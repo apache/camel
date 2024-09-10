@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-log",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "log",
     "extendsScheme": "",
     "syntax": "log:loggerName",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false,
+    "browsable": false,
     "remote": false
   },
   "componentProperties": {

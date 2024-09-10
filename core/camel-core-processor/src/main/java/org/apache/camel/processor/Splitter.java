@@ -236,8 +236,8 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                         if (isShareUnitOfWork()) {
                             prepareSharedUnitOfWork(newExchange, copy);
                         }
-                        if (part instanceof Message) {
-                            newExchange.setIn((Message) part);
+                        if (part instanceof Message message) {
+                            newExchange.setIn(message);
                         } else {
                             Message in = newExchange.getIn();
                             in.setBody(part);
@@ -279,8 +279,8 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                 }
             }
         } finally {
-            if (pairs instanceof Closeable) {
-                IOHelper.close((Closeable) pairs, "Splitter:ProcessorExchangePairs");
+            if (pairs instanceof Closeable closeable) {
+                IOHelper.close(closeable, "Splitter:ProcessorExchangePairs");
             }
         }
 

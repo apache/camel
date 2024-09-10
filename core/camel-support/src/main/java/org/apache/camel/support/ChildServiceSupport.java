@@ -37,7 +37,8 @@ public abstract class ChildServiceSupport extends ServiceSupport {
 
     @Override
     public void start() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == STARTED) {
                 LOG.trace("Service: {} already started", this);
                 return;
@@ -66,12 +67,15 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 ServiceHelper.stopService(childServices);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     public void stop() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
                 LOG.trace("Service: {} already stopped", this);
                 return;
@@ -92,12 +96,15 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 LOG.trace("Error while stopping service: {}", this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     public void shutdown() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (status == SHUTDOWN) {
                 LOG.trace("Service: {} already shut down", this);
                 return;
@@ -119,26 +126,34 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 LOG.trace("Error shutting down service: {}", this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     protected void addChildService(Object childService) {
-        if (childService instanceof Service) {
-            synchronized (lock) {
+        if (childService instanceof Service service) {
+            lock.lock();
+            try {
                 if (childServices == null) {
                     childServices = new ArrayList<>();
                 }
-                childServices.add((Service) childService);
+                childServices.add(service);
+            } finally {
+                lock.unlock();
             }
         }
     }
 
     protected boolean removeChildService(Object childService) {
         if (childService instanceof Service) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (childServices != null) {
                     return childServices.remove(childService);
                 }
+            } finally {
+                lock.unlock();
             }
         }
         return false;

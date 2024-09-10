@@ -43,5 +43,11 @@ public class Milvus {
 
         @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
         public static final String COLLECTION_NAME = "CamelMilvusCollectionName";
+
+        @Metadata(description = "Key Name for Insert/Upsert operation", javaType = "String")
+        public static final String KEY_NAME = "CamelMilvusKeyName";
+
+        @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
+        public static final String KEY_VALUE = "CamelMilvusKeyValue";
     }
 }

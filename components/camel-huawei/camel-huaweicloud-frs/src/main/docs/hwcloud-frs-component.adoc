@@ -87,15 +87,15 @@ When using imageBase64 or videoBase64 option, we suggest you use RAW(base64_valu
 
 |=======================================================================
 
-== List of Supported Operations
+=== List of Supported Operations
 
 - faceDetection - detect, locate, and analyze the face in an input image, and output the key facial points and attributes.
 - faceVerification - compare two faces to verify whether they belong to the same person and return the confidence level
 - faceLiveDetection - determine whether a person in a video is alive by checking whether the person's actions in the video are consistent with those in the input action list
 
-== Inline Configuration of route
+=== Inline Configuration of route
 
-=== faceDetection
+==== faceDetection
 
 Java DSL
 

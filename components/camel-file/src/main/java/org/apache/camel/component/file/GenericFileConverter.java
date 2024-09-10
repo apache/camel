@@ -109,9 +109,8 @@ public final class GenericFileConverter {
 
     @Converter
     public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException {
-        if (file.getFile() instanceof File) {
+        if (file.getFile() instanceof File f) {
             // prefer to use a file input stream if its a java.io.File
-            File f = (File) file.getFile();
             // the file must exists
             if (f.exists()) {
                 // read the file using the specified charset
@@ -178,9 +177,8 @@ public final class GenericFileConverter {
 
     @Converter
     public static Reader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
-        if (file.getFile() instanceof File) {
+        if (file.getFile() instanceof File f) {
             // prefer to use a file input stream if its a java.io.File
-            File f = (File) file.getFile();
             // the file must exists
             if (!f.exists()) {
                 return null;

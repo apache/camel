@@ -40,12 +40,30 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private boolean useGlobalSslContextParameters;
 
     private boolean infoEnabled;
+    private boolean staticEnabled;
+    @Metadata(defaultValue = "/")
+    private String staticContextPath = "/";
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
     private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
+    private boolean downloadEnabled;
+    private boolean sendEnabled;
+
+    @Metadata(label = "security")
+    private boolean authenticationEnabled;
+    @Metadata(label = "security")
+    private String authenticationPath;
+    @Metadata(label = "security")
+    private String basicPropertiesFile;
+    @Metadata(label = "security")
+    private String jwtKeystoreType;
+    @Metadata(label = "security")
+    private String jwtKeystorePath;
+    @Metadata(label = "security", secret = true)
+    private String jwtKeystorePassword;
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -137,6 +155,30 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.infoEnabled = infoEnabled;
     }
 
+    public boolean isStaticEnabled() {
+        return staticEnabled;
+    }
+
+    /**
+     * Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it
+     * possible to include small web applications.
+     */
+    public void setStaticEnabled(boolean staticEnabled) {
+        this.staticEnabled = staticEnabled;
+    }
+
+    public String getStaticContextPath() {
+        return staticContextPath;
+    }
+
+    /**
+     * The context-path to use for serving static content. By default, the root path is used. And if there is an
+     * index.html page then this is automatically loaded.
+     */
+    public void setStaticContextPath(String staticContextPath) {
+        this.staticContextPath = staticContextPath;
+    }
+
     public boolean isDevConsoleEnabled() {
         return devConsoleEnabled;
     }
@@ -210,6 +252,98 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.uploadSourceDir = uploadSourceDir;
     }
 
+    public boolean isDownloadEnabled() {
+        return downloadEnabled;
+    }
+
+    /**
+     * Whether to enable file download via HTTP. This makes it possible to browse and download resource source files
+     * such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for
+     * management and monitoring.
+     */
+    public void setDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
+    }
+
+    public boolean isSendEnabled() {
+        return sendEnabled;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public void setSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
+    }
+
+    public boolean isAuthenticationEnabled() {
+        return authenticationEnabled;
+    }
+
+    /**
+     * Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or
+     * Quarkus).
+     */
+    public void setAuthenticationEnabled(boolean authenticationEnabled) {
+        this.authenticationEnabled = authenticationEnabled;
+    }
+
+    public String getAuthenticationPath() {
+        return authenticationPath;
+    }
+
+    /**
+     * Set HTTP url path of embedded server that is protected by authentication configuration.
+     */
+    public void setAuthenticationPath(String authenticationPath) {
+        this.authenticationPath = authenticationPath;
+    }
+
+    public String getBasicPropertiesFile() {
+        return basicPropertiesFile;
+    }
+
+    /**
+     * Name of the file that contains basic authentication info for Vert.x file auth provider.
+     */
+    public void setBasicPropertiesFile(String basicPropertiesFile) {
+        this.basicPropertiesFile = basicPropertiesFile;
+    }
+
+    public String getJwtKeystoreType() {
+        return jwtKeystoreType;
+    }
+
+    /**
+     * Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.).
+     */
+    public void setJwtKeystoreType(String jwtKeystoreType) {
+        this.jwtKeystoreType = jwtKeystoreType;
+    }
+
+    public String getJwtKeystorePath() {
+        return jwtKeystorePath;
+    }
+
+    /**
+     * Path to the keystore file used for JWT tokens validation.
+     */
+    public void setJwtKeystorePath(String jwtKeystorePath) {
+        this.jwtKeystorePath = jwtKeystorePath;
+    }
+
+    public String getJwtKeystorePassword() {
+        return jwtKeystorePassword;
+    }
+
+    /**
+     * Password from the keystore used for JWT tokens validation.
+     */
+    public void setJwtKeystorePassword(String jwtKeystorePassword) {
+        this.jwtKeystorePassword = jwtKeystorePassword;
+    }
+
     /**
      * Whether embedded HTTP server is enabled. By default, the server is not enabled.
      */
@@ -267,6 +401,24 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Whether serving static files is enabled. If enabled then Camel can host html/js and other web files that makes it
+     * possible to include small web applications.
+     */
+    public HttpServerConfigurationProperties withStaticEnabled(boolean staticEnabled) {
+        this.staticEnabled = staticEnabled;
+        return this;
+    }
+
+    /**
+     * The context-path to use for serving static content. By default, the root path is used. And if there is an
+     * index.html page then this is automatically loaded.
+     */
+    public HttpServerConfigurationProperties withStaticContextPath(String staticContextPath) {
+        this.staticContextPath = staticContextPath;
+        return this;
+    }
+
+    /**
      * Whether to enable developer console (not intended for production use). Dev console must also be enabled on
      * CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code
      * <tt>camelContext.setDevConsole(true);</tt> If enabled then you can access a basic developer console on
@@ -318,6 +470,74 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withUploadSourceDir(String uploadSourceDir) {
         this.uploadSourceDir = uploadSourceDir;
+        return this;
+    }
+
+    /**
+     * Whether to enable file download via HTTP. This makes it possible to browse and download resource source files
+     * such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for
+     * management and monitoring.
+     */
+    public HttpServerConfigurationProperties withDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public HttpServerConfigurationProperties withSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
+        return this;
+    }
+
+    /**
+     * Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or
+     * Quarkus).
+     */
+    public HttpServerConfigurationProperties withAuthenticationEnabled(boolean authenticationEnabled) {
+        this.authenticationEnabled = authenticationEnabled;
+        return this;
+    }
+
+    /**
+     * Set HTTP url path of embedded server that is protected by authentication configuration.
+     */
+    public HttpServerConfigurationProperties withAuthenticationPath(String authenticationPath) {
+        this.authenticationPath = authenticationPath;
+        return this;
+    }
+
+    /**
+     * Name of the file that contains basic authentication info for Vert.x file auth provider.
+     */
+    public HttpServerConfigurationProperties withBasicPropertiesFile(String basicPropertiesFile) {
+        this.basicPropertiesFile = basicPropertiesFile;
+        return this;
+    }
+
+    /**
+     * Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.).
+     */
+    public HttpServerConfigurationProperties withJwtKeystoreType(String jwtKeystoreType) {
+        this.jwtKeystoreType = jwtKeystoreType;
+        return this;
+    }
+
+    /**
+     * Path to the keystore file used for JWT tokens validation.
+     */
+    public HttpServerConfigurationProperties withJwtKeystorePath(String jwtKeystorePath) {
+        this.jwtKeystorePath = jwtKeystorePath;
+        return this;
+    }
+
+    /**
+     * Password from the keystore used for JWT tokens validation.
+     */
+    public HttpServerConfigurationProperties withJwtKeystorePassword(String jwtKeystorePassword) {
+        this.jwtKeystorePassword = jwtKeystorePassword;
         return this;
     }
 

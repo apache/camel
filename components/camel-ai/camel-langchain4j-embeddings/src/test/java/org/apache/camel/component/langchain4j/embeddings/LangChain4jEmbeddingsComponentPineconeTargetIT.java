@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import dev.langchain4j.model.embedding.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

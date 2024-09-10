@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "kubernetes-job",
     "extendsScheme": "",
     "syntax": "kubernetes-job:masterUrl",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false,
+    "browsable": false,
     "remote": true
   },
   "componentProperties": {
@@ -32,7 +33,8 @@
     "CamelKubernetesNamespaceName": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The namespace name", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_NAMESPACE_NAME" },
     "CamelKubernetesJobName": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Job name.", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_JOB_NAME" },
     "CamelKubernetesJobSpec": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "io.fabric8.kubernetes.api.model.batch.v1.JobSpec", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The spec for a Job.", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_JOB_SPEC" },
-    "CamelKubernetesJobLabels": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Job labels.", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_JOB_LABELS" }
+    "CamelKubernetesJobLabels": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Job labels.", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_JOB_LABELS" },
+    "CamelKubernetesJobAnnotations": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Job annotations.", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_JOB_ANNOTATIONS" }
   },
   "properties": {
     "masterUrl": { "index": 0, "kind": "path", "displayName": "Master Url", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.kubernetes.KubernetesConfiguration", "configurationField": "configuration", "description": "URL to a remote Kubernetes API server. This should only be used when your Camel application is connecting from outside Kubernetes. If you run your Camel application inside Kubernetes, then you can use local or client as the URL to tell Camel to run in local mode. If you connect remotely to Kubernetes, then you may also need some of the many other configuration options for secured connection with certificates, etc." },

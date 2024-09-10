@@ -20,25 +20,6 @@ with automatic fail over if that JVM dies.
 This can be handy if you need to consume from some legacy back end that either doesn't support concurrent
 consumption or due to commercial or stability reasons, you can only have a single connection at any point in time.
 
-== Using the master endpoint
-
-Just prefix any camel endpoint with **master:someName:** where _someName_ is a logical name and is
-used to acquire the master lock. e.g.
-
-[source,java]
-----
-from("master:cheese:jms:foo")
-  .to("activemq:wine");
-----
-
-In this example, the master component ensures that the route is only active in one node, at any given time, in the cluster.
-So if there are 8 nodes in the cluster, then the master component will elect one route to be the leader, and only
-this route will be active, and hence only this route will consume messages from `jms:foo`.
-In case this route is stopped or unexpectedly terminated, then the master component will detect this,
-and re-elect another node to be active, which will then become active and start consuming messages from `jms:foo`.
-
-TIP: Apache ActiveMQ 5.x has such a feature out of the box called https://activemq.apache.org/exclusive-consumer.html[Exclusive Consumers].
-
 == URI format
 
 ----
@@ -60,6 +41,28 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+== Usage
+
+=== Using the master endpoint
+
+Prefix any camel endpoint with **master:someName:** where _someName_ is a logical name and is
+used to acquire the master lock.
+For instance:
+
+[source,java]
+----
+from("master:cheese:jms:foo")
+  .to("activemq:wine");
+----
+
+In this example, the master component ensures that the route is only active in one node, at any given time, in the cluster.
+So if there are 8 nodes in the cluster, then the master component will elect one route to be the leader, and only
+this route will be active, and hence only this route will consume messages from `jms:foo`.
+In case this route is stopped or unexpectedly terminated, then the master component will detect this,
+and re-elect another node to be active, which will then become active and start consuming messages from `jms:foo`.
+
+TIP: Apache ActiveMQ 5.x has such a feature out of the box called https://activemq.apache.org/exclusive-consumer.html[Exclusive Consumers].
 
 
 == Example
@@ -95,7 +98,7 @@ service.setBasePath("/camel/cluster");
 context.addService(service)
 ----
 
-* *Xml (Spring/Blueprint)*
+* *Xml (Spring)*
 +
 [source,xml]
 ----

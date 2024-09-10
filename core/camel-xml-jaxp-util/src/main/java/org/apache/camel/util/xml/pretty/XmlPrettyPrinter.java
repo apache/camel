@@ -104,7 +104,7 @@ public final class XmlPrettyPrinter {
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         parser = factory.newSAXParser();
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(256);
         final DefaultHandler handler = new DefaultHandler() {
             int indent;
             boolean inElement;
@@ -112,7 +112,7 @@ public final class XmlPrettyPrinter {
             @Override
             public void declaration(String version, String encoding, String standalone) throws SAXException {
                 if (declaration) {
-                    StringBuilder lb = new StringBuilder();
+                    StringBuilder lb = new StringBuilder(256);
                     lb.append("<?xml");
                     if (version != null) {
                         lb.append(" version=\"").append(version).append("\"");
@@ -136,7 +136,7 @@ public final class XmlPrettyPrinter {
                 inElement = true;
                 sb.append(XmlPrettyPrinter.padString(indent, blanks));
 
-                StringBuilder lb = new StringBuilder();
+                StringBuilder lb = new StringBuilder(256);
                 lb.append("<");
                 lb.append(qName);
 
@@ -170,7 +170,7 @@ public final class XmlPrettyPrinter {
                 inElement = false;
                 --indent;
 
-                StringBuilder lb = new StringBuilder();
+                StringBuilder lb = new StringBuilder(256);
                 lb.append("</");
                 lb.append(qName);
                 lb.append(">");

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-azure-eventhubs</artifactId>
@@ -53,13 +53,6 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
-        </dependency>
-
-        <!-- extras -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io-version}</version>
         </dependency>
 
         <!-- for testing -->

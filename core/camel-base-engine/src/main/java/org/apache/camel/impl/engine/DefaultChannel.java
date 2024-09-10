@@ -276,8 +276,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // on the error handler. See more details in the class javadoc of InstrumentationProcessor
         if (instrumentationProcessor != null) {
             boolean redeliveryPossible = false;
-            if (errorHandler instanceof ErrorHandlerRedeliveryCustomizer) {
-                ErrorHandlerRedeliveryCustomizer erh = (ErrorHandlerRedeliveryCustomizer) errorHandler;
+            if (errorHandler instanceof ErrorHandlerRedeliveryCustomizer erh) {
                 redeliveryPossible = erh.determineIfRedeliveryIsEnabled();
                 if (redeliveryPossible) {
                     // okay we can redeliver then we need to change the output in the error handler

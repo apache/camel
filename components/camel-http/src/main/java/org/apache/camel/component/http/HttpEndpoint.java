@@ -207,18 +207,28 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         return answer;
     }
 
-    public synchronized HttpClient getHttpClient() {
-        if (httpClient == null) {
-            httpClient = createHttpClient();
+    public HttpClient getHttpClient() {
+        lock.lock();
+        try {
+            if (httpClient == null) {
+                httpClient = createHttpClient();
+            }
+            return httpClient;
+        } finally {
+            lock.unlock();
         }
-        return httpClient;
     }
 
     /**
      * Sets a custom HttpClient to be used by the producer
      */
-    public synchronized void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
+    public void setHttpClient(HttpClient httpClient) {
+        lock.lock();
+        try {
+            this.httpClient = httpClient;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -641,8 +651,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")
     public int getClientConnectionsPoolStatsMax() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -656,8 +666,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Number of available idle persistent connections")
     public int getClientConnectionsPoolStatsAvailable() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -671,8 +681,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Number of persistent connections tracked by the connection manager currently being used to execute requests")
     public int getClientConnectionsPoolStatsLeased() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -687,8 +697,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                                     + " This can happen only if there are more worker threads contending for fewer connections.")
     public int getClientConnectionsPoolStatsPending() {
         ConnPoolControl<?> pool = null;
-        if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl<?>) clientConnectionManager;
+        if (clientConnectionManager instanceof ConnPoolControl<?> connPoolControl) {
+            pool = connPoolControl;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();

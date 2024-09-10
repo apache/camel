@@ -23,12 +23,12 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-chatscript</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: ChatScript</name>
+    <name>Camel :: AI :: ChatScript</name>
     <description>Camel support for ChatScript</description>
 
     <properties>

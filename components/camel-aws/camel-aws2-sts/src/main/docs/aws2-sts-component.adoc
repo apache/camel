@@ -60,6 +60,10 @@ You have to provide the amazonSTSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sts/[Amazon STS] service.
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
@@ -81,10 +85,6 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === STS Producer operations
 
 Camel-AWS STS component provides the following operation on the producer side:
@@ -93,7 +93,9 @@ Camel-AWS STS component provides the following operation on the producer side:
 - getSessionToken
 - getFederationToken
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 - assumeRole: this operation will make an AWS user assume a different role temporary
 
@@ -122,7 +124,7 @@ from("direct:getFederationToken")
     .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
 --------------------------------------------------------------------------------
 
-== Using a POJO as body
+=== Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS STS, as an example for Assume Role request, you can do something like:

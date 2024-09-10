@@ -26,6 +26,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.spi.IdAware;
 
+@Deprecated(since = "4.8.0")
 public interface ServiceRegistry extends Service, CamelContextAware, IdAware, Ordered {
 
     @Override

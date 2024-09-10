@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class BodyAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BodyAnnotationToDisambiguateMethodsTest.class);
     protected final MyBean myBean = new MyBean();
 
     @Test

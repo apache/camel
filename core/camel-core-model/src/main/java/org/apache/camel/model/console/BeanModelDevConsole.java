@@ -58,7 +58,7 @@ public class BeanModelDevConsole extends AbstractDevConsole {
         boolean properties = "true".equals(options.getOrDefault(PROPERTIES, "true"));
         boolean nulls = "true".equals(options.getOrDefault(NULLS, "true"));
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);

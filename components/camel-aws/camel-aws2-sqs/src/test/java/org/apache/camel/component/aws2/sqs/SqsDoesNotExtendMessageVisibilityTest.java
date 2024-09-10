@@ -55,11 +55,11 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         message.receiptHandle(RECEIPT_HANDLE);
-        this.client.messages.add(message.build());
+        this.client.addMessage(message.build());
 
         // Wait for message to arrive.
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(0, this.client.changeMessageVisibilityBatchRequests.size());
+        assertEquals(0, this.client.getChangeMessageVisibilityBatchRequests().size());
     }
 
     @Override

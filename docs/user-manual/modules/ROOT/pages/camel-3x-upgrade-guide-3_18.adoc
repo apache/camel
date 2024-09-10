@@ -1,7 +1,7 @@
 = Apache Camel 3.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from Camel 3.x to 3.y. For example, if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.17 to 3.18
@@ -9,7 +9,7 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === camel-core
 
 Camel will now mask all known secret values when logging endpoint URIs to avoid leaking sensitive details
-such as from stacktraces. Previously only a sub set of known _secret_ keys was masked.
+such as from stack traces. Previously only a subset of known _secret_ keys was masked.
 
 The type converter from `InputStream` to `byte[]` will now close the input stream after the conversion.
 
@@ -23,7 +23,7 @@ to better separate output between text and json based.
 
 === camel-cxf
 
-The `camel-cxf` JAR has been split up into SOAP vs REST and Spring and non Spring JARs.
+The `camel-cxf` JAR has been split up into SOAP vs. REST and Spring and non-Spring JARs.
 
 Users should therefore choose `camel-cxf` to migrate among the following JARs:
 
@@ -34,15 +34,15 @@ Users should therefore choose `camel-cxf` to migrate among the following JARs:
 - `camel-cxf-transport`
 - `camel-cxf-spring-transport`
 
-For example if you were using CXF for SOAP and with Spring XML, then you would need to migrate
+For example, if you were using CXF for SOAP and with Spring XML, then you would need to migrate
 from using `camel-cxf` to `camel-cxf-spring-soap` and `camel-cxf-spring-transport`.
 
-When using Spring Boot then you need to migrate from `camel-cxf-starter` to use SOAP or REST:
+When using Spring Boot, then you need to migrate from `camel-cxf-starter` to use SOAP or REST:
 
 - `camel-cxf-soap-starter`
 - `camel-cxf-rest-starter`
 
-The `camel-cxf` XML XSD schemas has also changed namespaces:
+The `camel-cxf` XML XSD schemas have also changed namespaces:
 
 |===
 |Old Namespace | New Namespace
@@ -70,8 +70,8 @@ i.e. `org.apache.camel.component.cxf` is now `org.apache.camel.component.cxf.jaw
 This means, for example, the `CxfComponent` class is now located
 in `org.apache.camel.component.cxf.jaxws`.
 
-Some classes in the following packages were refactored, and the package was updated, 
-if you were using one of those packages and, after the migration, a ClassNotFoundException is thrown, 
+Some classes in the following packages were refactored, and the package was updated.
+If you were using one of those packages and, after the migration, a `ClassNotFoundException` is thrown,
 an update should be considered
 
 |===

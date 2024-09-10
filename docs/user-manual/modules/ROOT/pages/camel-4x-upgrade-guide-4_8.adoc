@@ -6,13 +6,62 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.7 to 4.8
 
+=== camel-api
+
+Added `void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod)` method to `org.apache.camel.spi.Registry`
+to support init and destroy method on beans.
+
+=== camel-core
+
+The `UseOriginalAggregationStrategy` class will now propagate the caught exception stored in the exchange property `Exchange.EXCEPTION_CAUGHT`
+as well. For example, when using the Splitter EIP with this, then any caught exception during splitting would be stored
+as well, which allows access to this information afterward, for example, in an `onCompletion` where the caught exception
+can be used to know some error happened during splitting.
+
+Internally, Camel will now use Java's own `InputStream.transferTo` for copying data between streams whenever such copies don't
+require customized buffer sizes or data flushing policies. Additionally, the size of the data buffer used by Camel when
+performing these copies has increased from 4096 bytes to 16384 bytes (the default buffer size used by Java 21).
+
+The tracer (`BacklogTracer`) has changed the `backlogSize` default value from `1000` to `100`, and `maxBodySize` from `128kb` to `32kb`.
+This reduces the amount of data captured and stored and helps reduce the tracing overhead.
+
+The `org.apache.camel.support.DefaultExchangeHolder` will now include both exchange variables and properties,
+if the parameter `includeProperties` is set to true.
+
+=== camel-jbang
+
+The `camel trace` command has changed to show tracing status (by default). To dump traced messages use `camel trace --action=dump`.
+
+=== Deprecated Components
+
+The following components that were marked as deprecated:
+
+* camel-univocity-parsers
+
+=== camel-as2
+
+The header prefixes have been corrected from `CamelAS2.` -> `CamelAs2.` to be consistent with naming convention
+used by other API-based components. The documentation uses the correct naming prefix as `CamelAs2.`.
+
 === camel-kafka
 
 The `KafkaIdempotentRepository` will now continue to sync cache updates after Camel has been started.
-You can configure `startupOnly=true` to only sync the cache once on startup
-(however then the cache is not synced with other Camel nodes in a cluster).
+You can configure `startupOnly=true` to only sync the cache once on startup,
+(however, then the cache is not synced with other Camel nodes in a cluster).
+
+=== camel-langchain4j-chat
+
+The chat-with-tools feature was deprecated. Use the new `camel-langchain4j-tool` component.
 
 === camel-tests
 
 Continuing the multi-release tests cleanups, on this one, restricted methods from the `CamelTestSupport` class
 have been marked as final and cannot be extended.
+
+=== Preferred JAX-B implementation: `org.glassfish.jaxb:jaxb-runtime`
+
+We stopped relying on `com.sun.xml.bind:jaxb-impl` in favor of `org.glassfish.jaxb:jaxb-runtime`.
+This change should have no impact on existing code, because recent versions of the two artifacts bring the same classes.
+The main motivation for this change is to allow projects that still require classes from `javax.xml.bind` package
+to be able to depend on pre-3.x versions of `com.sun.xml.bind:jaxb-impl` together with the recent version of
+`org.glassfish.jaxb:jaxb-runtime` brought by Camel.

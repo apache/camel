@@ -17,6 +17,7 @@
 package org.apache.camel.tracing;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -28,7 +29,6 @@ public final class ActiveSpanManager {
 
     public static final String MDC_TRACE_ID = "trace_id";
     public static final String MDC_SPAN_ID = "span_id";
-    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
 
     private ActiveSpanManager() {
@@ -41,7 +41,7 @@ public final class ActiveSpanManager {
      * @return          The current active span, or null if none exists
      */
     public static SpanAdapter getSpan(Exchange exchange) {
-        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             return holder.getSpan();
         }
@@ -56,9 +56,9 @@ public final class ActiveSpanManager {
      * @param span     The span
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
-        exchange.setProperty(ACTIVE_SPAN_PROPERTY,
-                new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
-        if (exchange.getContext().isUseMDCLogging()) {
+        exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN,
+                new Holder(exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class), span));
+        if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
             MDC.put(MDC_TRACE_ID, span.traceId());
             MDC.put(MDC_SPAN_ID, span.spanId());
         }
@@ -72,15 +72,15 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      */
     public static void deactivate(Exchange exchange) {
-        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null) {
-            exchange.setProperty(ACTIVE_SPAN_PROPERTY, holder.getParent());
+            Holder parent = holder.getParent();
+            exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, parent);
 
             holder.closeScope();
-            if (exchange.getContext().isUseMDCLogging()) {
-                Holder parent = holder.getParent();
+            if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
                 if (parent != null) {
-                    SpanAdapter span = holder.getParent().getSpan();
+                    SpanAdapter span = parent.getSpan();
                     MDC.put(MDC_TRACE_ID, span.traceId());
                     MDC.put(MDC_SPAN_ID, span.spanId());
                 } else {
@@ -92,14 +92,14 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * If underlying span is active, closes its scope without ending the span. This methods should be called after async
-     * execution is started on the same thread on which span was activated. ExchangeAsyncStartedEvent is used to notify
-     * about it.
+     * If the underlying span is active, closes its scope without ending the span. This method should be called after
+     * async execution is started on the same thread on which span was activated. ExchangeAsyncStartedEvent is used to
+     * notify about it.
      *
      * @param exchange The exchange
      */
     public static void endScope(Exchange exchange) {
-        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             holder.closeScope();
         }
@@ -107,15 +107,15 @@ public final class ActiveSpanManager {
 
     /**
      * Simple holder for the currently active span and an optional reference to the parent holder. This will be used to
-     * maintain a stack for spans, built up during the execution of a series of chained camel exchanges, and then
-     * unwound when the responses are processed.
+     * maintain a stack for spans, built up during the execution of multiple chained camel exchanges, and then unwound
+     * when the responses are processed.
      */
     public static class Holder {
-        private Holder parent;
-        private SpanAdapter span;
-        private AutoCloseable scope;
+        private final Holder parent;
+        private final SpanAdapter span;
+        private final AutoCloseable scope;
 
-        public Holder(Holder parent, SpanAdapter span) {
+        Holder(Holder parent, SpanAdapter span) {
             this.parent = parent;
             this.span = span;
             this.scope = span.makeCurrent();

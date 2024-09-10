@@ -408,7 +408,7 @@ public final class RestConsumerContextPathMatcher {
      */
     private static String prepareConsumerPathRegex(String consumerPath) {
         Matcher m = CONSUMER_PATH_PARAMETER_PATTERN.matcher(consumerPath);
-        StringBuilder regexBuilder = new StringBuilder();
+        StringBuilder regexBuilder = new StringBuilder(256);
         while (m.find()) {
             m.appendReplacement(regexBuilder, m.group(1) + m.group(2).replaceAll("[\\_\\-]", "") + m.group(3));
         }

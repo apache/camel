@@ -87,8 +87,7 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         Map<String, Object> map = new TreeMap<>(parameters);
         for (String secretParameter : secretPropertyNames()) {
             Object val = map.get(secretParameter);
-            if (val instanceof String) {
-                String answer = (String) val;
+            if (val instanceof String answer) {
                 if (!answer.startsWith("#") && !answer.startsWith("RAW(")) {
                     map.put(secretParameter, "RAW(" + val + ")");
                 }

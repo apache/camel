@@ -49,7 +49,7 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
     }
 
     @Test
-    public void testResponseUsingWss4jSampleInterceptorWithoutHeadersRemoved() throws Exception {
+    public void testResponseUsingWss4jSampleInterceptorWithoutHeadersRemoved() {
 
         setRemoveHeaders(false);
 
@@ -63,7 +63,7 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
     }
 
     @Test
-    public void testResponseUsingWss4jSampleInterceptorWithHeadersRemoved() throws Exception {
+    public void testResponseUsingWss4jSampleInterceptorWithHeadersRemoved() {
 
         setRemoveHeaders(true);
 
@@ -78,10 +78,10 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
 
     private PlusResponse createSampleRequestResponsePair() {
         PlusRequest request = new PlusRequest();
-        request.setA(Integer.valueOf(1));
-        request.setB(Integer.valueOf(2));
+        request.setA(1);
+        request.setB(2);
 
-        PlusResponse result = (PlusResponse) template.requestBody("direct:testHeader", request);
+        PlusResponse result = template.requestBody("direct:testHeader", request, PlusResponse.class);
 
         return result;
     }
@@ -90,9 +90,7 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
         ClientInterceptor[] clientInterceptors = webServiceTemplate.getInterceptors();
 
         for (ClientInterceptor clientInterceptor : clientInterceptors) {
-            if (clientInterceptor instanceof Wss4jSecurityInterceptor) {
-                Wss4jSecurityInterceptor wss4jSampleInterceptor
-                        = (Wss4jSecurityInterceptor) clientInterceptor;
+            if (clientInterceptor instanceof Wss4jSecurityInterceptor wss4jSampleInterceptor) {
                 wss4jSampleInterceptor.setRemoveSecurityHeader(isRemoved);
             }
         }

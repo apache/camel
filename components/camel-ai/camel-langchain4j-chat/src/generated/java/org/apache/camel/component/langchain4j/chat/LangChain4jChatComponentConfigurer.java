@@ -32,6 +32,8 @@ public class LangChain4jChatComponentConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chatmodel":
         case "chatModel": getOrCreateConfiguration(target).setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
         case "chatoperation":
@@ -53,6 +55,8 @@ public class LangChain4jChatComponentConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "chatmodel":
         case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
         case "chatoperation":
@@ -70,6 +74,8 @@ public class LangChain4jChatComponentConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chatmodel":
         case "chatModel": return getOrCreateConfiguration(target).getChatModel();
         case "chatoperation":

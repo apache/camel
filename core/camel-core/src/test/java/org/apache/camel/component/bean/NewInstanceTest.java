@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiBeanRepository;
@@ -32,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NewInstanceTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NewInstanceTest.class);
     protected JndiContext jndiContext;
 
     @Test

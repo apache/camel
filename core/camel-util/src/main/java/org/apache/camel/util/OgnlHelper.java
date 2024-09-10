@@ -183,7 +183,7 @@ public final class OgnlHelper {
         }
 
         List<String> methods = new ArrayList<>(4);
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
 
         int j = 0; // j is used as counter per method
         int squareBracketCnt = 0; // special to keep track if and how deep we are inside a square bracket block, eg: [foo]
@@ -288,7 +288,7 @@ public final class OgnlHelper {
     }
 
     public static String methodAsDoubleQuotes(String ognl) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(ognl.length() + 32);
 
         int singleBracketCnt = 0;
         int doubleBracketCnt = 0;

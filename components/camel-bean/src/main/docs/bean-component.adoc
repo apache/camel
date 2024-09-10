@@ -96,7 +96,7 @@ The bean component can also call a bean by _bean id_ by looking up the bean
 in the xref:manual::registry.adoc[Registry] instead of using the class name.
 ====
 
-== Java DSL specific bean syntax
+=== Java DSL specific bean syntax
 
 Java DSL comes with syntactic sugar for the xref:bean-component.adoc[Bean]
 component. Instead of specifying the bean explicitly as the endpoint

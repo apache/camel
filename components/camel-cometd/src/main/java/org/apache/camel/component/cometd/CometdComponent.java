@@ -22,6 +22,8 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.servlet.DispatcherType;
 
@@ -56,6 +58,7 @@ import org.slf4j.LoggerFactory;
 public class CometdComponent extends DefaultComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
+    private final Lock connectorsLock = new ReentrantLock();
     private final Map<String, ConnectorRef> connectors = new LinkedHashMap<>();
 
     private List<BayeuxServer.BayeuxServerListener> serverListeners;
@@ -116,7 +119,8 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         CometdEndpoint endpoint = prodcon.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
 
-        synchronized (connectors) {
+        connectorsLock.lock();
+        try {
             ConnectorRef connectorRef = connectors.get(connectorKey);
             if (connectorRef == null) {
                 ServerConnector connector;
@@ -160,6 +164,8 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
                 }
             }
             prodcon.setBayeux(bayeux);
+        } finally {
+            connectorsLock.unlock();
         }
     }
 
@@ -171,16 +177,17 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
 
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
 
-        synchronized (connectors) {
+        connectorsLock.lock();
+        try {
             ConnectorRef connectorRef = connectors.get(connectorKey);
-            if (connectorRef != null) {
-                if (connectorRef.decrement() == 0) {
-                    connectorRef.server.removeConnector(connectorRef.connector);
-                    connectorRef.connector.stop();
-                    connectorRef.server.stop();
-                    connectors.remove(connectorKey);
-                }
+            if (connectorRef != null && connectorRef.decrement() == 0) {
+                connectorRef.server.removeConnector(connectorRef.connector);
+                connectorRef.connector.stop();
+                connectorRef.server.stop();
+                connectors.remove(connectorKey);
             }
+        } finally {
+            connectorsLock.unlock();
         }
     }
 
@@ -352,10 +359,15 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
 
     @Override
     protected void doStop() throws Exception {
-        for (ConnectorRef connectorRef : connectors.values()) {
-            connectorRef.connector.stop();
+        connectorsLock.lock();
+        try {
+            for (ConnectorRef connectorRef : connectors.values()) {
+                connectorRef.connector.stop();
+            }
+            connectors.clear();
+        } finally {
+            connectorsLock.unlock();
         }
-        connectors.clear();
 
         super.doStop();
     }

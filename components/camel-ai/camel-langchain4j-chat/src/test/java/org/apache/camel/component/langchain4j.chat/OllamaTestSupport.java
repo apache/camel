@@ -39,12 +39,12 @@ public class OllamaTestSupport extends CamelTestSupport {
         chatLanguageModel = createModel();
     }
 
-    public ChatLanguageModel createModel() {
+    protected ChatLanguageModel createModel() {
         return OllamaChatModel.builder()
-                .baseUrl(OLLAMA.getBaseUrl())
+                .baseUrl(OLLAMA.getEndpoint())
                 .modelName(OLLAMA.getModel())
                 .temperature(0.3)
-                .timeout(ofSeconds(3000))
+                .timeout(ofSeconds(60))
                 .build();
     }
 }

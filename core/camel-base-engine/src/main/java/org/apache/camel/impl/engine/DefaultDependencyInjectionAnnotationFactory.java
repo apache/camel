@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.function.Supplier;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -46,12 +48,14 @@ public class DefaultDependencyInjectionAnnotationFactory
     }
 
     @Override
-    public Runnable createBindToRegistryFactory(String id, Object bean, String beanName, boolean beanPostProcess) {
+    @SuppressWarnings("unchecked")
+    public Runnable createBindToRegistryFactory(
+            String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess,
+            String initMethod, String destroyMethod) {
         return () -> {
             if (beanPostProcess) {
                 try {
                     final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(camelContext);
-
                     beanPostProcessor.postProcessBeforeInitialization(bean, beanName);
                     beanPostProcessor.postProcessAfterInitialization(bean, beanName);
                 } catch (Exception e) {
@@ -59,7 +63,17 @@ public class DefaultDependencyInjectionAnnotationFactory
                 }
             }
             CamelContextAware.trySetCamelContext(bean, camelContext);
-            camelContext.getRegistry().bind(id, bean);
+            if (bean instanceof Supplier) {
+                // must be Supplier<Object> to ensure correct binding
+                Supplier<Object> sup = (Supplier<Object>) bean;
+                camelContext.getRegistry().bind(id, beanType, sup);
+            } else {
+                if (initMethod != null || destroyMethod != null) {
+                    camelContext.getRegistry().bind(id, bean, initMethod, destroyMethod);
+                } else {
+                    camelContext.getRegistry().bind(id, bean);
+                }
+            }
         };
     }
 }

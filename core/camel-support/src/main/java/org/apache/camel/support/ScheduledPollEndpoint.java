@@ -153,16 +153,15 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                             e);
                 }
             } else if (!"none".equals(schedulerKey)) {
-                if (schedulerKey instanceof String) {
-                    String str = schedulerKey.toString();
+                if (schedulerKey instanceof String str) {
                     // must refer to a custom scheduler by the given name
                     if (EndpointHelper.isReferenceParameter(str)) {
                         str = str.substring(1);
                     }
                     consumerScheduler = CamelContextHelper.mandatoryLookup(getCamelContext(), str,
                             ScheduledPollConsumerScheduler.class);
-                } else if (schedulerKey instanceof ScheduledPollConsumerScheduler) {
-                    consumerScheduler = (ScheduledPollConsumerScheduler) schedulerKey;
+                } else if (schedulerKey instanceof ScheduledPollConsumerScheduler scheduler) {
+                    consumerScheduler = scheduler;
                 } else {
                     throw new IllegalArgumentException(
                             "Scheduler must either be a reference to a custom scheduler or an ScheduledPollConsumerScheduler type, was: "
@@ -173,8 +172,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     }
 
     protected void doConfigureConsumer(Consumer consumer) {
-        if (consumer instanceof ScheduledPollConsumer) {
-            ScheduledPollConsumer spc = (ScheduledPollConsumer) consumer;
+        if (consumer instanceof ScheduledPollConsumer spc) {
             spc.setBackoffErrorThreshold(backoffErrorThreshold);
             spc.setBackoffIdleThreshold(backoffIdleThreshold);
             spc.setBackoffMultiplier(backoffMultiplier);

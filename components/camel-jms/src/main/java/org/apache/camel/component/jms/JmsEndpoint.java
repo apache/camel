@@ -51,6 +51,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.UnwrapHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -148,6 +149,13 @@ public class JmsEndpoint extends DefaultEndpoint
             // we need to use reflection to find the URL to the brokers, so do this once on startup
             BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
             ConnectionFactory cf = getConnectionFactory();
+            // unwrap if cf is from a synthetic ClientProxy bean
+            if (cf != null && cf.getClass().getName().endsWith("ClientProxy")) {
+                ConnectionFactory actual = UnwrapHelper.unwrapClientProxy(cf);
+                if (actual != null) {
+                    cf = actual;
+                }
+            }
             serviceUrl = JmsServiceLocationHelper.getBrokerURLFromConnectionFactory(bi, cf);
             serviceProtocol = getComponent().getDefaultName();
 
@@ -237,8 +245,8 @@ public class JmsEndpoint extends DefaultEndpoint
             // we are using a shared thread pool that this listener container is using.
             // store a reference to the consumer, but we should not shutdown the thread pool when the consumer stops
             // as the lifecycle of the shared thread pool is handled elsewhere
-            if (configuration.getTaskExecutor() instanceof ExecutorService) {
-                consumer.setListenerContainerExecutorService((ExecutorService) configuration.getTaskExecutor(), false);
+            if (configuration.getTaskExecutor() instanceof ExecutorService executorService) {
+                consumer.setListenerContainerExecutorService(executorService, false);
             }
         } else if (!(listenerContainer instanceof DefaultJmsMessageListenerContainer)
                 || configuration.getDefaultTaskExecutorType() == null) {
@@ -260,8 +268,8 @@ public class JmsEndpoint extends DefaultEndpoint
 
         // set a default transaction name if none provided
         if (configuration.getTransactionName() == null) {
-            if (listenerContainer instanceof DefaultMessageListenerContainer) {
-                ((DefaultMessageListenerContainer) listenerContainer).setTransactionName(consumerName);
+            if (listenerContainer instanceof DefaultMessageListenerContainer defaultMessageListenerContainer) {
+                defaultMessageListenerContainer.setTransactionName(consumerName);
             }
         }
 
@@ -278,10 +286,10 @@ public class JmsEndpoint extends DefaultEndpoint
     }
 
     private void setContainerTaskExecutor(AbstractMessageListenerContainer listenerContainer, Executor executor) {
-        if (listenerContainer instanceof SimpleMessageListenerContainer) {
-            ((SimpleMessageListenerContainer) listenerContainer).setTaskExecutor(executor);
-        } else if (listenerContainer instanceof DefaultMessageListenerContainer) {
-            ((DefaultMessageListenerContainer) listenerContainer).setTaskExecutor(executor);
+        if (listenerContainer instanceof SimpleMessageListenerContainer container) {
+            container.setTaskExecutor(executor);
+        } else if (listenerContainer instanceof DefaultMessageListenerContainer defaultMessageListenerContainer) {
+            defaultMessageListenerContainer.setTaskExecutor(executor);
         }
     }
 
@@ -616,6 +624,11 @@ public class JmsEndpoint extends DefaultEndpoint
         return getConfiguration().getMaxMessagesPerTask();
     }
 
+    @ManagedAttribute
+    public int getIdleReceivesPerTaskLimit() {
+        return getConfiguration().getIdleReceivesPerTaskLimit();
+    }
+
     public MessageConverter getMessageConverter() {
         return getConfiguration().getMessageConverter();
     }
@@ -943,6 +956,11 @@ public class JmsEndpoint extends DefaultEndpoint
     @ManagedAttribute
     public void setMaxMessagesPerTask(int maxMessagesPerTask) {
         getConfiguration().setMaxMessagesPerTask(maxMessagesPerTask);
+    }
+
+    @ManagedAttribute
+    public void setIdleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+        getConfiguration().setIdleReceivesPerTaskLimit(idleReceivesPerTaskLimit);
     }
 
     public void setMessageConverter(MessageConverter messageConverter) {

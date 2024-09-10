@@ -96,7 +96,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                                 } catch (Exception e) {
                                     // ignore
                                 }
-                                if (code.length() > 0) {
+                                if (!code.isEmpty()) {
                                     sb.append("    ").append("-".repeat(40));
                                     sb.append(code);
                                     sb.append("\n\n");

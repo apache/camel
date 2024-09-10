@@ -118,10 +118,10 @@ public class BaseWriter {
             NodeList children = v.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node item = children.item(i);
-                if (item instanceof Element) {
-                    domElement((Element) item);
-                } else if (item instanceof Text) {
-                    text(((Text) item).getWholeText());
+                if (item instanceof Element element) {
+                    domElement(element);
+                } else if (item instanceof Text text) {
+                    text(text.getWholeText());
                 }
             }
             endElement(v.getNamespaceURI());

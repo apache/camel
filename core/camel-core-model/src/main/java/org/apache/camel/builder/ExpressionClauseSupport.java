@@ -79,18 +79,26 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Specify an {@link org.apache.camel.Expression} instance
      */
     public T expression(Expression expression) {
-        if (expression instanceof ExpressionFactory || expression instanceof PredicateFactory) {
-            // it can be both an expression and predicate
-            if (expression instanceof ExpressionFactory) {
-                setExpressionType((ExpressionFactory) expression);
-            }
-            if (expression instanceof PredicateFactory) {
-                setPredicateType((PredicateFactory) expression);
-            }
-        } else {
+        if (!tryExpressionOrPredicate(expression)) {
             setExpressionValue(expression);
         }
         return result;
+    }
+
+    private boolean tryExpressionOrPredicate(Expression expression) {
+        boolean match = false;
+
+        // it can be both an expression and predicate
+        if (expression instanceof ExpressionFactory expressionFactory) {
+            setExpressionType(expressionFactory);
+            match = true;
+        }
+        if (expression instanceof PredicateFactory predicateFactory) {
+            setPredicateType(predicateFactory);
+            match = true;
+        }
+
+        return match;
     }
 
     /**
@@ -106,8 +114,8 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * during starting up the route, do not use this if you want dynamic values during routing.
      */
     public T constant(Object value) {
-        if (value instanceof String) {
-            return expression(new ConstantExpression((String) value));
+        if (value instanceof String str) {
+            return expression(new ConstantExpression(str));
         } else {
             return expression(ExpressionBuilder.constantExpression(value));
         }
@@ -128,8 +136,8 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * during starting up the route, do not use this if you want dynamic values during routing.
      */
     public T constant(Object value, boolean trim) {
-        if (value instanceof String) {
-            ConstantExpression ce = new ConstantExpression((String) value);
+        if (value instanceof String str) {
+            ConstantExpression ce = new ConstantExpression(str);
             ce.setTrim(trim ? "true" : "false");
             return expression(ce);
         } else {
@@ -856,6 +864,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, int group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
+        expression.setRegex(Boolean.toString(regex));
         expression.setSkipFirst(Boolean.toString(skipFirst));
         expression.setGroup(Integer.toString(group));
         expression.setSkipFirst(Boolean.toString(skipFirst));
@@ -875,6 +884,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, String group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
+        expression.setRegex(Boolean.toString(regex));
         expression.setSkipFirst(Boolean.toString(skipFirst));
         expression.setGroup(group);
         expression.setSkipFirst(Boolean.toString(skipFirst));
@@ -1198,9 +1208,4 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         }
         return getExpressionValue();
     }
-
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        // noop
-    }
-
 }

@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-univocity-parsers</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: UniVocity Parsers</name>
+    <name>Camel :: UniVocity Parsers (deprecated)</name>
     <description>Camel UniVocity parsers data format support</description>
 
     <properties>

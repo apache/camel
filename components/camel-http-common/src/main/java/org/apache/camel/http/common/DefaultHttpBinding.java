@@ -207,8 +207,8 @@ public class DefaultHttpBinding implements HttpBinding {
         // lets parse the body
         Object body = message.getBody();
         // reset the stream cache if the body is the instance of StreamCache
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).reset();
+        if (body instanceof StreamCache streamCache) {
+            streamCache.reset();
         }
 
         // if content type is serialized java object, then de-serialize it to a Java object
@@ -274,8 +274,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 // lets parse the body
                 Object body = message.getBody();
                 // reset the stream cache if the body is the instance of StreamCache
-                if (body instanceof StreamCache) {
-                    ((StreamCache) body).reset();
+                if (body instanceof StreamCache streamCache) {
+                    streamCache.reset();
                 }
 
                 // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
@@ -297,8 +297,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
 
                 // reset the stream cache if the body is the instance of StreamCache
-                if (body instanceof StreamCache) {
-                    ((StreamCache) body).reset();
+                if (body instanceof StreamCache streamCache) {
+                    streamCache.reset();
                 }
             }
         }
@@ -323,7 +323,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String name = (String) names.nextElement();
             Object object = request.getAttribute(name);
             LOG.trace("HTTP attachment {} = {}", name, object);
-            if (object instanceof File) {
+            if (object instanceof File fileObject) {
                 String fileName = request.getParameter(name);
                 // fix file name if using malicious parameter name
                 if (fileName != null) {
@@ -343,7 +343,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
                 if (accepted) {
                     AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
-                    am.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File) object, fileName)));
+                    am.addAttachment(fileName, new DataHandler(new CamelFileDataSource(fileObject, fileName)));
                 } else {
                     LOG.debug(
                             "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
@@ -454,15 +454,14 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
-        if ((headerValue instanceof Date || headerValue instanceof Locale)
-                && convertDateAndLocaleLocally(exchange)) {
-            if (headerValue instanceof Date) {
-                return toHttpDate((Date) headerValue);
-            } else {
-                return toHttpLanguage((Locale) headerValue);
-            }
+        if (headerValue instanceof Date date && convertDateAndLocaleLocally(exchange)) {
+            return toHttpDate(date);
         } else {
-            return exchange.getContext().getTypeConverter().convertTo(String.class, headerValue);
+            if (headerValue instanceof Locale locale && convertDateAndLocaleLocally(exchange)) {
+                return toHttpLanguage(locale);
+            } else {
+                return exchange.getContext().getTypeConverter().convertTo(String.class, headerValue);
+            }
         }
     }
 
@@ -531,11 +530,10 @@ public class DefaultHttpBinding implements HttpBinding {
                     // we need to setup the length if message is not chucked
                     response.setContentLength(len);
                     OutputStream current = stream.getCurrentStream();
-                    if (current instanceof ByteArrayOutputStream) {
+                    if (current instanceof ByteArrayOutputStream bos) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Streaming (direct) response in non-chunked mode with content-length {}", len);
                         }
-                        ByteArrayOutputStream bos = (ByteArrayOutputStream) current;
                         bos.writeTo(os);
                     } else {
                         if (LOG.isDebugEnabled()) {
@@ -580,8 +578,8 @@ public class DefaultHttpBinding implements HttpBinding {
         if (message.getHeader(Exchange.HTTP_CHUNKED) == null) {
             // check the endpoint option
             Endpoint endpoint = exchange.getFromEndpoint();
-            if (endpoint instanceof HttpCommonEndpoint) {
-                answer = ((HttpCommonEndpoint) endpoint).isChunked();
+            if (endpoint instanceof HttpCommonEndpoint httpCommonEndpoint) {
+                answer = httpCommonEndpoint.isChunked();
             }
         } else {
             answer = message.getHeader(Exchange.HTTP_CHUNKED, boolean.class);
@@ -594,8 +592,7 @@ public class DefaultHttpBinding implements HttpBinding {
         GZIPOutputStream gos = new GZIPOutputStream(os);
 
         Object body = exchange.getIn().getBody();
-        if (body instanceof InputStream) {
-            InputStream is = (InputStream) body;
+        if (body instanceof InputStream is) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Streaming GZIP response in chunked mode with buffer size {}", response.getBufferSize());
             }

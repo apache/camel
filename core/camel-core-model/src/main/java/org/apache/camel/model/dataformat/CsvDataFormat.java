@@ -401,7 +401,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the quote which by default is "
+     * Sets the quote to use which by default is double-quote character
      */
     public void setQuote(String quote) {
         this.quote = quote;

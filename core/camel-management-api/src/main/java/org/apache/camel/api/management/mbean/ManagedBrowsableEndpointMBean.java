@@ -16,12 +16,16 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
 
+    @ManagedAttribute(description = "Maximum number of messages to browse by default")
+    int getBrowseLimit();
+
     @ManagedOperation(description = "Current number of Exchanges in Queue")
-    long queueSize();
+    int queueSize();
 
     @ManagedOperation(description = "Get Exchange from queue by index")
     String browseExchange(Integer index);
@@ -37,5 +41,14 @@ public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
 
     @ManagedOperation(description = "Gets the range of messages as XML from the queue")
     String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody);
+
+    @ManagedOperation(description = "Get message as JSon from queue by index")
+    String browseMessageAsJSon(Integer index, Boolean includeBody);
+
+    @ManagedOperation(description = "Gets all the messages as JSon from the queue")
+    String browseAllMessagesAsJSon(Boolean includeBody);
+
+    @ManagedOperation(description = "Gets the range of messages as JSon from the queue")
+    String browseRangeMessagesAsJSon(Integer fromIndex, Integer toIndex, Boolean includeBody);
 
 }

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -64,6 +65,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
     private static final String BODY_VERBS = "DELETE,PUT,POST,PATCH";
 
+    private static final String GEN_OPID = "GENOPID_";
+
     private CamelContext camelContext;
     private ProducerCache producerCache;
     private String component = "direct";
@@ -75,8 +78,9 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     public void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumerAware platformHttpConsumer) throws Exception {
         List<String> ids = new ArrayList<>();
         for (var e : openAPI.getPaths().entrySet()) {
-            for (var o : e.getValue().readOperations()) {
-                String id = o.getOperationId();
+            for (var o : e.getValue().readOperationsMap().entrySet()) {
+                Operation op = o.getValue();
+                String id = op.getOperationId() != null ? op.getOperationId() : generateOperationId(e.getKey(), o.getKey());
                 ids.add(component + "://" + id);
             }
         }
@@ -143,6 +147,21 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 uris.add(uri);
             }
         }
+    }
+
+    /**
+     * If the operation has no operationId specified, generate one based on the path and the operation method.
+     *
+     * @param  path       The path for this operation, such as /users.
+     * @param  httpMethod The operation to perform
+     * @return            A generated operation id based on the path and the operation. Slashes and braces in the path
+     *                    are replaced with placeholder characters.
+     */
+    private String generateOperationId(String path, HttpMethod httpMethod) {
+        final String sanitizedPath = path.replace('/', '.').replaceAll("[{}]", "_");
+        final String opId = GEN_OPID + httpMethod.name() + sanitizedPath;
+        LOG.debug("Generated operationId {} for path {} and method {}", opId, path, httpMethod.name());
+        return opId;
     }
 
     @Override
@@ -395,10 +414,12 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
 
-        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
-        if (phc != null) {
-            uris.forEach(phc::removeHttpEndpoint);
-            uris.clear();
+        if (camelContext != null) {
+            PlatformHttpComponent phc = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
+            if (phc != null) {
+                uris.forEach(phc::removeHttpEndpoint);
+                uris.clear();
+            }
         }
     }
 

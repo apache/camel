@@ -112,10 +112,11 @@ from("platform-http:/upload?httpMethodRestrict=POST&useStreaming=true")
 
 Http authentication is disabled by default. In can be enabled by calling `setEnabled(true)` of `AuthenticationConfig`.
 Default http authentication takes http-basic credentials and compares them with those provided in camel-platform-http-vertx-auth.properties file.
-To be more specific, default http authentication uses https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BasicAuthHandler.html[BasicAuthHandler] and https://vertx.io/docs/vertx-auth-properties/java/[PropertyFileAuthentication].
+To be more specific, default http authentication
 
-To set up custom authentication, you need to create custom `AuthenticationConfigEntries`, as shown in the example below.
-Mind that in Vert.x order of adding `AuthenticationHandlers` matters, so `AuthenticationConfigEntries` with a more specific url path is applied first.
+To set up authentication, you need to create `AuthenticationConfigEntries`, as shown in the example below.
+This example uses Vert.x https://vertx.io/docs/apidocs/io/vertx/ext/web/handler/BasicAuthHandler.html[BasicAuthHandler] and https://vertx.io/docs/vertx-auth-properties/java/[PropertyFileAuthentication] to configure Basic http authentication with users info stored in `myPropFile.properties` file.
+Mind that in Vert.x order of adding `AuthenticationHandlers` matters, so `AuthenticationConfigEntries` with a more specific url path are applied first.
 
 [source,java]
 ----

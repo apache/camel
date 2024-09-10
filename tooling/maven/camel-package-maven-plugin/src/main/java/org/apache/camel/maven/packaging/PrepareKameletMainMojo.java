@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -38,11 +40,9 @@ import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
 import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
@@ -61,16 +61,9 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * Maven ProjectHelper.
-     */
-    @Component
-    protected MavenProjectHelper projectHelper;
-
-    /**
      * build context to check changed files and mark them for refresh (used for m2e compatibility)
      */
-    @Component
-    protected BuildContext buildContext;
+    protected final BuildContext buildContext;
 
     /**
      * The camel-catalog directory
@@ -82,7 +75,12 @@ public class PrepareKameletMainMojo extends AbstractMojo {
     protected File genDir;
 
     private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
-    private transient String licenseHeader;
+    private String licenseHeader;
+
+    @Inject
+    public PrepareKameletMainMojo(BuildContext buildContext) {
+        this.buildContext = buildContext;
+    }
 
     /**
      * Execute goal.

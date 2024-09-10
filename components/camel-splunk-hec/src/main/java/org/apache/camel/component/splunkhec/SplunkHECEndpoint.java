@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.splunkhec;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -29,6 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
@@ -46,6 +51,8 @@ public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServic
     @UriPath
     @Metadata(required = true)
     private String splunkURL;
+    @UriParam(description = "SSL configuration")
+    private SSLContextParameters sslContextParameters;
 
     @UriParam
     private SplunkHECConfiguration configuration;
@@ -90,6 +97,11 @@ public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     @Override
+    public SplunkHECComponent getComponent() {
+        return (SplunkHECComponent) super.getComponent();
+    }
+
+    @Override
     public Producer createProducer() {
         return new SplunkHECProducer(this);
     }
@@ -124,4 +136,21 @@ public class SplunkHECEndpoint extends DefaultEndpoint implements EndpointServic
         this.splunkURL = splunkURL;
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    SSLContext provideSSLContext() throws GeneralSecurityException, IOException {
+        if (sslContextParameters != null) {
+            return sslContextParameters.createSSLContext(getCamelContext());
+        } else if (getComponent().getSslContextParameters() != null) {
+            return getComponent().getSslContextParameters().createSSLContext(getCamelContext());
+        } else {
+            return null;
+        }
+    }
 }

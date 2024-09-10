@@ -62,11 +62,11 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
 
     public StreamSourceCache(StreamCache streamCache) {
         this.streamCache = streamCache;
-        if (streamCache instanceof InputStream) {
-            setInputStream((InputStream) streamCache);
+        if (streamCache instanceof InputStream inputStream) {
+            setInputStream(inputStream);
             this.readCache = null;
-        } else if (streamCache instanceof ReaderCache) {
-            this.readCache = (ReaderCache) streamCache;
+        } else if (streamCache instanceof ReaderCache readerCache) {
+            this.readCache = readerCache;
             setReader((java.io.Reader) streamCache);
         } else {
             this.readCache = null;

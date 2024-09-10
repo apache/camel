@@ -26,11 +26,17 @@ import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "logs", description = "Print the logs of a Kubernetes pod", sortOptions = false)
 public class PodLogs extends KubernetesBaseCommand {
+
+    @CommandLine.Parameters(description = "The Camel file to get logs from. Integration name is derived from the file name.",
+                            arity = "0..1", paramLabel = "<file>")
+    protected String filePath;
 
     @CommandLine.Option(names = { "--name" },
                         description = "The integration name. Use this when the name should not get derived from the source file name.")
@@ -56,13 +62,20 @@ public class PodLogs extends KubernetesBaseCommand {
     }
 
     public Integer doCall() throws Exception {
-        if (name == null && label == null) {
+        if (name == null && label == null && filePath == null) {
             printer().println("Name or label selector must be set");
             return 1;
         }
 
-        if (name != null) {
-            label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, name);
+        if (label == null) {
+            String projectName;
+            if (name != null) {
+                projectName = KubernetesHelper.sanitize(name);
+            } else {
+                projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
+            }
+
+            label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
         }
 
         String[] parts = label.split("=", 2);
@@ -135,9 +148,8 @@ public class PodLogs extends KubernetesBaseCommand {
             }
         } catch (IOException e) {
             printer().println("Failed to read pod logs - " + e.getMessage());
-            return false;
         }
 
-        return resumeCount < 10;
+        return resumeCount < 25;
     }
 }

@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.inject.Inject;
+
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -49,7 +51,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -213,8 +214,7 @@ public class ValidateMojo extends AbstractMojo {
     @Parameter(property = "camel.configurationFiles", defaultValue = "application.properties")
     private String configurationFiles;
 
-    @Component
-    private RepositorySystem repositorySystem;
+    private final RepositorySystem repositorySystem;
 
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true)
     private RepositorySystemSession repositorySystemSession;
@@ -229,6 +229,11 @@ public class ValidateMojo extends AbstractMojo {
     private static final Set<File> xmlFiles = new LinkedHashSet<>();
 
     private static final Set<String> downloadedArtifacts = new LinkedHashSet<>();
+
+    @Inject
+    public ValidateMojo(RepositorySystem repositorySystem) {
+        this.repositorySystem = repositorySystem;
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

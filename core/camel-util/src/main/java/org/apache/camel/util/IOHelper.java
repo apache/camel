@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +42,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -56,7 +57,8 @@ public final class IOHelper {
 
     public static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
-    public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+    // Use the same default buffer size as the JVM
+    public static final int DEFAULT_BUFFER_SIZE = 16384;
 
     public static final long INITIAL_OFFSET = 0;
 
@@ -81,7 +83,7 @@ public final class IOHelper {
      * @return    the passed <code>in</code> decorated through a {@link BufferedInputStream} object as wrapper
      */
     public static BufferedInputStream buffered(InputStream in) {
-        return (in instanceof BufferedInputStream) ? (BufferedInputStream) in : new BufferedInputStream(in);
+        return (in instanceof BufferedInputStream bi) ? bi : new BufferedInputStream(in);
     }
 
     /**
@@ -93,7 +95,7 @@ public final class IOHelper {
      * @return     the passed <code>out</code> decorated through a {@link BufferedOutputStream} object as wrapper
      */
     public static BufferedOutputStream buffered(OutputStream out) {
-        return (out instanceof BufferedOutputStream) ? (BufferedOutputStream) out : new BufferedOutputStream(out);
+        return (out instanceof BufferedOutputStream bo) ? bo : new BufferedOutputStream(out);
     }
 
     /**
@@ -105,7 +107,7 @@ public final class IOHelper {
      * @return        the passed <code>reader</code> decorated through a {@link BufferedReader} object as wrapper
      */
     public static BufferedReader buffered(Reader reader) {
-        return (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
+        return (reader instanceof BufferedReader br) ? br : new BufferedReader(reader);
     }
 
     /**
@@ -117,7 +119,7 @@ public final class IOHelper {
      * @return        the passed <code>writer</code> decorated through a {@link BufferedWriter} object as wrapper
      */
     public static BufferedWriter buffered(Writer writer) {
-        return (writer instanceof BufferedWriter) ? (BufferedWriter) writer : new BufferedWriter(writer);
+        return (writer instanceof BufferedWriter bw) ? bw : new BufferedWriter(writer);
     }
 
     public static String toString(Reader reader) throws IOException {
@@ -151,26 +153,71 @@ public final class IOHelper {
         return sb.toString();
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses {@link InputStream#transferTo(OutputStream)}.
+     *
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @return             the number of bytes copied
+     * @throws IOException for I/O errors
+     */
     public static int copy(InputStream input, OutputStream output) throws IOException {
-        return copy(input, output, DEFAULT_BUFFER_SIZE);
+        int copied = (int) input.transferTo(output);
+        output.flush();
+        return copied;
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
+     * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
+     *
+     * @param      input       the input stream buffer
+     * @param      output      the output stream buffer
+     * @param      bufferSize  the size of the buffer used for the copies
+     * @return                 the number of bytes copied
+     * @deprecated             Prefer using {@link IOHelper#copy(InputStream, OutputStream)}
+     * @throws     IOException for I/O errors
+     */
+    @Deprecated(since = "4.8.0")
     public static int copy(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
         return copy(input, output, bufferSize, false);
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
+     * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
+     *
+     * @param  input            the input stream buffer
+     * @param  output           the output stream buffer
+     * @param  bufferSize       the size of the buffer used for the copies
+     * @param  flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @return                  the number of bytes copied
+     * @throws IOException      for I/O errors
+     */
     public static int copy(final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite)
             throws IOException {
         return copy(input, output, bufferSize, flushOnEachWrite, -1);
     }
 
+    /**
+     * Copies the data from the input stream to the output stream. Uses the legacy copy logic. Prefer using
+     * {@link IOHelper#copy(InputStream, OutputStream)} unless you have to control how data is flushed the buffer
+     *
+     * @param      input            the input stream buffer
+     * @param      output           the output stream buffer
+     * @param      bufferSize       the size of the buffer used for the copies
+     * @param      flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @return                      the number of bytes copied
+     * @deprecated                  Prefer using {@link IOHelper#copy(InputStream, OutputStream)}
+     * @throws     IOException      for I/O errors
+     */
     public static int copy(
             final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,
             long maxSize)
             throws IOException {
 
         if (input instanceof ByteArrayInputStream) {
-            // optimized for byte array as we only need the max size it can be
+            // optimized for byte arrays as we only need the max size it can be
             input.mark(0);
             input.reset();
             bufferSize = input.available();
@@ -199,7 +246,7 @@ public final class IOHelper {
         if (ZERO_BYTE_EOL_ENABLED) {
             // workaround issue on some application servers which can return 0
             // (instead of -1)
-            // as first byte to indicate end of stream (CAMEL-11672)
+            // as first byte to indicate the end of stream (CAMEL-11672)
             hasData = n > 0;
         } else {
             hasData = n > -1;
@@ -224,10 +271,29 @@ public final class IOHelper {
         return total;
     }
 
+    /**
+     * Copies the data from the input stream to the output stream and closes the input stream afterward. Uses
+     * {@link InputStream#transferTo(OutputStream)}.
+     *
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @throws IOException
+     */
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
-        copyAndCloseInput(input, output, DEFAULT_BUFFER_SIZE);
+        copy(input, output);
+        close(input, null, LOG);
     }
 
+    /**
+     * Copies the data from the input stream to the output stream and closes the input stream afterward. Uses Camel's
+     * own copying logic. Prefer using {@link IOHelper#copyAndCloseInput(InputStream, OutputStream)} unless you need a
+     * specific buffer size.
+     *
+     * @param  input       the input stream buffer
+     * @param  output      the output stream buffer
+     * @param  bufferSize  the size of the buffer used for the copies
+     * @throws IOException
+     */
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);
         close(input, null, LOG);
@@ -427,11 +493,11 @@ public final class IOHelper {
     }
 
     public static void closeIterator(Object it) throws IOException {
-        if (it instanceof Closeable) {
-            IOHelper.closeWithException((Closeable) it);
+        if (it instanceof Closeable closeable) {
+            IOHelper.closeWithException(closeable);
         }
-        if (it instanceof java.util.Scanner) {
-            IOException ioException = ((java.util.Scanner) it).ioException();
+        if (it instanceof java.util.Scanner scanner) {
+            IOException ioException = scanner.ioException();
             if (ioException != null) {
                 throw ioException;
             }
@@ -456,7 +522,7 @@ public final class IOHelper {
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(2048);
         InputStreamReader isr = new InputStreamReader(in);
         try {
             BufferedReader reader = buffered(isr);
@@ -626,14 +692,15 @@ public final class IOHelper {
      */
     public static class EncodingInputStream extends InputStream {
 
-        private final File file;
+        private final Lock lock = new ReentrantLock();
+        private final Path file;
         private final BufferedReader reader;
         private final Charset defaultStreamCharset;
 
         private ByteBuffer bufferBytes;
         private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
 
-        public EncodingInputStream(File file, String charset) throws IOException {
+        public EncodingInputStream(Path file, String charset) throws IOException {
             this.file = file;
             reader = toReader(file, charset);
             defaultStreamCharset = defaultCharset.get();
@@ -659,12 +726,17 @@ public final class IOHelper {
         }
 
         @Override
-        public synchronized void reset() throws IOException {
-            reader.reset();
+        public void reset() throws IOException {
+            lock.lock();
+            try {
+                reader.reset();
+            } finally {
+                lock.unlock();
+            }
         }
 
-        public InputStream toOriginalInputStream() throws FileNotFoundException {
-            return new FileInputStream(file);
+        public InputStream toOriginalInputStream() throws IOException {
+            return Files.newInputStream(file);
         }
     }
 
@@ -746,21 +818,42 @@ public final class IOHelper {
      * @return         the input stream with the JVM default charset
      */
     public static InputStream toInputStream(File file, String charset) throws IOException {
+        return toInputStream(file.toPath(), charset);
+    }
+
+    /**
+     * Converts the given {@link File} with the given charset to {@link InputStream} with the JVM default charset
+     *
+     * @param  file    the file to be converted
+     * @param  charset the charset the file is read with
+     * @return         the input stream with the JVM default charset
+     */
+    public static InputStream toInputStream(Path file, String charset) throws IOException {
         if (charset != null) {
             return new EncodingInputStream(file, charset);
         } else {
-            return buffered(new FileInputStream(file));
+            return buffered(Files.newInputStream(file));
         }
     }
 
+    public static BufferedReader toReader(Path file, String charset) throws IOException {
+        return toReader(file, charset != null ? Charset.forName(charset) : null);
+    }
+
     public static BufferedReader toReader(File file, String charset) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return IOHelper.buffered(new EncodingFileReader(in, charset));
+        return toReader(file, charset != null ? Charset.forName(charset) : null);
     }
 
     public static BufferedReader toReader(File file, Charset charset) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return IOHelper.buffered(new EncodingFileReader(in, charset));
+        return toReader(file.toPath(), charset);
+    }
+
+    public static BufferedReader toReader(Path file, Charset charset) throws IOException {
+        if (charset != null) {
+            return Files.newBufferedReader(file, charset);
+        } else {
+            return Files.newBufferedReader(file);
+        }
     }
 
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
@@ -783,7 +876,7 @@ public final class IOHelper {
      * @return                 the filtered content of the file
      */
     public static String stripLineComments(Path path, String commentPrefix, boolean stripBlankLines) {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(2048);
         try (Stream<String> lines = Files.lines(path)) {
             lines
                     .filter(l -> !stripBlankLines || !l.isBlank())

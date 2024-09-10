@@ -18,11 +18,11 @@ package org.apache.camel.yaml.io;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.StringJoiner;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -61,7 +61,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     private final DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
-    private final Stack<EipModel> models = new Stack<>();
+    private final ArrayDeque<EipModel> models = new ArrayDeque<>();
     private String expression;
     private boolean uriAsParameters;
 
@@ -310,16 +310,15 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     exp = expressionName(model, key);
                 }
                 Object v = entry.getValue();
-                if (v instanceof EipModel) {
-                    EipModel m = (EipModel) entry.getValue();
+                if (v instanceof EipModel m) {
                     if (exp == null || "expression".equals(exp)) {
                         v = asExpressionNode(m, m.getName());
                     } else {
                         v = asExpressionNode(m, exp);
                     }
                 }
-                if (exp != null && v instanceof EipNode) {
-                    node.addExpression((EipNode) v);
+                if (exp != null && v instanceof EipNode eipNode) {
+                    node.addExpression(eipNode);
                 } else {
                     node.addProperty(key, v);
                     if ("expression".equals(key)) {
@@ -385,8 +384,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     List<Object> list = new ArrayList<>();
                     for (Object v : col) {
                         Object r = v;
-                        if (r instanceof EipModel) {
-                            EipNode en = asNode((EipModel) r);
+                        if (r instanceof EipModel eipModel) {
+                            EipNode en = asNode(eipModel);
                             value = en.asJsonObject();
                             JsonObject wrap = new JsonObject();
                             wrap.put(en.getName(), value);
@@ -403,8 +402,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     }
                     jo.put(key, list);
                 } else {
-                    if (value instanceof EipModel) {
-                        EipNode r = asNode((EipModel) value);
+                    if (value instanceof EipModel eipModel) {
+                        EipNode r = asNode(eipModel);
                         value = r.asJsonObject();
                         jo.put(r.getName(), value);
                     } else {

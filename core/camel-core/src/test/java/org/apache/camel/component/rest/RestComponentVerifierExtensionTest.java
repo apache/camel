@@ -106,7 +106,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
                 @Override
                 public Result verify(Scope scope, Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(RestComponentVerifierExtension.Result.Status.OK, scope)
-                            .error(ResultErrorHelper.requiresOption("authProxy", parameters).orElse(null))
+                            .error(ResultErrorHelper.requiresOption(parameters, "authProxy"))
                             .build();
                 }
             });

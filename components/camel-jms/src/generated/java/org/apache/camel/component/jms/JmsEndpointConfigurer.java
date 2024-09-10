@@ -49,6 +49,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": target.getConfiguration().setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.getConfiguration().setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": target.getConfiguration().setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "cachelevel":
         case "cacheLevel": target.getConfiguration().setCacheLevel(property(camelContext, int.class, value)); return true;
         case "cachelevelname":
@@ -107,6 +109,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "idleconsumerlimit":
         case "idleConsumerLimit": target.getConfiguration().setIdleConsumerLimit(property(camelContext, int.class, value)); return true;
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": target.getConfiguration().setIdleReceivesPerTaskLimit(property(camelContext, int.class, value)); return true;
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": target.getConfiguration().setIdleTaskExecutionLimit(property(camelContext, int.class, value)); return true;
         case "includealljmsxproperties":
@@ -248,6 +252,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "cachelevel":
         case "cacheLevel": return int.class;
         case "cachelevelname":
@@ -306,6 +312,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "idleconsumerlimit":
         case "idleConsumerLimit": return int.class;
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": return int.class;
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": return int.class;
         case "includealljmsxproperties":
@@ -448,6 +456,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": return target.getConfiguration().isAsyncStopListener();
         case "autostartup":
         case "autoStartup": return target.getConfiguration().isAutoStartup();
+        case "browselimit":
+        case "browseLimit": return target.getConfiguration().getBrowseLimit();
         case "cachelevel":
         case "cacheLevel": return target.getConfiguration().getCacheLevel();
         case "cachelevelname":
@@ -506,6 +516,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "idleconsumerlimit":
         case "idleConsumerLimit": return target.getConfiguration().getIdleConsumerLimit();
+        case "idlereceivespertasklimit":
+        case "idleReceivesPerTaskLimit": return target.getConfiguration().getIdleReceivesPerTaskLimit();
         case "idletaskexecutionlimit":
         case "idleTaskExecutionLimit": return target.getConfiguration().getIdleTaskExecutionLimit();
         case "includealljmsxproperties":

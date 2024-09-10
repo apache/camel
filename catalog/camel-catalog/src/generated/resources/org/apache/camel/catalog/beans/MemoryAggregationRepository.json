@@ -3,13 +3,13 @@
     "kind": "bean",
     "name": "MemoryAggregationRepository",
     "javaType": "org.apache.camel.processor.aggregate.MemoryAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Memory Aggregation Repository",
     "description": "A memory based AggregationRepository which stores Exchange in memory only.",
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-processor",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "properties": { "optimisticLocking": { "index": 0, "kind": "property", "displayName": "Optimistic Locking", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether to use optimistic locking" } }
   }
 }

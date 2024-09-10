@@ -75,8 +75,7 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
             exp = exp.getExpressionType();
         }
         Predicate pre = exp.getPredicate();
-        if (pre instanceof ExpressionFactoryAware) {
-            ExpressionFactoryAware aware = (ExpressionFactoryAware) pre;
+        if (pre instanceof ExpressionFactoryAware aware) {
             if (aware.getExpressionFactory() != null) {
                 // if using the Java DSL then the expression may have been
                 // set using the
@@ -88,8 +87,8 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 // reset the expression to the expression type the
                 // ExpressionClause did build for us
                 ExpressionFactory model = aware.getExpressionFactory();
-                if (model instanceof ExpressionDefinition) {
-                    whenClause.setExpression((ExpressionDefinition) model);
+                if (model instanceof ExpressionDefinition expressionDefinition) {
+                    whenClause.setExpression(expressionDefinition);
                 }
             }
         }

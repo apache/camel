@@ -207,7 +207,7 @@ public class Bind extends KubernetesBaseCommand {
         if (logs) {
             IntegrationLogs logsCommand = new IntegrationLogs(getMain());
             logsCommand.withClient(client());
-            logsCommand.name = pipeResource.getMetadata().getName();
+            logsCommand.withName(pipeResource.getMetadata().getName());
             logsCommand.doCall();
         }
 

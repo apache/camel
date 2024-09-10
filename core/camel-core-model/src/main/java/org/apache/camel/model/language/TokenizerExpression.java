@@ -238,7 +238,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         private String skipFirst;
 
         /**
-         * The (start) token to use as tokenizer, for example you can use the new line token. You can use simple
+         * The (start) token to use as tokenizer, for example, you can use the new line token. You can use simple
          * language as the token to support dynamic tokens.
          */
         public Builder token(String token) {
@@ -256,7 +256,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         }
 
         /**
-         * To inherit namespaces from a root/parent tag name when using XML You can use simple language as the tag name
+         * To inherit namespaces from a root/parent tag name when using XML, you can use simple language as the tag name
          * to support dynamic names.
          */
         public Builder inheritNamespaceTagName(String inheritNamespaceTagName) {
@@ -321,7 +321,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         }
 
         /**
-         * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple
+         * To group N parts together, for example, to split big files into chunks of 1000 lines. You can use simple
          * language as the group to support dynamic group sizes.
          */
         public Builder group(String group) {
@@ -330,7 +330,7 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         }
 
         /**
-         * To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple
+         * To group N parts together, for example, to split big files into chunks of 1000 lines. You can use simple
          * language as the group to support dynamic group sizes.
          */
         public Builder group(int group) {
@@ -339,7 +339,8 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
         }
 
         /**
-         * Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter.
+         * Sets the delimiter to use when grouping. If this has not been set, then the token will be used as the
+         * delimiter.
          */
         public Builder groupDelimiter(String groupDelimiter) {
             this.groupDelimiter = groupDelimiter;

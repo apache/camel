@@ -4,9 +4,8 @@ Testing is a crucial activity in any piece of software development or
 integration. Typically, Camel users would use various different
 technologies wired together in a variety of EIPs with different
 endpoints, languages, bean integration, and
-dependency injection, so it's very easy
-for things to go wrong!. Testing is the crucial weapon to ensure
-that things work as you would expect.
+dependency injection, so it's easy for things to go wrong!
+Testing is the crucial weapon to ensure that things work as you would expect.
 
 Camel is a Java library, so you can easily wire up tests in JUnit.
 However, the Camel project has tried to make the testing of Camel as easy
@@ -31,10 +30,10 @@ class for all your configuration and routing without.
 
 |=======================================================================
 
-NOTE: If you are using Camel Quarkus then you can find information in
+NOTE: If you are using Camel Quarkus, then you can find information in
 its documentation how to do testing with Quarkus and Camel.
 
-In all approaches the test classes look pretty much the same in that
+In all approaches, the test classes look pretty much the same in that
 they all reuse the xref:bean-integration.adoc[Camel binding and
 injection annotations].
 
@@ -55,26 +54,26 @@ Camel provides a number of xref:endpoint.adoc[endpoints] which can make testing 
 |xref:components::mock-component.adoc[Mock] |For testing routes and mediation rules using
 mocks and allowing assertions to be added to an endpoint.
 
-|xref:components::dataset-component.adoc[DataSet] |For load & soak testing this endpoint
+|xref:components::dataset-component.adoc[DataSet] |For load & soak testing, this endpoint
 provides a way to create huge numbers of messages for sending to
 components and asserting that they are consumed correctly.
 
-|xref:components::dataset-test-component.adoc[DataSet Test] |Used for automatic load
-a set of expected message from another endpoint which is then compared to the messages
-that arrives at this endpoint.
+|xref:components::dataset-test-component.adoc[DataSet Test] |Used to automatically load
+a set of expected messages from another endpoint which is then compared to the messages
+that arrive at this endpoint.
 
 |=======================================================================
 
-The main endpoint is the xref:components::mock-component.adoc[Mock] endpoint which allows
+The main endpoint is the xref:components::mock-component.adoc[Mock] endpoint, which allows
 expectations to be added to different endpoints; you can then run your
 tests and assert that your expectations are met at the end.
 
 === Stubbing out physical transport technologies
 
-If you wish to test out a route but want to avoid actually using real physical transport
-(for example to unit test a transformation route
-rather than performing a full integration test) then the following
+If you wish to test out a route but want to avoid actually using real physical transport, then the following
 endpoints can be useful:
+
+NOTE: For example, to unit test a transformation route rather than performing a full integration test
 
 [width="100%",cols="1,3",options="header",]
 |=======================================================================
@@ -87,7 +86,7 @@ performed which can be useful to mock out physical transports
 a `BlockingQueue` which is good for testing asynchronous transports
 
 |xref:components::stub-component.adoc[Stub] |Works like xref:components::stub-component.adoc[SEDA] but does not
-validate the endpoint URI, which makes stubbing very easy.
+validate the endpoint URI, which makes stubbing straightforward.
 |=======================================================================
 
 === Testing existing routes
@@ -95,19 +94,19 @@ validate the endpoint URI, which makes stubbing very easy.
 Camel provides some features to aid during testing of existing routes
 where you cannot or will not use xref:components::mock-component.adoc[Mock] etc.
 For example, you may have a production ready route which you want to test with some
-3rd party API which sends messages into this route.
+third party API that sends messages into this route.
 
 [width="100%",cols="1,3",options="header",]
 |=======================================================================
 |Name |Description
 |xref:notify-builder.adoc[NotifyBuilder] |Allows you to be notified when
-a certain condition has occurred. For example when the route has
-completed 5 messages. You can build complex expressions to match your
+a certain condition has occurred. For example, when the route has
+completed five messages. You can build complex expressions to match your
 criteria when to be notified.
 
 |xref:advice-with.adoc[AdviceWith] |Allows you to _advice_ (enhance)
 an existing route using a xref:route-builder.adoc[RouteBuilder] style.
-For example, you can send (or send and skip) message to a xref:components::mock-component.adoc[Mock]
+For example, you can send (or send and skip) a message to a xref:components::mock-component.adoc[Mock]
 endpoint for validating the message send by Camel is as expected.
 |=======================================================================
 

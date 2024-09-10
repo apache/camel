@@ -80,8 +80,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
      * Transform the header
      */
     private void processHeader(CamelContext context, Message inOrOut, WebServiceMessage webServiceMessage) {
-        if (webServiceMessage instanceof SoapMessage) {
-            SoapMessage soapMessage = (SoapMessage) webServiceMessage;
+        if (webServiceMessage instanceof SoapMessage soapMessage) {
             try {
                 XsltUriResolver resolver = new XsltUriResolver(context, xslt);
                 Source stylesheetResource = resolver.resolve(xslt, null);

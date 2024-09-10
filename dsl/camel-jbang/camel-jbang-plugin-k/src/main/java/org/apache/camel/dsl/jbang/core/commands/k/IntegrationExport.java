@@ -100,7 +100,7 @@ public class IntegrationExport extends KubernetesExport {
     }
 
     @Override
-    protected Traits getTraitSpec() {
+    protected Traits getTraitSpec(String[] applicationProperties, String[] applicationProfileProperties) {
         if (integration != null && integration.getSpec().getTraits() != null) {
             return integration.getSpec().getTraits();
         }
@@ -112,7 +112,7 @@ public class IntegrationExport extends KubernetesExport {
                     .loadAs(KubernetesHelper.dumpYaml(pipe.getSpec().getIntegration().getTraits()), Traits.class);
         }
 
-        return super.getTraitSpec();
+        return super.getTraitSpec(applicationProperties, applicationProfileProperties);
     }
 
     @Override

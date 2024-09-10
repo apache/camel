@@ -15,11 +15,10 @@
 
 *{component-header}*
 
-The LangChain4j embeddings component provides support to compute embeddings using https://docs.langchain4j.dev/[LangChain4j] embeddings.
+The LangChain4j embeddings component provides support for compute embeddings using https://docs.langchain4j.dev/[LangChain4j] embeddings.
 
 == URI format
 
-[source]
 ----
 langchain4j-embeddings:embeddingId[?options]
 ----

@@ -45,6 +45,24 @@ public interface ScpEndpointBuilderFactory {
         }
 
         /**
+         * If provided, then Camel will write a checksum file when the original
+         * file has been written. The checksum file will contain the checksum
+         * created with the provided algorithm for the original file. The
+         * checksum file will always be written in the same folder as the
+         * original file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param checksumFileAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
+            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
+            return this;
+        }
+        /**
          * Allows you to set chmod on the stored file. For example chmod=664.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -93,24 +111,6 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
-            return this;
-        }
-        /**
-         * If provided, then Camel will write a checksum file when the original
-         * file has been written. The checksum file will contain the checksum
-         * created with the provided algorithm for the original file. The
-         * checksum file will always be written in the same folder as the
-         * original file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param checksumFileAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
-            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
             return this;
         }
         /**
@@ -564,6 +564,38 @@ public interface ScpEndpointBuilderFactory {
          */
         default AdvancedScpEndpointBuilder moveExistingFileStrategy(String moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedScpEndpointBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedScpEndpointBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
             return this;
         }
         /**

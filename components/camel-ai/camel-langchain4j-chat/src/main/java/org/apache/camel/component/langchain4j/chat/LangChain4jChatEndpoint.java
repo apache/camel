@@ -34,12 +34,13 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
 @UriEndpoint(firstVersion = "4.5.0", scheme = SCHEME,
-             title = "langChain4j Chat",
-             syntax = "langchain4j-chat:chatId", producerOnly = true,
+             title = "LangChain4j Chat",
+             syntax = "langchain4j-chat:chatId",
              category = { Category.AI }, headersClass = LangChain4jChat.Headers.class)
 public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
@@ -97,10 +98,21 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(
                     "In order to use the langchain4j component as a consumer, you need to specify at least description, or a camelToolParameter");
         }
-        ToolSpecification toolSpecification = toolSpecificationBuilder.build();
+
+        String simpleDescription = null;
+        if (description != null) {
+            simpleDescription = StringHelper.dashToCamelCase(description.replace(" ", "-"));
+        }
+
+        ToolSpecification toolSpecification = toolSpecificationBuilder
+                .name(simpleDescription)
+                .build();
+
+        final LangChain4jChatConsumer langChain4jChatConsumer = new LangChain4jChatConsumer(this, processor);
+        configureConsumer(langChain4jChatConsumer);
 
         CamelToolSpecification camelToolSpecification
-                = new CamelToolSpecification(toolSpecification, new LangChain4jChatConsumer(this, processor));
+                = new CamelToolSpecification(toolSpecification, langChain4jChatConsumer);
         CamelToolExecutorCache.getInstance().put(chatId, camelToolSpecification);
 
         return camelToolSpecification.getConsumer();
@@ -141,5 +153,12 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
     public void setCamelToolParameter(CamelSimpleToolParameter camelToolParameter) {
         this.camelToolParameter = camelToolParameter;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        CamelToolExecutorCache.getInstance().getTools().clear();
     }
 }

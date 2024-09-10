@@ -17,7 +17,7 @@
         <quarkus.platform.group-id>{{ .QuarkusGroupId }}</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>{{ .QuarkusArtifactId }}</quarkus.platform.artifact-id>
         <quarkus.platform.version>{{ .QuarkusVersion }}</quarkus.platform.version>
-{{ .AdditionalProperties }}
+{{ .BuildProperties }}
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.1.2</surefire-plugin.version>
     </properties>
@@ -153,11 +153,37 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                      <artifactItem>
+                                        <groupId>org.jolokia</groupId>
+                                        <artifactId>jolokia-agent-jvm</artifactId>
+                                        <version>2.1.0</version>
+                                        <type>jar</type>
+                                        <classifier>javaagent</classifier>
+                                      </artifactItem>
+                                    </artifactItems>
+                                    <stripVersion>true</stripVersion>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>${quarkus.platform.group-id}</groupId>
                         <artifactId>quarkus-maven-plugin</artifactId>
                         <version>${quarkus.platform.version}</version>
                         <configuration>
-                            <jvmArgs>-Dcamel.main.shutdownTimeout=30 -Dquarkus.camel.source-location-enabled=true</jvmArgs>
+                            <jvmArgs>-Dcamel.main.shutdownTimeout=30 -Dquarkus.camel.source-location-enabled=true -javaagent:target/dependency/jolokia-agent-jvm-javaagent.jar=port=7878,host=localhost</jvmArgs>
                         </configuration>
                     </plugin>
                 </plugins>

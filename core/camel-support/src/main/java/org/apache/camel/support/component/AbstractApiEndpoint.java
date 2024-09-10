@@ -192,9 +192,9 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     @Override
     protected void configureConsumer(Consumer consumer) throws Exception {
         super.configureConsumer(consumer);
-        if (getConfiguration() instanceof AbstractApiConfiguration && consumer instanceof AbstractApiConsumer) {
+        if (getConfiguration() instanceof AbstractApiConfiguration config && consumer instanceof AbstractApiConsumer) {
             ((AbstractApiConsumer<?, ?>) consumer)
-                    .setSplitResult(((AbstractApiConfiguration) getConfiguration()).isSplitResult());
+                    .setSplitResult(config.isSplitResult());
         }
     }
 
@@ -338,10 +338,13 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     public final ExecutorService getExecutorService() {
         if (executorService == null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (executorService == null) {
                     executorService = getExecutorService(getClass(), getCamelContext(), getThreadProfileName());
                 }
+            } finally {
+                lock.unlock();
             }
         }
         return executorService;

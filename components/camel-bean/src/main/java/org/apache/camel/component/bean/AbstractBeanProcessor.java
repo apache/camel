@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.BeanScope;
 import org.apache.camel.Exchange;
@@ -38,7 +41,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     private transient Processor processor;
     private transient Object bean;
     private transient boolean lookupProcessorDone;
-    private final Object lock = new Object();
+    private final Lock lock = new ReentrantLock();
     private BeanScope scope;
     private String method;
     private boolean shorthandMethod;
@@ -130,11 +133,14 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             boolean allowCache = scope == null || scope == BeanScope.Singleton;
             if (allowCache) {
                 if (!lookupProcessorDone) {
-                    synchronized (lock) {
+                    lock.lock();
+                    try {
                         lookupProcessorDone = true;
                         // so if there is a custom type converter for the bean to processor
                         target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, beanTmp);
                         processor = target;
+                    } finally {
+                        lock.unlock();
                     }
                 }
             } else {

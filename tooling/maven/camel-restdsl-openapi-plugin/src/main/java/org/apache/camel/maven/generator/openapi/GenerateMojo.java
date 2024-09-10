@@ -20,19 +20,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.generator.openapi.RestDslSourceCodeGenerator;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateMojo extends AbstractGenerateMojo {
 
@@ -47,6 +50,11 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
     @Parameter
     private String packageName;
+
+    @Inject
+    public GenerateMojo(BuildPluginManager pluginManager) {
+        super(pluginManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -64,7 +72,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             throw new MojoExecutionException(
                     "Unable to generate REST DSL OpenApi sources from specification: "
                                              + specificationUri
-                                             + ", make sure that the specification is available at the given URI");
+                                             + ". Check that the specification is available at the given URI and that it has version OpenAPI 3.0.x or 3.1.x.");
         }
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(openapi);

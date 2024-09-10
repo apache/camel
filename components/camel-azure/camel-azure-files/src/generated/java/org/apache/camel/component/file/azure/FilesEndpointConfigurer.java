@@ -41,6 +41,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": target.setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -219,6 +221,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return java.lang.String.class;
         case "connecttimeout":
@@ -398,6 +402,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "browselimit":
+        case "browseLimit": return target.getBrowseLimit();
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "connecttimeout":

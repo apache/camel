@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
@@ -57,6 +59,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     private final CamelContext context;
     private final Deque<Route> routes = new ArrayDeque<>(8);
+    private final Lock lock = new ReentrantLock();
     private final Logger log;
     private Exchange exchange;
     private List<Synchronization> synchronizations;
@@ -184,24 +187,39 @@ public class DefaultUnitOfWork implements UnitOfWork {
     }
 
     @Override
-    public synchronized void addSynchronization(Synchronization synchronization) {
-        if (synchronizations == null) {
-            synchronizations = new ArrayList<>(8);
-        }
-        log.trace("Adding synchronization {}", synchronization);
-        synchronizations.add(synchronization);
-    }
-
-    @Override
-    public synchronized void removeSynchronization(Synchronization synchronization) {
-        if (synchronizations != null) {
-            synchronizations.remove(synchronization);
+    public void addSynchronization(Synchronization synchronization) {
+        lock.lock();
+        try {
+            if (synchronizations == null) {
+                synchronizations = new ArrayList<>(8);
+            }
+            log.trace("Adding synchronization {}", synchronization);
+            synchronizations.add(synchronization);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized boolean containsSynchronization(Synchronization synchronization) {
-        return synchronizations != null && synchronizations.contains(synchronization);
+    public void removeSynchronization(Synchronization synchronization) {
+        lock.lock();
+        try {
+            if (synchronizations != null) {
+                synchronizations.remove(synchronization);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean containsSynchronization(Synchronization synchronization) {
+        lock.lock();
+        try {
+            return synchronizations != null && synchronizations.contains(synchronization);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -221,8 +239,8 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
             boolean handover = true;
             SynchronizationVetoable veto = null;
-            if (synchronization instanceof SynchronizationVetoable) {
-                veto = (SynchronizationVetoable) synchronization;
+            if (synchronization instanceof SynchronizationVetoable v) {
+                veto = v;
                 handover = veto.allowHandover();
             }
 
@@ -269,14 +287,13 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
 
         // the exchange is now done
-        if (exchange instanceof PooledExchange) {
+        if (exchange instanceof PooledExchange pooled) {
             // pooled exchange has its own done logic which will reset this uow for reuse
             // so do not call onDone
             try {
-                PooledExchange pooled = (PooledExchange) exchange;
                 // only trigger done if we should auto-release
                 if (pooled.isAutoRelease()) {
-                    ((PooledExchange) exchange).done();
+                    pooled.done();
                 }
             } catch (Exception e) {
                 // must catch exceptions to ensure synchronizations is also invoked

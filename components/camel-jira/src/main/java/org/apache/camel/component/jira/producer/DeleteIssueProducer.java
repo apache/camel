@@ -35,7 +35,7 @@ public class DeleteIssueProducer extends DefaultProducer {
         String issueKey = exchange.getIn().getHeader(ISSUE_KEY, String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named \'IssueKey\', it should specify the issue key to remove it.");
+                    "Missing exchange input header named 'IssueKey', it should specify the issue key to remove it.");
         }
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
         IssueRestClient issueClient = client.getIssueClient();

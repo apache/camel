@@ -19,8 +19,6 @@ package org.apache.camel.component.netty.http;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -52,6 +50,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -461,12 +460,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 message.setHeader(NettyHttpConstants.CONTENT_TYPE, NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
             } else {
                 // we failed due an exception so print it as plain text
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                cause.printStackTrace(pw);
+                final String stackTrace = ExceptionHelper.stackTraceToString(cause);
 
                 // the body should then be the stacktrace
-                body = NettyConverter.toByteBuffer(sw.toString().getBytes());
+                body = NettyConverter.toByteBuffer(stackTrace.getBytes());
                 // force content type to be text/plain as that is what the stacktrace is
                 message.setHeader(NettyHttpConstants.CONTENT_TYPE, "text/plain");
             }

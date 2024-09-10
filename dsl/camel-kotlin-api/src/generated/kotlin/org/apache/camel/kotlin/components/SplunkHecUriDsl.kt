@@ -120,6 +120,13 @@ public class SplunkHecUriDsl(
   }
 
   /**
+   * SSL configuration
+   */
+  public fun sslContextParameters(sslContextParameters: String) {
+    it.property("sslContextParameters", sslContextParameters)
+  }
+
+  /**
    * Time this even occurred. By default, the time will be when this event hits the splunk server.
    */
   public fun time(time: String) {

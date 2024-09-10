@@ -87,7 +87,7 @@ include::partial$component-endpoint-options.adoc[]
 |=======================================================================
 
 
-== Supported list of smn services and corresponding operations
+=== Supported list of smn services and corresponding operations
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -97,9 +97,9 @@ include::partial$component-endpoint-options.adoc[]
 |=======================================================================
 
 
-== Inline Configuration of route
+=== Inline Configuration of route
 
-=== publishAsTextMessage
+==== publishAsTextMessage
 Java DSL
 [source,java]
 --------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ from("direct:triggerRoute")
 .to("hwcloud-smn:publishMessageService?operation=publishAsTemplatedMessage&accessKey=*********&secretKey=********&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4")
 --------------------------------------------------------------------------------
 
-== Using ServiceKey configuration Bean
+=== Using ServiceKey configuration Bean
 
 Access key and secret keys are required to authenticate against cloud smn service. You can avoid having them being exposed
 and scattered over in your endpoint uri by wrapping them inside a bean of class ```org.apache.camel.component.huaweicloud.smn.models.ServiceKeys```.

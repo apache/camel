@@ -1,7 +1,7 @@
 = Apache Camel 4.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 4.x to 4.y. For example if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.2 to 4.3
@@ -79,11 +79,11 @@ from("seda:c")
 
 === Consumer health checks
 
-The scheduled consumers has been improved to mark the consumer as _ready_ sooner, when possible. Previously a consumer,
-would mark as ready after the first poll was completed. For example, a FTP consumer downloading a big file on first poll,
-could take so long time, that the readiness check would timeout and fail during startup of your Camel application.
+The scheduled consumers have been improved to mark the consumer as _ready_ sooner, when possible. Previously a consumer
+would mark as ready after the first poll was completed. For example, an FTP consumer downloading a big file on the first poll
+could take so long time that the readiness check would timeout and fail during the startup of your Camel application.
 
-The following components is now marking the consumer as ready sooner:
+The following components are now marking the consumer as ready sooner:
 
 - camel-aws
 - camel-azure
@@ -114,7 +114,7 @@ in their `ObjectName` also.
 
 === camel-console
 
-The context and route consoles has changed some values in their JSon output data for timestamp for created, completed and failed exchanges.
+The context and route consoles have changed some values in their JSON output data for timestamp for created, completed and failed exchanges.
 
 |===
 |**Old Key** |**New Key**
@@ -123,7 +123,7 @@ The context and route consoles has changed some values in their JSon output data
 | `sinceLastFailedExchange` | `lastFailedExchangeTimestamp`
 |===
 
-The values are also changed from String ago to timestamp in millis.For example old value `3m5s` is now `1701599263337`.
+The values are also changed from String ago to timestamp in millis.For example, old value `3m5s` is now `1701599263337`.
 
 === camel-jbang
 

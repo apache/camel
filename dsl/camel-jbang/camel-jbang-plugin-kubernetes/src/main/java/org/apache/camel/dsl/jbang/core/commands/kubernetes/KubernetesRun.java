@@ -24,16 +24,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
@@ -68,7 +71,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String[] resources;
 
     @CommandLine.Option(names = { "--open-api" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
-    String[] openApis;
+    String openApi;
 
     @CommandLine.Option(names = { "--env" },
                         description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
@@ -120,13 +123,20 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String image;
 
     @CommandLine.Option(names = { "--image-registry" },
-                        defaultValue = "quay.io",
                         description = "The image registry to hold the app container image.")
-    String imageRegistry = "quay.io";
+    String imageRegistry;
 
     @CommandLine.Option(names = { "--image-group" },
                         description = "The image registry group used to push images to.")
     String imageGroup;
+
+    @CommandLine.Option(names = { "--image-builder" },
+                        description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
+    String imageBuilder;
+
+    @CommandLine.Option(names = { "--cluster-type" },
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+    String clusterType;
 
     @CommandLine.Option(names = { "--image-build" },
                         defaultValue = "true",
@@ -142,8 +152,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "List of target platforms. Each platform is defined using the pattern.")
     String imagePlatforms;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
-    String gav;
+    // Export base options
+
+    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
+    List<String> repositories = new ArrayList<>();
+
+    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
+                        split = ",")
+    List<String> dependencies = new ArrayList<>();
 
     @CommandLine.Option(names = { "--runtime" },
                         completionCandidates = RuntimeCompletionCandidates.class,
@@ -152,9 +168,75 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.quarkus;
 
+    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    String gav;
+
+    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    List<String> excludes = new ArrayList<>();
+
+    @CommandLine.Option(names = { "--maven-settings" },
+                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
+                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    String mavenSettings;
+
+    @CommandLine.Option(names = { "--maven-settings-security" },
+                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
+    String mavenSettingsSecurity;
+
+    @CommandLine.Option(names = { "--maven-central-enabled" },
+                        description = "Whether downloading JARs from Maven Central repository is enabled")
+    boolean mavenCentralEnabled = true;
+
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+                        description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    boolean mavenApacheSnapshotEnabled = true;
+
+    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "17")
+    String javaVersion = "17";
+
+    @CommandLine.Option(names = { "--camel-version" },
+                        description = "To export using a different Camel version than the default version.")
+    String camelVersion;
+
+    @CommandLine.Option(names = {
+            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    String kameletsVersion;
+
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
+                        description = "Profile to export (dev, test, or prod).")
+    String profile;
+
+    @CommandLine.Option(names = { "--local-kamelet-dir" },
+                        description = "Local directory for loading Kamelets (takes precedence)")
+    String localKameletDir;
+
+    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
+                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
+
+    @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
+    String camelSpringBootVersion;
+
+    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+                        defaultValue = "io.quarkus.platform")
+    String quarkusGroupId = "io.quarkus.platform";
+
+    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+                        defaultValue = "quarkus-bom")
+    String quarkusArtifactId = "quarkus-bom";
+
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
                         defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+
+    @CommandLine.Option(names = { "--package-name" },
+                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                                      + "Use false to turn off and not include package name in the Java source files.")
+    String packageName;
+
+    @CommandLine.Option(names = { "--build-property" },
+                        description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
+    List<String> buildProperties = new ArrayList<>();
 
     public KubernetesRun(CamelJBangMain main) {
         super(main);
@@ -165,43 +247,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = RUN_PLATFORM_DIR + "/" + projectName;
 
-        KubernetesExport export = new KubernetesExport(
-                getMain(), new KubernetesExport.ExportConfigurer(
-                        runtime,
-                        quarkusVersion,
-                        true,
-                        true,
-                        false,
-                        workingDir,
-                        List.of(filePaths),
-                        gav,
-                        true,
-                        true,
-                        true,
-                        false,
-                        "off"));
-
-        export.image = image;
-        export.imageRegistry = imageRegistry;
-        export.imageGroup = imageGroup;
-        export.traitProfile = traitProfile;
-        export.serviceAccount = serviceAccount;
-        export.properties = properties;
-        export.configs = configs;
-        export.resources = resources;
-        export.openApis = openApis;
-        export.envVars = envVars;
-        export.volumes = volumes;
-        export.connects = connects;
-        export.annotations = annotations;
-        export.labels = labels;
-        export.traits = traits;
-
         printer().println("Exporting application ...");
 
+        // Cache export output in String for later usage in case of error
+        Printer runPrinter = printer();
+        StringPrinter exportPrinter = new StringPrinter();
+        getMain().withPrinter(exportPrinter);
+
+        KubernetesExport export = configureExport(workingDir);
         int exit = export.export();
+
+        // Revert printer to this run command's printer
+        getMain().withPrinter(runPrinter);
         if (exit != 0) {
-            printer().println("Project export failed");
+            // print export command output with error details
+            printer().println(exportPrinter.getOutput());
             return exit;
         }
 
@@ -219,8 +279,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.yml");
-                case "json" -> manifest = new File(workingDir, "target/kubernetes/kubernetes.json");
+                case "yaml" -> manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                case "json" ->
+                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
                 default -> {
                     printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
                     return 1;
@@ -241,13 +302,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (exit != 0) {
-            printer().println("Deployment to Kubernetes failed!");
+            printer().println("Deployment to %s failed!".formatted(Optional.ofNullable(clusterType)
+                    .map(StringHelper::capitalize).orElse("Kubernetes")));
             return exit;
         }
 
         if (dev) {
             DefaultCamelContext reloadContext = new DefaultCamelContext(false);
-            configureFileWatch(reloadContext, export, workingDir);
+            configureFileWatch(reloadContext, workingDir);
             reloadContext.start();
 
             if (cleanup) {
@@ -268,6 +330,65 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         return 0;
+    }
+
+    private KubernetesExport configureExport(String workingDir) {
+        KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
+                runtime,
+                quarkusVersion,
+                List.of(filePaths),
+                gav,
+                repositories,
+                dependencies,
+                excludes,
+                mavenSettings,
+                mavenSettingsSecurity,
+                mavenCentralEnabled,
+                mavenApacheSnapshotEnabled,
+                javaVersion,
+                camelVersion,
+                kameletsVersion,
+                profile,
+                localKameletDir,
+                springBootVersion,
+                camelSpringBootVersion,
+                quarkusGroupId,
+                quarkusArtifactId,
+                "maven",
+                openApi,
+                workingDir,
+                packageName,
+                buildProperties,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                "off");
+        KubernetesExport export = new KubernetesExport(getMain(), configurer);
+
+        export.image = image;
+        export.imageRegistry = imageRegistry;
+        export.imageGroup = imageGroup;
+        export.imageBuilder = imageBuilder;
+        export.clusterType = clusterType;
+        export.traitProfile = traitProfile;
+        export.serviceAccount = serviceAccount;
+        export.properties = properties;
+        export.configs = configs;
+        export.resources = resources;
+        export.envVars = envVars;
+        export.volumes = volumes;
+        export.connects = connects;
+        export.annotations = annotations;
+        export.labels = labels;
+        export.traits = traits;
+
+        return export;
     }
 
     private void installShutdownInterceptor(String projectName, String workingDir) {
@@ -317,7 +438,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deployQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // Run Quarkus build via Maven
         String mvnw = "/mvnw";
@@ -344,7 +466,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Dquarkus.container-image.push=true");
         }
 
-        args.add("-Dquarkus.kubernetes.deploy=true");
+        if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            args.add("-Dquarkus.openshift.deploy=true");
+        } else {
+            args.add("-Dquarkus.kubernetes.deploy=true");
+        }
 
         if (namespace != null) {
             args.add("-Dquarkus.kubernetes.namespace=%s".formatted(namespace));
@@ -373,18 +499,22 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private Integer deploySpringBoot(String workingDir) {
-        printer().println("Deploying to Kubernetes ...");
+        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
+                .map(StringHelper::capitalize).orElse("Kubernetes")));
 
         // TODO: implement SpringBoot Kubernetes deployment
         return 0;
     }
 
-    private void configureFileWatch(DefaultCamelContext camelContext, KubernetesExport export, String workingDir)
+    private void configureFileWatch(DefaultCamelContext camelContext, String workingDir)
             throws Exception {
         String watchDir = ".";
         FileFilter filter = null;
         if (filePaths != null && filePaths.length > 0) {
-            watchDir = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+            if (filePath != null) {
+                watchDir = filePath;
+            }
 
             filter = pathname -> Arrays.stream(filePaths)
                     .map(FileUtil::stripPath)
@@ -395,6 +525,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 = new FileWatcherResourceReloadStrategy(watchDir);
         reloadStrategy.setResourceReload((name, resource) -> {
             printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
+            KubernetesExport export = configureExport(workingDir);
             int refresh = export.export();
             if (refresh == 0) {
                 if (RuntimeType.quarkus == runtime) {
@@ -402,6 +533,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 } else if (RuntimeType.springBoot == runtime) {
                     deploySpringBoot(workingDir);
                 }
+            } else {
+                // print export command output with error details
+                printer().printf("Reloading project failed - export failed with code: %d%n", refresh);
             }
         });
         if (filter != null) {

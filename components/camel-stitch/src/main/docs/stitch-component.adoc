@@ -19,12 +19,7 @@ applications and databases. It integrates various data sources into a central da
 for many enterprise software data sources, and can receive data via WebHooks and an API (Stitch Import API) which
 Camel Stitch Component uses to produce the data to Stitch ETL.
 
-For more info, feel free to visit their website: https://www.stitchdata.com/
-
-Prerequisites
-
-You must have a valid Stitch account, you will need to enable Stitch Import API and generate a token for the
-integration, for more info, please find more info https://www.stitchdata.com/docs/developers/import-api/guides/quick-start[here].
+For more info, feel free to visit their https://www.stitchdata.com/[website]
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -62,16 +57,21 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Async Producer
+== Usage
+
+=== Prerequisites
+
+You must have a valid Stitch account, you will need to enable Stitch Import API and generate a token for the
+integration, for more info, please find more info https://www.stitchdata.com/docs/developers/import-api/guides/quick-start[here].
+
+=== Async Producer
 
 This component implements the async Consumer and producer.
 
 This allows camel route to consume and produce events asynchronously without blocking any threads.
 
-== Usage
 
-For example, to produce data to Stitch from a custom processor:
-
+.Example showing how to produce data to Stitch from a custom processor:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:sendStitch")
@@ -93,6 +93,7 @@ from("direct:sendStitch")
 --------------------------------------------------------------------------------
 
 === Message body type
+
 Currently, the component supports the following types for the body message on the producer side when producing a message to Stitch component:
 
 * `org.apache.camel.component.stitch.client.models.StitchRequestBody`: This represents this Stitch https://www.stitchdata.com/docs/developers/import-api/api#batch-data--arguments[JSON Message]. However,
@@ -110,7 +111,7 @@ can be type of `StitchMessage`, `StitchRequestBody` or `Map` but this Map here i
 
 === Examples
 
-Here is list of examples of data that can be proceeded to Stitch:
+Here is list of examples showing data that can be proceeded to Stitch:
 
 ==== Input body type `org.apache.camel.component.stitch.client.models.StitchRequestBody`:
 [source,java]
@@ -230,9 +231,9 @@ from("direct:sendStitch")
 .to("stitch:table_1?token=RAW({{token}})");
 --------------------------------------------------------------------------------
 
-=== Development Notes (Important)
+== Development Notes (Important)
 
-When developing on this component, you will need to obtain your Stitch token to run the integration tests.
+When developing on this component, you will need to obtain a Stitch token to run the integration tests.
 In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make*
 To run the integration tests, in this component directory, run the following maven command:

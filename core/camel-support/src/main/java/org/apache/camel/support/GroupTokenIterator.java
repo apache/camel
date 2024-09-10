@@ -67,8 +67,8 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
         this.it = it;
         // if the iterator is a scanner then it may have a dynamic delimiter
         // so we need to use the actual evaluated delimiter as token
-        if (LanguageSupport.hasSimpleFunction(token) && it instanceof Scanner) {
-            this.token = ((Scanner) it).getDelim();
+        if (LanguageSupport.hasSimpleFunction(token) && it instanceof Scanner scanner) {
+            this.token = scanner.getDelim();
         } else {
             this.token = token;
         }
@@ -142,11 +142,9 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
             if (data != null && count > 0 && token != null) {
                 bos.write(token.getBytes());
             }
-            if (data instanceof InputStream) {
-                InputStream is = (InputStream) data;
+            if (data instanceof InputStream is) {
                 IOHelper.copy(is, bos);
-            } else if (data instanceof byte[]) {
-                byte[] bytes = (byte[]) data;
+            } else if (data instanceof byte[] bytes) {
                 bos.write(bytes);
             } else if (data != null) {
                 // convert to input stream

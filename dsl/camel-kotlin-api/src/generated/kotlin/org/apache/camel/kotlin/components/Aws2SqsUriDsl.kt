@@ -149,6 +149,20 @@ public class Aws2SqsUriDsl(
   }
 
   /**
+   * The maximum number of concurrent receive request send to AWS in single consumer polling.
+   */
+  public fun concurrentRequestLimit(concurrentRequestLimit: String) {
+    it.property("concurrentRequestLimit", concurrentRequestLimit)
+  }
+
+  /**
+   * The maximum number of concurrent receive request send to AWS in single consumer polling.
+   */
+  public fun concurrentRequestLimit(concurrentRequestLimit: Int) {
+    it.property("concurrentRequestLimit", concurrentRequestLimit.toString())
+  }
+
+  /**
    * The default visibility timeout (in seconds)
    */
   public fun defaultVisibilityTimeout(defaultVisibilityTimeout: String) {
@@ -287,6 +301,16 @@ public class Aws2SqsUriDsl(
    */
   public fun serverSideEncryptionEnabled(serverSideEncryptionEnabled: Boolean) {
     it.property("serverSideEncryptionEnabled", serverSideEncryptionEnabled.toString())
+  }
+
+  /**
+   * The name of the message attribute used for sorting the messages. When specified, the messages
+   * polled by the consumer will be sorted by this attribute. This configuration may be of importance
+   * when you configure maxMessagesPerPoll parameter exceeding 10. In such cases, the messages will be
+   * fetched concurrently so the ordering is not guaranteed.
+   */
+  public fun sortAttributeName(sortAttributeName: String) {
+    it.property("sortAttributeName", sortAttributeName)
   }
 
   /**

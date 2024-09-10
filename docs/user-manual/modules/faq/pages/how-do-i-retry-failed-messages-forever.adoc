@@ -15,4 +15,4 @@ When you consume a message you can check the in message header
 has been redlivered.
 
 Or `org.apache.camel.Redelivered` that contains a boolean if its
-redelivered or if its the first time the message is processed.
+redelivered or if it is the first time the message is processed.

@@ -68,6 +68,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -112,10 +113,12 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
+import org.apache.camel.reifier.tokenizer.LangChain4JTokenizerReifier;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
@@ -265,6 +268,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new PipelineReifier(route, definition);
         } else if (definition instanceof PolicyDefinition) {
             return new PolicyReifier(route, definition);
+        } else if (definition instanceof PollDefinition) {
+            return new PollReifier(route, definition);
         } else if (definition instanceof PollEnrichDefinition) {
             return new PollEnrichReifier(route, definition);
         } else if (definition instanceof ProcessDefinition) {
@@ -347,6 +352,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new ResumableReifier(route, definition);
         } else if (definition instanceof PausableDefinition) {
             return new PausableReifier(route, definition);
+        } else if (definition instanceof LangChain4jTokenizerDefinition) {
+            return new LangChain4JTokenizerReifier(route, definition);
         }
         return null;
     }
@@ -461,8 +468,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // prefer to use explicit configured executor on the definition
         if (definition.getExecutorServiceBean() != null) {
             ExecutorService executorService = definition.getExecutorServiceBean();
-            if (executorService instanceof ScheduledExecutorService) {
-                return (ScheduledExecutorService) executorService;
+            if (executorService instanceof ScheduledExecutorService scheduledExecutorService) {
+                return scheduledExecutorService;
             }
             throw new IllegalArgumentException(
                     "ExecutorServiceRef " + definition.getExecutorServiceRef()
@@ -644,8 +651,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      */
     public Channel wrapProcessor(Processor processor) throws Exception {
         // don't double wrap
-        if (processor instanceof Channel) {
-            return (Channel) processor;
+        if (processor instanceof Channel channel) {
+            return channel;
         }
         return wrapChannel(processor, null);
     }
@@ -787,8 +794,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
                 builder, output);
 
-        if (output instanceof ErrorHandlerAware) {
-            ((ErrorHandlerAware) output).setErrorHandler(errorHandler);
+        if (output instanceof ErrorHandlerAware errorHandlerAware) {
+            errorHandlerAware.setErrorHandler(errorHandler);
         }
 
         return errorHandler;
@@ -816,12 +823,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             Processor processor = createProcessor(output);
 
             // inject id
-            if (processor instanceof IdAware) {
+            if (processor instanceof IdAware idAware) {
                 String id = getId(output);
-                ((IdAware) processor).setId(id);
+                idAware.setId(id);
             }
-            if (processor instanceof RouteIdAware) {
-                ((RouteIdAware) processor).setRouteId(route.getRouteId());
+            if (processor instanceof RouteIdAware routeIdAware) {
+                routeIdAware.setRouteId(route.getRouteId());
             }
 
             if (output instanceof Channel && processor == null) {
@@ -887,12 +894,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         }
 
         // inject id
-        if (processor instanceof IdAware) {
+        if (processor instanceof IdAware idAware) {
             String id = getId(definition);
-            ((IdAware) processor).setId(id);
+            idAware.setId(id);
         }
-        if (processor instanceof RouteIdAware) {
-            ((RouteIdAware) processor).setRouteId(route.getRouteId());
+        if (processor instanceof RouteIdAware routeIdAware) {
+            routeIdAware.setRouteId(route.getRouteId());
         }
 
         if (processor == null) {
@@ -944,11 +951,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = lookupByName(definition.getAggregationStrategyRef());
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
+            if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
+                strategy = aggregationStrategy;
+            } else if (aggStrategy instanceof BiFunction biFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                        = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));

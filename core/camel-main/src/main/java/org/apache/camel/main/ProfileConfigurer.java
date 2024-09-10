@@ -43,8 +43,13 @@ public class ProfileConfigurer {
             return;
         }
 
-        // enable backlog tracing
-        config.tracerConfig().withEnabled(true);
+        if ("dev".equals(profile)) {
+            // make tracing at least standby so we can use it in dev-mode
+            boolean enabled = config.tracerConfig().isEnabled();
+            if (!enabled) {
+                config.tracerConfig().withStandby(true);
+            }
+        }
 
         configureCommon(camelContext, profile, config);
     }

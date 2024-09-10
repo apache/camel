@@ -93,8 +93,8 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         try {
             // scan the class for @Converter and load them into this registry
             TypeConvertersLoader loader;
-            if (typeConverters instanceof Class) {
-                loader = new TypeConvertersLoader((Class<?>) typeConverters);
+            if (typeConverters instanceof Class tcs) {
+                loader = new TypeConvertersLoader(tcs);
             } else {
                 loader = new TypeConvertersLoader(typeConverters);
             }
@@ -162,8 +162,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             }
             Object obj = getInjector().newInstance(clazz, false);
             CamelContextAware.trySetCamelContext(obj, getCamelContext());
-            if (obj instanceof TypeConverterLoader) {
-                TypeConverterLoader loader = (TypeConverterLoader) obj;
+            if (obj instanceof TypeConverterLoader loader) {
                 CamelContextAware.trySetCamelContext(loader, getCamelContext());
                 LOG.debug("TypeConverterLoader: {} loading converters", name);
                 loader.load(this);
@@ -272,8 +271,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
                     .filter(Objects::nonNull)
                     .findAny().orElseThrow(() -> new ClassNotFoundException(name));
             Object obj = getInjector().newInstance(clazz, false);
-            if (obj instanceof TypeConverter) {
-                TypeConverter fb = (TypeConverter) obj;
+            if (obj instanceof TypeConverter fb) {
                 LOG.debug("Adding loaded FallbackTypeConverter: {}", name);
                 addFallbackTypeConverter(fb, false);
             }

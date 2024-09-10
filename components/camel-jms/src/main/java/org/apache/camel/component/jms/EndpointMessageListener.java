@@ -229,8 +229,8 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             // send back reply if there was no error and we are supposed to send back a reply
             if (rce == null && sendReply && (body != null || cause != null)) {
                 LOG.trace("onMessage.sendReply START");
-                if (replyDestination instanceof Destination) {
-                    sendReply((Destination) replyDestination, message, exchange, body, cause);
+                if (replyDestination instanceof Destination destination) {
+                    sendReply(destination, message, exchange, body, cause);
                 } else {
                     sendReply((String) replyDestination, message, exchange, body, cause);
                 }
@@ -265,8 +265,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
         // reuse existing jms message if pooled
         org.apache.camel.Message msg = exchange.getIn();
-        if (msg instanceof JmsMessage) {
-            JmsMessage jm = (JmsMessage) msg;
+        if (msg instanceof JmsMessage jm) {
             jm.init(exchange, message, session, getBinding());
         } else {
             exchange.setIn(new JmsMessage(exchange, message, session, getBinding()));

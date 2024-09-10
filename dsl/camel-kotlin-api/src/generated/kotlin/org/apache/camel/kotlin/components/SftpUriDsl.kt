@@ -762,6 +762,20 @@ public class SftpUriDsl(
   }
 
   /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
+  }
+
+  /**
    * Specifies how many requests may be outstanding at any one time. Increasing this value may
    * slightly improve file transfer speed but will increase memory usage.
    */

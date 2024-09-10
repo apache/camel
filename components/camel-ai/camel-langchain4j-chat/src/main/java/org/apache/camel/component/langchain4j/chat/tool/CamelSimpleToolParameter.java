@@ -22,6 +22,7 @@ import java.util.List;
  * langchain4j Simple Tool parameter implementation, this class can be used to provide multiple properties/input
  * parameters to the tool itself, the NamedJsonSchemaProperty can be then found as headers into the consumer route
  */
+@Deprecated(since = "4.8.0")
 public class CamelSimpleToolParameter {
 
     private final String description;

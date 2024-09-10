@@ -28,13 +28,13 @@ import org.apache.camel.support.jsse.SecureRandomParameters;
 public abstract class AbstractSecureRandomParametersFactoryBean extends AbstractJsseUtilFactoryBean<SecureRandomParameters> {
 
     @XmlAttribute(required = true)
-    @Metadata(description = "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration. "
-                            + "See Appendix A in the Java Cryptography Architecture API Specification and Reference guide for information about standard RNG algorithm names.")
+    @Metadata(description = "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration."
+                            + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
     protected String algorithm;
 
     @XmlAttribute
-    @Metadata(description = "The optional provider identifier for the SecureRandom factory"
-                            + " method used to create the SecureRandom represented by this object's configuration.")
+    @Metadata(label = "advanced", description = "The provider identifier for the SecureRandom factory"
+                                                + " method used to create the SecureRandom represented by this object's configuration.")
     protected String provider;
 
     @XmlTransient

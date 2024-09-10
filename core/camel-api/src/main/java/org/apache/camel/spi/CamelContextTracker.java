@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 import java.io.Closeable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +35,8 @@ public class CamelContextTracker implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTracker.class);
 
     private static final List<CamelContextTracker> TRACKERS = new CopyOnWriteArrayList<>();
+
+    private static final Lock LOCK = new ReentrantLock();
 
     @FunctionalInterface
     public interface Filter extends Predicate<CamelContext> {
@@ -91,27 +95,37 @@ public class CamelContextTracker implements Closeable {
         TRACKERS.remove(this);
     }
 
-    public static synchronized void notifyContextCreated(CamelContext camelContext) {
-        for (CamelContextTracker tracker : TRACKERS) {
-            try {
-                if (tracker.accept(camelContext)) {
-                    tracker.contextCreated(camelContext);
+    public static void notifyContextCreated(CamelContext camelContext) {
+        LOCK.lock();
+        try {
+            for (CamelContextTracker tracker : TRACKERS) {
+                try {
+                    if (tracker.accept(camelContext)) {
+                        tracker.contextCreated(camelContext);
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
                 }
-            } catch (Exception e) {
-                LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
             }
+        } finally {
+            LOCK.unlock();
         }
     }
 
-    public static synchronized void notifyContextDestroyed(CamelContext camelContext) {
-        for (CamelContextTracker tracker : TRACKERS) {
-            try {
-                if (tracker.accept(camelContext)) {
-                    tracker.contextDestroyed(camelContext);
+    public static void notifyContextDestroyed(CamelContext camelContext) {
+        LOCK.lock();
+        try {
+            for (CamelContextTracker tracker : TRACKERS) {
+                try {
+                    if (tracker.accept(camelContext)) {
+                        tracker.contextDestroyed(camelContext);
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
                 }
-            } catch (Exception e) {
-                LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
             }
+        } finally {
+            LOCK.unlock();
         }
     }
 }

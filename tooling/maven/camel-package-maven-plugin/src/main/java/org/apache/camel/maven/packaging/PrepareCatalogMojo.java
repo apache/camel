@@ -40,6 +40,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -57,11 +59,9 @@ import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -97,49 +97,49 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected Boolean validate;
 
     /**
-     * The output directory for components catalog
+     * The output directory for generated component catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/components")
     protected File componentsOutDir;
 
     /**
-     * The output directory for dataformats catalog
+     * The output directory for the data format catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/dataformats")
     protected File dataFormatsOutDir;
 
     /**
-     * The output directory for languages catalog
+     * The output directory for generated language catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/languages")
     protected File languagesOutDir;
 
     /**
-     * The output directory for transformers catalog
+     * The output directory for generated transformer catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/transformers")
     protected File transformersOutDir;
 
     /**
-     * The output directory for pojo beans catalog
+     * The output directory for generated pojo beans catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/beans")
     protected File beansOutDir;
 
     /**
-     * The output directory for dev-consoles catalog
+     * The output directory for generated dev-consoles catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/dev-consoles")
     protected File consolesOutDir;
 
     /**
-     * The output directory for others catalog
+     * The output directory for generate others catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/others")
     protected File othersOutDir;
 
     /**
-     * The output directory for models catalog
+     * The output directory for generated model catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/models")
     protected File modelsOutDir;
@@ -151,13 +151,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File modelsAppOutDir;
 
     /**
-     * The output directory for XML schemas catalog
+     * The output directory for generated XML schemas catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/schemas")
     protected File schemasOutDir;
 
     /**
-     * The output directory for main
+     * The output directory for generated main
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/main")
     protected File mainOutDir;
@@ -216,14 +216,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "camel.prepare-catalog.skip")
     protected boolean skip;
 
-    /**
-     * Maven ProjectHelper.
-     */
-    @Component
-    protected MavenProjectHelper projectHelper;
-
-    @Component
-    private RepositorySystem repoSystem;
+    private final RepositorySystem repoSystem;
 
     @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
     private RepositorySystemSession repoSession;
@@ -234,6 +227,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
     private Collection<Path> allJsonFiles;
     private Collection<Path> allPropertiesFiles;
     private final Map<Path, BaseModel<?>> allModels = new HashMap<>();
+
+    @Inject
+    public PrepareCatalogMojo(RepositorySystem repoSystem) {
+        this.repoSystem = repoSystem;
+    }
 
     private static String asComponentName(Path file) {
         String name = file.getFileName().toString();
@@ -362,8 +360,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             if (f.endsWith(PackageHelper.JSON_SUFIX)) {
                                 allJsonFiles.add(p);
                                 var m = JsonMapper.generateModel(p);
-                                if (m instanceof OtherModel) {
-                                    OtherModel om = (OtherModel) m;
+                                if (m instanceof OtherModel om) {
                                     if (!project.getVersion().equals(om.getVersion())) {
                                         // update version in model and file because we prepare catalog before we build DSL
                                         // so their previous generated model files may use previous version (eg 3.x.0-SNAPSHOT -> 3.15.0)

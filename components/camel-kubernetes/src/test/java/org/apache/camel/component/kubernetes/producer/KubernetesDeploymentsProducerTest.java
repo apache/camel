@@ -103,6 +103,34 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createDeploymentWithAnnotations() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
+        DeploymentSpec spec = new DeploymentSpecBuilder().withReplicas(13).build();
+        Deployment de1
+                = new DeploymentBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels)
+                        .withAnnotations(annotations).and()
+                        .withSpec(spec).build();
+        server.expect().post().withPath("/apis/apps/v1/namespaces/test/deployments").andReturn(200, de1).once();
+
+        Exchange ex = template.request("direct:createDeploymentWithAnnotations", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_SPEC, spec);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_ANNOTATIONS, annotations);
+        });
+
+        Deployment result = ex.getMessage().getBody(Deployment.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("de1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getReplicas());
+        assertEquals(annotations, result.getMetadata().getAnnotations());
+    }
+
+    @Test
     void updateDeployment() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         DeploymentSpec spec = new DeploymentSpecBuilder().withReplicas(13).build();
@@ -189,6 +217,8 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
                 from("direct:deleteDeployment")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=deleteDeployment");
                 from("direct:createDeployment")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=createDeployment");
+                from("direct:createDeploymentWithAnnotations")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=createDeployment");
                 from("direct:updateDeployment")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=updateDeployment");

@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +52,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         FIND_ANY_PATTERN = Pattern.compile("(?s).*");
     }
 
+    private static final Lock LOCK = new ReentrantLock();
     private static final Map<String, Pattern> CACHE = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(Entry<String, Pattern> eldest) {
@@ -300,9 +303,9 @@ public final class Scanner implements Iterator<String>, Closeable {
     public void close() throws IOException {
         if (!closed) {
             closed = true;
-            if (source instanceof Closeable) {
+            if (source instanceof Closeable closeable) {
                 try {
-                    ((Closeable) source).close();
+                    closeable.close();
                 } catch (IOException e) {
                     lastIOException = e;
                 }
@@ -317,8 +320,11 @@ public final class Scanner implements Iterator<String>, Closeable {
         if (pattern == null) {
             return null;
         }
-        synchronized (CACHE) {
+        LOCK.lock();
+        try {
             return CACHE.computeIfAbsent(pattern, Pattern::compile);
+        } finally {
+            LOCK.unlock();
         }
     }
 

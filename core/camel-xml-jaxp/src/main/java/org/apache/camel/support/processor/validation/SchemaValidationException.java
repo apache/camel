@@ -75,7 +75,8 @@ public class SchemaValidationException extends ValidationException {
     protected static String message(
             Object schema, List<SAXParseException> fatalErrors,
             List<SAXParseException> errors, List<SAXParseException> warnings) {
-        StringBuilder buffer = new StringBuilder("Validation failed for: ")
+        StringBuilder buffer = new StringBuilder(128)
+                .append("Validation failed for: ")
                 .append(schema)
                 .append("\n");
 

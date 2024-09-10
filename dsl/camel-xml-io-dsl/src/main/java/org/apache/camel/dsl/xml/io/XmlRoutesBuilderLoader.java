@@ -18,7 +18,6 @@ package org.apache.camel.dsl.xml.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +50,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.scan.PackageScanHelper;
-import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import org.slf4j.Logger;
@@ -72,7 +69,6 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     private final Map<String, XmlStreamInfo> xmlInfoCache = new ConcurrentHashMap<>();
     private final Map<String, BeansDefinition> camelAppCache = new ConcurrentHashMap<>();
     private final List<BeanFactoryDefinition<?>> delayedRegistrations = new ArrayList<>();
-    private final Map<String, KeyValueHolder<Object, String>> beansToDestroy = new LinkedHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -364,50 +360,13 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     }
 
     protected void bindBean(BeanFactoryDefinition<?> def, String name, Object target) throws Exception {
-        // destroy and unbind any existing bean
-        destroyBean(name, true);
+        // unbind in case we reload
         getCamelContext().getRegistry().unbind(name);
-
-        // invoke init method and register bean
-        String initMethod = def.getInitMethod();
-        if (initMethod != null) {
-            ObjectHelper.invokeMethodSafe(initMethod, target);
-        }
-        getCamelContext().getRegistry().bind(name, target);
-
-        // remember to destroy bean on shutdown
-        if (def.getDestroyMethod() != null) {
-            beansToDestroy.put(name, new KeyValueHolder<>(target, def.getDestroyMethod()));
-        }
+        getCamelContext().getRegistry().bind(name, target, def.getInitMethod(), def.getDestroyMethod());
 
         // register bean in model
         Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
         model.addCustomBean(def);
-    }
-
-    protected void destroyBean(String name, boolean remove) {
-        var holder = remove ? beansToDestroy.remove(name) : beansToDestroy.get(name);
-        if (holder != null) {
-            String destroyMethod = holder.getValue();
-            Object target = holder.getKey();
-            try {
-                ObjectHelper.invokeMethodSafe(destroyMethod, target);
-            } catch (Exception e) {
-                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
-                        destroyMethod, target, e.getMessage(), e);
-            }
-        }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        // beans should trigger destroy methods on shutdown
-        for (String name : beansToDestroy.keySet()) {
-            destroyBean(name, false);
-        }
-        beansToDestroy.clear();
     }
 
 }

@@ -18,16 +18,16 @@ package org.apache.camel.converter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,31 +71,22 @@ public final class NIOConverter {
 
     @Converter(order = 5)
     public static ByteBuffer toByteBuffer(File file) throws IOException {
-        if (file.length() > Integer.MAX_VALUE) {
-            // very big file we cannot load into memory
-            throw new IOException(
-                    "Cannot convert file: " + file.getName() + " to ByteBuffer. The file length is too large: "
-                                  + file.length());
-        }
-
-        InputStream in = null;
-        try {
-            byte[] buf = new byte[(int) file.length()];
-            in = IOHelper.buffered(new FileInputStream(file));
-            int sizeLeft = (int) file.length();
-            int offset = 0;
-            while (sizeLeft > 0) {
-                int readSize = in.read(buf, offset, sizeLeft);
-                sizeLeft -= readSize;
-                offset += readSize;
-            }
-            return ByteBuffer.wrap(buf);
-        } finally {
-            IOHelper.close(in, "Failed to close file stream: " + file.getPath(), LOG);
-        }
+        return toByteBuffer(file.toPath());
     }
 
     @Converter(order = 6)
+    public static ByteBuffer toByteBuffer(Path file) throws IOException {
+        long length = Files.size(file);
+        if (length > Integer.MAX_VALUE) {
+            // very big file we cannot load into memory
+            throw new IOException(
+                    "Cannot convert file: " + file + " to ByteBuffer. The file length is too large: "
+                                  + length);
+        }
+        return ByteBuffer.wrap(Files.readAllBytes(file));
+    }
+
+    @Converter(order = 7)
     public static ByteBuffer toByteBuffer(String value, Exchange exchange) {
         byte[] bytes = null;
         if (exchange != null) {
@@ -114,7 +105,7 @@ public final class NIOConverter {
         return ByteBuffer.wrap(bytes);
     }
 
-    @Converter(order = 7)
+    @Converter(order = 8)
     public static ByteBuffer toByteBuffer(Short value) {
         ByteBuffer buf = ByteBuffer.allocate(2);
         buf.putShort(value);
@@ -122,7 +113,7 @@ public final class NIOConverter {
         return buf;
     }
 
-    @Converter(order = 8)
+    @Converter(order = 9)
     public static ByteBuffer toByteBuffer(Integer value) {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(value);
@@ -130,7 +121,7 @@ public final class NIOConverter {
         return buf;
     }
 
-    @Converter(order = 9)
+    @Converter(order = 10)
     public static ByteBuffer toByteBuffer(Long value) {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putLong(value);
@@ -138,7 +129,7 @@ public final class NIOConverter {
         return buf;
     }
 
-    @Converter(order = 10)
+    @Converter(order = 11)
     public static ByteBuffer toByteBuffer(Float value) {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putFloat(value);
@@ -146,7 +137,7 @@ public final class NIOConverter {
         return buf;
     }
 
-    @Converter(order = 11)
+    @Converter(order = 12)
     public static ByteBuffer toByteBuffer(Double value) {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putDouble(value);
@@ -154,7 +145,7 @@ public final class NIOConverter {
         return buf;
     }
 
-    @Converter(order = 12)
+    @Converter(order = 13)
     public static InputStream toInputStream(ByteBuffer bufferbuffer) {
         return IOConverter.toInputStream(toByteArray(bufferbuffer));
     }

@@ -38,6 +38,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
@@ -46,8 +48,13 @@ import org.apache.camel.util.ObjectHelper;
              remote = false, consumerOnly = true, category = { Category.CORE, Category.REST }, lenientProperties = true)
 public class RestApiEndpoint extends DefaultEndpoint {
 
+    public static final String[] DEFAULT_REST_API_CONSUMER_COMPONENTS
+            = new String[] { "platform-http", "servlet", "jetty", "undertow", "netty-http" };
+
     public static final String DEFAULT_API_COMPONENT_NAME = "openapi";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/restapi/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestApiEndpoint.class);
 
     @UriPath
     @Metadata(required = true)
@@ -207,12 +214,12 @@ public class RestApiEndpoint extends DefaultEndpoint {
         // the API then uses the api component (eg usually camel-openapi-java) to build the API
         if (getConsumerComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getConsumerComponentName());
-            if (comp instanceof RestApiConsumerFactory) {
-                factory = (RestApiConsumerFactory) comp;
+            if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                factory = restApiConsumerFactory;
             } else {
                 comp = getCamelContext().getComponent(getConsumerComponentName());
-                if (comp instanceof RestApiConsumerFactory) {
-                    factory = (RestApiConsumerFactory) comp;
+                if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                    factory = restApiConsumerFactory;
                 }
             }
 
@@ -231,8 +238,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = getCamelContext().getComponent(name);
-                if (comp instanceof RestApiConsumerFactory) {
-                    factory = (RestApiConsumerFactory) comp;
+                if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                    factory = restApiConsumerFactory;
                     cname = name;
                     break;
                 }
@@ -244,6 +251,23 @@ public class RestApiEndpoint extends DefaultEndpoint {
             Set<RestApiConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestApiConsumerFactory.class);
             if (factories != null && factories.size() == 1) {
                 factory = factories.iterator().next();
+            }
+        }
+        // no explicit factory found then try to see if we can find any of the default rest consumer components
+        if (factory == null) {
+            RestApiConsumerFactory found = null;
+            String foundName = null;
+            for (String name : DEFAULT_REST_API_CONSUMER_COMPONENTS) {
+                Object comp = getCamelContext().getComponent(name, true);
+                if (comp instanceof RestApiConsumerFactory restApiConsumerFactory) {
+                    found = restApiConsumerFactory;
+                    foundName = name;
+                    break;
+                }
+            }
+            if (found != null) {
+                LOG.debug("Auto discovered {} as RestApiConsumerFactory", foundName);
+                factory = found;
             }
         }
 

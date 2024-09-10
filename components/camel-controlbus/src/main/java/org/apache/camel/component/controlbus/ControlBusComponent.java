@@ -48,11 +48,16 @@ public class ControlBusComponent extends DefaultComponent {
         return answer;
     }
 
-    synchronized ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "ControlBus");
+    ExecutorService getExecutorService() {
+        lock.lock();
+        try {
+            if (executorService == null) {
+                executorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "ControlBus");
+            }
+            return executorService;
+        } finally {
+            lock.unlock();
         }
-        return executorService;
     }
 
     @Override

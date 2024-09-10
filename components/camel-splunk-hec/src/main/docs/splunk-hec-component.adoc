@@ -54,7 +54,10 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message body
+== Usage
+
+=== Message body
+
 The body must be serializable to JSON, so it may be sent to Splunk.
 
 A `String` or a `java.util.Map` object can be serialized easily.
@@ -64,7 +67,7 @@ The Splunk HEC endpoint may be used to stream data to Splunk for ingestion.
 
 It is meant for high-volume ingestion of machine data.
 
-== Configuring the index time
+=== Configuring the index time
 
 By default, the index time for an event is when the event makes it to the Splunk
 server.

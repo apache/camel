@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -123,6 +124,10 @@ public class LogicalExpression extends BaseSimpleNode {
 
     @Override
     public String createCode(String expression) throws SimpleParserException {
+        return BaseSimpleParser.CODE_START + doCreateCode(expression) + BaseSimpleParser.CODE_END;
+    }
+
+    private String doCreateCode(String expression) throws SimpleParserException {
         ObjectHelper.notNull(left, "left node", this);
         ObjectHelper.notNull(right, "right node", this);
 

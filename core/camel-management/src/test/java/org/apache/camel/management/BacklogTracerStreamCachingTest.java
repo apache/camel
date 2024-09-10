@@ -50,7 +50,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals(1000, size.intValue(), "Should be 1000");
+        assertEquals(100, size.intValue(), "Should be 100");
 
         Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
         assertEquals(Boolean.TRUE, removeOnDump);
@@ -82,7 +82,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
                      + "      <exchangeProperties>\n"
                      + "        <exchangeProperty key=\"CamelToEndpoint\" type=\"java.lang.String\">direct://start</exchangeProperty>\n"
                      + "      </exchangeProperties>\n"
-                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" position=\"0\">Bye World</body>\n"
+                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\" size=\"9\" position=\"0\">Bye World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
     }

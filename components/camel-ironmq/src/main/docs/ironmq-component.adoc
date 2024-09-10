@@ -59,12 +59,16 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Message Body
+== Usage
+
+=== Message Body
 
 It should be either a String or an array of Strings.
 In the latter case, the batch of strings will be sent to IronMQ as one request, creating one message per element in the array.
 
-== Consumer example
+== Examples
+
+=== Consumer example
 
 Consume 50 messages per poll from the queue `testqueue` on aws eu, and save the messages to files.
 
@@ -74,7 +78,8 @@ from("ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&projectId=
   .to("file:somefolder");
 --------------------------------------------------
 
-== Producer example
+=== Producer example
+
 Dequeue from activemq jms and enqueue the messages on IronMQ.
 
 [source,java]

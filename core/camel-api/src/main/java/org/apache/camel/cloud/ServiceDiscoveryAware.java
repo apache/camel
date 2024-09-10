@@ -19,6 +19,7 @@ package org.apache.camel.cloud;
 /**
  * An interface to represent an object which wishes to be injected with a {@link ServiceDiscovery}
  */
+@Deprecated(since = "4.8.0")
 public interface ServiceDiscoveryAware {
 
     /**

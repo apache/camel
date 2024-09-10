@@ -110,7 +110,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         if (timerName == null) {
             timerName = getEndpointUri();
         }
-        // do nothing in regards to setTimer, the timer will be set when the first consumer will request it
+        // do nothing in regard to setTimer, the timer will be set when the first consumer requests it
     }
 
     @Override
@@ -144,7 +144,7 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Specifies whether or not the thread associated with the timer endpoint runs as a daemon.
+     * Specifies whether the thread associated with the timer endpoint runs as a daemon.
      * <p/>
      * The default value is true.
      */
@@ -217,8 +217,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire once. If you set it
-     * to 5, it will only fire five times. A value of zero or negative means fire forever.
+     * Specifies a maximum limit for the number of fires. Therefore, if you set it to 1, the timer will only fire once.
+     * If you set it to 5, it will only fire five times. A value of zero or negative means fire forever.
      */
     @ManagedAttribute(description = "Repeat Count")
     public void setRepeatCount(long repeatCount) {

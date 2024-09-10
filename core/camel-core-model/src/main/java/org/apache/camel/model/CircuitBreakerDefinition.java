@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route messages in a fault tolerance way using Circuit Breaker
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
@@ -91,8 +91,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (output instanceof OnFallbackDefinition) {
-            onFallback = (OnFallbackDefinition) output;
+        if (output instanceof OnFallbackDefinition onFallbackDefinition) {
+            onFallback = onFallbackDefinition;
         } else {
             if (onFallback != null) {
                 onFallback.addOutput(output);
@@ -118,8 +118,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         Iterator<ProcessorDefinition<?>> it = outputs.iterator();
         while (it.hasNext()) {
             ProcessorDefinition<?> out = it.next();
-            if (out instanceof OnFallbackDefinition) {
-                onFallback = (OnFallbackDefinition) out;
+            if (out instanceof OnFallbackDefinition onFallbackDefinition) {
+                onFallback = onFallbackDefinition;
                 it.remove();
             }
         }

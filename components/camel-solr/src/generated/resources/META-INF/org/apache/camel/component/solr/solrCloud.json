@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-solr",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "solrCloud",
     "extendsScheme": "",
     "alternativeSchemes": "solr,solrs,solrCloud",
@@ -21,6 +21,7 @@
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false,
+    "browsable": false,
     "remote": true
   },
   "componentProperties": {

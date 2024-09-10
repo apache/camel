@@ -57,6 +57,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher} that
  * uses a {@link org.apache.camel.Producer}.
  *
+ * @see PollProcessor
  * @see Enricher
  */
 public class PollEnricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
@@ -132,6 +133,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     public Expression getExpression() {
@@ -386,14 +391,14 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     private static boolean isBridgeErrorHandler(PollingConsumer consumer) {
         Consumer delegate = consumer;
-        if (consumer instanceof EventDrivenPollingConsumer) {
-            delegate = ((EventDrivenPollingConsumer) consumer).getDelegateConsumer();
+        if (consumer instanceof EventDrivenPollingConsumer eventDrivenPollingConsumer) {
+            delegate = eventDrivenPollingConsumer.getDelegateConsumer();
         }
 
         // is the consumer bridging the error handler?
         boolean bridgeErrorHandler = false;
-        if (delegate instanceof DefaultConsumer) {
-            ExceptionHandler handler = ((DefaultConsumer) delegate).getExceptionHandler();
+        if (delegate instanceof DefaultConsumer defaultConsumer) {
+            ExceptionHandler handler = defaultConsumer.getExceptionHandler();
             if (handler instanceof BridgeExceptionHandlerToErrorHandler) {
                 bridgeErrorHandler = true;
             }

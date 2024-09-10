@@ -217,6 +217,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
+                new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.from),
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
                         .with(this::getRemote),
@@ -246,6 +249,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
+                new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                        .with(r -> r.from),
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
                         .with(this::getRemote),

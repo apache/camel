@@ -51,8 +51,7 @@ public class MainPropertiesReload extends ServiceSupport
 
     @Override
     public void onReload(String name, Properties properties) throws Exception {
-        if (properties instanceof OrderedLocationProperties) {
-            OrderedLocationProperties prop = (OrderedLocationProperties) properties;
+        if (properties instanceof OrderedLocationProperties prop) {
             main.autoConfigurationFromReloadedProperties(camelContext, prop);
             main.autowireWildcardProperties(camelContext);
         }

@@ -23,12 +23,12 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-djl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Deep Java Library</name>
+    <name>Camel :: AI :: Deep Java Library</name>
     <description>Camel Deep Java Library support</description>
 
     <properties>

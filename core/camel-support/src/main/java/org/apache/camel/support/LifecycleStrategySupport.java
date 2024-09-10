@@ -55,43 +55,43 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
         return new LifecycleStrategySupport() {
             @Override
             public void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
-                if (handler instanceof OnCamelContextInitializing) {
-                    ((OnCamelContextInitializing) handler).onContextInitializing(context);
+                if (handler instanceof OnCamelContextInitializing onCamelContextInitializing) {
+                    onCamelContextInitializing.onContextInitializing(context);
                 }
             }
 
             @Override
             public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
-                if (handler instanceof OnCamelContextInitialized) {
-                    ((OnCamelContextInitialized) handler).onContextInitialized(context);
+                if (handler instanceof OnCamelContextInitialized onCamelContextInitialized) {
+                    onCamelContextInitialized.onContextInitialized(context);
                 }
             }
 
             @Override
             public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
-                if (handler instanceof OnCamelContextStarting) {
-                    ((OnCamelContextStarting) handler).onContextStarting(context);
+                if (handler instanceof OnCamelContextStarting onCamelContextStarting) {
+                    onCamelContextStarting.onContextStarting(context);
                 }
             }
 
             @Override
             public void onContextStarted(CamelContext context) {
-                if (handler instanceof OnCamelContextStarted) {
-                    ((OnCamelContextStarted) handler).onContextStarted(context);
+                if (handler instanceof OnCamelContextStarted onCamelContextStarted) {
+                    onCamelContextStarted.onContextStarted(context);
                 }
             }
 
             @Override
             public void onContextStopping(CamelContext context) {
-                if (handler instanceof OnCamelContextStopping) {
-                    ((OnCamelContextStopping) handler).onContextStopping(context);
+                if (handler instanceof OnCamelContextStopping onCamelContextStopping) {
+                    onCamelContextStopping.onContextStopping(context);
                 }
             }
 
             @Override
             public void onContextStopped(CamelContext context) {
-                if (handler instanceof OnCamelContextStopped) {
-                    ((OnCamelContextStopped) handler).onContextStopped(context);
+                if (handler instanceof OnCamelContextStopped onCamelContextStopped) {
+                    onCamelContextStopped.onContextStopped(context);
                 }
             }
         };
@@ -247,8 +247,7 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     protected static void doAutoWire(String name, String kind, Object target, CamelContext camelContext) {
         PropertyConfigurer pc = PluginHelper.getConfigurerResolver(camelContext)
                 .resolvePropertyConfigurer(name + "-" + kind, camelContext);
-        if (pc instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
+        if (pc instanceof PropertyConfigurerGetter getter) {
             String[] names = getter.getAutowiredNames();
             if (names != null) {
                 for (String option : names) {

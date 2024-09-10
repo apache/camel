@@ -124,6 +124,22 @@ public interface BrowseComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default BrowseComponentBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
     }
 
     class BrowseComponentBuilderImpl
@@ -142,6 +158,7 @@ public interface BrowseComponentBuilderFactory {
             case "bridgeErrorHandler": ((BrowseComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BrowseComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((BrowseComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "browseLimit": ((BrowseComponent) component).setBrowseLimit((int) value); return true;
             default: return false;
             }
         }

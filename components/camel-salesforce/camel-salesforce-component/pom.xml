@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-salesforce-parent</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-salesforce</artifactId>
@@ -116,9 +116,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl-version}</version>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
         </dependency>
         <!-- Pub/Sub API dependencies -->
         <dependency>
@@ -463,7 +462,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                             <dependency>
                                 <groupId>org.apache.ant</groupId>
                                 <artifactId>ant</artifactId>
-                                <version>1.10.14</version>
+                                <version>1.10.15</version>
                             </dependency>
                         </dependencies>
                     </plugin>

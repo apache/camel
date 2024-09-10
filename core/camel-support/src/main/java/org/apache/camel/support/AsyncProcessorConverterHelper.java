@@ -189,15 +189,15 @@ public final class AsyncProcessorConverterHelper {
     }
 
     public static AsyncProducer convert(Producer value) {
-        if (value instanceof AsyncProducer) {
-            return (AsyncProducer) value;
+        if (value instanceof AsyncProducer asyncProducer) {
+            return asyncProducer;
         }
         return new ProducerToAsyncProducerBridge(value);
     }
 
     public static AsyncProcessor convert(Processor value) {
-        if (value instanceof AsyncProcessor) {
-            return (AsyncProcessor) value;
+        if (value instanceof AsyncProcessor asyncProcessor) {
+            return asyncProcessor;
         }
         return new ProcessorToAsyncProcessorBridge(value);
     }

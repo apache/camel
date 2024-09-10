@@ -78,7 +78,8 @@ public class EventHubsComponent extends DefaultComponent {
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
         if (!isAccessKeyAndAccessNameSet(configuration) && !isProducerAsyncClientSet(configuration)
-                && !isConnectionStringSet(configuration) && !isTokenCredentialSet(configuration)) {
+                && !isConnectionStringSet(configuration) && !isTokenCredentialSet(configuration)
+                && !isAzureIdentitySet(configuration)) {
             throw new IllegalArgumentException(
                     "Azure EventHubs SharedAccessName/SharedAccessKey, ProducerAsyncClient, ConnectionString or TokenCredential must be specified.");
         }
@@ -99,6 +100,11 @@ public class EventHubsComponent extends DefaultComponent {
 
     private boolean isProducerAsyncClientSet(final EventHubsConfiguration configuration) {
         return ObjectHelper.isNotEmpty(configuration.getProducerAsyncClient());
+    }
+
+    private boolean isAzureIdentitySet(final EventHubsConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getCredentialType())
+                && configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY);
     }
 
     private void checkAndSetNamespaceAndHubName(final EventHubsConfiguration configuration, final String remaining) {

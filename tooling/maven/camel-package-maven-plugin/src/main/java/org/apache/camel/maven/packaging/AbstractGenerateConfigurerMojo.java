@@ -17,9 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -34,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.Metadata;
@@ -42,16 +38,10 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.util.ReflectionHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.AnnotationValue;
@@ -88,10 +78,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     @Parameter(defaultValue = "false")
     protected boolean skipDeprecated;
 
-    @Component
-    private ArtifactFactory artifactFactory;
-
     private DynamicClassLoader projectClassLoader;
+
+    protected AbstractGenerateConfigurerMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     public static class ConfigurerOption extends BaseOptionModel {
 
@@ -101,13 +92,13 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             // we just use name, type
             setName(name);
             if (byte[].class == type) {
-                // special for byte array
+                // special for byte arrays
                 setJavaType("byte[]");
             } else if (long[].class == type) {
-                // special for long array
+                // special for long arrays
                 setJavaType("long[]");
             } else if (type.isArray()) {
-                // special for array
+                // special for arrays
                 String arrType = between(type.getName(), "[L", ";") + "[]";
                 setJavaType(arrType);
             } else {
@@ -120,9 +111,6 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         public boolean isBuilderMethod() {
             return builderMethod;
         }
-    }
-
-    public AbstractGenerateConfigurerMojo() {
     }
 
     protected void doExecute(File sourcesOutputDir, File resourcesOutputDir, List<String> classes, boolean testClasspathOnly)
@@ -277,11 +265,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
     }
 
-    private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
+    private Collection<Artifact> getAllNonTestScopedDependencies() {
         List<Artifact> answer = new ArrayList<>();
-
-        for (Artifact artifact : getAllDependencies()) {
-
+        for (Artifact artifact : project.getArtifacts()) {
             // do not add test artifacts
             if (!artifact.getScope().equals(Artifact.SCOPE_TEST)) {
                 answer.add(artifact);
@@ -290,59 +276,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         return answer;
     }
 
-    // generic method to retrieve all the transitive dependencies
-    private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
-        List<Artifact> artifacts = new ArrayList<>();
-
-        for (Dependency dependency : project.getDependencies()) {
-            String groupId = dependency.getGroupId();
-            String artifactId = dependency.getArtifactId();
-
-            VersionRange versionRange;
-            try {
-                versionRange = VersionRange.createFromVersionSpec(dependency.getVersion());
-            } catch (InvalidVersionSpecificationException e) {
-                throw new MojoExecutionException("unable to parse version", e);
-            }
-
-            String type = dependency.getType();
-            if (type == null) {
-                type = "jar";
-            }
-            String classifier = dependency.getClassifier();
-            boolean optional = dependency.isOptional();
-            String scope = dependency.getScope();
-            if (scope == null) {
-                scope = Artifact.SCOPE_COMPILE;
-            }
-
-            if (this.artifactFactory != null) {
-                Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
-                        type, classifier, scope, null, optional);
-
-                if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
-                    art.setFile(new File(dependency.getSystemPath()));
-                }
-
-                List<String> exclusions = new ArrayList<>();
-                for (Exclusion exclusion : dependency.getExclusions()) {
-                    exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
-                }
-
-                ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
-
-                art.setDependencyFilter(newFilter);
-
-                artifacts.add(art);
-            }
-        }
-
-        return artifacts;
-    }
-
     private List<ConfigurerOption> processClass(Index index, String fqn) throws ClassNotFoundException {
         List<ConfigurerOption> answer = new ArrayList<>();
-        // filter out duplicates by using a names set that has already added
+        // filter out duplicates by using a name set that has already added
         Set<String> names = new HashSet<>();
 
         Class<?> clazz = projectClassLoader.loadClass(fqn);
@@ -372,7 +308,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 if (boolean.class == type || Boolean.class == type) {
                     try {
                         String isGetter = "is" + getter.substring(3);
-                        clazz.getMethod(isGetter, null);
+                        clazz.getMethod(isGetter);
                         getter = isGetter;
                     } catch (Exception e) {
                         // ignore as its then assumed to get
@@ -385,10 +321,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                         : Character.toLowerCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
                 Field field = ReflectionHelper.findField(clazz, t);
                 // check via the field whether to be included or not if we should only include fields marked up with @Metadata
-                if (metadataOnly && field != null) {
-                    if (!field.isAnnotationPresent(Metadata.class)) {
-                        return;
-                    }
+                if (metadataOnly && field != null && !field.isAnnotationPresent(Metadata.class)) {
+                    return;
                 }
                 if (names.add(t)) {
                     option = new ConfigurerOption(t, type, getter, builder);
@@ -455,18 +389,16 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String cn = targetFqn.substring(pos + 1) + "Configurer";
-        String en = fqn;
-        String pfqn = fqn;
         String psn = "org.apache.camel.support.component.PropertyConfigurerSupport";
 
-        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
+        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).toList();
 
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("generatorClass", getClass().getName());
         ctx.put("package", pn);
         ctx.put("className", cn);
-        ctx.put("type", en);
-        ctx.put("pfqn", pfqn);
+        ctx.put("type", fqn);
+        ctx.put("pfqn", fqn);
         ctx.put("psn", psn);
         ctx.put("hasSuper", false);
         ctx.put("component", false);
@@ -489,16 +421,14 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         int pos = targetFqn.lastIndexOf('.');
         String pn = targetFqn.substring(0, pos);
         String en = targetFqn.substring(pos + 1);
-        try (Writer w = new StringWriter()) {
-            w.append("# ").append(GENERATED_MSG).append("\n");
-            w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
-            String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
-            boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
-            if (updated) {
-                getLog().info("Updated " + fileName);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        StringBuilder w = new StringBuilder(256);
+        w.append("# ").append(GENERATED_MSG).append("\n");
+        w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
+        String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
+        boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
+        if (updated) {
+            getLog().info("Updated " + fileName);
         }
     }
 

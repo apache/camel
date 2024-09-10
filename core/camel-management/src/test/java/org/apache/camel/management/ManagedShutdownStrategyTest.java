@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
@@ -27,7 +28,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedShutdownStrategyTest extends ManagementTestSupport {
@@ -39,13 +43,30 @@ public class ManagedShutdownStrategyTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = getContextObjectName();
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "*");
 
-        Long timeout = (Long) mbeanServer.getAttribute(on, "Timeout");
+        // number of services
+        Set<ObjectName> names = mbeanServer.queryNames(on, null);
+        ObjectName name = null;
+        for (ObjectName service : names) {
+            if (service.toString().contains("DefaultShutdownStrategy")) {
+                name = service;
+                break;
+            }
+        }
+        assertNotNull(name, "Cannot find DefaultShutdownStrategy");
+
+        Long timeout = (Long) mbeanServer.getAttribute(name, "Timeout");
         assertEquals(300, timeout.longValue());
 
-        TimeUnit unit = (TimeUnit) mbeanServer.getAttribute(on, "TimeUnit");
+        TimeUnit unit = (TimeUnit) mbeanServer.getAttribute(name, "TimeUnit");
         assertEquals("seconds", unit.toString().toLowerCase(Locale.ENGLISH));
+
+        String level = (String) mbeanServer.getAttribute(name, "LoggingLevel");
+        assertEquals("DEBUG", level);
+
+        Boolean order = (Boolean) mbeanServer.getAttribute(name, "ShutdownRoutesInReverseOrder");
+        assertTrue(order);
     }
 
     @Override

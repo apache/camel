@@ -19,10 +19,10 @@ package org.apache.camel.component.jira.consumer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(WatchUpdatesConsumer.class);
-    private static final int SEARCH_MAX_PER_QUERY = 50;
-    private static final int SEARCH_START_AT = 0;
     final HashMap<Long, Issue> watchedIssues = new HashMap<>();
     List<String> watchedFieldsList;
     String watchedIssuesKeys;
@@ -51,12 +49,11 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        List<Issue> issues = getIssues(getEndpoint().getJql(), SEARCH_START_AT, SEARCH_MAX_PER_QUERY,
-                getEndpoint().getMaxResults());
+        Collection<Issue> issues = getIssues(getEndpoint().getJql());
         initIssues(issues);
     }
 
-    private void initIssues(List<Issue> issues) {
+    private void initIssues(Collection<Issue> issues) {
         watchedIssues.clear();
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
         watchedIssuesKeys = issues.stream()
@@ -66,8 +63,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     @Override
     protected int doPoll() throws Exception {
-        List<Issue> issues = getIssues(getEndpoint().getJql(), SEARCH_START_AT, SEARCH_MAX_PER_QUERY,
-                getEndpoint().getMaxResults());
+        Collection<Issue> issues = getIssues();
         for (Issue issue : issues) {
             checkIfIssueChanged(issue);
         }
@@ -80,14 +76,12 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private void checkIfIssueChanged(Issue issue) throws Exception {
         Issue original = watchedIssues.get(issue.getId());
-        AtomicBoolean issueChanged = new AtomicBoolean();
         if (original != null) {
+            boolean issueChanged = false;
             for (String field : this.watchedFieldsList) {
-                if (hasFieldChanged(issue, original, field)) {
-                    issueChanged.set(true);
-                }
+                issueChanged |= hasFieldChanged(issue, original, field);
             }
-            if (issueChanged.get()) {
+            if (issueChanged) {
                 watchedIssues.put(issue.getId(), issue);
             }
         }

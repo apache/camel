@@ -343,13 +343,13 @@ public class RestEndpoint extends DefaultEndpoint {
         String pname = getProducerComponentName();
         if (pname != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(pname);
-            if (comp instanceof RestProducerFactory) {
-                factory = (RestProducerFactory) comp;
+            if (comp instanceof RestProducerFactory restProducerFactory) {
+                factory = restProducerFactory;
             } else {
                 comp = setupComponent(getProducerComponentName(), getCamelContext(),
                         (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory) {
-                    factory = (RestProducerFactory) comp;
+                if (comp instanceof RestProducerFactory restProducerFactory) {
+                    factory = restProducerFactory;
                 }
             }
 
@@ -366,8 +366,8 @@ public class RestEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory) {
-                    factory = (RestProducerFactory) comp;
+                if (comp instanceof RestProducerFactory producerFactory) {
+                    factory = producerFactory;
                     pname = name;
                     break;
                 }
@@ -378,13 +378,13 @@ public class RestEndpoint extends DefaultEndpoint {
         if (pname == null && getConsumerComponentName() != null) {
             String cname = getConsumerComponentName();
             Object comp = getCamelContext().getRegistry().lookupByName(cname);
-            if (comp instanceof RestProducerFactory) {
-                factory = (RestProducerFactory) comp;
+            if (comp instanceof RestProducerFactory restProducerFactory) {
+                factory = restProducerFactory;
                 pname = cname;
             } else {
                 comp = setupComponent(cname, getCamelContext(), (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory) {
-                    factory = (RestProducerFactory) comp;
+                if (comp instanceof RestProducerFactory restProducerFactory) {
+                    factory = restProducerFactory;
                     pname = cname;
                 }
             }
@@ -399,20 +399,15 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         // no explicit factory found then try to see if we can find any of the default rest producer components
-        // and there must only be exactly one so we safely can pick this one
         if (factory == null) {
             RestProducerFactory found = null;
             String foundName = null;
             for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
                 Object comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory) {
-                    if (found == null) {
-                        found = (RestProducerFactory) comp;
-                        foundName = name;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Multiple RestProducerFactory found on classpath. Configure explicit which component to use");
-                    }
+                if (comp instanceof RestProducerFactory restProducerFactory) {
+                    found = restProducerFactory;
+                    foundName = name;
+                    break;
                 }
             }
             if (found != null) {
@@ -456,12 +451,12 @@ public class RestEndpoint extends DefaultEndpoint {
         String cname = null;
         if (getConsumerComponentName() != null) {
             Object comp = getCamelContext().getRegistry().lookupByName(getConsumerComponentName());
-            if (comp instanceof RestConsumerFactory) {
-                factory = (RestConsumerFactory) comp;
+            if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                factory = restConsumerFactory;
             } else {
                 comp = getCamelContext().getComponent(getConsumerComponentName());
-                if (comp instanceof RestConsumerFactory) {
-                    factory = (RestConsumerFactory) comp;
+                if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                    factory = restConsumerFactory;
                 }
             }
 
@@ -480,8 +475,8 @@ public class RestEndpoint extends DefaultEndpoint {
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
                 Component comp = getCamelContext().getComponent(name);
-                if (comp instanceof RestConsumerFactory) {
-                    factory = (RestConsumerFactory) comp;
+                if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                    factory = restConsumerFactory;
                     cname = name;
                     break;
                 }
@@ -491,8 +486,8 @@ public class RestEndpoint extends DefaultEndpoint {
         // favour using platform-http if available on classpath
         if (factory == null) {
             Object comp = getCamelContext().getComponent("platform-http", true);
-            if (comp instanceof RestConsumerFactory) {
-                factory = (RestConsumerFactory) comp;
+            if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                factory = restConsumerFactory;
                 LOG.debug("Auto discovered platform-http as RestConsumerFactory");
             }
         }
@@ -506,20 +501,15 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         // no explicit factory found then try to see if we can find any of the default rest consumer components
-        // and there must only be exactly one so we safely can pick this one
         if (factory == null) {
             RestConsumerFactory found = null;
             String foundName = null;
             for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
                 Object comp = getCamelContext().getComponent(name, true);
-                if (comp instanceof RestConsumerFactory) {
-                    if (found == null) {
-                        found = (RestConsumerFactory) comp;
-                        foundName = name;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Multiple RestConsumerFactory found on classpath. Configure explicit which component to use");
-                    }
+                if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                    found = restConsumerFactory;
+                    foundName = name;
+                    break;
                 }
             }
             if (found != null) {

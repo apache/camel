@@ -9,8 +9,8 @@
 
     <properties>
         <java.version>{{ .JavaVersion }}</java.version>
+{{ .BuildProperties }}
 {{ .CamelKubernetesProperties }}
-{{ .AdditionalProperties }}
     </properties>
 
     <dependencyManagement>

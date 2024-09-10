@@ -47,9 +47,9 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
             scope = parse(BeanScope.class, definition.getScope());
         }
         Processor answer = fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
-        if (answer instanceof IdAware) {
+        if (answer instanceof IdAware idAware) {
             String id = camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class).createId(definition);
-            ((IdAware) answer).setId(id);
+            idAware.setId(id);
         }
         return answer;
     }

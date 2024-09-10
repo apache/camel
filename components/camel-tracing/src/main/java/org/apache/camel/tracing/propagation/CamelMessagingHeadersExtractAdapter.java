@@ -33,10 +33,10 @@ public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter
         // Extract string valued map entries
         this.jmsEncoding = jmsEncoding;
         map.entrySet().stream().filter(e -> e.getValue() instanceof String || e.getValue() instanceof byte[]).forEach(e -> {
-            if (e.getValue() instanceof byte[]) {
-                this.map.put(decodeDash(e.getKey()), new String((byte[]) e.getValue(), StandardCharsets.UTF_8));
+            if (e.getValue() instanceof byte[] bytes) {
+                this.map.put(decodeDash(e.getKey()), new String(bytes, StandardCharsets.UTF_8));
             } else {
-                this.map.put(decodeDash(e.getKey()), (String) e.getValue());
+                this.map.put(decodeDash(e.getKey()), e.getValue());
             }
         });
     }

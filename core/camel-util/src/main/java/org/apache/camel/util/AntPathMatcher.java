@@ -405,7 +405,7 @@ public class AntPathMatcher {
         String[] patternParts = tokenizeToStringArray(pattern, this.pathSeparator);
         String[] pathParts = tokenizeToStringArray(path, this.pathSeparator);
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(path.length());
 
         // Add any path parts that have a wildcarded pattern part.
         int puts = 0;

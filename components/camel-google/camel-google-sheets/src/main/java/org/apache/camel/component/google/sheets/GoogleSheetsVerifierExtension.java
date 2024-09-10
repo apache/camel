@@ -44,9 +44,9 @@ public class GoogleSheetsVerifierExtension extends DefaultComponentVerifierExten
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption("applicationName", parameters))
-                .error(ResultErrorHelper.requiresOption("clientId", parameters))
-                .error(ResultErrorHelper.requiresOption("clientSecret", parameters));
+                .error(ResultErrorHelper.requiresOption(parameters, "applicationName"))
+                .error(ResultErrorHelper.requiresOption(parameters, "clientId"))
+                .error(ResultErrorHelper.requiresOption(parameters, "clientSecret"));
 
         return builder.build();
     }

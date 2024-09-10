@@ -109,8 +109,8 @@ public abstract class AbstractReifier implements BeanRepository {
     }
 
     protected <T> T parse(Class<T> clazz, Object text) {
-        if (text instanceof String) {
-            text = parseString((String) text);
+        if (text instanceof String string) {
+            text = parseString(string);
         }
         return CamelContextHelper.convertTo(camelContext, clazz, text);
     }

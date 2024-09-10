@@ -66,7 +66,7 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
     private static class MyStrategy implements FileMoveExistingStrategy {
 
-        private static final Logger LOG = LoggerFactory.getLogger(FileMoveExistingStrategy.class);
+        private static final Logger LOG = LoggerFactory.getLogger(MyStrategy.class);
         private int counter;
 
         @Override

@@ -29,6 +29,7 @@ import org.apache.camel.v1.integrationspec.traits.Container;
 public class ContainerTrait extends BaseTrait {
 
     public static final int CONTAINER_TRAIT_ORDER = 1600;
+    public static final int DEFAULT_CONTAINER_PORT = 8080;
     public static final String DEFAULT_CONTAINER_PORT_NAME = "http";
 
     public ContainerTrait() {
@@ -56,7 +57,8 @@ public class ContainerTrait extends BaseTrait {
         if (containerTrait.getPort() != null || context.getService().isPresent() || context.getKnativeService().isPresent()) {
             container.addToPorts(new ContainerPortBuilder()
                     .withName(Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
-                    .withContainerPort(Optional.ofNullable(containerTrait.getPort()).map(Long::intValue).orElse(8080))
+                    .withContainerPort(
+                            Optional.ofNullable(containerTrait.getPort()).map(Long::intValue).orElse(DEFAULT_CONTAINER_PORT))
                     .withProtocol("TCP")
                     .build());
         }

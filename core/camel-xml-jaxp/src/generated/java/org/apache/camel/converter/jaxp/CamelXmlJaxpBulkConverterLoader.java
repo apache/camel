@@ -41,7 +41,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
 
     @Override
     public int size() {
-        return 95;
+        return 101;
     }
 
     @Override
@@ -221,6 +221,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof java.io.File) {
                 return getXmlConverter().toDOMSource((java.io.File) value, exchange);
             }
+            if (value instanceof java.nio.file.Path) {
+                return getXmlConverter().toDOMSource((java.nio.file.Path) value, exchange);
+            }
             if (value instanceof javax.xml.transform.stream.StreamSource) {
                 return getXmlConverter().toDOMSourceFromStream((javax.xml.transform.stream.StreamSource) value, exchange);
             }
@@ -245,6 +248,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             }
             if (value instanceof java.io.File) {
                 return getXmlConverter().toSAXSource((java.io.File) value, exchange);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return getXmlConverter().toSAXSource((java.nio.file.Path) value, exchange);
             }
             if (value instanceof javax.xml.transform.stream.StreamSource) {
                 return getXmlConverter().toSAXSourceFromStream((javax.xml.transform.stream.StreamSource) value, exchange);
@@ -271,6 +277,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof java.io.File) {
                 return getXmlConverter().toStAXSource((java.io.File) value, exchange);
             }
+            if (value instanceof java.nio.file.Path) {
+                return getXmlConverter().toStAXSource((java.nio.file.Path) value, exchange);
+            }
         } else if (to == javax.xml.transform.stream.StreamSource.class) {
             if (value instanceof java.lang.String) {
                 return getXmlConverter().toStreamSource((java.lang.String) value);
@@ -283,6 +292,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             }
             if (value instanceof java.io.File) {
                 return getXmlConverter().toStreamSource((java.io.File) value);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return getXmlConverter().toStreamSource((java.nio.file.Path) value);
             }
             if (value instanceof byte[]) {
                 return getXmlConverter().toStreamSource((byte[]) value, exchange);
@@ -345,6 +357,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (value instanceof java.io.File) {
                 return getXmlConverter().toDOMDocument((java.io.File) value, exchange);
             }
+            if (value instanceof java.nio.file.Path) {
+                return getXmlConverter().toDOMDocument((java.nio.file.Path) value, exchange);
+            }
             if (value instanceof javax.xml.transform.Source) {
                 return getXmlConverter().toDOMDocument((javax.xml.transform.Source) value);
             }
@@ -392,6 +407,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             }
             if (value instanceof java.io.File) {
                 return getXmlConverter().toInputSource((java.io.File) value, exchange);
+            }
+            if (value instanceof java.nio.file.Path) {
+                return getXmlConverter().toInputSource((java.nio.file.Path) value, exchange);
             }
         }
         return null;
@@ -444,6 +462,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         registry.addConverter(new TypeConvertible<>(org.apache.camel.StreamCache.class, javax.xml.transform.dom.DOMSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.dom.DOMSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.dom.DOMSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, javax.xml.transform.dom.DOMSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, javax.xml.transform.dom.DOMSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.sax.SAXSource.class, javax.xml.transform.dom.DOMSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.stax.StAXSource.class, javax.xml.transform.dom.DOMSource.class), this);
@@ -452,6 +471,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.sax.SAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.sax.SAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.sax.SAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, javax.xml.transform.sax.SAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.stream.StreamSource.class, javax.xml.transform.sax.SAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.dom.DOMSource.class, javax.xml.transform.sax.SAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.stax.StAXSource.class, javax.xml.transform.sax.SAXSource.class), this);
@@ -460,10 +480,12 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.stax.StAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.stax.StAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.stax.StAXSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, javax.xml.transform.stax.StAXSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, javax.xml.transform.stream.StreamSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, javax.xml.transform.stream.StreamSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.Reader.class, javax.xml.transform.stream.StreamSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, javax.xml.transform.stream.StreamSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, javax.xml.transform.stream.StreamSource.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, javax.xml.transform.stream.StreamSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.nio.ByteBuffer.class, javax.xml.transform.stream.StreamSource.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.sax.SAXSource.class, javax.xml.transform.stream.StreamSource.class), this);
@@ -483,6 +505,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         registry.addConverter(new TypeConvertible<>(org.xml.sax.InputSource.class, org.w3c.dom.Document.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.w3c.dom.Document.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, org.w3c.dom.Document.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, org.w3c.dom.Document.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, org.w3c.dom.Document.class), this);
         registry.addConverter(new TypeConvertible<>(org.w3c.dom.NodeList.class, org.w3c.dom.Document.class), this);
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, org.w3c.dom.Element.class), this);
@@ -493,6 +516,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         registry.addConverter(new TypeConvertible<>(javax.xml.transform.Source.class, org.w3c.dom.Node.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, org.xml.sax.InputSource.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, org.xml.sax.InputSource.class), this);
+        registry.addConverter(new TypeConvertible<>(java.nio.file.Path.class, org.xml.sax.InputSource.class), this);
     }
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {
@@ -650,6 +674,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
             if (from == javax.xml.transform.stream.StreamSource.class) {
                 return this;
             }
@@ -673,6 +700,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
             if (from == java.io.File.class) {
+                return this;
+            }
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
             if (from == javax.xml.transform.stream.StreamSource.class) {
@@ -700,6 +730,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
         } else if (to == javax.xml.transform.stream.StreamSource.class) {
             if (from == java.lang.String.class) {
                 return this;
@@ -711,6 +744,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
             if (from == java.io.File.class) {
+                return this;
+            }
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
             if (from == byte[].class) {
@@ -774,6 +810,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             if (from == java.io.File.class) {
                 return this;
             }
+            if (from == java.nio.file.Path.class) {
+                return this;
+            }
             if (from == javax.xml.transform.Source.class) {
                 return this;
             }
@@ -805,6 +844,9 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
             if (from == java.io.File.class) {
+                return this;
+            }
+            if (from == java.nio.file.Path.class) {
                 return this;
             }
         }

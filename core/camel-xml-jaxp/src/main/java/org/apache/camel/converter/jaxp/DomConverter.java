@@ -54,12 +54,11 @@ public final class DomConverter {
         // sometimes the NodeList is a Node which we can then leverage
         // the XML converter to turn into XML incl. tags
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(128);
 
         // use XML converter at first since it preserves tag names
         boolean found = false;
-        if (nodeList instanceof Node) {
-            Node node = (Node) nodeList;
+        if (nodeList instanceof Node node) {
             String s = toString(node, exchange);
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(s)) {
                 found = true;
@@ -90,15 +89,13 @@ public final class DomConverter {
     @Converter(order = 2)
     public String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
-        if (node instanceof Text) {
-            Text textnode = (Text) node;
-
-            StringBuilder b = new StringBuilder();
-            b.append(textnode.getNodeValue());
-            textnode = (Text) textnode.getNextSibling();
-            while (textnode != null) {
-                b.append(textnode.getNodeValue());
-                textnode = (Text) textnode.getNextSibling();
+        if (node instanceof Text textNode) {
+            StringBuilder b = new StringBuilder(128);
+            b.append(textNode.getNodeValue());
+            textNode = (Text) textNode.getNextSibling();
+            while (textNode != null) {
+                b.append(textNode.getNodeValue());
+                textNode = (Text) textNode.getNextSibling();
             }
             s = b.toString();
         } else {
@@ -109,7 +106,7 @@ public final class DomConverter {
 
     @Converter(order = 3)
     public static Integer toInteger(NodeList nodeList) {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(128);
         append(buffer, nodeList);
         String s = buffer.toString();
         return Integer.valueOf(s);
@@ -117,7 +114,7 @@ public final class DomConverter {
 
     @Converter(order = 4)
     public static Long toLong(NodeList nodeList) {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(128);
         append(buffer, nodeList);
         String s = buffer.toString();
         return Long.valueOf(s);
@@ -153,14 +150,11 @@ public final class DomConverter {
     }
 
     private static void append(StringBuilder buffer, Node node) {
-        if (node instanceof Text) {
-            Text text = (Text) node;
+        if (node instanceof Text text) {
             buffer.append(text.getTextContent());
-        } else if (node instanceof Attr) {
-            Attr attribute = (Attr) node;
+        } else if (node instanceof Attr attribute) {
             buffer.append(attribute.getTextContent());
-        } else if (node instanceof Element) {
-            Element element = (Element) node;
+        } else if (node instanceof Element element) {
             append(buffer, element.getChildNodes());
         }
     }

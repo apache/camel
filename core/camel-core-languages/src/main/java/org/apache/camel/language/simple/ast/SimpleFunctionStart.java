@@ -79,20 +79,20 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(256);
                 boolean quoteEmbeddedFunctions = false;
 
                 // we need to concat the block so we have the expression
                 for (SimpleNode child : block.getChildren()) {
                     // whether a nested function should be lazy evaluated or not
                     boolean lazy = true;
-                    if (child instanceof SimpleFunctionStart) {
-                        lazy = ((SimpleFunctionStart) child).lazyEval(child);
+                    if (child instanceof SimpleFunctionStart simpleFunctionStart) {
+                        lazy = simpleFunctionStart.lazyEval(child);
                     }
-                    if (child instanceof LiteralNode) {
-                        String text = ((LiteralNode) child).getText();
+                    if (child instanceof LiteralNode literal) {
+                        String text = literal.getText();
                         sb.append(text);
-                        quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
+                        quoteEmbeddedFunctions |= literal.quoteEmbeddedNodes();
                         // if its quoted literal then embed that as text
                     } else if (!lazy || child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                         try {
@@ -151,7 +151,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     @Override
     public String createCode(String expression) throws SimpleParserException {
         String answer;
-        // a function can either be a simple literal function, or contain nested functions
+        // a function can either be a simple literal function or contain nested functions
         if (block.getChildren().size() == 1 && block.getChildren().get(0) instanceof LiteralNode) {
             answer = doCreateLiteralCode(expression);
         } else {
@@ -168,15 +168,15 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private String doCreateCompositeCode(String expression) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         boolean quoteEmbeddedFunctions = false;
 
         // we need to concat the block, so we have the expression
         for (SimpleNode child : block.getChildren()) {
-            if (child instanceof LiteralNode) {
-                String text = ((LiteralNode) child).getText();
+            if (child instanceof LiteralNode literal) {
+                String text = literal.getText();
                 sb.append(text);
-                quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
+                quoteEmbeddedFunctions |= literal.quoteEmbeddedNodes();
                 // if its quoted literal then embed that as text
             } else if (child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                 try {

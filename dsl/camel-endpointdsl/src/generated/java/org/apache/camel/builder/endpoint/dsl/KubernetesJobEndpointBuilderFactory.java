@@ -572,6 +572,18 @@ public interface KubernetesJobEndpointBuilderFactory {
         public String kubernetesJobLabels() {
             return "CamelKubernetesJobLabels";
         }
+        /**
+         * The Job annotations.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesJobAnnotations}.
+         */
+        public String kubernetesJobAnnotations() {
+            return "CamelKubernetesJobAnnotations";
+        }
     }
     static KubernetesJobEndpointBuilder endpointBuilder(String componentName, String path) {
         class KubernetesJobEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesJobEndpointBuilder, AdvancedKubernetesJobEndpointBuilder {

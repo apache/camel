@@ -137,20 +137,14 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
             return;
         }
 
-        // is current dir blueprint
-        boolean blueprint = targetDir != null && targetDir.contains("camel-blueprint");
-
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreXmlDir, "camelCoreXmlDir");
         validateIsDirectory(camelCoreModelDir, "camelCoreModelDir");
         validateIsDirectory(camelCoreXmlDir, "camelCoreXmlDir");
-        if (blueprint) {
-            validateExists(camelSpringDir, "camelSpringDir");
-            validateIsDirectory(camelSpringDir, "camelSpringDir");
-        }
+
         try {
-            runPlugin(blueprint);
+            runPlugin();
         } catch (Exception e) {
             throw new MojoExecutionException("Error during plugin execution", e);
         }
@@ -159,7 +153,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         }
     }
 
-    private void runPlugin(boolean blueprint) throws Exception {
+    private void runPlugin() throws Exception {
         Document document = XmlHelper.buildNamespaceAwareDocument(inputCamelSchemaFile);
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         DomFinder domFinder = new DomFinder(document, xPath);
@@ -167,15 +161,17 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
 
         // include schema files from camel-core-model, camel-core-xml and from camel-spring
         Set<File> files = new HashSet<>();
-        PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files);
-        PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
-        // spring/blueprint should not include SpringErrorHandlerDefinition (duplicates a file from camel-core-model)
+
+        // Do not include the model/app/bean.json file for enhancement (there are two bean.json)
+        Predicate<File> beanFilter = f -> !(f.getName().equals("bean.json") && f.getParentFile().getName().equals("app"));
+        PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files, beanFilter);
+        PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files, beanFilter);
+
+        // spring should not include SpringErrorHandlerDefinition (duplicates a file from camel-core-model)
         Predicate<File> filter = f -> !f.getName().equals("errorHandler.json");
-        if (blueprint) {
-            PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files, filter);
-        } else {
-            PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files, filter);
-        }
+
+        PackageHelper.findJsonFiles(new File(targetDir, pathToSpringModelDir), files, filter);
+
         Map<String, File> jsonFiles = new HashMap<>();
         files.forEach(f -> jsonFiles.put(PackageHelper.asName(f.toPath()), f));
 

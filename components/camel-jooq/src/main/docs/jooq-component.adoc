@@ -16,42 +16,6 @@
 
 The JOOQ component enables you to store and retrieve Java objects from persistent storage using JOOQ library.
 
-JOOQ provides DSL to create queries.
-There are two types of queries:
-
-. org.jooq.Query - can be executed
-. org.jooq.ResultQuery - can return results
-
-For example:
-[source,java]
-----
-// Create a Query object and execute it:
-Query query = create.query("DELETE FROM BOOK");
-query.execute();
-
-// Create a ResultQuery object and execute it, fetching results:
-ResultQuery<Record> resultQuery = create.resultQuery("SELECT * FROM BOOK");
-Result<Record> result = resultQuery.fetch();
-----
-
-== Plain SQL
-SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
-Also, the SQL query could be specified inside URI:
-
-[source,java]
-----
-from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
-----
-
-See the examples below.
-
-== Consuming from endpoint
-
-Consuming messages from a JOOQ consumer endpoint removes (or updates) entity beans in the database.
-This allows you to use a database table as a logical queue: consumers take messages from the queue and then delete/update them to logically remove them from the queue.
-If you do not wish to delete the entity bean when it has been processed, you can specify consumeDelete=false on the URI.
-
-
 // component-configure options: START
 
 // component-configure options: END
@@ -65,6 +29,42 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+== Usage
+
+JOOQ provides DSL to create queries.
+There are two types of queries:
+
+. `org.jooq.Query`: can be executed
+. `org.jooq.ResultQuery`: can return results
+
+For example:
+[source,java]
+----
+// Create a Query object and execute it:
+Query query = create.query("DELETE FROM BOOK");
+query.execute();
+
+// Create a ResultQuery object and execute it, fetching results:
+ResultQuery<Record> resultQuery = create.resultQuery("SELECT * FROM BOOK");
+Result<Record> result = resultQuery.fetch();
+----
+
+=== Plain SQL
+SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
+Also, the SQL query could be specified inside URI:
+
+[source,java]
+----
+from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
+----
+
+See the examples below.
+
+=== Consuming from endpoint
+
+Consuming messages from a JOOQ consumer endpoint removes (or updates) entity beans in the database.
+This allows you to use a database table as a logical queue: consumers take messages from the queue and then delete/update them to logically remove them from the queue.
+If you do not wish to delete the entity bean when it has been processed, you can specify consumeDelete=false on the URI.
 
 === Operations
 
@@ -78,9 +78,9 @@ When using jooq as a producer you can use any of the following `JooqOperation` o
 | fetch | Execute a query and the result of the query is stored as the new message body
 |===
 
-=== Example:
-JOOQ configuration:
+==  Example
 
+.JOOQ configuration:
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -124,7 +124,7 @@ JOOQ configuration:
 </beans>
 ----
 
-Camel context configuration:
+.Camel context configuration:
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -206,7 +206,7 @@ Camel context configuration:
 </beans>
 ----
 
-Sample bean:
+.Sample bean:
 [source,java]
 ----
 @Component

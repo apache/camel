@@ -232,13 +232,13 @@ The error handler can be configured as a spring bean and scoped in:
 The error handler is configured with the `errorHandlerRef` attribute.
 
 TIP: *Error Handler Hierarchy* +
-The error handlers is inherited, so if you only have set a global error
-handler then its use everywhere. But you can override this in a route
+The error handlers are inherited, so if you only have set a global error
+handler, then it is used everywhere. But you can override this in a route
 and use another error handler.
 
-=== Spring based configuration sample
+=== Spring-based configuration sample
 
-In this sample we configure a xref:components:eips:dead-letter-channel.adoc[Dead Letter
+In this sample, we configure a xref:components:eips:dead-letter-channel.adoc[Dead Letter
 Channel] on the route that should redeliver at most 3 times and use a
 little delay before retrying. First we configure the reference to *myDeadLetterErrorHandler* using
 the `errorHandlerRef` attribute on the `route` tag.

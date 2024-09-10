@@ -21,6 +21,8 @@ import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -54,7 +56,7 @@ public class AS2AsyncMDNServerConnection {
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2AsyncMdnHdlr-";
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
     private RequestListenerThread listenerThread;
-    private final Object lock = new Object();
+    private final Lock lock = new ReentrantLock();
 
     public AS2AsyncMDNServerConnection(Integer portNumber, SSLContext sslContext)
                                                                                   throws IOException {
@@ -66,7 +68,8 @@ public class AS2AsyncMDNServerConnection {
 
     public void close() {
         if (listenerThread != null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 try {
                     listenerThread.serverSocket.close();
                 } catch (IOException e) {
@@ -74,14 +77,19 @@ public class AS2AsyncMDNServerConnection {
                 } finally {
                     listenerThread = null;
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
 
     public void receive(String requestUriPattern, HttpRequestHandler handler) {
         if (listenerThread != null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 listenerThread.registerHandler(requestUriPattern, handler);
+            } finally {
+                lock.unlock();
             }
         }
     }

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-soap</artifactId>
@@ -47,11 +47,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl-version}</version>
-        </dependency>
-        <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
             <version>${jakarta-xml-ws-api-version}</version>
@@ -71,13 +66,6 @@
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
             <version>3.0.4</version>
-            <exclusions>
-                <exclusion>
-                   <!--Get dependency from jaxb-runtime-->
-                   <groupId>org.jvnet.staxex</groupId>
-                   <artifactId>stax-ex</artifactId>
-                 </exclusion>
-            </exclusions>
          </dependency>
 
         <!-- test dependencies -->
@@ -112,15 +100,6 @@
             <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- needed by jetty http server to load class: org.jvnet.staxex.util.XMLStreamReaderToXMLStreamWriter -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-osgi</artifactId>
-            <version>${jaxb-osgi-version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

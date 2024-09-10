@@ -37,7 +37,9 @@ public class PredicateValidationException extends ValidationException {
     }
 
     protected static String buildMessage(Predicate predicate, Exchange exchange) {
-        StringBuilder builder = new StringBuilder("Validation failed for Predicate[");
+        StringBuilder builder = new StringBuilder(256);
+
+        builder.append("Validation failed for Predicate[");
         builder.append(predicate.toString());
         builder.append("]");
         return builder.toString();

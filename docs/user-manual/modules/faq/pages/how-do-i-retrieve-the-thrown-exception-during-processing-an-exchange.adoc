@@ -3,14 +3,14 @@
 You have send an Exchange to Camel but it fails during processing caused
 by a thrown Exception. How do I retrieve this Exception?
 
-If you are using CamelTemplate (or CamelProducer), then its common to
+If you are using CamelTemplate (or CamelProducer), then it is common to
 use the sendBody/requestBody methods that returns the exchange body
 response *only*. So if there was a thrown exception during processing
 Camel is not rethrowing this Exception. To remedy this you can use the
 plain send/request methods that accepts an Exchange object and returns
 an Exchange object.
 
-From the returned Exchange you can test if its failed and get the caused
+From the returned Exchange you can test if it has failed and get the caused
 exception. This is illustrated in the code sample:
 
 [source,java]

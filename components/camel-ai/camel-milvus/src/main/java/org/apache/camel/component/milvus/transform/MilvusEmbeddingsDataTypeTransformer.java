@@ -24,12 +24,15 @@ import java.util.List;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import io.milvus.param.dml.InsertParam;
+import io.milvus.param.dml.UpsertParam;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.milvus.Milvus;
+import org.apache.camel.component.milvus.MilvusAction;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Maps a LangChain4j Embeddings to a Milvus InsertParam/Upsert Param to write an embeddings vector on a Milvus
@@ -45,12 +48,33 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
         String textFieldName = message.getHeader(Milvus.Headers.TEXT_FIELD_NAME, () -> "text", String.class);
         String vectorFieldName = message.getHeader(Milvus.Headers.VECTOR_FIELD_NAME, () -> "vector", String.class);
         String collectionName = message.getHeader(Milvus.Headers.COLLECTION_NAME, () -> "embeddings", String.class);
+        String keyName = message.getHeader(Milvus.Headers.KEY_NAME, () -> "id", String.class);
+        Object keyValue = message.getHeader(Milvus.Headers.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
+        final MilvusAction action = message.getHeader(Milvus.Headers.ACTION, MilvusAction.class);
+        switch (action) {
+            case INSERT -> insertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
+                    keyValue, keyName);
+            case UPSERT -> upsertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
+                    keyValue, keyName);
+            default -> throw new IllegalStateException("The only operations supported are insert and upsert");
+        }
+    }
+
+    private static void insertEmbeddingOperation(
+            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
+            String collectionName, Object keyValue, String keyName) {
         List<InsertParam.Field> fields = new ArrayList<>();
         ArrayList list = new ArrayList<>();
         list.add(embedding.vectorAsList());
         fields.add(new InsertParam.Field(vectorFieldName, list));
         fields.add(new InsertParam.Field(textFieldName, Collections.singletonList(text.text())));
+
+        if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
+            ArrayList keyValues = new ArrayList<>();
+            keyValues.add(keyValue);
+            fields.add(new InsertParam.Field(keyName, keyValues));
+        }
 
         InsertParam insertParam = InsertParam.newBuilder()
                 .withCollectionName(collectionName)
@@ -58,5 +82,27 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
                 .build();
 
         message.setBody(insertParam);
+    }
+
+    private static void upsertEmbeddingOperation(
+            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
+            String collectionName, Object keyValue, String keyName) {
+        List<InsertParam.Field> fields = new ArrayList<>();
+        ArrayList list = new ArrayList<>();
+        list.add(embedding.vectorAsList());
+        fields.add(new UpsertParam.Field(vectorFieldName, list));
+        fields.add(new UpsertParam.Field(textFieldName, Collections.singletonList(text.text())));
+        if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
+            ArrayList keyValues = new ArrayList<>();
+            keyValues.add(keyValue);
+            fields.add(new UpsertParam.Field(keyName, keyValues));
+        }
+
+        UpsertParam upsertParam = UpsertParam.newBuilder()
+                .withCollectionName(collectionName)
+                .withFields(fields)
+                .build();
+
+        message.setBody(upsertParam);
     }
 }

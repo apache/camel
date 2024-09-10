@@ -16,6 +16,8 @@
  */
 package org.apache.camel.openapi;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,9 +29,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderModelTest extends CamelTestSupport {
 
@@ -62,7 +64,9 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
 
                         .get("/findAll").description("Find all users").outType(User[].class).responseMessage()
                         .message("All the found users").endResponseMessage()
-                        .to("bean:userService?method=listUsers");
+                        .to("bean:userService?method=listUsers")
+
+                        .post().description("Update all users").type(User[].class).to("bean:userService?method=updateAllUsers");
             }
         };
     }
@@ -87,19 +91,40 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         log.info(json);
 
+        DocumentContext doc = JsonPath.parse(json);
+
+        assertEquals("http://localhost:8080/api", doc.read("$.servers[0].url"));
+        assertEquals("User rest service", doc.read("$.tags[0].description"));
+        assertEquals("#/components/schemas/User",
+                doc.read("$.paths['/user'].put.requestBody.content['application/json'].schema['$ref']"));
+        assertEquals("org.apache.camel.openapi.User", doc.read("$.components.schemas.User['x-className'].format"));
+
+        assertEquals("string", doc.read("$.paths['/user/{id}/{date}'].get.parameters[1].schema.type"));
+        assertEquals("date", doc.read("$.paths['/user/{id}/{date}'].get.parameters[1].schema.format"));
+
+        assertEquals(44, doc.read("$.components.schemas.User.properties.age.example", Integer.class));
+
+        // Ensure valid schema for array request body and response body CAMEL-21076
+        assertEquals("array", doc.read("$.paths['/user'].post.requestBody.content['application/json'].schema.type"));
+        assertEquals("#/components/schemas/User",
+                doc.read("$.paths['/user'].post.requestBody.content['application/json'].schema.items['$ref']"));
+
+        assertEquals("array",
+                doc.read("$.paths['/user/findAll'].get.responses['200'].content['application/json'].schema.type"));
+        assertEquals("#/components/schemas/User",
+                doc.read("$.paths['/user/findAll'].get.responses['200'].content['application/json'].schema.items['$ref']"));
+
         if (config.isOpenApi30()) {
             // nullable is only supported in OpenAPI 3.0
-            assertTrue(json.contains("\"nullable\" : true"));
+            assertEquals(true, doc.read("$.components.schemas.User.properties.age.nullable", Boolean.class));
         }
-        assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));
-        assertTrue(json.contains("\"description\" : \"The user returned\""));
-        assertTrue(json.contains("\"$ref\" : \"#/components/schemas/User\""));
+
+        // Ensure valid array output ref CAMEL-19818
         assertFalse(json.contains("\"$ref\" : \"#/components/schemas/org.apache.camel.openapi.User\""));
-        assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
-        assertTrue(json.contains("\"type\" : \"string\""));
-        assertTrue(json.contains("\"format\" : \"date\""));
-        assertTrue(json.contains("\"example\" : 44"));
+
+        // do not populate enum when no allowable values are set
         assertFalse(json.contains("\"enum\""));
+
         context.stop();
     }
 }

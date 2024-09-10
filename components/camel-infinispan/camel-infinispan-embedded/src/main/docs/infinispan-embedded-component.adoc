@@ -69,8 +69,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Usage
 
-== Camel Operations
+=== Camel Operations
 This section lists all available operations, along with their header information.
 
 .Put Operations
@@ -241,13 +242,13 @@ from("direct:start")
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
     .setHeader(InfinispanConstants.KEY).constant("123")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L) // <1>
-    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT.constant(TimeUnit.MILLISECONDS.toString()) // <2>
+    .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.MILLISECONDS.toString()) // <2>
     .to("infinispan:myCacheName");
 ----
 <1> Set the lifespan of the entry
@@ -255,7 +256,7 @@ from("direct:start")
 
 * Queries
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION, InfinispanConstants.QUERY)
@@ -271,7 +272,7 @@ from("direct:start")
 
 * Custom Listeners
 +
-[source,java,options="nowrap"]
+[source,java]
 ----
 from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListener")
   .to("mock:result");
@@ -281,7 +282,7 @@ The instance of `myCustomListener` must exist and Camel should be able to look i
 Users are encouraged to extend the `org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomListener` class and annotate the resulting class with `@Listener` which can be found in the package `org.infinispan.notifications`.
 
 
-== Using the Infinispan based idempotent repository
+=== Using the Infinispan based idempotent repository
 
 In this section, we will use the Infinispan based idempotent repository.
 
@@ -342,7 +343,7 @@ XML::
 
 ====
 
-== Using the Infinispan based aggregation repository
+=== Using the Infinispan based aggregation repository
 
 In this section, we will use the Infinispan based aggregation repository.
 
@@ -354,7 +355,7 @@ Java::
 [source,java]
 ----
 InfinispanEmbeddedConfiguration conf = new InfinispanEmbeddedConfiguration(); // <1>
-conf.setConfigurationUri("classpath:infinispan.xml")
+conf.setConfigurationUri("classpath:infinispan.xml");
 
 InfinispanEmbeddedAggregationRepository repo = new InfinispanEmbeddedAggregationRepository("aggregation");  // <2>
 repo.setConfiguration(conf);

@@ -41,18 +41,18 @@ The pattern option is used for matching. It uses the same rules as xref:componen
 * match by wildcard (`*`)
 * match by regular expression
 
-For example to match exact you can use `weaveById("foo")` which will match only the id in the route which has the value foo.
+For example, to match exact, you can use `weaveById("foo")` which will match only the id in the route which has the value foo.
 The wildcard is when the pattern ends with a `\*` character, such as: `weaveById("foo*")` which will match any id's starting with foo, such as: foo, foobar, foobie and so forth.
 The regular expression is more advanced and allows you to match multiple ids, such as `weaveById("(foo|bar)")` which will match both foo and bar.
 
 If you try to match a pattern on an exact endpoint URI, then mind that URI options ordering may influence, and hence it's best to match by wildcard.
 
-For example using `mockEndpointsAndSkip("activemq:queue:foo?*")` To match the foo queue and disregard any options.
+For example, using `mockEndpointsAndSkip("activemq:queue:foo?*")` To match the foo queue and disregard any options.
 
 == Using AdviceWith
 
 To _advice_ you need to use the `AdviceWithRouteBuilder` for manipulating the route.
-But first you need to select which route to manipulate which you can do by the route ID or the route index.
+But first, you need to select which route to manipulate which you can do by the route ID or the route index.
 
 [source,java]
 ----
@@ -66,7 +66,7 @@ AdviceWith.adviceWith(context, "myRoute", new AdviceWithRouteBuilder() {
 
 We introduce a more modern API for _advicing_ routes using Java lambda style.
 
-Below we are _advicing_ the route with ID myRoute:
+Below, we are _advicing_ the route with ID myRoute:
 
 [source,java]
 ----
@@ -95,11 +95,11 @@ quickly: a route is started and then is immediately stopped and removed. This is
 an undesired behavior; you want to avoid restarts of the _adviced_ routes.
 This is solved by following the following steps:
 
-1. Tell Camel that routes are being _adviced_, which will prevent Camel from automatic starting routes.
+1. Tell Camel that routes are being _adviced_, which will prevent Apache Camel from automatic starting routes.
 2. Advice the routes in your unit test methods
 3. Start Camel after you have _adviced_ the routes
 
-When using xref:components:others:test-junit5.adoc[camel-test-junit5] for unit testing then you can tell Camel that advice is in use by either
+When using xref:components:others:test-junit5.adoc[camel-test-junit5] for unit testing, then you can tell Camel that advice is in use by either
 overriding the `isUsedAdviceWith` method from `CamelTestSupport` as shown:
 
 [source,java]
@@ -134,7 +134,7 @@ public void testMockEndpoints() throws Exception {
     context.start();
 ----
 
-In the unit test method above, we first advice the route by ID, where we auto mock all the endpoints.
+In the unit test method above, we first advise the route by ID, where we auto mock all the endpoints.
 After that we start Camel.
 
 === Logging before and after advicing routes
@@ -186,12 +186,12 @@ public void testReplaceFrom() throws Exception {
 ----
 
 This replaces the input endpoint (from) in the route with ID myRoute, with a direct endpoint, which makes it
-easy to send message to the route when unit testing.
+easy to send a message to the route when unit testing.
 
 === Mocking endpoints
 
 When using the `mockEndpoints` methods when _advicing_ routes, then Camel will log during startup
-which endpoints has been _adviced_ and their corresponding mock uri, such as:
+which endpoints have been _adviced_ and their corresponding mock uri, such as:
 
 [source,log]
 ----
@@ -204,7 +204,7 @@ Here Camel have _adviced_ two endpoints:
 - seda:camel --> mock:seda:camel
 - seda:other --> mock:seda:other
 
-This allows to use the mock endpoints in your unit tests for testing, such as:
+This allows using the mock endpoints in your unit tests for testing, such as:
 
 [source,java]
 ----
@@ -240,7 +240,7 @@ The following methods are available for the `weave` methods:
 | after | After the selected node(s), the following nodes is added.
 |=======================================================================
 
-For example given the following route:
+For example, given the following route:
 
 [source,java]
 ----
@@ -397,12 +397,12 @@ the selection to a specific node. This can be done by using the select methods:
 
 - `selectFirst` Selects only the first node.
 - `selectLast` Selects only the last node.
-- `selectIndex(index)` Selects only the nth node. The index is zero based.
-- `selectRange(from, to)` Selects the nodes within the given range. The index is zero based.
+- `selectIndex(index)` Selects only the nth node. The index is zero-based.
+- `selectRange(from, to)` Selects the nodes within the given range. The index is zero-based.
 - `maxDeep(level)` Limits the selection to at most N levels deep in the Camel route tree. The first level is number 1. So number 2 is the children of the first-level nodes.
 
 Given the following route which has multiple xref:components:eips:filter-eip.adoc[Filter] EIP,
-then we want to only advice the 2nd filter.
+then we want to only advise the second filter.
 
 [source,java]
 ----
@@ -421,7 +421,7 @@ from("file:inbox").routeId("inbox")
     .to("mock:c")
 ----
 
-You can then use `weaveByType` to match the Filter EIPs and selectIndex to match the 2nd found:
+You can then use `weaveByType` to match the Filter EIPs and selectIndex to match the second found:
 
 [source,java]
 ----

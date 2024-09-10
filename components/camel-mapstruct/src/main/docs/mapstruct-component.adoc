@@ -40,10 +40,12 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Setting up MapStruct
+== Usage
+
+=== Setting up MapStruct
 
 The camel-mapstruct component must be configured with one or more package names for classpath scanning MapStruct _Mapper_ classes.
-This is needed because the _Mapper_ classes are to be used for converting POJOs with MapStruct.
+This is necessary because the _Mapper_ classes are to be used for converting POJOs with MapStruct.
 
 For example, to set up two packages, you can do the following:
 

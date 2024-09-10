@@ -86,8 +86,8 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
 
     private static Arguments toArguments(Object item) {
         // Nothing to do except cast.
-        if (item instanceof Arguments) {
-            return (Arguments) item;
+        if (item instanceof Arguments arguments) {
+            return arguments;
         }
         // Pass all multidimensional arrays "as is", in contrast to Object[].
         // See https://github.com/junit-team/junit5/issues/1665

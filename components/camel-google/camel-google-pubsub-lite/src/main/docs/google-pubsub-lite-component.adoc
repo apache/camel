@@ -66,27 +66,31 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Producer Endpoints
+== Usage
 
-Google PubSub Lite expects the payload to be byte[] array, Producer endpoints will send:
+=== Producer Endpoints
 
-* String body as byte[] encoded as UTF-8
-* byte[] body as is
-* Everything else will be serialised into byte[] array
+Google PubSub Lite expects the payload to be `byte[]` array, Producer endpoints will send:
+
+* String body as `byte[]` encoded as UTF-8
+* `byte[]` body as is
+* Everything else will be serialised into a `byte[]` array
 
 A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as PubSub attributes.
 
-When producing messages set the message header `GooglePubsubConstants.ORDERING_KEY` . This will be set as the PubSub Lite orderingKey for the message. More information in https://cloud.google.com/pubsub/lite/docs/publishing#using_ordering_keys[Using ordering keys].
+When producing messages set the message header `GooglePubsubConstants.ORDERING_KEY`.
+This will be set as the PubSub Lite orderingKey for the message.
+You can find more information on https://cloud.google.com/pubsub/lite/docs/publishing#using_ordering_keys[Using ordering keys].
 
-== Consumer Endpoints
+=== Consumer Endpoints
 
 Google PubSub Lite will redeliver the message if it has not been acknowledged within the time period set as a configuration option on the subscription.
 
 The component will acknowledge the message once exchange processing has been completed.
 
-== Message Body
+=== Message Body
 
-The consumer endpoint returns the content of the message as byte[] - exactly as the underlying system sends it.
+The consumer endpoint returns the content of the message as `byte[]` - exactly as the underlying system sends it.
 It is up for the route to convert/unmarshall the contents.
 
 == Examples

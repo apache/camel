@@ -32,8 +32,7 @@ public class MyBean {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof MyBean) {
-            MyBean that = (MyBean) o;
+        if (o instanceof MyBean that) {
             return ObjectHelper.equal(this.a, that.a) && ObjectHelper.equal(this.b, that.b);
         }
         return false;

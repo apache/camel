@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "bean",
           description = "Aggregation repository that uses Hazelcast Cache to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class HazelcastAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository,

@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels properties
- * component. This allows to use configuration management from MicroProfile with Camel.
+ * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with the Properties Component.
+ * This allows using configuration management from MicroProfile with Camel.
  */
 @JdkService("properties-source-factory")
 public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {

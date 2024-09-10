@@ -38,7 +38,7 @@ The method `getProperties()` now only returns user properties. To include intern
 then use `getAllProperties()`.
 
 The other APIs such as `getProperty(String)` works the same way as before, being able to lookup a property
-regardless if its internal or custom.
+regardless if it is internal or custom.
 
 The internal properties is a fixed set of known keys defined in the `ExchangePropertyKey` enum class.
 These keys are used in camel-core such as the routing engine, EIPs and others that needs to store internal

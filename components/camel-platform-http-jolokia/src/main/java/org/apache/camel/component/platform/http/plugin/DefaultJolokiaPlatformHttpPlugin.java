@@ -215,6 +215,17 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
                     }
                 }
 
+                // convert data to string
+                if (json != null) {
+                    try {
+                        Method m = ReflectionHelper.findMethod(json.getClass(), "toJSONString");
+                        if (m != null) {
+                            json = ObjectHelper.invokeMethodSafe(m, json);
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
                 String data = json != null ? json.toString() : "";
 
                 routingContext.response()

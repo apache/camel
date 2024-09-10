@@ -69,8 +69,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
             public boolean isEnabled(CamelEvent event) {
                 // we only want the async endpoint
-                if (event instanceof ExchangeSentEvent) {
-                    ExchangeSentEvent sent = (ExchangeSentEvent) event;
+                if (event instanceof ExchangeSentEvent sent) {
                     return sent.getEndpoint().getEndpointUri().startsWith("async");
                 }
                 return false;

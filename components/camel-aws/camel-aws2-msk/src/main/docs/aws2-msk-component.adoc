@@ -54,6 +54,10 @@ You have to provide the amazonMskClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/msk/[Amazon MSK] service.
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Usage
 
 === Static credentials vs Default Credential Provider
@@ -68,10 +72,6 @@ You have the possibility of avoiding the usage of explicit static credentials by
  - Amazon EC2 Instance profile credentials. 
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === MSK Producer operations
 
@@ -137,7 +137,7 @@ from("direct:createCluster")
     .to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")
 --------------------------------------------------------------------------------
 
-== Using a POJO as body
+=== Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as the body.
 In AWS MSK, there are multiple operations you can submit, as an example for List clusters request, you can do something like:

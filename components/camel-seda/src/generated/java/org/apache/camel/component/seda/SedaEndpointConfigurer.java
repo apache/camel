@@ -27,6 +27,8 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blockWhenFull": target.setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": target.setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "discardifnoconsumers":
@@ -67,6 +69,8 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blockWhenFull": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
         case "discardifnoconsumers":
@@ -108,6 +112,8 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "blockWhenFull": return target.isBlockWhenFull();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "browselimit":
+        case "browseLimit": return target.getBrowseLimit();
         case "concurrentconsumers":
         case "concurrentConsumers": return target.getConcurrentConsumers();
         case "discardifnoconsumers":

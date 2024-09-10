@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.Exchange;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.apache.camel.util.IOHelper;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -42,7 +46,6 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
     @Override
     public void cleanupResources() throws Exception {
-
         if (localServer != null) {
             localServer.stop();
         }
@@ -50,15 +53,30 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
     @Test
     public void httpDisableStreamCache() {
-        Exchange exchange = template.request("http://localhost:"
-                                             + localServer.getLocalPort() + "/test/?disableStreamCache=true",
-                exchange1 -> {
-                });
-
-        byte[] arr = assertIsInstanceOf(byte[].class, exchange.getMessage().getBody());
-        assertNotNull(arr);
-
-        assertEquals("camel rocks!", context.getTypeConverter().convertTo(String.class, arr));
+        Object out = template.requestBody("direct:start", (String) null);
+        assertEquals("camel rocks!", context.getTypeConverter().convertTo(String.class, out));
     }
 
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").streamCache("false")
+                        .to("http://localhost:" + localServer.getLocalPort() + "/test/?disableStreamCache=true")
+                        .process(e -> {
+                            InputStream is = (InputStream) e.getMessage().getBody();
+                            assertNotNull(is);
+
+                            // we can only read the raw http stream once
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            IOHelper.copy(is, bos);
+
+                            e.setVariable("newBody", bos.toString());
+                        })
+                        .setBody().variable("newBody");
+
+            }
+        };
+    }
 }

@@ -167,8 +167,8 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
         // ensure transformer is started before its being used
         ServiceHelper.startService(obj);
 
-        if (obj instanceof TransformerLoader) {
-            ((TransformerLoader) obj).load(this);
+        if (obj instanceof TransformerLoader transformerLoader) {
+            transformerLoader.load(this);
             return obj;
         } else {
             if (LOG.isDebugEnabled()) {

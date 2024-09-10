@@ -137,7 +137,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         script = evalDependencyInjection(camelContext, scriptImports, scriptBeans, script);
 
         //  wrap text into a class method we can call
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(4096);
         sb.append("package ").append(qn).append(";\n");
         sb.append("\n");
         sb.append("import java.util.*;\n");

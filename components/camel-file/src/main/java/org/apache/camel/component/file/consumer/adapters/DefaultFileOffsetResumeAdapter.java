@@ -46,10 +46,10 @@ class DefaultFileOffsetResumeAdapter extends AbstractFileResumeAdapter implement
     }
 
     public boolean add(Object key, Object offset) {
-        if (offset instanceof Long) {
+        if (offset instanceof Long longOffset) {
             FileOffset fileOffset = (FileOffset) cache.computeIfAbsent((File) key, k -> new FileOffset());
 
-            fileOffset.update((Long) offset);
+            fileOffset.update(longOffset);
         } else {
             throw new UnsupportedOperationException("This adapter cannot be used for directory entries");
         }
@@ -74,8 +74,8 @@ class DefaultFileOffsetResumeAdapter extends AbstractFileResumeAdapter implement
             return;
         }
 
-        if (offsetObj instanceof Long) {
-            genericFile.updateLastOffsetValue((Long) offsetObj);
+        if (offsetObj instanceof Long longOffsetObj) {
+            genericFile.updateLastOffsetValue(longOffsetObj);
         } else {
             // This should never happen
             LOG.warn("Cannot perform a resume operation of an object of unhandled type: {}", offsetObj.getClass());

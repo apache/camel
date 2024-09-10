@@ -71,11 +71,11 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
     }
 
     /**
-     * To enable using supervising route controller which allows Camel to startup and then the controller takes care of
-     * starting the routes in a safe manner.
+     * To enable using supervising route controller which allows Camel to start up and then, the controller takes care
+     * of starting the routes in a safe manner.
      *
-     * This can be used when you want to startup Camel despite a route may otherwise fail fast during startup and cause
-     * Camel to fail to startup as well. By delegating the route startup to the supervising route controller then its
+     * This can be used when you want to start up Camel despite a route may otherwise fail fast during startup and cause
+     * Camel to fail to start up as well. By delegating the route startup to the supervising route controller, then it
      * manages the startup using a background thread. The controller allows to be configured with various settings to
      * attempt to restart failing routes.
      */
@@ -229,11 +229,11 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
     }
 
     /**
-     * To enable using supervising route controller which allows Camel to startup and then the controller takes care of
-     * starting the routes in a safe manner.
+     * To enable using supervising route controller which allows Camel to start up and then, the controller takes care
+     * of starting the routes in a safe manner.
      *
-     * This can be used when you want to startup Camel despite a route may otherwise fail fast during startup and cause
-     * Camel to fail to startup as well. By delegating the route startup to the supervising route controller then its
+     * This can be used when you want to start up Camel despite a route may otherwise fail fast during startup and cause
+     * Camel to fail to start up as well. By delegating the route startup to the supervising route controller, then it
      * manages the startup using a background thread. The controller allows to be configured with various settings to
      * attempt to restart failing routes.
      */
@@ -243,7 +243,7 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
     }
 
     /**
-     * Initial delay in milli seconds before the route controller starts, after CamelContext has been started.
+     * Initial delay in milliseconds before the route controller starts, after CamelContext has been started.
      */
     public RouteControllerConfigurationProperties withInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;

@@ -307,8 +307,8 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
     @Override
     public String toString() {
         // the thread factory often have more precise details what the thread pool is used for
-        if (delegate.getThreadFactory() instanceof CamelThreadFactory) {
-            String name = ((CamelThreadFactory) delegate.getThreadFactory()).getName();
+        if (delegate.getThreadFactory() instanceof CamelThreadFactory camelThreadFactory) {
+            String name = camelThreadFactory.getName();
             return super.toString() + "[" + name + "]";
         } else {
             return super.toString();

@@ -29,7 +29,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.8.0-SNAPSHOT</version>
+    <version>4.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -120,23 +120,25 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2024-07-13T06:32:37Z</project.build.outputTimestamp>
 
-        <cyclonedx-maven-plugin-version>2.8.0</cyclonedx-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.8.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>4.5</license-maven-plugin-version>
         <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
-        <maven-dependency-plugin-version>3.7.1</maven-dependency-plugin-version>
+        <maven-dependency-plugin-version>3.8.0</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.5.0</maven-enforcer-plugin-version>
-        <maven-invoker-plugin-version>3.7.0</maven-invoker-plugin-version>
-        <maven-javadoc-plugin-version>3.8.0</maven-javadoc-plugin-version>
+        <maven-invoker-plugin-version>3.8.0</maven-invoker-plugin-version>
+        <maven-javadoc-plugin-version>3.10.0</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.2.0</maven-remote-resources-plugin-version>
-        <maven-surefire-plugin-version>3.3.1</maven-surefire-plugin-version>
+        <maven-surefire-plugin-version>3.5.0</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.17.1</versions-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
         <invoker.skip>${skipTests}</invoker.skip>
+
+        <enforcer.phase>none</enforcer.phase><!-- We do not enforce with -Dquickly, the property is overridden in the full profile -->
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
@@ -164,13 +166,21 @@
                 <executions>
                     <execution>
                         <id>enforce-maven-version</id>
-                        <phase>none
-                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>${enforcer.phase}</phase>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.5.0</version>
+                                </requireMavenVersion>
+                                <externalRules>
+                                    <location>${maven.multiModuleProjectDirectory}/tooling/enforcer-rules/src/main/resources/camel-banned-dependencies.xml</location>
+                                </externalRules>
+                            </rules>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>enforce-java-version</id>
-                        <phase>none
-                        </phase><!-- unbound here to speedup -Dquickly build; bound to a phase in the full profile -->
+                        <phase>${enforcer.phase}</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -327,6 +337,8 @@
                                     <exclude>doap.rdf</exclude>
                                     <exclude>mvnw*</exclude>
                                     <exclude>**/FileSplitXPathCharsetTest-input.xml</exclude>
+                                    <exclude>**/.camel-jbang-run/**</exclude>
+                                    <exclude>**/camel-jbang-run.properties</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -515,6 +527,8 @@
                             <exclude>**/quarkus-pom.ftl</exclude>
                             <exclude>**/quarkus-docker/*</exclude>
                             <exclude>.github/**/*</exclude>
+                            <exclude>**/.camel-jbang-run/**/*</exclude>
+                            <exclude>**/.camel-jbang/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>
@@ -860,6 +874,9 @@
                     <name>!quickly</name>
                 </property>
             </activation>
+            <properties>
+                <enforcer.phase>validate</enforcer.phase><!-- We do not enforce with -Dquickly, but we enforce otherwise -->
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -872,25 +889,6 @@
                                     <goal>format</goal>
                                 </goals>
                                 <phase>process-sources</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-maven-version</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireMavenVersion>
-                                            <version>3.5.0</version>
-                                        </requireMavenVersion>
-                                    </rules>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -5,7 +5,7 @@
     "title": "Sort",
     "description": "Sorts the contents of the message",
     "deprecated": false,
-    "label": "eip,routing",
+    "label": "eip,transformation",
     "javaType": "org.apache.camel.model.SortDefinition",
     "abstract": false,
     "input": true,

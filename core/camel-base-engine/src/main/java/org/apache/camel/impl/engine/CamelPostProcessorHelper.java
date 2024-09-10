@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.io.Closeable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -106,8 +107,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         Endpoint endpoint = getEndpointInjection(bean, endpointUri, endpointProperty, injectionPointName, true);
         if (endpoint != null) {
             boolean multipleConsumer = false;
-            if (endpoint instanceof MultipleConsumersSupport) {
-                multipleConsumer = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+            if (endpoint instanceof MultipleConsumersSupport consumersSupport) {
+                multipleConsumer = consumersSupport.isMultipleConsumersSupported();
             }
             try {
                 SubscribeMethodProcessor processor = getConsumerProcessor(endpoint);
@@ -170,8 +171,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             answer = doGetEndpointInjection(uri, injectionPointName, mandatory);
         }
         // it may be a delegate endpoint via ref component
-        if (answer instanceof DelegateEndpoint) {
-            answer = ((DelegateEndpoint) answer).getEndpoint();
+        if (answer instanceof DelegateEndpoint delegateEndpoint) {
+            answer = delegateEndpoint.getEndpoint();
         }
         return answer;
     }
@@ -211,8 +212,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             }
             if (value == null) {
                 return null;
-            } else if (value instanceof Endpoint) {
-                return (Endpoint) value;
+            } else if (value instanceof Endpoint endpoint) {
+                return endpoint;
             } else {
                 String uriOrRef = getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
                 return getCamelContext().getEndpoint(uriOrRef);
@@ -520,11 +521,11 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     public Object getInjectionBeanMethodValue(
             CamelContext context,
-            Method method, Object bean, String beanName) {
+            Method method, Object bean, String beanName, String annotationName) {
         Class<?> returnType = method.getReturnType();
         if (returnType == Void.TYPE) {
             throw new IllegalArgumentException(
-                    "@BindToRegistry on class: " + method.getDeclaringClass()
+                    "@" + annotationName + " on class: " + method.getDeclaringClass()
                                                + " method: " + method.getName() + " with void return type is not allowed");
         }
 
@@ -691,10 +692,31 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      * @return      <tt>true</tt> if its singleton scoped, for prototype scoped <tt>false</tt> is returned.
      */
     protected boolean isSingleton(Object bean, String beanName) {
-        if (bean instanceof IsSingleton) {
-            IsSingleton singleton = (IsSingleton) bean;
+        if (bean instanceof IsSingleton singleton) {
             return singleton.isSingleton();
         }
         return true;
+    }
+
+    /**
+     * Find the best init method to use for the given bean
+     */
+    public static String initMethodCandidate(Object bean) {
+        if (bean instanceof Service) {
+            return "start";
+        }
+        return null;
+    }
+
+    /**
+     * Find the best destroy method to use for the given bean
+     */
+    public static String destroyMethodCandidate(Object bean) {
+        if (bean instanceof Service) {
+            return "stop";
+        } else if (bean instanceof Closeable) {
+            return "close";
+        }
+        return null;
     }
 }

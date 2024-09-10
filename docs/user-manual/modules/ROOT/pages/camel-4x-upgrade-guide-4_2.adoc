@@ -1,7 +1,7 @@
 = Apache Camel 4.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 4.x to 4.y. For example if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.1 to 4.2
@@ -30,13 +30,13 @@ are sent to have access to exchange properties.
 
 The `readLock=changed` with using `readLockMinAge` has been restored to same behaviour as 3.x.
 
-For example using `readLockMinAge=5s` would pickup files that are older than 5 seconds from startup time.
+For example, using `readLockMinAge=5s` would pick up files that are older than 5 seconds from startup time.
 If you have many existing files on startup that are old, then Camel will now again be fast,
-and pickup these files immediately.
+and pick up these files immediately.
 
 === camel-kafka
 
-The consumer will now pre validate hostname:port and DNS resolution on startup, and fail-fast
+The consumer will now pre-validate `hostname:port` and DNS resolution on startup, and fail-fast
 in case of mis-configuration or invalid hostname.
 
 This can be disabled by setting `preValidateHostAndPort=false`, which will postpone validation
@@ -55,7 +55,7 @@ The `org.apache.camel.service.lra.LRAClient` can now access `Exchange` to retrie
 - `org.apache.camel.saga.CamelSagaCoordinator.newSaga` is now `org.apache.camel.saga.CamelSagaCoordinator.newSaga(Exchange exchange)`
 to support the transport of `Exchange`.
 
-As result of interface changes also the known implementation classes and usages have been adopted.
+As a result of interface changes, also the known implementation classes and usages have been adopted.
 
 === camel-ignite
 
@@ -75,17 +75,17 @@ configuring the Multicast Processor within the Dynamic Router EIP component, so 
 are identical to that of the Multicast Processor.
 
 When upgrading to this version, you should still be able to use this component with the configuration from previous
-versions.  The new options allow more specific configuration, if you need it.
+versions.  The new options allow more specific configuration if you need it.
 
 === camel-spring & camel-spring-boot
 
 ==== Autowiring Primary beans
 
 Camel will now take into account `@Primary` beans from Spring when autowiring by type.
-For example a JDBC `DataSource` in the SQL component will now use the `@Primary` data source
+For example, a JDBC `DataSource` in the SQL component will now use the `@Primary` data source
 when multiple data sources are defined.
 
-Previously Camel would not autowire if there are 2 or more beans for a given type.
+Previously, Camel would not autowire if there are two or more beans for a given type.
 
 NOTE: This is a change in behaviour, that can affect your applications when upgrading.
 

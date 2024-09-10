@@ -46,6 +46,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.AsPredicate;
@@ -63,6 +65,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -130,7 +134,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     private IndexView indexView;
     private final Map<String, JavaClassSource> sources = new HashMap<>();
 
-    public SchemaGeneratorMojo() {
+    @Inject
+    public SchemaGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
     }
 
     @Override

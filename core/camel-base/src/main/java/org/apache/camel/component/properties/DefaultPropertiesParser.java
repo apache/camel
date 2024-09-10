@@ -37,8 +37,11 @@ import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
  * A parser to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements PropertiesParser {
+
     private static final String UNRESOLVED_PREFIX_TOKEN = "@@[";
+
     private static final String UNRESOLVED_SUFFIX_TOKEN = "]@@";
+
     private static final String GET_OR_ELSE_TOKEN = ":";
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -132,7 +135,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 return null;
             }
 
-            StringBuilder answer = new StringBuilder();
+            StringBuilder answer = new StringBuilder(input.length());
             Property property;
             while ((property = readProperty(input)) != null) {
                 String before = input.substring(0, property.getBeginIndex());
@@ -387,7 +390,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     return UNRESOLVED_PREFIX_TOKEN + key + UNRESOLVED_SUFFIX_TOKEN;
                 }
                 if (!optional) {
-                    StringBuilder esb = new StringBuilder();
+                    StringBuilder esb = new StringBuilder(256);
                     esb.append("Property with key [").append(key).append("] ");
                     esb.append("not found in properties from text: ").append(input);
                     throw new IllegalArgumentException(esb.toString());
@@ -424,8 +427,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 if (value != null) {
                     String localDefaultValue = null;
                     String loc = location(local, key, "LocalProperties");
-                    if (local instanceof OrderedLocationProperties) {
-                        Object val = ((OrderedLocationProperties) local).getDefaultValue(key);
+                    if (local instanceof OrderedLocationProperties propSource) {
+                        Object val = propSource.getDefaultValue(key);
                         if (val != null) {
                             localDefaultValue
                                     = propertiesComponent.getCamelContext().getTypeConverter().tryConvertTo(String.class, val);
@@ -510,8 +513,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
     private static String location(Properties prop, String name, String defaultLocation) {
         String loc = null;
-        if (prop instanceof OrderedLocationProperties) {
-            loc = ((OrderedLocationProperties) prop).getLocation(name);
+        if (prop instanceof OrderedLocationProperties olp) {
+            loc = olp.getLocation(name);
         }
         if (loc == null) {
             loc = defaultLocation;

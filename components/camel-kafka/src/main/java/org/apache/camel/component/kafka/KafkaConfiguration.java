@@ -572,7 +572,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, keyManagers.getKeyPassword());
             KeyStoreParameters keyStore = keyManagers.getKeyStore();
             if (keyStore != null) {
-                // kakfa loads the resource itself and you cannot have prefix
+                // kakfa loads the resource itself and you cannot have a prefix
                 String location = keyStore.getResource();
                 if (ResourceHelper.hasScheme(location)) {
                     location = StringHelper.after(location, ":");
@@ -588,7 +588,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, trustManagers.getAlgorithm());
             KeyStoreParameters keyStore = trustManagers.getKeyStore();
             if (keyStore != null) {
-                // kakfa loads the resource itself and you cannot have prefix
+                // kakfa loads the resource itself and you cannot have a prefix
                 String location = keyStore.getResource();
                 if (ResourceHelper.hasScheme(location)) {
                     location = StringHelper.after(location, ":");
@@ -841,7 +841,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The maximum amount of data the server should return for a fetch request This is not an absolute maximum, if the
+     * The maximum amount of data the server should return for a fetch request. This is not an absolute maximum, if the
      * first message in the first non-empty partition of the fetch is larger than this value, the message will still be
      * returned to ensure that the consumer can make progress. The maximum message size accepted by the broker is
      * defined via message.max.bytes (broker config) or max.message.bytes (topic config). Note that the consumer
@@ -860,8 +860,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The maximum amount of time the server will block before answering the fetch request if there isn't sufficient
-     * data to immediately satisfy fetch.min.bytes
+     * The maximum amount of time the server will block before answering the fetch request if there isn't enough data to
+     * immediately satisfy fetch.min.bytes
      */
     public void setFetchWaitMaxMs(Integer fetchWaitMaxMs) {
         this.fetchWaitMaxMs = fetchWaitMaxMs;
@@ -1438,8 +1438,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * idempotence is not explicitly enabled, idempotence is disabled.
      *
      * Allowing retries while setting enable.idempotence to false and max.in.flight.requests.per.connection to 1 will
-     * potentially change the ordering of records because if two batches are sent to a single partition, and the first
-     * fails and is retried but the second succeeds, then the records in the second batch may appear first.
+     * potentially change the ordering of records, because if two batches are sent to a single partition, and the first
+     * fails and is retried but the second succeeds; then the records in the second batch may appear first.
      */
     public void setRetries(Integer retries) {
         this.retries = retries;
@@ -1495,7 +1495,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * The producer groups together any records that arrive in between request transmissions into a single, batched,
      * request. Normally, this occurs only under load when records arrive faster than they can be sent out. However, in
      * some circumstances, the client may want to reduce the number of requests even under a moderate load. This setting
-     * accomplishes this by adding a small amount of artificial delay. That is, rather than immediately sending out a
+     * achieves this by adding a small amount of artificial delay. That is, rather than immediately sending out a
      * record, the producer will wait for up to the given delay to allow other records to be sent so that they can be
      * batched together. This can be thought of as analogous to Nagle's algorithm in TCP. This setting gives the upper
      * bound on the delay for batching: once we get batch.size worth of records for a partition, it will be sent

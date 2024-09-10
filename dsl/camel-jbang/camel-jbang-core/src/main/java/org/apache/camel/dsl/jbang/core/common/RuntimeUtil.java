@@ -57,9 +57,9 @@ public final class RuntimeUtil {
                 if (export) {
                     name = "log4j2-export.properties";
                 } else if (script) {
-                    name = "log4j2-export.properties";
+                    name = "log4j2-script.properties";
                 } else if (json) {
-                    name = "log4j2-export.properties";
+                    name = "log4j2-json.properties";
                 } else if (color) {
                     name = "log4j2.properties";
                 }
@@ -76,7 +76,9 @@ public final class RuntimeUtil {
                     if (!catName.isEmpty() && !catLevel.isEmpty()) {
                         sj.add("logger." + prefix + ".name=" + catName);
                         sj.add("logger." + prefix + ".level=" + catLevel);
-                        sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
+                        if (!export && !script) {
+                            sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
+                        }
                         sj.add("logger." + prefix + ".appenderRef.$2.ref=file");
                     }
                 }
@@ -167,6 +169,14 @@ public final class RuntimeUtil {
         return lines;
     }
 
+    public static List<String> getCommaSeparatedPropertyAsList(Properties props, String key, List<String> defaultValue) {
+        var value = props.getProperty(key);
+        return Optional.ofNullable(value)
+                .map(val -> Arrays.asList(val.split(",")))
+                .filter(tok -> !tok.isEmpty())
+                .orElse(defaultValue);
+    }
+
     public static String getDependencies(Properties properties) {
         String deps = properties != null ? properties.getProperty("camel.jbang.dependencies") : null;
         if (deps != null) {
@@ -184,7 +194,8 @@ public final class RuntimeUtil {
     }
 
     public static String[] getDependenciesAsArray(Properties properties) {
-        return getDependencies(properties).split(",");
+        String deps = getDependencies(properties);
+        return deps.isEmpty() ? new String[0] : deps.split(",");
     }
 
     public static String getPid() {

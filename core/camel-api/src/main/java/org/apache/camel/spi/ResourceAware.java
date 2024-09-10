@@ -25,8 +25,8 @@ public interface ResourceAware {
      * Set the {@link Resource} resource if the object is an instance of {@link ResourceAware}.
      */
     static <T> T trySetResource(T object, Resource resource) {
-        if (resource != null && object instanceof ResourceAware) {
-            ((ResourceAware) object).setResource(resource);
+        if (resource != null && object instanceof ResourceAware resourceAware) {
+            resourceAware.setResource(resource);
         }
 
         return object;

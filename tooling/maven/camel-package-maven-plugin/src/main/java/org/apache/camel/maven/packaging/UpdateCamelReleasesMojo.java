@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.json.JsonArray;
@@ -39,6 +41,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 
 /**
  * Unfortunately we do not have a release timestamp for every Camel release published to maven. So we need to grab the
@@ -52,10 +56,15 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
             = "https://api.github.com/repos/apache/camel-website/contents/content/releases/q/";
 
     /**
-     * The output directory for generated file
+     * The output directory for the generated catalog releases files
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/releases")
     protected File outDir;
+
+    @Inject
+    public UpdateCamelReleasesMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

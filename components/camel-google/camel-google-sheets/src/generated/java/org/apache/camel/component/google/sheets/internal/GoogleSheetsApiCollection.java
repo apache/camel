@@ -22,8 +22,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class GoogleSheetsApiCollection extends ApiCollection<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
-    private static GoogleSheetsApiCollection collection;
-
     private GoogleSheetsApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<GoogleSheetsApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleSheetsApiName.class);
@@ -58,10 +56,11 @@ public final class GoogleSheetsApiCollection extends ApiCollection<GoogleSheetsA
         return result;
     }
 
-    public static synchronized GoogleSheetsApiCollection getCollection() {
-        if (collection == null) {
-            collection = new GoogleSheetsApiCollection();
-        }
-        return collection;
+    public static GoogleSheetsApiCollection getCollection() {
+        return GoogleSheetsApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class GoogleSheetsApiCollectionHolder {
+        private static final GoogleSheetsApiCollection INSTANCE = new GoogleSheetsApiCollection();
     }
 }

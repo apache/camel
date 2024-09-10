@@ -64,8 +64,7 @@ public class BasicMessageFilter implements MessageFilter {
      */
     protected void processHeaderAndAttachments(AttachmentMessage inOrOut, WebServiceMessage response) {
 
-        if (response instanceof SoapMessage) {
-            SoapMessage soapMessage = (SoapMessage) response;
+        if (response instanceof SoapMessage soapMessage) {
             processSoapHeader(inOrOut, soapMessage);
             doProcessSoapAttachments(inOrOut, soapMessage);
         }
@@ -117,8 +116,8 @@ public class BasicMessageFilter implements MessageFilter {
             }
 
             Object value = headers.get(name);
-            if (value instanceof QName) {
-                soapHeader.addHeaderElement((QName) value);
+            if (value instanceof QName qname) {
+                soapHeader.addHeaderElement(qname);
             } else {
                 if (value instanceof String) {
                     soapHeader.addAttribute(new QName(name), value + "");
@@ -128,7 +127,7 @@ public class BasicMessageFilter implements MessageFilter {
     }
 
     /**
-     * Populate SOAP attachments from in or out exchange message. This the convenient method for overriding.
+     * Populate SOAP attachments from in or out an exchange message. This the convenient method for overriding.
      */
     protected void doProcessSoapAttachments(AttachmentMessage inOrOut, SoapMessage response) {
         if (inOrOut.hasAttachments()) {

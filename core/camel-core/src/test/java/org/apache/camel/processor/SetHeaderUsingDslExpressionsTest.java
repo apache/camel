@@ -46,8 +46,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         @Override
         public boolean equals(Object obj) {
             boolean result = false;
-            if (obj instanceof MyValueClass) {
-                MyValueClass value = (MyValueClass) obj;
+            if (obj instanceof MyValueClass value) {
                 if (this.value1.equals(value.value1) && this.value2.equals(value.value2)) {
                     result = true;
                 }

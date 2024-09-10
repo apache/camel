@@ -340,11 +340,11 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected ExchangePattern resolveExchangePattern(Object recipient) {
         String s = null;
 
-        if (recipient instanceof NormalizedEndpointUri) {
-            s = ((NormalizedEndpointUri) recipient).getUri();
-        } else if (recipient instanceof String) {
+        if (recipient instanceof NormalizedEndpointUri normalizedEndpointUri) {
+            s = normalizedEndpointUri.getUri();
+        } else if (recipient instanceof String str) {
             // trim strings as end users might have added spaces between separators
-            s = ((String) recipient).trim();
+            s = str.trim();
         }
         if (s != null) {
             return EndpointHelper.resolveExchangePatternFromUrl(s);

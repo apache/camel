@@ -1,0 +1,1 @@
+../../../../../components/camel-tahu/src/main/docs/tahu-summary.adoc

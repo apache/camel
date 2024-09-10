@@ -42,6 +42,8 @@ import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.JandexStore;
 import org.apache.camel.spi.annotations.ExternalSchemaElement;
 import org.apache.camel.tooling.util.srcgen.GenericType;
@@ -67,7 +69,6 @@ import org.jboss.jandex.IndexReader;
  */
 @Mojo(name = "generate-xml-parser", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
-@SuppressWarnings("unused")
 public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final String PARSER_PACKAGE = "org.apache.camel.xml.in";
@@ -81,12 +82,16 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
 
     private Class<?> outputDefinitionClass;
 
+    @Inject
+    public ModelXmlParserGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
         generateXmlParser = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-parser", "false"));
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override

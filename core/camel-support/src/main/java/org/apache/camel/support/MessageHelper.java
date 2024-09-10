@@ -20,11 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +76,8 @@ public final class MessageHelper {
 
         // optimize if the body is a String type already
         Object body = message.getBody();
-        if (body instanceof String) {
-            return (String) body;
+        if (body instanceof String string) {
+            return string;
         }
 
         // we need to favor using stream cache so the body can be re-read later
@@ -135,8 +134,8 @@ public final class MessageHelper {
         } catch (Exception e) {
             // ignore
         }
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).reset();
+        if (body instanceof StreamCache streamCache) {
+            streamCache.reset();
         }
     }
 
@@ -347,7 +346,7 @@ public final class MessageHelper {
         }
 
         if (!allowFiles) {
-            if (obj instanceof WrappedFile || obj instanceof File) {
+            if (obj instanceof WrappedFile || obj instanceof File || obj instanceof Path) {
                 return "[Body is file based: " + obj + "]";
             }
         }
@@ -375,10 +374,10 @@ public final class MessageHelper {
         // is the body a stream cache or input stream
         StreamCache cache = null;
         InputStream is = null;
-        if (obj instanceof StreamCache) {
-            cache = (StreamCache) obj;
-        } else if (obj instanceof InputStream) {
-            is = (InputStream) obj;
+        if (obj instanceof StreamCache streamCache) {
+            cache = streamCache;
+        } else if (obj instanceof InputStream inputStream) {
+            is = inputStream;
         }
 
         // grab the message body as a string
@@ -492,10 +491,9 @@ public final class MessageHelper {
             Message message, boolean includeExchangeProperties, boolean includeExchangeVariables,
             boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
             boolean allowFiles, int maxChars) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(1024);
 
-        StringBuilder prefix = new StringBuilder();
-        prefix.append(" ".repeat(indent));
+        final String prefix = " ".repeat(indent);
 
         // include exchangeId/exchangePattern/type as attribute on the <message> tag
         sb.append(prefix);
@@ -549,8 +547,9 @@ public final class MessageHelper {
             Map<String, Object> properties = new TreeMap<>(message.getExchange().getAllProperties());
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 String key = entry.getKey();
-                // skip message history
-                if (Exchange.MESSAGE_HISTORY.equals(key)) {
+                // skip some special that are too big
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 Object value = entry.getValue();
@@ -630,8 +629,8 @@ public final class MessageHelper {
                 int size = Array.getLength(body);
                 sb.append(" size=\"").append(size).append("\"");
             }
-            if (body instanceof StreamCache) {
-                long pos = ((StreamCache) body).position();
+            if (body instanceof StreamCache streamCache) {
+                long pos = streamCache.position();
                 if (pos != -1) {
                     sb.append(" position=\"").append(pos).append("\"");
                 }
@@ -755,7 +754,7 @@ public final class MessageHelper {
         boolean enabled = list != null;
         boolean source = !loc.isEmpty();
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(2048);
         sb.append("\n");
         sb.append("Message History");
         if (!source && !enabled) {
@@ -1001,8 +1000,9 @@ public final class MessageHelper {
                 String type = ObjectHelper.classCanonicalName(value);
                 JsonObject jh = new JsonObject();
                 String key = entry.getKey();
-                // skip message history
-                if (Exchange.MESSAGE_HISTORY.equals(key)) {
+                // skip some special that are too big
+                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                        || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
                 jh.put("key", key);
@@ -1081,15 +1081,32 @@ public final class MessageHelper {
                 int size = Array.getLength(body);
                 jb.put("size", size);
             }
-            if (body instanceof StreamCache) {
-                long pos = ((StreamCache) body).position();
+            if (body instanceof WrappedFile<?> wf) {
+                if (wf.getFile() instanceof File f) {
+                    jb.put("size", f.length());
+                }
+            } else if (body instanceof File f) {
+                jb.put("size", f.length());
+            } else if (body instanceof Path p) {
+                jb.put("size", p.toFile().length());
+            }
+            if (body instanceof StreamCache streamCache) {
+                long pos = streamCache.position();
                 if (pos != -1) {
                     jb.put("position", pos);
+                }
+                long size = streamCache.length();
+                if (size > 0) {
+                    jb.put("size", size);
                 }
             }
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (data != null) {
-                jb.put("value", Jsoner.escape(data));
+                if ("[Body is null]".equals(data)) {
+                    jb.put("value", null);
+                } else {
+                    jb.put("value", Jsoner.escape(data));
+                }
             }
         }
 
@@ -1103,10 +1120,9 @@ public final class MessageHelper {
      * @return        the XML
      */
     public static String dumpExceptionAsXML(Throwable exception, int indent) {
-        StringBuilder prefix = new StringBuilder();
-        prefix.append(" ".repeat(indent));
+        final String prefix = " ".repeat(indent);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(512);
         try {
             sb.append(prefix).append("<exception");
             String type = ObjectHelper.classCanonicalName(exception);
@@ -1119,9 +1135,7 @@ public final class MessageHelper {
                 sb.append(" message=\"").append(msg).append("\"");
             }
             sb.append(">\n");
-            StringWriter sw = new StringWriter();
-            exception.printStackTrace(new PrintWriter(sw));
-            String trace = sw.toString();
+            final String trace = ExceptionHelper.stackTraceToString(exception);
             // must always xml encode
             sb.append(StringHelper.xmlEncode(trace));
             sb.append(prefix).append("</exception>");
@@ -1168,9 +1182,8 @@ public final class MessageHelper {
         }
         String msg = exception.getMessage();
         jo.put("message", msg);
-        StringWriter sw = new StringWriter();
-        exception.printStackTrace(new PrintWriter(sw));
-        String trace = sw.toString();
+
+        final String trace = ExceptionHelper.stackTraceToString(exception);
         try {
             jo.put("stackTrace", Jsoner.escape(trace));
         } catch (Exception e) {

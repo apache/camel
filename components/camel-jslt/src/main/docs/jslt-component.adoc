@@ -59,7 +59,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Passing values to JSLT
+== Usage
+
+=== Passing values to JSLT
 
 Camel can supply exchange information as variables when applying a JSLT expression on the body. The available variables from the *Exchange* are:
 
@@ -83,7 +85,7 @@ For example, the header named `type` and the exchange property `instance` can be
 }
 --------------------------------------
 
-== Samples
+== Examples
 
 For example, you could use something like:
 

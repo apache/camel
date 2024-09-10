@@ -124,4 +124,11 @@ public class JsonataUriDsl(
   public fun lazyStartProducer(lazyStartProducer: Boolean) {
     it.property("lazyStartProducer", lazyStartProducer.toString())
   }
+
+  /**
+   * To configure the Jsonata frame binding. Allows custom functions to be added.
+   */
+  public fun frameBinding(frameBinding: String) {
+    it.property("frameBinding", frameBinding)
+  }
 }

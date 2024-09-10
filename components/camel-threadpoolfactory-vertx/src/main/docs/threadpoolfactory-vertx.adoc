@@ -9,7 +9,7 @@
 
 *Since Camel {since}*
 
-The camel-threadpoolfactory-vertx is a VertX based implementation of the `ThreadPoolFactory` SPI.
+The Camel ThreadPoolFactory Vert.x component is a VertX based implementation of the `ThreadPoolFactory` SPI.
 
 By default, Camel will use its own thread pool for EIPs that can use parallel processing (such as splitter, aggregator).
 You can plug in different engines via an SPI interface. This is a VertX based plugin that uses the VertX worker thread pool

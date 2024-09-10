@@ -61,6 +61,10 @@ You have to provide the amazonKmsClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/iam/[Amazon IAM] service.
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
@@ -82,10 +86,6 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === IAM Producer operations
 
 Camel-AWS2 IAM component provides the following operation on the producer side:
@@ -104,7 +104,9 @@ Camel-AWS2 IAM component provides the following operation on the producer side:
 - addUserToGroup
 - removeUserFromGroup
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 - createUser: this operation will create a user in IAM
 
@@ -158,7 +160,7 @@ from("direct:listUsers")
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups")
 --------------------------------------------------------------------------------
 
-== Using a POJO as body
+=== Using a POJO as body
 
 Sometimes building an AWS Request can be complex because of multiple options. We introduce the possibility to use a POJO as a body.
 In AWS IAM, there are multiple operations you can submit, as an example for Create User request, you can do something like:

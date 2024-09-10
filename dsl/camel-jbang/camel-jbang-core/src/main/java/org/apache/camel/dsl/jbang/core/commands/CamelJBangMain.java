@@ -36,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.MissingPluginParameterExceptionHandler;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginAdd;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
@@ -88,6 +89,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("count", new CommandLine(new CamelCount(main)))
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
+                        .addSubcommand("properties", new CommandLine(new ListProperties(main)))
                         .addSubcommand("variable", new CommandLine(new ListVariable(main)))
                         .addSubcommand("consumer", new CommandLine(new ListConsumer(main)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
@@ -120,6 +122,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(main)))
+                        .addSubcommand("browse", new CommandLine(new CamelBrowseAction(main)))
                         .addSubcommand("stub", new CommandLine(new CamelStubAction(main)))
                         .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))
                         .addSubcommand("logger", new CommandLine(new LoggerAction(main)))
@@ -155,7 +158,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main)))
-                        .addSubcommand("list", new CommandLine(new VersionList(main))));
+                        .addSubcommand("list", new CommandLine(new VersionList(main))))
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
 
         PluginHelper.addPlugins(commandLine, main, args);
 

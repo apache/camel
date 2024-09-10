@@ -60,7 +60,9 @@ You have to provide the amazonSNSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sns[Amazon's SNS].
 
-== Usage
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider
 
@@ -81,9 +83,7 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+== Usage
 
 === Advanced AmazonSNS configuration
 
@@ -121,20 +121,20 @@ from("aws2-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessage
     .to(...);
 -------------------------------------------------
 
-== Topic Autocreation
+=== Topic Auto-creation
 
-With the option `autoCreateTopic` users are able to avoid the autocreation of an SNS Topic in case it doesn't exist. The default for this option is `false`.
+With the option `autoCreateTopic` users are able to avoid the auto-creation of an SNS Topic in case it doesn't exist. The default for this option is `false`.
 If set to false, any operation on a non-existent topic in AWS won't be successful and an error will be returned.
 
-== SNS FIFO
+=== SNS FIFO
 
 SNS FIFO are supported. While creating the SQS queue, you will subscribe to the SNS topic there is an important point to remember, you'll need to make possible for the SNS Topic to send the message to the SQS Queue.
 
 This is clear with an example.
 
-Suppose you created an SNS FIFO Topic called Order.fifo and an SQS Queue called QueueSub.fifo.
+Suppose you created an SNS FIFO Topic called `Order.fifo` and an SQS Queue called `QueueSub.fifo`.
 
-In the access Policy of the QueueSub.fifo you should submit something like this
+In the access Policy of the `QueueSub.fifo` you should submit something like this
 
 [source,json]
 -------------------------------------------------

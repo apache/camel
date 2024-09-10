@@ -571,6 +571,18 @@ public interface KubernetesSecretsEndpointBuilderFactory {
         public String kubernetesSecret() {
             return "CamelKubernetesSecret";
         }
+        /**
+         * The secret annotations.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesSecretsAnnotations}.
+         */
+        public String kubernetesSecretsAnnotations() {
+            return "CamelKubernetesSecretsAnnotations";
+        }
     }
     static KubernetesSecretsEndpointBuilder endpointBuilder(String componentName, String path) {
         class KubernetesSecretsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesSecretsEndpointBuilder, AdvancedKubernetesSecretsEndpointBuilder {

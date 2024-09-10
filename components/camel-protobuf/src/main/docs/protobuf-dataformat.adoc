@@ -39,7 +39,7 @@ include::partial$dataformat-options.adoc[]
 == Content type format
 
 It's possible to parse JSON message to convert it to the protobuf format and unparse it back using native util converter.
-To use this option, set contentTypeFormat value to 'json' or call protobuf with second parameter.
+To use this option, set contentTypeFormat value to `json` or call protobuf with second parameter.
 If the default instance is not specified, always use the native protobuf format.
 The sample code shows below:
 
@@ -52,14 +52,19 @@ from("direct:marshal")
 --------------------------------------------------------------------------------------------------
 
 == Input data type
+
 This dataformat supports marshaling input data either as protobuf `Message` type or `Map` data type.
 In case of input data as `Map` type, first it will try to retrieve the data as `Map` using built-in type converters, if it fails to
 do so, it will fall back to retrieve it as proto `Message`.
 
 == Output data type
+
 As mentioned above, you can define the content type format to choose from JSON or native to serialize/deserialize data from/to.
 In addition, you can also obtain the data as `Map` and let this component do the heavy lifting to parse the
-data from proto `Message` to `Map`, you will need to set the `contentTypeFormat` to *native* and explicitly define the data type `Map` when you obtain body of the exchange, e.g.: `exchange.getMessage().getBody(Map.class)`.
+data from proto `Message` to `Map`,
+you will need to set the `contentTypeFormat` to `native`
+and explicitly define the data type `Map` when you get body of the exchange.
+For instance: `exchange.getMessage().getBody(Map.class)`.
 
 == Protobuf overview
 
@@ -109,11 +114,11 @@ message AddressBook {
 == Generating Java classes
 
 The Protobuf SDK provides a compiler which will generate the Java
-classes for the format we defined in our .proto file.
+classes for the format we defined in our `.proto` file.
 If your operating system is supported by https://www.xolstice.org/protobuf-maven-plugin[Protobuf Java code generator maven plugin],
 you can automate protobuf Java code generating by adding the following configurations to your `pom.xml`:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually
+Insert operating system and CPU architecture detection extension inside `<build>` tag of the project `pom.xml` or set `${os.detected.classifier}` parameter manually
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>
@@ -124,7 +129,7 @@ Insert operating system and CPU architecture detection extension inside **<build
   </extension>
 </extensions>
 -------------------------------------------------------------------------
-Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the project pom.xml
+Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the project `pom.xml`
 [source,xml]
 -------------------------------------------------------------------------
 <plugin>
@@ -174,7 +179,7 @@ DataFormat marshal and unmarshal API like this.
    from("direct:back").unmarshal(format).to("mock:reverse");
 -----------------------------------------------------------------------------------
 
-Or use the DSL protobuf() passing the unmarshal default instance or
+Or use the DSL `protobuf()` passing the unmarshal default instance or
 default instance class name like this. However, if you have input data as `Map` type, you will need to **specify** the ProtobufDataFormat otherwise it will throw an error.
 
 [source,java]
@@ -193,7 +198,7 @@ default instance class name like this. However, if you have input data as `Map` 
 The following example shows how to use Protobuf to unmarshal using Spring
 configuring the protobuf data type
 
-[source,java]
+[source,xml]
 ----------------------------------------------------------------------------------------------------------
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
@@ -208,9 +213,10 @@ configuring the protobuf data type
 
 == Dependencies
 
-To use Protobuf in your Camel routes you need to add the dependency on
+To use Protobuf in your Camel routes, you need to add the dependency on
 *camel-protobuf*, which implements this data format.
 
+.Example pom.xml for `camel-protobuf`
 [source,xml]
 -----------------------------------------
 <dependency>

@@ -50,8 +50,7 @@ public final class CatalogLoader {
 
     public static CamelCatalog loadCatalog(String repos, String version) throws Exception {
         CamelCatalog answer = new DefaultCamelCatalog();
-        if (version == null) {
-            answer = new DefaultCamelCatalog();
+        if (version == null || version.isEmpty() || version.equals(answer.getCatalogVersion())) {
             answer.enableCache();
             return answer;
         }
@@ -59,7 +58,7 @@ public final class CatalogLoader {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(null);
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setClassLoader(cl);
-        downloader.setRepos(repos);
+        downloader.setRepositories(repos);
         try {
             downloader.start();
 
@@ -97,7 +96,7 @@ public final class CatalogLoader {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setClassLoader(cl);
-        downloader.setRepos(repos);
+        downloader.setRepositories(repos);
         try {
             downloader.start();
 
@@ -162,7 +161,7 @@ public final class CatalogLoader {
 
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setRepos(repos);
+        downloader.setRepositories(repos);
         downloader.setClassLoader(cl);
         try {
             downloader.start();

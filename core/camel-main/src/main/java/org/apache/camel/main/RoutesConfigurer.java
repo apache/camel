@@ -164,15 +164,24 @@ public class RoutesConfigurer {
         if (getRoutesBuilderClasses() != null) {
             String[] routeClasses = getRoutesBuilderClasses().split(",");
             for (String routeClass : routeClasses) {
-                Class<RoutesBuilder> routeClazz = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
-                if (routeClazz == null) {
-                    LOG.warn("Unable to resolve class: {}", routeClass);
-                    continue;
-                }
+                try {
+                    Class<RoutesBuilder> routeClazz
+                            = camelContext.getClassResolver().resolveClass(routeClass, RoutesBuilder.class);
+                    if (routeClazz == null) {
+                        LOG.warn("Unable to resolve class: {}", routeClass);
+                        continue;
+                    }
 
-                // lets use Camel's injector so the class has some support for dependency injection
-                RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
-                routes.add(builder);
+                    // lets use Camel's injector so the class has some support for dependency injection
+                    RoutesBuilder builder = camelContext.getInjector().newInstance(routeClazz);
+                    routes.add(builder);
+                } catch (Exception e) {
+                    if (isIgnoreLoadingError()) {
+                        LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                    } else {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                }
             }
         }
 
@@ -181,11 +190,19 @@ public class RoutesConfigurer {
             Set<Class<?>> set = PluginHelper.getPackageScanClassResolver(camelContext)
                     .findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
-                Object builder = camelContext.getInjector().newInstance(routeClazz);
-                if (builder instanceof RoutesBuilder) {
-                    routes.add((RoutesBuilder) builder);
-                } else {
-                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                try {
+                    Object builder = camelContext.getInjector().newInstance(routeClazz);
+                    if (builder instanceof RoutesBuilder routesBuilder) {
+                        routes.add(routesBuilder);
+                    } else {
+                        LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                    }
+                } catch (Exception e) {
+                    if (isIgnoreLoadingError()) {
+                        LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                    } else {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
                 }
             }
         }
@@ -219,7 +236,11 @@ public class RoutesConfigurer {
                             getRoutesIncludePattern(), TimeUtils.printDuration(watch.taken(), true));
                 }
             } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
+                if (isIgnoreLoadingError()) {
+                    LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                } else {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
             }
         }
 
@@ -227,8 +248,16 @@ public class RoutesConfigurer {
             // lets use Camel's bean post processor on any existing route builder classes
             // so the instance has some support for dependency injection
             for (RoutesBuilder routeBuilder : routes) {
-                getBeanPostProcessor().postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
-                getBeanPostProcessor().postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+                try {
+                    getBeanPostProcessor().postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
+                    getBeanPostProcessor().postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+                } catch (Exception e) {
+                    if (isIgnoreLoadingError()) {
+                        LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                    } else {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                }
             }
         }
 
@@ -242,21 +271,44 @@ public class RoutesConfigurer {
 
         // first add the routes configurations as they are globally for all routes
         for (RoutesBuilder builder : routes) {
-            if (builder instanceof RouteConfigurationsBuilder) {
-                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
-                LOG.debug("Adding routes configurations into CamelContext from RouteConfigurationsBuilder: {}", rcb);
-                camelContext.addRoutesConfigurations(rcb);
+            try {
+                if (builder instanceof RouteConfigurationsBuilder rcb) {
+                    LOG.debug("Adding routes configurations into CamelContext from RouteConfigurationsBuilder: {}", rcb);
+                    camelContext.addRoutesConfigurations(rcb);
+                }
+            } catch (Exception e) {
+                if (isIgnoreLoadingError()) {
+                    LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                } else {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
             }
         }
         // then add the routes
         for (RoutesBuilder builder : routes) {
-            LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
-            camelContext.addRoutes(builder);
+            try {
+                LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
+                camelContext.addRoutes(builder);
+            } catch (Exception e) {
+                if (isIgnoreLoadingError()) {
+                    LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                } else {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
         }
         // then add templated routes last
         for (RoutesBuilder builder : routes) {
-            LOG.debug("Adding templated routes into CamelContext from RoutesBuilder: {}", builder);
-            camelContext.addTemplatedRoutes(builder);
+            try {
+                LOG.debug("Adding templated routes into CamelContext from RoutesBuilder: {}", builder);
+                camelContext.addTemplatedRoutes(builder);
+            } catch (Exception e) {
+                if (isIgnoreLoadingError()) {
+                    LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                } else {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
         }
     }
 
@@ -355,15 +407,14 @@ public class RoutesConfigurer {
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
             RoutesBuilderLoader loader = entry.getKey();
-            if (loader instanceof ExtendedRoutesBuilderLoader) {
+            if (loader instanceof ExtendedRoutesBuilderLoader extLoader) {
                 // extended loader can pre-parse all resources ine one unit
-                ExtendedRoutesBuilderLoader extLoader = (ExtendedRoutesBuilderLoader) loader;
                 List<Resource> files = entry.getValue();
                 try {
                     extLoader.preParseRoutes(files);
                 } catch (Exception e) {
-                    if (ignoreLoadingError) {
-                        LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", files, e.getMessage());
+                    if (isIgnoreLoadingError()) {
+                        LOG.warn("Ignore loading error: {} due to: {}. This exception is ignored.", files, e.getMessage());
                     } else {
                         throw e;
                     }
@@ -373,8 +424,8 @@ public class RoutesConfigurer {
                     try {
                         loader.preParseRoute(resource);
                     } catch (Exception e) {
-                        if (ignoreLoadingError) {
-                            LOG.warn("Loading resources error: {} due to: {}. This exception is ignored.", resource,
+                        if (isIgnoreLoadingError()) {
+                            LOG.warn("Ignore loading error: {} due to: {}. This exception is ignored.", resource,
                                     e.getMessage());
                         } else {
                             throw e;

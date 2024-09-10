@@ -448,11 +448,11 @@ public class ServiceCallConfigurationTest {
     private DefaultServiceCallProcessor findServiceCallProcessor(Route route) {
 
         for (Processor processor : route.navigate().next()) {
-            if (processor instanceof DefaultChannel) {
-                processor = ((DefaultChannel) processor).getNextProcessor();
+            if (processor instanceof DefaultChannel defaultChannel) {
+                processor = defaultChannel.getNextProcessor();
             }
-            if (processor instanceof DefaultServiceCallProcessor) {
-                return (DefaultServiceCallProcessor) processor;
+            if (processor instanceof DefaultServiceCallProcessor defaultServiceCallProcessor) {
+                return defaultServiceCallProcessor;
             }
         }
 

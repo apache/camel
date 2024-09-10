@@ -206,8 +206,7 @@ public class JndiContext implements Context, Serializable {
                 }
             }
         }
-        if (result instanceof LinkRef) {
-            LinkRef ref = (LinkRef) result;
+        if (result instanceof LinkRef ref) {
             result = lookup(ref.getLinkName());
         }
         if (result instanceof Reference) {
@@ -219,12 +218,12 @@ public class JndiContext implements Context, Serializable {
                 throw (NamingException) new NamingException("could not look up : " + name).initCause(e);
             }
         }
-        if (result instanceof JndiContext) {
+        if (result instanceof JndiContext jndiContext) {
             String prefix = getNameInNamespace();
             if (!prefix.isEmpty()) {
                 prefix = prefix + SEPARATOR;
             }
-            result = new JndiContext((JndiContext) result, environment, prefix + name);
+            result = new JndiContext(jndiContext, environment, prefix + name);
         }
         return result;
     }
@@ -258,8 +257,8 @@ public class JndiContext implements Context, Serializable {
         Object o = lookup(name);
         if (o == this) {
             return CastUtils.cast(new ListEnumeration());
-        } else if (o instanceof Context) {
-            return ((Context) o).list("");
+        } else if (o instanceof Context context) {
+            return context.list("");
         } else {
             throw new NotContextException();
         }
@@ -270,8 +269,8 @@ public class JndiContext implements Context, Serializable {
         Object o = lookup(name);
         if (o == this) {
             return CastUtils.cast(new ListBindingEnumeration());
-        } else if (o instanceof Context) {
-            return ((Context) o).listBindings("");
+        } else if (o instanceof Context context) {
+            return context.listBindings("");
         } else {
             throw new NotContextException();
         }

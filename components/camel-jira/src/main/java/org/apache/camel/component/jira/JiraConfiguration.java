@@ -98,7 +98,7 @@ public class JiraConfiguration implements Cloneable {
     }
 
     /**
-     * The Jira server url, example: http://my_jira.com:8081
+     * The Jira server url, for example <tt>http://my_jira.com:8081</tt>.
      */
     public void setJiraUrl(String jiraUrl) {
         this.jiraUrl = jiraUrl;

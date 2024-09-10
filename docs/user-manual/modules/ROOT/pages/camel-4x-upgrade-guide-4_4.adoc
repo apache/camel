@@ -101,7 +101,7 @@ The reason is that this link should only be for EIPs with sub exchanges such as 
 
 ==== Throttle EIP
 
-Previously Camel used a throttler based on the total number of requests over a period of time ("TotalRequests" mode). That was
+Previously, Camel used a throttler based on the total number of requests over a period of time ("TotalRequests" mode). That was
 the default on Camel up to version 4.2.0. On Camel 4.3.0 we introduced a new one based on the number of concurrent requests and
 replaced the former.
 
@@ -123,65 +123,69 @@ And the option `camel.main.routeControllerSuperviseEnabled` has been renamed to 
 
 === camel-kamelet
 
-All kamelets are now turned off error handling in the route templates. This is done to make using kamelets
+All Kamelets are now turned off error handling in the route templates. This is done to make using Kamelets
 the same as calling a regular Camel component endpoint. Backwards mode can be enabled by setting `noErrorHandler=false`
 on the `KameletComponent` or as URI parameter `to("kamelet:http-sink?noErrorHandler=false&uri=xxxxx")`.
 
 === camel-azure-cosmosdb
 
-The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between SHARED_ACCOUNT_KEY and AZURE_IDENTITY.
+The `useDefaultIdentity` parameter has been removed in favor of the credentialType parameter.
+Now user should select between `SHARED_ACCOUNT_KEY` and `AZURE_IDENTITY`.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-azure-eventhubs
 
-The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, CONNECTION_STRING and TOKEN_CREDENTIAL.
-With the CONNECTION_STRING mode the user could explicitly set the connectionString parameters or use the sharedAccessName and sharedAccessKey to automatically build the connection string.
-With the TOKEN_CREDENTIAL mode the user could pass a TokenCredential instance.
-With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+The credentialType parameter has been introduced with three possible values: `AZURE_IDENTITY`, `CONNECTION_STRING` and `TOKEN_CREDENTIAL`.
+With the `CONNECTION_STRING` mode the user could explicitly set the `connectionString` parameters or use the `sharedAccessName` and `sharedAccessKey` to automatically build the connection string.
+With the `TOKEN_CREDENTIAL` mode the user could pass a `TokenCredential` instance.
+With the `AZURE_IDENTITY` mode the user will be able to use the Default Azure Credentials Chain.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-azure-servicebus
 
-The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, CONNECTION_STRING and TOKEN_CREDENTIAL.
-With the CONNECTION_STRING mode the user could explicitly set the connectionString parameter.
-With the TOKEN_CREDENTIAL mode the user could pass a TokenCredential instance.
-With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
+The credentialType parameter has been introduced with three possible values: `AZURE_IDENTITY`, `CONNECTION_STRING` and `TOKEN_CREDENTIAL`.
+With the `CONNECTION_STRING` mode the user could explicitly set the `connectionString` parameter.
+With the `TOKEN_CREDENTIAL` mode the user could pass a `TokenCredential` instance.
+With the `AZURE_IDENTITY` mode the user will be able to use the Default Azure Credentials Chain.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-azure-files
 
-The credentialType parameter has been introduced with three possible values: AZURE_IDENTITY, SHARED_ACCOUNT_KEY and AZURE_SAS.
-With the SHARED_ACCOUNT_KEY mode the user could explicitly set the sharedKey parameter.
-With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
-With the AZURE_SAS mode the user could explicitly set the token parameter.
+The credentialType parameter has been introduced with three possible values: `AZURE_IDENTITY`, `SHARED_ACCOUNT_KEY` and `AZURE_SAS`.
+With the `SHARED_ACCOUNT_KEY` mode the user could explicitly set the `sharedKey` parameter.
+With the `AZURE_IDENTITY` mode the user will be able to use the Default Azure Credentials Chain.
+With the `AZURE_SAS` mode the user could explicitly set the token parameter.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-azure-storage-datalake
 
-The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between AZURE_IDENTITY, CLIENT_SECRET, SHARED_KEY_CREDENTIAL, AZURE_SAS and SERVICE_CLIENT_INSTANCE
-With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the sharedKey parameter or a SharedKeyCredential instance.
-With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
-With the AZURE_SAS mode the user could explicitly set the sasSignature or sasCredential parameter.
-With the CLIENT_SECRET mode the user could explicitly set clientId, clientSecret and tenantId or specify a ClientSecretCredential instance.
-With the SERVICE_CLIENT_INSTANCE the user could explicitly set a serviceClient parameter by passing a DataLakeServiceClient instance.
+The useDefaultIdentity parameter has been removed in favor of the `credentialType` parameter. Now user should select between `AZURE_IDENTITY`, `CLIENT_SECRET`, `SHARED_KEY_CREDENTIAL`, `AZURE_SAS` and `SERVICE_CLIENT_INSTANCE`.
+With the `SHARED_KEY_CREDENTIAL` mode the user could explicitly set the `sharedKey` parameter or a `SharedKeyCredential` instance.
+With the `AZURE_IDENTITY` mode the user will be able to use the Default Azure Credentials Chain.
+With the `AZURE_SAS` mode the user could explicitly set the `sasSignature` or `sasCredential` parameter.
+With the `CLIENT_SECRET` mode the user could explicitly set `clientId`, `clientSecret` and `tenantId` or specify a `ClientSecretCredential` instance.
+With the `SERVICE_CLIENT_INSTANCE` the user could explicitly set a `serviceClient` parameter by passing a `DataLakeServiceClient` instance.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-azure-storage-queue
 
-The useDefaultIdentity parameter has been removed in favor of the credentialType parameter. Now user should select between AZURE_IDENTITY, SHARED_KEY_CREDENTIAL and SHARED_ACCOUNT_KEY
-With the SHARED_KEY_CREDENTIAL mode the user could explicitly set the SharedKeyCredential instance.
-With the AZURE_IDENTITY mode the user will be able to use the Default Azure Credentials Chain.
-With the SHARED_ACCOUNT_KEY mode the user could explicitly set the accessKey parameter.
+The `useDefaultIdentity` parameter has been removed in favor of the `credentialType` parameter. Now user should select between `AZURE_IDENTITY`, `SHARED_KEY_CREDENTIAL` and `SHARED_ACCOUNT_KEY`.
+With the `SHARED_KEY_CREDENTIAL` mode the user could explicitly set the `SharedKeyCredential` instance.
+With the `AZURE_IDENTITY` mode the user will be able to use the Default Azure Credentials Chain.
+With the `SHARED_ACCOUNT_KEY` mode the user could explicitly set the `accessKey` parameter.
 This is part of the effort explained in CAMEL-18590.
 
 === camel-cassandraql
 
-The NamedCassandraAggregationRepository now provides a deserializationFilter parameter. The default value for it is allowing all java packages and subpackages and all org.apache.camel packages and subpackages. If you plan to use particular classes and you want to expand the filter, you should change the value according to your needs. More details in CAMEL-20306.
+The `NamedCassandraAggregationRepository` now provides a `deserializationFilter` parameter.
+The default value for it is allowing all java packages and subpackages and all `org.apache.camel` packages and subpackages.
+If you plan to use particular classes, and you want to expand the filter, you should change the value according to your needs.
+More details in CAMEL-20306.
 
 === camel-coap
 
-Upgraded from org.eclipse.californium v2 to v3 which was a painful upgrade. Removed the `"CamelCoapUri` header that would
-allow a producer to create dynamic client to send to another Url. Use Camel's existing `toD` EIP for that instead.
+Upgraded from `org.eclipse.californium` v2 to v3 which was a painful upgrade. Removed the `"CamelCoapUri` header that would
+allow a producer to create the dynamic client to send to another URL. Use Camel's existing `toD` EIP for that instead.
 
 === camel-consul
 

@@ -17,9 +17,10 @@
 package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -28,15 +29,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.impl.MimeMapping;
 import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
@@ -44,7 +48,12 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.impl.BlockingHandlerDecorator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -63,9 +72,19 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
+import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ExceptionHelper;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -75,6 +94,7 @@ import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -85,6 +105,12 @@ import org.slf4j.LoggerFactory;
 public class MainHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainHttpServer.class);
+    private static final int BODY_MAX_CHARS = 128 * 1024;
+    private static final int DEFAULT_POLL_TIMEOUT = 20000;
+
+    private final HeaderFilterStrategy filter = new HttpProtocolHeaderFilterStrategy();
+    private ProducerTemplate producer;
+    private ConsumerTemplate consumer;
 
     private VertxPlatformHttpServer server;
     private VertxPlatformHttpRouter router;
@@ -96,12 +122,16 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
     private boolean infoEnabled;
+    private boolean staticEnabled;
+    private String staticContextPath;
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
     private boolean metricsEnabled;
     private boolean uploadEnabled;
     private String uploadSourceDir;
+    private boolean downloadEnabled;
+    private boolean sendEnabled;
 
     @Override
     public CamelContext getCamelContext() {
@@ -128,6 +158,29 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     public void setInfoEnabled(boolean infoEnabled) {
         this.infoEnabled = infoEnabled;
+    }
+
+    @ManagedAttribute(description = "Whether serving static content is enabled (such as html pages)")
+    public boolean isStaticEnabled() {
+        return staticEnabled;
+    }
+
+    public void setStaticEnabled(boolean staticEnabled) {
+        this.staticEnabled = staticEnabled;
+    }
+
+    @ManagedAttribute(description = "The context-path for serving static content")
+    public String getStaticContextPath() {
+        return staticContextPath;
+    }
+
+    public void setStaticContextPath(String staticContextPath) {
+        this.staticContextPath = staticContextPath;
+    }
+
+    @ManagedAttribute(description = "Whether serving static content is enabled (such as html pages)")
+    public boolean isStaticFilePattern() {
+        return staticEnabled;
     }
 
     @ManagedAttribute(description = "Whether dev console is enabled (/q/dev)")
@@ -200,6 +253,31 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
      */
     public void setUploadSourceDir(String uploadSourceDir) {
         this.uploadSourceDir = uploadSourceDir;
+    }
+
+    @ManagedAttribute(description = "Whether file download is enabled (q/download)")
+    public boolean isDownloadEnabled() {
+        return downloadEnabled;
+    }
+
+    /**
+     * Whether file download is enabled (q/download)
+     */
+    public void setDownloadEnabled(boolean downloadEnabled) {
+        this.downloadEnabled = downloadEnabled;
+    }
+
+    @ManagedAttribute(description = "Whether send message is enabled  (q/send)")
+    public boolean isSendEnabled() {
+        return sendEnabled;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public void setSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
     }
 
     @ManagedAttribute(description = "HTTP server port number")
@@ -279,6 +357,13 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
+        if (sendEnabled && producer == null) {
+            producer = camelContext.createProducerTemplate();
+        }
+        if (sendEnabled && consumer == null) {
+            consumer = camelContext.createConsumerTemplate();
+        }
+
         server = new VertxPlatformHttpServer(configuration);
         // adding server to camel-context which will manage shutdown the server, so we should not do this here
         camelContext.addService(server);
@@ -289,14 +374,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             pluginRegistry.setCamelContext(getCamelContext());
             getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
-        ServiceHelper.initService(pluginRegistry);
+        ServiceHelper.initService(pluginRegistry, producer, consumer);
     }
 
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        ServiceHelper.startService(server, pluginRegistry);
+        ServiceHelper.startService(server, pluginRegistry, producer, consumer);
         router = VertxPlatformHttpRouter.lookup(camelContext);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
@@ -306,7 +391,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(pluginRegistry);
+        ServiceHelper.stopAndShutdownServices(pluginRegistry, producer, consumer);
     }
 
     private boolean pluginsEnabled() {
@@ -316,6 +401,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     protected void setupConsoles() {
         if (infoEnabled) {
             setupInfo();
+        }
+        if (staticEnabled) {
+            setupStatic();
         }
         if (devConsoleEnabled) {
             setupDevConsole();
@@ -331,6 +419,12 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 throw new IllegalArgumentException("UploadSourceDir must be configured when uploadEnabled=true");
             }
             setupUploadConsole(uploadSourceDir);
+        }
+        if (downloadEnabled) {
+            setupDownloadConsole();
+        }
+        if (sendEnabled) {
+            setupSendConsole();
         }
         // metrics will be setup in camel-micrometer-prometheus
     }
@@ -413,6 +507,70 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 });
             }
         });
+    }
+
+    protected void setupStatic() {
+        String path = staticContextPath;
+        if (!path.endsWith("*")) {
+            path = path + "*";
+        }
+        final Route web = router.route(path);
+        web.produces("*");
+        web.consumes("*");
+        web.order(Integer.MAX_VALUE); // run this last so all other are served first
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                String u = ctx.normalizedPath();
+                if (u.isBlank() || u.endsWith("/") || u.equals("index.html")) {
+                    u = "index.html";
+                } else {
+                    u = FileUtil.stripLeadingSeparator(u);
+                }
+
+                InputStream is = null;
+                File f = new File(u);
+                if (f.exists()) {
+                    // load directly from file system first
+                    try {
+                        is = new FileInputStream(f);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                } else {
+                    is = camelContext.getClassResolver().loadResourceAsStream(u);
+                    if (is == null) {
+                        // common folder for java app servers like quarkus and spring-boot
+                        is = camelContext.getClassResolver().loadResourceAsStream("META-INF/resources/" + u);
+                    }
+                }
+                if (is != null) {
+                    String mime = MimeMapping.getMimeTypeForFilename(f.getName());
+                    if (mime != null) {
+                        ctx.response().putHeader("content-type", mime);
+                    }
+                    String text = null;
+                    try {
+                        text = IOHelper.loadText(is);
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        IOHelper.close(is);
+                    }
+                    ctx.response().setStatusCode(200);
+                    ctx.end(text);
+                } else {
+                    ctx.response().setStatusCode(404);
+                    ctx.end();
+                }
+            }
+        };
+
+        // use blocking handler as the task can take longer time to complete
+        web.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint(staticContextPath, null, null, null, null);
     }
 
     protected void setupInfo() {
@@ -720,10 +878,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     private static String errorStackTrace(Throwable e) {
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-
-        String trace = sw.toString();
+        String trace = ExceptionHelper.stackTraceToString(e);
         // because the stacktrace is printed in json we need to make it safe
         trace = trace.replace('"', '\'');
         trace = trace.replace('\t', ' ');
@@ -942,6 +1097,299 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         platformHttpComponent.addHttpEndpoint("/q/upload", "PUT,DELETE",
                 "multipart/form-data", null, null);
+    }
+
+    protected void setupDownloadConsole() {
+        final Route download = router.route("/q/download/*")
+                .produces("text/plain")
+                .produces("application/octet-stream")
+                .method(HttpMethod.GET);
+
+        final AntPathMatcher matcher = AntPathMatcher.INSTANCE;
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                String name = StringHelper.after(ctx.normalizedPath(), "/q/download/");
+                boolean cp = "true".equals(ctx.queryParams().get("classpath"));
+                if (name == null || name.isBlank() || matcher.isPattern(name)) {
+                    Set<String> names = new TreeSet<>();
+                    if (cp) {
+                        // also look inside classpath
+                        PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
+                        resolver.addClassLoader(camelContext.getApplicationContextClassLoader());
+                        try {
+                            String pattern = "**/*";
+                            if (name != null && !name.isBlank()) {
+                                pattern = "**/" + name;
+                            }
+                            for (Resource res : resolver.findResources(pattern)) {
+                                String loc = res.getLocation();
+                                loc = LoggerHelper.sourceNameOnly(loc);
+                                names.add(loc);
+                            }
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+                    // always include routes
+                    for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                        String loc = route.getSourceLocation();
+                        if (loc != null) {
+                            loc = LoggerHelper.sourceNameOnly(loc);
+                            if (name == null || name.isBlank() || matcher.match(name, loc)) {
+                                names.add(loc);
+                            }
+                        }
+                    }
+
+                    String acp = ctx.request().getHeader("Accept");
+                    boolean html = acp != null && acp.contains("html");
+                    StringJoiner sj;
+                    if (html) {
+                        String prefix = StringHelper.after(ctx.normalizedPath(), "/q/download/");
+                        if (prefix == null) {
+                            prefix = "/q/download/";
+                        } else {
+                            prefix = "";
+                        }
+                        ctx.response().putHeader("Content-Type", "text/html");
+                        sj = new StringJoiner("<br/>");
+                        for (String n : names) {
+                            sj.add("<a href=" + prefix + n + ">" + n + "</a>");
+                        }
+                    } else {
+                        ctx.response().putHeader("Content-Type", "text/plain");
+                        sj = new StringJoiner("\n");
+                        names.forEach(sj::add);
+                    }
+                    ctx.response().setStatusCode(200);
+                    ctx.end(sj.toString());
+                } else {
+                    // load file as resource
+                    ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
+                    Resource res = loader.resolveResource("classpath:" + name);
+                    if (res == null || !res.exists()) {
+                        for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                            String loc = route.getSourceLocation();
+                            if (loc != null) {
+                                loc = LoggerHelper.sourceNameOnly(loc);
+                                if (matcher.match(name, loc)) {
+                                    res = route.getSourceResource();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (res != null && res.exists()) {
+                        ctx.response().putHeader("Content-Type", "application/octet-stream");
+                        ctx.response().putHeader("Content-Disposition",
+                                "attachment; filename=\"" + FileUtil.stripPath(name) + "\"");
+                        ctx.response().setStatusCode(200);
+                        String data = null;
+                        try {
+                            data = IOHelper.loadText(res.getInputStream());
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                        ctx.end(data);
+                    } else {
+                        ctx.response().setStatusCode(204);
+                        ctx.end();
+                    }
+                }
+            }
+        };
+        // use blocking handler as the task can take longer time to complete
+        download.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint("/q/download", "GET",
+                null, "text/plain,application/octet-stream", null);
+    }
+
+    protected void setupSendConsole() {
+        final Route send = router.route("/q/send/")
+                .produces("application/json")
+                .method(HttpMethod.GET).method(HttpMethod.POST)
+                // need body handler to have access to the body
+                .handler(BodyHandler.create(false));
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                try {
+                    doSend(ctx);
+                } catch (Exception e) {
+                    LOG.warn("Error sending Camel message due to: " + e.getMessage(), e);
+                    if (!ctx.response().ended()) {
+                        ctx.response().setStatusCode(500);
+                        ctx.end();
+                    }
+                }
+            }
+        };
+        // use blocking handler as the task can take longer time to complete
+        send.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint("/q/send", "GET,POST",
+                null, "application/json", null);
+    }
+
+    protected void doSend(RoutingContext ctx) {
+        StopWatch watch = new StopWatch();
+        long timestamp = System.currentTimeMillis();
+
+        String endpoint = ctx.request().getHeader("endpoint");
+        String exchangePattern = ctx.request().getHeader("exchangePattern");
+        String resultType = ctx.request().getHeader("resultType");
+        String poll = ctx.request().getHeader("poll");
+        String pollTimeout = ctx.request().getHeader("pollTimeout");
+        final Map<String, Object> headers = new LinkedHashMap<>();
+        for (var entry : ctx.request().headers()) {
+            String k = entry.getKey();
+            boolean exclude
+                    = "endpoint".equals(k) || "exchangePattern".equals(k) || "poll".equals(k)
+                            || "pollTimeout".equals(k) || "resultType".equals(k) || "Accept".equals(k)
+                            || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
+            if (!exclude) {
+                headers.put(entry.getKey(), entry.getValue());
+            }
+        }
+        final String body = ctx.body().asString();
+
+        Exchange out = null;
+        Endpoint target = null;
+        if (endpoint == null) {
+            List<org.apache.camel.Route> routes = camelContext.getRoutes();
+            if (!routes.isEmpty()) {
+                // grab endpoint from 1st route
+                target = routes.get(0).getEndpoint();
+            }
+        } else {
+            // is the endpoint a pattern or route id
+            boolean scheme = endpoint.contains(":");
+            boolean pattern = endpoint.endsWith("*");
+            if (!scheme || pattern) {
+                if (!scheme) {
+                    endpoint = endpoint + "*";
+                }
+                for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                    Endpoint e = route.getEndpoint();
+                    if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
+                        target = e;
+                        break;
+                    }
+                }
+                if (target == null) {
+                    // okay it may refer to a route id
+                    for (org.apache.camel.Route route : camelContext.getRoutes()) {
+                        String id = route.getRouteId();
+                        Endpoint e = route.getEndpoint();
+                        if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
+                            target = e;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                target = camelContext.getEndpoint(endpoint);
+            }
+        }
+
+        JsonObject jo = new JsonObject();
+        if (target != null) {
+            Class<?> clazz = null;
+            try {
+                if (resultType != null) {
+                    clazz = camelContext.getClassResolver().resolveMandatoryClass(resultType);
+                    // we want the result as a specific type then make sure to use InOut
+                    if (exchangePattern == null) {
+                        exchangePattern = "InOut";
+                    }
+                }
+                if (exchangePattern == null) {
+                    exchangePattern = "InOnly"; // use in-only by default
+                }
+                final ExchangePattern mep = ExchangePattern.valueOf(exchangePattern);
+                long timeout = pollTimeout != null ? Long.parseLong(pollTimeout) : DEFAULT_POLL_TIMEOUT;
+                if ("true".equals(poll)) {
+                    exchangePattern = "InOut"; // we want to receive the data so enable out mode
+                    out = consumer.receive(target, timeout);
+                } else {
+                    out = producer.send(target, exchange -> {
+                        exchange.setPattern(mep);
+                        exchange.getMessage().setBody(body);
+                        if (!headers.isEmpty()) {
+                            exchange.getMessage().setHeaders(headers);
+                        }
+                    });
+                }
+                if (clazz != null && out != null) {
+                    Object b = out.getMessage().getBody(clazz);
+                    out.getMessage().setBody(b);
+                }
+            } catch (Exception e) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "failed");
+                jo.put("exception",
+                        MessageHelper.dumpExceptionAsJSonObject(e).getMap("exception"));
+            }
+            if (out != null && out.getException() != null) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangeId", out.getExchangeId());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "failed");
+                // avoid double wrap
+                jo.put("exception",
+                        MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+            } else if (out != null && "InOut".equals(exchangePattern)) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangeId", out.getExchangeId());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "success");
+                // dump response and remove unwanted data
+                JsonObject msg = MessageHelper.dumpAsJSonObject(out.getMessage(), false, false, true, true, true, true,
+                        BODY_MAX_CHARS).getMap("message");
+                msg.remove("exchangeId");
+                msg.remove("exchangePattern");
+                msg.remove("exchangeType");
+                msg.remove("messageType");
+                jo.put("message", msg);
+            } else if (out != null) {
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("exchangeId", out.getExchangeId());
+                jo.put("exchangePattern", exchangePattern);
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "success");
+            } else {
+                // timeout as there is no data
+                jo.put("endpoint", target.getEndpointUri());
+                jo.put("timestamp", timestamp);
+                jo.put("elapsed", watch.taken());
+                jo.put("status", "timeout");
+            }
+        } else {
+            // there is no valid endpoint
+            ctx.response().setStatusCode(400);
+            jo.put("endpoint", endpoint);
+            jo.put("exchangeId", "");
+            jo.put("exchangePattern", exchangePattern);
+            jo.put("timestamp", timestamp);
+            jo.put("elapsed", watch.taken());
+            jo.put("status", "failed");
+            // avoid double wrap
+            jo.put("exception",
+                    MessageHelper.dumpExceptionAsJSonObject(new NoSuchEndpointException(endpoint))
+                            .getMap("exception"));
+        }
+        ctx.end(jo.toJson());
     }
 
 }

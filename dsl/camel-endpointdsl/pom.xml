@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-endpointdsl</artifactId>
@@ -36,6 +36,7 @@
         <firstVersion>3.0.0</firstVersion>
         <title>Java Endpoint DSL</title>
         <label>dsl</label>
+        <enforcer.phase>none</enforcer.phase><!-- Save some time -->
     </properties>
 
     <repositories>
@@ -50,7 +51,7 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-    </repositories>  
+    </repositories>
 
     <dependencies>
 

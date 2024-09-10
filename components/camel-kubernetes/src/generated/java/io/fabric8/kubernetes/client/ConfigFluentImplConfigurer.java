@@ -28,7 +28,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "authprovider":
         case "authProvider": target.withAuthProvider(property(camelContext, io.fabric8.kubernetes.api.model.AuthProviderConfig.class, value)); return true;
         case "autoconfigure":
-        case "autoConfigure": target.withAutoConfigure(property(camelContext, boolean.class, value)); return true;
+        case "autoConfigure": target.withAutoConfigure(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "autooauthtoken":
         case "autoOAuthToken": target.withAutoOAuthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertdata":
@@ -48,19 +48,17 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "clientkeypassphrase":
         case "clientKeyPassphrase": target.withClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
-        case "connectionTimeout": target.withConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "connectionTimeout": target.withConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "contexts": target.withContexts(property(camelContext, java.util.List.class, value)); return true;
         case "currentcontext":
         case "currentContext": target.withCurrentContext(property(camelContext, io.fabric8.kubernetes.api.model.NamedContext.class, value)); return true;
         case "customheaders":
         case "customHeaders": target.withCustomHeaders(property(camelContext, java.util.Map.class, value)); return true;
-        case "defaultnamespace":
-        case "defaultNamespace": target.withDefaultNamespace(property(camelContext, boolean.class, value)); return true;
         case "disablehostnameverification":
-        case "disableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, boolean.class, value)); return true;
+        case "disableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "file": target.withFile(property(camelContext, java.io.File.class, value)); return true;
         case "http2disable":
-        case "http2Disable": target.withHttp2Disable(property(camelContext, boolean.class, value)); return true;
+        case "http2Disable": target.withHttp2Disable(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "httpproxy":
         case "httpProxy": target.withHttpProxy(property(camelContext, java.lang.String.class, value)); return true;
         case "httpsproxy":
@@ -76,13 +74,13 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "keystorepassphrase":
         case "keyStorePassphrase": target.withKeyStorePassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "logginginterval":
-        case "loggingInterval": target.withLoggingInterval(property(camelContext, int.class, value)); return true;
+        case "loggingInterval": target.withLoggingInterval(property(camelContext, java.lang.Integer.class, value)); return true;
         case "masterurl":
         case "masterUrl": target.withMasterUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "maxconcurrentrequests":
-        case "maxConcurrentRequests": target.withMaxConcurrentRequests(property(camelContext, int.class, value)); return true;
+        case "maxConcurrentRequests": target.withMaxConcurrentRequests(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxconcurrentrequestsperhost":
-        case "maxConcurrentRequestsPerHost": target.withMaxConcurrentRequestsPerHost(property(camelContext, int.class, value)); return true;
+        case "maxConcurrentRequestsPerHost": target.withMaxConcurrentRequestsPerHost(property(camelContext, java.lang.Integer.class, value)); return true;
         case "namespace": target.withNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "noproxy":
         case "noProxy": target.withNoProxy(property(camelContext, java.lang.String[].class, value)); return true;
@@ -91,39 +89,39 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "oauthtokenprovider":
         case "oauthTokenProvider": target.withOauthTokenProvider(property(camelContext, io.fabric8.kubernetes.client.OAuthTokenProvider.class, value)); return true;
         case "onlyhttpwatches":
-        case "onlyHttpWatches": target.withOnlyHttpWatches(property(camelContext, boolean.class, value)); return true;
+        case "onlyHttpWatches": target.withOnlyHttpWatches(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "password": target.withPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
         case "proxyPassword": target.withProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyusername":
         case "proxyUsername": target.withProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "requestretrybackoffinterval":
-        case "requestRetryBackoffInterval": target.withRequestRetryBackoffInterval(property(camelContext, int.class, value)); return true;
+        case "requestRetryBackoffInterval": target.withRequestRetryBackoffInterval(property(camelContext, java.lang.Integer.class, value)); return true;
         case "requestretrybackofflimit":
-        case "requestRetryBackoffLimit": target.withRequestRetryBackoffLimit(property(camelContext, int.class, value)); return true;
+        case "requestRetryBackoffLimit": target.withRequestRetryBackoffLimit(property(camelContext, java.lang.Integer.class, value)); return true;
         case "requesttimeout":
-        case "requestTimeout": target.withRequestTimeout(property(camelContext, int.class, value)); return true;
+        case "requestTimeout": target.withRequestTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "scaletimeout":
-        case "scaleTimeout": target.withScaleTimeout(property(camelContext, long.class, value)); return true;
+        case "scaleTimeout": target.withScaleTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "tlsversions":
         case "tlsVersions": target.withTlsVersions(property(camelContext, io.fabric8.kubernetes.client.http.TlsVersion[].class, value)); return true;
         case "trustcerts":
-        case "trustCerts": target.withTrustCerts(property(camelContext, boolean.class, value)); return true;
+        case "trustCerts": target.withTrustCerts(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "truststorefile":
         case "trustStoreFile": target.withTrustStoreFile(property(camelContext, java.lang.String.class, value)); return true;
         case "truststorepassphrase":
         case "trustStorePassphrase": target.withTrustStorePassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "uploadrequesttimeout":
-        case "uploadRequestTimeout": target.withUploadRequestTimeout(property(camelContext, int.class, value)); return true;
+        case "uploadRequestTimeout": target.withUploadRequestTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
         case "userAgent": target.withUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.withUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "watchreconnectinterval":
-        case "watchReconnectInterval": target.withWatchReconnectInterval(property(camelContext, int.class, value)); return true;
+        case "watchReconnectInterval": target.withWatchReconnectInterval(property(camelContext, java.lang.Integer.class, value)); return true;
         case "watchreconnectlimit":
-        case "watchReconnectLimit": target.withWatchReconnectLimit(property(camelContext, int.class, value)); return true;
+        case "watchReconnectLimit": target.withWatchReconnectLimit(property(camelContext, java.lang.Integer.class, value)); return true;
         case "websocketpinginterval":
-        case "websocketPingInterval": target.withWebsocketPingInterval(property(camelContext, long.class, value)); return true;
+        case "websocketPingInterval": target.withWebsocketPingInterval(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }
@@ -136,7 +134,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "authprovider":
         case "authProvider": return io.fabric8.kubernetes.api.model.AuthProviderConfig.class;
         case "autoconfigure":
-        case "autoConfigure": return boolean.class;
+        case "autoConfigure": return java.lang.Boolean.class;
         case "autooauthtoken":
         case "autoOAuthToken": return java.lang.String.class;
         case "cacertdata":
@@ -156,19 +154,17 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "clientkeypassphrase":
         case "clientKeyPassphrase": return java.lang.String.class;
         case "connectiontimeout":
-        case "connectionTimeout": return int.class;
+        case "connectionTimeout": return java.lang.Integer.class;
         case "contexts": return java.util.List.class;
         case "currentcontext":
         case "currentContext": return io.fabric8.kubernetes.api.model.NamedContext.class;
         case "customheaders":
         case "customHeaders": return java.util.Map.class;
-        case "defaultnamespace":
-        case "defaultNamespace": return boolean.class;
         case "disablehostnameverification":
-        case "disableHostnameVerification": return boolean.class;
+        case "disableHostnameVerification": return java.lang.Boolean.class;
         case "file": return java.io.File.class;
         case "http2disable":
-        case "http2Disable": return boolean.class;
+        case "http2Disable": return java.lang.Boolean.class;
         case "httpproxy":
         case "httpProxy": return java.lang.String.class;
         case "httpsproxy":
@@ -184,13 +180,13 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "keystorepassphrase":
         case "keyStorePassphrase": return java.lang.String.class;
         case "logginginterval":
-        case "loggingInterval": return int.class;
+        case "loggingInterval": return java.lang.Integer.class;
         case "masterurl":
         case "masterUrl": return java.lang.String.class;
         case "maxconcurrentrequests":
-        case "maxConcurrentRequests": return int.class;
+        case "maxConcurrentRequests": return java.lang.Integer.class;
         case "maxconcurrentrequestsperhost":
-        case "maxConcurrentRequestsPerHost": return int.class;
+        case "maxConcurrentRequestsPerHost": return java.lang.Integer.class;
         case "namespace": return java.lang.String.class;
         case "noproxy":
         case "noProxy": return java.lang.String[].class;
@@ -199,39 +195,39 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "oauthtokenprovider":
         case "oauthTokenProvider": return io.fabric8.kubernetes.client.OAuthTokenProvider.class;
         case "onlyhttpwatches":
-        case "onlyHttpWatches": return boolean.class;
+        case "onlyHttpWatches": return java.lang.Boolean.class;
         case "password": return java.lang.String.class;
         case "proxypassword":
         case "proxyPassword": return java.lang.String.class;
         case "proxyusername":
         case "proxyUsername": return java.lang.String.class;
         case "requestretrybackoffinterval":
-        case "requestRetryBackoffInterval": return int.class;
+        case "requestRetryBackoffInterval": return java.lang.Integer.class;
         case "requestretrybackofflimit":
-        case "requestRetryBackoffLimit": return int.class;
+        case "requestRetryBackoffLimit": return java.lang.Integer.class;
         case "requesttimeout":
-        case "requestTimeout": return int.class;
+        case "requestTimeout": return java.lang.Integer.class;
         case "scaletimeout":
-        case "scaleTimeout": return long.class;
+        case "scaleTimeout": return java.lang.Long.class;
         case "tlsversions":
         case "tlsVersions": return io.fabric8.kubernetes.client.http.TlsVersion[].class;
         case "trustcerts":
-        case "trustCerts": return boolean.class;
+        case "trustCerts": return java.lang.Boolean.class;
         case "truststorefile":
         case "trustStoreFile": return java.lang.String.class;
         case "truststorepassphrase":
         case "trustStorePassphrase": return java.lang.String.class;
         case "uploadrequesttimeout":
-        case "uploadRequestTimeout": return int.class;
+        case "uploadRequestTimeout": return java.lang.Integer.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
         case "username": return java.lang.String.class;
         case "watchreconnectinterval":
-        case "watchReconnectInterval": return int.class;
+        case "watchReconnectInterval": return java.lang.Integer.class;
         case "watchreconnectlimit":
-        case "watchReconnectLimit": return int.class;
+        case "watchReconnectLimit": return java.lang.Integer.class;
         case "websocketpinginterval":
-        case "websocketPingInterval": return long.class;
+        case "websocketPingInterval": return java.lang.Long.class;
         default: return null;
         }
     }
@@ -245,7 +241,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "authprovider":
         case "authProvider": return target.getAuthProvider();
         case "autoconfigure":
-        case "autoConfigure": return target.isAutoConfigure();
+        case "autoConfigure": return target.getAutoConfigure();
         case "autooauthtoken":
         case "autoOAuthToken": return target.getAutoOAuthToken();
         case "cacertdata":
@@ -271,13 +267,11 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "currentContext": return target.getCurrentContext();
         case "customheaders":
         case "customHeaders": return target.getCustomHeaders();
-        case "defaultnamespace":
-        case "defaultNamespace": return target.isDefaultNamespace();
         case "disablehostnameverification":
-        case "disableHostnameVerification": return target.isDisableHostnameVerification();
+        case "disableHostnameVerification": return target.getDisableHostnameVerification();
         case "file": return target.getFile();
         case "http2disable":
-        case "http2Disable": return target.isHttp2Disable();
+        case "http2Disable": return target.getHttp2Disable();
         case "httpproxy":
         case "httpProxy": return target.getHttpProxy();
         case "httpsproxy":
@@ -308,7 +302,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "oauthtokenprovider":
         case "oauthTokenProvider": return target.getOauthTokenProvider();
         case "onlyhttpwatches":
-        case "onlyHttpWatches": return target.isOnlyHttpWatches();
+        case "onlyHttpWatches": return target.getOnlyHttpWatches();
         case "password": return target.getPassword();
         case "proxypassword":
         case "proxyPassword": return target.getProxyPassword();
@@ -325,7 +319,7 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "tlsversions":
         case "tlsVersions": return target.getTlsVersions();
         case "trustcerts":
-        case "trustCerts": return target.isTrustCerts();
+        case "trustCerts": return target.getTrustCerts();
         case "truststorefile":
         case "trustStoreFile": return target.getTrustStoreFile();
         case "truststorepassphrase":

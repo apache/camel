@@ -49,7 +49,7 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
         assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals(1000, size.intValue(), "Should be 1000");
+        assertEquals(100, size.intValue(), "Should be 100");
 
         // set the filter to match only if header foo exists
         mbeanServer.setAttribute(on, new Attribute("TraceFilter", "${header.foo} != null"));

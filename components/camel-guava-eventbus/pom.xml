@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-guava-eventbus</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Guava-EventBus</name>
+    <name>Camel :: Guava-EventBus (deprecated)</name>
     <description>Camel Guava EventBus support</description>
 
     <properties>

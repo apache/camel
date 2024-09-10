@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.StringHelper.*;
+import static org.apache.camel.util.StringHelper.dashToCamelCase;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,6 +66,30 @@ public class StringHelperTest {
     @Test
     public void testDashToCamelCase() {
         assertEquals("enableCors", dashToCamelCase("enable-cors"));
+
+        assertNull(dashToCamelCase(null));
+        assertEquals("", dashToCamelCase(""));
+
+        assertEquals("helloWorld", dashToCamelCase("hello-world"));
+        assertEquals("helloBigWorld", dashToCamelCase("hello-big-world"));
+        assertEquals("myId", dashToCamelCase("my-id"));
+        assertEquals("myId", dashToCamelCase("my-id"));
+        assertEquals("myUrl", dashToCamelCase("my-url"));
+        assertEquals("myUrl", dashToCamelCase("my-url"));
+        assertEquals("myBigId", dashToCamelCase("my-big-id"));
+        assertEquals("myBigId", dashToCamelCase("my-big-id"));
+        assertEquals("myBigUrl", dashToCamelCase("my-big-url"));
+        assertEquals("myBigUrl", dashToCamelCase("my-big-url"));
+        assertEquals("myBigIdAgain", dashToCamelCase("my-big-id-again"));
+        assertEquals("myBigUrlAgain", dashToCamelCase("my-big-url-again"));
+
+        assertEquals("useMdcLogging", dashToCamelCase("use-mdc-logging"));
+        assertEquals("mdcLoggingKeysPattern", dashToCamelCase("mdc-logging-keys-pattern"));
+        assertEquals("availablePhoneNumberCountry", dashToCamelCase("available-phone-number-country"));
+        assertEquals("available_phoneNumberCountry", dashToCamelCase("available_phone-number-country"));
+        assertEquals("available_phone_number_country", dashToCamelCase("available_phone_number_country"));
+        assertEquals("enableCors", dashToCamelCase("enable-cors"));
+
     }
 
     @Test

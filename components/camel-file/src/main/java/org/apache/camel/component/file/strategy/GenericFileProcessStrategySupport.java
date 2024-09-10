@@ -165,8 +165,8 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
 
     @Override
     protected void doStart() throws Exception {
-        if (exclusiveReadLockStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) exclusiveReadLockStrategy).setCamelContext(camelContext);
+        if (exclusiveReadLockStrategy instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
         ServiceHelper.startService(exclusiveReadLockStrategy);
     }

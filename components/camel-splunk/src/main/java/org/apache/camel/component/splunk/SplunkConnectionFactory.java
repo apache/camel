@@ -44,6 +44,7 @@ public class SplunkConnectionFactory {
     private int connectionTimeout;
     private boolean useSunHttpsHandler;
     private SSLSecurityProtocol sslProtocol;
+    private boolean validateCertificates;
 
     public SplunkConnectionFactory(final String host, final int port, final String username, final String password) {
         this.host = host;
@@ -94,6 +95,14 @@ public class SplunkConnectionFactory {
 
     public void setSslProtocol(SSLSecurityProtocol sslProtocol) {
         this.sslProtocol = sslProtocol;
+    }
+
+    public boolean isValidateCertificates() {
+        return validateCertificates;
+    }
+
+    public void setValidateCertificates(boolean validateCertificates) {
+        this.validateCertificates = validateCertificates;
     }
 
     public String getToken() {
@@ -153,7 +162,9 @@ public class SplunkConnectionFactory {
         Future<Service> future = executor.submit(new Callable<Service>() {
             public Service call() throws Exception {
                 if (Service.DEFAULT_SCHEME.equals(getScheme())) {
-                    LOG.debug("Https in use. Setting SSL protocol to {}", getSslProtocol());
+                    LOG.debug("Https in use. Setting SSL protocol to {} and sertificate validation to %s", getSslProtocol(),
+                            isValidateCertificates());
+                    HttpService.setValidateCertificates(isValidateCertificates());
                     HttpService.setSslSecurityProtocol(getSslProtocol());
                 }
                 return Service.connect(args);

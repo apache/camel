@@ -16,9 +16,17 @@
  */
 package org.apache.camel.component.as2.api;
 
+import java.util.Optional;
+
 interface Constants {
     String SHA_1_AS2_ALGORITHM_NAME = "sha1";
+    String SHA_256_AS2_ALGORITHM_NAME = "sha256";
+    String SHA_384_AS2_ALGORITHM_NAME = "sha384";
+    String SHA_512_AS2_ALGORITHM_NAME = "sha512";
     String SHA_1_JDK_ALGORITHM_NAME = "SHA-1";
+    String SHA_256_JDK_ALGORITHM_NAME = "SHA-256";
+    String SHA_384_JDK_ALGORITHM_NAME = "SHA-384";
+    String SHA_512_JDK_ALGORITHM_NAME = "SHA-512";
 
     String MD5_AS2_ALGORITHM_NAME = "md5";
     String MD5_JDK_ALGORITHM_NAME = "MD5";
@@ -26,6 +34,9 @@ interface Constants {
 
 public enum AS2MicAlgorithm {
     SHA_1(Constants.SHA_1_JDK_ALGORITHM_NAME, Constants.SHA_1_AS2_ALGORITHM_NAME),
+    SHA_256(Constants.SHA_256_JDK_ALGORITHM_NAME, Constants.SHA_256_AS2_ALGORITHM_NAME),
+    SHA_384(Constants.SHA_384_JDK_ALGORITHM_NAME, Constants.SHA_384_AS2_ALGORITHM_NAME),
+    SHA_512(Constants.SHA_512_JDK_ALGORITHM_NAME, Constants.SHA_512_AS2_ALGORITHM_NAME),
     MD5(Constants.MD5_JDK_ALGORITHM_NAME, Constants.MD5_AS2_ALGORITHM_NAME);
 
     private final String jdkAlgorithmName;
@@ -45,25 +56,30 @@ public enum AS2MicAlgorithm {
     }
 
     public static String getJdkAlgorithmName(String as2AlgorithmName) {
-        switch (as2AlgorithmName) {
-            case Constants.SHA_1_AS2_ALGORITHM_NAME:
-                return Constants.SHA_1_JDK_ALGORITHM_NAME;
-            case Constants.MD5_AS2_ALGORITHM_NAME:
-                return Constants.MD5_JDK_ALGORITHM_NAME;
-            default:
-                return null;
-        }
+        return Optional.ofNullable(as2AlgorithmName)
+                .map(alg -> alg.replaceAll("-", ""))
+                .map(alg -> switch (alg) {
+                    case Constants.MD5_AS2_ALGORITHM_NAME -> Constants.MD5_JDK_ALGORITHM_NAME;
+                    case Constants.SHA_1_AS2_ALGORITHM_NAME -> Constants.SHA_1_JDK_ALGORITHM_NAME;
+                    case Constants.SHA_256_AS2_ALGORITHM_NAME -> Constants.SHA_256_JDK_ALGORITHM_NAME;
+                    case Constants.SHA_384_AS2_ALGORITHM_NAME -> Constants.SHA_384_JDK_ALGORITHM_NAME;
+                    case Constants.SHA_512_AS2_ALGORITHM_NAME -> Constants.SHA_512_JDK_ALGORITHM_NAME;
+                    default -> null;
+                })
+                .orElse(null);
     }
 
     public static String getAS2AlgorithmName(String jdkAlgorithmName) {
-        switch (jdkAlgorithmName) {
-            case Constants.MD5_JDK_ALGORITHM_NAME:
-                return Constants.MD5_AS2_ALGORITHM_NAME;
-            case Constants.SHA_1_JDK_ALGORITHM_NAME:
-                return Constants.SHA_1_AS2_ALGORITHM_NAME;
-            default:
-                return null;
-        }
+        return Optional.ofNullable(jdkAlgorithmName)
+                .map(alg -> switch (alg) {
+                    case Constants.MD5_JDK_ALGORITHM_NAME -> Constants.MD5_AS2_ALGORITHM_NAME;
+                    case Constants.SHA_1_JDK_ALGORITHM_NAME -> Constants.SHA_1_AS2_ALGORITHM_NAME;
+                    case Constants.SHA_256_JDK_ALGORITHM_NAME -> Constants.SHA_256_AS2_ALGORITHM_NAME;
+                    case Constants.SHA_384_JDK_ALGORITHM_NAME -> Constants.SHA_384_AS2_ALGORITHM_NAME;
+                    case Constants.SHA_512_JDK_ALGORITHM_NAME -> Constants.SHA_512_AS2_ALGORITHM_NAME;
+                    default -> null;
+                })
+                .orElse(null);
     }
 
 }

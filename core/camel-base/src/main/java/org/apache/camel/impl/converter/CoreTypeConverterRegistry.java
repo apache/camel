@@ -114,9 +114,9 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             Object answer = ObjectConverter.toBoolean(value);
             requireNonNullBoolean(type, value, answer);
             return (T) answer;
-        } else if (type == Boolean.class && value instanceof String) {
+        } else if (type == Boolean.class && value instanceof String str) {
             // String -> Boolean
-            Boolean parsedBoolean = customParseBoolean((String) value);
+            Boolean parsedBoolean = customParseBoolean(str);
             if (parsedBoolean != null) {
                 return (T) parsedBoolean;
             }
@@ -215,9 +215,9 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 Object answer = ObjectConverter.toBoolean(value);
                 requireNonNullBoolean(type, value, answer);
                 return (T) answer;
-            } else if (type == Boolean.class && value instanceof String) {
+            } else if (type == Boolean.class && value instanceof String str) {
                 // String -> Boolean
-                Boolean parsedBoolean = customParseBoolean((String) value);
+                Boolean parsedBoolean = customParseBoolean(str);
                 if (parsedBoolean != null) {
                     return (T) parsedBoolean;
                 }
@@ -573,8 +573,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     protected TypeConversionException createTypeConversionException(
             Exchange exchange, Class<?> type, Object value, Throwable cause) {
-        if (cause instanceof TypeConversionException) {
-            if (((TypeConversionException) cause).getToType() == type) {
+        if (cause instanceof TypeConversionException tce) {
+            if (tce.getToType() == type) {
                 return (TypeConversionException) cause;
             }
         }

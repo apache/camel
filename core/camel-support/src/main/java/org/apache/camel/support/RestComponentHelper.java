@@ -143,9 +143,11 @@ public final class RestComponentHelper {
     }
 
     private static String applyFormatAndQuery(String format, String query, Object... formatOptions) {
+        final String initial = String.format(format, formatOptions);
         // get the endpoint
-        StringBuilder urlBuilder = new StringBuilder(String.format(format, formatOptions));
+        StringBuilder urlBuilder = new StringBuilder(initial.length() + query.length() + 1);
 
+        urlBuilder.append(initial);
         if (!query.isEmpty()) {
             urlBuilder.append("?");
             urlBuilder.append(query);

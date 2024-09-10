@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-component-maven-plugin</artifactId>
@@ -91,9 +91,6 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <configuration>
                     <goalPrefix>camel-component</goalPrefix>
-                    <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
-                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-                    <mojoDependencies />
                 </configuration>
                 <executions>
                     <execution>
@@ -106,6 +103,18 @@
                         <id>help-goal</id>
                         <goals>
                             <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.sisu</groupId>
+                <artifactId>sisu-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-index</id>
+                        <goals>
+                            <goal>main-index</goal>
                         </goals>
                     </execution>
                 </executions>

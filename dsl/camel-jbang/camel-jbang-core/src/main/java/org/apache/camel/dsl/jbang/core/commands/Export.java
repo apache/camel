@@ -74,46 +74,48 @@ public class Export extends ExportBaseCommand {
 
     private void doLoadAndInitProfileProperties(File file) throws Exception {
         if (file.exists()) {
-            Properties prop = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(prop, file);
+            Properties props = new CamelCaseOrderedProperties();
+            RuntimeUtil.loadProperties(props, file);
             // read runtime and gav from profile if not configured
-            if (prop.containsKey("camel.jbang.runtime")) {
-                this.runtime = RuntimeType.fromValue(prop.getProperty("camel.jbang.runtime"));
+            String rt = props.getProperty("camel.jbang.runtime");
+            if (rt != null) {
+                this.runtime = RuntimeType.fromValue(rt);
             }
-            this.gav = prop.getProperty("camel.jbang.gav", this.gav);
+            this.gav = props.getProperty("camel.jbang.gav", this.gav);
             // allow configuring versions from profile
-            this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
-            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
-            this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
-            this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
-            this.camelSpringBootVersion = prop.getProperty("camel.jbang.camelSpringBootVersion", this.camelSpringBootVersion);
-            this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
+            this.javaVersion = props.getProperty("camel.jbang.javaVersion", this.javaVersion);
+            this.camelVersion = props.getProperty("camel.jbang.camelVersion", this.camelVersion);
+            this.kameletsVersion = props.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
+            this.localKameletDir = props.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
+            this.quarkusGroupId = props.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
+            this.quarkusArtifactId = props.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
+            this.quarkusVersion = props.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
+            this.camelSpringBootVersion = props.getProperty("camel.jbang.camelSpringBootVersion", this.camelSpringBootVersion);
+            this.springBootVersion = props.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
             this.mavenWrapper
-                    = "true".equals(prop.getProperty("camel.jbang.mavenWrapper", this.mavenWrapper ? "true" : "false"));
+                    = "true".equals(props.getProperty("camel.jbang.mavenWrapper", this.mavenWrapper ? "true" : "false"));
             this.gradleWrapper
-                    = "true".equals(prop.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
-            this.exportDir = prop.getProperty("camel.jbang.exportDir", this.exportDir);
-            this.buildTool = prop.getProperty("camel.jbang.buildTool", this.buildTool);
-            this.openapi = prop.getProperty("camel.jbang.openApi", this.openapi);
-            this.repos = prop.getProperty("camel.jbang.repos", this.repos);
-            this.mavenSettings = prop.getProperty("camel.jbang.maven-settings", this.mavenSettings);
-            this.mavenSettingsSecurity = prop.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
+                    = "true".equals(props.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
+            this.exportDir = props.getProperty("camel.jbang.exportDir", this.exportDir);
+            this.buildTool = props.getProperty("camel.jbang.buildTool", this.buildTool);
+            this.openapi = props.getProperty("camel.jbang.openApi", this.openapi);
+            this.repositories
+                    = RuntimeUtil.getCommaSeparatedPropertyAsList(props, "camel.jbang.repositories", this.repositories);
+            this.mavenSettings = props.getProperty("camel.jbang.maven-settings", this.mavenSettings);
+            this.mavenSettingsSecurity = props.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
             this.mavenCentralEnabled = "true"
-                    .equals(prop.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
-            this.mavenApacheSnapshotEnabled = "true".equals(prop.getProperty("camel.jbang.maven-apache-snapshot-enabled",
+                    .equals(props.getProperty("camel.jbang.maven-central-enabled", mavenCentralEnabled ? "true" : "false"));
+            this.mavenApacheSnapshotEnabled = "true".equals(props.getProperty("camel.jbang.maven-apache-snapshot-enabled",
                     mavenApacheSnapshotEnabled ? "true" : "false"));
-            this.exclude = prop.getProperty("camel.jbang.exclude", this.exclude);
+            this.excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(props, "camel.jbang.excludes", this.excludes);
         }
     }
 
     protected Integer export(ExportBaseCommand cmd) throws Exception {
         // copy properties from this to cmd
         cmd.files = this.files;
-        cmd.repos = this.repos;
-        cmd.addDependencies(this.dependencies);
+        cmd.repositories = this.repositories;
+        cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.gav = this.gav;
         cmd.mavenSettings = this.mavenSettings;
@@ -140,10 +142,10 @@ public class Export extends ExportBaseCommand {
         cmd.gradleWrapper = this.gradleWrapper;
         cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
-        cmd.additionalProperties = this.additionalProperties;
+        cmd.buildProperties = this.buildProperties;
         cmd.openapi = this.openapi;
         cmd.packageName = this.packageName;
-        cmd.exclude = this.exclude;
+        cmd.excludes = this.excludes;
         cmd.ignoreLoadingError = this.ignoreLoadingError;
         // run export
         return cmd.export();

@@ -57,7 +57,7 @@ public class MetadataHelperTest {
         metadata = MetadataHelper.readFromSource(catalog, source);
 
         Assertions.assertFalse(MetadataHelper.exposesHttpServices(catalog, metadata));
-        Assertions.assertEquals(3, metadata.resources.components.size());
+        Assertions.assertEquals(2, metadata.resources.components.size());
         Assertions.assertTrue(metadata.resources.components.containsAll(Arrays.asList("timer", "log")));
         Assertions.assertEquals(1, metadata.endpoints.from.size());
         Assertions.assertTrue(metadata.endpoints.from.contains("timer://tick"));

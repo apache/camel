@@ -36,18 +36,22 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listEvents
-- listEventsByLabels
-- getEvent
-- createEvent
-- updateEvent
-- deleteEvent
+=== Supported producer operation
 
-== Kubernetes Events Producer Examples
+- `listEvents`
+- `listEventsByLabels`
+- `getEvent`
+- `createEvent`
+- `updateEvent`
+- `deleteEvent`
 
-- listEvents: this operation lists the events
+== Examples
+
+=== Kubernetes Events Producer Examples
+
+- `listEvents`: this operation lists the events
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -60,7 +64,7 @@ This operation returns a list of events from your cluster. The type of the event
 
 To indicate from which namespace, the events are expected, it is possible to set the message header `CamelKubernetesNamespaceName`. By default, the events of all namespaces are returned.
 
-- listEventsByLabels: this operation lists the events selected by labels
+- `listEventsByLabels`: this operation lists the events selected by labels
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -82,7 +86,7 @@ This operation returns a list of events from your cluster that occurred in any n
 
 This operation expects the message header `CamelKubernetesEventsLabels` to be set to a `Map<String, String>` where the key-value pairs represent the expected label names and values.
 
-- getEvent: this operation gives a specific event
+- `getEvent`: this operation gives a specific event
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -104,7 +108,7 @@ This operation expects two message headers which are `CamelKubernetesNamespaceNa
 
 If no matching event could be found, `null` is returned.
 
-- createEvent: this operation creates a new event
+- `createEvent`: this operation creates a new event
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -139,11 +143,11 @@ The message headers that can be used to create an event are `CamelKubernetesEven
 
 In case the supported message headers are not enough for a specific use case, it is still possible to set the message body with an object of type `io.fabric8.kubernetes.api.model.events.v1.EventBuilder` representing a prefilled builder to use when creating the event. Please note that the labels, name of event and name of namespace are always set from the message headers, even when the builder is provided.
 
-- updateEvent: this operation updates an existing event
+- `updateEvent`: this operation updates an existing event
 
 The behavior is exactly the same as `createEvent`, only the name of the operation is different.
 
-- deleteEvent: this operation deletes an existing event.
+- `deleteEvent`: this operation deletes an existing event.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -163,7 +167,7 @@ This operation removes an existing event from your cluster. It returns a `boolea
 
 This operation expects two message headers which are `CamelKubernetesNamespaceName` and `CamelKubernetesEventName`, the first one needs to be set to the name of the target namespace and second one needs to be set to the target name of event.
 
-== Kubernetes Events Consumer Example
+=== Kubernetes Events Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------

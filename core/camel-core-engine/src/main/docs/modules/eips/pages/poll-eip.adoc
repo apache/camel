@@ -1,0 +1,115 @@
+= Poll EIP
+:doctitle: Poll
+:shortname: poll
+:description: Polls a message from a static endpoint
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/DataEnricher.html[Content
+Enricher] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
+
+image::eip/DataEnricher.gif[image]
+
+In Camel the Content Enricher can be done in several ways:
+
+* Using xref:enrich-eip.adoc[Enrich] EIP, xref:pollEnrich-eip.adoc[Poll Enrich], or xref:poll-eip.adoc[Poll] EIP
+* Using a xref:message-translator.adoc[Message Translator]
+* Using a xref:manual::processor.adoc[Processor] with the enrichment programmed in Java
+* Using a xref:bean-eip.adoc[Bean] EIP with the enrichment programmed in Java
+
+The Poll EIP is a simplified xref:pollEnrich-eip.adoc[Poll Enrich] which only supports:
+
+* Static Endpoints
+* No custom aggregation or other advanced features
+* Uses a 20 seconds timeout (default)
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Polling a message using Poll EIP
+
+`poll` uses a xref:polling-consumer.adoc[Polling Consumer] to obtain the data.
+It is usually used for xref:event-message.adoc[Event Message] messaging,
+for instance, to read a file or download a file using FTP.
+
+We have three methods when polling:
+
+* `receive`: Waits until a message is available and then returns it. *Warning* that this method could block indefinitely if no messages are available.
+* `receiveNoWait`: Attempts to receive a message exchange immediately without waiting and returning `null` if a message exchange is not available yet.
+* `receive(timeout)`: Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns the message or `null` if the timeout expired.
+
+=== Timeout
+
+By default, Camel will use the `receive(timeout)` which has a 20 seconds timeout.
+
+You can pass in a timeout value that determines which method to use:
+
+* if timeout is `-1` or other negative number then `receive` is selected (*Important:* the `receive` method may block if there is no message)
+* if timeout is `0` then `receiveNoWait` is selected
+* otherwise, `receive(timeout)` is selected
+
+The timeout values are in milliseconds.
+
+=== Using Poll
+
+For example to download an FTP file:
+
+[source,xml]
+----
+<rest path="/report">
+    <description>Report REST API</description>
+    <get path="/{id}/payload">
+        <route id="report-payload-download">
+            <poll uri="ftp:myserver.com/myfolder?fileName=report-file.pdf"/>
+        </route>
+    </get>
+</rest>
+----
+
+NOTE: You can use dynamic values using the simple language in the uri, as shown below:
+
+[source,xml]
+----
+<rest path="/report">
+    <description>Report REST API</description>
+    <get path="/{id}/payload">
+        <route id="report-payload-download">
+            <poll uri="ftp:myserver.com/myfolder?fileName=report-${header.id}.pdf"/>
+        </route>
+    </get>
+</rest>
+----
+
+=== Using Poll with Rest DSL
+
+You can also use `poll` with xref:manual::rest-dsl.adoc[Rest DSL] to,
+for example, download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the response of an API call.
+
+[source,xml]
+----
+<rest path="/report">
+    <description>Report REST API</description>
+    <get path="/{id}/payload">
+        <route id="report-payload-download">
+            <poll uri="aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf"/>
+        </route>
+    </get>
+</rest>
+----
+
+== See More
+
+- xref:poll-eip.adoc[Poll EIP]
+- xref:enrich-eip.adoc[Enrich EIP]

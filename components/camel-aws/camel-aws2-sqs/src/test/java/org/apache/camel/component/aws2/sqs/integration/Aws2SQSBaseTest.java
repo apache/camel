@@ -24,8 +24,10 @@ import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class Aws2SQSBaseTest extends CamelTestSupport {
@@ -36,15 +38,28 @@ public abstract class Aws2SQSBaseTest extends CamelTestSupport {
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
+    protected SqsClient sqsClient;
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        if (sqsClient == null) {
+            sqsClient = AWSSDKClientUtils.newSQSClient();
+        }
         CamelContext context = super.createCamelContext();
         Sqs2Component sqs = context.getComponent("aws2-sqs", Sqs2Component.class);
-        sqs.getConfiguration().setAmazonSQSClient(AWSSDKClientUtils.newSQSClient());
+        sqs.getConfiguration().setAmazonSQSClient(sqsClient);
         return context;
     }
 
     protected CamelContext createCamelContextWithoutClient() throws Exception {
         return super.createCamelContext();
+    }
+
+    @AfterEach
+    void closeSqslClient() {
+        if (sqsClient != null) {
+            sqsClient.close();
+            sqsClient = null;
+        }
     }
 }

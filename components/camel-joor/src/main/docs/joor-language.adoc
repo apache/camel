@@ -22,27 +22,27 @@ NOTE: Java 8 is not supported. Java 11 is required.
 
 == jOOR Options
 
-
-
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
 
-== Variables
+== Usage
+
+=== Variables
 
 The jOOR language allows the following variables to be used in the script:
 
 [width="100%",cols="2,1m,7",options="header"]
 |===
 | Variable | Java Type | Description
-| context | Context | The CamelContext
-| exchange | Exchange | The Camel Exchange
-| message | Message | The Camel message
-| body | Object | The message body
-| optionalBody | The body wrapped in `java.util.Optional`.
+| `context` | Context | The CamelContext
+| `exchange` | Exchange | The Camel Exchange
+| `message` | Message | The Camel message
+| `body` | Object | The message body
+| `optionalBody` | The body wrapped in `java.util.Optional`.
 |===
 
-== Functions
+=== Functions
 
 The jOOR language allows the following functions to be used in the script:
 
@@ -92,7 +92,7 @@ And then the function can be shortened:
 var user = bodyAs(MyUser);
 ----
 
-== Dependency Injection
+=== Dependency Injection
 
 The Camel jOOR language allows dependency injection by referring to beans by their id from the Camel registry.
 For optimization purposes, then the beans are injected once in the constructor and the scopes are _singleton_.
@@ -161,7 +161,7 @@ Notice how we declare the bean as if it is a local variable via `var bean = #bea
 When doing this, we must use a different name as `myEcho` is the variable used by the dependency injection.
 Therefore, we use _bean_ as name in the script.
 
-== Auto imports
+=== Auto imports
 
 The jOOR language will automatically import from:
 
@@ -174,7 +174,7 @@ import org.apache.camel.*;
 import org.apache.camel.util.*;
 ----
 
-== Configuration file
+=== Configuration file
 
 You can configure the jOOR language in the `camel-joor.properties` file which by default is loaded from the root classpath.
 You can specify a different location with the `configResource` option on the jOOR language.
@@ -257,7 +257,7 @@ XML DSL::
 
 ====
 
-== Multi statements
+=== Multi statements
 
 It is possible to include multiple statements.
 The code below shows an example where the `user` header is retrieved in a first statement.
@@ -279,7 +279,7 @@ from("seda:orders")
   .to("seda:user");
 ----
 
-== Hot re-load
+=== Hot re-load
 
 You can turn off pre-compilation for the jOOR language and then Camel will recompile the script for each message.
 You can externalize the code into a resource file, which will be reloaded on each message as shown:
@@ -318,7 +318,7 @@ In XML DSL it's easier because you can turn off pre-compilation in the `<joor>` 
 
 ====
 
-== Lambda-based AggregationStrategy
+=== Lambda-based AggregationStrategy
 
 The jOOR language has special support for defining an `org.apache.camel.AggregationStrategy` as a lambda expression.
 This is useful when using EIP patterns that use aggregation such as the Aggregator, Splitter, Recipient List, Enrich, and others.
@@ -345,13 +345,13 @@ For example, to aggregate message bodies together, we can do this as shown:
 }
 ----
 
-== Limitations
+=== Limitations
 
 The jOOR Camel language is only supported as a block of Java code that gets compiled into a Java class with a single method.
 The code that you can write is therefore limited to a number of Java statements.
 
 The supported runtime is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
-It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
+It is not supported on any kind of Java Application Server runtime.
 
 jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69), it works with exploded classpath.
 

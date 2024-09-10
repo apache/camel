@@ -19,7 +19,6 @@ The Kamelet Component provides support for interacting with the xref:manual::rou
 
 == URI format
 
-[source]
 ----
 kamelet:templateId/routeId[?options]
 ----
@@ -43,11 +42,13 @@ include::partial$component-endpoint-options.adoc[]
 The *kamelet* endpoint is *lenient*, which means that the endpoint accepts additional parameters that are passed to the xref:manual::route-template.adoc[Route Template] engine and consumed upon route materialization.
 ====
 
-== Discovery
+== Usage
+
+=== Discovery
 
 If a xref:manual::route-template.adoc[Route Template] is not found, the *kamelet* endpoint tries to load the related *kamelet* definition from the file system (by default `classpath:kamelets`). The default resolution mechanism expects _Kamelets_ files to have the extension `.kamelet.yaml`.
 
-== Samples
+== Examples
 
 
 _Kamelets_ can be used as if they were standard Camel components.

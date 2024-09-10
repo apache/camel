@@ -25,6 +25,8 @@ public class JsonataComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "framebinding":
+        case "frameBinding": target.setFrameBinding(property(camelContext, org.apache.camel.component.jsonata.JsonataFrameBinding.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -36,6 +38,8 @@ public class JsonataComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "framebinding":
+        case "frameBinding": return org.apache.camel.component.jsonata.JsonataFrameBinding.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -48,6 +52,8 @@ public class JsonataComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "framebinding":
+        case "frameBinding": return target.getFrameBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

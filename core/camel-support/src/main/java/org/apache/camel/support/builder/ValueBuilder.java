@@ -43,8 +43,8 @@ public class ValueBuilder implements Expression, Predicate {
 
     @Override
     public void initPredicate(CamelContext context) {
-        if (expression instanceof Predicate) {
-            ((Predicate) expression).initPredicate(context);
+        if (expression instanceof Predicate predicate) {
+            predicate.initPredicate(context);
         } else {
             expression.init(context);
         }
@@ -57,8 +57,8 @@ public class ValueBuilder implements Expression, Predicate {
 
     @Override
     public boolean matches(Exchange exchange) {
-        if (expression instanceof Predicate) {
-            return ((Predicate) expression).matches(exchange);
+        if (expression instanceof Predicate predicate) {
+            return predicate.matches(exchange);
         }
         return PredicateBuilder.toPredicate(getExpression()).matches(exchange);
     }
@@ -313,8 +313,8 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     protected Expression asExpression(Object value) {
-        if (value instanceof Expression) {
-            return (Expression) value;
+        if (value instanceof Expression expression) {
+            return expression;
         } else {
             return ExpressionBuilder.constantExpression(value);
         }

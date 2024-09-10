@@ -39,8 +39,8 @@ public class XsltResultHandlerTest extends TestSupport {
 
         XsltEndpoint endpoint = null;
         for (Endpoint ep : context.getEndpoints()) {
-            if (ep instanceof XsltEndpoint) {
-                endpoint = (XsltEndpoint) ep;
+            if (ep instanceof XsltEndpoint xsltEndpoint) {
+                endpoint = xsltEndpoint;
                 break;
             }
         }

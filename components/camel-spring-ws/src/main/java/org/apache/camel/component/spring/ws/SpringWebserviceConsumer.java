@@ -46,8 +46,8 @@ import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResu
 
 public class SpringWebserviceConsumer extends DefaultConsumer implements MessageEndpoint {
 
-    private SpringWebserviceEndpoint endpoint;
-    private SpringWebserviceConfiguration configuration;
+    private final SpringWebserviceEndpoint endpoint;
+    private final SpringWebserviceConfiguration configuration;
 
     public SpringWebserviceConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -70,7 +70,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             populateExchangeFromMessageContext(messageContext, exchange);
 
             // populate camel exchange with breadcrumb from transport header
-            if (getEndpoint().getCamelContext().isUseBreadcrumb()) {
+            if (Boolean.TRUE.equals(getEndpoint().getCamelContext().isUseBreadcrumb())) {
                 populateExchangeWithBreadcrumbFromMessageContext(messageContext, exchange);
             }
 
@@ -94,8 +94,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     }
 
     private void populateExchangeWithBreadcrumbFromMessageContext(MessageContext messageContext, Exchange exchange) {
-        if (messageContext.getRequest() instanceof SaajSoapMessage) {
-            SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
+        if (messageContext.getRequest() instanceof SaajSoapMessage saajSoap) {
             populateExchangeWithBreadcrumbFromSaajMessage(exchange, saajSoap);
         } else {
             populateExchangeWithBreadcrumbFromMessageContext(exchange, messageContext);
@@ -171,8 +170,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
      * @param request the WebService Request
      */
     private void extractSourceFromSoapHeader(Map<String, Object> headers, WebServiceMessage request) {
-        if (request instanceof SoapMessage) {
-            SoapMessage soapMessage = (SoapMessage) request;
+        if (request instanceof SoapMessage soapMessage) {
             SoapHeader soapHeader = soapMessage.getSoapHeader();
 
             if (soapHeader != null) {
@@ -203,12 +201,12 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
 
         DefaultAttachmentMessage dam = null;
 
-        if (request instanceof MimeMessage) {
-            Iterator<Attachment> attachmentsIterator = ((MimeMessage) request).getAttachments();
+        if (request instanceof MimeMessage mimeMessage) {
+            Iterator<Attachment> attachmentsIterator = mimeMessage.getAttachments();
             while (attachmentsIterator.hasNext()) {
                 Attachment attachment = attachmentsIterator.next();
                 if (dam == null) {
-                    // this is just a wrapper which will set data on the IN
+                    // this is just a wrapper that will set data on the IN
                     dam = new DefaultAttachmentMessage(exchange.getIn());
                 }
                 dam.addAttachment(attachment.getContentId(), attachment.getDataHandler());

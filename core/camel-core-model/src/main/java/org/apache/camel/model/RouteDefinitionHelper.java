@@ -548,21 +548,21 @@ public final class RouteDefinitionHelper {
 
         // move the abstracts interceptors into the dedicated list
         for (ProcessorDefinition processor : abstracts) {
-            if (processor instanceof InterceptSendToEndpointDefinition) {
+            if (processor instanceof InterceptSendToEndpointDefinition interceptSendToEndpointDefinition) {
                 if (interceptSendToEndpointDefinitions == null) {
                     interceptSendToEndpointDefinitions = new ArrayList<>();
                 }
-                interceptSendToEndpointDefinitions.add((InterceptSendToEndpointDefinition) processor);
-            } else if (processor instanceof InterceptFromDefinition) {
+                interceptSendToEndpointDefinitions.add(interceptSendToEndpointDefinition);
+            } else if (processor instanceof InterceptFromDefinition interceptFromDefinition) {
                 if (interceptFromDefinitions == null) {
                     interceptFromDefinitions = new ArrayList<>();
                 }
-                interceptFromDefinitions.add((InterceptFromDefinition) processor);
-            } else if (processor instanceof InterceptDefinition) {
+                interceptFromDefinitions.add(interceptFromDefinition);
+            } else if (processor instanceof InterceptDefinition interceptDefinition) {
                 if (intercepts == null) {
                     intercepts = new ArrayList<>();
                 }
-                intercepts.add((InterceptDefinition) processor);
+                intercepts.add(interceptDefinition);
             }
         }
 
@@ -677,8 +677,8 @@ public final class RouteDefinitionHelper {
 
         // find the route scoped onCompletions
         for (ProcessorDefinition out : abstracts) {
-            if (out instanceof OnCompletionDefinition) {
-                completions.add((OnCompletionDefinition) out);
+            if (out instanceof OnCompletionDefinition onCompletionDefinition) {
+                completions.add(onCompletionDefinition);
             }
         }
 
@@ -704,9 +704,9 @@ public final class RouteDefinitionHelper {
 
         // add to correct type
         for (ProcessorDefinition<?> type : abstracts) {
-            if (type instanceof SagaDefinition) {
+            if (type instanceof SagaDefinition sagaDefinition) {
                 if (saga == null) {
-                    saga = (SagaDefinition) type;
+                    saga = sagaDefinition;
                 } else {
                     throw new IllegalArgumentException("The route can only have one saga defined");
                 }
@@ -727,9 +727,9 @@ public final class RouteDefinitionHelper {
 
         // add to correct type
         for (ProcessorDefinition<?> type : abstracts) {
-            if (type instanceof TransactedDefinition) {
+            if (type instanceof TransactedDefinition transactedDefinition) {
                 if (transacted == null) {
-                    transacted = (TransactedDefinition) type;
+                    transacted = transactedDefinition;
                 } else {
                     throw new IllegalArgumentException("The route can only have one transacted defined");
                 }

@@ -131,10 +131,10 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Instead of supplying namespace, sharedAccessKey, sharedAccessName ... etc, you can just supply the connection
-     * string for your eventHub. The connection string for EventHubs already include all the necessary information to
-     * connection to your EventHub. To learn on how to generate the connection string, take a look at this
-     * documentation: https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string
+     * Instead of supplying namespace, sharedAccessKey, sharedAccessName, etc. you can supply the connection string for
+     * your eventHub. The connection string for EventHubs already includes all the necessary information to connect to
+     * your EventHub. To learn how to generate the connection string, take a look at this documentation:
+     * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string
      */
     public String getConnectionString() {
         return connectionString;
@@ -145,8 +145,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Still another way of authentication (beside supplying namespace, sharedAccessKey, sharedAccessName or connection
-     * string) is through Azure-AD authentication using an implementation instance of {@link TokenCredential}.
+     * Provide custom authentication credentials using an implementation of {@link TokenCredential}.
      */
     public TokenCredential getTokenCredential() {
         return tokenCredential;
@@ -157,8 +156,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is
-     * {@link AmqpTransportType#AMQP}.
+     * Sets the transport type by which all the communication with Azure Event Hubs occurs.
      */
     public AmqpTransportType getAmqpTransportType() {
         return amqpTransportType;
@@ -169,7 +167,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the retry policy for {@link EventHubAsyncClient}. If not specified, the default retry options are used.
+     * Sets the retry policy for {@link EventHubProducerAsyncClient}. If not specified, the default retry options are
+     * used.
      */
     public AmqpRetryOptions getAmqpRetryOptions() {
         return amqpRetryOptions;
@@ -181,7 +180,7 @@ public class EventHubsConfiguration implements Cloneable {
 
     /**
      * Sets the name of the consumer group this consumer is associated with. Events are read in the context of this
-     * group. The name of the consumer group that is created by default is {@code "$Default"}.
+     * group. The name of the consumer group that is created by default is $Default.
      */
     public String getConsumerGroupName() {
         return consumerGroupName;
@@ -206,9 +205,9 @@ public class EventHubsConfiguration implements Cloneable {
     /**
      * Sets the {@link EventHubProducerAsyncClient}.An asynchronous producer responsible for transmitting
      * {@link EventData} to a specific Event Hub, grouped together in batches. Depending on the
-     * {@link CreateBatchOptions options} specified when creating an {@linkEventDataBatch}, the events may be
-     * automatically routed to an available partition or specific to a partition. Use by this component to produce the
-     * data in camel producer.
+     * {@link com.azure.messaging.eventhubs.models.CreateBatchOptions} options specified when creating an
+     * {@link com.azure.messaging.eventhubs.EventDataBatch}, the events may be automatically routed to an available
+     * partition or specific to a partition. Use by this component to produce the data in camel producer.
      */
     public EventHubProducerAsyncClient getProducerAsyncClient() {
         return producerAsyncClient;
@@ -219,7 +218,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the identifier of the Event Hub partition that the {@link EventData events} will be sent to. If the
+     * Sets the identifier of the Event Hub partition that the {@link EventData} events will be sent to. If the
      * identifier is not specified, the Event Hubs service will be responsible for routing events that are sent to an
      * available partition.
      */
@@ -241,8 +240,7 @@ public class EventHubsConfiguration implements Cloneable {
      *
      * This should be specified only when there is a need to group events by partition, but there is flexibility into
      * which partition they are routed. If ensuring that a batch of events is sent only to a specific partition, it is
-     * recommended that the {@link #setPartitionId(String) identifier of the position be specified directly} when
-     * sending the batch.
+     * recommended that the identifier of the position be specified directly when sending the batch.
      */
     public String getPartitionKey() {
         return partitionKey;
@@ -261,7 +259,7 @@ public class EventHubsConfiguration implements Cloneable {
      * checkpoint information.
      * </p>
      *
-     * By default it set to use {@link com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore} which
+     * By default, it's set to use {@link com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore} which
      * stores all checkpoint offsets into Azure Blob Storage.
      */
     public CheckpointStore getCheckpointStore() {
@@ -324,7 +322,7 @@ public class EventHubsConfiguration implements Cloneable {
      * Sets the map containing the event position to use for each partition if a checkpoint for the partition does not
      * exist in {@link CheckpointStore}. This map is keyed off of the partition id. If there is no checkpoint in
      * {@link CheckpointStore} and there is no entry in this map, the processing of the partition will start from
-     * {@link EventPosition#latest() latest} position.
+     * {@link EventPosition#latest()} position.
      */
     public Map<String, EventPosition> getEventPosition() {
         return eventPosition;
@@ -339,7 +337,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the batch size between each checkpoint updates. Works jointly with {@link #checkpointBatchTimeout}.
+     * Sets the batch size between each checkpoint update. Works jointly with {@link #checkpointBatchTimeout}.
      */
     public void setCheckpointBatchSize(int checkpointBatchSize) {
         this.checkpointBatchSize = checkpointBatchSize;
@@ -350,7 +348,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the batch timeout between each checkpoint updates. Works jointly with {@link #checkpointBatchSize}.
+     * Sets the batch timeout between each checkpoint update. Works jointly with {@link #checkpointBatchSize}.
      */
     public void setCheckpointBatchTimeout(int checkpointBatchTimeout) {
         this.checkpointBatchTimeout = checkpointBatchTimeout;

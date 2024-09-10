@@ -290,7 +290,7 @@ public final class StringHelper {
             return false;
         }
 
-        // for the simple language the expression start token could be "${"
+        // for the simple language, the expression start token could be "${"
         if ("simple".equalsIgnoreCase(language) && expression.contains("${")) {
             return true;
         }
@@ -306,7 +306,7 @@ public final class StringHelper {
      * Replaces the first from token in the given input string.
      * <p/>
      * This implementation is not recursive, not does it check for tokens in the replacement string. If from or to is
-     * null then the input string is returned as-is
+     * null, then the input string is returned as-is
      *
      * @param  input                    the input string
      * @param  from                     the from string
@@ -328,7 +328,7 @@ public final class StringHelper {
     }
 
     /**
-     * Creates a json tuple with the given name/value pair.
+     * Creates a JSON tuple with the given name/value pair.
      *
      * @param  name  the name
      * @param  value the value
@@ -515,6 +515,10 @@ public final class StringHelper {
         if (dashToCamelCase) {
             ret = dashToCamelCase(text);
         }
+        return doCapitalize(ret);
+    }
+
+    private static String doCapitalize(String ret) {
         if (ret == null) {
             return null;
         }
@@ -542,20 +546,10 @@ public final class StringHelper {
         final char[] chars = text.toCharArray();
 
         // We are OK with the limitations of Character.toLowerCase. The symbols and ideographs
-        // for which it does not return the lower case value should not be used here (this is
+        // for which it does not return the lower case value should not be used here (this isap
         // mostly used to convert part of setters/getters to properties)
         chars[0] = Character.toLowerCase(chars[0]);
         return new String(chars);
-    }
-
-    /**
-     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
-     *
-     * @param  text the string
-     * @return      the string camel cased
-     */
-    public static String dashToCamelCase(final String text) {
-        return dashToCamelCase(text, false);
     }
 
     /**
@@ -565,18 +559,52 @@ public final class StringHelper {
      * @return      true if it contains dashes or false otherwise
      */
     public static boolean isDashed(String text) {
-        int length = text.length();
-        return length != 0 && text.indexOf('-') != -1;
+        return !text.isEmpty() && text.indexOf('-') != -1;
     }
 
     /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
      *
-     * @param  text              the string
-     * @param  skipQuotedOrKeyed flag to skip converting within quoted or keyed text
-     * @return                   the string camel cased
+     * @param  text the string
+     * @return      the string camel cased
      */
-    public static String dashToCamelCase(final String text, boolean skipQuotedOrKeyed) {
+    public static String dashToCamelCase(final String text) {
+        if (text == null) {
+            return null;
+        }
+        if (!isDashed(text)) {
+            return text;
+        }
+
+        // there is at least 1 dash so the capacity can be shorter
+        int length = text.length();
+        StringBuilder sb = new StringBuilder(length - 1);
+        boolean upper = false;
+        for (int i = 0; i < length; i++) {
+            char c = text.charAt(i);
+
+            if (c == '-') {
+                upper = true;
+            } else {
+                if (upper) {
+                    c = Character.toUpperCase(c);
+                    upper = false;
+                }
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Converts the string from dash format into camel case, using the special for skip mode where we should keep text
+     * inside quotes or keys as-is. Where an input such as "camel.component.rabbitmq.args[queue.x-queue-type]" is
+     * transformed into camel.component.rabbitmq.args[queue.xQueueType]
+     *
+     * @param  text the string
+     * @return      the string camel cased
+     */
+    private static String skippingDashToCamelCase(final String text) {
         if (text == null) {
             return null;
         }
@@ -594,27 +622,25 @@ public final class StringHelper {
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
 
-            // special for skip mode where we should keep text inside quotes or keys as-is
-            if (skipQuotedOrKeyed) {
-                if (c == ']') {
-                    skip = false;
-                } else if (c == '[') {
-                    skip = true;
-                } else if (c == '\'') {
-                    singleQuotes++;
-                } else if (c == '"') {
-                    doubleQuotes++;
-                }
-                if (singleQuotes > 0) {
-                    skip = singleQuotes % 2 == 1;
-                }
-                if (doubleQuotes > 0) {
-                    skip = doubleQuotes % 2 == 1;
-                }
-                if (skip) {
-                    sb.append(c);
-                    continue;
-                }
+            if (c == ']') {
+                skip = false;
+            } else if (c == '[') {
+                skip = true;
+            } else if (c == '\'') {
+                singleQuotes++;
+            } else if (c == '"') {
+                doubleQuotes++;
+            }
+
+            if (singleQuotes > 0) {
+                skip = singleQuotes % 2 == 1;
+            }
+            if (doubleQuotes > 0) {
+                skip = doubleQuotes % 2 == 1;
+            }
+            if (skip) {
+                sb.append(c);
+                continue;
             }
 
             if (c == '-') {
@@ -628,6 +654,21 @@ public final class StringHelper {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
+     *
+     * @param  text              the string
+     * @param  skipQuotedOrKeyed flag to skip converting within a quoted or keyed text
+     * @return                   the string camel cased
+     */
+    public static String dashToCamelCase(final String text, boolean skipQuotedOrKeyed) {
+        if (!skipQuotedOrKeyed) {
+            return dashToCamelCase(text);
+        } else {
+            return skippingDashToCamelCase(text);
+        }
     }
 
     /**
@@ -649,7 +690,7 @@ public final class StringHelper {
     }
 
     /**
-     * Returns the string after the given token, or the default value
+     * Returns the string after the given token or the default value
      *
      * @param  text         the text
      * @param  after        the token
@@ -679,7 +720,7 @@ public final class StringHelper {
     }
 
     /**
-     * Returns the string after the the last occurrence of the given token
+     * Returns the string after the last occurrence of the given token
      *
      * @param  text  the text
      * @param  after the token
@@ -697,7 +738,7 @@ public final class StringHelper {
     }
 
     /**
-     * Returns the string after the the last occurrence of the given token, or the default value
+     * Returns the string after the last occurrence of the given token, or the default value
      *
      * @param  text         the text
      * @param  after        the token
@@ -741,12 +782,13 @@ public final class StringHelper {
     }
 
     /**
-     * Returns the string before the given token, or the default value
+     * Returns the string before the given token or the default value
      *
      * @param  text         the text
      * @param  before       the token
-     * @param  defaultValue the value to return if text does not contain the token
-     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     * @param  defaultValue the value to return if the text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if the text does not contain the
+     *                      token
      */
     public static String before(String text, char before, String defaultValue) {
         if (text == null) {
@@ -778,7 +820,7 @@ public final class StringHelper {
      *
      * @param  text   the text
      * @param  before the token
-     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
+     * @return        the text before the token, or <tt>null</tt> if the text does not contain the token
      */
     public static String beforeLast(String text, String before) {
         if (text == null) {
@@ -793,8 +835,9 @@ public final class StringHelper {
      *
      * @param  text         the text
      * @param  before       the token
-     * @param  defaultValue the value to return if text does not contain the token
-     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     * @param  defaultValue the value to return if the text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if the text does not contain the
+     *                      token
      */
     public static String beforeLast(String text, String before, String defaultValue) {
         String answer = beforeLast(text, before);
@@ -807,7 +850,7 @@ public final class StringHelper {
      * @param  text   the text
      * @param  after  the before token
      * @param  before the after token
-     * @return        the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @return        the text between the tokens, or <tt>null</tt> if the text does not contain the tokens
      */
     public static String between(final String text, String after, String before) {
         String ret = after(text, after);
@@ -866,10 +909,10 @@ public final class StringHelper {
     /**
      * Returns the string between the most outer pair of tokens
      * <p/>
-     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise
+     * The number of token pairs must be even, e.g., there must be same number of before and after tokens, otherwise
      * <tt>null</tt> is returned
      * <p/>
-     * This implementation skips matching when the text is either single or double quoted. For example:
+     * This implementation skips matching when the text is either single or double-quoted. For example:
      * <tt>${body.matches("foo('bar')")</tt> Will not match the parenthesis from the quoted text.
      *
      * @param  text   the text
@@ -973,7 +1016,7 @@ public final class StringHelper {
      * ClassNotFoundException
      *
      * @param  name the class name
-     * @return      normalized classname that can be load by a class loader.
+     * @return      normalized class name that can be load by a class loader.
      */
     public static String normalizeClassName(String name) {
         StringBuilder sb = new StringBuilder(name.length());
@@ -1080,7 +1123,7 @@ public final class StringHelper {
     }
 
     /**
-     * Outputs the bytes in human readable format in units of KB,MB,GB etc.
+     * Outputs the bytes in human-readable format in units of KB,MB,GB etc.
      *
      * @param  locale The locale to apply during formatting. If l is {@code null} then no localization is applied.
      * @param  bytes  number of bytes
@@ -1098,7 +1141,7 @@ public final class StringHelper {
     }
 
     /**
-     * Outputs the bytes in human readable format in units of KB,MB,GB etc.
+     * Outputs the bytes in human-readable format in units of KB,MB,GB etc.
      *
      * The locale always used is the one returned by {@link java.util.Locale#getDefault()}.
      *
@@ -1152,26 +1195,34 @@ public final class StringHelper {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        StringBuilder answer = new StringBuilder();
+        char prev = 0;
 
-        Character prev = null;
-        Character next;
         char[] arr = text.toCharArray();
+        StringBuilder answer = new StringBuilder(arr.length < 13 ? 16 : arr.length + 8);
+
         for (int i = 0; i < arr.length; i++) {
             char ch = arr[i];
-            if (i < arr.length - 1) {
-                next = arr[i + 1];
-            } else {
-                next = null;
-            }
+
             if (ch == '-' || ch == '_') {
                 answer.append("-");
-            } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
-                applyDashPrefix(prev, answer, ch);
-            } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
-                applyDashPrefix(prev, answer, ch);
             } else {
-                answer.append(Character.toLowerCase(ch));
+                if (Character.isUpperCase(ch) && prev != 0) {
+                    char next;
+
+                    if (i < arr.length - 1) {
+                        next = arr[i + 1];
+                    } else {
+                        next = 0;
+                    }
+
+                    if (!Character.isUpperCase(prev) || next != 0 && Character.isLowerCase(next)) {
+                        applyDashPrefix(prev, answer, ch);
+                    } else {
+                        answer.append(Character.toLowerCase(ch));
+                    }
+                } else {
+                    answer.append(Character.toLowerCase(ch));
+                }
             }
             prev = ch;
         }
@@ -1179,7 +1230,7 @@ public final class StringHelper {
         return answer.toString();
     }
 
-    private static void applyDashPrefix(Character prev, StringBuilder answer, char ch) {
+    private static void applyDashPrefix(char prev, StringBuilder answer, char ch) {
         if (prev != '-' && prev != '_') {
             answer.append("-");
         }
@@ -1187,7 +1238,7 @@ public final class StringHelper {
     }
 
     /**
-     * Does the string starts with the given prefix (ignore case).
+     * Does the string start with the given prefix (ignoring the case).
      *
      * @param text   the string
      * @param prefix the prefix
@@ -1201,7 +1252,7 @@ public final class StringHelper {
     }
 
     /**
-     * Converts the value to an enum constant value that is in the form of upper cased with underscore.
+     * Converts the value to an enum constant value that is in the form of upper-cased with underscore.
      */
     public static String asEnumConstantValue(final String value) {
         if (value == null || value.isEmpty()) {
@@ -1242,7 +1293,7 @@ public final class StringHelper {
      *
      * @param  text   the text
      * @param  search the string to search
-     * @return        an integer reporting the number of occurrence of the searched string in to the text
+     * @return        an integer reporting the occurrences of the searched string in to the text
      */
     public static int countOccurrence(String text, String search) {
         int lastIndex = 0;

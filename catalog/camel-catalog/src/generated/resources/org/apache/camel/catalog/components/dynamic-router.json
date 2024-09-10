@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dynamic-router",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "dynamic-router",
     "extendsScheme": "",
     "syntax": "dynamic-router:channel",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false,
+    "browsable": false,
     "remote": false
   },
   "componentProperties": {

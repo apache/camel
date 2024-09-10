@@ -87,11 +87,7 @@ public class DocumentationEnricher {
         Object defaultValueText = option != null ? option.getDefaultValue() : null;
 
         // special for this option
-        if ("useBlueprintPropertyResolver".equals(name)) {
-            descriptionText
-                    = "Whether to automatic detect OSGi Blueprint property placeholder service in use, and bridge with Camel property placeholder."
-                      + " When enabled this allows you to only setup OSGi Blueprint property placeholder and Camel can use the properties in the camelContext.";
-        } else if ("binding".equals(name)) {
+        if ("binding".equals(name)) {
             descriptionText
                     = "In binding mode we bind the passed in arguments (args) to the created exchange using the existing Camel"
                       + " @Body, @Header, @Headers, @ExchangeProperty annotations if no annotation then its bound as the message body";

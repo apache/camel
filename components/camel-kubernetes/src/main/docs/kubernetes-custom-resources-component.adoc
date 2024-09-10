@@ -38,12 +38,12 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Supported producer operation
 
-- listCustomResources
-- listCustomResourcesByLabels
-- getCustomResource
-- deleteCustomResource
-- createCustomResource
-- updateCustomResource
+- `listCustomResources`
+- `listCustomResourcesByLabels`
+- `getCustomResource`
+- `deleteCustomResource`
+- `createCustomResource`
+- `updateCustomResource`
 
 
 include::spring-boot:partial$starter.adoc[]

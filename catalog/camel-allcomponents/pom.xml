@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-allcomponents</artifactId>
@@ -31,6 +31,10 @@
 
     <name>Camel :: All Components Sync point</name>
     <description>Depends on all components to ensure correct build ordering</description>
+
+    <properties>
+        <enforcer.phase>none</enforcer.phase><!-- We enforce all dependencies individuall, so there is no point enforcing here again -->
+    </properties>
 
     <repositories>
         <repository>
@@ -1124,6 +1128,21 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-tokenizer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-tools</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-langchain4j-web-search</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-language</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1740,6 +1759,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-syslog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tahu</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

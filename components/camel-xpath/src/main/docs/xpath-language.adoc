@@ -75,12 +75,12 @@ exchange:
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
 |Function |Argument |Type |Description
-|in:body |none |Object |Will return the message body.
-|in:header |the header name |Object |Will return the message header.
-|out:body |none |Object |*deprecated* Will return the out message body.
-|out:header |the header name |Object |*deprecated* Will return the out message header.
-|function:properties |key for property |String |To use a xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder].
-|function:simple |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] language.
+|`in:body` |none |Object |Will return the message body.
+|`in:header` |the header name |Object |Will return the message header.
+|`out:body` |none |Object |*deprecated* Will return the out message body.
+|`out:header` |the header name |Object |*deprecated* Will return the out message header.
+|`function:properties` |key for property |String |To use a xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder].
+|`function:simple` |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] language.
 |===
 
 CAUTION: `function:properties` and `function:simple` is not supported
@@ -255,7 +255,7 @@ Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
                      .add("b", "http://acme.com/beer");
 ----
 
-When using namespaces in XML DSL then its different, as you set up the namespaces
+When using namespaces in XML DSL, then it is different, as you set up the namespaces
 in the XML root tag (or one of the `camelContext`, `routes`, `route` tags).
 
 In the XML example below we use Spring XML where the namespace is declared in the root tag `beans`,
@@ -365,7 +365,6 @@ This unit test shows how this can be done to use Saxon instead:
 Camel will log at `INFO` level if it uses a non-default `XPathFactory`
 such as:
 
-[source]
 ----
 XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://saxon.sf.net/jaxp/xpath/om with value:
                     net.sf.saxon.xpath.XPathFactoryImpl when creating XPathFactory
@@ -373,7 +372,7 @@ XPathBuilder  INFO  Using system property javax.xml.xpath.XPathFactory:http://sa
 
 To use Apache Xerces, you can configure the system property
 
-[source]
+
 ----
 -Djavax.xml.xpath.XPathFactory=org.apache.xpath.jaxp.XPathFactoryImpl
 ----
@@ -471,7 +470,7 @@ Some points to take into account:
 the output because it adds no value
 * Default namespaces are listed under the `DEFAULT` keyword in the output
 * Keep in mind that namespaces can be remapped under different scopes.
-Think of a top-level 'a' prefix which in inner elements can be assigned
+Think of a top-level `a` prefix which in inner elements can be assigned
 a different namespace, or the default namespace changing in inner
 scopes. For each discovered prefix, all associated URIs are listed.
 
@@ -495,7 +494,7 @@ The result of the auditing will be appeared at the INFO level under the
 `org.apache.camel.language.xpath.XPathBuilder` logger and will look like
 the following:
 
-[source]
+
 ----
 2012-01-16 13:23:45,878 [stSaxonWithFlag] INFO  XPathBuilder  - Namespaces discovered in message: 
 {xmlns:a=[http://apache.org/camel], DEFAULT=[http://apache.org/default], 
@@ -514,7 +513,7 @@ e.g., to refer to a file on the classpath you can do:
 .setHeader("myHeader").xpath("resource:classpath:myxpath.txt", String.class)
 ----
 
-== Transforming a XML message
+== Transforming an XML message
 
 For basic XML transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and XPath language as:
@@ -562,7 +561,7 @@ from("direct:start")
 Notice how we use `${xpath(exp}` syntax in the simple template to use xpath that will be evaluated on the message body,
 to extract the content to be used in the output (see previous for output).
 
-Since the simple language can output anything, you can also use this to output in plain text or JSon, etc.
+Since the simple language can output anything, you can also use this to output in plain text or JSON, etc.
 
 [source,java]
 ----

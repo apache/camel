@@ -63,14 +63,13 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
                 preServices = jmx.getPreServices();
             }
 
-            if (preServices != null && !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy) {
-                JmxManagementLifecycleStrategy existing = (JmxManagementLifecycleStrategy) lifecycle;
+            if (preServices != null && !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy existing) {
                 for (java.util.function.Consumer<JmxManagementLifecycleStrategy> pre : preServices) {
                     existing.addPreService(pre);
                 }
             }
 
-            // camel-spring/camel-blueprint may re-initialize JMX during startup, so remove any previous
+            // camel-spring may re-initialize JMX during startup, so remove any previous
             camelContext.getLifecycleStrategies().removeIf(s -> s instanceof JmxManagementLifecycleStrategy);
         }
         camelContext.getLifecycleStrategies().add(0, lifecycle);

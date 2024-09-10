@@ -20,9 +20,12 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,9 +56,10 @@ public final class TraitHelper {
     }
 
     /**
-     * Parses given list of trait expressions to proper trait model object.
+     * Parses given list of trait expressions to proper trait model object. Supports trait options in the form of
+     * key=value.
      *
-     * @param  traits
+     * @param  traits trait key-value-pairs.
      * @return
      */
     public static Traits parseTraits(String[] traits) {
@@ -63,33 +67,9 @@ public final class TraitHelper {
             return new Traits();
         }
 
-        return parseTraits(traits, null);
-    }
-
-    /**
-     * Parses given list of trait expressions to proper trait model object. Supports trait options in the form of
-     * key=value and trait annotation configuration.
-     *
-     * @param  traits      trait key-value-pairs.
-     * @param  annotations trait annotation configuration.
-     * @return
-     */
-    public static Traits parseTraits(String[] traits, String[] annotations) {
         Map<String, Map<String, Object>> traitConfigMap = new HashMap<>();
 
-        String[] traitExpressions;
-        if (annotations != null) {
-            Stream<String> annotationTraits = Stream.of(annotations)
-                    .filter(annotation -> annotation.startsWith("trait.camel.apache.org/"))
-                    .map(annotation -> StringHelper.after(annotation, "trait.camel.apache.org/"));
-
-            traitExpressions
-                    = Stream.concat(Stream.of(traits), annotationTraits).collect(Collectors.toSet()).toArray(String[]::new);
-        } else {
-            traitExpressions = traits;
-        }
-
-        for (String traitExpression : traitExpressions) {
+        for (String traitExpression : traits) {
             //traitName.key=value
             final String[] trait = traitExpression.split("\\.", 2);
             final String[] traitConfig = trait[1].split("=", 2);
@@ -112,12 +92,35 @@ public final class TraitHelper {
                         } else {
                             values.add(traitValue.toString());
                         }
+                    } else if (existingValue instanceof Map) {
+                        Map<String, String> values = (Map<String, String>) existingValue;
+                        if (traitValue instanceof Map) {
+                            Map<String, String> traitValueList = (Map<String, String>) traitValue;
+                            values.putAll(traitValueList);
+                        } else {
+                            final String[] traitValueConfig = traitValue.toString().split("=", 2);
+                            values.put(traitValueConfig[0], traitValueConfig[1]);
+                        }
                     } else if (traitValue instanceof List) {
                         List<String> traitValueList = (List<String>) traitValue;
                         traitValueList.add(0, existingValue.toString());
                         config.put(traitKey, traitValueList);
+                    } else if (traitValue instanceof Map) {
+                        Map<String, String> traitValueMap = (Map<String, String>) traitValue;
+                        final String[] existingValueConfig = existingValue.toString().split("=", 2);
+                        traitValueMap.put(existingValueConfig[0], existingValueConfig[1]);
+                        config.put(traitKey, traitValueMap);
                     } else {
-                        config.put(traitKey, Arrays.asList(existingValue.toString(), traitValue));
+                        if (traitKey.endsWith("annotations")) {
+                            Map<String, String> map = new LinkedHashMap<>();
+                            final String[] traitValueConfig = traitValue.toString().split("=", 2);
+                            final String[] existingValueConfig = existingValue.toString().split("=", 2);
+                            map.put(traitValueConfig[0], traitValueConfig[1]);
+                            map.put(existingValueConfig[0], existingValueConfig[1]);
+                            config.put(traitKey, map);
+                        } else {
+                            config.put(traitKey, Arrays.asList(existingValue.toString(), traitValue));
+                        }
                     }
                 } else {
                     config.put(traitKey, traitValue);
@@ -150,9 +153,6 @@ public final class TraitHelper {
      * Resolve trait value with automatic type conversion. Some trait keys (like enabled, verbose) need to be converted
      * to boolean type.
      *
-     * @param  traitKey
-     * @param  value
-     * @return
      */
     private static Object resolveTraitValue(String traitKey, String value) {
         if (traitKey.equalsIgnoreCase("enabled") ||
@@ -244,8 +244,8 @@ public final class TraitHelper {
         traitsSpec.setCamel(camelTrait);
     }
 
-    public static void configureOpenApiSpec(Traits traitsSpec, String[] openApis) {
-        if (openApis == null || openApis.length == 0) {
+    public static void configureOpenApiSpec(Traits traitsSpec, String openApi) {
+        if (openApi == null || !openApi.startsWith("configmap:")) {
             return;
         }
 
@@ -253,7 +253,7 @@ public final class TraitHelper {
         if (openapiTrait.getConfigmaps() == null) {
             openapiTrait.setConfigmaps(new ArrayList<>());
         }
-        openapiTrait.getConfigmaps().addAll(List.of(openApis));
+        openapiTrait.getConfigmaps().add(openApi);
         traitsSpec.setOpenapi(openapiTrait);
     }
 
@@ -311,6 +311,13 @@ public final class TraitHelper {
                 containerTrait.setImage("%s%s:%s".formatted(registryPrefix, imageName, version));
             }
 
+            // Plain export command always exposes a health endpoint on 8080.
+            // Skip this, when we decide that the health endpoint can be disabled.
+            if (containerTrait.getPort() == null) {
+                containerTrait.setPortName(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME);
+                containerTrait.setPort((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
+            }
+
             traitsSpec.setContainer(containerTrait);
         }
     }
@@ -327,7 +334,7 @@ public final class TraitHelper {
             CamelCatalog catalog = context.getCatalog();
             if (context.getSources() != null) {
                 for (Source source : context.getSources()) {
-                    SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
+                    SourceMetadata metadata = context.inspectMetaData(source);
                     if (MetadataHelper.exposesHttpServices(catalog, metadata)) {
                         exposesHttpServices = true;
                         break;
@@ -340,5 +347,71 @@ public final class TraitHelper {
             context.printer().printf("Failed to apply service trait %s%n", e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Extract properties traits (camel.jbang.trait.key=value) and transform them into regular trait form (key=value)
+     *
+     * @param  properties properties
+     * @return            traits
+     */
+    public static String[] extractTraitsFromProperties(Properties properties) {
+        if (properties != null && !properties.isEmpty()) {
+            Stream<String> propertyTraits = properties.entrySet().stream()
+                    .filter(property -> property.getKey().toString().startsWith("camel.jbang.trait"))
+                    .map(property -> StringHelper.after(property.getKey().toString(), "camel.jbang.trait.") + "="
+                                     + properties.get(property.getKey()).toString());
+            return propertyTraits.collect(Collectors.toSet()).toArray(String[]::new);
+        }
+        return new String[0];
+    }
+
+    /**
+     * Extract annotation traits (trait.camel.apache.org/key=value) and transform them into regular trait form
+     * (key=value)
+     *
+     * @param  annotations annotations
+     * @return             traits
+     */
+    public static String[] extractTraitsFromAnnotations(String[] annotations) {
+        if (annotations != null && annotations.length > 0) {
+            Stream<String> annotationTraits = Stream.of(annotations)
+                    .filter(annotation -> annotation.startsWith("trait.camel.apache.org/"))
+                    .map(annotation -> StringHelper.after(annotation, "trait.camel.apache.org/"));
+            return annotationTraits.collect(Collectors.toSet()).toArray(String[]::new);
+        }
+        return new String[0];
+    }
+
+    /**
+     * Merge all the traits from multiple sources in one keeping overrides priority by its position in the list. A trait
+     * property value in the array 0 will have priority on the value of the same trait property in an array 1. Supports
+     * trait options in the form of key=value.
+     *
+     * @param  traitsBySource traits grouped by source
+     * @return                the traits merged
+     */
+    public static String[] mergeTraits(String[]... traitsBySource) {
+        if (traitsBySource == null || traitsBySource.length == 0) {
+            return new String[0];
+        }
+        Set<String> existingKeys = new HashSet<>();
+        List<String> mergedTraits = new ArrayList<>();
+        for (String[] traits : traitsBySource) {
+            if (traits != null && traits.length > 0) {
+                for (String trait : traits) {
+                    final String[] traitConfig = trait.split("=", 2);
+                    if (!existingKeys.contains(traitConfig[0])) {
+                        mergedTraits.add(trait);
+                    }
+                }
+                existingKeys.clear();
+                for (String trait : mergedTraits) {
+                    final String[] traitConfig = trait.split("=", 2);
+                    existingKeys.add(traitConfig[0]);
+                }
+            }
+        }
+        return mergedTraits.toArray(new String[0]);
     }
 }

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.maven.packaging.generics.JavadocUtil;
 import org.apache.camel.tooling.model.BaseModel;
@@ -105,14 +107,18 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
+    @Inject
+    public EndpointDslMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         baseDir = project.getBasedir();
         endpointFactoriesPackageName = "org.apache.camel.builder.endpoint";
         componentsFactoriesPackageName = "org.apache.camel.builder.endpoint.dsl";
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override
@@ -378,8 +384,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return switch (type) {
             case "org.apache.camel.component.atmosphere.websocket.WebsocketComponent" -> "AtmosphereWebsocket";
             case "org.apache.camel.component.zookeepermaster.MasterComponent" -> "ZooKeeperMaster";
-            case "org.apache.camel.component.jetty9.JettyHttpComponent9" -> "JettyHttp";
             case "org.apache.camel.component.elasticsearch.ElasticsearchComponent" -> "ElasticsearchRest";
+            case "org.apache.camel.component.activemq.ActiveMQComponent" -> "ActiveMQ";
+            case "org.apache.camel.component.activemq6.ActiveMQComponent" -> "ActiveMQ6";
             default -> name;
         };
     }
@@ -417,7 +424,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     public String javadoc(String indent, String doc) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(doc.length() * 2);
         List<String> lines = formatJavadocOrCommentStringAsList(doc, indent);
         if (!lines.isEmpty()) {
             sb.append("/**\n");

@@ -68,8 +68,8 @@ public class ProcessorValidator extends Validator {
                 ExchangeHelper.copyResults(exchange, copy);
             }
         } catch (Exception e) {
-            if (e instanceof ValidationException) {
-                throw (ValidationException) e;
+            if (e instanceof ValidationException validationException) {
+                throw validationException;
             } else {
                 throw new ValidationException(String.format("Validation failed for '%s'", type), exchange, e);
             }

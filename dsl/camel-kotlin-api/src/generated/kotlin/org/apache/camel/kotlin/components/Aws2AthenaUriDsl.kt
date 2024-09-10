@@ -337,7 +337,7 @@ public class Aws2AthenaUriDsl(
   }
 
   /**
-   * If using a profile credentials provider this parameter will set the profile name
+   * If using a profile credentials provider, this parameter will set the profile name
    */
   public fun profileCredentialsName(profileCredentialsName: String) {
     it.property("profileCredentialsName", profileCredentialsName)
@@ -391,7 +391,7 @@ public class Aws2AthenaUriDsl(
 
   /**
    * Set whether the Athena client should expect to use Session Credentials. This is useful in a
-   * situation in which the user needs to assume a IAM role for doing operations in Athena.
+   * situation in which the user needs to assume an IAM role for doing operations in Athena.
    */
   public fun useSessionCredentials(useSessionCredentials: String) {
     it.property("useSessionCredentials", useSessionCredentials)
@@ -399,7 +399,7 @@ public class Aws2AthenaUriDsl(
 
   /**
    * Set whether the Athena client should expect to use Session Credentials. This is useful in a
-   * situation in which the user needs to assume a IAM role for doing operations in Athena.
+   * situation in which the user needs to assume an IAM role for doing operations in Athena.
    */
   public fun useSessionCredentials(useSessionCredentials: Boolean) {
     it.property("useSessionCredentials", useSessionCredentials.toString())

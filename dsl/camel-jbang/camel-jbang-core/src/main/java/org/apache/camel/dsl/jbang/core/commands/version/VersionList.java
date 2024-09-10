@@ -98,7 +98,7 @@ public class VersionList extends CamelCommand {
         List<String[]> versions;
         try {
             main.setFresh(fresh);
-            main.setRepos(repo);
+            main.setRepositories(repo);
             main.start();
 
             // use kamelet-main to download from maven

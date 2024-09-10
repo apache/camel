@@ -178,6 +178,8 @@ and existing blocks together. Any blocks not specified in the block list and per
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
 
+== Examples
+
 === Consumer Examples
 
 To consume a blob into a file using the file component, this can be done like this:
@@ -580,7 +582,7 @@ from("direct:copyBlob")
   .to("azure-storage-blob://account/containerblob2?operation=uploadBlockBlob&credentialType=AZURE_SAS")
 --------------------------------------------------------------------------------
 
-=== Development Notes (Important)
+== Important Development Notes
 
 All integration tests use https://www.testcontainers.org/[Testcontainers] and run by default.
 Obtaining of Azure accessKey and accountName is needed to be able to run all integration tests using Azure services.

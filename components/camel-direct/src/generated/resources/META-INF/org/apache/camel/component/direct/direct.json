@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-direct",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "direct",
     "extendsScheme": "",
     "syntax": "direct:name",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,
+    "browsable": false,
     "remote": false
   },
   "componentProperties": {
@@ -38,6 +39,6 @@
     "failIfNoConsumers": { "index": 5, "kind": "parameter", "displayName": "Fail If No Consumers", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the producer should fail by throwing an exception, when sending to a DIRECT endpoint with no active consumers." },
     "timeout": { "index": 6, "kind": "parameter", "displayName": "Timeout", "group": "producer", "label": "producer", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 30000, "description": "The timeout value to use if block is enabled." },
     "lazyStartProducer": { "index": 7, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
-    "synchronous": { "index": 8, "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether synchronous processing is forced. If enabled then the producer thread, will be forced to wait until the message has been completed before the same thread will continue processing. If disabled (default) then the producer thread may be freed and can do other work while the message is continued processed by other threads (reactive)." }
+    "synchronous": { "index": 8, "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether synchronous processing is forced. If enabled, then the producer thread will be forced to wait until the message has been completed before the same thread will continue processing. If disabled, the default, then the producer thread may be freed and can do other work while the message is continued processed by other threads (reactive)." }
   }
 }

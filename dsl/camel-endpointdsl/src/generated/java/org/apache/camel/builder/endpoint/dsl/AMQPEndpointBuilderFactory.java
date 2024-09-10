@@ -1472,6 +1472,38 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * A pluggable
          * org.springframework.jms.support.destination.DestinationResolver that
          * allows you to use your own resolver (for example, to lookup the real
@@ -1642,6 +1674,76 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(String idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
+            return this;
+        }
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder idleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
+            return this;
+        }
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder idleReceivesPerTaskLimit(String idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
             return this;
         }
         /**
@@ -3926,6 +4028,38 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * A pluggable
          * org.springframework.jms.support.destination.DestinationResolver that
          * allows you to use your own resolver (for example, to lookup the real
@@ -4096,6 +4230,76 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(String idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
+            return this;
+        }
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder idleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
+            return this;
+        }
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder idleReceivesPerTaskLimit(String idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
             return this;
         }
         /**
@@ -5551,6 +5755,38 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder browseLimit(int browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
+         * Maximum number of messages to keep in memory available for browsing.
+         * Use 0 for unlimited.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param browseLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder browseLimit(String browseLimit) {
+            doSetProperty("browseLimit", browseLimit);
+            return this;
+        }
+        /**
          * A pluggable
          * org.springframework.jms.support.destination.DestinationResolver that
          * allows you to use your own resolver (for example, to lookup the real
@@ -5721,6 +5957,76 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder idleConsumerLimit(String idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
+            return this;
+        }
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder idleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
+            return this;
+        }
+        /**
+         * Marks the consumer as idle after the specified number of idle
+         * receives have been reached. An idle receive is counted from the
+         * moment a null message is returned by the receiver after the potential
+         * setReceiveTimeout elapsed. This gives the opportunity to check if the
+         * idle task count exceeds setIdleTaskExecutionLimit and based on that
+         * decide if the task needs to be re-scheduled or not, saving resources
+         * that would otherwise be held. This setting differs from
+         * setMaxMessagesPerTask where the task is released and re-scheduled
+         * after this limit is reached, no matter if the received messages were
+         * null or non-null messages. This setting alone can be inflexible if
+         * one desires to have a large enough batch for each task but requires a
+         * quick(er) release from the moment there are no more messages to
+         * process. This setting differs from setIdleTaskExecutionLimit where
+         * this limit decides after how many iterations of being marked as idle,
+         * a task is released. For example: If setMaxMessagesPerTask is set to
+         * '500' and #setIdleReceivesPerTaskLimit is set to '60' and
+         * setReceiveTimeout is set to '1000' and setIdleTaskExecutionLimit is
+         * set to '1', then 500 messages per task would be processed unless
+         * there is a subsequent number of 60 idle messages received, the task
+         * would be marked as idle and released. This also means that after the
+         * last message was processed, the task would be released after 60
+         * seconds as long as no new messages appear.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleReceivesPerTaskLimit the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder idleReceivesPerTaskLimit(String idleReceivesPerTaskLimit) {
+            doSetProperty("idleReceivesPerTaskLimit", idleReceivesPerTaskLimit);
             return this;
         }
         /**

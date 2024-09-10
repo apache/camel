@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
@@ -136,31 +137,52 @@ public final class AnnotationDependencyInjection {
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
                 throws Exception {
-            if (instance == null) {
-                return;
-            }
 
-            BindToRegistry bir = instance.getClass().getAnnotation(BindToRegistry.class);
-            Configuration cfg = instance.getClass().getAnnotation(Configuration.class);
-            if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
-                CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
-                if (bir != null && ObjectHelper.isNotEmpty(bir.value())) {
-                    name = bir.value();
-                } else if (cfg != null && ObjectHelper.isNotEmpty(cfg.value())) {
-                    name = cfg.value();
-                }
-                // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                bpp.setUnbindEnabled(true);
-                try {
-                    // this class uses camels own annotations so the bind to registry happens
-                    // automatic by the bean post processor
-                    bpp.postProcessBeforeInitialization(instance, name);
-                    bpp.postProcessAfterInitialization(instance, name);
-                } finally {
-                    bpp.setUnbindEnabled(false);
-                }
-                if (instance instanceof CamelConfiguration) {
-                    ((CamelConfiguration) instance).configure(camelContext);
+            BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
+            Configuration cfg = clazz.getAnnotation(Configuration.class);
+
+            // special for lazy beans which we must create on-demand
+            if (instance == null && bir != null && bir.lazy()) {
+                final String beanName = bir.value();
+                instance = (Supplier<Object>) () -> {
+                    Object answer = camelContext.getInjector().newInstance(clazz);
+                    CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
+                    try {
+                        bpp.postProcessBeforeInitialization(answer, beanName);
+                        bpp.postProcessAfterInitialization(answer, beanName);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                    return answer;
+                };
+                // unbind old bean and register lazy bean
+                camelContext.getRegistry().unbind(beanName);
+                // use dependency injection factory to perform the task of binding the bean to registry
+                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
+                        .createBindToRegistryFactory(name, instance, clazz, beanName, false, bir.initMethod(),
+                                bir.destroyMethod());
+                task.run();
+            } else {
+                if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
+                    CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
+                    if (bir != null && ObjectHelper.isNotEmpty(bir.value())) {
+                        name = bir.value();
+                    } else if (cfg != null && ObjectHelper.isNotEmpty(cfg.value())) {
+                        name = cfg.value();
+                    }
+                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
+                    bpp.setUnbindEnabled(true);
+                    try {
+                        // this class uses camels own annotations so the bind to registry happens
+                        // automatic by the bean post processor
+                        bpp.postProcessBeforeInitialization(instance, name);
+                        bpp.postProcessAfterInitialization(instance, name);
+                    } finally {
+                        bpp.setUnbindEnabled(false);
+                    }
+                    if (instance instanceof CamelConfiguration) {
+                        ((CamelConfiguration) instance).configure(camelContext);
+                    }
                 }
             }
         }
@@ -230,7 +252,7 @@ public final class AnnotationDependencyInjection {
         public void onMethodInject(Method method, Object bean, String beanName) {
             Bean bi = method.getAnnotation(Bean.class);
             if (bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Bean");
                 if (instance != null) {
                     String name = method.getName();
                     if (bi.name().length > 0) {
@@ -302,7 +324,7 @@ public final class AnnotationDependencyInjection {
             Produces produces = method.getAnnotation(Produces.class);
             Named bi = method.getAnnotation(Named.class);
             if (produces != null || bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName);
+                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Produces");
                 if (instance != null) {
                     String name = method.getName();
                     if (bi != null && !bi.value().isBlank()) {

@@ -27,19 +27,7 @@ public class SecureRandomParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecureRandomParameters.class);
 
-    /**
-     * The Random Number Generator algorithm identifier for the {@link SecureRandom} factory method used to create the
-     * {@link SecureRandom} represented by this object's configuration. See Appendix A in the
-     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA" > Java
-     * Cryptography Architecture API Specification &amp; Reference</a> for information about standard RNG algorithm
-     * names.
-     */
     protected String algorithm;
-
-    /**
-     * The optional provider identifier for the {@link SecureRandom} factory method used to create the
-     * {@link SecureRandom} represented by this object's configuration.
-     */
     protected String provider;
 
     /**
@@ -67,18 +55,15 @@ public class SecureRandomParameters extends JsseParameters {
         return secureRandom;
     }
 
-    /**
-     * @see #setAlgorithm(String)
-     */
     public String getAlgorithm() {
         return algorithm;
     }
 
     /**
      * Sets the Random Number Generator (RNG) algorithm identifier for the {@link SecureRandom} factory method used to
-     * create the {@link SecureRandom} represented by this object's configuration. See Appendix A in the
-     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA" > Java
-     * Cryptography Architecture Reference Guide</a> for information about standard RNG algorithm names.
+     * create the {@link SecureRandom} represented by this object's configuration.
+     *
+     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
      *
      * @param value the algorithm identifier
      */
@@ -86,9 +71,6 @@ public class SecureRandomParameters extends JsseParameters {
         this.algorithm = value;
     }
 
-    /**
-     * @see #setProvider(String)
-     */
     public String getProvider() {
         return provider;
     }

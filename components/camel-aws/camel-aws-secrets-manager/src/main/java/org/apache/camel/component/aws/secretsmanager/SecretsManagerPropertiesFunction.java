@@ -180,9 +180,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String returnValue = null;
         String defaultValue = null;
         String version = null;
-        if (remainder.contains("/")) {
-            key = StringHelper.before(remainder, "/");
-            subkey = StringHelper.after(remainder, "/");
+        if (remainder.contains("#")) {
+            key = StringHelper.before(remainder, "#");
+            subkey = StringHelper.after(remainder, "#");
             defaultValue = StringHelper.after(subkey, ":");
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 if (defaultValue.contains("@")) {
@@ -257,7 +257,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             if (ObjectHelper.isEmpty(returnValue)) {
                 returnValue = defaultValue;
             }
-        } catch (SecretsManagerException ex) {
+        } catch (SecretsManagerException | IllegalArgumentException ex) {
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 returnValue = defaultValue;
             } else {

@@ -25,8 +25,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2Configuration> {
 
-    private static Dhis2ApiCollection collection;
-
     private Dhis2ApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<Dhis2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(Dhis2ApiName.class);
@@ -85,10 +83,11 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
         return result;
     }
 
-    public static synchronized Dhis2ApiCollection getCollection() {
-        if (collection == null) {
-            collection = new Dhis2ApiCollection();
-        }
-        return collection;
+    public static Dhis2ApiCollection getCollection() {
+        return Dhis2ApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class Dhis2ApiCollectionHolder {
+        private static final Dhis2ApiCollection INSTANCE = new Dhis2ApiCollection();
     }
 }

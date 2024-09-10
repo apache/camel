@@ -29,7 +29,7 @@ import org.infinispan.commons.api.BasicCache;
 
 @Metadata(label = "bean",
           description = "Aggregation repository that uses embedded Infinispan to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class InfinispanEmbeddedAggregationRepository extends InfinispanAggregationRepository {
 

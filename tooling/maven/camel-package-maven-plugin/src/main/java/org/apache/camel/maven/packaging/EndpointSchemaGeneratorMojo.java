@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -44,6 +42,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.inject.Inject;
 
 import org.apache.camel.Category;
 import org.apache.camel.maven.packaging.generics.ClassUtil;
@@ -78,6 +78,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
@@ -120,6 +122,16 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected List<Path> sourceRoots;
     protected Map<String, String> sources = new HashMap<>();
     protected Map<String, JavaSource<?>> parsed = new HashMap<>();
+
+    @Inject
+    public EndpointSchemaGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
+    // for testing purposes
+    EndpointSchemaGeneratorMojo() {
+        this(null, null);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -667,8 +679,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     public String getDocumentationWithNotes(BaseOptionModel option) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(option.getDescription());
+        String description = option.getDescription();
+        StringBuilder sb = new StringBuilder(description.length() * 64);
+        sb.append(description);
 
         if (!Strings.isNullOrEmpty(option.getDefaultValueNote())) {
             if (sb.charAt(sb.length() - 1) != '.') {
@@ -819,6 +832,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         model.setRemote(uriEndpoint.remote());
         model.setAsync(loadClass("org.apache.camel.AsyncEndpoint").isAssignableFrom(endpointClassElement));
         model.setApi(loadClass("org.apache.camel.ApiEndpoint").isAssignableFrom(endpointClassElement));
+        model.setBrowsable(loadClass("org.apache.camel.spi.BrowsableEndpoint").isAssignableFrom(endpointClassElement));
         model.setApiSyntax(uriEndpoint.apiSyntax());
 
         // what is the first version this component was added to Apache Camel
@@ -1682,13 +1696,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     protected void generateMetaInfConfigurer(String name, String fqn) {
-        try (Writer w = new StringWriter()) {
-            w.append("# " + GENERATED_MSG + "\n");
-            w.append("class=").append(fqn).append("\n");
-            updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        StringBuilder w = new StringBuilder(256);
+
+        w.append("# ").append(GENERATED_MSG).append("\n");
+        w.append("class=").append(fqn).append("\n");
+        updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
     }
 
     private IndexView getIndex() {

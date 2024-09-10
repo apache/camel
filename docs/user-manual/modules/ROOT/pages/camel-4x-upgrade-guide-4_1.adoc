@@ -1,7 +1,7 @@
 = Apache Camel 4.x Upgrade Guide
 
 This document is for helping you upgrade your Apache Camel application
-from Camel 4.x to 4.y. For example if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.0 to 4.1
@@ -188,7 +188,7 @@ from("direct:start")
 
 === camel-pdf
 
-The Camel-PDF component has been updated to Apache PDFBox 3.0.0 and the font parameter is now defined through the following enum values: COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE, HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,SYMBOL and ZAPF_DINGBATS
+The Camel-PDF component has been updated to Apache PDFBox 3.0.0, and the font parameter is now defined through the following enum values: COURIER,COURIER_BOLD,COURIER_OBLIQUE,COURIER_BOLD_OBLIQUE, HELVETICA,HELVETICA_BOLD,HELVETICA_OBLIQUE,HELVETICA_BOLD_OBLIQUE,TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,SYMBOL and ZAPF_DINGBATS
 
 === camel-jbang
 
@@ -196,14 +196,14 @@ The `pipe` command has been renamed to `script`.
 
 The `--secrets-refresh` and `--secret-refresh-providers` have been removed, since they were logically incorrect in the export command context. More information at CAMEL-19927 issue.
 
-The generated xml route, created using the command `camel init`, now uses `<camel>` as the root tag instead of `<routes>`.
+The generated XML route, created using the command `camel init`, now uses `<camel>` as the root tag instead of `<routes>`.
 
 === camel-jetty / camel-servlet / camel-atmosphere-websocket / camel-http-common
 
-By default stack traces will not be included in HTTP responses,
+By default, stack traces will not be included in HTTP responses,
 exceptions are muted.
 Stack traces can be included in HTTP responses by disabling `muteException`.
-For example
+For example:
 
 ----
 from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false")
@@ -226,8 +226,7 @@ The `Tag` Enum containing constants for tagging spans has been deprecated.
 Instead,
 use constants from the `TagConstants` Class that align to Open Telemetry v1.21.0 semantic conventions.
 
-For example,
-instead of
+For example, instead of
 
 ----
 span.setTag(Tag.URL_SCHEME, scheme);

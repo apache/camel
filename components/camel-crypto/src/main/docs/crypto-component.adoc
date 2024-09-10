@@ -106,7 +106,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Using
+== Usage
 
 === Raw keys
 

@@ -879,7 +879,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
     class ClientFactoryBeanCache {
-        private Map<String, JAXRSClientFactoryBean> cache;
+        private final Map<String, JAXRSClientFactoryBean> cache;
 
         ClientFactoryBeanCache(final int maxCacheSize) {
             this.cache = LRUCacheFactory.newLRUSoftCache(maxCacheSize);
@@ -896,22 +896,16 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         }
 
         public JAXRSClientFactoryBean get(String address) {
-            JAXRSClientFactoryBean retVal = null;
-            synchronized (cache) {
-                retVal = cache.get(address);
-
-                if (retVal == null) {
-                    retVal = ((CxfRsEndpoint) getEndpoint()).createJAXRSClientFactoryBean(address);
-
-                    cache.put(address, retVal);
-
-                    LOG.trace("Created client factory bean and add to cache for address '{}'", address);
-
-                } else {
-                    LOG.trace("Retrieved client factory bean from cache for address '{}'", address);
-                }
-            }
-            return retVal;
+            return cache.compute(address,
+                    (key, value) -> {
+                        if (value == null) {
+                            value = ((CxfRsEndpoint) getEndpoint()).createJAXRSClientFactoryBean(address);
+                            LOG.trace("Created client factory bean and add to cache for address '{}'", address);
+                        } else {
+                            LOG.trace("Retrieved client factory bean from cache for address '{}'", address);
+                        }
+                        return value;
+                    });
         }
     }
 }

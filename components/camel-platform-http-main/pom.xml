@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-platform-http-main</artifactId>
@@ -57,6 +57,17 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-properties</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-jwt</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -66,6 +77,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-health</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

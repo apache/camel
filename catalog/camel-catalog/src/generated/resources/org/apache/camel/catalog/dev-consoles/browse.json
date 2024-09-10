@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "browse",
+    "title": "Browse",
+    "description": "Browse pending messages on Camel components",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.BrowseDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.9.0-SNAPSHOT"
+  }
+}
+

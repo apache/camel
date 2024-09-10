@@ -299,8 +299,8 @@ public final class DefaultResourceResolvers {
             URLConnection connection = null;
             try {
                 connection = new URL(getLocation()).openConnection();
-                if (connection instanceof HttpURLConnection) {
-                    return ((HttpURLConnection) connection).getResponseCode() == HttpURLConnection.HTTP_OK;
+                if (connection instanceof HttpURLConnection httpURLConnection) {
+                    return httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
                 }
                 return connection.getContentLengthLong() > 0;
             } catch (IOException e) {
@@ -308,8 +308,8 @@ public final class DefaultResourceResolvers {
             } finally {
                 // close the http connection to avoid
                 // leaking gaps in case of an exception
-                if (connection instanceof HttpURLConnection) {
-                    ((HttpURLConnection) connection).disconnect();
+                if (connection instanceof HttpURLConnection httpURLConnection) {
+                    httpURLConnection.disconnect();
                 }
             }
         }
@@ -324,8 +324,8 @@ public final class DefaultResourceResolvers {
             } catch (IOException e) {
                 // close the http connection to avoid
                 // leaking gaps in case of an exception
-                if (con instanceof HttpURLConnection) {
-                    ((HttpURLConnection) con).disconnect();
+                if (con instanceof HttpURLConnection httpURLConnection) {
+                    httpURLConnection.disconnect();
                 }
                 throw e;
             }

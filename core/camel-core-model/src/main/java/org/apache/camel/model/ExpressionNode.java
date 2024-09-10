@@ -117,8 +117,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
             exp = getExpression().getExpressionValue();
         }
 
-        if (exp instanceof ExpressionClause) {
-            ExpressionClause<?> clause = (ExpressionClause<?>) exp;
+        if (exp instanceof ExpressionClause clause) {
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set
                 // using the
@@ -129,8 +128,8 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
                 // reset the expression to the expression type the
                 // ExpressionClause did build for us
                 ExpressionFactory model = clause.getExpressionType();
-                if (model instanceof ExpressionDefinition) {
-                    setExpression((ExpressionDefinition) model);
+                if (model instanceof ExpressionDefinition expressionDefinition) {
+                    setExpression(expressionDefinition);
                 }
             }
         }

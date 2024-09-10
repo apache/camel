@@ -508,11 +508,17 @@ abstract class AbstractExchange implements Exchange {
     public Message getOut() {
         // lazy create
         if (out == null) {
-            out = (in instanceof MessageSupport)
-                    ? ((MessageSupport) in).newInstance() : new DefaultMessage(getContext());
+            out = newOutMessage();
             configureMessage(out);
         }
         return out;
+    }
+
+    private Message newOutMessage() {
+        if (in instanceof MessageSupport messageSupport) {
+            return messageSupport.newInstance();
+        }
+        return new DefaultMessage(getContext());
     }
 
     @SuppressWarnings("deprecated")
@@ -580,8 +586,8 @@ abstract class AbstractExchange implements Exchange {
     public void setException(Throwable t) {
         if (t == null) {
             this.exception = null;
-        } else if (t instanceof Exception) {
-            this.exception = (Exception) t;
+        } else if (t instanceof Exception exception) {
+            this.exception = exception;
         } else {
             // wrap throwable into an exception
             this.exception = CamelExecutionException.wrapCamelExecutionException(this, t);
@@ -685,8 +691,7 @@ abstract class AbstractExchange implements Exchange {
      * Configures the message after it has been set on the exchange
      */
     protected void configureMessage(Message message) {
-        if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport) message;
+        if (message instanceof MessageSupport messageSupport) {
             messageSupport.setExchange(this);
             messageSupport.setCamelContext(getContext());
         }

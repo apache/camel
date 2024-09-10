@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
@@ -33,6 +34,7 @@ import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.support.DefaultEndpoint;
@@ -57,8 +59,8 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * {@link org.apache.camel.RoutingSlip} for creating <a href="http://camel.apache.org/routingslip-annotation.html">a
  * Routing Slip router via annotations</a>.
  * <p/>
- * Components such as camel-spring or camel-blueprint can leverage this post processor to hook in Camel bean post
- * processing into their bean processing framework.
+ * Components such as camel-spring can leverage this post-processor to hook in Camel bean post-processing into their
+ * bean processing framework.
  */
 public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, CamelContextAware {
 
@@ -298,7 +300,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
             BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
             if (bind != null) {
-                bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess());
+                bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess(), false, bind.initMethod(),
+                        bind.destroyMethod());
             }
         });
     }
@@ -403,7 +406,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         // bind each method
         methods.forEach(method -> {
             BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
-            bindToRegistry(method, bind.value(), bean, beanName, bind.beanPostProcess());
+            bindToRegistry(method, bind.value(), bean, beanName, bind.beanPostProcess(), bind.lazy(), bind.initMethod(),
+                    bind.destroyMethod());
         });
     }
 
@@ -411,7 +415,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         Class<?> clazz = bean.getClass();
         BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
         if (ann != null) {
-            bindToRegistry(clazz, ann.value(), bean, beanName, ann.beanPostProcess());
+            bindToRegistry(clazz, ann.value(), bean, beanName, ann.beanPostProcess(), ann.lazy(), ann.initMethod(),
+                    ann.destroyMethod());
         }
     }
 
@@ -420,7 +425,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
             if (ann != null) {
                 // it is a nested class so we don't have a bean instance for it
-                bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
+                bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess(), ann.lazy(), ann.initMethod(),
+                        ann.destroyMethod());
             }
         });
     }
@@ -501,55 +507,132 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         }
     }
 
-    private void bindToRegistry(Class<?> clazz, String name, Object bean, String beanName, boolean beanPostProcess) {
+    private void bindToRegistry(
+            Class<?> clazz, String name, Object bean, String beanName,
+            boolean beanPostProcess, boolean lazy,
+            String initMethod, String destroyMethod) {
         if (isEmpty(name)) {
             name = clazz.getSimpleName();
         }
+        boolean postProcess = beanPostProcess;
         if (bean == null) {
-            // no bean so then create an instance from its type
-            bean = getOrLookupCamelContext().getInjector().newInstance(clazz);
+            if (lazy) {
+                postProcess = false; // we do post-processing lazy
+                bean = (Supplier<Object>) () -> {
+                    Object answer = getOrLookupCamelContext().getInjector().newInstance(clazz);
+                    if (answer != null && beanPostProcess) {
+                        try {
+                            final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(camelContext);
+                            beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
+                            beanPostProcessor.postProcessAfterInitialization(answer, beanName);
+                        } catch (Exception e) {
+                            throw RuntimeCamelException.wrapRuntimeException(e);
+                        }
+                    }
+                    return answer;
+                };
+            } else {
+                // no bean so then create an instance from its type
+                bean = getOrLookupCamelContext().getInjector().newInstance(clazz);
+            }
         }
-
         if (unbindEnabled) {
             getOrLookupCamelContext().getRegistry().unbind(name);
         }
+        if (isEmpty(initMethod)) {
+            initMethod = CamelPostProcessorHelper.initMethodCandidate(bean);
+        }
+        if (isEmpty(destroyMethod)) {
+            destroyMethod = CamelPostProcessorHelper.destroyMethodCandidate(bean);
+        }
         // use dependency injection factory to perform the task of binding the bean to registry
         Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
-                .createBindToRegistryFactory(name, bean, beanName, beanPostProcess);
+                .createBindToRegistryFactory(name, bean, clazz, beanName, postProcess, initMethod, destroyMethod);
         task.run();
     }
 
-    private void bindToRegistry(Field field, String name, Object bean, String beanName, boolean beanPostProcess) {
+    private void bindToRegistry(
+            Field field, String name, Object bean, String beanName,
+            boolean beanPostProcess, boolean lazy,
+            String initMethod, String destroyMethod) {
         if (isEmpty(name)) {
             name = field.getName();
         }
-        Object value = ReflectionHelper.getField(field, bean);
-
+        boolean postProcess = beanPostProcess;
+        Object value;
+        if (lazy) {
+            postProcess = false; // we do post-processing lazy
+            value = (Supplier<Object>) () -> {
+                Object answer = ReflectionHelper.getField(field, bean);
+                if (answer != null && beanPostProcess) {
+                    try {
+                        final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(camelContext);
+                        beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
+                        beanPostProcessor.postProcessAfterInitialization(answer, beanName);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                }
+                return answer;
+            };
+        } else {
+            value = ReflectionHelper.getField(field, bean);
+        }
         if (value != null) {
+            if (isEmpty(initMethod)) {
+                initMethod = CamelPostProcessorHelper.initMethodCandidate(bean);
+            }
+            if (isEmpty(destroyMethod)) {
+                destroyMethod = CamelPostProcessorHelper.destroyMethodCandidate(bean);
+            }
             if (unbindEnabled) {
                 getOrLookupCamelContext().getRegistry().unbind(name);
             }
             // use dependency injection factory to perform the task of binding the bean to registry
             Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
-                    .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
+                    .createBindToRegistryFactory(name, value, field.getType(), beanName, postProcess, initMethod,
+                            destroyMethod);
             task.run();
         }
     }
 
-    private void bindToRegistry(Method method, String name, Object bean, String beanName, boolean beanPostProcess) {
+    private void bindToRegistry(
+            Method method, String name, Object bean, String beanName,
+            boolean beanPostProcess, boolean lazy,
+            String initMethod, String destroyMethod) {
         if (isEmpty(name)) {
             name = method.getName();
         }
-        Object value = getPostProcessorHelper()
-                .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName);
-
+        boolean postProcess = beanPostProcess;
+        Object value;
+        if (lazy) {
+            postProcess = false; // we do post-processing lazy
+            value = (Supplier<Object>) () -> {
+                Object answer = getPostProcessorHelper()
+                        .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName, "BindToRegistry");
+                if (answer != null && beanPostProcess) {
+                    try {
+                        final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(camelContext);
+                        beanPostProcessor.postProcessBeforeInitialization(answer, beanName);
+                        beanPostProcessor.postProcessAfterInitialization(answer, beanName);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                }
+                return answer;
+            };
+        } else {
+            value = getPostProcessorHelper()
+                    .getInjectionBeanMethodValue(getOrLookupCamelContext(), method, bean, beanName, "BindToRegistry");
+        }
         if (value != null) {
             if (unbindEnabled) {
                 getOrLookupCamelContext().getRegistry().unbind(name);
             }
             // use dependency injection factory to perform the task of binding the bean to registry
             Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
-                    .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
+                    .createBindToRegistryFactory(name, value, method.getReturnType(), beanName, postProcess,
+                            initMethod, destroyMethod);
             task.run();
         }
     }

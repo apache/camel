@@ -339,8 +339,7 @@ public final class URISupport {
             }
             // if the value is a list then we need to iterate
             Object value = entry.getValue();
-            if (value instanceof List) {
-                List list = (List) value;
+            if (value instanceof List list) {
                 for (int i = 0; i < list.size(); i++) {
                     Object obj = list.get(i);
                     if (obj == null) {
@@ -879,7 +878,7 @@ public final class URISupport {
             return "";
         }
 
-        final StringBuilder joined = new StringBuilder();
+        final StringBuilder joined = new StringBuilder(paths.length * 64);
 
         boolean addedLast = false;
         for (int i = paths.length - 1; i >= 0; i--) {
@@ -907,7 +906,7 @@ public final class URISupport {
     }
 
     public static String buildMultiValueQuery(String key, Iterable<Object> values) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         for (Object v : values) {
             if (!sb.isEmpty()) {
                 sb.append("&");

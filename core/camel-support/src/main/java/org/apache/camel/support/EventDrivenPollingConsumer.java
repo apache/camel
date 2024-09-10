@@ -133,7 +133,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
         while (isRunAllowed()) {
             // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-            synchronized (this) {
+            lock.lock();
+            try {
                 try {
                     beforePoll(0);
                     // take will block waiting for message
@@ -143,6 +144,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
                 } finally {
                     afterPoll();
                 }
+            } finally {
+                lock.unlock();
             }
         }
         LOG.trace("Consumer is not running, so returning null");
@@ -157,7 +160,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
 
         // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
-        synchronized (this) {
+        lock.lock();
+        try {
             try {
                 // use the timeout value returned from beforePoll
                 timeout = beforePoll(timeout);
@@ -168,6 +172,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             } finally {
                 afterPoll();
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -233,8 +239,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     protected long beforePoll(long timeout) {
-        if (consumer instanceof PollingConsumerPollingStrategy) {
-            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+        if (consumer instanceof PollingConsumerPollingStrategy strategy) {
             try {
                 timeout = strategy.beforePoll(timeout);
             } catch (Exception e) {
@@ -245,8 +250,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     protected void afterPoll() {
-        if (consumer instanceof PollingConsumerPollingStrategy) {
-            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+        if (consumer instanceof PollingConsumerPollingStrategy strategy) {
             try {
                 strategy.afterPoll();
             } catch (Exception e) {
@@ -279,8 +283,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     @Override
     protected void doStart() throws Exception {
         // if the consumer has a polling strategy then invoke that
-        if (consumer instanceof PollingConsumerPollingStrategy) {
-            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+        if (consumer instanceof PollingConsumerPollingStrategy strategy) {
             strategy.onInit();
         } else {
             ServiceHelper.startService(consumer);

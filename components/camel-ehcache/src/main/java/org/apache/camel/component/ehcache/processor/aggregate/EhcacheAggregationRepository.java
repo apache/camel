@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 @Metadata(label = "bean",
           description = "Aggregation repository that uses Caffeine Cache to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "EHCache based aggregation repository")
 public class EhcacheAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {

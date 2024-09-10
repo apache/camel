@@ -80,9 +80,14 @@ public class CoAPProducer extends DefaultProducer {
         }
     }
 
-    protected synchronized void initClient() throws Exception {
-        if (client == null) {
-            client = endpoint.createCoapClient(endpoint.getUri());
+    protected void initClient() throws Exception {
+        lock.lock();
+        try {
+            if (client == null) {
+                client = endpoint.createCoapClient(endpoint.getUri());
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

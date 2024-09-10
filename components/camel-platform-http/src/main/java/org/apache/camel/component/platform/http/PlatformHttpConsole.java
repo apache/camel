@@ -36,7 +36,9 @@ public class PlatformHttpConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        PlatformHttpComponent http = getCamelContext().getComponent("platform-http", PlatformHttpComponent.class);
+        // do not auto-create as during bootstrap then this component in Spring Boot may
+        // currently be creating which can lead to a dead-lock in Spring Boot
+        PlatformHttpComponent http = (PlatformHttpComponent) getCamelContext().hasComponent("platform-http");
         if (http != null) {
             String server = "http://0.0.0.0";
             int port = http.getEngine().getServerPort();
@@ -60,7 +62,9 @@ public class PlatformHttpConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        PlatformHttpComponent http = getCamelContext().getComponent("platform-http", PlatformHttpComponent.class);
+        // do not auto-create as during bootstrap then this component in Spring Boot may
+        // currently be creating which can lead to a dead-lock in Spring Boot
+        PlatformHttpComponent http = (PlatformHttpComponent) getCamelContext().hasComponent("platform-http");
         if (http != null) {
             String server = "http://0.0.0.0";
             int port = http.getEngine().getServerPort();

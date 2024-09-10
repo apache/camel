@@ -42,7 +42,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpHelper;
@@ -54,6 +53,7 @@ import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
@@ -474,12 +474,16 @@ public class HttpProducer extends DefaultProducer {
      * @throws IOException can be thrown
      */
     protected <T> T executeMethod(HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
-            throws IOException {
-        HttpContext localContext = HttpClientContext.create();
+            throws IOException, HttpException {
+        HttpContext localContext;
         if (httpContext != null) {
             localContext = new BasicHttpContext(httpContext);
+        } else {
+            localContext = HttpClientContext.create();
         }
-        return httpClient.execute(httpHost, httpRequest, localContext, handler);
+        // execute open that does not automatic close response input-stream (this is done in exchange on-completion by Camel)
+        ClassicHttpResponse res = httpClient.executeOpen(httpHost, httpRequest, localContext);
+        return handler.handleResponse(res);
     }
 
     /**
@@ -550,10 +554,8 @@ public class HttpProducer extends DefaultProducer {
         } else {
             if (entity.isStreaming()) {
                 if (getEndpoint().isDisableStreamCache()) {
-                    // write to in-memory buffer
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream(BUFFER_SIZE);
-                    entity.writeTo(bos);
-                    return bos.toByteArray();
+                    // use the response as-is
+                    return is;
                 } else {
                     int max = getEndpoint().getComponent().getResponsePayloadStreamingThreshold();
                     if (max > 0) {
@@ -583,27 +585,12 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    private InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
+    private Object doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
         // As httpclient is using a AutoCloseInputStream, it will be closed when the connection is closed
         // we need to cache the stream for it.
-        CachedOutputStream cos = null;
-        try {
-            // This CachedOutputStream will not be closed when the exchange is onCompletion
-            cos = new CachedOutputStream(exchange, false);
-            IOHelper.copy(is, cos);
-            // When the InputStream is closed, the CachedOutputStream will be closed
-            return cos.getWrappedInputStream();
-        } catch (IOException ex) {
-            // try to close the CachedOutputStream when we get the IOException
-            try {
-                cos.close();
-            } catch (IOException ignore) {
-                //do nothing here
-            }
-            throw ex;
-        } finally {
-            IOHelper.close(is, "Extracting response body", LOG);
-        }
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+        IOHelper.copy(is, osb);
+        return osb.build();
     }
 
     /**

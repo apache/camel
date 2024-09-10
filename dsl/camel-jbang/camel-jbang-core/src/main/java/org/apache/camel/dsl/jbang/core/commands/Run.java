@@ -78,9 +78,6 @@ public class Run extends CamelCommand {
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
     private static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
-    private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
-
     private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
             "route", "routes",
             "routeTemplate", "routeTemplates",
@@ -152,12 +149,12 @@ public class Run extends CamelCommand {
             description = "Profile to run (dev, test, or prod).")
     String profile = "dev";
 
-    @Option(names = { "--dep", "--dependency" }, arity = "*", description = "Add additional dependencies")
-    String[] dependencies;
+    @Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
+            split = ",")
+    List<String> dependencies = new ArrayList<>();
 
-    @Option(names = { "--repos" },
-            description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
+    List<String> repositories = new ArrayList<>();
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
     String gav;
@@ -194,9 +191,8 @@ public class Run extends CamelCommand {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
-    @Option(names = { "--exclude" },
-            description = "Exclude files by name or pattern. Multiple names can be separated by comma.")
-    String exclude;
+    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    List<String> excludes = new ArrayList<>();
 
     @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
     boolean logging = true;
@@ -321,6 +317,7 @@ public class Run extends CamelCommand {
     protected Integer runExport(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.exportRun = true;
+        this.ignoreLoadingError = ignoreLoadingError;
         return run();
     }
 
@@ -485,7 +482,7 @@ public class Run extends CamelCommand {
 
         final KameletMain main = createMainInstance();
         main.setProfile(profile);
-        main.setRepos(repos);
+        main.setRepositories(String.join(",", repositories));
         main.setDownload(download);
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
@@ -542,7 +539,7 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
         }
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
-        writeSetting(main, profileProperties, "camel.jbang.repos", repos);
+        writeSetting(main, profileProperties, "camel.jbang.repositories", String.join(",", repositories));
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
@@ -808,7 +805,7 @@ public class Run extends CamelCommand {
 
         // merge existing dependencies with --deps
         addDependencies(RuntimeUtil.getDependenciesAsArray(profileProperties));
-        if (dependencies.length > 0) {
+        if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
             main.addInitialProperty("camel.jbang.dependencies", joined);
             writeSettings("camel.jbang.dependencies", joined);
@@ -857,14 +854,8 @@ public class Run extends CamelCommand {
 
     protected void addDependencies(String... deps) {
         var depsArray = Optional.ofNullable(deps).orElse(new String[0]);
-        var depsList = new ArrayList<>(getDependenciesList());
-        depsList.addAll(Arrays.asList(depsArray));
-        dependencies = depsList.toArray(new String[0]);
-    }
-
-    protected List<String> getDependenciesList() {
-        var depsArray = Optional.ofNullable(dependencies).orElse(new String[0]);
-        return Arrays.asList(depsArray);
+        var depsList = Arrays.stream(depsArray).filter(tok -> !tok.isEmpty()).toList();
+        dependencies.addAll(depsList);
     }
 
     protected int runQuarkus() throws Exception {
@@ -876,42 +867,47 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportQuarkus eq = new ExportQuarkus(getMain());
-        eq.symbolicLink = true;
+        eq.javaLiveReload = this.dev;
+        eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
         eq.quarkusVersion = this.quarkusVersion;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
-        eq.exclude = this.exclude;
+        eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.gav = this.gav;
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.addDependencies(this.dependencies);
-        eq.addDependencies("camel:cli-connector");
+        eq.dependencies = this.dependencies;
+        if (!this.exportRun) {
+            eq.addDependencies("camel:cli-connector");
+        }
         eq.fresh = this.fresh;
         eq.download = this.download;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
-
-        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
+        eq.ignoreLoadingError = this.ignoreLoadingError;
 
         // run export
         int exit = eq.export();
-        if (exit != 0) {
+        if (exit != 0 || this.exportRun) {
             return exit;
         }
+
+        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
+
         // run quarkus via maven
         String mvnw = "/mvnw";
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "quarkus:dev");
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "package", "quarkus:" + (dev ? "dev" : "run"));
 
         if (background) {
             Process p = pb.start();
@@ -939,7 +935,9 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
-        eq.symbolicLink = true;
+        // Java codes reload is not supported in Spring Boot since it has to be recompiled to trigger the restart
+        eq.javaLiveReload = false;
+        eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
@@ -947,15 +945,17 @@ public class Run extends CamelCommand {
         eq.camelSpringBootVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
-        eq.exclude = this.exclude;
+        eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
         eq.gav = this.gav;
         if (eq.gav == null) {
             eq.gav = "org.example.project:jbang-run-dummy:1.0-SNAPSHOT";
         }
-        eq.addDependencies(dependencies);
-        eq.addDependencies("camel:cli-connector");
+        eq.dependencies.addAll(dependencies);
+        if (!this.exportRun) {
+            eq.addDependencies("camel:cli-connector");
+        }
         if (this.dev) {
             // hot-reload of spring-boot
             eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
@@ -965,14 +965,16 @@ public class Run extends CamelCommand {
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
-
-        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
+        eq.ignoreLoadingError = this.ignoreLoadingError;
 
         // run export
         int exit = eq.export();
-        if (exit != 0) {
+        if (exit != 0 || exportRun) {
             return exit;
         }
+
+        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
+
         // prepare spring-boot for logging to file
         InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
         eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
@@ -1095,7 +1097,7 @@ public class Run extends CamelCommand {
                     = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            repos = answer.getProperty("camel.jbang.repos", repos);
+            repositories = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, "camel.jbang.repositories", repositories);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
             mavenCentralEnabled = "true"
@@ -1112,7 +1114,7 @@ public class Run extends CamelCommand {
             quarkusVersion = answer.getProperty("camel.jbang.quarkusVersion", quarkusVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
-            exclude = answer.getProperty("camel.jbang.exclude", exclude);
+            excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, "camel.jbang.excludes", excludes);
         }
 
         return answer;
@@ -1179,8 +1181,8 @@ public class Run extends CamelCommand {
             cmds.removeIf(arg -> arg.startsWith("--jvm-debug"));
         }
 
-        if (repos != null) {
-            jbangArgs.add("--repos=" + repos);
+        if (repositories != null) {
+            jbangArgs.add("--repos=" + repositories);
         }
         jbangArgs.add("camel@apache/camel");
         jbangArgs.addAll(cmds);
@@ -1243,8 +1245,8 @@ public class Run extends CamelCommand {
         IOHelper.close(is);
 
         content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17");
-        if (repos != null) {
-            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repos);
+        if (repositories != null) {
+            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repositories);
         } else {
             content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         }
@@ -1283,10 +1285,10 @@ public class Run extends CamelCommand {
             cmds.remove("--background=true");
             cmds.remove("--background");
         }
-        if (repos != null) {
+        if (repositories != null) {
             if (!VersionHelper.isGE(v, "3.18.1")) {
                 // --repos is not supported in 3.18.0 or older, so remove
-                cmds.remove("--repos=" + repos);
+                cmds.remove("--repos=" + repositories);
             }
         }
 
@@ -1479,6 +1481,8 @@ public class Run extends CamelCommand {
                         if (key.endsWith(".level")) {
                             key = key.substring(0, key.length() - 6);
                         }
+                    } else {
+                        continue;
                     }
                     key = StringHelper.removeLeadingAndEndingQuotes(key);
                     String line = key + "=" + value;
@@ -1558,7 +1562,7 @@ public class Run extends CamelCommand {
             }
             // if the ext is an accepted file then we include it as a potential route
             // (java files need to be included as route to support pojos/processors with routes)
-            return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(ext2));
+            return SourceHelper.isAcceptedSourceFile(ext2);
         } else {
             // assume match as it can be wildcard or dir
             return true;
@@ -1603,7 +1607,7 @@ public class Run extends CamelCommand {
         }
 
         // is the file excluded?
-        if (isExcluded(name, exclude)) {
+        if (isExcluded(name, excludes)) {
             return true;
         }
 
@@ -1626,9 +1630,9 @@ public class Run extends CamelCommand {
         return false;
     }
 
-    private static boolean isExcluded(String name, String exclude) {
-        if (exclude != null) {
-            for (String pattern : exclude.split(",")) {
+    private static boolean isExcluded(String name, List<String> excludes) {
+        if (excludes != null) {
+            for (String pattern : excludes) {
                 pattern = pattern.trim();
                 if (AntPathMatcher.INSTANCE.match(pattern, name)) {
                     return true;

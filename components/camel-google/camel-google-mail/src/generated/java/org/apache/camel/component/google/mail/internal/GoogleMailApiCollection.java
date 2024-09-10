@@ -27,8 +27,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class GoogleMailApiCollection extends ApiCollection<GoogleMailApiName, GoogleMailConfiguration> {
 
-    private static GoogleMailApiCollection collection;
-
     private GoogleMailApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<GoogleMailApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleMailApiName.class);
@@ -103,10 +101,11 @@ public final class GoogleMailApiCollection extends ApiCollection<GoogleMailApiNa
         return result;
     }
 
-    public static synchronized GoogleMailApiCollection getCollection() {
-        if (collection == null) {
-            collection = new GoogleMailApiCollection();
-        }
-        return collection;
+    public static GoogleMailApiCollection getCollection() {
+        return GoogleMailApiCollectionHolder.INSTANCE;
+    }
+
+    private static final class GoogleMailApiCollectionHolder {
+        private static final GoogleMailApiCollection INSTANCE = new GoogleMailApiCollection();
     }
 }

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -42,6 +42,7 @@
         <module>openapi-rest-dsl-generator</module>
         <module>maven</module>
         <module>camel-tooling-maven</module>
+        <module>enforcer-rules</module>
     </modules>
 
     <properties>

@@ -46,10 +46,10 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
-         * option, then its the first endpoint being created with the queue
-         * name, that determines the size. To make sure all endpoints use same
-         * size, then configure the size option on all of them, or the first
-         * endpoint being created.
+         * option, then it's the first endpoint being created with the queue
+         * name that determines the size. To make sure all endpoints use the
+         * same size, then configure the size option on all of them, or the
+         * first endpoint being created.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -66,10 +66,10 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
-         * option, then its the first endpoint being created with the queue
-         * name, that determines the size. To make sure all endpoints use same
-         * size, then configure the size option on all of them, or the first
-         * endpoint being created.
+         * option, then it's the first endpoint being created with the queue
+         * name that determines the size. To make sure all endpoints use the
+         * same size, then configure the size option on all of them, or the
+         * first endpoint being created.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -330,10 +330,10 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
-         * option, then its the first endpoint being created with the queue
-         * name, that determines the size. To make sure all endpoints use same
-         * size, then configure the size option on all of them, or the first
-         * endpoint being created.
+         * option, then it's the first endpoint being created with the queue
+         * name that determines the size. To make sure all endpoints use the
+         * same size, then configure the size option on all of them, or the
+         * first endpoint being created.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -350,10 +350,10 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
-         * option, then its the first endpoint being created with the queue
-         * name, that determines the size. To make sure all endpoints use same
-         * size, then configure the size option on all of them, or the first
-         * endpoint being created.
+         * option, then it's the first endpoint being created with the queue
+         * name that determines the size. To make sure all endpoints use the
+         * same size, then configure the size option on all of them, or the
+         * first endpoint being created.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -589,10 +589,10 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
-         * option, then its the first endpoint being created with the queue
-         * name, that determines the size. To make sure all endpoints use same
-         * size, then configure the size option on all of them, or the first
-         * endpoint being created.
+         * option, then it's the first endpoint being created with the queue
+         * name that determines the size. To make sure all endpoints use the
+         * same size, then configure the size option on all of them, or the
+         * first endpoint being created.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -609,10 +609,10 @@ public interface DisruptorEndpointBuilderFactory {
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
-         * option, then its the first endpoint being created with the queue
-         * name, that determines the size. To make sure all endpoints use same
-         * size, then configure the size option on all of them, or the first
-         * endpoint being created.
+         * option, then it's the first endpoint being created with the queue
+         * name that determines the size. To make sure all endpoints use the
+         * same size, then configure the size option on all of them, or the
+         * first endpoint being created.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

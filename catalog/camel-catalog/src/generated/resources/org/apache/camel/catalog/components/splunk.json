@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-splunk",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "splunk",
     "extendsScheme": "",
     "syntax": "splunk:name",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,
+    "browsable": false,
     "remote": true
   },
   "componentProperties": {
@@ -76,6 +77,7 @@
     "sslProtocol": { "index": 42, "kind": "parameter", "displayName": "Ssl Protocol", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "com.splunk.SSLSecurityProtocol", "enum": [ "TLSv1.2", "TLSv1.1", "TLSv1", "SSLv3" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "TLSv1.2", "configurationClass": "org.apache.camel.component.splunk.SplunkConfiguration", "configurationField": "configuration", "description": "Set the ssl protocol to use" },
     "token": { "index": 43, "kind": "parameter", "displayName": "Token", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.splunk.SplunkConfiguration", "configurationField": "configuration", "description": "User's token for Splunk. This takes precedence over password when both are set" },
     "username": { "index": 44, "kind": "parameter", "displayName": "Username", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.splunk.SplunkConfiguration", "configurationField": "configuration", "description": "Username for Splunk" },
-    "useSunHttpsHandler": { "index": 45, "kind": "parameter", "displayName": "Use Sun Https Handler", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.splunk.SplunkConfiguration", "configurationField": "configuration", "description": "Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling." }
+    "useSunHttpsHandler": { "index": 45, "kind": "parameter", "displayName": "Use Sun Https Handler", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.splunk.SplunkConfiguration", "configurationField": "configuration", "description": "Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling." },
+    "validateCertificates": { "index": 46, "kind": "parameter", "displayName": "Validate Certificates", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "configurationClass": "org.apache.camel.component.splunk.SplunkConfiguration", "configurationField": "configuration", "description": "Sets client's certificate validation mode. Value false makes SSL vulnerable and is not recommended for the production environment." }
   }
 }

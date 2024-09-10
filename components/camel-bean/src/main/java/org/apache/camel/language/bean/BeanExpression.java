@@ -191,7 +191,9 @@ public class BeanExpression implements Expression, Predicate {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("BeanExpression[");
+        StringBuilder sb = new StringBuilder(256);
+
+        sb.append("BeanExpression[");
         if (bean != null) {
             sb.append(bean);
         } else if (beanName != null) {

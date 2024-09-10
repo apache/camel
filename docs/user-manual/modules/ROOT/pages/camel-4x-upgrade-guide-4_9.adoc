@@ -1,0 +1,44 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.8 to 4.9
+
+=== camel-management
+
+The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
+to an `Integer` value.
+
+=== camel-jms
+
+Added `int limit` as parameter to the `browse` method in `org.apache.camel.component.jms.QueueBrowseStrategy`.
+
+=== camel-hashicorp-vault properties function
+
+The syntax for retrieving a single field of a secret has been changed.
+
+From this
+
+`{{hashicorp:secret:database/username}}`
+
+to this
+
+`{{hashicorp:secret:database#username}}`
+
+You could find more details on CAMEL-21179 issue
+
+=== camel-aws-secrets-manager properties function
+
+The syntax for retrieving a single field of a secret has been changed.
+
+From this
+
+`{{aws:database/username}}`
+
+to this
+
+`{{aws:database#username}}`
+
+You could find more details on CAMEL-21179 issue

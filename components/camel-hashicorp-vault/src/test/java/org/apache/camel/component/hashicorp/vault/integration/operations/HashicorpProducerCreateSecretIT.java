@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
 
@@ -39,12 +40,15 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
     @EndpointInject("mock:result-read")
     private MockEndpoint mockRead;
 
+    @EndpointInject("mock:result-read-with-param")
+    private MockEndpoint mockReadWithParam;
+
     @Test
     public void createSecretTest() throws InterruptedException {
 
         mockWrite.expectedMessageCount(1);
-        mockRead.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:createSecret", new Processor() {
+        mockRead.expectedMessageCount(2);
+        template.request("direct:createSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 HashMap map = new HashMap();
@@ -52,17 +56,29 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
                 exchange.getIn().setBody(map);
             }
         });
-        exchange = template.request("direct:readSecret", new Processor() {
+        template.request("direct:readSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "test");
             }
         });
+        template.request("direct:readSecretWithPathParam", null);
+
+        Exchange result = template.request("direct:readSecret", new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "invalid");
+            }
+        });
+        assertNull(result.getMessage().getBody());
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange ret = mockRead.getExchanges().get(0);
         assertNotNull(ret);
         assertEquals("30", ((Map) ret.getMessage().getBody(Map.class).get("data")).get("integer"));
+        Exchange retWithParam = mockReadWithParam.getExchanges().get(0);
+        assertNotNull(retWithParam);
+        assertEquals("30", ((Map) retWithParam.getMessage().getBody(Map.class).get("data")).get("integer"));
     }
 
     @Override
@@ -79,6 +95,11 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
                         .toF("hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-read");
+
+                from("direct:readSecretWithPathParam")
+                        .toF("hashicorp-vault://secret?operation=getSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                                service.token(), service.host(), service.port())
+                        .to("mock:result-read-with-param");
             }
         };
     }

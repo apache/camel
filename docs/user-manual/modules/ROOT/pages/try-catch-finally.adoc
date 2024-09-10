@@ -1,9 +1,9 @@
-= Try ... Catch ... Finally
+= Try, Catch and Finally
 
 Camel supports the Java equivalent of try ... catch ... finally directly in the DSL.
 It aims to work like its Java sisters but with more power.
 
-In Camel we prefix the keywords with `do` to avoid having same keyword as Java.
+In Camel, we prefix the keywords with `do` to avoid having same keyword as Java.
 So we have:
 
 - `doTry`
@@ -58,7 +58,7 @@ And in XML DSL
 === Using onWhen with doCatch
 
 You can use xref:predicate.adoc[Predicate]s with `doCatch` to make it runtime determine if the block should be triggered or not.
-In our case we only want to trigger if the caused exception message contains the *damn* word.
+In our case, we only want to trigger if the caused exception message contains the *damn* word.
 
 [source,java]
 ----
@@ -114,7 +114,10 @@ TIP: Instead of `end()` you can use `endDoTry()` to end and _return back_ to the
 
 === Using nested doTry ... doCatch EIPs
 
-When nesting doTry ... doCatch from an outer doTry ... doCatch EIP, then pay extra attention when using Java DSL as the Java programming language is not _indent aware_ so you may write Java code that are indented in a way where you think that a catch block is associated with the other doTry but it is not.
+When nesting `doTry ... doCatch` from an outer `doTry ... doCatch` EIP,
+then pay extra attention when using Java DSL as the Java programming language is not _indent aware_
+so you may write Java code
+that is indented in a way where you think that a catch block is associated with the other doTry, but it is not.
 
 Given the following Java DSL:
 
@@ -132,10 +135,11 @@ from("direct:test").routeId("myroute")
     .end();
 ----
 
-Then you may think that _docatch2_ is associated on the outer doTry because of how the code is formatted.
-But it is **not**, both __docatch1__ and __docatch2__ are in the inner doTry, and the outer doTry has no catch blocks.
+Then you may think that `_docatch2_` is associated on the outer doTry because of how the code is formatted.
+But it is **not**, both `_docatch1_` and `_docatch2_` are in the inner `doTry`, and the outer `doTry` has no catch blocks.
 
-So in this example the route will throw the 1st exception which is then handled in __docatch1__ which then throw a 2nd exception, that is not caught.
+So in this example, the route will throw the first exception which is then handled in `_docatch1_`
+which then throws a second exception, that is not caught.
 
 So what you must do is to end the doCatch block correct (notice how we use `endDoTry()` two times) as shown below:
 

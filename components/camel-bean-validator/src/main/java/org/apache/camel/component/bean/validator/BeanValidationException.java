@@ -38,7 +38,9 @@ public class BeanValidationException extends ValidationException {
     }
 
     protected static String buildMessage(Set<ConstraintViolation<Object>> constraintViolations, Object bean) {
-        StringBuilder buffer = new StringBuilder("Validation failed for: ");
+        StringBuilder buffer = new StringBuilder(256);
+
+        buffer.append("Validation failed for: ");
         buffer.append(bean);
 
         buffer.append(" errors: [");

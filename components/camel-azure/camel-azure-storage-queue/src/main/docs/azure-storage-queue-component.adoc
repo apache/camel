@@ -158,6 +158,8 @@ For these operations, `accountName` and `queueName` are *required*.
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
 
+== Examples
+
 === Consumer Examples
 To consume a queue into a file component with maximum five messages in one batch, this can be done like this:
 
@@ -307,7 +309,7 @@ from("direct:start")
 -----------------------------------------------------------------------
 
 
-=== Development Notes (Important)
+== Important Development Notes
 
 When developing on this component, you will need to obtain your Azure `accessKey` to run the integration tests. In addition to the mocked unit tests,
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*

@@ -476,7 +476,7 @@ public class XsltBuilder implements Processor {
         }
 
         transformer.clearParameters();
-        addParameters(transformer, exchange.getProperties());
+        addParameters(transformer, exchange.getAllProperties());
         addParameters(transformer, exchange.getIn().getHeaders());
         addParameters(transformer, exchange.getVariables());
         addParameters(transformer, getParameters());

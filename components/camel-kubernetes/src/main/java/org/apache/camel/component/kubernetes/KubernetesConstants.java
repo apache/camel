@@ -135,6 +135,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "A secret object", javaType = "io.fabric8.kubernetes.api.model.Secret",
               applicableFor = SCHEME_SECRETS)
     public static final String KUBERNETES_SECRET = "CamelKubernetesSecret";
+    @Metadata(label = "producer", description = "The secret annotations", javaType = "Map<String, String>",
+              applicableFor = SCHEME_SECRETS)
+    public static final String KUBERNETES_SECRETS_ANNOTATIONS = "CamelKubernetesSecretsAnnotations";
     @Metadata(label = "producer", description = "The resource quota labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_RESOURCES_QUOTA)
     public static final String KUBERNETES_RESOURCES_QUOTA_LABELS = "CamelKubernetesResourcesQuotaLabels";
@@ -164,6 +167,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The deployment labels", javaType = "Map<String, String>",
               applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENTS_LABELS = "CamelKubernetesDeploymentsLabels";
+    @Metadata(label = "producer", description = "The deployment labels", javaType = "Map<String, String>",
+              applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
+    public static final String KUBERNETES_DEPLOYMENTS_ANNOTATIONS = "CamelKubernetesDeploymentsAnnotations";
     @Metadata(label = "producer", description = "The deployment name", javaType = "String",
               applicableFor = { SCHEME_DEPLOYMENTS, SCHEME_DEPLOYMENT_CONFIGS })
     public static final String KUBERNETES_DEPLOYMENT_NAME = "CamelKubernetesDeploymentName";
@@ -178,6 +184,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The ConfigMap Data", javaType = "Map<String, String>",
               applicableFor = SCHEME_CONFIG_MAPS)
     public static final String KUBERNETES_CONFIGMAP_DATA = "CamelKubernetesConfigData";
+    @Metadata(label = "producer", description = "The ConfigMap annotations", javaType = "Map<String, String>",
+              applicableFor = SCHEME_CONFIG_MAPS)
+    public static final String KUBERNETES_CONFIGMAPS_ANNOTATIONS = "CamelKubernetesConfigMapsAnnotations";
     @Metadata(label = "producer", description = "The Openshift build labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_BUILDS)
     public static final String KUBERNETES_BUILDS_LABELS = "CamelKubernetesBuildsLabels";
@@ -207,6 +216,9 @@ public final class KubernetesConstants {
     public static final String KUBERNETES_JOB_SPEC = "CamelKubernetesJobSpec";
     @Metadata(label = "producer", description = "The Job labels.", javaType = "Map<String, String>", applicableFor = SCHEME_JOB)
     public static final String KUBERNETES_JOB_LABELS = "CamelKubernetesJobLabels";
+    @Metadata(label = "producer", description = "The Job annotations.", javaType = "Map<String, String>",
+              applicableFor = SCHEME_JOB)
+    public static final String KUBERNETES_JOB_ANNOTATIONS = "CamelKubernetesJobAnnotations";
     @Metadata(label = "producer", description = "The deployment name", javaType = "String",
               applicableFor = SCHEME_CUSTOM_RESOURCES)
     public static final String KUBERNETES_CRD_INSTANCE_NAME = "CamelKubernetesCRDInstanceName";

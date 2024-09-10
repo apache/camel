@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "disruptor-vm",
     "extendsScheme": "",
     "alternativeSchemes": "disruptor,disruptor-vm",
@@ -21,6 +21,7 @@
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,
+    "browsable": false,
     "remote": false
   },
   "componentProperties": {
@@ -36,7 +37,7 @@
   },
   "properties": {
     "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of queue" },
-    "size": { "index": 1, "kind": "parameter", "displayName": "Size", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1024, "description": "The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest power of two. Notice: Mind if you use this option, then its the first endpoint being created with the queue name, that determines the size. To make sure all endpoints use same size, then configure the size option on all of them, or the first endpoint being created." },
+    "size": { "index": 1, "kind": "parameter", "displayName": "Size", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1024, "description": "The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest power of two. Notice: Mind if you use this option, then it's the first endpoint being created with the queue name that determines the size. To make sure all endpoints use the same size, then configure the size option on all of them, or the first endpoint being created." },
     "concurrentConsumers": { "index": 2, "kind": "parameter", "displayName": "Concurrent Consumers", "group": "consumer", "label": "consumer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1, "description": "Number of concurrent threads processing exchanges." },
     "multipleConsumers": { "index": 3, "kind": "parameter", "displayName": "Multiple Consumers", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Specifies whether multiple consumers are allowed. If enabled, you can use Disruptor for Publish-Subscribe messaging. That is, you can send a message to the queue and have each consumer receive a copy of the message. When enabled, this option should be specified on every consumer endpoint." },
     "waitStrategy": { "index": 4, "kind": "parameter", "displayName": "Wait Strategy", "group": "consumer", "label": "consumer", "required": false, "type": "object", "javaType": "org.apache.camel.component.disruptor.DisruptorWaitStrategy", "enum": [ "Blocking", "Sleeping", "BusySpin", "Yielding" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Blocking", "description": "Defines the strategy used by consumer threads to wait on new exchanges to be published. The options allowed are:Blocking, Sleeping, BusySpin and Yielding." },

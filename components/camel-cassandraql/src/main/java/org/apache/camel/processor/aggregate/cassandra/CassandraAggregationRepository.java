@@ -58,7 +58,7 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 @Metadata(label = "bean",
           description = "Aggregation repository that uses Cassandra table to store exchanges."
                         + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 

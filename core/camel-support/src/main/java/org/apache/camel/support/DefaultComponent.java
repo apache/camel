@@ -176,8 +176,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         endpoint.setCamelContext(getCamelContext());
 
         // and setup those global options afterwards
-        if (endpoint instanceof DefaultEndpoint) {
-            DefaultEndpoint de = (DefaultEndpoint) endpoint;
+        if (endpoint instanceof DefaultEndpoint de) {
             de.setBridgeErrorHandler(bridge);
             de.setLazyStartProducer(lazy);
             de.setAutowiredEnabled(autowire);
@@ -193,8 +192,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         // allow custom configuration after properties has been configured
-        if (endpoint instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured) endpoint).afterPropertiesConfigured(getCamelContext());
+        if (endpoint instanceof AfterPropertiesConfigured afterPropertiesConfigured) {
+            afterPropertiesConfigured.afterPropertiesConfigured(getCamelContext());
         }
 
         afterConfiguration(uri, path, endpoint, parameters);
@@ -449,8 +448,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             configurer = getComponentPropertyConfigurer();
         } else if (bean instanceof Endpoint) {
             configurer = getEndpointPropertyConfigurer();
-        } else if (bean instanceof PropertyConfigurerAware) {
-            configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
+        } else if (bean instanceof PropertyConfigurerAware propertyConfigurerAware) {
+            configurer = propertyConfigurerAware.getPropertyConfigurer(bean);
         } else {
             configurer = null;
         }
@@ -543,8 +542,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         // the parameter may be the the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
-        if (value instanceof String) {
-            String str = (String) value;
+        if (value instanceof String str) {
             if (EndpointHelper.isReferenceParameter(str)) {
                 return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
             }
@@ -600,8 +598,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         // the parameter may be the the type already (such as from endpoint-dsl)
         Object value = parameters.remove(key);
-        if (value instanceof String) {
-            String str = (String) value;
+        if (value instanceof String str) {
             if (EndpointHelper.isReferenceParameter(str)) {
                 return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
             }

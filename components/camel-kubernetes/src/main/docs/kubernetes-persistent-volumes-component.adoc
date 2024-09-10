@@ -16,7 +16,7 @@
 *{component-header}*
 
 The Kubernetes Persistent Volume component is one of xref:kubernetes-summary.adoc[Kubernetes Components] which
-provides a producer to execute Kubernetes Persistent Volume operations.
+provides a producer to execute Kubernetes Persistent Volume (PV) operations.
 
 
 // component-configure options: START
@@ -35,15 +35,19 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listPersistentVolumes
-- listPersistentVolumesByLabels
-- getPersistentVolume
+=== Supported producer operation
 
-== Kubernetes Persistent Volumes Producer Examples
+- `listPersistentVolumes`
+- `listPersistentVolumesByLabels`
+- `getPersistentVolume`
 
-- listPersistentVolumes: this operation lists the pv on a kubernetes cluster
+== Examples
+
+=== Kubernetes Persistent Volumes Producer Examples
+
+- `listPersistentVolumes`: this operation lists the PVs on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -52,9 +56,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of pv from your cluster
+This operation returns a list of PVs from your cluster
 
-- listPersistentVolumesByLabels:  this operation lists the pv by labels on a kubernetes cluster
+- `listPersistentVolumesByLabels`: this operation lists the PVs by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -71,7 +75,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of pv from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+This operation returns a list of PVs from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 
 include::spring-boot:partial$starter.adoc[]

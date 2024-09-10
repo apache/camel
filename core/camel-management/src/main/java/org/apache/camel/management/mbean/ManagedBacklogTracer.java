@@ -207,8 +207,18 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public String dumpTracedMessagesAsJSon(String nodeOrRouteId) {
+        return backlogTracer.dumpTracedMessagesAsJSon(nodeOrRouteId);
+    }
+
+    @Override
     public String dumpAllTracedMessagesAsXml() {
         return backlogTracer.dumpAllTracedMessagesAsXml();
+    }
+
+    @Override
+    public String dumpAllTracedMessagesAsJSon() {
+        return backlogTracer.dumpAllTracedMessagesAsJSon();
     }
 
     @Override

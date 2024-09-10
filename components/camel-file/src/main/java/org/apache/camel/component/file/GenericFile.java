@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.function.LongSupplier;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -126,7 +127,7 @@ public class GenericFile<T> implements WrappedFile<T> {
     private GenericFileMessage<T> commonBindToExchange(Exchange exchange) {
         Map<String, Object> headers;
 
-        exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
+        exchange.setProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, this);
         GenericFileMessage<T> msg = new GenericFileMessage<>(exchange, this);
 
         headers = exchange.getMessage().hasHeaders() ? exchange.getMessage().getHeaders() : null;

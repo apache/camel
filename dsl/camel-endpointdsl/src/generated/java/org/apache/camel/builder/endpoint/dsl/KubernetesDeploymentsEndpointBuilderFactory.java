@@ -1487,6 +1487,19 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
             return "CamelKubernetesDeploymentsLabels";
         }
         /**
+         * The deployment labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesDeploymentsAnnotations}.
+         */
+        public String kubernetesDeploymentsAnnotations() {
+            return "CamelKubernetesDeploymentsAnnotations";
+        }
+        /**
          * The deployment name.
          * 
          * The option is a: {@code String} type.

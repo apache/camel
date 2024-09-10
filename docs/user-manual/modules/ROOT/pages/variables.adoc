@@ -249,6 +249,7 @@ special support for choosing to use variables over the current `Exchange`:
 - from
 - to
 - toD
+- poll
 - enrich
 - pollEnrich
 - wireTap

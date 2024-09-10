@@ -226,9 +226,8 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
         // if the body is a stream cache we must use a copy of the stream in the wire tapped exchange
         Message msg = answer.getMessage();
-        if (msg.getBody() instanceof StreamCache) {
-            // in parallel processing case, the stream must be copied, therefore get the stream
-            StreamCache cache = (StreamCache) msg.getBody();
+        if (msg.getBody() instanceof StreamCache cache) {
+            // in parallel processing case, the stream must be copied, therefore, get the stream
             StreamCache copied = cache.copy(answer);
             if (copied != null) {
                 msg.setBody(copied);

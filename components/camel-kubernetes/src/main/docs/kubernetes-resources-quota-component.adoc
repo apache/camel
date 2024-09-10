@@ -35,18 +35,22 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Supported producer operation
+== Usage
 
-- listResourcesQuota
-- listResourcesQuotaByLabels
-- getResourcesQuota
-- createResourcesQuota
-- updateResourceQuota
-- deleteResourcesQuota
+=== Supported producer operation
 
-== Kubernetes Resource Quota Producer Examples
+- `listResourcesQuota`
+- `listResourcesQuotaByLabels`
+- `getResourcesQuota`
+- `createResourcesQuota`
+- `updateResourceQuota`
+- `deleteResourcesQuota`
 
-- listResourcesQuota: this operation lists the Resource Quotas on a kubernetes cluster
+== Examples
+
+=== Kubernetes Resource Quota Producer Examples
+
+- `listResourcesQuota`: this operation lists the resource quotas on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -55,9 +59,9 @@ from("direct:list").
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Resource Quotas from your cluster
+This operation returns a list of resource quotas from your cluster
 
-- listResourcesQuotaByLabels:  this operation lists the Resource Quotas by labels on a kubernetes cluster
+- `listResourcesQuotaByLabels`: this operation lists the resource quotas by labels on a kubernetes cluster
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -74,8 +78,7 @@ from("direct:listByLabels").process(new Processor() {
     to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation returns a List of Resource Quotas from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
-
+This operation returns a list of resource quotas from your cluster using a label selector (with key1 and key2, with value value1 and value2)
 
 
 include::spring-boot:partial$starter.adoc[]

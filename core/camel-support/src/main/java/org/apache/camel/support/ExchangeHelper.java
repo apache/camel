@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,10 +128,9 @@ public final class ExchangeHelper {
             throw new NoSuchEndpointException("null");
         }
         Endpoint endpoint;
-        if (value instanceof Endpoint) {
-            endpoint = (Endpoint) value;
-        } else if (value instanceof NormalizedEndpointUri) {
-            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+        if (value instanceof Endpoint ep) {
+            endpoint = ep;
+        } else if (value instanceof NormalizedEndpointUri nu) {
             endpoint = CamelContextHelper.getMandatoryEndpoint(context, nu);
         } else {
             String uri = value.toString().trim();
@@ -164,10 +166,9 @@ public final class ExchangeHelper {
             throw new NoSuchEndpointException("null");
         }
         Endpoint endpoint;
-        if (value instanceof Endpoint) {
-            endpoint = (Endpoint) value;
-        } else if (value instanceof NormalizedEndpointUri) {
-            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+        if (value instanceof Endpoint ep) {
+            endpoint = ep;
+        } else if (value instanceof NormalizedEndpointUri nu) {
             endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, nu);
         } else {
             String uri = value.toString().trim();
@@ -785,8 +786,7 @@ public final class ExchangeHelper {
         if (type.isAssignableFrom(result.getClass())) {
             return type.cast(result);
         }
-        if (result instanceof Exchange) {
-            Exchange exchange = (Exchange) result;
+        if (result instanceof Exchange exchange) {
             Object answer = ExchangeHelper.extractResultBody(exchange, exchange.getPattern());
             return context.getTypeConverter().convertTo(type, exchange, answer);
         }
@@ -867,8 +867,8 @@ public final class ExchangeHelper {
         }
 
         // need to de-reference old from the exchange so it can be GC
-        if (old instanceof MessageSupport) {
-            ((MessageSupport) old).setExchange(null);
+        if (old instanceof MessageSupport messageSupport) {
+            messageSupport.setExchange(null);
         }
     }
 
@@ -993,35 +993,41 @@ public final class ExchangeHelper {
      * @return           the scanner, is newer <tt>null</tt>
      */
     public static Scanner getScanner(Exchange exchange, Object value, String delimiter) {
-        if (value instanceof WrappedFile) {
-            WrappedFile<?> gf = (WrappedFile<?>) value;
+        if (value instanceof WrappedFile gf) {
             Object body = gf.getBody();
             if (body != null) {
                 // we have loaded the file content into the body so use that
                 value = body;
             } else {
                 // generic file is just a wrapper for the real file so call again with the real file
-                return getScanner(exchange, gf.getFile(), delimiter);
+                value = gf.getFile();
             }
         }
 
         Scanner scanner;
-        if (value instanceof Readable) {
-            scanner = new Scanner((Readable) value, delimiter);
-        } else if (value instanceof String) {
-            scanner = new Scanner((String) value, delimiter);
+        if (value instanceof Readable readable) {
+            scanner = new Scanner(readable, delimiter);
+        } else if (value instanceof String str) {
+            scanner = new Scanner(str, delimiter);
         } else {
             String charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
-            if (value instanceof File) {
+            if (value instanceof Path path) {
                 try {
-                    scanner = new Scanner((File) value, charset, delimiter);
+                    scanner = new Scanner(
+                            Files.newByteChannel(path, StandardOpenOption.READ), charset, delimiter);
                 } catch (IOException e) {
                     throw new RuntimeCamelException(e);
                 }
-            } else if (value instanceof InputStream) {
-                scanner = new Scanner((InputStream) value, charset, delimiter);
-            } else if (value instanceof ReadableByteChannel) {
-                scanner = new Scanner((ReadableByteChannel) value, charset, delimiter);
+            } else if (value instanceof File file) {
+                try {
+                    scanner = new Scanner(file, charset, delimiter);
+                } catch (IOException e) {
+                    throw new RuntimeCamelException(e);
+                }
+            } else if (value instanceof InputStream inputStream) {
+                scanner = new Scanner(inputStream, charset, delimiter);
+            } else if (value instanceof ReadableByteChannel readableByteChannel) {
+                scanner = new Scanner(readableByteChannel, charset, delimiter);
             } else {
                 // value is not a suitable type, try to convert value to a string
                 String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
@@ -1273,8 +1279,8 @@ public final class ExchangeHelper {
      */
     public static <T> T getBodyAndResetStreamCache(Exchange exchange, Class<T> type) {
         Object body = exchange.getMessage().getBody();
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).reset();
+        if (body instanceof StreamCache sc) {
+            sc.reset();
         }
         return exchange.getMessage().getBody(type);
     }

@@ -1777,7 +1777,7 @@ public class ExpressionBuilder {
                 ObjectHelper.notNull(it,
                         "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(128);
                 while (it.hasNext()) {
                     Object o = it.next();
                     if (o != null) {
@@ -2052,7 +2052,7 @@ public class ExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new StringBuilder(256);
                 for (Expression expression : expressions) {
                     String text = expression.evaluate(exchange, String.class);
                     if (text != null) {
@@ -2098,7 +2098,7 @@ public class ExpressionBuilder {
                 if (optimizedValue != null) {
                     return optimizedValue;
                 }
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new StringBuilder(256);
                 Collection<?> col = optimized != null ? optimized : expressions;
                 for (Object obj : col) {
                     if (obj instanceof Expression expression) {
@@ -2121,8 +2121,8 @@ public class ExpressionBuilder {
                     boolean constantsOnly = true;
                     for (Expression expression : expressions) {
                         expression.init(context);
-                        if (expression instanceof ConstantExpressionAdapter) {
-                            Object value = ((ConstantExpressionAdapter) expression).getValue();
+                        if (expression instanceof ConstantExpressionAdapter constantExpressionAdapter) {
+                            Object value = constantExpressionAdapter.getValue();
                             preprocessedExpression.add(value.toString());
                         } else {
                             preprocessedExpression.add(expression);
@@ -2130,7 +2130,7 @@ public class ExpressionBuilder {
                         }
                     }
                     if (constantsOnly) {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new StringBuilder(256);
                         for (Object o : preprocessedExpression) {
                             sb.append(o);
                         }

@@ -22,10 +22,10 @@ import java.util.Optional;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry;
 import org.apache.camel.support.ResolverHelper;
+import org.jolokia.json.JSONObject;
+import org.jolokia.json.JSONStructure;
+import org.jolokia.json.parser.JSONParser;
 import org.jolokia.server.core.http.HttpRequestHandler;
-import org.json.simple.JSONAware;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
         Assertions.assertNotNull(plugin);
         HttpRequestHandler handler = plugin.getJolokiaRequestHandler();
 
-        JSONAware json = handler.handleGetRequest("", "/", new HashMap<>());
+        JSONStructure json = handler.handleGetRequest("", "/", new HashMap<>());
 
         JSONParser parser = new JSONParser();
         JSONObject responseBody = (JSONObject) parser.parse(json.toJSONString());
@@ -54,7 +54,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
         String type = (String) request.get("type");
 
         assertEquals("version", type);
-        assertEquals("2.0.3", agentVersion);
+        assertEquals("2.1.0", agentVersion);
     }
 
     private PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {

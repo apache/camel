@@ -9,7 +9,7 @@ image::images/MessageTranslator.gif[image]
 Camel has support for message transformation using several techniques.
 One such technique is data formats, where marshal and unmarshal comes from.
 
-So in other words the xref:components:eips:marshal-eip.adoc[Marshal] and
+So in other words, the xref:components:eips:marshal-eip.adoc[Marshal] and
 xref:components:eips:unmarshal-eip.adoc[Unmarshal] EIPs
 are used data formats.
 
@@ -20,7 +20,7 @@ into a Java object; or some other representation according to the data format be
 == Supported data formats
 
 There are more than 40 different data formats that
-supports formats such as XML, CSV, JSon, YAML, Avro, Protobuf, and many more.
+support formats such as XML, CSV, JSON, YAML, Avro, Protobuf, and many more.
 
 == Example
 

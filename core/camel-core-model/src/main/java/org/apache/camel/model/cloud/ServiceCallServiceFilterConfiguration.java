@@ -119,9 +119,9 @@ public class ServiceCallServiceFilterConfiguration extends ServiceCallConfigurat
                 Map<String, Object> parameters = getConfiguredOptions(camelContext, this);
 
                 parameters.replaceAll((k, v) -> {
-                    if (v instanceof String) {
+                    if (v instanceof String str) {
                         try {
-                            v = camelContext.resolvePropertyPlaceholders((String) v);
+                            v = camelContext.resolvePropertyPlaceholders(str);
                         } catch (Exception e) {
                             throw new IllegalArgumentException(
                                     String.format("Exception while resolving %s (%s)", k, v), e);

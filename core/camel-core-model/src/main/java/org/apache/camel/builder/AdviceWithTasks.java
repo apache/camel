@@ -25,12 +25,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.model.AdviceWithDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.EndpointRequiredDefinition;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PipelineDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -127,12 +129,24 @@ public final class AdviceWithTasks {
 
         @Override
         public boolean match(ProcessorDefinition<?> processor) {
-            if (processor instanceof EndpointRequiredDefinition) {
-                String uri = ((EndpointRequiredDefinition) processor).getEndpointUri();
+            if (processor instanceof EndpointRequiredDefinition endpointRequiredDefinition) {
+                String uri = endpointRequiredDefinition.getEndpointUri();
                 return PatternHelper.matchPattern(uri, toUri);
-            } else if (processor instanceof ToDynamicDefinition) {
-                String uri = ((ToDynamicDefinition) processor).getUri();
+            } else if (processor instanceof ToDynamicDefinition toDynamicDefinition) {
+                String uri = toDynamicDefinition.getUri();
                 return PatternHelper.matchPattern(uri, toUri);
+            } else if (processor instanceof EnrichDefinition enrichDefinition) {
+                var exp = enrichDefinition.getExpression();
+                if (exp != null) {
+                    String uri = exp.getExpression();
+                    return PatternHelper.matchPattern(uri, toUri);
+                }
+            } else if (processor instanceof PollEnrichDefinition pollEnrichDefinition) {
+                var exp = pollEnrichDefinition.getExpression();
+                if (exp != null) {
+                    String uri = exp.getExpression();
+                    return PatternHelper.matchPattern(uri, toUri);
+                }
             }
             return false;
         }
@@ -613,8 +627,7 @@ public final class AdviceWithTasks {
     }
 
     private static ProcessorDefinition<?> flatternOutput(ProcessorDefinition<?> output) {
-        if (output instanceof AdviceWithDefinition) {
-            AdviceWithDefinition advice = (AdviceWithDefinition) output;
+        if (output instanceof AdviceWithDefinition advice) {
             if (advice.getOutputs().size() == 1) {
                 return advice.getOutputs().get(0);
             } else {

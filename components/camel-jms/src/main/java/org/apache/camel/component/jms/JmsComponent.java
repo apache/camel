@@ -446,6 +446,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setMaxMessagesPerTask(maxMessagesPerTask);
     }
 
+    public int getIdleReceivesPerTaskLimit() {
+        return configuration.getIdleReceivesPerTaskLimit();
+    }
+
+    public void setIdleReceivesPerTaskLimit(int idleReceivesPerTaskLimit) {
+        configuration.setIdleReceivesPerTaskLimit(idleReceivesPerTaskLimit);
+    }
+
     public int getCacheLevel() {
         return configuration.getCacheLevel();
     }

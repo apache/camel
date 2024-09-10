@@ -65,7 +65,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Endpoint HTTP Headers
+== Usage
+
+=== Endpoint HTTP Headers
 
 The component level configuration property **httpHeaders** supplies static HTTP header information.
 However, some systems require dynamic header information to be passed to and received from the endpoint.
@@ -75,7 +77,7 @@ be passed to the endpoint in the *`CamelOlingo4.endpointHttpHeaders`* property a
 response headers will be returned in a *`CamelOlingo4.responseHttpHeaders`* property.  
 Both properties are of the type *`java.util.Map<String, String>`*.
 
-== OData Resource Type Mapping
+=== OData Resource Type Mapping
 
 The result of *read* endpoint and data type of *data* option depends on
 the OData resource being queried, created or modified. 
@@ -102,7 +104,7 @@ the OData resource being queried, created or modified.
 |Count |<resource-uri>/$count |`java.lang.Long`
 |=======================================================================
 
-== Samples
+== Examples
 
 The following route reads top 5 entries from the People entity
 ordered by ascending FirstName property. 

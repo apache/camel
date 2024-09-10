@@ -43,6 +43,12 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Examples
+
 === Using Hashicorp Vault Property Function
 
 To use this function, you'll need to provide credentials for Hashicorp vault as environment variables:
@@ -64,6 +70,9 @@ camel.vault.hashicorp.host = host
 camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
+
+NOTE: `camel.vault.hashicorp` configuration only applies to the Hashicorp Vault properties function (E.g when resolving properties).
+When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) & `token` options.
 
 At this point, you'll be able to reference a property in the following way:
 
@@ -114,7 +123,7 @@ You're able to do get single secret value in your route, in the 'secret' engine,
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:secret:database/username}}"/>
+        <log message="Username is {{hashicorp:secret:database#username}}"/>
     </route>
 </camelContext>
 ----
@@ -128,7 +137,7 @@ You could specify a default value in case the particular field of secret is not 
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:secret:database/username:admin}}"/>
+        <log message="Username is {{hashicorp:secret:database#username:admin}}"/>
     </route>
 </camelContext>
 ----
@@ -166,7 +175,7 @@ This approach will return the route secret value with version '2' or default val
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:secret:database/username:admin@2}}"/>
+        <log message="Username is {{hashicorp:secret:database#username:admin@2}}"/>
     </route>
 </camelContext>
 ----
@@ -174,3 +183,5 @@ This approach will return the route secret value with version '2' or default val
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
+
+include::spring-boot:partial$starter.adoc[]

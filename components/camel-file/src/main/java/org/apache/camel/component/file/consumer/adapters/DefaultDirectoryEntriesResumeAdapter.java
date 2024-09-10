@@ -33,10 +33,10 @@ class DefaultDirectoryEntriesResumeAdapter extends AbstractFileResumeAdapter imp
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDirectoryEntriesResumeAdapter.class);
 
     protected boolean add(Object key, Object offset) {
-        if (offset instanceof File) {
+        if (offset instanceof File fileBasedOffset) {
             FileSet fileSet = (FileSet) cache.computeIfAbsent((File) key, k -> new FileSet());
 
-            fileSet.update((File) offset);
+            fileSet.update(fileBasedOffset);
         } else {
             throw new UnsupportedOperationException("This adapter cannot be used for file offsets");
         }

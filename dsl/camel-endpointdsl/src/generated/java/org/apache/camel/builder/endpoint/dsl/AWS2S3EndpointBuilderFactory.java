@@ -126,6 +126,40 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder ignoreBody(String ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
@@ -365,40 +399,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointConsumerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * If it is true, the S3 Object Body will be ignored completely if it is
-         * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param ignoreBody the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder ignoreBody(boolean ignoreBody) {
-            doSetProperty("ignoreBody", ignoreBody);
-            return this;
-        }
-        /**
-         * If it is true, the S3 Object Body will be ignored completely if it is
-         * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param ignoreBody the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder ignoreBody(String ignoreBody) {
-            doSetProperty("ignoreBody", ignoreBody);
             return this;
         }
         /**
@@ -1779,6 +1779,40 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder ignoreBody(String ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
@@ -2908,6 +2942,40 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder forcePathStyle(String forcePathStyle) {
             doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder ignoreBody(boolean ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
+            return this;
+        }
+        /**
+         * If it is true, the S3 Object Body will be ignored completely if it is
+         * set to false, the S3 Object will be put in the body. Setting this to
+         * true will override any behavior defined by includeBody option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param ignoreBody the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder ignoreBody(String ignoreBody) {
+            doSetProperty("ignoreBody", ignoreBody);
             return this;
         }
         /**

@@ -22,13 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
@@ -159,7 +155,7 @@ class ExportSpringBoot extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepos(settings, prop, camelSpringBootVersion);
+        String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
         CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
 
@@ -186,32 +182,8 @@ class ExportSpringBoot extends Export {
         } else {
             context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
         }
-        if (additionalProperties != null && !additionalProperties.isEmpty()) {
-            String properties = Arrays.stream(additionalProperties.split(","))
-                    .filter(item -> !item.isEmpty())
-                    .map(item -> {
-                        String[] keyValueProperty = item.split("=");
-                        return String.format("        <%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
-                                keyValueProperty[0]);
-                    })
-                    .collect(Collectors.joining(System.lineSeparator()));
-            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), Matcher.quoteReplacement(properties));
-        } else {
-            context = context.replaceFirst(Pattern.quote("{{ .AdditionalProperties }}"), "");
-        }
 
-        // Convert jkube properties to maven properties
-        Properties allProps = new CamelCaseOrderedProperties();
-        if (profile != null && profile.exists()) {
-            RuntimeUtil.loadProperties(allProps, profile);
-        }
-        StringBuilder sbJKube = new StringBuilder();
-        allProps.stringPropertyNames().stream().filter(p -> p.startsWith("jkube")).forEach(key -> {
-            String value = allProps.getProperty(key);
-            sbJKube.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
-        });
-        context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"),
-                Matcher.quoteReplacement(sbJKube.toString()));
+        context = replaceBuildProperties(context);
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
@@ -275,13 +247,6 @@ class ExportSpringBoot extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        // add jkube profiles if there is jkube version property
-        String jkubeProfiles = "";
-        if (allProps.getProperty("jkube.version") != null) {
-            jkubeProfiles = readResourceTemplate("templates/jkube-profiles.tmpl");
-        }
-        context = context.replaceFirst(Pattern.quote("{{ .jkubeProfiles }}"), Matcher.quoteReplacement(jkubeProfiles));
-
         IOHelper.writeText(context, new FileOutputStream(pom, false));
     }
 
@@ -292,7 +257,7 @@ class ExportSpringBoot extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepos(settings, prop, camelSpringBootVersion);
+        String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
         CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
         String camelVersion = catalog.getLoadedVersion();
@@ -406,6 +371,10 @@ class ExportSpringBoot extends Export {
 
     @Override
     protected String applicationPropertyLine(String key, String value) {
+        if (key.startsWith("camel.server.")) {
+            // skip "camel.server." as this is for camel-main only
+            return null;
+        }
         boolean camel44orOlder = camelSpringBootVersion != null && VersionHelper.isLE("4.4", camelSpringBootVersion);
         if (camel44orOlder) {
             // camel.main.x should be renamed to camel.springboot.x (for camel 4.4.x or older)

@@ -23,5 +23,6 @@ package org.apache.camel.cloud;
  * @see ServiceFilter
  */
 @FunctionalInterface
+@Deprecated(since = "4.8.0")
 public interface ServiceFilterFactory extends ServiceFactory<ServiceFilter> {
 }

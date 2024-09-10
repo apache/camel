@@ -216,8 +216,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         CompletableFuture<Exchange> future = f != null ? f : new CompletableFuture<>();
         AsyncProducerCallback cb = (p, e, c) -> asyncDispatchExchange(endpoint, p, resultProcessor, e, c);
         try {
-            if (processor instanceof AsyncProcessor) {
-                ((AsyncProcessor) processor).process(exchange,
+            if (processor instanceof AsyncProcessor asyncProcessor) {
+                asyncProcessor.process(exchange,
                         doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
             } else {
                 if (processor != null) {
@@ -372,17 +372,22 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    public synchronized void purge() {
+    public void purge() {
+        lock.lock();
         try {
-            if (producers != null) {
-                producers.stop();
-                producers.start();
+            try {
+                if (producers != null) {
+                    producers.stop();
+                    producers.start();
+                }
+            } catch (Exception e) {
+                LOG.debug("Error restarting producers", e);
             }
-        } catch (Exception e) {
-            LOG.debug("Error restarting producers", e);
-        }
-        if (statistics != null) {
-            statistics.clear();
+            if (statistics != null) {
+                statistics.clear();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

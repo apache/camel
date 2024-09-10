@@ -23,6 +23,7 @@ import org.apache.camel.spi.CircuitBreakerConstants;
  */
 public enum ExchangePropertyKey {
 
+    ACTIVE_SPAN(Exchange.ACTIVE_SPAN),
     AGGREGATED_COMPLETED_BY(Exchange.AGGREGATED_COMPLETED_BY),
     AGGREGATED_CORRELATION_KEY(Exchange.AGGREGATED_CORRELATION_KEY),
     AGGREGATED_SIZE(Exchange.AGGREGATED_SIZE),
@@ -51,6 +52,7 @@ public enum ExchangePropertyKey {
     FAILURE_HANDLED(Exchange.FAILURE_HANDLED),
     FAILURE_ROUTE_ID(Exchange.FAILURE_ROUTE_ID),
     FATAL_FALLBACK_ERROR_HANDLER(Exchange.FATAL_FALLBACK_ERROR_HANDLER),
+    FILE_EXCHANGE_FILE(Exchange.FILE_EXCHANGE_FILE),
     GROUPED_EXCHANGE(Exchange.GROUPED_EXCHANGE),
     INTERCEPTED_ENDPOINT(Exchange.INTERCEPTED_ENDPOINT),
     INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED),
@@ -141,6 +143,8 @@ public enum ExchangePropertyKey {
                 return FAILURE_ROUTE_ID;
             case Exchange.FATAL_FALLBACK_ERROR_HANDLER:
                 return FATAL_FALLBACK_ERROR_HANDLER;
+            case Exchange.FILE_EXCHANGE_FILE:
+                return FILE_EXCHANGE_FILE;
             case Exchange.GROUPED_EXCHANGE:
                 return GROUPED_EXCHANGE;
             case Exchange.INTERCEPTED_ENDPOINT:

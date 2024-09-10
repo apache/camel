@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -77,7 +77,7 @@ class AsyncJmsProducerExceptionInTXManualIT extends SpringJMSBasic {
             fail("transaction should fail, otherwise looks like CAMEL-4616 has been emerged!");
         } catch (CamelExecutionException e) {
             Throwable cause = e.getCause();
-            assertTrue(cause instanceof TransactionException);
+            assertInstanceOf(TransactionException.class, cause);
             while (cause.getCause() != null) {
                 cause = cause.getCause();
             }

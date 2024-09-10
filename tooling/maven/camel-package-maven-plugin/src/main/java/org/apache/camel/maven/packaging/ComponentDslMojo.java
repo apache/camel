@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -101,14 +103,18 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
                defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
+    @Inject
+    public ComponentDslMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
+        super(projectHelper, buildContext);
+    }
+
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         baseDir = project.getBasedir();
         componentsDslPackageName = "org.apache.camel.builder.component";
         componentsDslFactoriesPackageName = "org.apache.camel.builder.component.dsl";
-        super.execute(project, projectHelper, buildContext);
+        super.execute(project);
     }
 
     @Override
@@ -223,7 +229,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     }
 
     public String javadoc(String indent, String doc) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(doc.length() * 2);
         sb.append("/**\n");
         int len = 78 - indent.length();
         String rem = xmlEncode(doc);

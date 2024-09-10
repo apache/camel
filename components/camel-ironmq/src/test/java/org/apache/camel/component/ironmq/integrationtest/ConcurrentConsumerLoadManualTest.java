@@ -76,7 +76,7 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
         int seconds = (int) watch.taken() / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
         LOGGER.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is "
-                    + msgPrSec + " messages pr. second");
+                    + msgPrSec + " messages per second");
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
         int seconds = (int) watch.taken() / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
         LOGGER.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is "
-                    + msgPrSec + " messages pr. second");
+                    + msgPrSec + " messages per second");
     }
 
     @Override

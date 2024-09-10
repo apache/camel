@@ -32,6 +32,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -89,7 +90,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
         Exception ex = assertThrows(GenericFileOperationFailedException.class,
                 () -> consumer.doSafePollSubDirectory("anyPath", "adir", list, 0));
 
-        assertTrue(ex.getCause() instanceof IllegalStateException);
+        assertInstanceOf(IllegalStateException.class, ex.getCause());
     }
 
     @Test

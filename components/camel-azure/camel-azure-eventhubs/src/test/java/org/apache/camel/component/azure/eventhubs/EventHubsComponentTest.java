@@ -141,9 +141,7 @@ class EventHubsComponentTest extends CamelTestSupport {
 
     @Test
     public void testCreateEndpointWithConfigAzureIdentity() {
-        final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName"
-                           + "&sharedAccessKey=DummyKey"
-                           + "&consumerGroupName=testConsumer&prefetchCount=100"
+        final String uri = "azure-eventhubs:namespace/hubName?consumerGroupName=testConsumer&prefetchCount=100"
                            + "&checkpointBatchSize=100&checkpointBatchTimeout=1000"
                            + "&credentialType=AZURE_IDENTITY";
 

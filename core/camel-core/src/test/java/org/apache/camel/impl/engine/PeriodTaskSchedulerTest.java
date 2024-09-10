@@ -42,9 +42,9 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         counter.set(0);
 
         PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
-        if (scheduler instanceof TimerListenerManager) {
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
             // speedup unit test
-            ((TimerListenerManager) scheduler).setInterval(10);
+            timerListenerManager.setInterval(10);
         }
         scheduler.schedulePeriodTask(counter::incrementAndGet, 10);
         context.start();
@@ -59,9 +59,9 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
         MyTask task = new MyTask();
 
         PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
-        if (scheduler instanceof TimerListenerManager) {
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
             // speedup unit test
-            ((TimerListenerManager) scheduler).setInterval(10);
+            timerListenerManager.setInterval(10);
         }
         scheduler.schedulePeriodTask(task, 10);
         context.start();
@@ -99,6 +99,33 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
             counter.incrementAndGet();
             event += "run";
         }
+    }
+
+    @Test
+    public void testSchedulerRun() {
+        final AtomicInteger taskCounter = new AtomicInteger();
+        counter.set(0);
+
+        PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(context);
+        if (scheduler instanceof TimerListenerManager timerListenerManager) {
+            // speedup unit test
+            timerListenerManager.setInterval(10);
+        }
+        // this task is only executed once (it can keep looping forever if needed)
+        scheduler.scheduledTask(() -> {
+            counter.incrementAndGet();
+            for (int i = 0; i < 10; i++) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    // ignore
+                }
+                taskCounter.incrementAndGet();
+            }
+        });
+        context.start();
+
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() == 1 && taskCounter.get() == 10);
     }
 
 }

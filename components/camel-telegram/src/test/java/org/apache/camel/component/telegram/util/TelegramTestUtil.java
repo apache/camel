@@ -59,7 +59,7 @@ public final class TelegramTestUtil {
 
     private static byte[] readBytesFromStream(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE);
-        IOHelper.copy(in, out, IOHelper.DEFAULT_BUFFER_SIZE);
+        IOHelper.copy(in, out);
         return out.toByteArray();
     }
 

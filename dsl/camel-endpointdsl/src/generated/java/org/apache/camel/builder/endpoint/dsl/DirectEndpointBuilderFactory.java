@@ -172,12 +172,12 @@ public interface DirectEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether synchronous processing is forced. If enabled then the
-         * producer thread, will be forced to wait until the message has been
+         * Whether synchronous processing is forced. If enabled, then the
+         * producer thread will be forced to wait until the message has been
          * completed before the same thread will continue processing. If
-         * disabled (default) then the producer thread may be freed and can do
-         * other work while the message is continued processed by other threads
-         * (reactive).
+         * disabled, the default, then the producer thread may be freed and can
+         * do other work while the message is continued processed by other
+         * threads (reactive).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -192,12 +192,12 @@ public interface DirectEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether synchronous processing is forced. If enabled then the
-         * producer thread, will be forced to wait until the message has been
+         * Whether synchronous processing is forced. If enabled, then the
+         * producer thread will be forced to wait until the message has been
          * completed before the same thread will continue processing. If
-         * disabled (default) then the producer thread may be freed and can do
-         * other work while the message is continued processed by other threads
-         * (reactive).
+         * disabled, the default, then the producer thread may be freed and can
+         * do other work while the message is continued processed by other
+         * threads (reactive).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -376,12 +376,12 @@ public interface DirectEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether synchronous processing is forced. If enabled then the
-         * producer thread, will be forced to wait until the message has been
+         * Whether synchronous processing is forced. If enabled, then the
+         * producer thread will be forced to wait until the message has been
          * completed before the same thread will continue processing. If
-         * disabled (default) then the producer thread may be freed and can do
-         * other work while the message is continued processed by other threads
-         * (reactive).
+         * disabled, the default, then the producer thread may be freed and can
+         * do other work while the message is continued processed by other
+         * threads (reactive).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -396,12 +396,12 @@ public interface DirectEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether synchronous processing is forced. If enabled then the
-         * producer thread, will be forced to wait until the message has been
+         * Whether synchronous processing is forced. If enabled, then the
+         * producer thread will be forced to wait until the message has been
          * completed before the same thread will continue processing. If
-         * disabled (default) then the producer thread may be freed and can do
-         * other work while the message is continued processed by other threads
-         * (reactive).
+         * disabled, the default, then the producer thread may be freed and can
+         * do other work while the message is continued processed by other
+         * threads (reactive).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -442,12 +442,12 @@ public interface DirectEndpointBuilderFactory {
         }
 
         /**
-         * Whether synchronous processing is forced. If enabled then the
-         * producer thread, will be forced to wait until the message has been
+         * Whether synchronous processing is forced. If enabled, then the
+         * producer thread will be forced to wait until the message has been
          * completed before the same thread will continue processing. If
-         * disabled (default) then the producer thread may be freed and can do
-         * other work while the message is continued processed by other threads
-         * (reactive).
+         * disabled, the default, then the producer thread may be freed and can
+         * do other work while the message is continued processed by other
+         * threads (reactive).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -462,12 +462,12 @@ public interface DirectEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether synchronous processing is forced. If enabled then the
-         * producer thread, will be forced to wait until the message has been
+         * Whether synchronous processing is forced. If enabled, then the
+         * producer thread will be forced to wait until the message has been
          * completed before the same thread will continue processing. If
-         * disabled (default) then the producer thread may be freed and can do
-         * other work while the message is continued processed by other threads
-         * (reactive).
+         * disabled, the default, then the producer thread may be freed and can
+         * do other work while the message is continued processed by other
+         * threads (reactive).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -77,8 +77,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     // all maven-resolver work is delegated to camel-tooling-maven
     private MavenDownloader mavenDownloader;
 
-    // repository URLs set from "camel.jbang.repos" property or --repos option.
-    private String repos;
+    // repository URLs set from "camel.jbang.repositories" property or --repository option.
+    private String repositories;
     private boolean fresh;
 
     // settings.xml and settings-security.xml locations to be passed to MavenDownloader from camel-tooling-maven
@@ -144,13 +144,13 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public String getRepos() {
-        return repos;
+    public String getRepositories() {
+        return repositories;
     }
 
     @Override
-    public void setRepos(String repos) {
-        this.repos = repos;
+    public void setRepositories(String repositories) {
+        this.repositories = repositories;
     }
 
     @Override
@@ -506,7 +506,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setMavenSettingsSecurityLocation(mavenSettingsSecurity);
         mavenDownloaderImpl.setMavenCentralEnabled(mavenCentralEnabled);
         mavenDownloaderImpl.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
-        mavenDownloaderImpl.setRepos(repos);
+        mavenDownloaderImpl.setRepos(repositories);
         mavenDownloaderImpl.setFresh(fresh);
         mavenDownloaderImpl.setOffline(!download);
         // use listener to keep track of which JARs was downloaded from a remote Maven repo (and how long time it took)

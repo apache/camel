@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-docker",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "docker",
     "extendsScheme": "",
     "syntax": "docker:operation",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true,
+    "browsable": false,
     "remote": true
   },
   "componentProperties": {

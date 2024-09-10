@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,6 +28,7 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -56,9 +55,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         RouteController rc = getCamelContext().getRouteController();
-        if (rc instanceof SupervisingRouteController) {
-            SupervisingRouteController src = (SupervisingRouteController) rc;
-
+        if (rc instanceof SupervisingRouteController src) {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
             routes.addAll(src.getExhaustedRoutes());
@@ -114,10 +111,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 if (includeError && cause != null) {
                     error = cause.getMessage();
                     if (includeStacktrace) {
-                        StringWriter writer = new StringWriter();
-                        cause.printStackTrace(new PrintWriter(writer));
-                        writer.flush();
-                        stacktrace = writer.toString();
+                        stacktrace = ExceptionHelper.stackTraceToString(cause);
                     }
                 }
 
@@ -169,9 +163,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
         final List<JsonObject> list = new ArrayList<>();
 
         RouteController rc = getCamelContext().getRouteController();
-        if (rc instanceof SupervisingRouteController) {
-            SupervisingRouteController src = (SupervisingRouteController) rc;
-
+        if (rc instanceof SupervisingRouteController src) {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
             routes.addAll(src.getExhaustedRoutes());
@@ -230,10 +222,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
                         jo.put("error", Jsoner.escape(error));
                         if (includeStacktrace) {
                             JsonArray arr2 = new JsonArray();
-                            StringWriter writer = new StringWriter();
-                            cause.printStackTrace(new PrintWriter(writer));
-                            writer.flush();
-                            String trace = writer.toString();
+                            final String trace = ExceptionHelper.stackTraceToString(cause);
                             jo.put("stackTrace", arr2);
                             Collections.addAll(arr2, trace.split("\n"));
                         }

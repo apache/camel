@@ -149,6 +149,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String startupRecorderProfile = "default";
     private long startupRecorderDuration;
     private String startupRecorderDir;
+    private String cloudPropertiesLocation;
 
     // getter and setters
     // --------------------------------------------------------------
@@ -936,7 +937,7 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * Turning this off should only be done if you are sure you do not use any of these Camel features.
      *
-     * Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML).
+     * Not all runtimes allow turning this off.
      *
      * The default value is true (enabled).
      */
@@ -2175,7 +2176,7 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * Turning this off should only be done if you are sure you do not use any of these Camel features.
      *
-     * Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML).
+     * Not all runtimes allow turning this off.
      *
      * The default value is true (enabled).
      */
@@ -2724,6 +2725,26 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStartupRecorderDir(String startupRecorderDir) {
         this.startupRecorderDir = startupRecorderDir;
+        return (T) this;
+    }
+
+    public String getCloudPropertiesLocation() {
+        return cloudPropertiesLocation;
+    }
+
+    /**
+     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
+     * environments such as Kubernetes. You should only scan text based mounted configuration.
+     */
+    public void setCloudPropertiesLocation(String cloudPropertiesLocation) {
+        this.cloudPropertiesLocation = cloudPropertiesLocation;
+    }
+
+    /**
+     * Whether to use cloud properties location setting. Default is none.
+     */
+    public T withCloudPropertiesLocation(boolean dumpRoutesResolvePlaceholders) {
+        this.cloudPropertiesLocation = cloudPropertiesLocation;
         return (T) this;
     }
 

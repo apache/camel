@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.knative.http;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -45,9 +43,9 @@ import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeTransportConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,23 +329,18 @@ public class KnativeHttpConsumer extends DefaultConsumer {
 
         if (exception != null) {
             // we failed due an exception so print it as plain text
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
 
-            try {
-                exception.printStackTrace(pw);
+            final String stackTrace = ExceptionHelper.stackTraceToString(exception);
 
-                // the body should then be the stacktrace
-                body = sw.toString().getBytes(StandardCharsets.UTF_8);
-                // force content type to be text/plain as that is what the stacktrace is
-                message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            // the body should then be the stacktrace
+            body = stackTrace.getBytes(StandardCharsets.UTF_8);
+            // force content type to be text/plain as that is what the stacktrace is
+            message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
 
-                // and mark the exception as failure handled, as we handled it by returning
-                // it as the response
-                ExchangeHelper.setFailureHandled(message.getExchange());
-            } finally {
-                IOHelper.close(pw, sw);
-            }
+            // and mark the exception as failure handled, as we handled it by returning
+            // it as the response
+            ExchangeHelper.setFailureHandled(message.getExchange());
+
         }
 
         return body != null

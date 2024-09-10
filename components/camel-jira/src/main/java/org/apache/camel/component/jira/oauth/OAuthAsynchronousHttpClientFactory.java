@@ -48,10 +48,10 @@ public class OAuthAsynchronousHttpClientFactory {
     public DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler) {
         final HttpClientOptions options = new HttpClientOptions();
 
-        final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(
+        final DefaultHttpClientFactory<?> defaultHttpClientFactory = new DefaultHttpClientFactory<>(
                 new NoOpEventPublisher(),
                 new RestClientApplicationProperties(serverUri),
-                new ThreadLocalContextManager() {
+                new ThreadLocalContextManager<>() {
                     @Override
                     public Object getThreadLocalContext() {
                         return null;

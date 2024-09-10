@@ -44,11 +44,11 @@ public class TransitionIssueProducer extends DefaultProducer {
         Integer transitionId = exchange.getIn().getHeader(ISSUE_TRANSITION_ID, Integer.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named \'IssueKey\', it should specify the issue key to add the comment to.");
+                    "Missing exchange input header named 'IssueKey', it should specify the issue key to add the comment to.");
         }
         if (transitionId == null) {
             throw new IllegalArgumentException(
-                    "Missing exchange input header named \'IssueTransitionId\', it should specify the transition id.");
+                    "Missing exchange input header named 'IssueTransitionId', it should specify the transition id.");
         }
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
         IssueRestClient issueClient = client.getIssueClient();

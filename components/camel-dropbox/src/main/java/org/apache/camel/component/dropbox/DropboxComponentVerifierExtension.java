@@ -42,8 +42,8 @@ public class DropboxComponentVerifierExtension extends DefaultComponentVerifierE
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-                .error(ResultErrorHelper.requiresOption("accessToken", parameters))
-                .error(ResultErrorHelper.requiresOption("clientIdentifier", parameters));
+                .error(ResultErrorHelper.requiresOption(parameters, "accessToken"))
+                .error(ResultErrorHelper.requiresOption(parameters, "clientIdentifier"));
 
         return builder.build();
     }

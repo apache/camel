@@ -50,8 +50,8 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
 
     @Override
     public String getName() {
-        if (dataFormat instanceof DataFormatName) {
-            return ((DataFormatName) dataFormat).getDataFormatName();
+        if (dataFormat instanceof DataFormatName dataFormatName) {
+            return dataFormatName.getDataFormatName();
         }
         return null;
     }
@@ -69,8 +69,8 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
     @Override
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (dataFormat instanceof StatefulService) {
-            ServiceStatus status = ((StatefulService) dataFormat).getStatus();
+        if (dataFormat instanceof StatefulService statefulService) {
+            ServiceStatus status = statefulService.getStatus();
             return status.name();
         }
 

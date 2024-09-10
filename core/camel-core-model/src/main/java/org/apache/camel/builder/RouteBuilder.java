@@ -669,8 +669,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // this will add the routes to camel
         populateRoutes();
 
-        if (this instanceof OnCamelContextEvent) {
-            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
+        if (this instanceof OnCamelContextEvent onCamelContextEvent) {
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt(onCamelContextEvent));
         }
     }
 
@@ -709,8 +709,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             src.startRoutes(true);
         }
 
-        if (this instanceof OnCamelContextEvent) {
-            context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
+        if (this instanceof OnCamelContextEvent onCamelContextEvent) {
+            context.addLifecycleStrategy(LifecycleStrategySupport.adapt(onCamelContextEvent));
         }
 
         for (RouteDefinition route : routeCollection.getRoutes()) {
@@ -767,6 +767,27 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public void removeLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
         lifecycleInterceptors.remove(interceptor);
+    }
+
+    /**
+     * A utility method allowing to build any tokenizer using a fluent syntax as shown in the next example:
+     *
+     * <pre>
+     * {@code
+     * from("jms:queue:orders")
+     *         .tokenize(
+     *                 tokenizer()
+     *                         .byParagraph()
+     *                         .maxTokens(1024)
+     *                         .end())
+     *         .to("qdrant:db");
+     * }
+     * </pre>
+     *
+     * @return an entry point to the builder of all supported tokenizers.
+     */
+    public TokenizerBuilderFactory tokenizer() {
+        return new TokenizerBuilderFactory();
     }
 
     // Implementation methods

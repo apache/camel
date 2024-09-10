@@ -41,8 +41,6 @@ import org.apache.camel.support.component.ApiMethodHelper;
  */
 public final class $collectionName extends ApiCollection<${apiNameEnum}, ${componentConfig}> {
 
-    private static $collectionName collection;
-
     private ${collectionName}() {
         final Map<String, String> aliases = new HashMap<>();
         final Map<${apiNameEnum}, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(${apiNameEnum}.class);
@@ -78,10 +76,11 @@ public final class $collectionName extends ApiCollection<${apiNameEnum}, ${compo
         return result;
     }
 
-    public static synchronized $collectionName getCollection() {
-        if (collection == null) {
-            collection = new $collectionName();
-        }
-        return collection;
+    public static $collectionName getCollection() {
+        return ${collectionName}Holder.INSTANCE;
+    }
+
+    private static final class ${collectionName}Holder {
+        private static final $collectionName INSTANCE = new $collectionName();
     }
 }

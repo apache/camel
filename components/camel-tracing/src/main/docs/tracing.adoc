@@ -11,7 +11,7 @@
 
 This module is a common interface and API for distributed tracing.
 
-This module is not intended to be used by end users. Instead, should use one of:
+This module is not intended to be used by end users. Instead, you should use one of:
 
 * xref:opentelemetry.adoc[`camel-opentelemetry`]
 * xref:observation.adoc[`camel-observation`]

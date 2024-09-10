@@ -80,8 +80,7 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
     }
 
     protected void setReceiveTimeout(long timeout) {
-        if (template instanceof JmsTemplate) {
-            JmsTemplate jmsTemplate = (JmsTemplate) template;
+        if (template instanceof JmsTemplate jmsTemplate) {
             jmsTemplate.setReceiveTimeout(timeout);
         } else {
             throw new IllegalArgumentException(

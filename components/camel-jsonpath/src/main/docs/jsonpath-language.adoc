@@ -22,6 +22,54 @@ using xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Pr
 include::partial$language-options.adoc[]
 // language options: END
 
+== Usage
+
+
+=== JSONPath Syntax
+
+Using the JSONPath syntax takes some time to learn, even for basic predicates.
+So for example, to find out all the cheap books you have to do:
+
+[source,text]
+----
+$.store.book[?(@.price < 20)]
+----
+
+=== Easy JSONPath Syntax
+
+However, what if you could just write it as:
+
+[source,text]
+----
+store.book.price < 20
+----
+
+And you can omit the path if you just want to look at nodes with a price key:
+
+[source,text]
+----
+price < 20
+----
+
+To support this there is a `EasyPredicateParser` which kicks-in if you have defined the predicate
+using a basic style. That means the predicate must not start with the `$` sign, and only include one operator.
+
+The easy syntax is:
+
+[source,text]
+----
+left OP right
+----
+
+You can use Camel simple language in the right operator, eg:
+
+[source,text]
+----
+store.book.price < ${header.limit}
+----
+
+See the https://github.com/json-path/JsonPath[JSONPath] project page for more syntax examples.
+
 == Examples
 
 For example, you can use JSONPath in a xref:manual::predicate.adoc[Predicate]
@@ -68,53 +116,7 @@ XML DSL::
 
 ====
 
-== JSONPath Syntax
-
-Using the JSONPath syntax takes some time to learn, even for basic predicates.
-So for example, to find out all the cheap books you have to do:
-
-[source,text]
-----
-$.store.book[?(@.price < 20)]
-----
-
-=== Easy JSONPath Syntax
-
-However, what if you could just write it as:
-
-[source,text]
-----
-store.book.price < 20
-----
-
-And you can omit the path if you just want to look at nodes with a price key:
-
-[source,text]
-----
-price < 20
-----
-
-To support this there is a `EasyPredicateParser` which kicks-in if you have defined the predicate
-using a basic style. That means the predicate must not start with the `$` sign, and only include one operator.
-
-The easy syntax is:
-
-[source,text]
-----
-left OP right
-----
-
-You can use Camel simple language in the right operator, eg:
-
-[source,text]
-----
-store.book.price < ${header.limit}
-----
-
-See the https://github.com/json-path/JsonPath[JSONPath] project page for more syntax examples.
-
-
-== Supported message body types
+===  Supported message body types
 
 Camel JSONPath supports message body using the following types:
 
@@ -135,7 +137,7 @@ If a message body is of unsupported type, then an exception is thrown by default
 However, you can configure JSONPath to suppress exceptions (see below)
 
 
-== Suppressing exceptions
+=== Suppressing exceptions
 
 By default, jsonpath will throw an exception if the json payload does not
 have a valid path accordingly to the configured jsonpath expression. In
@@ -181,7 +183,7 @@ XML DSL::
 
 This option is also available on the `@JsonPath` annotation.
 
-== Inline Simple expressions
+=== Inline Simple expressions
 
 It's possible to inlined xref:languages:simple-language.adoc[Simple] language
 in the JSONPath expression using the simple syntax `$\{xxx}`.
@@ -250,7 +252,7 @@ XML DSL::
 
 ====
 
-== JSONPath injection
+=== JSONPath injection
 
 You can use xref:manual::bean-integration.adoc[Bean Integration] to invoke a
 method on a bean and use various languages such as JSONPath (via the `@JsonPath` annotation)
@@ -267,7 +269,7 @@ public class Foo {
 }
 ----
 
-== Encoding Detection
+=== Encoding Detection
 
 The encoding of the JSON document is
 detected automatically, if the document is encoded in unicode (UTF-8,
@@ -277,7 +279,7 @@ you enter the document in String format to JSONPath, or you
 can specify the encoding in the header `CamelJsonPathJsonEncoding` which
 is defined as a constant in: `JsonpathConstants.HEADER_JSON_ENCODING`.
 
-== Split JSON data into sub rows as JSON
+=== Split JSON data into sub rows as JSON
 
 You can use JSONPath to split a JSON document, such as:
 
@@ -306,7 +308,7 @@ from("direct:start")
 
 Then each book is logged as a String JSON value.
 
-== Unpack a single-element array into an object
+=== Unpack a single-element array into an object
 
 It is possible to unpack a single-element array into an object:
 
@@ -319,7 +321,7 @@ from("direct:start")
 
 If a book array contains only one book, it will be converted into a Book object.
 
-== Using header as input
+=== Using header as input
 
 By default, JSONPath uses the message body as the input source. However, you can also use a header as input
 by specifying the `headerName` option.
@@ -351,7 +353,7 @@ The same example in XML DSL would be:
 </route>
 ----
 
-== Transforming a JSon message
+=== Transforming a JSon message
 
 For basic JSon transformation where you have a fixed structure, you can represent with a combination of using
 Camel simple and JSonPath language as:

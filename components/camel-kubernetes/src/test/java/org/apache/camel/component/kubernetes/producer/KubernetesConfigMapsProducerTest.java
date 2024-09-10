@@ -132,6 +132,32 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createConfigMapWithAnnotations() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
+        Map<String, String> data = Map.of("my.data.key", "my.data.value");
+        ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cmAnnotated").withNamespace("test")
+                .withLabels(labels).withAnnotations(annotations).and()
+                .withData(data).build();
+        server.expect().post().withPath("/api/v1/namespaces/test/configmaps").andReturn(200, cm1).once();
+
+        Exchange ex = template.request("direct:createConfigMap", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cmAnnotated");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, data);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_ANNOTATIONS, annotations);
+        });
+
+        ConfigMap result = ex.getMessage().getBody(ConfigMap.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("cmAnnotated", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(annotations, result.getMetadata().getAnnotations());
+    }
+
+    @Test
     void updateConfigMap() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         Map<String, String> data = Map.of("my.data.key", "my.data.value");

@@ -206,7 +206,7 @@ is great to use with the Choice EIP in precondition mode to select a specific br
 on xref:manual:ROOT:using-propertyplaceholder.adoc[property placeholders].
 
 Here we select from the Switch the first predicate that matches. So if there is
-a property placeholder with the key `foo` then its select, and so on.
+a property placeholder with the key `foo` then it is selected, and so on.
 Notice how we can use `{{?foo}}` to mark the property placeholder as optional.
 
 [tabs]

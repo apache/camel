@@ -207,7 +207,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             }
         } catch (Exception e) {
             if (isIgnoreLoadingError()) {
-                log.warn("Loading resources error: {} due to: {}. This exception is ignored.", accepted, e.getMessage());
+                log.warn("Ignore Loading error: {} due to: {}. This exception is ignored.", accepted, e.getMessage());
             } else {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }

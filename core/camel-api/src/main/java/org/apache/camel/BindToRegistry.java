@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Used for binding a bean to the registry.
  *
  * This annotation is not supported with camel-spring or camel-spring-boot as they have their own set of annotations for
- * registering beans in spring bean registry. Instead this annotation is intended for Camel standalone such as
+ * registering beans in spring bean registry. Instead, this annotation is intended for Camel standalone such as
  * camel-main or camel-quarkus or similar runtimes.
  *
  * If no name is specified then the bean will have its name auto computed based on the class name, field name, or method
@@ -43,7 +43,31 @@ public @interface BindToRegistry {
     String value() default "";
 
     /**
-     * Whether to perform bean post processing (dependency injection) on the bean
+     * Whether to perform bean post-processing (dependency injection) on the bean
      */
     boolean beanPostProcess() default false;
+
+    /**
+     * Whether to create the bean instance lazy (on-demand) instead of creating eager. Using lazy can be useful when you
+     * only need to create beans if they are explicit in-use.
+     *
+     * NOTE: lazy does not support init or destroy methods.
+     */
+    boolean lazy() default false;
+
+    /**
+     * The optional name of a method to call on the bean instance during initialization.
+     *
+     * If no destroy method has been configured, then Camel will auto-detect as follows: If the bean is {@link Service}
+     * then start method is used.
+     */
+    String initMethod() default "";
+
+    /**
+     * The optional name of a method to call on the bean instance during destruction.
+     *
+     * If no destroy method has been configured, then Camel will auto-detect as follows: If the bean is {@link Service}
+     * then stop method is used. If the bean is {@link java.io.Closeable} then close method is used.
+     */
+    String destroyMethod() default "";
 }

@@ -74,14 +74,14 @@ public class MongodbUriDsl(
   }
 
   /**
-   * Create collection during initialisation if it doesn't exist. Default is true.
+   * Create the collection during initialisation if it doesn't exist. Default is true.
    */
   public fun createCollection(createCollection: String) {
     it.property("createCollection", createCollection)
   }
 
   /**
-   * Create collection during initialisation if it doesn't exist. Default is true.
+   * Create the collection during initialisation if it doesn't exist. Default is true.
    */
   public fun createCollection(createCollection: Boolean) {
     it.property("createCollection", createCollection.toString())
@@ -95,8 +95,8 @@ public class MongodbUriDsl(
   }
 
   /**
-   * Host address of mongodb server in host:port format. It's possible also use more than one
-   * address, as comma separated list of hosts: host1:port1,host2:port2. If the hosts parameter is
+   * Host address of mongodb server in host:port format. It's possible to also use more than one
+   * address, as a comma separated list of hosts: host1:port1,host2:port2. If this parameter is
    * specified, the provided connectionBean is ignored.
    */
   public fun hosts(hosts: String) {
@@ -118,7 +118,7 @@ public class MongodbUriDsl(
   }
 
   /**
-   * Convert the output of the producer to the selected type : DocumentList Document or
+   * Convert the output of the producer to the selected type: DocumentList Document or
    * MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to
    * all other operations.
    */
@@ -287,7 +287,7 @@ public class MongodbUriDsl(
   /**
    * heartbeatFrequencyMS controls when the driver checks the state of the MongoDB deployment.
    * Specify the interval (in milliseconds) between checks, counted from the end of the previous check
-   * until the beginning of the next one. Default: Single-threaded drivers: 60 seconds. Multi-threaded
+   * until the beginning of the next one. Default: Single-threaded drivers: 60 seconds. Multithreaded
    * drivers: 10 seconds.
    */
   public fun heartbeatFrequencyMS(heartbeatFrequencyMS: String) {
@@ -297,7 +297,7 @@ public class MongodbUriDsl(
   /**
    * heartbeatFrequencyMS controls when the driver checks the state of the MongoDB deployment.
    * Specify the interval (in milliseconds) between checks, counted from the end of the previous check
-   * until the beginning of the next one. Default: Single-threaded drivers: 60 seconds. Multi-threaded
+   * until the beginning of the next one. Default: Single-threaded drivers: 60 seconds. Multithreaded
    * drivers: 10 seconds.
    */
   public fun heartbeatFrequencyMS(heartbeatFrequencyMS: Int) {
@@ -446,8 +446,8 @@ public class MongodbUriDsl(
 
   /**
    * A representation of a tag set as a comma-separated list of colon-separated key-value pairs,
-   * e.g. dc:ny,rack:1. Spaces are stripped from beginning and end of all keys and values. To specify a
-   * list of tag sets, using multiple readPreferenceTags, e.g.
+   * e.g. dc:ny,rack:1. Spaces are stripped from the beginning and end of all keys and values. To
+   * specify a list of tag sets, using multiple readPreferenceTags, e.g.,
    * readPreferenceTags=dc:ny,rack:1;readPreferenceTags=dc:ny;readPreferenceTags= Note the empty value
    * for the last one, which means match any secondary as a last resort. Order matters when using
    * multiple readPreferenceTags.
@@ -721,7 +721,7 @@ public class MongodbUriDsl(
   /**
    * Indicates what database the tail tracking mechanism will persist to. If not specified, the
    * current database will be picked by default. Dynamicity will not be taken into account even if
-   * enabled, i.e. the tail tracking database will not vary past endpoint initialisation.
+   * enabled, i.e., the tail tracking database will not vary past endpoint initialization.
    */
   public fun tailTrackDb(tailTrackDb: String) {
     it.property("tailTrackDb", tailTrackDb)

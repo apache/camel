@@ -73,7 +73,8 @@ public class SetHeadersProcessor extends AsyncProcessorSupport implements Tracea
 
     @Override
     public String getTraceLabel() {
-        StringBuilder sb = new StringBuilder("setHeaders[");
+        StringBuilder sb = new StringBuilder(256);
+        sb.append("setHeaders[");
         int headerIndex = 0;
         for (Expression expression : expressions) {
             if (headerIndex > 0) {

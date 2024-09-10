@@ -90,8 +90,8 @@ public class DisruptorComponent extends DefaultComponent {
             }
         }
 
-        // Check if the pollTimeout argument is set (may be the case if Disruptor component is used as drop-in
-        // replacement for the SEDA component.
+        // Check if the pollTimeout argument is set (maybe the case if the Disruptor component is used as drop-in
+        // replacement for the SEDA component).
         if (parameters.containsKey("pollTimeout")) {
             throw new IllegalArgumentException("The 'pollTimeout' argument is not supported by the Disruptor component");
         }
@@ -133,7 +133,8 @@ public class DisruptorComponent extends DefaultComponent {
         }
         sizeToUse = powerOfTwo(sizeToUse);
 
-        synchronized (this) {
+        lock.lock();
+        try {
             DisruptorReference ref = getDisruptors().get(key);
             if (ref == null) {
                 LOGGER.debug("Creating new disruptor for key {}", key);
@@ -151,6 +152,8 @@ public class DisruptorComponent extends DefaultComponent {
             }
 
             return ref;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -171,8 +174,11 @@ public class DisruptorComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        synchronized (this) {
+        lock.lock();
+        try {
             getDisruptors().clear();
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }

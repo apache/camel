@@ -30,16 +30,19 @@ public abstract class AbstractSSLContextParametersFactoryBean
         extends AbstractBaseSSLContextParametersFactoryBean<SSLContextParameters> {
 
     @XmlAttribute
-    @Metadata(description = "The optional provider identifier for the JSSE implementation to use when constructing an SSLContext.")
+    @Metadata(label = "advanced",
+              description = "The provider identifier for the JSSE implementation to use when constructing an SSLContext.")
     private String provider;
 
     @XmlAttribute
-    @Metadata(description = "The optional protocol for the secure sockets created by the SSLContext"
-                            + " represented by this instance's configuration. See Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names.")
+    @Metadata(label = "advanced", description = "The protocol for the secure sockets created by the SSLContext"
+                                                + " represented by this instance's configuration."
+                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
     private String secureSocketProtocol;
 
     @XmlAttribute
-    @Metadata(description = "An optional certificate alias to use. This is useful when the keystore has multiple certificates.")
+    @Metadata(label = "advanced",
+              description = "An optional certificate alias to use. This is useful when the keystore has multiple certificates.")
     private String certAlias;
 
     @Override

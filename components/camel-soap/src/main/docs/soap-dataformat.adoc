@@ -40,14 +40,14 @@ for a given soap fault name.
 |=======================================================================
 |Strategy |Usage
 
-|QNameStrategy |Uses a fixed qName that is configured on instantiation. Exception lookup
+|`QNameStrategy` |Uses a fixed qName that is configured on instantiation. Exception lookup
 is not supported
 
-|TypeNameStrategy |Uses the name and namespace from the `@XMLType` annotation of the given
+|`TypeNameStrategy` |Uses the name and namespace from the `@XMLType` annotation of the given
 type. If no namespace is set, then package-info is used. Exception lookup
 is not supported
 
-|ServiceInterfaceStrategy |Uses information from a webservice interface to determine the type name
+|`ServiceInterfaceStrategy` |Uses information from a webservice interface to determine the type name
 and to find the exception class for a SOAP fault
 |=======================================================================
 

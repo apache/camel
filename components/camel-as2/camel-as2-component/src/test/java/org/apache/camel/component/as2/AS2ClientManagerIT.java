@@ -165,26 +165,26 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void plainMessageSendTest() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is String
-        headers.put("CamelAS2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2From", AS2_NAME);
         // parameter type is String
-        headers.put("CamelAS2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -248,24 +248,24 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void plainMessageSendTestWhenDispositionNotificationToNotSet() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is String
-        headers.put("CamelAS2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2From", AS2_NAME);
         // parameter type is String
-        headers.put("CamelAS2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -303,22 +303,22 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void plainMessageSend2Test() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest2(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -382,30 +382,30 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void envelopedMessageSendTest() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is String
-        headers.put("CamelAS2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2From", AS2_NAME);
         // parameter type is String
-        headers.put("CamelAS2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.ENCRYPTED);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.ENCRYPTED);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is org.apache.camel.component.as2.api.AS2EncryptionAlgorithm
-        headers.put("CamelAS2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
+        headers.put("CamelAs2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAS2.encryptingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.encryptingCertificateChain", new Certificate[] { clientCert });
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -474,34 +474,34 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void multipartSignedMessageTest() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is String
-        headers.put("CamelAS2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2From", AS2_NAME);
         // parameter type is String
-        headers.put("CamelAS2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.SIGNED);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.SIGNED);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
-        headers.put("CamelAS2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
+        headers.put("CamelAs2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAS2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.signingCertificateChain", new Certificate[] { clientCert });
         // parameter type is java.security.PrivateKey
-        headers.put("CamelAS2.signingPrivateKey", clientKeyPair.getPrivate());
+        headers.put("CamelAs2.signingPrivateKey", clientKeyPair.getPrivate());
         // parameter type is String
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
-        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        headers.put("CamelAs2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -584,34 +584,34 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void multipartSignedXMLMessageTest() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is String
-        headers.put("CamelAS2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2From", AS2_NAME);
         // parameter type is String
-        headers.put("CamelAS2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.SIGNED);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.SIGNED);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_XML, StandardCharsets.US_ASCII)); // this line is the difference
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
-        headers.put("CamelAS2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
+        headers.put("CamelAs2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAS2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.signingCertificateChain", new Certificate[] { clientCert });
         // parameter type is java.security.PrivateKey
-        headers.put("CamelAS2.signingPrivateKey", clientKeyPair.getPrivate());
+        headers.put("CamelAs2.signingPrivateKey", clientKeyPair.getPrivate());
         // parameter type is String
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
-        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        headers.put("CamelAs2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();
@@ -693,30 +693,30 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     public void compressedMessageTest() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        headers.put("CamelAs2.requestUri", REQUEST_URI);
         // parameter type is String
-        headers.put("CamelAS2.subject", SUBJECT);
+        headers.put("CamelAs2.subject", SUBJECT);
         // parameter type is String
-        headers.put("CamelAS2.from", FROM);
+        headers.put("CamelAs2.from", FROM);
         // parameter type is String
-        headers.put("CamelAS2.as2From", AS2_NAME);
+        headers.put("CamelAs2.as2From", AS2_NAME);
         // parameter type is String
-        headers.put("CamelAS2.as2To", AS2_NAME);
+        headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
-        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.PLAIN_COMPRESSED);
+        headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN_COMPRESSED);
         // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAS2.ediMessageContentType",
+        headers.put("CamelAs2.ediMessageContentType",
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
         // parameter type is String
-        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is org.apache.camel.component.as2.api.AS2CompressionAlgorithm
-        headers.put("CamelAS2.compressionAlgorithm", AS2CompressionAlgorithm.ZLIB);
+        headers.put("CamelAs2.compressionAlgorithm", AS2CompressionAlgorithm.ZLIB);
         // parameter type is String
-        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
-        headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        headers.put("CamelAs2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
         // parameter type is String
-        headers.put("CamelAS2.attachedFileName", "");
+        headers.put("CamelAs2.attachedFileName", "");
 
         final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
         HttpEntity responseEntity = result.getLeft();

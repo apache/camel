@@ -42,7 +42,7 @@ The topic producer provides only one operation (publish).
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-=== Sample for *publish*:
+=== Example for *publish*:
 
 [source,java]
 ----------------------------------------------------------------------------------------

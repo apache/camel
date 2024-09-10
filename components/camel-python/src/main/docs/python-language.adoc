@@ -50,7 +50,7 @@ To use Python in your Camel routes, you need to add the dependency on
 *camel-python* which implements the Python language.
 
 If you use Maven, you could add the following to your `pom.xml`,
-substituting the version number for the latest & greatest release.
+substituting the version number for the latest release.
 
 [source,xml]
 -------------------------------------

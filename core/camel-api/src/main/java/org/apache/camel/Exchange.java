@@ -30,15 +30,15 @@ import org.apache.camel.spi.annotations.ConstantProvider;
  * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the current (not the
  * original) request and response {@link Message} messages. The {@link Exchange} also holds meta-data during its entire
  * lifetime stored as properties accessible using the various {@link #getProperty(String)} methods. The
- * {@link #setProperty(String, Object)} is used to store a property. For example you can use this to store security, SLA
- * related data or any other information deemed useful throughout processing. If an {@link Exchange} failed during
+ * {@link #setProperty(String, Object)} is used to store a property. For example, you can use this to store security,
+ * SLA related data or any other information deemed useful throughout processing. If an {@link Exchange} failed during
  * routing the {@link Exception} that caused the failure is stored and accessible via the {@link #getException()}
  * method.
  * <p/>
  * An Exchange is created when a {@link Consumer} receives a request. A new {@link Message} is created, the request is
  * set as the body of the {@link Message} and depending on the {@link Consumer} other {@link Endpoint} and protocol
  * related information is added as headers on the {@link Message}. Then an Exchange is created and the newly created
- * {@link Message} is set as the in on the Exchange. Therefore an Exchange starts its life in a {@link Consumer}. The
+ * {@link Message} is set as the in on the Exchange. Therefore, an Exchange starts its life in a {@link Consumer}. The
  * Exchange is then sent down the {@link Route} for processing along a {@link Processor} chain. The {@link Processor} as
  * the name suggests is what processes the {@link Message} in the Exchange and Camel, in addition to providing
  * out-of-the-box a large number of useful processors, it also allows you to create your own. The rule Camel uses is to
@@ -57,7 +57,7 @@ import org.apache.camel.spi.annotations.ConstantProvider;
  * you could also instantiate your specialized {@link Message} and set it on the exchange using the
  * {@link #setOut(org.apache.camel.Message)} method. Please note that a {@link Message} contains not only the body but
  * also headers and attachments. If you are creating a new {@link Message} the headers and attachments of the in
- * {@link Message} are not automatically copied to the out by Camel and you'll have to set the headers and attachments
+ * {@link Message} are not automatically copied to the out by Camel, and you'll have to set the headers and attachments
  * you need yourself. If your {@link Processor} is not producing a different {@link Message} but only needs to slightly
  * modify the in, you can simply update the in {@link Message} returned by {@link #getIn()}.
  * <p/>
@@ -67,6 +67,7 @@ import org.apache.camel.spi.annotations.ConstantProvider;
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange extends VariableAware {
 
+    String ACTIVE_SPAN = "OpenTracing.activeSpan";
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
     @Deprecated(since = "2.20.0")
@@ -102,7 +103,7 @@ public interface Exchange extends VariableAware {
     String BATCH_COMPLETE = "CamelBatchComplete";
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BINDING = "CamelBinding";
-    // do not prefix with Camel and use lower-case starting letter as its a shared key
+    // do not prefix with Camel and use a lower-case starting letter as it's a shared key
     // used across other Apache products such as AMQ, SMX etc.
     String BREADCRUMB_ID = "breadcrumbId";
 
@@ -174,6 +175,7 @@ public interface Exchange extends VariableAware {
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
+    String FILE_EXCHANGE_FILE = "CamelFileExchangeFile";
     @Deprecated(since = "3.9.0")
     String FILTER_MATCHED = "CamelFilterMatched";
     String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
@@ -473,7 +475,7 @@ public interface Exchange extends VariableAware {
     /**
      * Returns whether any properties have been set
      *
-     * @return <tt>true</tt> if any properties has been set
+     * @return <tt>true</tt> if any property has been set
      */
     boolean hasProperties();
 
@@ -500,7 +502,7 @@ public interface Exchange extends VariableAware {
     /**
      * Returns a variable by name and specifying the type required
      *
-     * @param  name         the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     * @param  name         the variable name. Can be prefixed with repo-id:name to look up the variable from a specific
      *                      repository. If no repo-id is provided, then variables will be from the current exchange.
      * @param  defaultValue the default value to return if variable was absent
      * @param  type         the type of the variable
@@ -595,9 +597,9 @@ public interface Exchange extends VariableAware {
      * headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use this method.
      * <p/>
      * <br/>
-     * If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
+     * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
      * <p/>
-     * See also the class java doc for this {@link Exchange} for more details and this
+     * See also the class Javadoc for this {@link Exchange} for more details and this
      * <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>.
      *
      * @return     the response
@@ -615,9 +617,9 @@ public interface Exchange extends VariableAware {
      * headers etc. is kept and propagated when routing continues. Bottom line end users should rarely use this method.
      * <p/>
      * <br/>
-     * If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
+     * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
      * <p/>
-     * See also the class java doc for this {@link Exchange} for more details and this
+     * See also the class Javadoc for this {@link Exchange} for more details and this
      * <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>.
      *
      * @param      type the given type

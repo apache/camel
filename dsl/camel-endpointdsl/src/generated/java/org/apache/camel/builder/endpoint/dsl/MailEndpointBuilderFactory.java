@@ -46,7 +46,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether the consumer should close the folder after polling. Setting
          * this option to false and having disconnect=false as well, then the
-         * consumer keep the folder open between polls.
+         * consumer keeps the folder open between polls.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -63,7 +63,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether the consumer should close the folder after polling. Setting
          * this option to false and having disconnect=false as well, then the
-         * consumer keep the folder open between polls.
+         * consumer keeps the folder open between polls.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -79,8 +79,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * After processing a mail message, it can be copied to a mail folder
-         * with the given name. You can override this configuration value, with
-         * a header with the key copyTo, allowing you to copy messages to folder
+         * with the given name. You can override this configuration value with a
+         * header with the key copyTo, allowing you to copy messages to folder
          * names configured at runtime.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -131,9 +131,9 @@ public interface MailEndpointBuilderFactory {
         /**
          * Deletes the messages after they have been processed. This is done by
          * setting the DELETED flag on the mail message. If false, the SEEN flag
-         * is set instead. As of Camel 2.10 you can override this configuration
-         * option by setting a header with the key delete to determine if the
-         * mail should be deleted or not.
+         * is set instead. You can override this configuration option by setting
+         * a header with the key delete to determine if the mail should be
+         * deleted or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -150,9 +150,9 @@ public interface MailEndpointBuilderFactory {
         /**
          * Deletes the messages after they have been processed. This is done by
          * setting the DELETED flag on the mail message. If false, the SEEN flag
-         * is set instead. As of Camel 2.10 you can override this configuration
-         * option by setting a header with the key delete to determine if the
-         * mail should be deleted or not.
+         * is set instead. You can override this configuration option by setting
+         * a header with the key delete to determine if the mail should be
+         * deleted or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -167,8 +167,8 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the consumer should disconnect after polling. If enabled this
-         * forces Camel to connect on each poll.
+         * Whether the consumer should disconnect after polling. If enabled,
+         * this forces Camel to connect on each poll.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -183,8 +183,8 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the consumer should disconnect after polling. If enabled this
-         * forces Camel to connect on each poll.
+         * Whether the consumer should disconnect after polling. If enabled,
+         * this forces Camel to connect on each poll.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -200,9 +200,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
-         * option allows to handle the caused exception by the consumer's error
-         * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead. The
+         * option allows handling the caused exception by the consumer's error
+         * handler. By enabling the bridge error handler on the consumer, then
+         * the Camel routing error handler can handle the exception instead. The
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
@@ -220,9 +220,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
-         * option allows to handle the caused exception by the consumer's error
-         * handler. By enable the bridge error handler on the consumer, then the
-         * Camel routing error handler can handle the exception instead. The
+         * option allows handling the caused exception by the consumer's error
+         * handler. By enabling the bridge error handler on the consumer, then
+         * the Camel routing error handler can handle the exception instead. The
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
@@ -306,8 +306,8 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * After processing a mail message, it can be moved to a mail folder
-         * with the given name. You can override this configuration value, with
-         * a header with the key moveTo, allowing you to move messages to folder
+         * with the given name. You can override this configuration value with a
+         * header with the key moveTo, allowing you to move messages to folder
          * names configured at runtime.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -324,9 +324,9 @@ public interface MailEndpointBuilderFactory {
         /**
          * Will mark the jakarta.mail.Message as peeked before processing the
          * mail message. This applies to IMAPMessage messages types only. By
-         * using peek the mail will not be eager marked as SEEN on the mail
-         * server, which allows us to rollback the mail message if there is an
-         * error processing in Camel.
+         * using peek, the mail will not be eagerly marked as SEEN on the mail
+         * server, which allows us to roll back the mail message if there is a
+         * processing error in Camel.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -343,9 +343,9 @@ public interface MailEndpointBuilderFactory {
         /**
          * Will mark the jakarta.mail.Message as peeked before processing the
          * mail message. This applies to IMAPMessage messages types only. By
-         * using peek the mail will not be eager marked as SEEN on the mail
-         * server, which allows us to rollback the mail message if there is an
-         * error processing in Camel.
+         * using peek, the mail will not be eagerly marked as SEEN on the mail
+         * server, which allows us to roll back the mail message if there is a
+         * processing error in Camel.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -393,7 +393,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
-         * option allows to skip the message and move on to retrieve the next
+         * option allows skipping the message and move on to retrieve the next
          * mail message. The default behavior would be the consumer throws an
          * exception and no mails from the batch would be able to be routed by
          * Camel.
@@ -412,7 +412,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
-         * option allows to skip the message and move on to retrieve the next
+         * option allows skipping the message and move on to retrieve the next
          * mail message. The default behavior would be the consumer throws an
          * exception and no mails from the batch would be able to be routed by
          * Camel.
@@ -1258,7 +1258,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to fail processing the mail if the mail message contains
          * attachments with duplicate file names. If set to false, then the
-         * duplicate attachment is skipped and a WARN is logged. If set to true
+         * duplicate attachment is skipped and a WARN is logged. If set to true,
          * then an exception is thrown failing to process the mail message.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1276,7 +1276,7 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to fail processing the mail if the mail message contains
          * attachments with duplicate file names. If set to false, then the
-         * duplicate attachment is skipped and a WARN is logged. If set to true
+         * duplicate attachment is skipped and a WARN is logged. If set to true,
          * then an exception is thrown failing to process the mail message.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -1294,8 +1294,8 @@ public interface MailEndpointBuilderFactory {
         /**
          * Sets the maximum number of messages to consume during a poll. This
          * can be used to avoid overloading a mail server, if a mailbox folder
-         * contains a lot of messages. Default value of -1 means no fetch size
-         * and all messages will be consumed. Setting the value to 0 is a
+         * contains a lot of messages. The default value of -1 means no fetch
+         * size and all messages will be consumed. Setting the value to 0 is a
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
@@ -1314,8 +1314,8 @@ public interface MailEndpointBuilderFactory {
         /**
          * Sets the maximum number of messages to consume during a poll. This
          * can be used to avoid overloading a mail server, if a mailbox folder
-         * contains a lot of messages. Default value of -1 means no fetch size
-         * and all messages will be consumed. Setting the value to 0 is a
+         * contains a lot of messages. The default value of -1 means no fetch
+         * size and all messages will be consumed. Setting the value to 0 is a
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
@@ -1366,9 +1366,9 @@ public interface MailEndpointBuilderFactory {
          * attachments that have a filename which is already present in the
          * attachments will be ignored unless failOnDuplicateFileAttachment is
          * set to true. uuidPrefix: this will prefix the duplicate attachment
-         * filenames each with a uuid and underscore
+         * filenames each with an uuid and underscore
          * (uuid_filename.fileextension). uuidSuffix: this will suffix the
-         * duplicate attachment filenames each with a underscore and uuid
+         * duplicate attachment filenames each with an underscore and uuid
          * (filename_uuid.fileextension).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1419,7 +1419,7 @@ public interface MailEndpointBuilderFactory {
          * body/headers/attachments. If set to true, the body of the mail
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
-         * attachment message. If this option is set to false then the IN
+         * attachment message. If this option is set to false, then the IN
          * message contains a raw jakarta.mail.Message. You can retrieve this
          * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
@@ -1441,7 +1441,7 @@ public interface MailEndpointBuilderFactory {
          * body/headers/attachments. If set to true, the body of the mail
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
-         * attachment message. If this option is set to false then the IN
+         * attachment message. If this option is set to false, then the IN
          * message contains a raw jakarta.mail.Message. You can retrieve this
          * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
@@ -1530,7 +1530,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Sets additional java mail properties, that will append/override any
-         * default properties that is set based on all the other options. This
+         * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
@@ -1551,7 +1551,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Sets additional java mail properties, that will append/override any
-         * default properties that is set based on all the other options. This
+         * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
@@ -1622,7 +1622,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
+         * are ignored. It can be used for tokens which can expire and therefore
          * must be read dynamically.
          * 
          * The option is a:
@@ -1639,7 +1639,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
+         * are ignored. It can be used for tokens which can expire and therefore
          * must be read dynamically.
          * 
          * The option will be converted to a
@@ -1829,9 +1829,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1847,9 +1847,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1865,9 +1865,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1883,9 +1883,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2085,8 +2085,8 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the To email address. Separate multiple email addresses with
-         * comma.
+         * Sets the destination email address. Separate multiple email addresses
+         * with comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2247,7 +2247,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Sets additional java mail properties, that will append/override any
-         * default properties that is set based on all the other options. This
+         * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
@@ -2268,7 +2268,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Sets additional java mail properties, that will append/override any
-         * default properties that is set based on all the other options. This
+         * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
@@ -2339,7 +2339,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
+         * are ignored. It can be used for tokens which can expire and therefore
          * must be read dynamically.
          * 
          * The option is a:
@@ -2356,7 +2356,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
+         * are ignored. It can be used for tokens which can expire and therefore
          * must be read dynamically.
          * 
          * The option will be converted to a
@@ -2546,9 +2546,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2564,9 +2564,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2582,9 +2582,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2600,9 +2600,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2800,7 +2800,7 @@ public interface MailEndpointBuilderFactory {
 
         /**
          * Sets additional java mail properties, that will append/override any
-         * default properties that is set based on all the other options. This
+         * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
@@ -2821,7 +2821,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Sets additional java mail properties, that will append/override any
-         * default properties that is set based on all the other options. This
+         * default properties that are set based on all the other options. This
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
@@ -2892,7 +2892,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
+         * are ignored. It can be used for tokens which can expire and therefore
          * must be read dynamically.
          * 
          * The option is a:
@@ -2909,7 +2909,7 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * The authenticator for login. If set then the password and username
-         * are ignored. Can be used for tokens which can expire and therefore
+         * are ignored. It can be used for tokens which can expire and therefore
          * must be read dynamically.
          * 
          * The option will be converted to a
@@ -3099,9 +3099,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3117,9 +3117,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3135,9 +3135,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3153,9 +3153,9 @@ public interface MailEndpointBuilderFactory {
         }
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported then charset=XXX (where
+         * sending mails. If the charset is unsupported, then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
-         * content-type and it relies on the platform default instead.
+         * content-type, and it relies on the platform default instead.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -54,11 +54,11 @@ public class RefLanguage extends TypedLanguageSupport {
     protected Expression createStaticExpression(String expression) {
         Expression answer;
 
-        Object exp = getCamelContext().getRegistry().lookupByName(expression);
-        if (exp instanceof Expression) {
-            answer = (Expression) exp;
-        } else if (exp instanceof Predicate) {
-            answer = PredicateToExpressionAdapter.toExpression((Predicate) exp);
+        Object obj = getCamelContext().getRegistry().lookupByName(expression);
+        if (obj instanceof Expression exp) {
+            answer = exp;
+        } else if (obj instanceof Predicate predicate) {
+            answer = PredicateToExpressionAdapter.toExpression(predicate);
         } else {
             throw new IllegalArgumentException(
                     "Cannot find expression or predicate in registry with ref: " + expression);
@@ -71,11 +71,11 @@ public class RefLanguage extends TypedLanguageSupport {
     protected Predicate createStaticPredicate(String expression) {
         Predicate answer;
 
-        Object exp = getCamelContext().getRegistry().lookupByName(expression);
-        if (exp instanceof Expression) {
-            answer = ExpressionToPredicateAdapter.toPredicate((Expression) exp);
-        } else if (exp instanceof Predicate) {
-            answer = (Predicate) exp;
+        Object obj = getCamelContext().getRegistry().lookupByName(expression);
+        if (obj instanceof Expression exp) {
+            answer = ExpressionToPredicateAdapter.toPredicate(exp);
+        } else if (obj instanceof Predicate predicate) {
+            answer = predicate;
         } else {
             throw new IllegalArgumentException(
                     "Cannot find expression or predicate in registry with ref: " + expression);
@@ -106,10 +106,10 @@ public class RefLanguage extends TypedLanguageSupport {
                 Object lookup = ref != null ? registry.lookupByName(ref) : null;
 
                 // must favor expression over predicate
-                if (lookup instanceof Expression) {
-                    target = (Expression) lookup;
-                } else if (lookup instanceof Predicate) {
-                    target = PredicateToExpressionAdapter.toExpression((Predicate) lookup);
+                if (lookup instanceof Expression exp) {
+                    target = exp;
+                } else if (lookup instanceof Predicate predicate) {
+                    target = PredicateToExpressionAdapter.toExpression(predicate);
                 }
 
                 if (target != null) {

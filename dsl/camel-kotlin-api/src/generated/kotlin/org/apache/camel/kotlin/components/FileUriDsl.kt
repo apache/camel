@@ -224,7 +224,7 @@ public class FileUriDsl(
   }
 
   /**
-   * Similar to the startingDirectoryMustExist option but this applies during polling (after
+   * Similar to the startingDirectoryMustExist option, but this applies during polling (after
    * starting the consumer).
    */
   public fun directoryMustExist(directoryMustExist: String) {
@@ -232,7 +232,7 @@ public class FileUriDsl(
   }
 
   /**
-   * Similar to the startingDirectoryMustExist option but this applies during polling (after
+   * Similar to the startingDirectoryMustExist option, but this applies during polling (after
    * starting the consumer).
    */
   public fun directoryMustExist(directoryMustExist: Boolean) {
@@ -265,8 +265,8 @@ public class FileUriDsl(
   }
 
   /**
-   * Whether to accept hidden directories. Directories which names starts with dot is regarded as a
-   * hidden directory, and by default not included. Set this option to true to include hidden
+   * Whether to accept hidden directories. Directories which names starts with dot are regarded as a
+   * hidden directory, and by default are not included. Set this option to true to include hidden
    * directories in the file consumer.
    */
   public fun includeHiddenDirs(includeHiddenDirs: String) {
@@ -274,8 +274,8 @@ public class FileUriDsl(
   }
 
   /**
-   * Whether to accept hidden directories. Directories which names starts with dot is regarded as a
-   * hidden directory, and by default not included. Set this option to true to include hidden
+   * Whether to accept hidden directories. Directories which names starts with dot are regarded as a
+   * hidden directory, and by default are not included. Set this option to true to include hidden
    * directories in the file consumer.
    */
   public fun includeHiddenDirs(includeHiddenDirs: Boolean) {
@@ -384,8 +384,8 @@ public class FileUriDsl(
 
   /**
    * Whether the starting directory has access permissions. Mind that the startingDirectoryMustExist
-   * parameter must be set to true in order to verify that the directory exists. Will thrown an
-   * exception if the directory doesn't have read and write permissions.
+   * parameter must be set to true to verify that the directory exists. Will throw an exception if the
+   * directory doesn't have read and write permissions.
    */
   public fun startingDirectoryMustHaveAccess(startingDirectoryMustHaveAccess: String) {
     it.property("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess)
@@ -393,8 +393,8 @@ public class FileUriDsl(
 
   /**
    * Whether the starting directory has access permissions. Mind that the startingDirectoryMustExist
-   * parameter must be set to true in order to verify that the directory exists. Will thrown an
-   * exception if the directory doesn't have read and write permissions.
+   * parameter must be set to true to verify that the directory exists. Will throw an exception if the
+   * directory doesn't have read and write permissions.
    */
   public fun startingDirectoryMustHaveAccess(startingDirectoryMustHaveAccess: Boolean) {
     it.property("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess.toString())
@@ -534,8 +534,8 @@ public class FileUriDsl(
   }
 
   /**
-   * Specify the file permissions which is sent by the producer, the chmod value must be between 000
-   * and 777; If there is a leading digit like in 0755 we will ignore it.
+   * Specify the file permissions that are sent by the producer, the chmod value must be between 000
+   * and 777; If there is a leading digit like in 0755, we will ignore it.
    */
   public fun chmod(chmod: String) {
     it.property("chmod", chmod)
@@ -543,7 +543,7 @@ public class FileUriDsl(
 
   /**
    * Specify the directory permissions used when the producer creates missing directories, the chmod
-   * value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
+   * value must be between 000 and 777; If there is a leading digit like in 0755, we will ignore it.
    */
   public fun chmodDirectory(chmodDirectory: String) {
     it.property("chmodDirectory", chmodDirectory)
@@ -580,18 +580,18 @@ public class FileUriDsl(
   }
 
   /**
-   * Whether to force syncing writes to the file system. You can turn this off if you do not want
-   * this level of guarantee, for example if writing to logs / audit logs etc; this would yield better
-   * performance.
+   * Whether to force syncing, writes to the file system. You can turn this off if you do not want
+   * this level of guarantee, for example, if writing to logs / audit logs etc.; this would yield
+   * better performance.
    */
   public fun forceWrites(forceWrites: String) {
     it.property("forceWrites", forceWrites)
   }
 
   /**
-   * Whether to force syncing writes to the file system. You can turn this off if you do not want
-   * this level of guarantee, for example if writing to logs / audit logs etc; this would yield better
-   * performance.
+   * Whether to force syncing, writes to the file system. You can turn this off if you do not want
+   * this level of guarantee, for example, if writing to logs / audit logs etc.; this would yield
+   * better performance.
    */
   public fun forceWrites(forceWrites: Boolean) {
     it.property("forceWrites", forceWrites.toString())
@@ -671,6 +671,20 @@ public class FileUriDsl(
   }
 
   /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
+  }
+
+  /**
    * Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading
    * files).
    */
@@ -687,7 +701,7 @@ public class FileUriDsl(
   }
 
   /**
-   * Whether to fallback and do a copy and delete file, in case the file could not be renamed
+   * Whether to fall back and do a copy and delete file, in case the file could not be renamed
    * directly. This option is not available for the FTP component.
    */
   public fun copyAndDeleteOnRenameFail(copyAndDeleteOnRenameFail: String) {
@@ -695,7 +709,7 @@ public class FileUriDsl(
   }
 
   /**
-   * Whether to fallback and do a copy and delete file, in case the file could not be renamed
+   * Whether to fall back and do a copy and delete file, in case the file could not be renamed
    * directly. This option is not available for the FTP component.
    */
   public fun copyAndDeleteOnRenameFail(copyAndDeleteOnRenameFail: Boolean) {
@@ -704,7 +718,7 @@ public class FileUriDsl(
 
   /**
    * Perform rename operations using a copy and delete strategy. This is primarily used in
-   * environments where the regular rename operation is unreliable (e.g. across different file systems
+   * environments where the regular rename operation is unreliable (e.g., across different file systems
    * or networks). This option takes precedence over the copyAndDeleteOnRenameFail parameter that will
    * automatically fall back to the copy and delete strategy, but only after additional delays.
    */
@@ -714,7 +728,7 @@ public class FileUriDsl(
 
   /**
    * Perform rename operations using a copy and delete strategy. This is primarily used in
-   * environments where the regular rename operation is unreliable (e.g. across different file systems
+   * environments where the regular rename operation is unreliable (e.g., across different file systems
    * or networks). This option takes precedence over the copyAndDeleteOnRenameFail parameter that will
    * automatically fall back to the copy and delete strategy, but only after additional delays.
    */

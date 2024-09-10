@@ -51,7 +51,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Api Endpoint
+== Usage
+
+=== Api Endpoint
 
 The `apiEndpoint` denotes the type of https://www.consul.io/api-docs[consul api] which should be addressed.
 
@@ -69,7 +71,9 @@ The `apiEndpoint` denotes the type of https://www.consul.io/api-docs[consul api]
 | session | ConsulSessionProducer | -
 |===
 
-== Producer Examples
+== Examples
+
+=== Producer Examples
 
 As an example, we will show how to use the `ConsulAgentProducer` to register a service by means of the Consul agent api.
 

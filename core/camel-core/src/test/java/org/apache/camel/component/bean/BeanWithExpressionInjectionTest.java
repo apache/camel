@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.simple.Simple;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanWithExpressionInjectionTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanWithExpressionInjectionTest.class);
     protected final MyBean myBean = new MyBean();
 
     @Test

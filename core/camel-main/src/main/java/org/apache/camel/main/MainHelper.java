@@ -259,10 +259,10 @@ public final class MainHelper {
         boolean rc = false;
 
         PropertyConfigurer targetConfigurer = null;
-        if (target instanceof Component) {
+        if (target instanceof Component component) {
             // the component needs to be initialized to have the configurer ready
             ServiceHelper.initService(target);
-            targetConfigurer = ((Component) target).getComponentPropertyConfigurer();
+            targetConfigurer = component.getComponentPropertyConfigurer();
         }
         if (targetConfigurer == null) {
             String name = target.getClass().getName();
@@ -271,10 +271,10 @@ public final class MainHelper {
         }
 
         PropertyConfigurer sourceConfigurer = null;
-        if (source instanceof Component) {
+        if (source instanceof Component component) {
             // the component needs to be initialized to have the configurer ready
             ServiceHelper.initService(source);
-            sourceConfigurer = ((Component) source).getComponentPropertyConfigurer();
+            sourceConfigurer = component.getComponentPropertyConfigurer();
         }
         if (sourceConfigurer == null) {
             String name = source.getClass().getName();
@@ -282,8 +282,7 @@ public final class MainHelper {
             sourceConfigurer = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name, context);
         }
 
-        if (targetConfigurer != null && sourceConfigurer instanceof ExtendedPropertyConfigurerGetter) {
-            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) sourceConfigurer;
+        if (targetConfigurer != null && sourceConfigurer instanceof ExtendedPropertyConfigurerGetter getter) {
             for (String key : getter.getAllOptions(source).keySet()) {
                 Object value = getter.getOptionValue(source, key, true);
                 if (value != null) {
@@ -305,10 +304,10 @@ public final class MainHelper {
 
         boolean rc = false;
         PropertyConfigurer configurer = null;
-        if (target instanceof Component) {
+        if (target instanceof Component component) {
             // the component needs to be initialized to have the configurer ready
             ServiceHelper.initService(target);
-            configurer = ((Component) target).getComponentPropertyConfigurer();
+            configurer = component.getComponentPropertyConfigurer();
         }
 
         if (configurer == null) {
@@ -597,15 +596,15 @@ public final class MainHelper {
         }
         if (SensitiveUtils.containsSensitive(k)) {
             if (debug) {
-                log.debug("    {} {}=xxxxxx", loc, k);
+                log.debug("    {} {} = xxxxxx", loc, k);
             } else {
-                log.info("    {} {}=xxxxxx", loc, k);
+                log.info("    {} {} = xxxxxx", loc, k);
             }
         } else {
             if (debug) {
-                log.debug("    {} {}={}", loc, k, v);
+                log.debug("    {} {} = {}", loc, k, v);
             } else {
-                log.info("    {} {}={}", loc, k, v);
+                log.info("    {} {} = {}", loc, k, v);
             }
         }
     }

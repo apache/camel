@@ -84,8 +84,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
         // gather all namespaces from the routes or route which is stored on the
         // expression nodes
-        if (definition instanceof RouteTemplatesDefinition) {
-            List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) definition).getRouteTemplates();
+        if (definition instanceof RouteTemplatesDefinition routeTemplatesDefinition) {
+            List<RouteTemplateDefinition> templates = routeTemplatesDefinition.getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
                 extractNamespaces(route.getRoute(), namespaces);
                 if (context.isDebugging()) {
@@ -93,15 +93,14 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 }
                 resolveEndpointDslUris(route.getRoute());
             }
-        } else if (definition instanceof RouteTemplateDefinition) {
-            RouteTemplateDefinition template = (RouteTemplateDefinition) definition;
+        } else if (definition instanceof RouteTemplateDefinition template) {
             extractNamespaces(template.getRoute(), namespaces);
             if (context.isDebugging()) {
                 extractSourceLocations(template.getRoute(), locations);
             }
             resolveEndpointDslUris(template.getRoute());
-        } else if (definition instanceof RoutesDefinition) {
-            List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
+        } else if (definition instanceof RoutesDefinition routesDefinition) {
+            List<RouteDefinition> routes = routesDefinition.getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
                 if (context.isDebugging()) {
@@ -109,8 +108,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 }
                 resolveEndpointDslUris(route);
             }
-        } else if (definition instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition) definition;
+        } else if (definition instanceof RouteDefinition route) {
             extractNamespaces(route, namespaces);
             if (context.isDebugging()) {
                 extractSourceLocations(route, locations);
@@ -180,8 +178,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                     Iterator<?> it = null;
                     if (definition instanceof RouteDefinition) {
                         it = ObjectHelper.createIterator(definition);
-                    } else if (definition instanceof RoutesDefinition) {
-                        it = ObjectHelper.createIterator(((RoutesDefinition) definition).getRoutes());
+                    } else if (definition instanceof RoutesDefinition routesDefinition) {
+                        it = ObjectHelper.createIterator(routesDefinition.getRoutes());
                     }
                     while (it != null && it.hasNext()) {
                         RouteDefinition routeDefinition = (RouteDefinition) it.next();

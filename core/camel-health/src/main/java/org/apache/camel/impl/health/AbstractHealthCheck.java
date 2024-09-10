@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -45,7 +47,7 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
 
     private CamelContext camelContext;
     private boolean enabled = true;
-    private final Object lock;
+    private final Lock lock;
     private final String group;
     private final String id;
     private final ConcurrentMap<String, Object> meta;
@@ -59,7 +61,7 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     }
 
     protected AbstractHealthCheck(String group, String id, Map<String, Object> meta) {
-        this.lock = new Object();
+        this.lock = new ReentrantLock();
         this.group = group;
         this.id = ObjectHelper.notNull(id, "HealthCheck ID");
         this.meta = new ConcurrentHashMap<>();
@@ -117,8 +119,11 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     @Override
     public Result call(Map<String, Object> options) {
         HealthCheckResultBuilder builder;
-        synchronized (lock) {
+        lock.lock();
+        try {
             builder = doCall(options);
+        } finally {
+            lock.unlock();
         }
 
         HealthCheckResultStrategy strategy = customHealthCheckResponseStrategy();

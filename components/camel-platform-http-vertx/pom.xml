@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-platform-http-vertx</artifactId>
@@ -53,11 +53,6 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
-            <version>${vertx-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-auth-properties</artifactId>
             <version>${vertx-version}</version>
         </dependency>
 
@@ -110,6 +105,18 @@
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-properties</artifactId>
+            <version>${vertx-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-jwt</artifactId>
+            <version>${vertx-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

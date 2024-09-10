@@ -1108,7 +1108,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
-     * Capture changes from a Oracle database.
+     * Capture changes from an Oracle database.
      * 
      * Category: database
      * Since: 3.17
@@ -2800,7 +2800,7 @@ public interface ComponentsBuilderFactory {
         return KuduComponentBuilderFactory.kudu();
     }
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -2824,6 +2824,32 @@ public interface ComponentsBuilderFactory {
      */
     static Langchain4jEmbeddingsComponentBuilderFactory.Langchain4jEmbeddingsComponentBuilder langchain4jEmbeddings() {
         return Langchain4jEmbeddingsComponentBuilderFactory.langchain4jEmbeddings();
+    }
+    /**
+     * LangChain4j Tools (camel-langchain4j-tools)
+     * LangChain4j Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jToolsComponentBuilderFactory.Langchain4jToolsComponentBuilder langchain4jTools() {
+        return Langchain4jToolsComponentBuilderFactory.langchain4jTools();
+    }
+    /**
+     * LangChain4j Web Search (camel-langchain4j-web-search)
+     * LangChain4j Web Search Engine
+     * 
+     * Category: ai
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-langchain4j-web-search
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jWebSearchComponentBuilderFactory.Langchain4jWebSearchComponentBuilder langchain4jWebSearch() {
+        return Langchain4jWebSearchComponentBuilderFactory.langchain4jWebSearch();
     }
     /**
      * Language (camel-language)
@@ -4215,6 +4241,32 @@ public interface ComponentsBuilderFactory {
      */
     static StubComponentBuilderFactory.StubComponentBuilder stub() {
         return StubComponentBuilderFactory.stub();
+    }
+    /**
+     * Tahu Edge Node / Device (camel-tahu)
+     * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * @return the dsl builder
+     */
+    static TahuEdgeComponentBuilderFactory.TahuEdgeComponentBuilder tahuEdge() {
+        return TahuEdgeComponentBuilderFactory.tahuEdge();
+    }
+    /**
+     * Tahu Host Application (camel-tahu)
+     * Sparkplug B Host Application support over MQTT using Eclipse Tahu
+     * 
+     * Category: messaging,iot,monitoring
+     * Since: 4.8
+     * Maven coordinates: org.apache.camel:camel-tahu
+     * 
+     * @return the dsl builder
+     */
+    static TahuHostComponentBuilderFactory.TahuHostComponentBuilder tahuHost() {
+        return TahuHostComponentBuilderFactory.tahuHost();
     }
     /**
      * Telegram (camel-telegram)

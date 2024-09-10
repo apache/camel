@@ -19,7 +19,7 @@ The Saga component provides a bridge to execute custom actions within a route us
 The component should be used for advanced tasks, such as deciding to complete or compensate a Saga
 with completionMode set to *MANUAL*.
 
-Refer to the Saga EIP documentation for help on using sagas in common scenarios.
+Refer to the xref:eips:saga-eip.adoc[Saga EIP] documentation for help on using sagas in common scenarios.
 
 == URI format
 

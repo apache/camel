@@ -50,7 +50,7 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Examples
+== Usage
 
 * `flatpack:fixed:foo.pzmap.xml` creates a fixed-width endpoint using
 the `foo.pzmap.xml` file configuration.
@@ -59,7 +59,7 @@ the `foo.pzmap.xml` file configuration.
 * `flatpack:foo` creates a delimited endpoint called `foo` with no file
 configuration.
 
-== Message Body
+=== Message Body
 
 The component delivers the data in the IN message as a
 `org.apache.camel.component.flatpack.DataSetList` object that has
@@ -70,7 +70,7 @@ converters for `java.util.Map` or `java.util.List`. +
  Each `Map` contains the key for the column name and its corresponding
 value.
 
-For example to get the firstname from the sample below:
+For example, to get the firstname from the sample below:
 
 [source,java]
 ------------------------------------------------
@@ -88,7 +88,7 @@ However, you can also always get it as a `List` (even for
   String firstName = row.get("FIRSTNAME");
 ---------------------------------------------------
 
-== Header and Trailer records
+=== Header and Trailer records
 
 The header and trailer notions in Flatpack are supported. However, you
 *must* use fixed record IDs:
@@ -119,7 +119,7 @@ trailer. You can omit one or both of them if not needed.
     </RECORD>
 ---------------------------------------------------------------------------
 
-== Using the endpoint
+=== Using as an Endpoint
 
 A common use case is sending a file to this endpoint for further
 processing in a separate route. For example:
@@ -142,7 +142,7 @@ processing in a separate route. For example:
 You can also convert the payload of each message created to a `Map` for
 easy Bean Integration
 
-== Flatpack DataFormat
+=== Flatpack DataFormat
 
 The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
@@ -160,7 +160,7 @@ Splitter.
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-== Options
+==== Options
 
 The data format has the following options:
 
@@ -189,9 +189,9 @@ expected and ignores the extra characters.
 expected and ignores the extra characters.
 |=======================================================================
 
-== Usage
+=== Using the data format
 
-To use the data format, simply instantiate an instance and invoke the
+To use the data format, instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
 
 [source,java]
@@ -217,21 +217,20 @@ df.setIgnoreFirstRecord(false);
 from("seda:people").marshal(df).convertBodyTo(String.class).to("jms:queue:people");
 -----------------------------------------------------------------------------------
 
-In the code above we marshal the data from a Object representation as a
+In the code above we marshal the data from an Object representation as a
 `List` of rows as `Maps`. The rows as `Map` contains the column name as
 the key, and the corresponding value. This structure can be created
-in Java code from e.g. a processor. We marshal the data according to the
+in Java code from e.g., a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-== Dependencies
+=== Dependencies
 
-To use Flatpack in your camel routes you need to add the a dependency on
+To use Flatpack in your camel routes, you need to add a dependency on
 *camel-flatpack* which implements this data format.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest release.
 
 [source,xml]
 -----------------------------------------

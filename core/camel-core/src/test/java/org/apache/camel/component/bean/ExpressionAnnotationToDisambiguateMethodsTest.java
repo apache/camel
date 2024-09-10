@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.simple.Simple;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExpressionAnnotationToDisambiguateMethodsTest.class);
     protected final MyBean myBean = new MyBean();
     protected final MyOtherBean myOtherBean = new MyOtherBean();
 

@@ -25,12 +25,12 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-langchain4j-core</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: LangChain4j :: Core</name>
+    <name>Camel :: AI :: LangChain4j :: Core</name>
     <description>LangChain4j Core</description>
 
     <properties>

@@ -82,32 +82,22 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                 Thread.sleep(50);
             }
             Object body = exchange.getIn().getBody();
-            if (body instanceof InputStream) {
+            if (body instanceof InputStream inputStream) {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                IOHelper.copy((InputStream) body, output);
+                IOHelper.copy(inputStream, output);
                 exchange.getMessage().setBody(output.toByteArray());
-            } else if (body instanceof Reader) {
-                Reader reader = (Reader) body;
-                StringBuilder sb = new StringBuilder();
-                for (int i = reader.read(); i > -1; i = reader.read()) {
-                    sb.append((char) i);
-                }
-                reader.close();
-                exchange.getMessage().setBody(sb.toString());
-            } else if (body instanceof StreamSource) {
-                StreamSource ss = (StreamSource) body;
+            } else if (body instanceof Reader reader) {
+                final String string = IOHelper.toString(reader);
+                exchange.getMessage().setBody(string);
+            } else if (body instanceof StreamSource ss) {
                 if (ss.getInputStream() != null) {
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     IOHelper.copy(ss.getInputStream(), output);
                     exchange.getMessage().setBody(output.toByteArray());
                 } else if (ss.getReader() != null) {
                     Reader reader = ss.getReader();
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = reader.read(); i > -1; i = reader.read()) {
-                        sb.append((char) i);
-                    }
-                    reader.close();
-                    exchange.getMessage().setBody(sb.toString());
+                    final String string = IOHelper.toString(reader);
+                    exchange.getMessage().setBody(string);
                 } else {
                     throw new RuntimeException("StreamSource without InputStream and without Reader not supported");
                 }

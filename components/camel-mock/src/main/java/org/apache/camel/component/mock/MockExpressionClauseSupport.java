@@ -46,8 +46,8 @@ public class MockExpressionClauseSupport<T> {
      */
     public T expression(Expression expression) {
         setExpressionValue(expression);
-        if (expression instanceof ExpressionFactory) {
-            setExpressionType((ExpressionFactory) expression);
+        if (expression instanceof ExpressionFactory expressionFactory) {
+            setExpressionType(expressionFactory);
         }
         return result;
     }

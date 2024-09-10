@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,9 +52,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
 
-    private Map<String, String> currentShardIterators = new java.util.HashMap<>();
+    private final Map<String, String> currentShardIterators = new java.util.HashMap<>();
+    private final Set<String> warnLogged = new HashSet<>();
 
-    private List<Shard> currentShardList = new ArrayList<>();
+    private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
     private ScheduledExecutorService shardMonitorExecutor;
 
@@ -75,11 +72,23 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.connection = connection;
     }
 
+    public boolean isShardClosed(String shardId) {
+        return currentShardIterators.get(shardId) == null && currentShardIterators.containsKey(shardId);
+    }
+
     @Override
     protected int poll() throws Exception {
         var processedExchangeCount = new AtomicInteger(0);
 
-        if (!getEndpoint().getConfiguration().getShardId().isEmpty()) {
+        String shardId = getEndpoint().getConfiguration().getShardId();
+        if (!shardId.isEmpty()) {
+            // skip if the shard is closed
+            if (isShardClosed(shardId)) {
+                // There was previously a shardIterator but shard is now closed
+                handleClosedShard(shardId);
+                return 0;
+            }
+
             var request = DescribeStreamRequest
                     .builder()
                     .streamName(getEndpoint().getConfiguration().getStreamName())
@@ -133,7 +142,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             final Shard shard,
             final KinesisConnection kinesisConnection,
             AtomicInteger processedExchangeCount) {
-        String shardIterator = null;
+        String shardIterator;
         try {
             shardIterator = getShardIterator(shard, kinesisConnection);
         } catch (InterruptedException e) {
@@ -226,6 +235,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             if (currentShardIterators.containsKey(shardId)) {
                 // There was previously a shardIterator but shard is now closed
                 handleClosedShard(shardId);
+                return null; // we cannot get the shard again as its closed
             }
 
             GetShardIteratorRequest.Builder request = GetShardIteratorRequest.builder()
@@ -268,8 +278,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private void handleClosedShard(String shardId) {
         switch (getEndpoint().getConfiguration().getShardClosed()) {
             case ignore:
-                LOG.warn("The shard with id={} on stream {} reached CLOSE status",
-                        shardId, getEndpoint().getConfiguration().getStreamName());
+                if (warnLogged.add(shardId)) {
+                    LOG.warn("The shard with id={} on stream {} reached CLOSE status",
+                            shardId, getEndpoint().getConfiguration().getStreamName());
+                }
                 break;
             case silent:
                 break;
@@ -384,12 +396,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         return getEndpoint().getConfiguration();
     }
 
-    protected synchronized List<Shard> getCurrentShardList() {
+    protected List<Shard> getCurrentShardList() {
         return this.currentShardList;
     }
 
-    private synchronized void setCurrentShardList(List<Shard> latestShardList) {
-        this.currentShardList = latestShardList;
+    private void setCurrentShardList(List<Shard> latestShardList) {
+        this.currentShardList = List.copyOf(latestShardList);
     }
 
     private class ShardMonitor implements Runnable {

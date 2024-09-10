@@ -44,8 +44,8 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
         ResumeStrategy resumeStrategy = resolveResumeStrategy();
         ObjectHelper.notNull(resumeStrategy, ResumeStrategy.DEFAULT_NAME, definition);
 
-        if (resumeStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) resumeStrategy).setCamelContext(camelContext);
+        if (resumeStrategy instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(camelContext);
         }
 
         route.setResumeStrategy(resumeStrategy);

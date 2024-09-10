@@ -115,10 +115,10 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
             Object aggStrategy = lookupByName(ref);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
-                strategy = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+            if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
+                strategy = aggregationStrategy;
+            } else if (aggStrategy instanceof BiFunction biFunction) {
+                strategy = new AggregationStrategyBiFunctionAdapter(biFunction);
             } else if (aggStrategy != null) {
                 strategy = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
             } else {

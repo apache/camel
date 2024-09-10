@@ -44,7 +44,7 @@ public class JoorCSimpleCompilationException extends RuntimeException {
     }
 
     private String codeWithLineNumbers() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(256);
         String[] lines = code.split("\n");
         int counter = 0;
         for (String line : lines) {

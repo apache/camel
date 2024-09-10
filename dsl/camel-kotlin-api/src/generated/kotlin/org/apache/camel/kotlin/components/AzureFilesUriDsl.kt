@@ -630,6 +630,20 @@ public class AzureFilesUriDsl(
   }
 
   /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: String) {
+    it.property("browseLimit", browseLimit)
+  }
+
+  /**
+   * Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.
+   */
+  public fun browseLimit(browseLimit: Int) {
+    it.property("browseLimit", browseLimit.toString())
+  }
+
+  /**
    * Sets the connect timeout for waiting for a connection to be established Used by both FTPClient
    * and JSCH
    */

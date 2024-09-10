@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -311,15 +310,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         @Override
         public InputStream getInputStream() throws IOException {
             if (!properties.isEmpty()) {
-                StringWriter sw = new StringWriter();
-                try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
-                    char[] buf = new char[32768];
-                    int l;
-                    while ((l = r.read(buf)) > 0) {
-                        sw.write(buf, 0, l);
-                    }
-                }
-                String before = sw.toString();
+                final String before = readBefore();
                 String p = properties.keySet().stream().map(Pattern::quote)
                         .collect(Collectors.joining("|", Pattern.quote("{{") + "(", ")" + Pattern.quote("}}")));
                 Matcher m = Pattern.compile(p).matcher(before);
@@ -333,6 +324,18 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             } else {
                 return delegate.getInputStream();
             }
+        }
+
+        private String readBefore() throws IOException {
+            StringBuilder sb = new StringBuilder(32768);
+            try (InputStreamReader r = new InputStreamReader(delegate.getInputStream(), StandardCharsets.UTF_8)) {
+                char[] buf = new char[32768];
+                int l;
+                while ((l = r.read(buf)) > 0) {
+                    sb.append(buf, 0, l);
+                }
+            }
+            return sb.toString();
         }
     }
 }

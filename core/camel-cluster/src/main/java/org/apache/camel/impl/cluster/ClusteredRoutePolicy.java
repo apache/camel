@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
@@ -63,6 +65,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
     private final String namespace;
     private final CamelClusterService.Selector clusterServiceSelector;
+    private final Lock lock;
     private CamelClusterService clusterService;
     private CamelClusterView clusterView;
     private volatile boolean startManagedRoutesEarly;
@@ -82,6 +85,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         this.leadershipEventListener = new CamelClusterLeadershipListener();
 
+        this.lock = new ReentrantLock();
         this.stoppedRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
         this.autoStartupRoutes = new HashSet<>();
@@ -215,16 +219,20 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
     }
 
-    private synchronized void retainClusterView() {
+    private void retainClusterView() {
+        lock.lock();
         try {
             clusterView = clusterService.getView(namespace);
             clusterView.addEventListener(leadershipEventListener);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
         }
     }
 
-    private synchronized void releaseClusterView() {
+    private void releaseClusterView() {
+        lock.lock();
         try {
             // Remove event listener
             if (clusterView != null) {
@@ -238,7 +246,11 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            setLeader(false);
+            try {
+                setLeader(false);
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -251,13 +263,18 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // Route managements
     // ****************************************************
 
-    private synchronized void setLeader(boolean isLeader) {
-        if (isLeader && leader.compareAndSet(false, isLeader)) {
-            LOG.debug("Leadership taken");
-            startManagedRoutes();
-        } else if (!isLeader && leader.getAndSet(isLeader)) {
-            LOG.debug("Leadership lost");
-            stopManagedRoutes();
+    private void setLeader(boolean isLeader) {
+        lock.lock();
+        try {
+            if (isLeader && leader.compareAndSet(false, isLeader)) {
+                LOG.debug("Leadership taken");
+                startManagedRoutes();
+            } else if (!isLeader && leader.getAndSet(isLeader)) {
+                LOG.debug("Leadership lost");
+                stopManagedRoutes();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

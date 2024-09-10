@@ -27,6 +27,7 @@ import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.*;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
 import com.azure.messaging.servicebus.models.ServiceBusMessageState;
+import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.*;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
@@ -230,6 +231,7 @@ public class ServiceBusConsumerTest {
     @Test
     void synchronizationCompletesMessageOnSuccess() throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
             consumer.doStart();
             verify(client).start();
             verify(clientFactory).createServiceBusProcessorClient(any(), any(), any());
@@ -254,6 +256,7 @@ public class ServiceBusConsumerTest {
     @Test
     void synchronizationAbandonsMessageOnFailure() throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
             consumer.doStart();
             verify(client).start();
             verify(clientFactory).createServiceBusProcessorClient(any(), any(), any());
@@ -311,6 +314,7 @@ public class ServiceBusConsumerTest {
 
     private void synchronizationDeadLettersMessageWithOptionsWhenExceptionPresent(SubQueue subQueue) throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
             when(configuration.isEnableDeadLettering()).thenReturn(true);
             when(configuration.getSubQueue()).thenReturn(subQueue);
 
@@ -346,6 +350,7 @@ public class ServiceBusConsumerTest {
     @Test
     void synchronizationDeadLettersMessageWithoutOptionsWhenExceptionNotPresent() throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
             when(configuration.isEnableDeadLettering()).thenReturn(true);
             consumer.doStart();
             verify(client).start();
@@ -373,6 +378,7 @@ public class ServiceBusConsumerTest {
     @EnumSource(value = SubQueue.class, names = "NONE", mode = EnumSource.Mode.EXCLUDE)
     void synchronizationAbandonsMessageOnFailureWhenProcessingDeadLetterQueue(SubQueue subQueue) throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
             when(configuration.isEnableDeadLettering()).thenReturn(true);
             when(configuration.getSubQueue()).thenReturn(subQueue);
             consumer.doStart();
@@ -393,6 +399,81 @@ public class ServiceBusConsumerTest {
             Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
             synchronization.onFailure(exchange);
             verify(messageContext).abandon();
+
+            verifyNoMoreInteractions(messageContext);
+        }
+    }
+
+    @Test
+    void synchronizationDoesNotCompleteMessageWhenReceiveModeIsReceiveAndDelete() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.RECEIVE_AND_DELETE);
+            consumer.doStart();
+            verify(client).start();
+            verify(clientFactory).createServiceBusProcessorClient(any(), any(), any());
+
+            when(messageContext.getMessage()).thenReturn(message);
+
+            processMessageCaptor.getValue().accept(messageContext);
+
+            verify(messageContext).getMessage();
+
+            Exchange exchange = exchangeCaptor.getValue();
+            assertThat(exchange).isNotNull();
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onComplete(exchange);
+
+            verifyNoMoreInteractions(messageContext);
+        }
+    }
+
+    @Test
+    void synchronizationDoesNotAbandonMessageWhenReceiveModeIsReceiveAndDelete() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.RECEIVE_AND_DELETE);
+            consumer.doStart();
+            verify(client).start();
+            verify(clientFactory).createServiceBusProcessorClient(any(), any(), any());
+
+            when(messageContext.getMessage()).thenReturn(message);
+
+            processMessageCaptor.getValue().accept(messageContext);
+
+            verify(messageContext).getMessage();
+
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
+            Exchange exchange = exchangeCaptor.getValue();
+            assertThat(exchange).isNotNull();
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onFailure(exchange);
+
+            verifyNoMoreInteractions(messageContext);
+        }
+    }
+
+    @Test
+    void synchronizationDoesNotDeadLetterMessageWhenReceiveModeIsReceiveAndDelete() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.RECEIVE_AND_DELETE);
+            when(configuration.isEnableDeadLettering()).thenReturn(true);
+            consumer.doStart();
+            verify(client).start();
+            verify(clientFactory).createServiceBusProcessorClient(any(), any(), any());
+
+            when(messageContext.getMessage()).thenReturn(message);
+
+            processMessageCaptor.getValue().accept(messageContext);
+
+            verify(messageContext).getMessage();
+
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
+            Exchange exchange = exchangeCaptor.getValue();
+            assertThat(exchange).isNotNull();
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onFailure(exchange);
 
             verifyNoMoreInteractions(messageContext);
         }

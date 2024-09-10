@@ -15,7 +15,7 @@ image::eip/DataEnricher.gif[image]
 
 In Camel the Content Enricher can be done in several ways:
 
-* Using xref:enrich-eip.adoc[Enrich] EIP or xref:pollEnrich-eip.adoc[Poll Enrich] EIP
+* Using xref:enrich-eip.adoc[Enrich] EIP, xref:pollEnrich-eip.adoc[Poll Enrich], or xref:poll-eip.adoc[Poll] EIP
 * Using a xref:message-translator.adoc[Message Translator]
 * Using a xref:manual::processor.adoc[Processor] with the enrichment programmed in Java
 * Using a xref:bean-eip.adoc[Bean] EIP with the enrichment programmed in Java
@@ -190,4 +190,5 @@ TIP: See the `cacheSize` option for more details on _how much cache_ to use depe
 
 == See More
 
-See xref:enrich-eip.adoc[Enrich] EIP
+- xref:poll-eip.adoc[Poll EIP]
+- xref:enrich-eip.adoc[Enrich EIP]

@@ -66,8 +66,9 @@ public final class PackagePluginUtils {
     }
 
     public static String joinHeaderAndSource(String licenseHeader, String source) {
-        StringBuilder sb = new StringBuilder(licenseHeader);
+        StringBuilder sb = new StringBuilder(licenseHeader.length() + source.length() + 8);
 
+        sb.append(licenseHeader);
         sb.append("\n");
         sb.append(source);
         return sb.toString();

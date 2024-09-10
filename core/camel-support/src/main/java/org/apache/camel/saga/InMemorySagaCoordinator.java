@@ -32,6 +32,7 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
@@ -42,8 +43,6 @@ import org.slf4j.LoggerFactory;
  * An in-memory implementation of a saga coordinator.
  */
 public class InMemorySagaCoordinator implements CamelSagaCoordinator {
-
-    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
 
     private enum Status {
         RUNNING,
@@ -234,9 +233,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         answer.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());
 
         // preserve span from parent, so we can link this new exchange to the parent span for distributed tracing
-        Object span = parent != null ? parent.getProperty(ACTIVE_SPAN_PROPERTY) : null;
+        Object span = parent != null ? parent.getProperty(ExchangePropertyKey.ACTIVE_SPAN) : null;
         if (span != null) {
-            answer.setProperty(ACTIVE_SPAN_PROPERTY, span);
+            answer.setProperty(ExchangePropertyKey.ACTIVE_SPAN, span);
         }
 
         Map<String, Object> values = optionValues.get(step);

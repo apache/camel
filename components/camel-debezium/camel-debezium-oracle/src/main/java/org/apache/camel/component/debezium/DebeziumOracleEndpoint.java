@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Capture changes from a Oracle database.
+ * Capture changes from an Oracle database.
  */
 @UriEndpoint(firstVersion = "3.17.0", scheme = "debezium-oracle", title = "Debezium Oracle Connector",
              syntax = "debezium-oracle:name", category = { Category.DATABASE }, consumerOnly = true,

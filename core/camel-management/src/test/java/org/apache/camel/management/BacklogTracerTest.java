@@ -53,7 +53,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals(1000, size.intValue(), "Should be 1000");
+        assertEquals(100, size.intValue(), "Should be 100");
 
         Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
         assertEquals(Boolean.TRUE, removeOnDump);
@@ -109,7 +109,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals(1000, size.intValue(), "Should be 1000");
+        assertEquals(100, size.intValue(), "Should be 100");
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -397,7 +397,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals(1000, size.intValue(), "Should be 1000");
+        assertEquals(100, size.intValue(), "Should be 100");
         // change size to 2 x 10 (as we need for first as well)
         mbeanServer.setAttribute(on, new Attribute("BacklogSize", 20));
         // set the pattern to match only foo

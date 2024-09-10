@@ -8,21 +8,21 @@
 
 *Since Camel {since}*
 
-The properties component is used for property placeholders in your Camel application, such as endpoint URIs.
+The Properties component is used for property placeholders in your Camel application, such as endpoint URIs.
 It is *not* a regular Camel component with producer and consumer for routing messages.
 However, for historical reasons it was named `PropertiesComponent` and this name is commonly known so we keep using it.
 
 IMPORTANT: See the xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder] documentation for general information on using property placeholders in Camel.
 
-The properties component requires to load the properties (key=value pairs) from an external source such as `.properties` files.
+The Properties component requires to load the properties (key=value pairs) from an external source such as `.properties` files.
 The component is pluggable, and you can configure to use other sources or write a custom implementation (for example to load from a database).
 
 
 == Defining location of properties files
 
-The properties component needs to know a location(s) where to resolve the properties.
-You can define one to many locations.
-Multiple locations can be separated by comma such as:
+The properties component needs to know the location(s) where to resolve the properties.
+You can define one-to-many locations.
+You can separate multiple locations by comma, such as:
 
 [source,java]
 ----
@@ -44,18 +44,18 @@ The location now supports using placeholders for JVM system properties and OS en
 
 For example:
 
-[source]
+[source,properties]
 ----
-location=file:{{sys:karaf.home}}/etc/foo.properties
+location=file:{{sys:app.home}}/etc/foo.properties
 ----
 
-In the location above we defined a location using the file scheme using the JVM system property with key `karaf.home`.
+In the location above we defined a location using the file scheme using the JVM system property with key `app.home`.
 
-To use an OS environment variable instead you would have to prefix with
+To use an OS environment variable, instead you would have to prefix with
 `env:`.
-You can also prefix with `env.`, however this style is not recommended because all the other functions use colon.
+You can also prefix with `env.`, however, this style is not recommended because all the other functions use colon.
 
-[source]
+[source,properties]
 ----
 location=file:{{env:APP_HOME}}/etc/foo.properties
 ----
@@ -70,7 +70,7 @@ But if you specify `APP-HOME` then Camel 3 will automatic lookup the value as `A
 
 You can have multiple placeholders in the same location, such as:
 
-[source]
+[source,properties]
 ----
 location=file:{{env:APP_HOME}}/etc/{{prop.name}}.properties
 ----
@@ -97,7 +97,7 @@ Using the `<propertyPlaceholder>` allows to configure this within the `<camelCon
 </camelContext>
 ----
 
-For fine grained configuration of the location, then this can be done as follows:
+For fine-grained configuration of the location, then this can be done as follows:
 
 [source,xml]
 ----
@@ -111,11 +111,6 @@ For fine grained configuration of the location, then this can be done as follows
       resolver = "classpath"
       path     = "com/my/company/something/my-properties-2.properties"
       optional = "false"/>
-    <propertiesLocation
-      resolver = "file"
-      path     = "{{sys:karaf.home}}/etc/my-override.properties"
-      optional = "true"/>
-   </propertyPlaceholder>
 </camelContext>
 ----
 

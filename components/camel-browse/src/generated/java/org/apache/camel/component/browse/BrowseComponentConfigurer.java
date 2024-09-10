@@ -27,6 +27,8 @@ public class BrowseComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "browselimit":
+        case "browseLimit": target.setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -40,6 +42,8 @@ public class BrowseComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "browselimit":
+        case "browseLimit": return int.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -54,6 +58,8 @@ public class BrowseComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "browselimit":
+        case "browseLimit": return target.getBrowseLimit();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

@@ -23,6 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +32,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -57,8 +58,12 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
     /**
      * Maven ProjectHelper.
      */
-    @Component
-    private MavenProjectHelper projectHelper;
+    private final MavenProjectHelper projectHelper;
+
+    @Inject
+    public PackageArchetypeCatalogMojo(MavenProjectHelper projectHelper) {
+        this.projectHelper = projectHelper;
+    }
 
     /**
      * Execute goal.

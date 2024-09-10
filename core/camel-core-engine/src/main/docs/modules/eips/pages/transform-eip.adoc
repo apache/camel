@@ -55,7 +55,7 @@ Java::
 [source,java]
 ----
 from("direct:cheese")
-    .setBody(simple("Hello ${body}"))
+    .transform(simple("Hello ${body}"))
     .to("log:hello");
 ----
 

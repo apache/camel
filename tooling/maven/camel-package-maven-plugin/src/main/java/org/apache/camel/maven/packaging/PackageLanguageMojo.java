@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,8 +26,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -34,6 +38,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
 import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -43,6 +48,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
  * Camel.
@@ -51,13 +58,13 @@ import org.codehaus.plexus.build.BuildContext;
 public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
     /**
-     * The output directory for generated languages file
+     * The output directory for generated language resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File languageOutDir;
 
     /**
-     * The output directory for generated languages file
+     * The output directory for generated schema resources
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
@@ -68,19 +75,17 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
-    public PackageLanguageMojo() {
-    }
-
+    @Inject
     public PackageLanguageMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
                                File buildDir, File languageOutDir, File schemaOutDir,
                                BuildContext buildContext) {
+        super(projectHelper, buildContext);
+
         setLog(log);
         this.project = project;
-        this.projectHelper = projectHelper;
         this.buildDir = buildDir;
         this.languageOutDir = languageOutDir;
         this.schemaOutDir = schemaOutDir;
-        this.buildContext = buildContext;
     }
 
     /**
@@ -114,7 +119,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
 
         Map<String, String> javaTypes = new HashMap<>();
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(256);
         int count = 0;
 
         File f = new File(project.getBasedir(), "target/classes");
@@ -162,7 +167,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         SchemaHelper.addModelMetadata(languageModel, project);
                         SchemaHelper.addModelMetadata(languageModel, javaType.getAnnotation(Metadata.class));
 
-                        // build json schema for the data format
+                        // build json schema for the language
                         String schema = JsonMapper.createParameterJsonSchema(languageModel);
                         if (log.isDebugEnabled()) {
                             log.debug("JSON schema\n" + schema);
@@ -203,7 +208,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         return count;
     }
 
-    protected static LanguageModel extractLanguageModel(MavenProject project, String json, String name, Class<?> javaType) {
+    protected LanguageModel extractLanguageModel(MavenProject project, String json, String name, Class<?> javaType) {
         EipModel def = JsonMapper.generateEipModel(json);
         LanguageModel model = new LanguageModel();
         model.setName(name);
@@ -258,7 +263,84 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             option.setDescription(opt.getDescription());
             model.addOption(option);
         }
+
+        // read class and find functionClass and add each field as a function in the model
+        Class<?> classElement = loadClass(javaType.getName());
+        final Language lan = classElement.getAnnotation(Language.class);
+        if (lan.functionsClass() != void.class) {
+            classElement = loadClass(lan.functionsClass().getName());
+            if (classElement != null) {
+                for (Field field : classElement.getFields()) {
+                    final boolean isEnum = classElement.isEnum();
+                    if ((isEnum || isStatic(field.getModifiers()) && field.getType() == String.class)
+                            && field.isAnnotationPresent(Metadata.class)) {
+                        try {
+                            addFunction(model, field);
+                        } catch (Exception e) {
+                            getLog().warn(e);
+                        }
+                    }
+                }
+            }
+        }
+
         return model;
+    }
+
+    private void addFunction(LanguageModel model, Field field) throws Exception {
+        final Class<?> declaringClass = field.getDeclaringClass();
+        final Metadata cm = declaringClass.getAnnotation(Metadata.class);
+        String prefix = null;
+        String suffix = null;
+        if (cm != null && cm.annotations() != null) {
+            for (String s : cm.annotations()) {
+                prefix = Strings.after(s, "prefix=", prefix);
+                suffix = Strings.after(s, "suffix=", suffix);
+            }
+        }
+        final Metadata metadata = field.getAnnotation(Metadata.class);
+        LanguageModel.LanguageFunctionModel fun = new LanguageModel.LanguageFunctionModel();
+        fun.setConstantName(String.format("%s#%s", declaringClass.getName(), field.getName()));
+        fun.setName((String) field.get(null));
+        fun.setPrefix(prefix);
+        fun.setSuffix(suffix);
+        fun.setDescription(metadata.description().trim());
+        fun.setKind("function");
+        String displayName = metadata.displayName();
+        // compute a display name if we don't have anything
+        if (Strings.isNullOrEmpty(displayName)) {
+            displayName = fun.getName();
+            int pos = displayName.indexOf('(');
+            if (pos == -1) {
+                pos = displayName.indexOf(':');
+            }
+            if (pos == -1) {
+                pos = displayName.indexOf('.');
+            }
+            if (pos != -1) {
+                displayName = displayName.substring(0, pos);
+            }
+            displayName = displayName.replace('-', ' ');
+            displayName = Strings.asTitle(displayName);
+        }
+        fun.setDisplayName(displayName);
+        fun.setJavaType(metadata.javaType());
+        fun.setRequired(metadata.required());
+        fun.setDefaultValue(metadata.defaultValue());
+        fun.setDeprecated(field.isAnnotationPresent(Deprecated.class));
+        fun.setDeprecationNote(metadata.deprecationNote());
+        fun.setSecret(metadata.secret());
+        String label = metadata.label();
+        boolean ognl = false;
+        if (label.contains(",ognl")) {
+            ognl = true;
+            label = label.replace(",ognl", "");
+        }
+        String group = EndpointHelper.labelAsGroupName(label, false, false);
+        fun.setGroup(group);
+        fun.setLabel(label);
+        fun.setOgnl(ognl);
+        model.addFunction(fun);
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext)

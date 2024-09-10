@@ -27,7 +27,6 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,6 @@ public class FtpConsumerWithCharsetIT extends FtpServerTestSupport {
     }
 
     @Override
-    @BeforeEach
     public void doPostSetup() throws Exception {
         byte[] iso = payload.getBytes(StandardCharsets.ISO_8859_1);
         byte[] utf = payload.getBytes(StandardCharsets.UTF_8);

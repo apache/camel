@@ -260,6 +260,38 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of concurrent receive request send to AWS in
+         * single consumer polling.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: consumer
+         * 
+         * @param concurrentRequestLimit the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder concurrentRequestLimit(int concurrentRequestLimit) {
+            doSetProperty("concurrentRequestLimit", concurrentRequestLimit);
+            return this;
+        }
+        /**
+         * The maximum number of concurrent receive request send to AWS in
+         * single consumer polling.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: consumer
+         * 
+         * @param concurrentRequestLimit the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder concurrentRequestLimit(String concurrentRequestLimit) {
+            doSetProperty("concurrentRequestLimit", concurrentRequestLimit);
+            return this;
+        }
+        /**
          * The default visibility timeout (in seconds).
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -545,6 +577,25 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointConsumerBuilder serverSideEncryptionEnabled(String serverSideEncryptionEnabled) {
             doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            return this;
+        }
+        /**
+         * The name of the message attribute used for sorting the messages. When
+         * specified, the messages polled by the consumer will be sorted by this
+         * attribute. This configuration may be of importance when you configure
+         * maxMessagesPerPoll parameter exceeding 10. In such cases, the
+         * messages will be fetched concurrently so the ordering is not
+         * guaranteed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param sortAttributeName the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder sortAttributeName(String sortAttributeName) {
+            doSetProperty("sortAttributeName", sortAttributeName);
             return this;
         }
         /**

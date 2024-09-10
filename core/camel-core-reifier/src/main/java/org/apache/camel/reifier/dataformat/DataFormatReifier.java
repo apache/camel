@@ -269,11 +269,12 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (dataFormat == null) {
             dataFormat = doCreateDataFormat();
             if (dataFormat != null) {
-                if (dataFormat instanceof DataFormatContentTypeHeader && definition instanceof ContentTypeHeaderAware) {
-                    String header = ((ContentTypeHeaderAware) definition).getContentTypeHeader();
+                if (dataFormat instanceof DataFormatContentTypeHeader dataFormatContentTypeHeader
+                        && definition instanceof ContentTypeHeaderAware contentTypeHeaderAware) {
+                    String header = contentTypeHeaderAware.getContentTypeHeader();
                     // is enabled by default so assume true if null
                     final boolean contentTypeHeader = parseBoolean(header, true);
-                    ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
+                    dataFormatContentTypeHeader.setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options
                 configureDataFormat(dataFormat);
@@ -328,8 +329,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         PropertyConfigurer configurer = null;
         String name = getDataFormatName();
         LOG.trace("Discovering optional dataformat property configurer class for dataformat: {}", name);
-        if (dataFormat instanceof PropertyConfigurerAware) {
-            configurer = ((PropertyConfigurerAware) dataFormat).getPropertyConfigurer(dataFormat);
+        if (dataFormat instanceof PropertyConfigurerAware propertyConfigurerAware) {
+            configurer = propertyConfigurerAware.getPropertyConfigurer(dataFormat);
             if (LOG.isDebugEnabled() && configurer != null) {
                 LOG.debug("Discovered dataformat property configurer using the PropertyConfigurerAware: {} -> {}", name,
                         configurer);

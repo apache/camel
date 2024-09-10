@@ -17,8 +17,8 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
@@ -29,14 +29,14 @@ import org.apache.camel.spi.annotations.Component;
  */
 @Component("atmosphere-websocket")
 public class WebsocketComponent extends ServletComponent {
-    private Map<String, WebSocketStore> stores;
+    private final Map<String, WebSocketStore> stores;
 
     public WebsocketComponent() {
         // override the default servlet name of ServletComponent
         super(WebsocketEndpoint.class);
         setServletName("CamelWsServlet");
 
-        this.stores = new HashMap<>();
+        this.stores = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -46,10 +46,6 @@ public class WebsocketComponent extends ServletComponent {
     }
 
     WebSocketStore getWebSocketStore(String name) {
-        WebSocketStore store;
-        synchronized (stores) {
-            store = stores.computeIfAbsent(name, k -> new MemoryWebSocketStore());
-        }
-        return store;
+        return stores.computeIfAbsent(name, k -> new MemoryWebSocketStore());
     }
 }

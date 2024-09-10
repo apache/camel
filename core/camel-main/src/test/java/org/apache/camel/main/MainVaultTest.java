@@ -17,10 +17,7 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.vault.AwsVaultConfiguration;
-import org.apache.camel.vault.AzureVaultConfiguration;
-import org.apache.camel.vault.GcpVaultConfiguration;
-import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.apache.camel.vault.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -82,9 +79,33 @@ public class MainVaultTest {
         main.addInitialProperty("camel.vault.aws.defaultCredentialsProvider", "false");
         main.addInitialProperty("camel.vault.aws.profileCredentialsProvider", "true");
         main.addInitialProperty("camel.vault.aws.profileName", "jack");
+        main.addInitialProperty("camel.vault.aws.sqsQueueUrl", "http://sqs-2");
+        main.addInitialProperty("camel.vault.aws.useSqsNotification", "true");
 
         main.start();
         return main;
+    }
+
+    @Test
+    public void testUseSqsNotification() {
+        final Main main = getMain();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        AwsVaultConfiguration cfg = context.getVaultConfiguration().aws();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("myKey", cfg.getAccessKey());
+        Assertions.assertEquals("mySecret", cfg.getSecretKey());
+        Assertions.assertEquals("myRegion", cfg.getRegion());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
+        Assertions.assertTrue(cfg.isProfileCredentialsProvider());
+        Assertions.assertEquals("jack", cfg.getProfileName());
+        Assertions.assertEquals("http://sqs-2", cfg.getSqsQueueUrl());
+        Assertions.assertTrue(cfg.isUseSqsNotification());
+
+        main.stop();
     }
 
     @Test
@@ -256,6 +277,47 @@ public class MainVaultTest {
         Assertions.assertEquals("localhost", cfg.getHost());
         Assertions.assertEquals("8200", cfg.getPort());
         Assertions.assertEquals("https", cfg.getScheme());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetes() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.kubernetes.refreshEnabled", "true");
+        main.addInitialProperty("camel.vault.kubernetes.secrets", "xxxx");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesVaultConfiguration cfg = context.getVaultConfiguration().kubernetes();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getSecrets());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetesFluent() {
+        Main main = new Main();
+        main.configure().vault().kubernetes()
+                .withRefreshEnabled(true)
+                .withSecrets("xxxx")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesVaultConfiguration cfg = context.getVaultConfiguration().kubernetes();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getSecrets());
         main.stop();
     }
 }

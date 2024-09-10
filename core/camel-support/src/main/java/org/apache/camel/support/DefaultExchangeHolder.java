@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  * <li>exchangeId</li>
  * <li>in body</li>
  * <li>out body</li>
- * <li>fault body</li>
  * <li>exception</li>
  * </ul>
  * <br/>
@@ -53,12 +52,12 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li>in headers</li>
  * <li>out headers</li>
- * <li>fault headers</li>
  * </ul>
- * The body is serialized and stored as serialized bytes. The header and exchange properties only include primitive,
- * String, and Number types (and Exception types for exchange properties). Any other type is skipped. Any message body
- * object that is not serializable will be skipped and Camel will log this at <tt>WARN</tt> level. And any message
- * header values that is not a primitive value will be skipped and Camel will log this at <tt>DEBUG</tt> level.
+ * The body is serialized and stored as serialized bytes. The header and exchange properties, exchange variables are
+ * only include primitive, String, and Number types (and Exception types for exchange properties). Any other type is
+ * skipped. Any message body object that is not serializable will be skipped and Camel will log this at <tt>WARN</tt>
+ * level. And any message header values that is not a primitive value will be skipped and Camel will log this at
+ * <tt>DEBUG</tt> level.
  */
 public class DefaultExchangeHolder implements Serializable {
 
@@ -71,10 +70,13 @@ public class DefaultExchangeHolder implements Serializable {
     private Map<String, Object> inHeaders;
     private Map<String, Object> outHeaders;
     private Map<String, Object> properties;
+    private Map<String, Object> variables;
     private Exception exception;
 
     /**
      * Creates a payload object with the information from the given exchange.
+     *
+     * Exchange properties and variables is included. Serialized values are skipped.
      *
      * @param  exchange the exchange, must <b>not</b> be <tt>null</tt>
      * @return          the holder object with information copied form the exchange
@@ -84,10 +86,10 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     /**
-     * Creates a payload object with the information from the given exchange.
+     * Creates a payload object with the information from the given exchange. Serialized values are skipped.
      *
      * @param  exchange          the exchange, must <b>not</b> be <tt>null</tt>
-     * @param  includeProperties whether or not to include exchange properties
+     * @param  includeProperties whether or not to include exchange properties and variables
      * @return                   the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
@@ -97,27 +99,27 @@ public class DefaultExchangeHolder implements Serializable {
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * @param  exchange               the exchange, must <b>not</b> be <tt>null</tt>
-     * @param  includeProperties      whether or not to include exchange properties
-     * @param  allowSerializedHeaders whether or not to include serialized headers
-     * @return                        the holder object with information copied form the exchange
+     * @param  exchange              the exchange, must <b>not</b> be <tt>null</tt>
+     * @param  includeProperties     whether or not to include exchange properties and variables
+     * @param  allowSerializedValues whether or not to include serialized values
+     * @return                       the holder object with information copied form the exchange
      */
-    public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties, boolean allowSerializedHeaders) {
-        return marshal(exchange, includeProperties, allowSerializedHeaders, true);
+    public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties, boolean allowSerializedValues) {
+        return marshal(exchange, includeProperties, allowSerializedValues, true);
     }
 
     /**
      * Creates a payload object with the information from the given exchange.
      *
-     * @param  exchange               the exchange, must <b>not</b> be <tt>null</tt>
-     * @param  includeProperties      whether or not to include exchange properties
-     * @param  allowSerializedHeaders whether or not to include serialized headers
-     * @param  preserveExchangeId     whether to preserve exchange id
-     * @return                        the holder object with information copied form the exchange
+     * @param  exchange              the exchange, must <b>not</b> be <tt>null</tt>
+     * @param  includeProperties     whether or not to include exchange properties and variables
+     * @param  allowSerializedValues whether or not to include serialized headers
+     * @param  preserveExchangeId    whether to preserve exchange id
+     * @return                       the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(
             Exchange exchange, boolean includeProperties,
-            boolean allowSerializedHeaders, boolean preserveExchangeId) {
+            boolean allowSerializedValues, boolean preserveExchangeId) {
         ObjectHelper.notNull(exchange, "exchange");
 
         // we do not support files
@@ -134,13 +136,14 @@ public class DefaultExchangeHolder implements Serializable {
             payload.exchangeId = exchange.getExchangeId();
         }
         payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
-        payload.safeSetInHeaders(exchange, allowSerializedHeaders);
+        payload.safeSetInHeaders(exchange, allowSerializedValues);
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
-            payload.safeSetOutHeaders(exchange, allowSerializedHeaders);
+            payload.safeSetOutHeaders(exchange, allowSerializedValues);
         }
         if (includeProperties) {
-            payload.safeSetProperties(exchange, allowSerializedHeaders);
+            payload.safeSetProperties(exchange, allowSerializedValues);
+            payload.safeSetVariables(exchange, allowSerializedValues);
         }
         payload.exception = exchange.getException();
 
@@ -175,6 +178,11 @@ public class DefaultExchangeHolder implements Serializable {
                 exchange.setProperty(entry.getKey(), entry.getValue());
             }
         }
+        if (payload.variables != null) {
+            for (Map.Entry<String, Object> entry : payload.variables.entrySet()) {
+                exchange.setVariable(entry.getKey(), entry.getValue());
+            }
+        }
         exchange.setException(payload.exception);
     }
 
@@ -198,12 +206,33 @@ public class DefaultExchangeHolder implements Serializable {
         payload.properties.put(key, property);
     }
 
+    /**
+     * Adds a variable to the payload.
+     * <p/>
+     * This can be done in special situations where additional information must be added which was not provided from the
+     * source.
+     *
+     * @param payload  the serialized payload
+     * @param key      the variable key to add
+     * @param variable the variable value to add
+     */
+    public static void addVariable(DefaultExchangeHolder payload, String key, Serializable variable) {
+        if (key == null || variable == null) {
+            return;
+        }
+        if (payload.variables == null) {
+            payload.variables = new LinkedHashMap<>();
+        }
+        payload.variables.put(key, variable);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("DefaultExchangeHolder[exchangeId=").append(exchangeId);
         sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);
         sb.append(", inHeaders=").append(inHeaders).append(", outHeaders=").append(outHeaders);
-        sb.append(", properties=").append(properties).append(", exception=").append(exception);
+        sb.append(", properties=").append(properties).append(", variables=").append(variables);
+        sb.append(", exception=").append(exception);
         return sb.append(']').toString();
     }
 
@@ -219,10 +248,10 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     @Deprecated(since = "3.0.0")
-    private Map<String, Object> safeSetOutHeaders(Exchange exchange, boolean allowSerializedHeaders) {
+    private Map<String, Object> safeSetOutHeaders(Exchange exchange, boolean allowSerializedValues) {
         if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
             Map<String, Object> map
-                    = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders(), allowSerializedHeaders);
+                    = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders(), allowSerializedValues);
             if (map != null && !map.isEmpty()) {
                 outHeaders = new LinkedHashMap<>(map);
             }
@@ -230,12 +259,21 @@ public class DefaultExchangeHolder implements Serializable {
         return null;
     }
 
-    private Map<String, Object> safeSetProperties(Exchange exchange, boolean allowSerializedHeaders) {
+    private Map<String, Object> safeSetProperties(Exchange exchange, boolean allowSerializedValues) {
         // also include the internal properties
         Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getAllProperties(),
-                allowSerializedHeaders);
+                allowSerializedValues);
         if (map != null && !map.isEmpty()) {
             properties = new LinkedHashMap<>(map);
+        }
+        return null;
+    }
+
+    private Map<String, Object> safeSetVariables(Exchange exchange, boolean allowSerializedValues) {
+        Map<String, Object> map = checkValidExchangePropertyObjects("variables", exchange, exchange.getVariables(),
+                allowSerializedValues);
+        if (map != null && !map.isEmpty()) {
+            variables = new LinkedHashMap<>(map);
         }
         return null;
     }
@@ -287,7 +325,7 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     private static Map<String, Object> checkValidExchangePropertyObjects(
-            String type, Exchange exchange, Map<String, Object> map, boolean allowSerializedHeaders) {
+            String type, Exchange exchange, Map<String, Object> map, boolean allowSerializedValues) {
         if (map == null) {
             return null;
         }
@@ -300,7 +338,7 @@ public class DefaultExchangeHolder implements Serializable {
                 continue;
             }
 
-            Object value = getValidExchangePropertyValue(entry.getKey(), entry.getValue(), allowSerializedHeaders);
+            Object value = getValidExchangePropertyValue(entry.getKey(), entry.getValue(), allowSerializedValues);
             if (value != null) {
                 Serializable converted
                         = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
@@ -331,12 +369,12 @@ public class DefaultExchangeHolder implements Serializable {
      *
      * We make possible store serialized headers by the boolean field allowSerializedHeaders
      *
-     * @param  headerName             the header name
-     * @param  headerValue            the header value
-     * @param  allowSerializedHeaders the header value
-     * @return                        the value to use, <tt>null</tt> to ignore this header
+     * @param  headerName            the header name
+     * @param  headerValue           the header value
+     * @param  allowSerializedValues whether to include serialized values
+     * @return                       the value to use, <tt>null</tt> to ignore this header
      */
-    protected static Object getValidHeaderValue(String headerName, Object headerValue, boolean allowSerializedHeaders) {
+    protected static Object getValidHeaderValue(String headerName, Object headerValue, boolean allowSerializedValues) {
         if (headerValue instanceof String) {
             return headerValue;
         } else if (headerValue instanceof BigInteger) {
@@ -353,7 +391,7 @@ public class DefaultExchangeHolder implements Serializable {
             return headerValue;
         } else if (headerValue instanceof Date) {
             return headerValue;
-        } else if (allowSerializedHeaders) {
+        } else if (allowSerializedValues) {
             if (headerValue instanceof Serializable) {
                 return headerValue;
             }
@@ -368,17 +406,18 @@ public class DefaultExchangeHolder implements Serializable {
      * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object, boolean)}
      * and in addition any value of type {@link Throwable}.
      *
-     * @param  propertyName  the property name
-     * @param  propertyValue the property value
-     * @return               the value to use, <tt>null</tt> to ignore this header
+     * @param  propertyName          the property name
+     * @param  propertyValue         the property value
+     * @param  allowSerializedValues whether to include serialized values
+     * @return                       the value to use, <tt>null</tt> to ignore this header
      */
     protected static Object getValidExchangePropertyValue(
-            String propertyName, Object propertyValue, boolean allowSerializedHeaders) {
+            String propertyName, Object propertyValue, boolean allowSerializedValues) {
         // for exchange properties we also allow exception to be transferred so people can store caught exception
         if (propertyValue instanceof Throwable) {
             return propertyValue;
         }
-        return getValidHeaderValue(propertyName, propertyValue, allowSerializedHeaders);
+        return getValidHeaderValue(propertyName, propertyValue, allowSerializedValues);
     }
 
     private static void logCannotSerializeObject(String type, String key, Object value) {

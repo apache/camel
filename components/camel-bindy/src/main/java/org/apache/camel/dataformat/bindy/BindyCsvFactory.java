@@ -307,7 +307,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     @Override
     public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
-        StringBuilder buffer = new StringBuilder();
         Map<Integer, List<String>> results = new HashMap<>();
 
         // Check if separator exists
@@ -365,6 +364,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             l.add(temp);
         }
 
+        StringBuilder buffer = new StringBuilder(256);
         Iterator<List<String>> it = l.iterator();
         while (it.hasNext()) {
             List<String> tokens = it.next();
@@ -579,7 +579,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         Map<Integer, DataField> dataFieldsSorted = new TreeMap<>(dataFields);
         Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
 
-        StringBuilder builderHeader = new StringBuilder();
+        StringBuilder builderHeader = new StringBuilder(256);
 
         while (it.hasNext()) {
 

@@ -41,6 +41,7 @@ import org.apache.camel.model.errorhandler.*;
 import org.apache.camel.model.language.*;
 import org.apache.camel.model.loadbalancer.*;
 import org.apache.camel.model.rest.*;
+import org.apache.camel.model.tokenizer.*;
 import org.apache.camel.model.transformer.*;
 import org.apache.camel.model.validator.*;
 import org.apache.camel.spi.*;
@@ -622,6 +623,14 @@ public class ModelParser extends BaseParser {
                 case "ref": def.setRef(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputDefinitionElementHandler(), noValueHandler());
+    }
+    protected PollDefinition doParsePollDefinition() throws IOException, XmlPullParserException {
+        return doParse(new PollDefinition(), (def, key, val) -> switch (key) {
+                case "timeout": def.setTimeout(val); yield true;
+                case "uri": def.setUri(sanitizeUri(val)); yield true;
+                case "variableReceive": def.setVariableReceive(val); yield true;
+                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected PollEnrichDefinition doParsePollEnrichDefinition() throws IOException, XmlPullParserException {
         return doParse(new PollEnrichDefinition(), (def, key, val) -> switch (key) {
@@ -2612,6 +2621,14 @@ public class ModelParser extends BaseParser {
         }
         return Optional.empty();
     }
+    protected LangChain4jTokenizerDefinition doParseLangChain4jTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LangChain4jTokenizerDefinition(), (def, key, val) -> switch (key) {
+                case "maxOverlap": def.setMaxOverlap(val); yield true;
+                case "maxTokens": def.setMaxTokens(val); yield true;
+                case "tokenizerType": def.setTokenizerType(val); yield true;
+                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
     protected CustomTransformerDefinition doParseCustomTransformerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CustomTransformerDefinition(), (def, key, val) -> switch (key) {
                 case "className": def.setClassName(val); yield true;
@@ -2733,6 +2750,7 @@ public class ModelParser extends BaseParser {
             case "pausable": return doParsePausableDefinition();
             case "pipeline": return doParsePipelineDefinition();
             case "policy": return doParsePolicyDefinition();
+            case "poll": return doParsePollDefinition();
             case "pollEnrich": return doParsePollEnrichDefinition();
             case "process": return doParseProcessDefinition();
             case "recipientList": return doParseRecipientListDefinition();
@@ -2772,6 +2790,7 @@ public class ModelParser extends BaseParser {
             case "validate": return doParseValidateDefinition();
             case "wireTap": return doParseWireTapDefinition();
             case "serviceCall": return doParseServiceCallDefinition();
+            case "langChain4j": return doParseLangChain4jTokenizerDefinition();
             default: return null;
         }
     }

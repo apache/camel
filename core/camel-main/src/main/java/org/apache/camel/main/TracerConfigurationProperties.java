@@ -32,12 +32,12 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     private boolean enabled;
     @Metadata
     private boolean standby;
-    @Metadata(label = "advanced", defaultValue = "1000")
-    private int backlogSize = 1000;
+    @Metadata(label = "advanced", defaultValue = "100")
+    private int backlogSize = 100;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean removeOnDump = true;
-    @Metadata(label = "advanced", defaultValue = "131072")
-    private int bodyMaxChars = 128 * 1024;
+    @Metadata(label = "advanced", defaultValue = "32768")
+    private int bodyMaxChars = 32 * 1024;
     @Metadata
     private boolean bodyIncludeStreams;
     @Metadata(defaultValue = "true")
@@ -98,7 +98,7 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Defines how many of the last messages to keep in the tracer.
+     * Defines how many of the last messages to keep in the tracer (should be between 1 - 1000).
      */
     public void setBacklogSize(int backlogSize) {
         this.backlogSize = backlogSize;
@@ -246,7 +246,7 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Defines how many of the last messages to keep in the tracer.
+     * Defines how many of the last messages to keep in the tracer (should be between 1 - 1000).
      */
     public TracerConfigurationProperties withBacklogSize(int backlogSize) {
         this.backlogSize = backlogSize;

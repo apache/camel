@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "debezium-oracle",
     "title": "Debezium Oracle Connector",
-    "description": "Capture changes from a Oracle database.",
+    "description": "Capture changes from an Oracle database.",
     "deprecated": false,
     "firstVersion": "3.17.0",
     "label": "database",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-oracle",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "debezium-oracle",
     "extendsScheme": "",
     "syntax": "debezium-oracle:name",
@@ -20,6 +20,7 @@
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false,
+    "browsable": false,
     "remote": true
   },
   "componentProperties": {

@@ -24,7 +24,7 @@ import org.apache.camel.kotlin.CamelDslMarker
 import org.apache.camel.kotlin.UriDsl
 
 /**
- * Capture changes from a Oracle database.
+ * Capture changes from an Oracle database.
  */
 public fun UriDsl.`debezium-oracle`(i: DebeziumOracleUriDsl.() -> Unit) {
   DebeziumOracleUriDsl(this).apply(i)

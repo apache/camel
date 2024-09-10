@@ -95,18 +95,16 @@ final class InternalServiceManager {
         // inject CamelContext
         CamelContextAware.trySetCamelContext(object, camelContext);
 
-        if (object instanceof Service) {
-            Service service = (Service) object;
-
+        if (object instanceof Service service) {
             if (useLifecycleStrategies) {
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                    if (service instanceof Endpoint) {
+                    if (service instanceof Endpoint endpoint) {
                         // use specialized endpoint add
-                        strategy.onEndpointAdd((Endpoint) service);
+                        strategy.onEndpointAdd(endpoint);
                     } else {
                         Route route;
-                        if (service instanceof RouteAware) {
-                            route = ((RouteAware) service).getRoute();
+                        if (service instanceof RouteAware routeAware) {
+                            route = routeAware.getRoute();
                         } else {
                             // if the service is added while creating a new route then grab the route from the startup manager
                             route = internalRouteStartupManager.getSetupRoute();
@@ -126,8 +124,8 @@ final class InternalServiceManager {
                 // otherwise we could for example end up with a lot of prototype
                 // scope endpoints
                 boolean singleton = true; // assume singleton by default
-                if (object instanceof IsSingleton) {
-                    singleton = ((IsSingleton) service).isSingleton();
+                if (service instanceof IsSingleton singletonService) {
+                    singleton = singletonService.isSingleton();
                 }
                 // do not add endpoints as they have their own list
                 if (singleton && !(service instanceof Endpoint)) {
@@ -154,15 +152,13 @@ final class InternalServiceManager {
     }
 
     public void deferStartService(CamelContext camelContext, Object object, boolean stopOnShutdown, boolean startEarly) {
-        if (object instanceof Service) {
-            Service service = (Service) object;
-
+        if (object instanceof Service service) {
             // only add to services to close if its a singleton
             // otherwise we could for example end up with a lot of prototype
             // scope endpoints
             boolean singleton = true; // assume singleton by default
-            if (object instanceof IsSingleton) {
-                singleton = ((IsSingleton) service).isSingleton();
+            if (service instanceof IsSingleton singletonService) {
+                singleton = singletonService.isSingleton();
             }
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
@@ -203,8 +199,7 @@ final class InternalServiceManager {
         if (services.isEmpty()) {
             return false;
         }
-        if (object instanceof Service) {
-            Service service = (Service) object;
+        if (object instanceof Service service) {
             return services.contains(service);
         }
         return false;

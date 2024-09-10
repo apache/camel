@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.0-SNAPSHOT</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ai-parent</artifactId>
@@ -39,9 +39,12 @@
         <module>camel-langchain4j-core</module>
         <module>camel-langchain4j-chat</module>
         <module>camel-langchain4j-embeddings</module>
+        <module>camel-langchain4j-web-search</module>
         <module>camel-milvus</module>
         <module>camel-pinecone</module>
         <module>camel-qdrant</module>
+        <module>camel-langchain4j-tokenizer</module>
+        <module>camel-langchain4j-tools</module>
     </modules>
 
 </project>

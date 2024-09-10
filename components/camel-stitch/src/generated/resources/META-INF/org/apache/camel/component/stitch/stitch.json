@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stitch",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "scheme": "stitch",
     "extendsScheme": "",
     "syntax": "stitch:tableName",
@@ -20,6 +20,7 @@
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false,
+    "browsable": false,
     "remote": true
   },
   "componentProperties": {

@@ -43,7 +43,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
@@ -123,11 +122,14 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession mavenSession;
 
-    @Component
-    private BuildPluginManager pluginManager;
+    private final BuildPluginManager pluginManager;
 
     @Parameter
     private Map<String, String> configOptions;
+
+    protected AbstractGenerateMojo(BuildPluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
 
     DestinationGenerator createDestinationGenerator() throws MojoExecutionException {
         final Class<DestinationGenerator> destinationGeneratorClass;

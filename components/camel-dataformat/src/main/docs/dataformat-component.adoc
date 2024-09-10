@@ -19,7 +19,6 @@ The Data Format component allows using xref:manual::data-format.adoc[Data Format
 
 == URI format
 
-[source]
 ----
 dataformat:name:(marshal|unmarshal)[?options]
 ----
@@ -49,7 +48,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Samples
+== Examples
 
 For example, to use the xref:dataformats:jaxb-dataformat.adoc[JAXB] xref:manual::data-format.adoc[Data Format], we can do as follows:
 

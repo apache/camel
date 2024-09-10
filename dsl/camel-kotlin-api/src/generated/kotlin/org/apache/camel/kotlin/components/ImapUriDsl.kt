@@ -71,7 +71,7 @@ public class ImapUriDsl(
 
   /**
    * Whether the consumer should close the folder after polling. Setting this option to false and
-   * having disconnect=false as well, then the consumer keep the folder open between polls.
+   * having disconnect=false as well, then the consumer keeps the folder open between polls.
    */
   public fun closeFolder(closeFolder: String) {
     it.property("closeFolder", closeFolder)
@@ -79,7 +79,7 @@ public class ImapUriDsl(
 
   /**
    * Whether the consumer should close the folder after polling. Setting this option to false and
-   * having disconnect=false as well, then the consumer keep the folder open between polls.
+   * having disconnect=false as well, then the consumer keeps the folder open between polls.
    */
   public fun closeFolder(closeFolder: Boolean) {
     it.property("closeFolder", closeFolder.toString())
@@ -87,8 +87,8 @@ public class ImapUriDsl(
 
   /**
    * After processing a mail message, it can be copied to a mail folder with the given name. You can
-   * override this configuration value, with a header with the key copyTo, allowing you to copy
-   * messages to folder names configured at runtime.
+   * override this configuration value with a header with the key copyTo, allowing you to copy messages
+   * to folder names configured at runtime.
    */
   public fun copyTo(copyTo: String) {
     it.property("copyTo", copyTo)
@@ -112,9 +112,8 @@ public class ImapUriDsl(
 
   /**
    * Deletes the messages after they have been processed. This is done by setting the DELETED flag
-   * on the mail message. If false, the SEEN flag is set instead. As of Camel 2.10 you can override
-   * this configuration option by setting a header with the key delete to determine if the mail should
-   * be deleted or not.
+   * on the mail message. If false, the SEEN flag is set instead. You can override this configuration
+   * option by setting a header with the key delete to determine if the mail should be deleted or not.
    */
   public fun delete(delete: String) {
     it.property("delete", delete)
@@ -122,16 +121,15 @@ public class ImapUriDsl(
 
   /**
    * Deletes the messages after they have been processed. This is done by setting the DELETED flag
-   * on the mail message. If false, the SEEN flag is set instead. As of Camel 2.10 you can override
-   * this configuration option by setting a header with the key delete to determine if the mail should
-   * be deleted or not.
+   * on the mail message. If false, the SEEN flag is set instead. You can override this configuration
+   * option by setting a header with the key delete to determine if the mail should be deleted or not.
    */
   public fun delete(delete: Boolean) {
     it.property("delete", delete.toString())
   }
 
   /**
-   * Whether the consumer should disconnect after polling. If enabled this forces Camel to connect
+   * Whether the consumer should disconnect after polling. If enabled, this forces Camel to connect
    * on each poll.
    */
   public fun disconnect(disconnect: String) {
@@ -139,7 +137,7 @@ public class ImapUriDsl(
   }
 
   /**
-   * Whether the consumer should disconnect after polling. If enabled this forces Camel to connect
+   * Whether the consumer should disconnect after polling. If enabled, this forces Camel to connect
    * on each poll.
    */
   public fun disconnect(disconnect: Boolean) {
@@ -147,8 +145,8 @@ public class ImapUriDsl(
   }
 
   /**
-   * If the mail consumer cannot retrieve a given mail message, then this option allows to handle
-   * the caused exception by the consumer's error handler. By enable the bridge error handler on the
+   * If the mail consumer cannot retrieve a given mail message, then this option allows handling the
+   * caused exception by the consumer's error handler. By enabling the bridge error handler on the
    * consumer, then the Camel routing error handler can handle the exception instead. The default
    * behavior would be the consumer throws an exception and no mails from the batch would be able to be
    * routed by Camel.
@@ -158,8 +156,8 @@ public class ImapUriDsl(
   }
 
   /**
-   * If the mail consumer cannot retrieve a given mail message, then this option allows to handle
-   * the caused exception by the consumer's error handler. By enable the bridge error handler on the
+   * If the mail consumer cannot retrieve a given mail message, then this option allows handling the
+   * caused exception by the consumer's error handler. By enabling the bridge error handler on the
    * consumer, then the Camel routing error handler can handle the exception instead. The default
    * behavior would be the consumer throws an exception and no mails from the batch would be able to be
    * routed by Camel.
@@ -202,8 +200,8 @@ public class ImapUriDsl(
 
   /**
    * After processing a mail message, it can be moved to a mail folder with the given name. You can
-   * override this configuration value, with a header with the key moveTo, allowing you to move
-   * messages to folder names configured at runtime.
+   * override this configuration value with a header with the key moveTo, allowing you to move messages
+   * to folder names configured at runtime.
    */
   public fun moveTo(moveTo: String) {
     it.property("moveTo", moveTo)
@@ -211,8 +209,8 @@ public class ImapUriDsl(
 
   /**
    * Will mark the jakarta.mail.Message as peeked before processing the mail message. This applies
-   * to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on the
-   * mail server, which allows us to rollback the mail message if there is an error processing in
+   * to IMAPMessage messages types only. By using peek, the mail will not be eagerly marked as SEEN on
+   * the mail server, which allows us to roll back the mail message if there is a processing error in
    * Camel.
    */
   public fun peek(peek: String) {
@@ -221,8 +219,8 @@ public class ImapUriDsl(
 
   /**
    * Will mark the jakarta.mail.Message as peeked before processing the mail message. This applies
-   * to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on the
-   * mail server, which allows us to rollback the mail message if there is an error processing in
+   * to IMAPMessage messages types only. By using peek, the mail will not be eagerly marked as SEEN on
+   * the mail server, which allows us to roll back the mail message if there is a processing error in
    * Camel.
    */
   public fun peek(peek: Boolean) {
@@ -246,7 +244,7 @@ public class ImapUriDsl(
   }
 
   /**
-   * If the mail consumer cannot retrieve a given mail message, then this option allows to skip the
+   * If the mail consumer cannot retrieve a given mail message, then this option allows skipping the
    * message and move on to retrieve the next mail message. The default behavior would be the consumer
    * throws an exception and no mails from the batch would be able to be routed by Camel.
    */
@@ -255,7 +253,7 @@ public class ImapUriDsl(
   }
 
   /**
-   * If the mail consumer cannot retrieve a given mail message, then this option allows to skip the
+   * If the mail consumer cannot retrieve a given mail message, then this option allows skipping the
    * message and move on to retrieve the next mail message. The default behavior would be the consumer
    * throws an exception and no mails from the batch would be able to be routed by Camel.
    */
@@ -326,7 +324,7 @@ public class ImapUriDsl(
   /**
    * Whether to fail processing the mail if the mail message contains attachments with duplicate
    * file names. If set to false, then the duplicate attachment is skipped and a WARN is logged. If set
-   * to true then an exception is thrown failing to process the mail message.
+   * to true, then an exception is thrown failing to process the mail message.
    */
   public fun failOnDuplicateFileAttachment(failOnDuplicateFileAttachment: String) {
     it.property("failOnDuplicateFileAttachment", failOnDuplicateFileAttachment)
@@ -335,7 +333,7 @@ public class ImapUriDsl(
   /**
    * Whether to fail processing the mail if the mail message contains attachments with duplicate
    * file names. If set to false, then the duplicate attachment is skipped and a WARN is logged. If set
-   * to true then an exception is thrown failing to process the mail message.
+   * to true, then an exception is thrown failing to process the mail message.
    */
   public fun failOnDuplicateFileAttachment(failOnDuplicateFileAttachment: Boolean) {
     it.property("failOnDuplicateFileAttachment", failOnDuplicateFileAttachment.toString())
@@ -343,7 +341,7 @@ public class ImapUriDsl(
 
   /**
    * Sets the maximum number of messages to consume during a poll. This can be used to avoid
-   * overloading a mail server, if a mailbox folder contains a lot of messages. Default value of -1
+   * overloading a mail server, if a mailbox folder contains a lot of messages. The default value of -1
    * means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner
    * case, where Camel will not consume any messages at all.
    */
@@ -353,7 +351,7 @@ public class ImapUriDsl(
 
   /**
    * Sets the maximum number of messages to consume during a poll. This can be used to avoid
-   * overloading a mail server, if a mailbox folder contains a lot of messages. Default value of -1
+   * overloading a mail server, if a mailbox folder contains a lot of messages. The default value of -1
    * means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner
    * case, where Camel will not consume any messages at all.
    */
@@ -379,8 +377,8 @@ public class ImapUriDsl(
    * Set the strategy to handle duplicate filenames of attachments never: attachments that have a
    * filename which is already present in the attachments will be ignored unless
    * failOnDuplicateFileAttachment is set to true. uuidPrefix: this will prefix the duplicate
-   * attachment filenames each with a uuid and underscore (uuid_filename.fileextension). uuidSuffix:
-   * this will suffix the duplicate attachment filenames each with a underscore and uuid
+   * attachment filenames each with an uuid and underscore (uuid_filename.fileextension). uuidSuffix:
+   * this will suffix the duplicate attachment filenames each with an underscore and uuid
    * (filename_uuid.fileextension).
    */
   public fun handleDuplicateAttachmentNames(handleDuplicateAttachmentNames: String) {
@@ -399,7 +397,7 @@ public class ImapUriDsl(
    * Specifies whether Camel should map the received mail message to Camel body/headers/attachments.
    * If set to true, the body of the mail message is mapped to the body of the Camel IN message, the
    * mail headers are mapped to IN headers, and the attachments to Camel IN attachment message. If this
-   * option is set to false then the IN message contains a raw jakarta.mail.Message. You can retrieve
+   * option is set to false, then the IN message contains a raw jakarta.mail.Message. You can retrieve
    * this raw message by calling exchange.getIn().getBody(jakarta.mail.Message.class).
    */
   public fun mapMailMessage(mapMailMessage: String) {
@@ -410,7 +408,7 @@ public class ImapUriDsl(
    * Specifies whether Camel should map the received mail message to Camel body/headers/attachments.
    * If set to true, the body of the mail message is mapped to the body of the Camel IN message, the
    * mail headers are mapped to IN headers, and the attachments to Camel IN attachment message. If this
-   * option is set to false then the IN message contains a raw jakarta.mail.Message. You can retrieve
+   * option is set to false, then the IN message contains a raw jakarta.mail.Message. You can retrieve
    * this raw message by calling exchange.getIn().getBody(jakarta.mail.Message.class).
    */
   public fun mapMailMessage(mapMailMessage: Boolean) {
@@ -472,7 +470,7 @@ public class ImapUriDsl(
   }
 
   /**
-   * Sets the To email address. Separate multiple email addresses with comma.
+   * Sets the destination email address. Separate multiple email addresses with comma.
    */
   public fun to(to: String) {
     it.property("to", to)
@@ -510,7 +508,7 @@ public class ImapUriDsl(
   }
 
   /**
-   * Sets additional java mail properties, that will append/override any default properties that is
+   * Sets additional java mail properties, that will append/override any default properties that are
    * set based on all the other options. This is useful if you need to add some special options but
    * want to keep the others as is.
    */
@@ -538,8 +536,8 @@ public class ImapUriDsl(
   }
 
   /**
-   * The authenticator for login. If set then the password and username are ignored. Can be used for
-   * tokens which can expire and therefore must be read dynamically.
+   * The authenticator for login. If set then the password and username are ignored. It can be used
+   * for tokens which can expire and therefore must be read dynamically.
    */
   public fun authenticator(authenticator: String) {
     it.property("authenticator", authenticator)
@@ -605,8 +603,8 @@ public class ImapUriDsl(
 
   /**
    * Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the
-   * charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed
-   * from the content-type and it relies on the platform default instead.
+   * charset is unsupported, then charset=XXX (where XXX represents the unsupported charset) is removed
+   * from the content-type, and it relies on the platform default instead.
    */
   public fun ignoreUnsupportedCharset(ignoreUnsupportedCharset: String) {
     it.property("ignoreUnsupportedCharset", ignoreUnsupportedCharset)
@@ -614,8 +612,8 @@ public class ImapUriDsl(
 
   /**
    * Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the
-   * charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed
-   * from the content-type and it relies on the platform default instead.
+   * charset is unsupported, then charset=XXX (where XXX represents the unsupported charset) is removed
+   * from the content-type, and it relies on the platform default instead.
    */
   public fun ignoreUnsupportedCharset(ignoreUnsupportedCharset: Boolean) {
     it.property("ignoreUnsupportedCharset", ignoreUnsupportedCharset.toString())
@@ -623,8 +621,8 @@ public class ImapUriDsl(
 
   /**
    * Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the
-   * charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed
-   * from the content-type and it relies on the platform default instead.
+   * charset is unsupported, then charset=XXX (where XXX represents the unsupported charset) is removed
+   * from the content-type, and it relies on the platform default instead.
    */
   public fun ignoreUriScheme(ignoreUriScheme: String) {
     it.property("ignoreUriScheme", ignoreUriScheme)
@@ -632,8 +630,8 @@ public class ImapUriDsl(
 
   /**
    * Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the
-   * charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed
-   * from the content-type and it relies on the platform default instead.
+   * charset is unsupported, then charset=XXX (where XXX represents the unsupported charset) is removed
+   * from the content-type, and it relies on the platform default instead.
    */
   public fun ignoreUriScheme(ignoreUriScheme: Boolean) {
     it.property("ignoreUriScheme", ignoreUriScheme.toString())

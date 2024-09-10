@@ -64,7 +64,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== InOut Pattern
+== Usage
+
+=== InOut Pattern
 
 InOut Pattern based on Message Key.
 When the producer sends the message, a messageKey will be generated and append to the message's key.

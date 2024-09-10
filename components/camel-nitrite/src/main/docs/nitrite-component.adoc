@@ -48,7 +48,9 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-== Producer operations
+== Usage
+
+=== Producer operations
 The following Operations are available to specify as `NitriteConstants.OPERATION` when producing to Nitrite.
 [width="100%",cols="2m,2m,1m,5",options="header"]
 |===

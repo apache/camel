@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-csv",
-    "version": "4.8.0-SNAPSHOT",
+    "version": "4.9.0-SNAPSHOT",
     "modelName": "csv",
     "modelJavaType": "org.apache.camel.model.dataformat.CsvDataFormat"
   },
@@ -32,7 +32,7 @@
     "nullStringDisabled": { "index": 13, "kind": "attribute", "displayName": "Null String Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Used to disable null strings" },
     "nullString": { "index": 14, "kind": "attribute", "displayName": "Null String", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the null string" },
     "quoteDisabled": { "index": 15, "kind": "attribute", "displayName": "Quote Disabled", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Used to disable quotes" },
-    "quote": { "index": 16, "kind": "attribute", "displayName": "Quote", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the quote which by default is" },
+    "quote": { "index": 16, "kind": "attribute", "displayName": "Quote", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the quote to use which by default is double-quote character" },
     "recordSeparatorDisabled": { "index": 17, "kind": "attribute", "displayName": "Record Separator Disabled", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Used for disabling record separator" },
     "recordSeparator": { "index": 18, "kind": "attribute", "displayName": "Record Separator", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the record separator (aka new line) which by default is new line characters (CRLF)" },
     "skipHeaderRecord": { "index": 19, "kind": "attribute", "displayName": "Skip Header Record", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to skip the header record in the output" },

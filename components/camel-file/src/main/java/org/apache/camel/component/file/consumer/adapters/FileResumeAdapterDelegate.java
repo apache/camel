@@ -72,12 +72,12 @@ public class FileResumeAdapterDelegate
         Object keyObj = deserializeKey(keyBuffer);
         Object valueObj = deserializeValue(valueBuffer);
 
-        if (valueObj instanceof File) {
-            directoryEntriesResumeAdapter.deserializeFileEntry((File) keyObj, (File) valueObj);
+        if (valueObj instanceof File file) {
+            directoryEntriesResumeAdapter.deserializeFileEntry((File) keyObj, file);
         }
 
-        if (valueObj instanceof Long) {
-            fileOffsetResumeAdapter.deserializeFileOffset((File) keyObj, (Long) valueObj);
+        if (valueObj instanceof Long aLong) {
+            fileOffsetResumeAdapter.deserializeFileOffset((File) keyObj, aLong);
         }
 
         return add(OffsetKeys.of(keyObj), Offsets.of(valueObj));

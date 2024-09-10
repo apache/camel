@@ -23,7 +23,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 /**
- * Legacy error handler for XML DSL in camel-spring-xml/camel-blueprint
+ * Legacy error handler for XML DSL in camel-spring-xml
  */
 @XmlTransient
 @Deprecated(since = "3.17.0")

@@ -319,7 +319,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                         lines.add(String.format("    %s %s (%s) (source: %s)", status, id, uri, loc));
                     }
                 }
-                LOG.info(String.format("Routes reloaded summary (total:%s started:%s)", total, started));
+                LOG.info("Routes reloaded summary (total:{} started:{})", total, started);
                 // if we are default/verbose then log each route line
                 if (getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Default
                         || getCamelContext().getStartupSummaryLevel() == StartupSummaryLevel.Verbose) {

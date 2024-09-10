@@ -52,6 +52,7 @@ import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.PausableDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -239,6 +240,7 @@ import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
@@ -3066,7 +3068,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "marshallerFactoryRef", type = "string", description = "Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling behavior by extending CsvMarshaller or creating it from scratch.", displayName = "Marshaller Factory Ref"),
                     @YamlProperty(name = "nullString", type = "string", description = "Sets the null string", displayName = "Null String"),
                     @YamlProperty(name = "nullStringDisabled", type = "boolean", description = "Used to disable null strings", displayName = "Null String Disabled"),
-                    @YamlProperty(name = "quote", type = "string", description = "Sets the quote which by default is", displayName = "Quote"),
+                    @YamlProperty(name = "quote", type = "string", description = "Sets the quote to use which by default is double-quote character", displayName = "Quote"),
                     @YamlProperty(name = "quoteDisabled", type = "boolean", description = "Used to disable quotes", displayName = "Quote Disabled"),
                     @YamlProperty(name = "quoteMode", type = "enum:ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE", description = "Sets the quote mode", displayName = "Quote Mode"),
                     @YamlProperty(name = "recordConverterRef", type = "string", description = "Refers to a custom CsvRecordConverter to lookup from the registry to use.", displayName = "Record Converter Ref"),
@@ -8811,6 +8813,84 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = {
+                    "lang-chain4j",
+                    "langChain4j"
+            },
+            types = org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "LangChain4J Tokenizer",
+            description = "Tokenizer that uses LangChain4j for tokenization.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+            }
+    )
+    public static class LangChain4jTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jTokenizerDefinition> {
+        public LangChain4jTokenizerDefinitionDeserializer() {
+            super(LangChain4jTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jTokenizerDefinition newInstance() {
+            return new LangChain4jTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jTokenizerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "maxOverlap": {
+                    String val = asText(node);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "language",
             types = org.apache.camel.model.language.LanguageExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -11595,6 +11675,94 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "poll",
+            inline = true,
+            types = org.apache.camel.model.PollDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Poll",
+            description = "Polls a message from a static endpoint",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "parameters", type = "object"),
+                    @YamlProperty(name = "timeout", type = "string", defaultValue = "20000", description = "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is 20000 (20 seconds).", displayName = "Timeout"),
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "Sets the uri of the endpoint to poll from.", displayName = "Uri"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current Message .", displayName = "Variable Receive")
+            }
+    )
+    public static class PollDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<PollDefinition> {
+        public PollDefinitionDeserializer() {
+            super(PollDefinition.class);
+        }
+
+        @Override
+        protected PollDefinition newInstance() {
+            return new PollDefinition();
+        }
+
+        @Override
+        protected PollDefinition newInstance(String value) {
+            return new PollDefinition(value);
+        }
+
+        @Override
+        protected void setEndpointUri(CamelContext camelContext, Node node, PollDefinition target,
+                Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
+        }
+
+        @Override
+        protected boolean setProperty(PollDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "timeout": {
+                    String val = asText(node);
+                    target.setTimeout(val);
+                    break;
+                }
+                case "uri": {
+                    String val = asText(node);
+                    target.setUri(val);
+                    break;
+                }
+                case "variableReceive": {
+                    String val = asText(node);
+                    target.setVariableReceive(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
                     break;
                 }
                 default: {

@@ -72,8 +72,8 @@ public final class Builder {
      */
     public static ValueBuilder method(Object beanOrBeanRef, String method) {
         Expression exp;
-        if (beanOrBeanRef instanceof String) {
-            exp = new MethodCallExpression((String) beanOrBeanRef, method);
+        if (beanOrBeanRef instanceof String str) {
+            exp = new MethodCallExpression(str, method);
         } else {
             exp = new MethodCallExpression(beanOrBeanRef, method);
         }
@@ -97,8 +97,8 @@ public final class Builder {
      */
     public static ValueBuilder constant(Object value) {
         Expression exp;
-        if (value instanceof String) {
-            exp = new ConstantExpression((String) value);
+        if (value instanceof String str) {
+            exp = new ConstantExpression(str);
         } else {
             exp = ExpressionBuilder.constantExpression(value);
         }
@@ -119,8 +119,8 @@ public final class Builder {
      */
     public static ValueBuilder constant(Object value, boolean trim) {
         Expression exp;
-        if (value instanceof String) {
-            ConstantExpression ce = new ConstantExpression((String) value);
+        if (value instanceof String str) {
+            ConstantExpression ce = new ConstantExpression(str);
             ce.setTrim(trim ? "true" : "false");
             exp = ce;
         } else {
@@ -333,7 +333,7 @@ public final class Builder {
     }
 
     /**
-     * Wasm TODO.
+     * Call a wasm (web assembly) function.
      */
     public static ValueBuilder wasm(String value) {
         WasmExpression exp = new WasmExpression(value);
@@ -341,7 +341,7 @@ public final class Builder {
     }
 
     /**
-     * Wasm TODO.
+     * Call a wasm (web assembly) function.
      */
     public static ValueBuilder wasm(String value, Class<?> resultType) {
         WasmExpression exp = new WasmExpression(value);

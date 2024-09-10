@@ -117,11 +117,11 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
             Object aggStrategy = lookupByName(ref);
-            if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
-            } else if (aggStrategy instanceof BiFunction) {
+            if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
+                strategy = aggregationStrategy;
+            } else if (aggStrategy instanceof BiFunction biFunction) {
                 AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter((BiFunction) aggStrategy);
+                        = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));

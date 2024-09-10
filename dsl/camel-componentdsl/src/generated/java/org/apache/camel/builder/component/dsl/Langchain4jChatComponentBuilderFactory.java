@@ -32,7 +32,7 @@ import org.apache.camel.component.langchain4j.chat.LangChain4jChatComponent;
 public interface Langchain4jChatComponentBuilderFactory {
 
     /**
-     * langChain4j Chat (camel-langchain4j-chat)
+     * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
      * 
      * Category: ai
@@ -46,7 +46,7 @@ public interface Langchain4jChatComponentBuilderFactory {
     }
 
     /**
-     * Builder for the langChain4j Chat component.
+     * Builder for the LangChain4j Chat component.
      */
     interface Langchain4jChatComponentBuilder extends ComponentBuilder<LangChain4jChatComponent> {
     
@@ -60,7 +60,7 @@ public interface Langchain4jChatComponentBuilderFactory {
          * &lt;code&gt;org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations&lt;/code&gt; type.
          * 
          * Default: CHAT_SINGLE_MESSAGE
-         * Group: producer
+         * Group: common
          * 
          * @param chatOperation the value to set
          * @return the dsl builder
@@ -76,13 +76,41 @@ public interface Langchain4jChatComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
         default Langchain4jChatComponentBuilder configuration(org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     
@@ -173,6 +201,7 @@ public interface Langchain4jChatComponentBuilderFactory {
             switch (name) {
             case "chatOperation": getOrCreateConfiguration((LangChain4jChatComponent) component).setChatOperation((org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations) value); return true;
             case "configuration": ((LangChain4jChatComponent) component).setConfiguration((org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration) value); return true;
+            case "bridgeErrorHandler": ((LangChain4jChatComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((LangChain4jChatComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((LangChain4jChatComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "chatModel": getOrCreateConfiguration((LangChain4jChatComponent) component).setChatModel((dev.langchain4j.model.chat.ChatLanguageModel) value); return true;

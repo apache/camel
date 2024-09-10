@@ -366,12 +366,12 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
      */
     protected Source getSource(Exchange exchange, Object content) {
         // body or header may already be a source
-        if (content instanceof Source) {
-            return (Source) content;
+        if (content instanceof Source source) {
+            return source;
         }
         Source source = null;
-        if (content instanceof InputStream) {
-            return new StreamSource((InputStream) content);
+        if (content instanceof InputStream stream) {
+            return new StreamSource(stream);
         }
         if (content != null) {
             TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, content.getClass());

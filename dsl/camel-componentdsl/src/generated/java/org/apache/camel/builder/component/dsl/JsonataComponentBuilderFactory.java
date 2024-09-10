@@ -96,6 +96,22 @@ public interface JsonataComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To configure custom frame bindings and inject user functions.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataFrameBinding&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param frameBinding the value to set
+         * @return the dsl builder
+         */
+        default JsonataComponentBuilder frameBinding(org.apache.camel.component.jsonata.JsonataFrameBinding frameBinding) {
+            doSetProperty("frameBinding", frameBinding);
+            return this;
+        }
     }
 
     class JsonataComponentBuilderImpl
@@ -113,6 +129,7 @@ public interface JsonataComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((JsonataComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JsonataComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "frameBinding": ((JsonataComponent) component).setFrameBinding((org.apache.camel.component.jsonata.JsonataFrameBinding) value); return true;
             default: return false;
             }
         }

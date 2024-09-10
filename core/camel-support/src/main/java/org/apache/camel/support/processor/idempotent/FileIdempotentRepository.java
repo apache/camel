@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -64,7 +66,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     private final AtomicBoolean init = new AtomicBoolean();
     private Map<String, Object> cache;
-    private final Object cacheAndStoreLock = new Object();
+    private final Lock lock = new ReentrantLock();
+    private final Lock cacheAndStoreLock = new ReentrantLock();
 
     @Metadata(description = "The maximum size of the 1st-level in-memory cache", defaultValue = "1000")
     private int cacheSize;
@@ -134,7 +137,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             if (cache.containsKey(key)) {
                 return false;
             } else {
@@ -160,15 +164,20 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
                 return true;
             }
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             // check 1st-level first and then fallback to check the actual file
             return cache.containsKey(key) || containsStore(key);
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 
@@ -176,10 +185,13 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
         boolean answer;
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             answer = cache.remove(key) != null;
             // remove from file cache also
             removeFromStore(key);
+        } finally {
+            cacheAndStoreLock.unlock();
         }
         return answer;
     }
@@ -193,13 +205,16 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     @Override
     @ManagedOperation(description = "Clear the store (danger this removes all entries)")
     public void clear() {
-        synchronized (cacheAndStoreLock) {
+        cacheAndStoreLock.lock();
+        try {
             cache.clear();
             if (cache instanceof LRUCache<String, Object> lruCache) {
                 lruCache.cleanUp();
             }
             // clear file store
             clearStore();
+        } finally {
+            cacheAndStoreLock.unlock();
         }
     }
 
@@ -279,14 +294,22 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Reset and clears the 1st-level cache to force it to reload from file
      */
     @ManagedOperation(description = "Reset and reloads the file store")
-    public synchronized void reset() throws IOException {
-        synchronized (cacheAndStoreLock) {
-            // run the cleanup task first
-            if (cache instanceof LRUCache<String, Object> lruCache) {
-                lruCache.cleanUp();
+    public void reset() throws IOException {
+        lock.lock();
+        try {
+            cacheAndStoreLock.lock();
+            try {
+                // run the cleanup task first
+                if (cache instanceof LRUCache<String, Object> lruCache) {
+                    lruCache.cleanUp();
+                }
+                cache.clear();
+                loadStore();
+            } finally {
+                cacheAndStoreLock.unlock();
             }
-            cache.clear();
-            loadStore();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -348,43 +371,48 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         }
     }
 
-    protected synchronized void removeFromStore(String key) {
-        LOG.debug("Removing: {} from idempotent filestore: {}", key, fileStore);
-
-        // we need to re-load the entire file and remove the key and then re-write the file
-        List<String> lines = new ArrayList<>();
-
-        boolean found = false;
+    protected void removeFromStore(String key) {
+        lock.lock();
         try {
-            try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
-                while (scanner.hasNext()) {
-                    String line = scanner.next();
-                    if (key.equals(line)) {
-                        found = true;
-                    } else {
-                        lines.add(line);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+            LOG.debug("Removing: {} from idempotent filestore: {}", key, fileStore);
 
-        if (found) {
-            // rewrite file
-            LOG.debug("Rewriting idempotent filestore: {} due to key: {} removed", fileStore, key);
-            FileOutputStream fos = null;
+            // we need to re-load the entire file and remove the key and then re-write the file
+            List<String> lines = new ArrayList<>();
+
+            boolean found = false;
             try {
-                fos = new FileOutputStream(fileStore);
-                for (String line : lines) {
-                    fos.write(line.getBytes());
-                    fos.write(STORE_DELIMITER.getBytes());
+                try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+                    while (scanner.hasNext()) {
+                        String line = scanner.next();
+                        if (key.equals(line)) {
+                            found = true;
+                        } else {
+                            lines.add(line);
+                        }
+                    }
                 }
             } catch (IOException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            } finally {
-                IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
             }
+
+            if (found) {
+                // rewrite file
+                LOG.debug("Rewriting idempotent filestore: {} due to key: {} removed", fileStore, key);
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(fileStore);
+                    for (String line : lines) {
+                        fos.write(line.getBytes());
+                        fos.write(STORE_DELIMITER.getBytes());
+                    }
+                } catch (IOException e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                } finally {
+                    IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
+                }
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -403,50 +431,55 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     /**
      * Trunks the file store when the max store size is hit by dropping the most oldest entries.
      */
-    protected synchronized void trunkStore() {
-        if (fileStore == null || !fileStore.exists()) {
-            return;
-        }
-
-        LOG.debug("Trunking: {} oldest entries from idempotent filestore: {}", dropOldestFileStore, fileStore);
-
-        // we need to re-load the entire file and remove the key and then re-write the file
-        List<String> lines = new ArrayList<>();
-
-        int count = 0;
+    protected void trunkStore() {
+        lock.lock();
         try {
-            try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
-                while (scanner.hasNext()) {
-                    String line = scanner.next();
-                    count++;
-                    if (count > dropOldestFileStore) {
-                        lines.add(line);
-                    }
-                }
+            if (fileStore == null || !fileStore.exists()) {
+                return;
             }
-        } catch (IOException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
 
-        if (!lines.isEmpty()) {
-            // rewrite file
-            LOG.debug("Rewriting idempotent filestore: {} with {} entries:", fileStore, lines.size());
-            FileOutputStream fos = null;
+            LOG.debug("Trunking: {} oldest entries from idempotent filestore: {}", dropOldestFileStore, fileStore);
+
+            // we need to re-load the entire file and remove the key and then re-write the file
+            List<String> lines = new ArrayList<>();
+
+            int count = 0;
             try {
-                fos = new FileOutputStream(fileStore);
-                for (String line : lines) {
-                    fos.write(line.getBytes());
-                    fos.write(STORE_DELIMITER.getBytes());
+                try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+                    while (scanner.hasNext()) {
+                        String line = scanner.next();
+                        count++;
+                        if (count > dropOldestFileStore) {
+                            lines.add(line);
+                        }
+                    }
                 }
             } catch (IOException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            } finally {
-                IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
             }
-        } else {
-            // its a small file so recreate the file
-            LOG.debug("Clearing idempotent filestore: {}", fileStore);
-            clearStore();
+
+            if (!lines.isEmpty()) {
+                // rewrite file
+                LOG.debug("Rewriting idempotent filestore: {} with {} entries:", fileStore, lines.size());
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(fileStore);
+                    for (String line : lines) {
+                        fos.write(line.getBytes());
+                        fos.write(STORE_DELIMITER.getBytes());
+                    }
+                } catch (IOException e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                } finally {
+                    IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
+                }
+            } else {
+                // its a small file so recreate the file
+                LOG.debug("Clearing idempotent filestore: {}", fileStore);
+                clearStore();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
