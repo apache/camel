@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "Etcd3AggregationRepository",
     "javaType": "org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Etcd3 Aggregation Repository",
     "description": "Aggregation repository that uses Etcd3 to store exchanges.",
     "deprecated": false,

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "bean",
           description = "Aggregation repository that uses LevelDB to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 

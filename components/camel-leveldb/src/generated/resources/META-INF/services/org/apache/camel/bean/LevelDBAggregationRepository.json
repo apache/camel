@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "LevelDBAggregationRepository",
     "javaType": "org.apache.camel.component.leveldb.LevelDBAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Level DBAggregation Repository",
     "description": "Aggregation repository that uses LevelDB to store exchanges.",
     "deprecated": false,

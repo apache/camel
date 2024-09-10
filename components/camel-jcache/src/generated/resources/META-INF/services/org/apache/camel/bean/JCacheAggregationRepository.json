@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "JCacheAggregationRepository",
     "javaType": "org.apache.camel.component.jcache.processor.aggregate.JCacheAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "JCache Aggregation Repository",
     "description": "Aggregation repository that uses JCache to store exchanges.",
     "deprecated": false,

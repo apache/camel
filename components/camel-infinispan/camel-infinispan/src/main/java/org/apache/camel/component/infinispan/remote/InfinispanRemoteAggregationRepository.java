@@ -32,7 +32,7 @@ import org.infinispan.commons.configuration.Combine;
 
 @Metadata(label = "bean",
           description = "Aggregation repository that uses remote Infinispan to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
 public class InfinispanRemoteAggregationRepository extends InfinispanAggregationRepository {
 

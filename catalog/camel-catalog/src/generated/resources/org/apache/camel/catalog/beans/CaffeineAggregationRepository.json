@@ -3,7 +3,7 @@
     "kind": "bean",
     "name": "CaffeineAggregationRepository",
     "javaType": "org.apache.camel.component.caffeine.processor.aggregate.CaffeineAggregationRepository",
-    "interfaceType": "org.apache.camel.AggregationStrategy",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Caffeine Aggregation Repository",
     "description": "Aggregation repository that uses Caffeine Cache to store exchanges.",
     "deprecated": false,
