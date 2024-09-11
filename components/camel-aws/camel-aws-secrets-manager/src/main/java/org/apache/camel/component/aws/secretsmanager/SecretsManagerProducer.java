@@ -36,8 +36,29 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.model.*;
+import software.amazon.awssdk.services.secretsmanager.model.BatchGetSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.BatchGetSecretValueResponse;
+import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
+import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.Builder;
+import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
+import software.amazon.awssdk.services.secretsmanager.model.ReplicaRegionType;
+import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsRequest;
+import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsResponse;
+import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.RotateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.SecretValueEntry;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
 /**
  * A Producer which sends messages to the Amazon Secrets Manager Service SDK v2
