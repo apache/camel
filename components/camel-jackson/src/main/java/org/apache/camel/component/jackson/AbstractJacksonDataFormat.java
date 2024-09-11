@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -157,7 +158,11 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (this.schemaResolver != null) {
             schema = this.schemaResolver.resolve(exchange);
         }
-        this.objectMapper.writerWithView(jsonView).with(schema).writeValue(stream, graph);
+        // using OutputStreamWriter because of Jackson not handling 4-byte characters properly with only a stream
+        // https://github.com/FasterXML/jackson-core/issues/223
+        try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
+            this.objectMapper.writerWithView(jsonView).with(schema).writeValue(writer, graph);
+        }
 
         if (contentTypeHeader) {
             exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
