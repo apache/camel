@@ -34,6 +34,8 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test")
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "false")
 @Timeout(60)
 @Tags({ @Tag("idempotent") })
