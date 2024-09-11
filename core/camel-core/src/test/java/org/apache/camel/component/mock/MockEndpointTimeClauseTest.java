@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
@@ -92,12 +92,10 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
             }
         });
 
-        try {
-            mock.assertIsSatisfied();
-            fail("Should have thrown an exception");
-        } catch (AssertionError e) {
-            assertEquals("mock://result Received message count. Expected: <1> but was: <2>", e.getMessage());
-        }
+        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied,
+                "Should have thrown an exception");
+
+        assertEquals("mock://result Received message count. Expected: <1> but was: <2>", e.getMessage());
 
         executor.shutdownNow();
     }
