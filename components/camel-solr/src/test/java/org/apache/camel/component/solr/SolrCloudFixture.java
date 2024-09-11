@@ -134,7 +134,7 @@ public class SolrCloudFixture {
 
         String destPath = "/configs/" + confName + "/" + destName;
         LOG.info("zk put {} to {}", file.getAbsolutePath(), destPath);
-        zkClient.makePath(destPath, file.toPath(), false, true);
+        zkClient.makePath(destPath, Files.readAllBytes(file.toPath()), false, true);
     }
 
     // static to share with distrib test
