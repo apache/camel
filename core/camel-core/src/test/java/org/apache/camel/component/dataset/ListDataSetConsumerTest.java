@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 public class ListDataSetConsumerTest extends ContextTestSupport {
 
@@ -51,6 +52,8 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                              disabledReason = "Apache CI nodes are too resource constrained for this test")
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         dataSet.setSize(10);
