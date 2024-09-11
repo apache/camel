@@ -52,7 +52,14 @@ public final class Strings {
     public static String wrapCamelCaseWords(String option, int watermark, String lineSep) {
         String text = option.replaceAll("(?=[A-Z][a-z])", " ");
         text = wrapWords(text, "", lineSep, watermark, false);
-        return Character.toUpperCase(text.charAt(0)) + text.substring(1);
+        text = Character.toUpperCase(text.charAt(0)) + text.substring(1);
+        if (text.startsWith(lineSep)) {
+            text = text.substring(lineSep.length());
+        }
+        if (text.endsWith(lineSep)) {
+            text = text.substring(0, text.length() - lineSep.length());
+        }
+        return text;
     }
 
     /**
