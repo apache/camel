@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xslt.XsltBuilder.xslt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XsltOutputFileTest extends ContextTestSupport {
 
@@ -51,13 +51,13 @@ public class XsltOutputFileTest extends ContextTestSupport {
 
     @Test
     public void testXsltOutputFileMissingHeader() {
-        try {
-            template.sendBody("direct:start", "<hello>world!</hello>");
-            fail("Should thrown exception");
-        } catch (CamelExecutionException e) {
-            NoSuchHeaderException nshe = assertIsInstanceOf(NoSuchHeaderException.class, e.getCause());
-            assertEquals(Exchange.XSLT_FILE_NAME, nshe.getHeaderName());
-        }
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "<hello>world!</hello>"),
+                "Should thrown exception");
+
+        NoSuchHeaderException nshe = assertIsInstanceOf(NoSuchHeaderException.class, e.getCause());
+        assertEquals(Exchange.XSLT_FILE_NAME, nshe.getHeaderName());
     }
 
     @Override
