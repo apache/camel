@@ -30,6 +30,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test")
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class TemporaryQueueRouteTest extends AbstractJMSTest {
     @Order(2)
