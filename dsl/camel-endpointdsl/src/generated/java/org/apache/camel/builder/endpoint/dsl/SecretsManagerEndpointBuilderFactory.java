@@ -685,6 +685,18 @@ public interface SecretsManagerEndpointBuilderFactory {
             return "CamelAwsSecretsManagerSecretId";
         }
         /**
+         * A comma separated list of the ARN or name of the secrets.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSecretsManagerSecretIds}.
+         */
+        public String awsSecretsManagerSecretIds() {
+            return "CamelAwsSecretsManagerSecretIds";
+        }
+        /**
          * The ARN of the Lambda rotation function that can rotate the secret.
          * 
          * The option is a: {@code String} type.
@@ -709,6 +721,20 @@ public interface SecretsManagerEndpointBuilderFactory {
          */
         public String awsSecretsManagerSecretVersionId() {
             return "CamelAwsSecretsManagerSecretVersionId";
+        }
+        /**
+         * The unique identifier of the version of the secrets in batch
+         * operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsSecretsManagerSecretVersionIds}.
+         */
+        public String awsSecretsManagerSecretVersionIds() {
+            return "CamelAwsSecretsManagerSecretVersionIds";
         }
         /**
          * A comma separated list of Regions in which to replicate the secret.
