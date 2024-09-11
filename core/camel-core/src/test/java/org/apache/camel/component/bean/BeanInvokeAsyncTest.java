@@ -65,17 +65,17 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
     }
 
     @Test
-    public void testThrowSomething() throws Exception {
-        try {
-            runTestSendBody(m -> m.expectedMessageCount(0), "SomeProblem", this::throwSomething);
-            fail("Exception expected");
-        } catch (ExecutionException e) {
-            boolean b1 = e.getCause() instanceof CamelExecutionException;
-            assertTrue(b1);
-            boolean b = e.getCause().getCause() instanceof IllegalStateException;
-            assertTrue(b);
-            assertEquals("SomeProblem", e.getCause().getCause().getMessage());
-        }
+    public void testThrowSomething() {
+
+        ExecutionException e = assertThrows(ExecutionException.class,
+                () -> runTestSendBody(m -> m.expectedMessageCount(0), "SomeProblem", this::throwSomething),
+                "Exception expected");
+
+        boolean b1 = e.getCause() instanceof CamelExecutionException;
+        assertTrue(b1);
+        boolean b = e.getCause().getCause() instanceof IllegalStateException;
+        assertTrue(b);
+        assertEquals("SomeProblem", e.getCause().getCause().getMessage());
     }
 
     private void runTestSendBody(String expectedBody, String sentBody, Function<String, String> processor) throws Exception {
