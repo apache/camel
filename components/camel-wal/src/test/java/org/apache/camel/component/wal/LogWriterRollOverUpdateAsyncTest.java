@@ -21,9 +21,12 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test")
 public class LogWriterRollOverUpdateAsyncTest extends LogWriterRollOverUpdateAsyncBase {
     private static final Logger LOG = LoggerFactory.getLogger(LogWriterRollOverUpdateAsyncTest.class);
 
