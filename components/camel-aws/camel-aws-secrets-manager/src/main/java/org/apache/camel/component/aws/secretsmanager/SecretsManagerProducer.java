@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -33,26 +36,8 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
-import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
-import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
+import software.amazon.awssdk.services.secretsmanager.model.*;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.Builder;
-import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
-import software.amazon.awssdk.services.secretsmanager.model.ReplicaRegionType;
-import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsRequest;
-import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsResponse;
-import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.RotateSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
 /**
  * A Producer which sends messages to the Amazon Secrets Manager Service SDK v2
@@ -81,6 +66,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 break;
             case getSecret:
                 getSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case batchGetSecret:
+                batchGetSecret(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
             case describeSecret:
                 describeSecret(getEndpoint().getSecretsManagerClient(), exchange);
@@ -405,6 +393,59 @@ public class SecretsManagerProducer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+    }
+
+    private void batchGetSecret(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        BatchGetSecretValueRequest request = null;
+        BatchGetSecretValueResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(BatchGetSecretValueRequest.class);
+        } else {
+            BatchGetSecretValueRequest.Builder builder = BatchGetSecretValueRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_IDS))) {
+                List<String> secretIds
+                        = Arrays.asList(
+                                exchange.getIn().getHeader(SecretsManagerConstants.SECRET_IDS, String.class).split(","));
+                builder.secretIdList(secretIds);
+            } else {
+                throw new IllegalArgumentException("Secret Ids must be specified");
+            }
+            request = builder.build();
+        }
+        try {
+            result = secretsManagerClient.batchGetSecretValue(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Batch Get Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        if (getConfiguration().isBinaryPayload()) {
+            List<String> secretsReturned = new ArrayList<String>();
+            if (!result.secretValues().isEmpty()) {
+                for (SecretValueEntry entry : result.secretValues()) {
+                    secretsReturned.add(new String(Base64.getDecoder().decode(entry.secretBinary().asByteBuffer()).array()));
+                }
+            }
+            message.setBody(secretsReturned);
+        } else {
+            List<String> secretsReturned = new ArrayList<String>();
+            if (!result.secretValues().isEmpty()) {
+                for (SecretValueEntry entry : result.secretValues()) {
+                    secretsReturned.add(entry.secretString());
+                }
+            }
+            message.setBody(secretsReturned);
+        }
+        List<String> versionIds = new ArrayList<String>();
+        if (!result.secretValues().isEmpty()) {
+            for (SecretValueEntry entry : result.secretValues()) {
+                if (ObjectHelper.isNotEmpty(entry.versionId())) {
+                    versionIds.add(entry.versionId());
+                }
+            }
+        }
+        exchange.getMessage().setHeader(SecretsManagerConstants.SECRET_VERSION_IDS, versionIds);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
