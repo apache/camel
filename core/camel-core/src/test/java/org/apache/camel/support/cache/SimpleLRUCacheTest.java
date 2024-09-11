@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -40,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The test class for {@link SimpleLRUCache}.
  */
 @Isolated("Some of these tests creates a lot of threads")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test")
 class SimpleLRUCacheTest {
 
     private final List<String> consumed = new ArrayList<>();
