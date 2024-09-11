@@ -39,6 +39,7 @@ import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.minio.MinioTestUtils.countObjectsInBucket;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -109,6 +110,8 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                              disabledReason = "Apache CI nodes are too resource constrained for this test")
     void deleteObjectsTest() throws Exception {
 
         client.removeBucket(RemoveBucketArgs.builder().bucket(BUCKET_NAME).build());

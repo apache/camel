@@ -31,9 +31,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test")
 class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIT.class);
