@@ -28,10 +28,12 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
 
 class ExportCamelMain extends Export {
@@ -165,9 +167,12 @@ class ExportCamelMain extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        if (camelVersion == null) {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-            camelVersion = catalog.getCatalogVersion();
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        if (ObjectHelper.isEmpty(camelVersion)) {
+            camelVersion = catalog.getLoadedVersion();
+        }
+        if (ObjectHelper.isEmpty(camelVersion)) {
+            camelVersion = VersionHelper.extractCamelVersion();
         }
 
         context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
