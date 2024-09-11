@@ -52,10 +52,10 @@ function main() {
 
   if [[ ${fastBuild} = "true" ]] ; then
     echo "Launching a fast build against the projects ${pl} and their dependencies"
-    $mavenBinary -l $log $MVND_OPTS -Dquickly install -pl "$pl" -am
+    $mavenBinary -l $log $MVND_OPTS -Dquickly install -pl "parent,$pl" -am
   else
     echo "Launching tests of the projects ${pl}"
-    $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
+    $mavenBinary -l $log $MVND_OPTS install -pl "parent,$pl"
     ret=$?
 
     if [[ ${ret} -ne 0 ]] ; then
