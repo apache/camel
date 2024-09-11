@@ -82,7 +82,7 @@ public class SpringManagedSedaEndpointTest extends SpringTestSupport {
         size = (Integer) mbeanServer.getAttribute(name, "CurrentQueueSize");
         assertEquals(1, size.intValue());
 
-        Long size2 = (Long) mbeanServer.invoke(name, "queueSize", null, null);
+        Integer size2 = (Integer) (mbeanServer.invoke(name, "queueSize", null, null));
         assertEquals(1, size2.longValue());
 
         String out
