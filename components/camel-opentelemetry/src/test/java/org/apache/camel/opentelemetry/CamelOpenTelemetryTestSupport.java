@@ -33,9 +33,11 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.sdk.logs.data.LogRecordData;
 import io.opentelemetry.sdk.trace.data.SpanData;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -62,6 +64,9 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     @RegisterExtension
     public final CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
+
+    @BindToRegistry
+    ThreadPoolFactory threadPoolFactory = new OpenTelemetryInstrumentedThreadPoolFactory();
 
     SpanTestData[] expected;
     Tracer tracer;
