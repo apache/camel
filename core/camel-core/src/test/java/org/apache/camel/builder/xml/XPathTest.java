@@ -46,7 +46,12 @@ import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.xpath.XPathBuilder.xpath;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XPathTest extends ContextTestSupport {
 
@@ -81,12 +86,11 @@ public class XPathTest extends ContextTestSupport {
 
     @Test
     public void testInvalidXPath() {
-        try {
-            assertPredicate("/foo/", "<foo><bar xyz='cheese'/></foo>", true);
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(XPathExpressionException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> assertPredicate("/foo/", "<foo><bar xyz='cheese'/></foo>", true),
+                "Should have thrown exception");
+
+        assertIsInstanceOf(XPathExpressionException.class, e.getCause());
     }
 
     @Test
