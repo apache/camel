@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +47,8 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                              disabledReason = "Apache CI nodes are too resource constrained for this test")
     public void testPreMoveNoopSameFileTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
