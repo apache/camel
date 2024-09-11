@@ -710,6 +710,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             clientActivityListener.onUploadComplete(endpoint.getConfiguration().remoteServerInformation(), name);
         }
 
+        if (!answer) {
+            Integer code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, Integer.class);
+            String status = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_STRING, String.class);
+            if (code != null && status != null) {
+                throw new GenericFileOperationFailedException(code, status, "Error writing file [" + targetName + "]");
+            }
+        }
+
         return answer;
     }
 
