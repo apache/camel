@@ -26,12 +26,14 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.apache.camel.test.junit5.ThrottlingExecutor.slowly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
@@ -81,15 +83,13 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         addTestRouteWithIdleTimeout(-1);
 
-        for (int i = 1; i <= connectionCount; ++i) {
-            mllpClient.connect();
-            Thread.sleep(connectionMillis);
-            mllpClient.close();
-        }
+        slowly().repeat(connectionCount).awaiting(connectionMillis, TimeUnit.MILLISECONDS)
+                .beforeEach((i) -> mllpClient.connect())
+                .afterEach((i) -> mllpClient.reset())
+                .execute();
 
         // Connect one more time and allow a client thread to start
         mllpClient.connect();
-        Thread.sleep(1000);
         mllpClient.close();
 
         MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
@@ -105,15 +105,13 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         addTestRouteWithIdleTimeout(-1);
 
-        for (int i = 1; i <= connectionCount; ++i) {
-            mllpClient.connect();
-            Thread.sleep(connectionMillis);
-            mllpClient.reset();
-        }
+        slowly().repeat(connectionCount).awaiting(connectionMillis, TimeUnit.MILLISECONDS)
+                .beforeEach((i) -> mllpClient.connect())
+                .afterEach((i) -> mllpClient.reset())
+                .execute();
 
         // Connect one more time and allow a client thread to start
         mllpClient.connect();
-        Thread.sleep(1000);
         mllpClient.reset();
 
         MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
@@ -136,17 +134,17 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
 
         mllpClient.connect();
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage);
-        Thread.sleep(idleTimeout + RECEIVE_TIMEOUT);
 
-        try {
-            mllpClient.checkConnection();
-            fail("The MllpClientResource should have thrown an exception when writing to the reset socket");
-        } catch (MllpJUnitResourceException expectedEx) {
-            assertEquals("checkConnection failed - read() returned END_OF_STREAM", expectedEx.getMessage());
-            assertNull(expectedEx.getCause());
-        }
+        Awaitility.await().untilAsserted(() -> {
 
-        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
+            MllpJUnitResourceException ex = assertThrows(MllpJUnitResourceException.class, () -> mllpClient.checkConnection(),
+                    "The MllpClientResource should have thrown an exception when writing to the reset socket");
+
+            assertEquals("checkConnection failed - read() returned END_OF_STREAM", ex.getMessage());
+            assertNull(ex.getCause());
+
+            MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
+        });
     }
 
     void addTestRouteWithIdleTimeout(final int idleTimeout) throws Exception {

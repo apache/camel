@@ -232,6 +232,11 @@ public class TransientCamelContextManager implements CamelContextManager {
 
     }
 
+    @Override
+    public void close() {
+        // NO-OP
+    }
+
     private static void doStopTemplates(
             ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate) {
         if (consumer != null) {

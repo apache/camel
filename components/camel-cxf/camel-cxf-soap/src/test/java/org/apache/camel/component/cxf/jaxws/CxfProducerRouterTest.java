@@ -36,7 +36,6 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.MessageContentsList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfProducerRouterTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CxfProducerRouterTest.class);
     private static final String SIMPLE_SERVER_ADDRESS

@@ -33,14 +33,12 @@ import org.apache.camel.wsdl_first.PersonMultiPartService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test that verifies multi part SOAP message functionality
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
     protected static int port1 = CXFTestSupport.getPort1();
     protected static int port2 = CXFTestSupport.getPort2();

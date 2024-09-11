@@ -317,8 +317,7 @@ public interface Activemq6ComponentBuilderFactory {
          * the Exchange is fully processed before the JmsConsumer will pickup
          * the next message from the JMS queue. Note if transacted has been
          * enabled, then asyncConsumer=true does not run asynchronously, as
-         * transaction must be executed synchronously (Camel 3.0 may support
-         * async transactions).
+         * transaction must be executed synchronously.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

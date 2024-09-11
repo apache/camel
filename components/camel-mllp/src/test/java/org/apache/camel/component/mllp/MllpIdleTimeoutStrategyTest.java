@@ -33,6 +33,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -146,10 +147,12 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
 
     private void sendHl7Message(ProducerTemplate template) throws Exception {
         target.expectedMessageCount(1);
-        // Need to send one message to get the connection established
+
         template.sendBody(Hl7TestMessageGenerator.generateMessage());
-        Thread.sleep(IDLE_TIMEOUT * 3);
-        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
+
+        // Need to send one message to get the connection established
+        Awaitility.await().atMost(IDLE_TIMEOUT * 3, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS));
     }
 
     @Test

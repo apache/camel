@@ -26,13 +26,11 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerMessageTest extends CamelTestSupport {
     private static final String TEST_MESSAGE = "Hello World!";
 

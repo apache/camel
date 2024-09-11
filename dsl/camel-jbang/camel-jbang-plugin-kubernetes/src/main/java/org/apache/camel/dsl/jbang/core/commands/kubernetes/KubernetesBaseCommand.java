@@ -83,8 +83,6 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
     /**
      * Gets Kubernetes client. In case custom kubeConfig option is set initializes the client with the config otherwise
      * uses default client.
-     *
-     * @return
      */
     protected KubernetesClient client() {
         if (kubernetesClient == null) {
@@ -100,8 +98,6 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
 
     /**
      * Sets the Kubernetes client.
-     *
-     * @param kubernetesClient
      */
     public KubernetesBaseCommand withClient(KubernetesClient kubernetesClient) {
         this.kubernetesClient = kubernetesClient;

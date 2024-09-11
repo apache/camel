@@ -257,7 +257,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             if (ObjectHelper.isEmpty(returnValue)) {
                 returnValue = defaultValue;
             }
-        } catch (SecretsManagerException | IllegalArgumentException ex) {
+        } catch (SecretsManagerException ex) {
             if (ObjectHelper.isNotEmpty(defaultValue)) {
                 returnValue = defaultValue;
             } else {

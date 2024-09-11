@@ -19,11 +19,8 @@ package org.apache.camel.dataformat.barcode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.context.ApplicationContext;
 
-@TestInstance(Lifecycle.PER_CLASS)
 public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
 
     @Override

@@ -523,7 +523,6 @@
                             <exclude>**/MySecondFooConfigurer.java</exclude>
                             <exclude>**/MySecondBarConfigurer.java</exclude>
                             <exclude>**/stockquote-response.xml</exclude>
-                            <exclude>**/org.apache.camel.dsl.kotlin.KotlinDSL.classname</exclude>
                             <exclude>**/quarkus-pom.ftl</exclude>
                             <exclude>**/quarkus-docker/*</exclude>
                             <exclude>.github/**/*</exclude>

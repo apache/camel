@@ -36,6 +36,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
 
 class ExportSpringBoot extends Export {
@@ -158,6 +159,12 @@ class ExportSpringBoot extends Export {
         String repos = getMavenRepositories(settings, prop, camelSpringBootVersion);
 
         CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
+        if (ObjectHelper.isEmpty(camelVersion)) {
+            camelVersion = catalog.getLoadedVersion();
+        }
+        if (ObjectHelper.isEmpty(camelVersion)) {
+            camelVersion = VersionHelper.extractCamelVersion();
+        }
 
         // First try to load a specialized template from the catalog, if the catalog does not provide it
         // fallback to the template defined in camel-jbang-core
@@ -168,8 +175,6 @@ class ExportSpringBoot extends Export {
         } else {
             context = readResourceTemplate("templates/" + pomTemplateName);
         }
-
-        String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);

@@ -42,3 +42,56 @@ to this
 `{{aws:database#username}}`
 
 You could find more details on CAMEL-21179 issue
+
+=== camel-google-secret-manager properties function
+
+The syntax for retrieving a single field of a secret has been changed.
+
+From this
+
+`{{gcp:database/username}}`
+
+to this
+
+`{{gcp:database#username}}`
+
+You could find more details on CAMEL-21179 issue
+
+=== camel-azure-key-vault properties function
+
+The syntax for retrieving a single field of a secret has been changed.
+
+From this
+
+`{{azure:database/username}}`
+
+to this
+
+`{{azure:database#username}}`
+
+You could find more details on CAMEL-21179 issue
+
+=== camel-test
+
+The `CamelTestSupport` class was modified so that the JUnit 5 extension code that was part of the class itself,
+was moved to a separate class. This is part of the work being done on https://issues.apache.org/jira/browse/CAMEL-20837[CAMEL-20837]
+to modernize the base test code.
+
+In many cases, code should work with no changes provided they are not using any of the API methods that
+were deprecated in Camel 4.7.0.
+Additionally, starting with Camel 4.9, we strongly recommend users to avoid relying on single-instance contexts (created
+via `@TestInstance(TestInstance.Lifecycle.PER_CLASS)`), as this is considered a deprecated functionality that will be removed in the
+future.
+The logs will print a warning message if this behavior is detected.
+
+=== Removed API
+
+==== Kotlin DSL
+
+The Kotlin DSL which was deprecated in Camel 4.7.0 has now been removed. The routes must be migrated to another DSL such as Java, Yaml or xml.
+
+=== Deprecated Components
+
+The following components that were marked as deprecated:
+
+* 

@@ -21,9 +21,7 @@ import jakarta.xml.ws.Endpoint;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
     static int port1 = CXFTestSupport.getPort1();
     static int port2 = CXFTestSupport.getPort2();

@@ -31,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.fusesource.jansi.Ansi;
@@ -66,6 +67,10 @@ public class CamelBrowseAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--wide-uri" },
                         description = "List endpoint URI in full details")
     boolean wideUri;
+
+    @CommandLine.Option(names = { "--mask" },
+                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    boolean mask;
 
     @CommandLine.Option(names = { "--dump" }, defaultValue = "false",
                         description = "Whether to include message dumps")
@@ -174,6 +179,9 @@ public class CamelBrowseAction extends ActionBaseCommand {
                 for (int i = 0; arr != null && i < arr.size(); i++) {
                     JsonObject o = (JsonObject) arr.get(i);
                     row.uri = o.getString("endpointUri");
+                    if (mask) {
+                        row.uri = URISupport.sanitizeUri(row.uri);
+                    }
                     row.queueSize = o.getInteger("queueSize");
                     row.limit = o.getInteger("limit");
                     row.position = o.getInteger("position");
@@ -224,6 +232,9 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         if (!showBody && message != null) {
                             message.remove("body");
                         }
+                    }
+                    if (mask) {
+                        row.uri = URISupport.sanitizeUri(row.uri);
                     }
                     JsonObject ep = new JsonObject();
                     ep.put("endpoint", row.uri);

@@ -99,9 +99,14 @@ public interface CamelContextManager {
     void stopTemplates();
 
     /**
-     * Fully stops the manager
+     * Stops the manager (typically run after every test execution)
      */
     void stop();
+
+    /**
+     * Close the manager (this is run after all tests have been executed)
+     */
+    void close();
 
     /**
      * Sets the JUnit's data context that may be used to provide additional information for some tests

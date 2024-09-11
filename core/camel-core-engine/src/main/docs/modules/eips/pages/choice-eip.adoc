@@ -141,7 +141,7 @@ from("direct:start")
 However, the code will still not compile.
 
 The reason is we have stretched how far we can take the good old Java language in terms of
-xref:manual::dsl.adoc[DSL]. In a more dynamic or modern language such as Kotlin or Groovy
+xref:manual::dsl.adoc[DSL]. In a more dynamic or modern language such as Groovy
 you would be able to let it be stack based, so the `.end()` will pop the last type of the
 stack, and you would return to the scope of the Choice EIP.
 

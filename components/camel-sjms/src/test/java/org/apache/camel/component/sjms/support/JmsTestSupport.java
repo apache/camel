@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.support;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +41,8 @@ public abstract class JmsTestSupport extends JmsCommonTestSupport {
     /**
      * Set up the Broker
      */
-    @Override
-    protected void doPreSetup() throws Exception {
-        preTestCleanup();
-        loadTestProperties();
-
+    @BeforeEach
+    protected final void setupBrokerUri() {
         brokerUri = getBrokerUri();
     }
 

@@ -443,8 +443,7 @@ public class JmsConfiguration implements Cloneable {
                             + " while the previous message is being processed asynchronously (by the Asynchronous Routing Engine)."
                             + " This means that messages may be processed not 100% strictly in order. If disabled (as default)"
                             + " then the Exchange is fully processed before the JmsConsumer will pickup the next message from the JMS queue."
-                            + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction"
-                            + "  must be executed synchronously (Camel 3.0 may support async transactions).")
+                            + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction must be executed synchronously.")
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
     @UriParam(label = "producer,advanced", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION",
@@ -2157,7 +2156,7 @@ public class JmsConfiguration implements Cloneable {
      * Asynchronous Routing Engine). This means that messages may be processed not 100% strictly in order. If disabled
      * (as default), then the Exchange is fully processed before the JmsConsumer will pick up the next message from the
      * JMS queue. Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as
-     * transaction must be executed synchronously (Camel 3.0 may support async transactions).
+     * transaction must be executed synchronously.
      */
     public void setAsyncConsumer(boolean asyncConsumer) {
         this.asyncConsumer = asyncConsumer;

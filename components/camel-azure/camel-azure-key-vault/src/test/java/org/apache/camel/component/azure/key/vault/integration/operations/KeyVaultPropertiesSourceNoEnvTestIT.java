@@ -53,7 +53,7 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("test");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -74,7 +74,7 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("test");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -90,7 +90,7 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{azure:database/username}}")).to("mock:bar");
+                from("direct:start").setBody(simple("{{azure:database#username}}")).to("mock:bar");
             }
         });
         context.start();
@@ -111,8 +111,8 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{azure:dbsample/username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{azure:dbsample/password:password}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{azure:dbsample#username:oscerd}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{azure:dbsample#password:password}}")).to("mock:bar");
             }
         });
         context.start();
@@ -134,8 +134,8 @@ public class KeyVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{azure:postgresql/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{azure:postgresql/additional2}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{azure:postgresql#additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{azure:postgresql#additional2}}")).to("mock:bar");
                 }
             });
             context.start();

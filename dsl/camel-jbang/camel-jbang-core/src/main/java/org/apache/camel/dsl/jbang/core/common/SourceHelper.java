@@ -38,7 +38,7 @@ import org.apache.camel.util.IOHelper;
 public class SourceHelper {
 
     private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "java", "groovy", "js", "jsh", "kts", "xml", "yaml" };
+            = new String[] { "java", "groovy", "js", "jsh", "xml", "yaml" };
 
     public static Source resolveSource(String source) {
         List<Source> resolved = resolveSources(Collections.singletonList(source));
@@ -57,7 +57,7 @@ public class SourceHelper {
         List<Source> resolved = new ArrayList<>();
         for (String source : sources) {
             SourceScheme sourceScheme = SourceScheme.fromUri(source);
-            String fileExtension = FileUtil.onlyExt(source);
+            String fileExtension = FileUtil.onlyExt(source, true);
             String fileName = SourceScheme.onlyName(FileUtil.onlyName(source));
             if (fileExtension != null) {
                 fileName = fileName + "." + fileExtension;

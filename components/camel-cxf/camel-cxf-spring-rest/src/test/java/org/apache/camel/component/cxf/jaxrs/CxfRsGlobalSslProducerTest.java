@@ -28,7 +28,6 @@ import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getSslPort();
 

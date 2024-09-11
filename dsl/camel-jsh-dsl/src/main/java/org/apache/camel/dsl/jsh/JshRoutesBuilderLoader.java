@@ -85,7 +85,7 @@ public class JshRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         try (JShell jshell = JShell.builder().executionEngine(provider, null).build()) {
             //
             // since we can't set a base class for the snippet as we do for other
-            // languages (groovy, kotlin) we need to introduce a top level variable
+            // languages (groovy) we need to introduce a top level variable
             // that users need to use to access the RouteBuilder, like:
             //
             //     builder.from("timer:tick")

@@ -414,8 +414,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                 answer.add("mvn:org.apache.camel:camel-js-dsl");
                             } else if ("jsh".equals(ext)) {
                                 answer.add("mvn:org.apache.camel:camel-jsh-dsl");
-                            } else if ("kts".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-kotlin-dsl");
                             } else if ("xml".equals(ext)) {
                                 answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
                             } else if ("yaml".equals(ext)) {

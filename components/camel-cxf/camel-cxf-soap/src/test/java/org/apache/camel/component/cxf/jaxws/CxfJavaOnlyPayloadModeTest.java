@@ -25,7 +25,6 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * A unit test for java only CXF in payload mode
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
 

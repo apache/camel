@@ -67,11 +67,6 @@
             <artifactId>mvel2</artifactId>
             <version>${mvel-version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.squareup</groupId>
-            <artifactId>kotlinpoet-jvm</artifactId>
-            <version>${kotlinpoet-version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>

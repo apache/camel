@@ -24,9 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.TestInstance;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
 
     private static final String ECHO_OPERATION = "echo";
