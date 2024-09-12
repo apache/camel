@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EnumConverterTest extends ContextTestSupport {
 
@@ -60,20 +60,14 @@ public class EnumConverterTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMandatoryConvertFailed() throws Exception {
-        try {
+    public void testMandatoryConvertFailed() {
+        assertThrows(TypeConversionException.class, () -> {
             LoggingLevel level = context.getTypeConverter().convertTo(LoggingLevel.class, "XXX");
-            fail("Should have thrown an exception");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        }, "Should have thrown an exception");
 
-        try {
-            context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX");
-            fail("Should have thrown an exception");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        assertThrows(TypeConversionException.class,
+                () -> context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX"),
+                "Should have thrown an exception");
     }
 
     @Test
