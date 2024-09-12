@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultCamelContextTest extends TestSupport {
 
@@ -136,14 +135,12 @@ public class DefaultCamelContextTest extends TestSupport {
     @Test
     public void testGetEndPointByTypeUnknown() {
         DefaultCamelContext camelContext = new DefaultCamelContext();
-        try {
-            camelContext.getEndpoint("xxx", Endpoint.class);
-            fail();
-        } catch (NoSuchEndpointException e) {
-            assertEquals(
-                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
-                    e.getMessage());
-        }
+        NoSuchEndpointException e = assertThrows(NoSuchEndpointException.class,
+                () -> camelContext.getEndpoint("xxx", Endpoint.class));
+
+        assertEquals(
+                "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                e.getMessage());
     }
 
     @Test
