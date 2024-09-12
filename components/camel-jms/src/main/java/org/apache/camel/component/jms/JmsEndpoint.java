@@ -65,7 +65,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * Sent and receive messages to/from a JMS Queue or Topic.
+ * Send and receive messages to/from JMS message brokers.
  *
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */

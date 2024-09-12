@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "jms",
     "title": "JMS",
-    "description": "Sent and receive messages to\/from a JMS Queue or Topic.",
+    "description": "Send and receive messages to\/from JMS message brokers.",
     "deprecated": false,
     "firstVersion": "1.0.0",
     "label": "messaging",
