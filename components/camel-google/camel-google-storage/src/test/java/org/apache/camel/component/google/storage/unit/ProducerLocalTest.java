@@ -101,6 +101,27 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         assertEquals(1, resp.size());
         assertEquals(fileName, resp.get(0).getName());
 
+        Exchange listObjectsExchangeWithPrefix = template.request("direct:listObjects", exchange -> {
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
+                    GoogleCloudStorageOperations.listObjects);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.PREFIX_NAME,
+                    "just_");
+        });
+        LOG.info("listObjectsExchange.body={}", listObjectsExchangeWithPrefix.getMessage().getBody());
+        resp = listObjectsExchangeWithPrefix.getMessage().getBody(List.class);
+        assertEquals(1, resp.size());
+        assertEquals(fileName, resp.get(0).getName());
+
+        Exchange listObjectsExchangeWithPrefixNoRes = template.request("direct:listObjects", exchange -> {
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
+                    GoogleCloudStorageOperations.listObjects);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.PREFIX_NAME,
+                    "file_");
+        });
+        LOG.info("listObjectsExchange.body={}", listObjectsExchangeWithPrefixNoRes.getMessage().getBody());
+        resp = listObjectsExchangeWithPrefixNoRes.getMessage().getBody(List.class);
+        assertEquals(0, resp.size());
+
         Exchange getObjectExchange = template.request("direct:getObject", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
                     GoogleCloudStorageOperations.getObject);
