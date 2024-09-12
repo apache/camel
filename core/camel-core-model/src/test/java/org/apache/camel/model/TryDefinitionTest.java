@@ -14,14 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.rest;
+package org.apache.camel.model;
 
 import java.util.List;
 
-import org.apache.camel.model.CatchDefinition;
-import org.apache.camel.model.FinallyDefinition;
-import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.TryDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
