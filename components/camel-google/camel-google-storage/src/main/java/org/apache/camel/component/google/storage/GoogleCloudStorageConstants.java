@@ -31,6 +31,9 @@ public final class GoogleCloudStorageConstants {
     @Metadata(label = "producer", description = "The object Name which will be used for the current operation",
               javaType = "String")
     public static final String OBJECT_NAME = "CamelGoogleCloudStorageObjectName";
+    @Metadata(label = "producer", description = "The prefix to be used in List Objects operation",
+              javaType = "String")
+    public static final String PREFIX_NAME = "CamelGoogleCloudStoragePrefixName";
     @Metadata(label = "producer", description = "The object Destination Name which will be used for the current operation",
               javaType = "String")
     public static final String DESTINATION_OBJECT_NAME = "CamelGoogleCloudStorageDestinationObjectName";

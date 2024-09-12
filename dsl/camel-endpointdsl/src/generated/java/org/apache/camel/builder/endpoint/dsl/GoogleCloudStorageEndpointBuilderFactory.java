@@ -1504,6 +1504,18 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             return "CamelGoogleCloudStorageObjectName";
         }
         /**
+         * The prefix to be used in List Objects operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleCloudStoragePrefixName}.
+         */
+        public String googleCloudStoragePrefixName() {
+            return "CamelGoogleCloudStoragePrefixName";
+        }
+        /**
          * The object Destination Name which will be used for the current
          * operation.
          * 

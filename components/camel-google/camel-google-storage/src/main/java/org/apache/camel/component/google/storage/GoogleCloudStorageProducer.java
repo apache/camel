@@ -342,10 +342,18 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
     private void listObjects(Storage storage, Exchange exchange) {
         final String bucketName = determineBucketName();
-
-        List<Blob> bloblist = new LinkedList<>();
-        for (Blob blob : storage.list(bucketName).iterateAll()) {
-            bloblist.add(blob);
+        String prefix = exchange.getMessage().getHeader(GoogleCloudStorageConstants.PREFIX_NAME, String.class);
+        List<Blob> bloblist;
+        if (ObjectHelper.isEmpty(prefix)) {
+            bloblist = new LinkedList<>();
+            for (Blob blob : storage.list(bucketName).iterateAll()) {
+                bloblist.add(blob);
+            }
+        } else {
+            bloblist = new LinkedList<>();
+            for (Blob blob : storage.list(bucketName, Storage.BlobListOption.prefix(prefix)).iterateAll()) {
+                bloblist.add(blob);
+            }
         }
 
         Message message = getMessageForResponse(exchange);
