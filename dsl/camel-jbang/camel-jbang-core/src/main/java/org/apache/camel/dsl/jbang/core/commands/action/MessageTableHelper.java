@@ -254,11 +254,13 @@ public class MessageTableHelper {
         String tab8 = null;
         if (cause != null) {
             String value = cause.getString("stackTrace");
-            value = Jsoner.unescape(value);
-            eRow = new TableRow("Stacktrace", null, null, value);
-            tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
-                            .with(TableRow::valueAsStringRed)));
+            if (value != null) {
+                value = Jsoner.unescape(value);
+                eRow = new TableRow("Stacktrace", null, null, value);
+                tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                        new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
+                                .with(TableRow::valueAsStringRed)));
+            }
         }
         String answer = "";
         if (tab0 != null && !tab0.isEmpty()) {

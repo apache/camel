@@ -90,6 +90,11 @@ The logs will print a warning message if this behavior is detected.
 
 The Kotlin DSL which was deprecated in Camel 4.7.0 has now been removed. The routes must be migrated to another DSL such as Java, Yaml or xml.
 
+The following modules has been removed:
+
+* camel-kotlin-dsl
+* camel-kotlin-api
+
 === Deprecated Components
 
 The following components that were marked as deprecated:
