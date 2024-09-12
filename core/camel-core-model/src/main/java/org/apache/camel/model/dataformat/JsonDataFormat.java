@@ -48,6 +48,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @XmlAttribute
     @Metadata(defaultValue = "Jackson")
     private JsonLibrary library = JsonLibrary.Jackson;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean",
+            description = "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding."
+                          + " This should be preferred when using 2-byte/4-byte characters such as Japanese.")
+    private String useWriter;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlTransient
@@ -124,6 +129,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.autoDiscoverObjectMapper = source.autoDiscoverObjectMapper;
         this.prettyPrint = source.prettyPrint;
         this.library = source.library;
+        this.useWriter = source.useWriter;
         this.unmarshalTypeName = source.unmarshalTypeName;
         this.unmarshalType = source.unmarshalType;
         this.jsonViewTypeName = source.jsonViewTypeName;
@@ -153,6 +159,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.autoDiscoverObjectMapper = builder.autoDiscoverObjectMapper;
         this.prettyPrint = builder.prettyPrint;
         this.library = builder.library;
+        this.useWriter = builder.useWriter;
         this.unmarshalTypeName = builder.unmarshalTypeName;
         this.unmarshalType = builder.unmarshalType;
         this.jsonViewTypeName = builder.jsonViewTypeName;
@@ -235,6 +242,18 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
      */
     public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public String getUseWriter() {
+        return useWriter;
+    }
+
+    /**
+     * Force using generator that outputs JSON content using a java.io.Writer which handles character encoding.
+     * This should be preferred when using 2-byte/4-byte characters such as Japanese.
+     */
+    public void setUseWriter(String useWriter) {
+        this.useWriter = useWriter;
     }
 
     public String getUnmarshalTypeName() {
@@ -618,6 +637,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String autoDiscoverObjectMapper;
         private String prettyPrint;
         private JsonLibrary library = JsonLibrary.Jackson;
+        private String useWriter;
         private String unmarshalTypeName;
         private Class<?> unmarshalType;
         private String jsonViewTypeName;
@@ -730,6 +750,24 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder library(JsonLibrary library) {
             this.library = library;
+            return this;
+        }
+
+        /**
+         * Force using generator that outputs JSON content using a java.io.Writer which handles character encoding.
+         * This should be preferred when using 2-byte/4-byte characters such as Japanese.
+         */
+        public Builder useWriter(boolean useWriter) {
+            this.useWriter = Boolean.toString(useWriter);
+            return this;
+        }
+
+        /**
+         * Force using generator that outputs JSON content using a java.io.Writer which handles character encoding.
+         * This should be preferred when using 2-byte/4-byte characters such as Japanese.
+         */
+        public Builder useWriter(String useWriter) {
+            this.useWriter = useWriter;
             return this;
         }
 

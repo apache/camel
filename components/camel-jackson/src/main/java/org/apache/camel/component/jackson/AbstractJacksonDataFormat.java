@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +66,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
     private boolean useDefaultObjectMapper = true;
+    private boolean useWriter;
     private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
@@ -157,7 +159,13 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (this.schemaResolver != null) {
             schema = this.schemaResolver.resolve(exchange);
         }
-        this.objectMapper.writerWithView(jsonView).with(schema).writeValue(stream, graph);
+        if (useWriter) {
+            try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
+                this.objectMapper.writerWithView(jsonView).with(schema).writeValue(writer, graph);
+            }
+        } else {
+            this.objectMapper.writerWithView(jsonView).with(schema).writeValue(stream, graph);
+        }
 
         if (contentTypeHeader) {
             exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
@@ -253,6 +261,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
 
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
+    }
+
+    public boolean isUseWriter() {
+        return useWriter;
+    }
+
+    public void setUseWriter(boolean useWriter) {
+        this.useWriter = useWriter;
     }
 
     public Class<? extends Collection> getCollectionType() {

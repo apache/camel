@@ -7554,6 +7554,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List"),
+                    @YamlProperty(name = "useWriter", type = "boolean", description = "Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese.", displayName = "Use Writer"),
                     @YamlProperty(name = "xmlMapper", type = "string", description = "Lookup and use the existing XmlMapper with the given id.", displayName = "Xml Mapper")
             }
     )
@@ -7650,6 +7651,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useList": {
                     String val = asText(node);
                     target.setUseList(val);
+                    break;
+                }
+                case "useWriter": {
+                    String val = asText(node);
+                    target.setUseWriter(val);
                     break;
                 }
                 case "xmlMapper": {
@@ -8226,7 +8232,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson and fastjson.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useDefaultObjectMapper", type = "boolean", description = "Whether to lookup and use default Jackson ObjectMapper from the registry.", displayName = "Use Default Object Mapper"),
-                    @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List")
+                    @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List"),
+                    @YamlProperty(name = "useWriter", type = "boolean", description = "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese.", displayName = "Use Writer")
             }
     )
     public static class JsonDataFormatDeserializer extends YamlDeserializerBase<JsonDataFormat> {
@@ -8356,6 +8363,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useList": {
                     String val = asText(node);
                     target.setUseList(val);
+                    break;
+                }
+                case "useWriter": {
+                    String val = asText(node);
+                    target.setUseWriter(val);
                     break;
                 }
                 default: {

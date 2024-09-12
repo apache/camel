@@ -19,6 +19,7 @@ package org.apache.camel.component.jacksonxml;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +67,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     private CamelContext camelContext;
     private XmlMapper xmlMapper;
+    private boolean useWriter;
     private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
@@ -169,7 +171,13 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        this.xmlMapper.writerWithView(jsonView).writeValue(stream, graph);
+        if (useWriter) {
+            try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
+                this.xmlMapper.writerWithView(jsonView).writeValue(writer, graph);
+            }
+        } else {
+            this.xmlMapper.writerWithView(jsonView).writeValue(stream, graph);
+        }
 
         if (contentTypeHeader) {
             exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/xml");
@@ -253,6 +261,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public boolean isUseWriter() {
+        return useWriter;
+    }
+
+    public void setUseWriter(boolean useWriter) {
+        this.useWriter = useWriter;
     }
 
     public String getCollectionTypeName() {

@@ -10985,6 +10985,11 @@
             "title" : "Use List",
             "description" : "To unmarshal to a List of Map or a List of Pojo."
           },
+          "useWriter" : {
+            "type" : "boolean",
+            "title" : "Use Writer",
+            "description" : "Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese."
+          },
           "xmlMapper" : {
             "type" : "string",
             "title" : "Xml Mapper",
@@ -11254,6 +11259,11 @@
             "type" : "boolean",
             "title" : "Use List",
             "description" : "To unmarshal to a List of Map or a List of Pojo."
+          },
+          "useWriter" : {
+            "type" : "boolean",
+            "title" : "Use Writer",
+            "description" : "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese."
           }
         }
       },

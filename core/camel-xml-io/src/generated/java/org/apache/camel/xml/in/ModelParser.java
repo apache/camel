@@ -1868,6 +1868,7 @@ public class ModelParser extends BaseParser {
                 case "timezone": def.setTimezone(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useList": def.setUseList(val); yield true;
+                case "useWriter": def.setUseWriter(val); yield true;
                 case "xmlMapper": def.setXmlMapper(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
@@ -1928,6 +1929,7 @@ public class ModelParser extends BaseParser {
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); yield true;
                 case "useList": def.setUseList(val); yield true;
+                case "useWriter": def.setUseWriter(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
