@@ -178,12 +178,12 @@ public class RouteTemplateTest extends ContextTestSupport {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("foo", "one");
-        try {
-            context.addRouteFromTemplate(null, "myTemplate", parameters);
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Route template myTemplate the following mandatory parameters must be provided: bar", e.getMessage());
-        }
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> context.addRouteFromTemplate(null, "myTemplate", parameters),
+                "Should throw exception");
+
+        assertEquals("Route template myTemplate the following mandatory parameters must be provided: bar", e.getMessage());
     }
 
     @Override

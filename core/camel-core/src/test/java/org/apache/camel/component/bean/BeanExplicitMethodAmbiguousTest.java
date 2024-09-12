@@ -25,7 +25,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
 
@@ -38,13 +38,12 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
 
     @Test
     public void testBeanExplicitMethodAmbiguous() {
-        try {
-            template.requestBody("direct:hello", "Camel");
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            AmbiguousMethodCallException cause = assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
-            assertEquals(2, cause.getMethods().size());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.requestBody("direct:hello", "Camel"),
+                "Should thrown an exception");
+
+        AmbiguousMethodCallException cause = assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
+        assertEquals(2, cause.getMethods().size());
     }
 
     @Test

@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MyServiceProxyTest extends ContextTestSupport {
 
@@ -39,12 +38,12 @@ public class MyServiceProxyTest extends ContextTestSupport {
     @Test
     public void testKaboom() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
-        try {
-            myService.method("Kaboom");
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Damn", e.getMessage());
-        }
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> myService.method("Kaboom"),
+                "Should have thrown exception");
+
+        assertEquals("Damn", e.getMessage());
     }
 
     @Test

@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
@@ -75,14 +74,13 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         assertSame(foo, context.getRegistry().lookupByName("{{bean.foo}}"));
         assertSame(bar, context.getRegistry().lookupByName("{{bean.bar}}"));
 
-        try {
-            context.getRegistry().lookupByName("{{bean.unknown}}");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
-                    cause.getMessage());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> context.getRegistry().lookupByName("{{bean.unknown}}"),
+                "Should have thrown exception");
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+                cause.getMessage());
     }
 
     @Test

@@ -7682,7 +7682,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JMS (camel-jms)
-     * Sent and receive messages to/from a JMS Queue or Topic.
+     * Send and receive messages to/from JMS message brokers.
      * 
      * Category: messaging
      * Since: 1.0
@@ -7707,7 +7707,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JMS (camel-jms)
-     * Sent and receive messages to/from a JMS Queue or Topic.
+     * Send and receive messages to/from JMS message brokers.
      * 
      * Category: messaging
      * Since: 1.0

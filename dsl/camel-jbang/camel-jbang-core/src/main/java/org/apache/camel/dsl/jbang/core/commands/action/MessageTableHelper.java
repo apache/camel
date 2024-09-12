@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -201,7 +203,23 @@ public class MessageTableHelper {
             if (arr != null) {
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow("Header", jo.getString("type"), jo.getString("key"), jo.get("value")));
+                    String key = jo.getString("key");
+                    Object value = jo.get("value");
+                    if ("CamelMessageTimestamp".equals(key)) {
+                        long val = jo.getLongOrDefault("value", 0);
+                        if (val > 0) {
+                            String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(val);
+                            String since = TimeUtils.printSince(val);
+                            value = "(" + df + " / " + since + " ago)";
+                            if (loggingColor) {
+                                value = val + " " + Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(value)
+                                        .reset().toString();
+                            } else {
+                                value = val + " " + value;
+                            }
+                        }
+                    }
+                    rows.add(new TableRow("Header", jo.getString("type"), key, value));
                 }
             }
             if (!rows.isEmpty()) {
@@ -318,7 +336,14 @@ public class MessageTableHelper {
         }
 
         String valueAsString() {
-            return value != null ? value.toString() : "null";
+            if (value == null || "null".equals(value)) {
+                if (loggingColor) {
+                    value = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(value).reset().toString();
+                } else {
+                    value = "null";
+                }
+            }
+            return value.toString();
         }
 
         String valueAsStringPretty() {

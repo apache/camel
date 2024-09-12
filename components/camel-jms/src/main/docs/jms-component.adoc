@@ -2,7 +2,7 @@
 :doctitle: JMS
 :shortname: jms
 :artifactid: camel-jms
-:description: Sent and receive messages to/from a JMS Queue or Topic.
+:description: Send and receive messages to/from JMS message brokers.
 :since: 1.0
 :supportlevel: Stable
 :tabs-sync-option:

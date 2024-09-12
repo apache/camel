@@ -479,6 +479,9 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 if (configuration.getCertificatePath() != null) {
                     httpClientBuilder.setSSLContext(createSslContextFromCa());
                 }
+                if (configuration.getHostnameVerifier() != null) {
+                    httpClientBuilder.setSSLHostnameVerifier(configuration.getHostnameVerifier());
+                }
                 return httpClientBuilder;
             });
         }

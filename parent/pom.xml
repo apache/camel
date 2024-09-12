@@ -69,7 +69,7 @@
         <asm-version>9.7</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
         <assertj-version>3.26.3</assertj-version>
-        <asterisk-java-version>3.39.0</asterisk-java-version>
+        <asterisk-java-version>3.40.1</asterisk-java-version>
         <atlassian-fugue-version>6.1.0</atlassian-fugue-version>
         <atmosphere-version>3.0.10</atmosphere-version>
         <avro-version>1.12.0</avro-version>
@@ -325,7 +325,7 @@
         <logback-version>1.5.8</logback-version>
         <lucene-version>9.11.1</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <littleproxy-version>2.2.4</littleproxy-version>
+        <littleproxy-version>2.3.0</littleproxy-version>
         <mapstruct-version>1.6.0</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.9</maven-version>
@@ -373,7 +373,7 @@
         <netty-version>4.1.112.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.1</networknt-json-schema-validator-version>
-        <nimbus-jose-jwt>9.40</nimbus-jose-jwt>
+        <nimbus-jose-jwt>9.41</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
@@ -387,7 +387,7 @@
         <openstack4j-version>3.12</openstack4j-version>
         <opentelemetry-version>1.42.1</opentelemetry-version>
         <opentelemetry-log4j2-version>2.7.0-alpha</opentelemetry-log4j2-version>
-        <opentelemetry-incubator-version>1.41.0-alpha</opentelemetry-incubator-version>
+        <opentelemetry-incubator-version>1.42.1-alpha</opentelemetry-incubator-version>
         <opentelemetry-alpha-version>1.23.1-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <paho-version>1.2.5</paho-version>
@@ -417,9 +417,9 @@
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
-        <reactor-version>3.6.9</reactor-version>
+        <reactor-version>3.6.10</reactor-version>
         <reactor-netty-version>1.1.22</reactor-netty-version>
-        <redisson-version>3.35.0</redisson-version>
+        <redisson-version>3.36.0</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.5.0</rest-assured-version>
         <roaster-version>2.29.0.Final</roaster-version>

@@ -549,6 +549,37 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
+         * The class to use as HostnameVerifier. By default there is no
+         * HostnameVerifier.
+         * 
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpensearchEndpointBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The class to use as HostnameVerifier. By default there is no
+         * HostnameVerifier.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpensearchEndpointBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 
