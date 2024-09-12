@@ -273,7 +273,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                 new Column().header("SIZE").headerAlign(HorizontalAlign.RIGHT).with(this::getQueueSize),
-                new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getMessageAgo),
+                new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
+                        .with(this::getMessageAgo),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getEndpointUri),
