@@ -29,7 +29,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Based on user forum issue
@@ -51,13 +51,12 @@ public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSuppor
         // we fail all redeliveries so after that we send to mock:exhausted
         getMockEndpoint("mock:exhausted").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            ConnectException cause = assertIsInstanceOf(ConnectException.class, e.getCause());
-            assertEquals("Forced", cause.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"),
+                "Should thrown an exception");
+
+        ConnectException cause = assertIsInstanceOf(ConnectException.class, e.getCause());
+        assertEquals("Forced", cause.getMessage());
 
         assertMockEndpointsSatisfied();
     }
