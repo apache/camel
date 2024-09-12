@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -185,6 +186,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                     row.queueSize = o.getInteger("queueSize");
                     row.limit = o.getInteger("limit");
                     row.position = o.getInteger("position");
+                    row.firstTimestamp = o.getLongOrDefault("firstTimestamp", 0);
+                    row.lastTimestamp = o.getLongOrDefault("lastTimestamp", 0);
                     if (dump) {
                         row.messages = o.getCollection("messages");
                     }
@@ -206,6 +209,16 @@ public class CamelBrowseAction extends ActionBaseCommand {
         // delete output file after use
         FileUtil.deleteFile(outputFile);
 
+        return 0;
+    }
+
+    private static long getLongValueFromCollection(JsonArray arr, String key) {
+        for (Object o : arr) {
+            JsonObject jo = (JsonObject) o;
+            if (key.equalsIgnoreCase(jo.getString("key"))) {
+                return jo.getLong("value");
+            }
+        }
         return 0;
     }
 
@@ -260,6 +273,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                 new Column().header("SIZE").headerAlign(HorizontalAlign.RIGHT).with(this::getQueueSize),
+                new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getMessageAgo),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getEndpointUri),
@@ -283,6 +297,17 @@ public class CamelBrowseAction extends ActionBaseCommand {
             default:
                 return 0;
         }
+    }
+
+    protected String getMessageAgo(Row r) {
+        StringJoiner sj = new StringJoiner("/");
+        if (r.firstTimestamp > 0) {
+            sj.add(TimeUtils.printSince(r.firstTimestamp));
+        }
+        if (r.lastTimestamp > 0) {
+            sj.add(TimeUtils.printSince(r.lastTimestamp));
+        }
+        return sj.toString();
     }
 
     protected String getQueueSize(Row r) {
@@ -315,6 +340,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
         int queueSize;
         int limit;
         int position;
+        long firstTimestamp;
+        long lastTimestamp;
         List<JsonObject> messages;
 
         Row copy() {

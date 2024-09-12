@@ -517,8 +517,22 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             Map<String, Object> map = null;
             if (body.startsWith("file:")) {
                 File file = new File(body.substring(5));
-                is = new FileInputStream(file);
-                b = is;
+                try {
+                    is = new FileInputStream(file);
+                    b = is;
+                } catch (Exception e) {
+                    JsonObject jo = new JsonObject();
+                    jo.put("endpoint", endpoint != null ? endpoint : "");
+                    jo.put("exchangeId", "");
+                    jo.put("exchangePattern", exchangePattern);
+                    jo.put("timestamp", timestamp);
+                    jo.put("elapsed", watch.taken());
+                    jo.put("status", "failed");
+                    // avoid double wrap
+                    jo.put("exception", MessageHelper.dumpExceptionAsJSonObject(e).getMap("exception"));
+                    IOHelper.writeText(jo.toJson(), outputFile);
+                    return;
+                }
             }
             if (headers != null) {
                 map = new HashMap<>();
@@ -630,7 +644,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             } else {
                 // there is no valid endpoint
                 JsonObject jo = new JsonObject();
-                jo.put("endpoint", root.getString("endpoint"));
+                jo.put("endpoint", endpoint != null ? endpoint : "");
                 jo.put("exchangeId", "");
                 jo.put("exchangePattern", exchangePattern);
                 jo.put("timestamp", timestamp);
