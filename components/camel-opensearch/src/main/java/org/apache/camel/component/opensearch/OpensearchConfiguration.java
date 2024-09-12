@@ -18,6 +18,8 @@ package org.apache.camel.component.opensearch;
 
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -72,6 +74,8 @@ public class OpensearchConfiguration {
     private int sniffAfterFailureDelay = OpensearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
     @UriParam(label = "advanced", defaultValue = "ObjectNode")
     private Class<?> documentClass = ObjectNode.class;
+    @UriParam(label = "advanced")
+    private HostnameVerifier hostnameVerifier;
 
     /**
      * Starting index of the response.
@@ -313,5 +317,16 @@ public class OpensearchConfiguration {
 
     public void setDocumentClass(Class<?> documentClass) {
         this.documentClass = documentClass;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    /**
+     * The class to use as HostnameVerifier. By default there is no HostnameVerifier.
+     */
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
     }
 }

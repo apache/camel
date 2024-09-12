@@ -37,6 +37,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.Integer.class, value)); return true;
         case "hostaddresses":
         case "hostAddresses": target.getConfiguration().setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverifier":
+        case "hostnameVerifier": target.getConfiguration().setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         case "indexname":
         case "indexName": target.getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -78,6 +80,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "from": return java.lang.Integer.class;
         case "hostaddresses":
         case "hostAddresses": return java.lang.String.class;
+        case "hostnameverifier":
+        case "hostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         case "indexname":
         case "indexName": return java.lang.String.class;
         case "lazystartproducer":
@@ -120,6 +124,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "from": return target.getConfiguration().getFrom();
         case "hostaddresses":
         case "hostAddresses": return target.getConfiguration().getHostAddresses();
+        case "hostnameverifier":
+        case "hostnameVerifier": return target.getConfiguration().getHostnameVerifier();
         case "indexname":
         case "indexName": return target.getConfiguration().getIndexName();
         case "lazystartproducer":
