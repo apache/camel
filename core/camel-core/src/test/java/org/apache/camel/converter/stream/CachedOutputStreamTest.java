@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CachedOutputStreamTest extends ContextTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough"
@@ -135,13 +134,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals(TEST_STRING, temp, "Cached a wrong file");
         exchange.getUnitOfWork().done(exchange);
 
-        try {
-            cache.reset();
-            // The stream is closed, so the temp file is gone.
-            fail("we expect the exception here");
-        } catch (Exception exception) {
-            // do nothing
-        }
+        // The stream is closed, so the temp file is gone.
+        assertThrows(Exception.class, cache::reset, "we expect the exception here");
 
         files = file.list();
         assertNotNull(files, "There should be a list of files");
