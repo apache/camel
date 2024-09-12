@@ -2371,7 +2371,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * JMS (camel-jms)
-     * Send and receive messages to/from JMS message brokers.
+     * Sent and receive messages to/from a JMS Queue or Topic.
      * 
      * Category: messaging
      * Since: 1.0
