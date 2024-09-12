@@ -17,10 +17,7 @@
 package org.apache.camel.component.azure.servicebus.integration;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -45,9 +42,23 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final String DIRECT_SEND_TO_QUEUE_URI = "direct:sendToQueue";
     private static final String DIRECT_SEND_TO_TOPIC_URI = "direct:sendToTopic";
     private static final String DIRECT_SEND_SCHEDULED_URI = "direct:sendScheduled";
-    private static final String PROPAGATED_HEADER_KEY = "PropagatedCustomHeader";
-    private static final String PROPAGATED_HEADER_VALUE = "propagated header value";
+    private static final Map<String, Object> PROPAGATED_HEADERS = new HashMap<>();
     private static final Pattern MESSAGE_BODY_PATTERN = Pattern.compile("^message-[0-4]$");
+
+    static {
+        PROPAGATED_HEADERS.put("booleanHeader", true);
+        PROPAGATED_HEADERS.put("byteHeader", (byte) 1);
+        PROPAGATED_HEADERS.put("characterHeader", '1');
+        PROPAGATED_HEADERS.put("doubleHeader", 1.0D);
+        PROPAGATED_HEADERS.put("floatHeader", 1.0F);
+        PROPAGATED_HEADERS.put("integerHeader", 1);
+        PROPAGATED_HEADERS.put("longHeader", 1L);
+        PROPAGATED_HEADERS.put("shortHeader", (short) 1);
+        PROPAGATED_HEADERS.put("stringHeader", "stringHeader");
+        PROPAGATED_HEADERS.put("timestampHeader", new Date());
+        PROPAGATED_HEADERS.put("uuidHeader", UUID.randomUUID());
+    }
+
     private ProducerTemplate producerTemplate;
 
     @BeforeEach
@@ -85,8 +96,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             client.start();
             for (int i = 0; i < 5; i++) {
                 String message = "message-" + i;
-                producerTemplate.sendBodyAndHeader(DIRECT_SEND_TO_QUEUE_URI, message, PROPAGATED_HEADER_KEY,
-                        PROPAGATED_HEADER_VALUE);
+                producerTemplate.sendBodyAndHeaders(DIRECT_SEND_TO_QUEUE_URI, message, PROPAGATED_HEADERS);
             }
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
@@ -96,8 +106,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 String messageBody = message.getBody().toString();
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
-                assertEquals(1, applicationProperties.size());
-                assertEquals(PROPAGATED_HEADER_VALUE, applicationProperties.get(PROPAGATED_HEADER_KEY));
+                assertEquals(PROPAGATED_HEADERS, applicationProperties);
             });
         }
     }
@@ -114,7 +123,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             }
 
             producerTemplate.send(DIRECT_SEND_TO_QUEUE_URI, exchange -> {
-                exchange.getIn().setHeader(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
+                exchange.getIn().setHeaders(PROPAGATED_HEADERS);
                 exchange.getIn().setBody(messageBatch);
             });
 
@@ -125,8 +134,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 String messageBody = message.getBody().toString();
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
-                assertEquals(1, applicationProperties.size());
-                assertEquals(PROPAGATED_HEADER_VALUE, applicationProperties.get(PROPAGATED_HEADER_KEY));
+                assertEquals(PROPAGATED_HEADERS, applicationProperties);
             });
         }
     }
@@ -138,8 +146,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             client.start();
             for (int i = 0; i < 5; i++) {
                 String message = "message-" + i;
-                producerTemplate.sendBodyAndHeader(DIRECT_SEND_TO_TOPIC_URI, message, PROPAGATED_HEADER_KEY,
-                        PROPAGATED_HEADER_VALUE);
+                producerTemplate.sendBodyAndHeaders(DIRECT_SEND_TO_TOPIC_URI, message, PROPAGATED_HEADERS);
             }
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
@@ -149,8 +156,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 String messageBody = message.getBody().toString();
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
-                assertEquals(1, applicationProperties.size());
-                assertEquals(PROPAGATED_HEADER_VALUE, applicationProperties.get(PROPAGATED_HEADER_KEY));
+                assertEquals(PROPAGATED_HEADERS, applicationProperties);
             });
         }
     }
@@ -162,8 +168,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             client.start();
             for (int i = 0; i < 5; i++) {
                 String message = "message-" + i;
-                Map<String, Object> headers = new HashMap<>();
-                headers.put(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
+                Map<String, Object> headers = new HashMap<>(PROPAGATED_HEADERS);
                 headers.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_SCHEDULED_URI, message, headers);
             }
@@ -175,8 +180,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 String messageBody = message.getBody().toString();
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
-                assertEquals(1, applicationProperties.size());
-                assertEquals(PROPAGATED_HEADER_VALUE, applicationProperties.get(PROPAGATED_HEADER_KEY));
+                assertEquals(PROPAGATED_HEADERS, applicationProperties);
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
@@ -194,8 +198,9 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
             }
 
             producerTemplate.send(DIRECT_SEND_SCHEDULED_URI, exchange -> {
-                exchange.getIn().setHeader(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
-                exchange.getIn().setHeader(PROPAGATED_HEADER_KEY, PROPAGATED_HEADER_VALUE);
+                Map<String, Object> headers = new HashMap<>(PROPAGATED_HEADERS);
+                headers.put(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME, OffsetDateTime.now().plusSeconds(1));
+                exchange.getIn().setHeaders(headers);
                 exchange.getIn().setBody(messageBatch);
             });
 
@@ -206,8 +211,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 String messageBody = message.getBody().toString();
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
-                assertEquals(1, applicationProperties.size());
-                assertEquals(PROPAGATED_HEADER_VALUE, applicationProperties.get(PROPAGATED_HEADER_KEY));
+                assertEquals(PROPAGATED_HEADERS, applicationProperties);
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
