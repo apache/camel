@@ -218,6 +218,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
+        // dirty flag
+        this.dataAsJson = null;
+        this.dataAsXml = null;
     }
 
     public String getEndpointServiceUrl() {
@@ -226,6 +229,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public void setEndpointServiceUrl(String endpointServiceUrl) {
         this.endpointServiceUrl = endpointServiceUrl;
+        // dirty flag
+        this.dataAsJson = null;
+        this.dataAsXml = null;
     }
 
     public String getEndpointServiceProtocol() {
@@ -234,6 +240,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public void setEndpointServiceProtocol(String endpointServiceProtocol) {
         this.endpointServiceProtocol = endpointServiceProtocol;
+        // dirty flag
+        this.dataAsJson = null;
+        this.dataAsXml = null;
     }
 
     public Map<String, String> getEndpointServiceMetadata() {
@@ -242,6 +251,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public void setEndpointServiceMetadata(Map<String, String> endpointServiceMetadata) {
         this.endpointServiceMetadata = endpointServiceMetadata;
+        // dirty flag
+        this.dataAsJson = null;
+        this.dataAsXml = null;
     }
 
     @Override
