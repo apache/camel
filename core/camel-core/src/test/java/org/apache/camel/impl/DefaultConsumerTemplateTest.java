@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultConsumerTemplateTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
@@ -318,13 +318,12 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         assertTrue(out.isFailed());
         assertNotNull(out.getException());
 
-        try {
-            consumer.receiveBody("seda:" + TEST_SEDA_CONSUMER, String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Damn", e.getCause().getMessage());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> consumer.receiveBody("seda:" + TEST_SEDA_CONSUMER, String.class),
+                "Should have thrown an exception");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Damn", e.getCause().getMessage());
     }
 
     @Test

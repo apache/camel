@@ -47,6 +47,11 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean",
+              description = "Force using generator that outputs XML content using a java.io.Writer which handles character encoding."
+                            + " This should be preferred when using 2-byte/4-byte characters such as Japanese.")
+    private String useWriter;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
@@ -98,6 +103,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.collectionType = builder.collectionType;
         this.xmlMapper = builder.xmlMapper;
         this.prettyPrint = builder.prettyPrint;
+        this.useWriter = builder.useWriter;
         this.unmarshalTypeName = builder.unmarshalTypeName;
         this.allowUnmarshallType = builder.allowUnmarshallType;
         this.jsonViewTypeName = builder.jsonViewTypeName;
@@ -121,6 +127,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.collectionType = builder.collectionType;
         this.xmlMapper = builder.xmlMapper;
         this.prettyPrint = builder.prettyPrint;
+        this.useWriter = builder.useWriter;
         this.unmarshalTypeName = builder.unmarshalTypeName;
         this.allowUnmarshallType = builder.allowUnmarshallType;
         this.jsonViewTypeName = builder.jsonViewTypeName;
@@ -151,6 +158,18 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
      */
     public void setXmlMapper(String xmlMapper) {
         this.xmlMapper = xmlMapper;
+    }
+
+    public String getUseWriter() {
+        return useWriter;
+    }
+
+    /**
+     * Force using generator that outputs XML content using a java.io.Writer which handles character encoding. + This
+     * should be preferred when using 2-byte/4-byte characters such as Japanese.
+     */
+    public void setUseWriter(String useWriter) {
+        this.useWriter = useWriter;
     }
 
     public String getPrettyPrint() {
@@ -382,6 +401,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         private Class<?> collectionType;
         private String xmlMapper;
         private String prettyPrint;
+        private String useWriter;
         private String unmarshalTypeName;
         private String allowUnmarshallType;
         private String jsonViewTypeName;
@@ -422,6 +442,24 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
          */
         public Builder prettyPrint(boolean prettyPrint) {
             this.prettyPrint = Boolean.toString(prettyPrint);
+            return this;
+        }
+
+        /**
+         * Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This
+         * should be preferred when using 2-byte/4-byte characters such as Japanese.
+         */
+        public Builder useWriter(boolean useWriter) {
+            this.useWriter = Boolean.toString(useWriter);
+            return this;
+        }
+
+        /**
+         * Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This
+         * should be preferred when using 2-byte/4-byte characters such as Japanese.
+         */
+        public Builder useWriter(String useWriter) {
+            this.useWriter = useWriter;
             return this;
         }
 

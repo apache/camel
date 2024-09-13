@@ -27,8 +27,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GroovyExpression extends ExpressionSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GroovyExpression.class);
+
     private final String text;
 
     public GroovyExpression(String text) {
@@ -50,6 +55,7 @@ public class GroovyExpression extends ExpressionSupport {
         Map<String, Object> globalVariables = new HashMap<>();
         Script script = instantiateScript(exchange, globalVariables);
         script.setBinding(createBinding(exchange, globalVariables));
+
         Object value = script.run();
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
@@ -82,8 +88,9 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     private Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
-        Map<String, Object> variables = new HashMap<>(globalVariables);
-        ExchangeHelper.populateVariableMap(exchange, variables, true);
-        return new Binding(variables);
+        Map<String, Object> map = new HashMap<>(globalVariables);
+        ExchangeHelper.populateVariableMap(exchange, map, true);
+        map.put("log", LOG);
+        return new Binding(map);
     }
 }

@@ -213,6 +213,7 @@ public interface Exchange extends VariableAware {
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS = "CamelLogDebugStreams";
     String LOG_EIP_NAME = "CamelLogEipName";
+    String LOG_EIP_LANGUAGE = "CamelLogEipLanguage";
     @Metadata(label = "loop", description = "Index of the current iteration (0 based).", javaType = "int")
     String LOOP_INDEX = "CamelLoopIndex";
     @Metadata(label = "loop",

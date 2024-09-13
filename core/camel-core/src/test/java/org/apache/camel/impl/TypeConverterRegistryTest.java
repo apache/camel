@@ -85,12 +85,10 @@ public class TypeConverterRegistryTest {
         context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Fail);
 
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
-        try {
-            context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
-            fail("Should have thrown exception");
-        } catch (TypeConverterExistsException e) {
-            // expected
-        }
+        assertThrows(TypeConverterExistsException.class,
+                () -> context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class,
+                        new MyOrderTypeConverter()),
+                "Should have thrown exception");
     }
 
     @Test

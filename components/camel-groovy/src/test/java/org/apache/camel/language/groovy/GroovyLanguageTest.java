@@ -26,6 +26,7 @@ public class GroovyLanguageTest extends LanguageTestSupport {
         assertExpression("exchange.in.headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");
         assertExpression("headers.foo", "abc");
+        assertExpression("header.foo", "abc");
     }
 
     @Test
@@ -38,6 +39,8 @@ public class GroovyLanguageTest extends LanguageTestSupport {
 
         assertExpression("exchangeProperties.myProp1", "myValue");
         assertExpression("exchangeProperties.myProp2", 123);
+        assertExpression("exchangeProperty.myProp1", "myValue");
+        assertExpression("exchangeProperty.myProp2", 123);
     }
 
     @Override

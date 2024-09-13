@@ -40,8 +40,6 @@
         <!-- Etcd3 container is not available on these platforms -->
         <skipTests.aarch64>true</skipTests.aarch64>
         <skipITs.aarch64>true</skipITs.aarch64>
-        <!-- netty 4.1.111 does not work with jetcd-core -->
-        <netty-version>4.1.110.Final</netty-version>
     </properties>
 
     <dependencies>

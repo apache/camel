@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkOperation;
 
@@ -46,7 +47,7 @@ public class OpensearchBulkRequestAggregationStrategy implements AggregationStra
         BulkOperation[] newBody = (BulkOperation[]) objBody;
         BulkRequest.Builder builder = new BulkRequest.Builder();
         builder.operations(List.of(newBody));
-        if (oldExchange != null) {
+        if (ObjectHelper.isNotEmpty(oldExchange)) {
             BulkRequest request = oldExchange.getIn().getBody(BulkRequest.class);
             builder.operations(request.operations());
         }

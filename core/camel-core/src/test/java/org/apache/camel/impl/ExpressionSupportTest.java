@@ -22,8 +22,8 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionSupportTest extends ContextTestSupport {
 
@@ -61,11 +61,10 @@ public class ExpressionSupportTest extends ContextTestSupport {
 
         Exchange e = new DefaultExchange(context);
         e.getIn().setBody("Kaboom");
-        try {
-            my.assertMatches("damn", e);
-            fail("Should have thrown exception");
-        } catch (AssertionError ae) {
-            assertTrue(ae.getMessage().contains("foo"));
-        }
+        AssertionError ae = assertThrows(AssertionError.class,
+                () -> my.assertMatches("damn", e),
+                "Should have thrown exception");
+
+        assertTrue(ae.getMessage().contains("foo"));
     }
 }

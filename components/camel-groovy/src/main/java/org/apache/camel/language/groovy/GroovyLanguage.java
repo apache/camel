@@ -34,9 +34,13 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Language("groovy")
 public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GroovyLanguage.class);
 
     /**
      * In case the expression is referring to an external resource, it indicates whether it is still needed to load the
@@ -144,10 +148,10 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             addScriptToCache(script, clazz);
         }
         Script gs = ObjectHelper.newInstance(clazz, Script.class);
-
         if (bindings != null) {
             gs.setBinding(new Binding(bindings));
         }
+        gs.getBinding().setVariable("log", LOG);
         Object value = gs.run();
         return getCamelContext().getTypeConverter().convertTo(resultType, value);
     }

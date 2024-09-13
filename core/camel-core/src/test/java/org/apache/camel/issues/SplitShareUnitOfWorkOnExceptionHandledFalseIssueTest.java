@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
@@ -31,13 +31,11 @@ public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Contex
         getMockEndpoint("mock:b").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Camel,Donkey");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Forced", cause.getMessage());
-        }
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:start", "Camel,Donkey"),
+                "Should throw exception");
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        assertEquals("Forced", cause.getMessage());
 
         assertMockEndpointsSatisfied();
     }

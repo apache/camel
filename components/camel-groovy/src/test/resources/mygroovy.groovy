@@ -15,4 +15,5 @@
  * limitations under the License.
  */
 // this is code comments
+log.info('Groovy script calculating input body: {}', body)
 return "The result is " + body * 2

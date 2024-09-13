@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTestSupport {
 
@@ -46,13 +46,11 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
 
     @Test
     public void testCloseableIterator() {
-        try {
-            template.sendBody("direct:start", "Hello,World");
-        } catch (CamelExecutionException e) {
-            assertTrue(MyCloseableIterator.getInstance().isClosed(), "MyCloseableIterator.close() was not invoked");
-            return;
-        }
-        fail("Exception should have been thrown");
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello,World"),
+                "Exception should have been thrown");
+
+        assertTrue(MyCloseableIterator.getInstance().isClosed(), "MyCloseableIterator.close() was not invoked");
     }
 
     @Override

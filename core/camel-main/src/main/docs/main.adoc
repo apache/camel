@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 121 options, which are listed below.
+The camel.main supports 122 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -84,6 +84,7 @@ The camel.main supports 121 options, which are listed below.
 | *camel.main.loadTypeConverters* | Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting Converter(loader = true) on your custom type converter classes. | false | boolean
 | *camel.main.logDebugMaxChars* | Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000 characters. |  | int
 | *camel.main.logExhaustedMessage{zwsp}Body* | Sets whether to log exhausted message body with message history. Default is false. | false | boolean
+| *camel.main.logLanguage* | To configure the language to use for Log EIP. By default, the simple language is used. However, Camel also supports other languages such as groovy. |  | String
 | *camel.main.logMask* | Sets whether log mask is enabled or not. Default is false. | false | boolean
 | *camel.main.logName* | The global name to use for Log EIP The name is default the routeId or the source:line if source location is enabled. You can also specify the name using tokens: $\{class} - the logger class name (org.apache.camel.processor.LogProcessor) $\{contextId} - the camel context id $\{routeId} - the route id $\{groupId} - the route group id $\{nodeId} - the node id $\{nodePrefixId} - the node prefix id $\{source} - the source:line (source location must be enabled) ${source.name} - the source filename (source location must be enabled) ${source.line} - the source line number (source location must be enabled) For example to use the route and node id you can specify the name as: $\{routeId}/$\{nodeId} |  | String
 | *camel.main.mainListenerClasses* | Sets classes names that will be used for MainListener that makes it possible to do custom logic during starting and stopping camel-main. |  | String

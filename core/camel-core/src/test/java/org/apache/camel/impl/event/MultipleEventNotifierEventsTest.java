@@ -28,7 +28,7 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
@@ -122,13 +122,11 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
     @Test
     public void testExchangeFailed() {
-        try {
-            template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:fail", "Hello World"),
+                "Should have thrown an exception");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
 
         assertEquals(16, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));

@@ -14,40 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.issues;
+package org.apache.camel.component.jackson;
 
-import org.apache.camel.ContextTestSupport;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MockExpectedHeaderNoMessageSentTest extends ContextTestSupport {
+public class JacksonMarshalUseWriterTest extends CamelTestSupport {
 
     @Test
-    public void testHeaderExpectedNoMessageSent() {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setResultWaitTime(100); // run test quick
+    public void testUseWriter() throws Exception {
+        Map<String, Object> in = new HashMap<>();
+        in.put("name", "Camel");
 
-        mock.expectedHeaderReceived("foo", "bar");
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().isEqualTo(in);
 
-        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied,
-                "Should fail");
+        Object marshalled = template.requestBody("direct:in", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        assertEquals("{\"name\":\"Camel\"}", marshalledAsString);
 
-        assertEquals("mock://result Received message count 0, expected at least 1", e.getMessage());
+        template.sendBody("direct:back", marshalled);
+
+        mock.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+
             @Override
             public void configure() {
-                from("direct:foo")
-                        .routeId("myRoute")
-                        .to("mock:result");
+                JacksonDataFormat format = new JacksonDataFormat();
+                format.setUseWriter(true);
+
+                from("direct:in").marshal(format);
+                from("direct:back").unmarshal(format).to("mock:reverse");
             }
         };
     }
+
 }

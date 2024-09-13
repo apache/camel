@@ -90,7 +90,6 @@ import org.slf4j.LoggerFactory;
 
 class DefaultCamelContextExtension implements ExtendedCamelContext {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
     private final AbstractCamelContext camelContext;
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
@@ -424,6 +423,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void addLogListener(LogListener listener) {
         // avoid adding double which can happen with spring xml on spring boot
+        CamelContextAware.trySetCamelContext(listener, camelContext);
         logListeners.add(listener);
     }
 
