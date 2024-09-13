@@ -1557,7 +1557,7 @@ public class CamelCatalogTest {
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-jms", null);
         Assertions.assertInstanceOf(ComponentModel.class, am);
-        Assertions.assertEquals("Sent and receive messages to/from a JMS Queue or Topic.", am.getDescription());
+        Assertions.assertEquals("Send and receive messages to/from JMS message brokers.", am.getDescription());
     }
 
     @Test
