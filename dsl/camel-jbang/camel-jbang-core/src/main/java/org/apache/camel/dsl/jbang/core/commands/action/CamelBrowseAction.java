@@ -184,8 +184,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         row.uri = URISupport.sanitizeUri(row.uri);
                     }
                     row.queueSize = o.getInteger("queueSize");
-                    row.limit = o.getInteger("limit");
-                    row.position = o.getInteger("position");
+                    row.limit = o.getIntegerOrDefault("limit", 0);
+                    row.position = o.getIntegerOrDefault("position", 0);
                     row.firstTimestamp = o.getLongOrDefault("firstTimestamp", 0);
                     row.lastTimestamp = o.getLongOrDefault("lastTimestamp", 0);
                     if (dump) {
@@ -315,7 +315,7 @@ public class CamelBrowseAction extends ActionBaseCommand {
         if (freshSize) {
             return "" + r.queueSize;
         }
-        if (r.queueSize >= r.limit) {
+        if (r.limit > 0 && r.queueSize >= r.limit) {
             return r.queueSize + "+";
         }
         return "" + r.queueSize;

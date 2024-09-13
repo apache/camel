@@ -30,6 +30,16 @@ import org.apache.camel.Exchange;
 public interface BrowsableEndpoint extends Endpoint {
 
     /**
+     * A quick status of the browse queue
+     *
+     * @param size           number of messages in the queue
+     * @param firstTimestamp timestamp of first message (0 if no information)
+     * @param lastTimestamp  timestamp of last message (0 if no information)
+     */
+    record BrowseStatus(int size, long firstTimestamp, long lastTimestamp) {
+    }
+
+    /**
      * Maximum number of messages to browse by default.
      */
     int getBrowseLimit();
@@ -38,6 +48,23 @@ public interface BrowsableEndpoint extends Endpoint {
      * Maximum number of messages to browse by default.
      */
     void setBrowseLimit(int browseLimit);
+
+    /**
+     * Returns a quick browse status
+     *
+     * @param  limit to limit the result to a maximum. Use 0 for default limit.
+     * @return       the status
+     */
+    default BrowseStatus getBrowseStatus(int limit) {
+        List<Exchange> list = getExchanges();
+        long ts = 0;
+        long ts2 = 0;
+        if (!list.isEmpty()) {
+            ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
+            ts2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
+        }
+        return new BrowseStatus(list.size(), ts, ts2);
+    }
 
     /**
      * Return the exchanges available on this endpoint

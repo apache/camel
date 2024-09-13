@@ -45,6 +45,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
                                  GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
+        this.setRetrieveFile(endpoint.isDownload());
     }
 
     @Override
@@ -151,11 +152,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
 
         return super.processExchange(exchange);
-    }
-
-    @Override
-    protected boolean isRetrieveFile() {
-        return getEndpoint().isDownload();
     }
 
     /**

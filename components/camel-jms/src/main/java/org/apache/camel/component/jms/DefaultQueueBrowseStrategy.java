@@ -26,6 +26,7 @@ import jakarta.jms.QueueBrowser;
 import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsOperations;
 
@@ -43,6 +44,17 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
                     (session, browser) -> doBrowse(endpoint, session, browser, limit));
         } else {
             return template.browse(queue, (session, browser) -> doBrowse(endpoint, session, browser, limit));
+        }
+    }
+
+    @Override
+    public BrowsableEndpoint.BrowseStatus browseStatus(
+            JmsOperations template, String queue, JmsBrowsableEndpoint endpoint, int limit) {
+        if (endpoint.getSelector() != null) {
+            return template.browseSelected(queue, endpoint.getSelector(),
+                    (session, browser) -> doBrowseStatus(endpoint, session, browser, limit));
+        } else {
+            return template.browse(queue, (session, browser) -> doBrowseStatus(endpoint, session, browser, limit));
         }
     }
 
@@ -64,6 +76,34 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
             answer.add(exchange);
         }
         return answer;
+    }
+
+    private static BrowsableEndpoint.BrowseStatus doBrowseStatus(
+            JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser, int limit)
+            throws JMSException {
+        if (limit <= 0) {
+            limit = Integer.MAX_VALUE;
+        }
+
+        // not the best implementation in the world as we have to browse
+        // the entire queue, which could be massive
+        Enumeration<?> iter = browser.getEnumeration();
+
+        int size = 0;
+        long ts1 = 0;
+        long ts2 = 0;
+        Message message = null;
+        for (int i = 0; i < limit && iter.hasMoreElements(); i++) {
+            message = (Message) iter.nextElement();
+            if (i == 0) {
+                ts1 = message.getJMSTimestamp();
+            }
+            size++;
+        }
+        if (message != null && size > 0) {
+            ts2 = message.getJMSTimestamp();
+        }
+        return new BrowsableEndpoint.BrowseStatus(size, ts1, ts2);
     }
 
 }

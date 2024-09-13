@@ -500,6 +500,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     @Override
     public List<Exchange> getExchanges(int limit, java.util.function.Predicate filter) {
+        return getExchanges(limit, filter, false);
+    }
+
+    @Override
+    public BrowseStatus getBrowseStatus(int limit) {
+        List<Exchange> list = getExchanges(limit, null, true);
+        long ts = 0;
+        long ts2 = 0;
+        if (!list.isEmpty()) {
+            ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
+            ts2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0, long.class);
+        }
+        return new BrowseStatus(list.size(), ts, ts2);
+    }
+
+    private List<Exchange> getExchanges(int limit, java.util.function.Predicate filter, boolean status) {
         final List<Exchange> answer = new ArrayList<>();
 
         GenericFileConsumer<?> consumer = null;
@@ -510,6 +526,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             if (filter == null) {
                 consumer.setMaxMessagesPerPoll(browseLimit);
             }
+            if (status) {
+                // optimize to not download files as we only want status
+                consumer.setRetrieveFile(false);
+            }
+            final GenericFileConsumer gfc = consumer;
             consumer.setCustomProcessor(new Processor() {
                 @Override
                 public void process(Exchange exchange) throws Exception {
@@ -518,6 +539,26 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                         include = filter.test(exchange);
                     }
                     if (include && answer.size() < browseLimit) {
+                        if (!status) {
+                            // ensure payload is downloaded (when not in status mode)
+                            GenericFile<?> gf = exchange.getMessage().getBody(GenericFile.class);
+                            if (gf != null) {
+                                final String name = gf.getAbsoluteFilePath();
+                                try {
+                                    boolean downloaded = gfc.tryRetrievingFile(exchange, name, gf, name, gf);
+                                    if (downloaded) {
+                                        gf.getBinding().loadContent(exchange, gf);
+                                        Object data = gf.getBody();
+                                        if (data != null) {
+                                            exchange.getMessage().setBody(data);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    LOG.debug("Error trying to retrieve file: {} due to: {}. This exception is ignored.", name,
+                                            e.getMessage(), e);
+                                }
+                            }
+                        }
                         answer.add(exchange);
                     }
                 }
