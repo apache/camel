@@ -39,21 +39,24 @@ a `Map`). The `Exchange` is transferred as:
 |=======================================================================
 |key |value
 
+|`body` |The message body.
+
+|`header` |The headers of the message.
+|`headers` |The headers of the message.
+
+|`variable` |The exchange variables
+|`variables` |The exchange variables
+
+|`exchangeProperty` |The exchange properties.
+|`exchangeProperties` |The exchange properties.
+
 |`exchange` |The `Exchange` itself.
-
-|`exchangeProperties` |The `Exchange` properties.
-
-|`variables` |The variables
-
-|`headers` |The headers of the In message.
-
 |`camelContext` |The Camel Context.
+|`exception` | If the exchange failed then this is the caused exception.
 
-|`request` |The In message.
+|`request` |The message.
 
-|`body` |The In message body.
-
-|`response` |The Out message (only for InOut message exchange pattern).
+|`response` | *Deprecated* The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
 

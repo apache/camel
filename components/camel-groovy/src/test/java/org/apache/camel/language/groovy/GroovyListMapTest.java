@@ -51,7 +51,7 @@ public class GroovyListMapTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .filter().groovy("request.body.get(0).get('foo') == 'bar'")
+                        .filter().groovy("body.get(0).get('foo') == 'bar'")
                         .to("mock:result");
             }
         };

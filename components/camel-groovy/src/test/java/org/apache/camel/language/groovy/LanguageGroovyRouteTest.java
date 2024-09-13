@@ -40,7 +40,7 @@ public class LanguageGroovyRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                String script = URLEncoder.encode("request.body * 2", "UTF-8");
+                String script = URLEncoder.encode("body * 2", "UTF-8");
                 from("direct:start").to("language:groovy:" + script).to("mock:result");
                 // END SNIPPET: e1
             }
