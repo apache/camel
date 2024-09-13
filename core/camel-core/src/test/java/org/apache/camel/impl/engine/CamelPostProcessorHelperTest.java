@@ -56,8 +56,8 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
@@ -116,14 +116,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         MyPrivateConsumeBean my = new MyPrivateConsumeBean();
         Method method = my.getClass().getDeclaredMethod("consumeSomethingPrivate", String.class);
-        try {
-            helper.consumerInjection(method, my, "foo");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith("The method private void"));
-            assertTrue(iae.getMessage().endsWith("(for example the method must be public)"));
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> helper.consumerInjection(method, my, "foo"),
+                "Should have thrown exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(iae.getMessage().startsWith("The method private void"));
+        assertTrue(iae.getMessage().endsWith("(for example the method must be public)"));
     }
 
     @Test
@@ -336,15 +335,15 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?> type = field.getType();
         String propertyName = "producer";
 
-        try {
-            helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
-            fail("Should throw exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertEquals("ref://unknown", e.getUri());
-            NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals("No bean could be found in the registry for: unknown of type: org.apache.camel.Endpoint",
-                    nsbe.getMessage());
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean,
+                        "foo"),
+                "Should throw exception");
+
+        assertEquals("ref://unknown", e.getUri());
+        NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
+        assertEquals("No bean could be found in the registry for: unknown of type: org.apache.camel.Endpoint",
+                nsbe.getMessage());
     }
 
     @Test
@@ -358,12 +357,10 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?> type = field.getType();
         String propertyName = "producer";
 
-        try {
-            helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
-            fail("Should throw exception");
-        } catch (NoSuchEndpointException e) {
-            // expected
-        }
+        assertThrows(NoSuchEndpointException.class,
+                () -> helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean,
+                        "foo"),
+                "Should throw exception");
     }
 
     @Test
@@ -539,14 +536,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("foo");
 
         Class<?> type = field.getType();
-        try {
-            helper.getInjectionBeanValue(type, "bar");
-            fail("Should have thrown exception");
-        } catch (NoSuchBeanException e) {
-            assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.impl.FooBar",
-                    e.getMessage());
-            assertEquals("bar", e.getName());
-        }
+        NoSuchBeanException e = assertThrows(NoSuchBeanException.class,
+                () -> helper.getInjectionBeanValue(type, "bar"),
+                "Should have thrown exception");
+
+        assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.impl.FooBar",
+                e.getMessage());
+        assertEquals("bar", e.getName());
     }
 
     @Test

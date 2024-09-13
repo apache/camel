@@ -45,12 +45,8 @@ public class MessageSupportTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Message in = exchange.getIn();
 
-        try {
-            in.getMandatoryBody();
-            fail("Should have thrown an exception");
-        } catch (InvalidPayloadException e) {
-            // expected
-        }
+        assertThrows(InvalidPayloadException.class, in::getMandatoryBody,
+                "Should have thrown an exception");
 
         in.setBody("Hello World");
 

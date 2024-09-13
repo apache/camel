@@ -120,13 +120,11 @@ public class EventNotifierEventsTest {
         // not optimized as this requires exchange events
         assertTrue(context.getCamelContextExtension().isEventNotificationApplicable());
 
-        try {
-            template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:fail", "Hello World"),
+                "Should have thrown an exception");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
 
         assertEquals(16, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));

@@ -83,12 +83,11 @@ public class DefaultFactoryFinderTest {
         final TestImplA expected = new TestImplA();
         when(injector.newInstance(TestImplA.class, false)).thenReturn(expected);
 
-        try {
-            factoryFinder.newInstance("TestImplA", TestImplB.class);
-            fail("Exception should have been thrown");
-        } catch (Exception e) {
-            assertInstanceOf(ClassCastException.class, e);
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> factoryFinder.newInstance("TestImplA", TestImplB.class),
+                "Exception should have been thrown");
+
+        assertInstanceOf(ClassCastException.class, e);
     }
 
     @Test
@@ -98,12 +97,11 @@ public class DefaultFactoryFinderTest {
 
     @Test
     public void shouldComplainNoClassKeyInPropertyFile() {
-        try {
-            factoryFinder.findClass("TestImplNoProperty");
-            fail("NoFactoryAvailableException should have been thrown");
-        } catch (Exception e) {
-            assertEquals("Expected property is missing: class", e.getCause().getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> factoryFinder.findClass("TestImplNoProperty"),
+                "NoFactoryAvailableException should have been thrown");
+
+        assertEquals("Expected property is missing: class", e.getCause().getMessage());
     }
 
     @Test
