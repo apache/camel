@@ -140,6 +140,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "logDebugMaxChars": target.setLogDebugMaxChars(property(camelContext, int.class, value)); return true;
         case "logexhaustedmessagebody":
         case "logExhaustedMessageBody": target.setLogExhaustedMessageBody(property(camelContext, boolean.class, value)); return true;
+        case "loglanguage":
+        case "logLanguage": target.setLogLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "logmask":
         case "logMask": target.setLogMask(property(camelContext, boolean.class, value)); return true;
         case "logname":
@@ -382,6 +384,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "logDebugMaxChars": return int.class;
         case "logexhaustedmessagebody":
         case "logExhaustedMessageBody": return boolean.class;
+        case "loglanguage":
+        case "logLanguage": return java.lang.String.class;
         case "logmask":
         case "logMask": return boolean.class;
         case "logname":
@@ -625,6 +629,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "logDebugMaxChars": return target.getLogDebugMaxChars();
         case "logexhaustedmessagebody":
         case "logExhaustedMessageBody": return target.isLogExhaustedMessageBody();
+        case "loglanguage":
+        case "logLanguage": return target.getLogLanguage();
         case "logmask":
         case "logMask": return target.isLogMask();
         case "logname":

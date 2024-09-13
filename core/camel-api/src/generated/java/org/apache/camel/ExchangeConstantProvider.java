@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(158);
+        Map<String, String> map = new HashMap<>(159);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("ACTIVE_SPAN", "OpenTracing.activeSpan");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
@@ -105,6 +105,7 @@ public class ExchangeConstantProvider {
         map.put("LANGUAGE_SCRIPT", "CamelLanguageScript");
         map.put("LOG_DEBUG_BODY_MAX_CHARS", "CamelLogDebugBodyMaxChars");
         map.put("LOG_DEBUG_BODY_STREAMS", "CamelLogDebugStreams");
+        map.put("LOG_EIP_LANGUAGE", "CamelLogEipLanguage");
         map.put("LOG_EIP_NAME", "CamelLogEipName");
         map.put("LOOP_INDEX", "CamelLoopIndex");
         map.put("LOOP_SIZE", "CamelLoopSize");

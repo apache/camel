@@ -246,6 +246,9 @@ public final class DefaultConfigurationConfigurer {
         if (config.getLogName() != null) {
             camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, config.getLogName());
         }
+        if (config.getLogLanguage() != null) {
+            camelContext.getGlobalOptions().put(Exchange.LOG_EIP_LANGUAGE, config.getLogLanguage());
+        }
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());

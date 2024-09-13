@@ -2789,6 +2789,9 @@ public abstract class AbstractCamelContext extends BaseService
             startupStepRecorder.endStep(subStep);
         }
 
+        // start log listeners
+        ServiceHelper.startService(getCamelContextExtension().getLogListeners());
+
         // ensure components are started
         for (Map.Entry<String, Component> entry : components.entrySet()) {
             StartupStep step = startupStepRecorder.beginStep(Component.class, entry.getKey(), "Start Component");
@@ -3020,6 +3023,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
         internalServiceManager.shutdownServices(this);
+
+        // shutdown log listeners
+        ServiceHelper.stopAndShutdownServices(getCamelContextExtension().getLogListeners());
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
