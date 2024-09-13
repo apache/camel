@@ -17,6 +17,7 @@
 package org.apache.camel.service.lra;
 
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -87,12 +88,18 @@ public class LRASagaRoutes extends RouteBuilder {
                 if (!queryParams.isEmpty()) {
                     if (queryParams.get(URL_COMPENSATION_KEY) != null) {
                         compensationURI = queryParams.get(URL_COMPENSATION_KEY).toString();
+                        // CAMEL-21216: the call from the lra-coordinator is not correctly url-decoded
+                        // as long as 'CAMEL-21197' is not solved, this workaround is needed
+                        compensationURI = java.net.URLDecoder.decode(compensationURI, StandardCharsets.UTF_8);
                         usedURIs.add(compensationURI);
                         exchange.getIn().setHeader(URL_COMPENSATION_KEY, compensationURI);
                     }
 
                     if (queryParams.get(URL_COMPLETION_KEY) != null) {
                         completionURI = queryParams.get(URL_COMPLETION_KEY).toString();
+                        // CAMEL-21216: the call from the lra-coordinator is not correctly url-decoded
+                        // as long as 'CAMEL-21197' is not solved, this workaround is needed
+                        completionURI = java.net.URLDecoder.decode(completionURI, StandardCharsets.UTF_8);
                         usedURIs.add(completionURI);
                         exchange.getIn().setHeader(URL_COMPLETION_KEY, completionURI);
                     }
