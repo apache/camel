@@ -97,6 +97,16 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
     }
 
     @Override
+    public BrowseStatus getBrowseStatus(int limit) {
+        if (queueBrowseStrategy == null) {
+            return new BrowseStatus(0, 0, 0);
+        }
+        String queue = getDestinationName();
+        JmsOperations template = getConfiguration().createInOnlyTemplate(this, false, queue);
+        return queueBrowseStrategy.browseStatus(template, queue, this, limit);
+    }
+
+    @Override
     public List<Exchange> getExchanges(int limit, Predicate filter) {
         if (queueBrowseStrategy == null) {
             return Collections.emptyList();
