@@ -16,16 +16,36 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class ServiceBusHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+    private static final Set<Class<?>> SUPPORTED_TYPES = Set.of(
+            Boolean.class,
+            Byte.class,
+            Character.class,
+            Double.class,
+            Float.class,
+            Integer.class,
+            Long.class,
+            Short.class,
+            String.class,
+            Date.class,
+            UUID.class);
+
     public ServiceBusHeaderFilterStrategy() {
         super();
-        initialise();
+        setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
+        setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
     }
 
-    private void initialise() {
-        setOutFilterStartsWith("Camel", "camel", "org.apache.camel.");
-        setInFilterStartsWith("Camel", "camel", "org.apache.camel.");
+    @Override
+    public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
+        return headerValue == null || !SUPPORTED_TYPES.contains(headerValue.getClass())
+                || super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
     }
 }
