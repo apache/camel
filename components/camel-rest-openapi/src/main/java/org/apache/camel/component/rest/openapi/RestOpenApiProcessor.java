@@ -19,11 +19,10 @@ package org.apache.camel.component.rest.openapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.media.Content;
 import org.apache.camel.*;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
@@ -142,7 +141,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan());
+        this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
         CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
 
         // register all openapi paths
@@ -198,32 +197,13 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
         bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
 
-        String consumes = endpoint.getConsumes();
-        String produces = endpoint.getProduces();
-        // the operation may have specific information what it can consume
-        if (o.getRequestBody() != null) {
-            Content c = o.getRequestBody().getContent();
-            if (c != null) {
-                consumes = c.keySet().stream().sorted().collect(Collectors.joining(","));
-            }
-        }
-        // the operation may have specific information what it can produce
-        if (o.getResponses() != null) {
-            for (var a : o.getResponses().values()) {
-                Content c = a.getContent();
-                if (c != null) {
-                    produces = c.keySet().stream().sorted().collect(Collectors.joining(","));
-                }
-            }
-        }
+        String consumes = Optional.ofNullable(openApiUtils.getConsumes(o)).orElse(endpoint.getConsumes());
+        String produces = Optional.ofNullable(openApiUtils.getProduces(o)).orElse(endpoint.getProduces());
+
         bc.setConsumes(consumes);
         bc.setProduces(produces);
 
-        boolean requiredBody = false;
-        if (o.getRequestBody() != null) {
-            requiredBody = Boolean.TRUE == o.getRequestBody().getRequired();
-        }
-        bc.setRequiredBody(requiredBody);
+        bc.setRequiredBody(openApiUtils.isRequiredBody(o));
 
         bc.setRequiredQueryParameters(openApiUtils.getRequiredQueryParameters(o));
         bc.setRequiredHeaders(openApiUtils.getRequiredHeaders(o));

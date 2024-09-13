@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
@@ -46,8 +47,7 @@ public class OpenApiUtils {
             "integer", Integer.class,
             "number", Double.class,
             "string", String.class,
-            "boolean", Boolean.class,
-            "object", Object.class);
+            "boolean", Boolean.class);
 
     private static final Map<String, Class<?>> OPENAPI_FORMATS = Map.of(
             "int32", Integer.class,
@@ -63,10 +63,43 @@ public class OpenApiUtils {
     private final Set<Class<?>> scannedClasses = new HashSet<>();
     private CamelContext camelContext;
     private String bindingPackage;
+    private Components components;
 
-    public OpenApiUtils(CamelContext camelContext, String bindingPackage) {
+    public OpenApiUtils(CamelContext camelContext, String bindingPackage, Components components) {
         this.camelContext = camelContext;
         this.bindingPackage = bindingPackage;
+        this.components = components;
+    }
+
+    public boolean isRequiredBody(Operation operation) {
+        if (operation.getRequestBody() != null) {
+            return Boolean.TRUE == operation.getRequestBody().getRequired();
+        }
+        return false;
+    }
+
+    public String getConsumes(Operation operation) {
+        // the operation may have specific information what it can consume
+        if (operation.getRequestBody() != null) {
+            Content content = operation.getRequestBody().getContent();
+            if (content != null) {
+                return content.keySet().stream().sorted().collect(Collectors.joining(","));
+            }
+        }
+        return null;
+    }
+
+    public String getProduces(Operation operation) {
+        // the operation may have specific information what it can produce
+        if (operation.getResponses() != null) {
+            for (var apiResponse : operation.getResponses().values()) {
+                Content content = apiResponse.getContent();
+                if (content != null) {
+                    return content.keySet().stream().sorted().collect(Collectors.joining(","));
+                }
+            }
+        }
+        return null;
     }
 
     public Set<String> getRequiredQueryParameters(Operation operation) {
@@ -145,17 +178,20 @@ public class OpenApiUtils {
             if (schema instanceof ArraySchema) {
                 schema = schema.getItems();
             }
-            Class<?> primitiveType = resolveType(schema);
-            if (primitiveType != null) {
-                return primitiveType;
+            String schemaName = findSchemaName(schema);
+            if (schemaName == null) {
+                Class<?> primitiveType = resolveType(schema);
+                if (primitiveType != null) {
+                    return primitiveType;
+                }
             }
             Pattern classNamePattern = Pattern.compile(".*\\/(.*)");
-            String typeName = Optional.ofNullable(schema.get$ref())
-                    .orElse(schema.getType());
-            Matcher classNameMatcher = classNamePattern.matcher(typeName);
+            schemaName = Optional.ofNullable(schemaName)
+                    .orElse(Optional.ofNullable(schema.get$ref()).orElse(schema.getType()));
+            Matcher classNameMatcher = classNamePattern.matcher(schemaName);
             String classToFind = classNameMatcher.find()
                     ? classNameMatcher.group(1)
-                    : typeName;
+                    : schemaName;
 
             return scannedClasses.stream()
                     .filter(aClass -> aClass.getSimpleName().equals(classToFind))
@@ -218,5 +254,16 @@ public class OpenApiUtils {
                     .collect(Collectors.toSet());
         }
         return parameters;
+    }
+
+    private String findSchemaName(Schema<?> schema) {
+        if (components != null) {
+            for (Map.Entry<String, Schema> schemaEntry : components.getSchemas().entrySet()) {
+                if (schemaEntry.getValue() == schema) {
+                    return schemaEntry.getKey();
+                }
+            }
+        }
+        return null;
     }
 }
