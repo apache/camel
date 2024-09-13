@@ -31,6 +31,7 @@
       <choice>
         <when>
           <groovy>
+            log.info('Summing data')
             int total = body.amount.sum()
             total > 100
           </groovy>

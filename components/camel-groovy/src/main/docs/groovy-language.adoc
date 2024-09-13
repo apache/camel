@@ -55,8 +55,9 @@ a `Map`). The `Exchange` is transferred as:
 |`exception` | If the exchange failed then this is the caused exception.
 
 |`request` |The message.
-
 |`response` | *Deprecated* The Out message (only for InOut message exchange pattern).
+
+|`log` | Can be used for logging purposes such as `log.info('Using body: {}', body)`.
 |=======================================================================
 
 
@@ -68,11 +69,11 @@ by using the key of `result` from the value set. If you have multiple
 statements scripts, you need to make sure you set the value of result
 variable as the script return value.
 
-[source,text]
+[source,groovy]
 -------------------------------------------------------------
-bar = "baz";
-# some other statements ...
-# camel take the result value as the script evaluation result
+bar = "baz"
+// some other statements ...
+// camel take the result value as the script evaluation result
 result = body * 2 + 1
 -------------------------------------------------------------
 
@@ -144,7 +145,7 @@ Java::
 [source,java]
 ------------------------------------------------------------------------------------------------
 from("queue:foo")
-    .filter(groovy("request.lineItems.any { i -> i.value > 100 }"))
+    .filter(groovy("body.lineItems.any { i -> i.value > 100 }"))
         .to("queue:bar")
 ------------------------------------------------------------------------------------------------
 
@@ -155,7 +156,7 @@ XML DSL::
 <route>
     <from uri="queue:foo"/>
     <filter>
-        <groovy>request.lineItems.any { i -> i.value > 100 }</groovy>
+        <groovy>body.lineItems.any { i -> i.value > 100 }</groovy>
         <to uri="queue:bar"/>
     </filter>
 </route>
