@@ -775,8 +775,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To configure the language to use for Log EIP. By default, the simple language is used.
-     * However, Camel also supports other languages such as groovy.
+     * To configure the language to use for Log EIP. By default, the simple language is used. However, Camel also
+     * supports other languages such as groovy.
      */
     public void setLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;
@@ -2070,8 +2070,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To configure the language to use for Log EIP. By default, the simple language is used.
-     * However, Camel also supports other languages such as groovy.
+     * To configure the language to use for Log EIP. By default, the simple language is used. However, Camel also
+     * supports other languages such as groovy.
      */
     public T withLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;

@@ -96,7 +96,8 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Exception t) {
-                LOG.warn("Ignoring an exception: {} thrown by: {} caused by: {}", t.getClass().getName(), listener.getClass().getName(), t.getMessage());
+                LOG.warn("Ignoring an exception: {} thrown by: {} caused by: {}", t.getClass().getName(),
+                        listener.getClass().getName(), t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
                 }
