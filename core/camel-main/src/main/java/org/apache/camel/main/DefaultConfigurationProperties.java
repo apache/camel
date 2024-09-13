@@ -83,6 +83,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean logMask;
     private boolean logExhaustedMessageBody;
     private String logName;
+    private String logLanguage;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean caseInsensitiveHeaders = true;
@@ -767,6 +768,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setLogName(String logName) {
         this.logName = logName;
+    }
+
+    public String getLogLanguage() {
+        return logLanguage;
+    }
+
+    /**
+     * To configure the language to use for Log EIP. By default, the simple language is used.
+     * However, Camel also supports other languages such as groovy.
+     */
+    public void setLogLanguage(String logLanguage) {
+        this.logLanguage = logLanguage;
     }
 
     public boolean isAutoStartup() {
@@ -2053,6 +2066,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLogName(String logName) {
         this.logName = logName;
+        return (T) this;
+    }
+
+    /**
+     * To configure the language to use for Log EIP. By default, the simple language is used.
+     * However, Camel also supports other languages such as groovy.
+     */
+    public T withLogLanguage(String logLanguage) {
+        this.logLanguage = logLanguage;
         return (T) this;
     }
 
