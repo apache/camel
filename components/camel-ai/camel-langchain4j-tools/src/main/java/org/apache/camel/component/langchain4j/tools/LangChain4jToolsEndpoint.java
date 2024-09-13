@@ -60,7 +60,7 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     @Metadata(label = "consumer")
     @UriParam(description = "List of Tool parameters in the form of parameter.<name>=<type>", prefix = "parameter.",
-              multiValue = true, enums = "string,integer,number,object,array,boolean,null")
+              multiValue = true)
     private Map<String, String> parameters;
 
     @Metadata(label = "consumer,advanced")
