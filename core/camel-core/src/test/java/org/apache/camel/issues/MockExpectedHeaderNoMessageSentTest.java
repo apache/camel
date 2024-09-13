@@ -22,23 +22,21 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MockExpectedHeaderNoMessageSentTest extends ContextTestSupport {
 
     @Test
-    public void testHeaderExpectedNoMessageSent() throws Exception {
+    public void testHeaderExpectedNoMessageSent() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.setResultWaitTime(100); // run test quick
 
         mock.expectedHeaderReceived("foo", "bar");
 
-        try {
-            mock.assertIsSatisfied();
-            fail("Should fail");
-        } catch (AssertionError e) {
-            assertEquals("mock://result Received message count 0, expected at least 1", e.getMessage());
-        }
+        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied,
+                "Should fail");
+
+        assertEquals("mock://result Received message count 0, expected at least 1", e.getMessage());
     }
 
     @Override

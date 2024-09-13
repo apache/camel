@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends ContextTestSupport {
@@ -50,12 +51,12 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends Context
 
     private void execute(String from) throws InterruptedException {
         for (int i = 0; i < 10; i++) {
-            try {
-                template.sendBody(from, "some content");
-            } catch (Exception e) {
-                // expected due to runtime exception in hasNext method
-                assertTrue(e.getMessage().startsWith("Exception occurred"));
-            }
+
+            Exception e = assertThrows(Exception.class, () -> template.sendBody(from, "some content"),
+                    "expected due to runtime exception in hasNext method");
+
+            assertTrue(e.getMessage().startsWith("Exception occurred"));
+
             assertMockEndpointsSatisfied();
         }
     }

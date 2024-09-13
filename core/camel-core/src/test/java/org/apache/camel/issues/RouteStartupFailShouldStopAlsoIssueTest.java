@@ -59,11 +59,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
             }
         });
 
-        try {
-            context.start();
-        } catch (Exception e) {
-            // should fail
-        }
+        assertThrows(Exception.class, () -> context.start(), "Should fail");
 
         assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
         assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());

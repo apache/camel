@@ -24,7 +24,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests the issue stated in <a href="https://issues.apache.org/jira/browse/CAMEL-12441">CAMEL-12441</a>.
@@ -36,13 +36,12 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
         getMockEndpoint("mock:line").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", new MyIterator(1));
-            fail("Should throw exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced error", iae.getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", new MyIterator(1)),
+                "Should throw exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced error", iae.getMessage());
 
         assertMockEndpointsSatisfied();
     }
@@ -52,13 +51,12 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
         getMockEndpoint("mock:line").expectedMessageCount(1);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", new MyIterator(2));
-            fail("Should throw exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced error", iae.getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", new MyIterator(2)),
+                "Should throw exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced error", iae.getMessage());
 
         assertMockEndpointsSatisfied();
     }
@@ -68,13 +66,12 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
         getMockEndpoint("mock:line").expectedMessageCount(2);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", new MyIterator(3));
-            fail("Should throw exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced error", iae.getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", new MyIterator(3)),
+                "Should throw exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Forced error", iae.getMessage());
 
         assertMockEndpointsSatisfied();
     }
