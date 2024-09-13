@@ -40,14 +40,46 @@ public class GroovyExpressionTest {
         assertExpression(GroovyLanguage.groovy("exchange.in.headers['foo.bar']"), exchange, "cheese");
         assertExpression(GroovyLanguage.groovy("exchange.in.headers.name"), exchange, "James");
         assertExpression(GroovyLanguage.groovy("exchange.in.headers['doesNotExist']"), exchange, null);
+
+        assertExpression(GroovyLanguage.groovy("header['foo.bar']"), exchange, "cheese");
+        assertExpression(GroovyLanguage.groovy("header.name"), exchange, "James");
+        assertExpression(GroovyLanguage.groovy("header['doesNotExist']"), exchange, null);
+
+        assertExpression(GroovyLanguage.groovy("variable['cheese']"), exchange, "gauda");
+        assertExpression(GroovyLanguage.groovy("variable.cheese"), exchange, "gauda");
+        assertExpression(GroovyLanguage.groovy("variable['doesNotExist']"), exchange, null);
+        assertExpression(GroovyLanguage.groovy("variables['cheese']"), exchange, "gauda");
+        assertExpression(GroovyLanguage.groovy("variables.cheese"), exchange, "gauda");
+        assertExpression(GroovyLanguage.groovy("variables['doesNotExist']"), exchange, null);
     }
 
     @Test
     public void testPredicateEvaluation() {
         assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'James'"), exchange, true);
+        assertPredicate(GroovyLanguage.groovy("header.name == 'James'"), exchange, true);
         assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
+        assertPredicate(GroovyLanguage.groovy("header.name == 'Hiram'"), exchange, false);
 
         assertPredicate(GroovyLanguage.groovy("request.headers.name == 'James'"), exchange, true);
+        assertPredicate(GroovyLanguage.groovy("header.name == 'James'"), exchange, true);
+
+        assertPredicate(GroovyLanguage.groovy("variable.cheese == 'gauda'"), exchange, true);
+        assertPredicate(GroovyLanguage.groovy("variables.cheese == 'gauda'"), exchange, true);
+        assertPredicate(GroovyLanguage.groovy("variables['cheese'] == 'gauda'"), exchange, true);
+    }
+
+    @Test
+    public void testException() {
+        Exception e = new IllegalArgumentException("Forced");
+
+        exchange.setException(e);
+        assertExpression(GroovyLanguage.groovy("exception"), exchange, e);
+
+        exchange.setException(null);
+        assertExpression(GroovyLanguage.groovy("exception"), exchange, null);
+
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+        assertExpression(GroovyLanguage.groovy("exception"), exchange, e);
     }
 
     @Test
@@ -74,5 +106,6 @@ public class GroovyExpressionTest {
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setHeader("foo.bar", "cheese");
         exchange.getIn().setHeader("name", "James");
+        exchange.setVariable("cheese", "gauda");
     }
 }

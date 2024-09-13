@@ -491,14 +491,20 @@ public final class ExchangeHelper {
      */
     public static void populateVariableMap(Exchange exchange, Map<String, Object> map, boolean allowContextMapAll) {
         Message in = exchange.getIn();
-        map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
-        map.put("variables", exchange.getVariables());
+        map.put("header", in.getHeaders());
+        map.put("headers", in.getHeaders());
+        var v = exchange.getVariables();
+        map.put("variable", v);
+        map.put("variables", v);
+        map.put("exception", LanguageHelper.exception(exchange));
         if (allowContextMapAll) {
             map.put("in", in);
             map.put("request", in);
             map.put("exchange", exchange);
-            map.put("exchangeProperties", exchange.getAllProperties());
+            var p = exchange.getAllProperties();
+            map.put("exchangeProperty", p);
+            map.put("exchangeProperties", p);
             if (isOutCapable(exchange)) {
                 // if we are out capable then set out and response as well
                 // however only grab OUT if it exists, otherwise reuse IN

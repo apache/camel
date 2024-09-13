@@ -62,7 +62,7 @@ public class GroovySetHeaderIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("mySlip").groovy("return \"${request.body.subOrderName}Endpoint\"")
+                        .setHeader("mySlip").groovy("return \"${body.subOrderName}Endpoint\"")
                         .routingSlip(header("mySlip"));
             }
         };

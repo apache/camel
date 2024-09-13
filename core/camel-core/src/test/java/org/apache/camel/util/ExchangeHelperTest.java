@@ -127,12 +127,13 @@ public class ExchangeHelperTest extends ContextTestSupport {
         Map<String, Object> map = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, map, false);
 
-        assertEquals(3, map.size());
+        assertEquals(5, map.size());
         assertNull(map.get("exchange"));
         assertNull(map.get("in"));
         assertNull(map.get("request"));
         assertNull(map.get("out"));
         assertNull(map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("header"));
         assertSame(exchange.getIn().getHeaders(), map.get("headers"));
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertSame(exchange.getVariable("cheese"), map.get("cheese"));
@@ -148,13 +149,16 @@ public class ExchangeHelperTest extends ContextTestSupport {
         Map<String, Object> map = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, map, true);
 
-        assertEquals(10, map.size());
+        assertEquals(13, map.size());
         assertSame(exchange, map.get("exchange"));
         assertSame(exchange.getIn(), map.get("in"));
         assertSame(exchange.getIn(), map.get("request"));
         assertSame(exchange.getMessage(), map.get("out"));
         assertSame(exchange.getMessage(), map.get("response"));
         assertSame(exchange.getIn().getHeaders(), map.get("headers"));
+        assertSame(exchange.getIn().getHeaders(), map.get("header"));
+        assertSame(exchange.getVariables(), map.get("variable"));
+        assertSame(exchange.getVariables(), map.get("variables"));
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertSame(exchange.getContext(), map.get("camelContext"));
     }
@@ -168,12 +172,13 @@ public class ExchangeHelperTest extends ContextTestSupport {
 
         Map<?, ?> map = ExchangeHelper.createVariableMap(exchange, true);
 
-        assertEquals(10, map.size());
+        assertEquals(13, map.size());
         assertSame(exchange, map.get("exchange"));
         assertSame(exchange.getIn(), map.get("in"));
         assertSame(exchange.getIn(), map.get("request"));
         assertSame(exchange.getMessage(), map.get("out"));
         assertSame(exchange.getMessage(), map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("header"));
         assertSame(exchange.getIn().getHeaders(), map.get("headers"));
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertSame(exchange.getContext(), map.get("camelContext"));
@@ -189,12 +194,13 @@ public class ExchangeHelperTest extends ContextTestSupport {
         Map<?, ?> map = ExchangeHelper.createVariableMap(exchange, true);
 
         // there should still be 10 in the map
-        assertEquals(10, map.size());
+        assertEquals(13, map.size());
         assertSame(exchange, map.get("exchange"));
         assertSame(exchange.getIn(), map.get("in"));
         assertSame(exchange.getIn(), map.get("request"));
         assertSame(exchange.getIn(), map.get("out"));
         assertSame(exchange.getIn(), map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("header"));
         assertSame(exchange.getIn().getHeaders(), map.get("headers"));
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertSame(exchange.getVariable("cheese"), map.get("cheese"));
