@@ -45,7 +45,7 @@ public class ManagedBrowsableEndpointAsJSonFileTest extends ManagementTestSuppor
         assertNotNull(out);
         log.info(out);
         assertTrue(out.contains("\"value\": \"Hello World\""));
-        assertTrue(out.contains("\"type\": \"org.apache.camel.component.file.GenericFile\""));
+        assertTrue(out.contains("\"type\": \"java.lang.String\""));
         assertTrue(out.contains("\"value\": \"hello.txt\""));
     }
 
