@@ -567,7 +567,13 @@ and setDefaultBus properties from spring configuration file.
 
 == Examples
 
-=== How to create a simple CXF service with POJO data format
+=== How to consume a message from a Camel CXF endpoint in POJO data format
+
+The Camel CXF endpoint consumer POJO data format is based on the
+http://cxf.apache.org/docs/invokers.html[CXF invoker], so the
+message header has a property with the name of
+`CxfConstants.OPERATION_NAME` and the message body is a list of the SEI
+operation parameters.
 
 Having simple java web service interface:
 
@@ -576,100 +582,69 @@ Having simple java web service interface:
 ----
 package org.apache.camel.component.cxf.soap.server;
 
-@WebService(targetNamespace = "http://server.soap.cxf.component.camel.apache.org/", name = "EchoService")
-public interface EchoService {
+import jakarta.jws.WebService;
 
-    String echo(String text);
+@WebService(targetNamespace = "http://server.soap.cxf.component.camel.apache.org/", name = "TextService", serviceName = "TextService")
+public interface TextService {
+
+    String upperCase(String text);
+
+    String lowerCase(String text);
 }
 ----
 
-And implementation:
+We can then create the simplest CXF service (note we didn't specify the `POJO` mode, as it is the default mode) as follows:
+
+[source,java]
+----
+    from("cxf:textServiceResponseFromRoute?serviceClass=org.apache.camel.component.cxf.soap.server.TextService&address=/text-route",
+            .process(exchange -> {
+                String operation = (String) exchange.getIn().getHeader(CxfConstants.OPERATION_NAME);
+                String inputArg = ((MessageContentsList) exchange.getIn().getBody()).get(0).toString();
+                String result = null;
+                if (operation.equals("upperCase")) {
+                    result = inputArg.toUpperCase();
+                }
+                else if (operation.equals("lowerCase")) {
+                    result = inputArg.toLowerCase();
+                }
+                exchange.getIn().setBody(result);
+            });                                     
+----
+
+For more dynamic implementation, we can create the implementation class as follows:
 
 [source,java]
 ----
 
 package org.apache.camel.component.cxf.soap.server;
 
-@WebService(name = "EchoService", serviceName = "EchoService", targetNamespace = "http://server.soap.cxf.component.camel.apache.org/")
-public class EchoServiceImpl implements EchoService {
+import jakarta.jws.WebService;
+
+@WebService(name = "TextService", serviceName = "TextService", targetNamespace = "http://server.soap.cxf.component.camel.apache.org/")
+public class TextServiceImpl implements TextService {
 
     @Override
-    public String echo(String text) {
-        return text;
+    public String upperCase(String text) {
+        return text.toUpperCase();
     }
-
-}
-----
-
-We can then create the simplest CXF service (note we didn't specify the `POJO` mode, as it is the default mode):
-
-[source,java]
-----
-    from("cxf:echoServiceResponseFromImpl?serviceClass=org.apache.camel.component.cxf.soap.server.EchoServiceImpl&address=/echo-impl")// no body set here; the response comes from EchoServiceImpl
-                .log("${body}");
-----
-
-For more complicated implementation of the service (more "Camel way"), we can set the body from the route instead:
-
-[source,java]
-----
-    from("cxf:echoServiceResponseFromRoute?serviceClass=org.apache.camel.component.cxf.soap.server.EchoServiceImpl&address=/echo-route")
-                .setBody(exchange -> exchange.getMessage().getBody(String.class) + " from Camel route");
-----
-
-
-=== How to consume a message from a Camel CXF endpoint in POJO data format
-
-The Camel CXF endpoint consumer POJO data format is based on the
-http://cxf.apache.org/docs/invokers.html[CXF invoker], so the
-message header has a property with the name of
-`CxfConstants.OPERATION_NAME` and the message body is a list of the SEI
-method parameters.
-
-Consider the https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/wsdl_first/PersonProcessor.java[PersonProcessor] example code:
-
-[source,java]
-----
-public class PersonProcessor implements Processor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PersonProcessor.class);
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void process(Exchange exchange) throws Exception {
-        LOG.info("processing exchange in camel");
-
-        BindingOperationInfo boi = (BindingOperationInfo) exchange.getProperty(BindingOperationInfo.class.getName());
-        if (boi != null) {
-            LOG.info("boi.isUnwrapped" + boi.isUnwrapped());
-        }
-        // Get the parameter list which element is the holder.
-        MessageContentsList msgList = (MessageContentsList) exchange.getIn().getBody();
-        Holder<String> personId = (Holder<String>) msgList.get(0);
-        Holder<String> ssn = (Holder<String>) msgList.get(1);
-        Holder<String> name = (Holder<String>) msgList.get(2);
-
-        if (personId.value == null || personId.value.length() == 0) {
-            LOG.info("person id 123, so throwing exception");
-            // Try to throw out the soap fault message
-            org.apache.camel.wsdl_first.types.UnknownPersonFault personFault
-                    = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
-            personFault.setPersonId("");
-            org.apache.camel.wsdl_first.UnknownPersonFault fault
-                    = new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);
-            exchange.getMessage().setBody(fault);
-            return;
-        }
-
-        name.value = "Bonjour";
-        ssn.value = "123";
-        LOG.info("setting Bonjour as the response");
-        // Set the response message, the first element is the return value of the operation,
-        // the others are the holders of method parameters
-        exchange.getMessage().setBody(new Object[] { null, personId, ssn, name });
+    public String lowerCase(String text) {
+        return text.toLowerCase();
     }
-
 }
+
+----
+
+
+Then we can use https://camel.apache.org/components/next/bean-component.html[Bean] (don't forget to add `camel-bean` dependency to your project) invocation based on requested operation name:
+
+[source,java]
+----
+    from("cxf:textServiceResponseFromImpl?serviceClass=org.apache.camel.component.cxf.soap.server.TextService&address=/text-impl")
+                .process(exchange -> exchange.getIn().setHeader(BeanConstants.BEAN_METHOD_NAME, exchange.getIn().getHeader(CxfConstants.OPERATION_NAME)))
+                .to("bean:org.apache.camel.component.cxf.soap.server.TextServiceImpl");
 ----
 
 === How to prepare the message for the Camel CXF endpoint in POJO data format
