@@ -675,7 +675,7 @@ public class JmsConfiguration implements Cloneable {
 
                 // If a delivery mode was set as a JMS header, then we have used a temporary
                 // property to store it - CamelJMSDeliveryMode. Otherwise, we could not keep
-                //  track of whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
+                // track of whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
                 // if it was set or not, so we can never tell if end user provided it in a header
                 int deliveryMode;
                 if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
