@@ -28,11 +28,14 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 @CamelSpringTest
 @ContextConfiguration
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Flaky on ASF CI")
 public class HttpMaxConnectionPerHostTest {
     protected static HttpTestServer localServer;
 
