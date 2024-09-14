@@ -393,7 +393,8 @@ public class JmsBinding {
             } else if (headerName.equals(JmsConstants.JMS_HEADER_PRIORITY)) {
                 jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
             } else if (headerName.equals(JmsConstants.JMS_HEADER_DELIVERY_MODE)) {
-                JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
+                boolean qos = endpoint != null && endpoint.isPreserveMessageQos();
+                JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue, qos);
             } else if (headerName.equals(JmsConstants.JMS_HEADER_EXPIRATION)) {
                 jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else {
