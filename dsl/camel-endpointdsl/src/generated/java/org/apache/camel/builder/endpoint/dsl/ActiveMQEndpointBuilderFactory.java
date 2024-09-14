@@ -7324,7 +7324,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option is a: {@code long} type.
          * 
-         * Default: 20_000
+         * Default: 20000
          * Group: producer
          * 
          * @return the name of the header {@code JmsRequestTimeout}.

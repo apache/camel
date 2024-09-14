@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This test cannot run in parallel: it reuses the same path for different test iterations
@@ -88,12 +89,16 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
         Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
         InputStream is = assertIsInstanceOf(InputStream.class, body);
+        assertNotNull(is);
 
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/", filename));
+
+        String targetName = FileUtil.stripPath(new File("target/stream/JmsStreamMessageTypeTest/out/").list()[0]);
+
         String dstContent
                 = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeTest/out/", filename));
+                        new File("target/stream/JmsStreamMessageTypeTest/out/", targetName));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
