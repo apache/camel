@@ -413,9 +413,11 @@ public final class JmsMessageHelper {
      * @param  exchange                 the exchange
      * @param  message                  the message
      * @param  deliveryMode             the delivery mode, either as a String or integer
+     * @param  preserveMessageQos       whether the option preserveMessageQos has been enabled
      * @throws jakarta.jms.JMSException is thrown if error setting the delivery mode
      */
-    public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {
+    public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode, boolean preserveMessageQos)
+            throws JMSException {
         Integer mode = null;
 
         if (deliveryMode instanceof String s) {
@@ -442,7 +444,9 @@ public final class JmsMessageHelper {
 
         if (mode != null) {
             message.setJMSDeliveryMode(mode);
-            message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
+            if (preserveMessageQos) {
+                message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
+            }
         }
     }
 
