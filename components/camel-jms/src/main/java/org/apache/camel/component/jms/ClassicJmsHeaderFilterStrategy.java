@@ -18,15 +18,17 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+/**
+ * The classic {@link org.apache.camel.spi.HeaderFilterStrategy} which includes Camel specific headers with the JMS
+ * component. This strategy should only be used if you rely on this old behavior.
+ */
+public class ClassicJmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-    public JmsHeaderFilterStrategy() {
+    public ClassicJmsHeaderFilterStrategy() {
         this(false);
     }
 
-    public JmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
-        setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
+    public ClassicJmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
         if (!includeAllJMSXProperties) {
             initialize();
         }

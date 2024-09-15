@@ -59,11 +59,13 @@ public final class JmsConstants {
     public static final String JMS_HEADER_XUSER_ID = "JMSXUserID";
     @Metadata(description = "The message type.", javaType = "org.apache.camel.component.jms.JmsMessageType")
     public static final String JMS_MESSAGE_TYPE = "CamelJmsMessageType";
-    public static final String JMS_DELIVERY_MODE = "CamelJmsDeliveryMode";
     @Metadata(label = "producer",
               description = "The timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds).",
-              javaType = "long", defaultValue = "20_000")
+              javaType = "long", defaultValue = "20000")
     public static final String JMS_REQUEST_TIMEOUT = "CamelJmsRequestTimeout";
+
+    // temporary header for delivery mode when preserver message qos is enabled
+    public static final String JMS_DELIVERY_MODE = "CamelJmsDeliveryMode";
 
     private JmsConstants() {
         // utility class

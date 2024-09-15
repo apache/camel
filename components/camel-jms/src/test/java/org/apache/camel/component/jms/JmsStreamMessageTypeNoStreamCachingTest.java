@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ResourceLock("src/test/data")
 public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
@@ -91,15 +92,20 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
         Object body = getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").getReceivedExchanges().get(0)
                 .getIn().getBody();
         StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
+        assertNotNull(is);
 
         // no more bytes should be available on the input stream
         assertEquals(0, is.available());
 
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, baseFile);
+
+        String targetName
+                = FileUtil.stripPath(new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/").list()[0]);
+
         String dstContent
                 = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/", filename));
+                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/", targetName));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 

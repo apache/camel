@@ -13,6 +13,10 @@ to an `Integer` value.
 
 === camel-jms
 
+The camel-jms component has changed its default `HeaderFilterStrategy` to also remove any `Camel...` headers,
+to act similar to other Camel components. If the old classic behavior is needed then you can configure the `JmsComponent` to use `org.apache.camel.component.jms.ClassicJmsHeaderFilterStrategy`
+as header filter strategy which is the old implementation.
+
 Added `int limit` as parameter to the `browse` method in `org.apache.camel.component.jms.QueueBrowseStrategy`.
 
 === camel-hashicorp-vault properties function

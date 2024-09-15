@@ -164,13 +164,6 @@ valid Java identifiers. One benefit of doing this is that you can then
 use your headers inside a JMS Selector (whose SQL92 syntax mandates Java
 identifier syntax for headers).
 
-A simple strategy for mapping header names is used by default. The
-strategy is to replace any dots and hyphens in the header name as shown
-below and to reverse the replacement when the header name is restored
-from a JMS message sent over the wire. What does this mean? No more
-losing method names to invoke on a bean component, no more losing the
-filename header for the File Component, and so on.
-
 The current header name strategy for accepting header names in Camel is
 as follows:
 
@@ -179,8 +172,27 @@ Camel consume the message
 * Hyphen is replaced by `\_HYPHEN_` and the replacement is reversed when
 Camel consumes the message
 
-You can configure many different properties on the JMS endpoint, which
-map to properties on the `JMSConfiguration` object. 
+
+Camel comes with two implementations of `HeaderFilterStrategy`:
+
+- `org.apache.camel.component.jms.ClassicJmsHeaderFilterStrategy` - classic strategy used until Camel 4.8.
+- `org.apache.camel.component.jms.JmsHeaderFilterStrategy` - newer default strategy from Camel 4.9 onwards.
+
+==== ClassicJmsHeaderFilterStrategy
+
+A classic strategy for mapping header names is used in Camel 4.8 or older.
+
+This strategy also includes Camel internal headers such as `CamelFileName` and `CamelBeanMethodName`
+which means that you can send Camel messages over JMS to another Camel instance and preserve
+this information. However, this also means that JMS messages contains properties with `Camel...` keys.
+This is not desirable always, and therefore we changed default from Camel 4.9 onwards.
+
+NOTE: You can always configure a custom `HeaderFilterStrategy` to remove all `Camel...` headers in Camel 4.8 or older.
+
+==== JmsHeaderFilterStrategy
+
+The new default strategy from Camel 4.9 onwards behaves similar to other components, where `Camel...`
+headers are removed, and only allowing explicit end user headers.
 
 [WARNING]
 ====
