@@ -18,6 +18,8 @@ package org.apache.camel.component.jms.integration;
 
 import java.io.File;
 
+import jakarta.jms.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
@@ -25,6 +27,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.jms.ClassicJmsHeaderFilterStrategy;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
@@ -86,6 +90,14 @@ public class FileRouteToJmsToFileIT extends AbstractJMSTest {
     @Override
     public CamelContextExtension getCamelContextExtension() {
         return camelContextExtension;
+    }
+
+    @Override
+    protected JmsComponent buildComponent(ConnectionFactory connectionFactory) {
+        JmsComponent amq = super.buildComponent(connectionFactory);
+        // need to use the classic header filter
+        amq.setHeaderFilterStrategy(new ClassicJmsHeaderFilterStrategy());
+        return amq;
     }
 
     @BeforeEach

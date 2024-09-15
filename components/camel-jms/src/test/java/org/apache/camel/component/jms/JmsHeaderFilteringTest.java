@@ -61,8 +61,8 @@ public class JmsHeaderFilteringTest extends AbstractJMSTest {
         errors.expectedMessageCount(0);
 
         template.send(testQueueEndpointA, ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader("org.apache.camel.jms", 10000);
-            exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);
+            exchange.getIn().setHeader("org.foo.jms", 10000);
+            exchange.getIn().setHeader("org.foo.test.jms", 20000);
             exchange.getIn().setHeader("testheader", 1020);
             exchange.getIn().setHeader("anotherheader", 1030);
             exchange.getIn().setHeader("JMSXAppID", "myApp");
@@ -132,10 +132,10 @@ public class JmsHeaderFilteringTest extends AbstractJMSTest {
             assertNull(message.getJmsMessage().getObjectProperty("anotherheader"));
 
             // notice dots are replaced by '_DOT_' when it is copied to the jms message properties
-            assertEquals(10000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_jms"));
+            assertEquals(10000, message.getJmsMessage().getObjectProperty("org_DOT_foo_DOT_jms"));
 
             // like testheader, org.apache.camel.test.jms will be filtered by the "in" filter
-            assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
+            assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_foo_DOT_test_DOT_jms"));
 
             // should be filtered by default
             assertNull(message.getJmsMessage().getStringProperty("JMSXAppID"));
@@ -157,10 +157,10 @@ public class JmsHeaderFilteringTest extends AbstractJMSTest {
             assertNull(exchange.getIn().getHeader("anotherheader"));
 
             // it should not been filtered out
-            assertEquals(10000, exchange.getIn().getHeader("org.apache.camel.jms"));
+            assertEquals(10000, exchange.getIn().getHeader("org.foo.jms"));
 
             // filtered out by "in" filter
-            assertNull(exchange.getIn().getHeader("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
+            assertNull(exchange.getIn().getHeader("org_DOT_foo_DOT_test_DOT_jms"));
 
             // should be filtered by default
             assertNull(exchange.getIn().getHeader("JMSXAppID"));

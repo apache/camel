@@ -84,12 +84,12 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
         mock.expectedHeaderReceived("Content-Type", "text/plain");
-        mock.expectedHeaderReceived("org.apache.camel.MyKey", "foo");
+        mock.expectedHeaderReceived("org.foo.MyKey", "foo");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "cheese");
         headers.put("Content-Type", "text/plain");
-        headers.put("org.apache.camel.MyKey", "foo");
+        headers.put("org.foo.MyKey", "foo");
 
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
 
