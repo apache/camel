@@ -18,32 +18,15 @@ package org.apache.camel.component.rest.openapi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.RouteAware;
-import org.apache.camel.StartupStep;
+import org.apache.camel.*;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.RestBindingAdvice;
@@ -68,10 +51,9 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private final String apiContextPath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
-    private final AtomicBoolean packageScanInit = new AtomicBoolean();
-    private final Set<Class<?>> scannedClasses = new HashSet<>();
     private PlatformHttpConsumerAware platformHttpConsumer;
     private Consumer consumer;
+    private OpenApiUtils openApiUtils;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -159,7 +141,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-
+        this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
         CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
 
         // register all openapi paths
@@ -193,7 +175,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
             }
         }
-        scannedClasses.clear(); // no longer needed
+        openApiUtils.clear(); // no longer needed
 
         restOpenapiProcessorStrategy.setMissingOperation(endpoint.getMissingOperation());
         restOpenapiProcessorStrategy.setMockIncludePattern(endpoint.getMockIncludePattern());
@@ -215,162 +197,23 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
         bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
 
-        String consumes = endpoint.getConsumes();
-        String produces = endpoint.getProduces();
-        // the operation may have specific information what it can consume
-        if (o.getRequestBody() != null) {
-            Content c = o.getRequestBody().getContent();
-            if (c != null) {
-                consumes = c.keySet().stream().sorted().collect(Collectors.joining(","));
-            }
-        }
-        // the operation may have specific information what it can produce
-        if (o.getResponses() != null) {
-            for (var a : o.getResponses().values()) {
-                Content c = a.getContent();
-                if (c != null) {
-                    produces = c.keySet().stream().sorted().collect(Collectors.joining(","));
-                }
-            }
-        }
+        String consumes = Optional.ofNullable(openApiUtils.getConsumes(o)).orElse(endpoint.getConsumes());
+        String produces = Optional.ofNullable(openApiUtils.getProduces(o)).orElse(endpoint.getProduces());
+
         bc.setConsumes(consumes);
         bc.setProduces(produces);
 
-        boolean requiredBody = false;
-        if (o.getRequestBody() != null) {
-            requiredBody = Boolean.TRUE == o.getRequestBody().getRequired();
-        }
-        bc.setRequiredBody(requiredBody);
+        bc.setRequiredBody(openApiUtils.isRequiredBody(o));
 
-        Set<String> requiredQueryParameters = null;
-        if (o.getParameters() != null) {
-            requiredQueryParameters = o.getParameters().stream()
-                    .filter(p -> "query".equals(p.getIn()))
-                    .filter(p -> Boolean.TRUE == p.getRequired())
-                    .map(Parameter::getName)
-                    .collect(Collectors.toSet());
-        }
-        if (requiredQueryParameters != null) {
-            bc.setRequiredQueryParameters(requiredQueryParameters);
-        }
-
-        Set<String> requiredHeaders = null;
-        if (o.getParameters() != null) {
-            requiredHeaders = o.getParameters().stream()
-                    .filter(p -> "header".equals(p.getIn()))
-                    .filter(p -> Boolean.TRUE == p.getRequired())
-                    .map(Parameter::getName)
-                    .collect(Collectors.toSet());
-        }
-        if (requiredHeaders != null) {
-            bc.setRequiredHeaders(requiredHeaders);
-        }
-        Map<String, String> defaultQueryValues = null;
-        if (o.getParameters() != null) {
-            defaultQueryValues = o.getParameters().stream()
-                    .filter(p -> "query".equals(p.getIn()))
-                    .filter(p -> p.getSchema() != null)
-                    .filter(p -> p.getSchema().getDefault() != null)
-                    .collect(Collectors.toMap(Parameter::getName, p -> p.getSchema().getDefault().toString()));
-        }
-        if (defaultQueryValues != null) {
-            bc.setQueryDefaultValues(defaultQueryValues);
-        }
+        bc.setRequiredQueryParameters(openApiUtils.getRequiredQueryParameters(o));
+        bc.setRequiredHeaders(openApiUtils.getRequiredHeaders(o));
+        bc.setQueryDefaultValues(openApiUtils.getQueryParametersDefaultValue(o));
 
         // input and output types binding to java classes
-        if (o.getRequestBody() != null) {
-            Content c = o.getRequestBody().getContent();
-            if (c != null) {
-                for (var m : c.entrySet()) {
-                    String mt = m.getKey();
-                    if (mt.contains("json") || mt.contains("xml")) {
-                        Schema s = m.getValue().getSchema();
-                        // $ref is null, so we need to know the schema name via XML
-                        if (s != null && s.getXml() != null) {
-                            String ref = s.getXml().getName();
-                            boolean array = "array".equals(s.getType());
-                            if (ref != null) {
-                                Class<?> clazz = loadBindingClass(camelContext, ref);
-                                if (clazz != null) {
-                                    String name = clazz.getName();
-                                    if (array) {
-                                        name = name + "[]";
-                                    }
-                                    bc.setType(name);
-                                    break; // okay set this just once
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (o.getResponses() != null) {
-            for (var a : o.getResponses().values()) {
-                Content c = a.getContent();
-                if (c != null) {
-                    for (var m : c.entrySet()) {
-                        String mt = m.getKey();
-                        if (mt.contains("json") || mt.contains("xml")) {
-                            Schema s = m.getValue().getSchema();
-                            // $ref is null, so we need to know the schema name via XML
-                            if (s != null && s.getXml() != null) {
-                                String ref = s.getXml().getName();
-                                boolean array = "array".equals(s.getType());
-                                if (ref != null) {
-                                    Class<?> clazz = loadBindingClass(camelContext, ref);
-                                    if (clazz != null) {
-                                        String name = clazz.getName();
-                                        if (array) {
-                                            name = name + "[]";
-                                        }
-                                        bc.setOutType(name);
-                                        break; // okay set this just once
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        bc.setType(openApiUtils.manageRequestBody(o));
+        bc.setOutType(openApiUtils.manageResponseBody(o));
 
         return bc;
-    }
-
-    private Class<?> loadBindingClass(CamelContext camelContext, String ref) {
-        if (ref == null) {
-            return null;
-        }
-
-        if (packageScanInit.compareAndSet(false, true)) {
-            String base = endpoint.getBindingPackageScan();
-            if (base != null) {
-                StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
-                StartupStep step = recorder.beginStep(RestOpenApiProcessor.class, "openapi-binding",
-                        "OpenAPI binding classes package scan");
-                String[] pcks = base.split(",");
-                PackageScanClassResolver resolver = PluginHelper.getPackageScanClassResolver(camelContext);
-                // just add all classes as the POJOs can be generated with all kind of tools and with and without annotations
-                scannedClasses.addAll(resolver.findImplementations(Object.class, pcks));
-                if (!scannedClasses.isEmpty()) {
-                    LOG.info("Binding package scan found {} classes in packages: {}", scannedClasses.size(), base);
-                }
-                recorder.endStep(step);
-            }
-        }
-
-        // must refer to a class name, so upper case
-        ref = Character.toUpperCase(ref.charAt(0)) + ref.substring(1);
-        // find class via simple name
-        for (Class<?> clazz : scannedClasses) {
-            if (clazz.getSimpleName().equals(ref)) {
-                return clazz;
-            }
-        }
-
-        // class not found
-        return null;
     }
 
     @Override
