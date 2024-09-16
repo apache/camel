@@ -25,11 +25,6 @@ public class InOnlyQueueConsumerTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "sjms:queue:in.only.queue.consumer.test.InOnlyQueueConsumerTest";
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testInOnlyQueueProducer() throws Exception {
         final String expectedBody = "Hello World";

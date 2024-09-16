@@ -35,11 +35,6 @@ public class InOnlyTopicProducerTest extends JmsTestSupport {
     public InOnlyTopicProducerTest() {
     }
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testInOnlyTopicProducerProducer() throws Exception {
         MessageConsumer mc = createTopicConsumer(TEST_DESTINATION_NAME, null);

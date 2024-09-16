@@ -78,11 +78,6 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
 
     protected abstract String getBrokerUri();
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     protected void setupFactoryExternal(ActiveMQConnectionFactory factory, ArtemisService service) {
         if (service.userName() != null) {
             factory.setUser(service.userName());
