@@ -26,6 +26,7 @@
 ** xref:jfr.adoc[JFR]
 ** xref:jta.adoc[JTA]
 ** xref:knative-http.adoc[Knative Http]
+** xref:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:lra.adoc[LRA]
 ** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
