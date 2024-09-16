@@ -51,11 +51,6 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     private static MosquittoService createLocalService() {
         return new MosquittoLocalContainerService(mqttPort);
     }
