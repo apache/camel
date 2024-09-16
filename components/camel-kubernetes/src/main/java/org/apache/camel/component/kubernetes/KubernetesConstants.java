@@ -278,6 +278,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The spec for a Job.",
               javaType = "io.fabric8.kubernetes.api.model.batch.v1.CronJobSpec", applicableFor = SCHEME_CRON_JOB)
     public static final String KUBERNETES_CRON_JOB_SPEC = "CamelKubernetesCronJobSpec";
+    @Metadata(label = "producer", description = "The Cron Job annotations.", javaType = "Map<String, String>",
+              applicableFor = SCHEME_CRON_JOB)
+    public static final String KUBERNETES_CRON_JOB_ANNOTATIONS = "CamelKubernetesCronJobAnnotations";
 
     private KubernetesConstants() {
 

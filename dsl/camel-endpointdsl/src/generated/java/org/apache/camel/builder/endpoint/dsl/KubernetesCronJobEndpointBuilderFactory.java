@@ -560,6 +560,18 @@ public interface KubernetesCronJobEndpointBuilderFactory {
         public String kubernetesCronJobSpec() {
             return "CamelKubernetesCronJobSpec";
         }
+        /**
+         * The Cron Job annotations.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCronJobAnnotations}.
+         */
+        public String kubernetesCronJobAnnotations() {
+            return "CamelKubernetesCronJobAnnotations";
+        }
     }
     static KubernetesCronJobEndpointBuilder endpointBuilder(String componentName, String path) {
         class KubernetesCronJobEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesCronJobEndpointBuilder, AdvancedKubernetesCronJobEndpointBuilder {
