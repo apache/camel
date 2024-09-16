@@ -32,11 +32,6 @@ public class InOnlyTopicSharedConsumerTest extends Jms2TestSupport {
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testSynchronous() throws Exception {
         final String expectedBody = "Hello World";

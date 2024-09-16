@@ -40,11 +40,6 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testDurableTopic() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

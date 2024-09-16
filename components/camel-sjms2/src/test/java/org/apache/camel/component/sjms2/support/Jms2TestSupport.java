@@ -49,11 +49,6 @@ public abstract class Jms2TestSupport extends CamelTestSupport {
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @AfterEach
     public void closeSessions() throws JMSException {
         log.info("Closing JMS Session");
