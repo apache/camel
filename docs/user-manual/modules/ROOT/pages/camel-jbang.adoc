@@ -1517,6 +1517,8 @@ completed message is 9 seconds ago, and last failed were 1 hour and 3 minutes ag
 
 TIP: You can run in _watch_ mode using: `camel get --watch`
 
+===== Total in Camel 4.7 and 4.8
+
 From *Camel 4.7* onwards, two numbers will be displayed for _TOTAL_, _FAILED_, and _INFLIGHT_ columns.
 The first number is messages received from external systems (databases, cloud systems), and the second
 number is the total number (as in earlier versions).
@@ -1530,6 +1532,21 @@ camel get
 
 The _TOTAL_ column above shows `1/65` which mean that 1 message was from an external source, and 65 in total; which means that
 64 are from internal sources (such as timer, seda).
+
+===== Total in Camel 4.9 onwards
+
+The TOTAL column is total number of messages processed. This is all messages both started internally (such as from a timer)
+and received from external systems (databases, cloud systems). In *Camel 4.9* we made the TOTAL column a single digit again
+to not confuse, and we added a new `REMOTE` column to show total for remote systems only. So the example above would be:
+
+[source,bash]
+----
+camel get
+  PID   NAME    CAMEL  PLATFORM        PROFILE  READY  STATUS   RELOAD  AGE   ROUTE  MSG/S  TOTAL  REMOTE  FAIL  INFLIGHT  LAST  DELTA  SINCE-LAST
+ 42240  cheese  4.9.0  JBang v0.118.0  dev       1/1   Running       0  1m8s    2/2   1.01     65       1   0/0       0/0     0     -1     1s/1s/-
+----
+
+==== Route status
 
 You can also see the status of every route, from all the local Camel integrations with `camel get route`:
 

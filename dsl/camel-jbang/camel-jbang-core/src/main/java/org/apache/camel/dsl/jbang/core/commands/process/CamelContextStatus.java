@@ -170,6 +170,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("MSG/S").with(this::getThroughput),
                     new Column().header("TOTAL").with(this::getTotal),
+                    new Column().header("REMOTE").with(this::getTotalRemote),
                     new Column().header("FAIL").with(this::getFailed),
                     new Column().header("INFLIGHT").with(this::getInflight),
                     new Column().header("LAST").with(r -> r.last),
@@ -221,10 +222,14 @@ public class CamelContextStatus extends ProcessWatchCommand {
     }
 
     private String getTotal(Row r) {
-        if (r.totalRemote != null) {
-            return r.totalRemote + "/" + r.total;
-        }
         return r.total;
+    }
+
+    private String getTotalRemote(Row r) {
+        if (r.totalRemote != null) {
+            return r.totalRemote;
+        }
+        return "";
     }
 
     private String getFailed(Row r) {

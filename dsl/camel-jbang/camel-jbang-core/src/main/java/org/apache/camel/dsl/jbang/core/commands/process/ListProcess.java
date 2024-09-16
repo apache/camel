@@ -118,6 +118,7 @@ public class ListProcess extends ProcessWatchCommand {
                                 .with(r -> extractState(r.state)),
                         new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                         new Column().header("TOTAL").with(this::getTotal),
+                        new Column().header("REMOTE").with(this::getTotalRemote),
                         new Column().header("FAIL").with(this::getFailed),
                         new Column().header("INFLIGHT").with(this::getInflight))));
             }
@@ -127,10 +128,14 @@ public class ListProcess extends ProcessWatchCommand {
     }
 
     private String getTotal(Row r) {
-        if (r.totalRemote != null) {
-            return r.totalRemote + "/" + r.total;
-        }
         return r.total;
+    }
+
+    private String getTotalRemote(Row r) {
+        if (r.totalRemote != null) {
+            return r.totalRemote;
+        }
+        return "";
     }
 
     private String getFailed(Row r) {
