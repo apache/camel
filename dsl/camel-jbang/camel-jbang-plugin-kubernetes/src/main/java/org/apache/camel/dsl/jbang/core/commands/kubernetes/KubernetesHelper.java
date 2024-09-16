@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -169,21 +168,23 @@ public final class KubernetesHelper {
     }
 
     public static File resolveKubernetesManifest(File workingDir, String extension) throws FileNotFoundException {
-        // Try arbitrary Kubernetes manifest first
-        File manifest = getKubernetesManifest(ClusterType.KUBERNETES.name(), workingDir);
+
+        // Try explicit Kubernetes manifest first
+        String clusterType = ClusterType.KUBERNETES.name();
+        File manifest = getKubernetesManifest(clusterType, workingDir, extension);
         if (manifest.exists()) {
             return manifest;
         }
 
-        // try to resolve from all the other cluster type specific manifests
-        return Arrays.stream(ClusterType.values())
-                .filter(ct -> ct != ClusterType.KUBERNETES)
-                .map(ct -> getKubernetesManifest(ct.name(), workingDir, extension))
-                .filter(File::exists)
-                .findFirst()
-                .orElseThrow(() -> new FileNotFoundException(
-                        "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
-                                .formatted(extension, workingDir.toPath().toString())));
+        // Try arbitrary Kubernetes manifest first
+        manifest = getKubernetesManifest(clusterType, workingDir);
+        if (manifest.exists()) {
+            return manifest;
+        }
+
+        throw new FileNotFoundException(
+                "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                        .formatted(extension, workingDir.toPath().toString()));
     }
 
     public static File getKubernetesManifest(String clusterType, String workingDir) {
