@@ -34,11 +34,6 @@ public class ResiliencePooledRouteOkTest extends CamelTestSupport {
     private BeanIntrospection bi;
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getCamelContextExtension().setExchangeFactory(new PooledExchangeFactory());
