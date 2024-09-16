@@ -68,6 +68,10 @@ public final class AnnotationDependencyInjection {
 
         Registry registry = context.getRegistry();
         CamelBeanPostProcessor cbbp = PluginHelper.getBeanPostProcessor(context);
+        if (lazyBean) {
+            // force lazy beans
+            cbbp.setLazyBeanStrategy((ann) -> true);
+        }
 
         // camel / common
         registry.bind("CamelTypeConverterCompilePostProcessor", new TypeConverterCompilePostProcessor());
@@ -79,6 +83,8 @@ public final class AnnotationDependencyInjection {
         // quarkus
         registry.bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
         cbbp.addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));
+
+
     }
 
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {

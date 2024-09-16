@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.BindToRegistry;
+
 /**
  * Bean post processor.
  */
@@ -91,5 +93,15 @@ public interface CamelBeanPostProcessor {
     default void addCamelBeanPostProjectInjector(CamelBeanPostProcessorInjector injector) {
         // noop
     }
+
+    /**
+     * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
+     */
+    void setLazyBeanStrategy(java.util.function.Predicate<BindToRegistry> strategy);
+
+    /**
+     * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
+     */
+    java.util.function.Predicate<BindToRegistry> getLazyBeanStrategy();
 
 }

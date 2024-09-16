@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.apache.camel.BeanConfigInject;
@@ -70,6 +71,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     protected CamelContext camelContext;
     protected boolean enabled = true;
     protected boolean unbindEnabled;
+    protected java.util.function.Predicate<BindToRegistry> lazyBeanStrategy;
 
     public DefaultCamelBeanPostProcessor() {
     }
@@ -106,6 +108,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     @Override
     public void setUnbindEnabled(boolean unbindEnabled) {
         this.unbindEnabled = unbindEnabled;
+    }
+
+    @Override
+    public Predicate<BindToRegistry> getLazyBeanStrategy() {
+        return lazyBeanStrategy;
+    }
+
+    @Override
+    public void setLazyBeanStrategy(Predicate<BindToRegistry> lazyBeanStrategy) {
+        this.lazyBeanStrategy = lazyBeanStrategy;
     }
 
     @Override
@@ -405,9 +417,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
         // bind each method
         methods.forEach(method -> {
-            BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
-            bindToRegistry(method, bind.value(), bean, beanName, bind.beanPostProcess(), bind.lazy(), bind.initMethod(),
-                    bind.destroyMethod());
+            BindToRegistry ann = method.getAnnotation(BindToRegistry.class);
+            bindToRegistry(method, ann.value(), bean, beanName, ann.beanPostProcess(), isLazyBean(ann), ann.initMethod(),
+                    ann.destroyMethod());
         });
     }
 
@@ -415,7 +427,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         Class<?> clazz = bean.getClass();
         BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
         if (ann != null) {
-            bindToRegistry(clazz, ann.value(), bean, beanName, ann.beanPostProcess(), ann.lazy(), ann.initMethod(),
+            bindToRegistry(clazz, ann.value(), bean, beanName, ann.beanPostProcess(), isLazyBean(ann), ann.initMethod(),
                     ann.destroyMethod());
         }
     }
@@ -425,7 +437,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
             if (ann != null) {
                 // it is a nested class so we don't have a bean instance for it
-                bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess(), ann.lazy(), ann.initMethod(),
+                bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess(), isLazyBean(ann), ann.initMethod(),
                         ann.destroyMethod());
             }
         });
@@ -457,6 +469,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         if (produce != null) {
             setterInjection(method, bean, beanName, produce.value(), produce.property());
         }
+    }
+
+    protected boolean isLazyBean(BindToRegistry ann) {
+        if (lazyBeanStrategy == null) {
+            return ann.lazy();
+        }
+        return lazyBeanStrategy.test(ann);
     }
 
     public void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointProperty) {

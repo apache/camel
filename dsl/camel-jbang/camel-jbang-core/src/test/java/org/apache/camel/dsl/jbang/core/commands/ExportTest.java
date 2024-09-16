@@ -62,7 +62,7 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
-    public void shouldGenerateSpringBootProject(RuntimeType rt) throws Exception {
+    public void shouldGenerateProject(RuntimeType rt) throws Exception {
         Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
@@ -120,8 +120,25 @@ class ExportTest {
         Export command = new ExportSpringBoot(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()));
+        if (args != null) {
+            CommandLine.populateCommand(command, args);
+        }
         command.files = Arrays.asList(files);
         return command;
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportLazyBean(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "classpath:route.yaml", "file:src/test/resources/LazyFoo.java" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--lazy-bean");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
     }
 
     private Model readMavenModel() throws Exception {
