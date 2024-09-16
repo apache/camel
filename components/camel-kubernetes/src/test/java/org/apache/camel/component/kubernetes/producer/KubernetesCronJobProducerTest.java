@@ -114,6 +114,32 @@ public class KubernetesCronJobProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createJobWithAnnotationsTest() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
+        CronJobSpec spec = new CronJobSpecBuilder().build();
+        CronJob j1 = new CronJobBuilder().withNewMetadata().withName("j1").withNamespace("test").withLabels(labels)
+                .withAnnotations(annotations).and()
+                .withSpec(spec).build();
+        server.expect().post().withPath("/apis/batch/v1/namespaces/test/cronjobs").andReturn(200, j1).once();
+
+        Exchange ex = template.request("direct:create", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRON_JOB_ANNOTATIONS, annotations);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, "j1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRON_JOB_SPEC, spec);
+        });
+
+        CronJob result = ex.getMessage().getBody(CronJob.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("j1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(annotations, result.getMetadata().getAnnotations());
+    }
+
+    @Test
     void updateJobTest() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         CronJobSpec spec = new CronJobSpecBuilder().withJobTemplate(new JobTemplateSpecBuilder().build()).build();

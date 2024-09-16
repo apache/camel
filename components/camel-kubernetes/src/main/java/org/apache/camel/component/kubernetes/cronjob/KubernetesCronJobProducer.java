@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.cronjob;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -136,6 +137,8 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         CronJobSpec cronjobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_SPEC, CronJobSpec.class);
+        HashMap<String, String> annotations
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_ANNOTATIONS, HashMap.class);
         if (ObjectHelper.isEmpty(cronjobName)) {
             throw new IllegalArgumentException(
                     String.format("%s a specific cronjob require specify a cronjob name", operationName));
@@ -149,11 +152,17 @@ public class KubernetesCronJobProducer extends DefaultProducer {
                     String.format("%s a specific cronjob require specify a cronjob spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
-        CronJob cronjobCreating = new CronJobBuilder().withNewMetadata().withName(cronjobName).withLabels(labels).endMetadata()
-                .withSpec(cronjobSpec).build();
+        CronJobBuilder cronJobBuilder = new CronJobBuilder();
+        if (ObjectHelper.isEmpty(annotations)) {
+            cronJobBuilder.withNewMetadata().withName(cronjobName).withLabels(labels).endMetadata()
+                    .withSpec(cronjobSpec);
+        } else {
+            cronJobBuilder.withNewMetadata().withName(cronjobName).withLabels(labels).withAnnotations(annotations).endMetadata()
+                    .withSpec(cronjobSpec);
+        }
         Object cronJob = operation.apply(
                 getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespaceName)
-                        .resource(cronjobCreating));
+                        .resource(cronJobBuilder.build()));
 
         prepareOutboundMessage(exchange, cronJob);
     }
