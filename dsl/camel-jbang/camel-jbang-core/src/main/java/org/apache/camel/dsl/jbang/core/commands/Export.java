@@ -147,6 +147,7 @@ public class Export extends ExportBaseCommand {
         cmd.packageName = this.packageName;
         cmd.excludes = this.excludes;
         cmd.ignoreLoadingError = this.ignoreLoadingError;
+        cmd.lazyBean = this.lazyBean;
         // run export
         return cmd.export();
     }

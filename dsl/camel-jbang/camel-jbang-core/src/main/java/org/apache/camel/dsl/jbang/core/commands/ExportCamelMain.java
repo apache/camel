@@ -65,7 +65,7 @@ class ExportCamelMain extends Export {
             if (!quiet && fresh) {
                 printer().println("Generating fresh run data");
             }
-            int silent = runSilently(ignoreLoadingError);
+            int silent = runSilently(ignoreLoadingError, lazyBean);
             if (silent != 0) {
                 return silent;
             }

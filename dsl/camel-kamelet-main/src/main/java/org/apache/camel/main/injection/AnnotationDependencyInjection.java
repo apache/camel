@@ -61,10 +61,11 @@ import org.springframework.stereotype.Service;
  */
 public final class AnnotationDependencyInjection {
 
-    private AnnotationDependencyInjection() {
-    }
+    private final boolean lazyBean;
 
-    public static void initAnnotationBasedDependencyInjection(CamelContext context) {
+    public AnnotationDependencyInjection(CamelContext context, boolean lazyBean) {
+        this.lazyBean = lazyBean;
+
         Registry registry = context.getRegistry();
         CamelBeanPostProcessor cbbp = PluginHelper.getBeanPostProcessor(context);
 
@@ -132,7 +133,7 @@ public final class AnnotationDependencyInjection {
         }
     }
 
-    private static class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
+    private class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
@@ -142,7 +143,7 @@ public final class AnnotationDependencyInjection {
             Configuration cfg = clazz.getAnnotation(Configuration.class);
 
             // special for lazy beans which we must create on-demand
-            if (instance == null && bir != null && bir.lazy()) {
+            if (instance == null && bir != null && (lazyBean || bir.lazy())) {
                 final String beanName = bir.value();
                 instance = (Supplier<Object>) () -> {
                     Object answer = camelContext.getInjector().newInstance(clazz);
@@ -189,7 +190,7 @@ public final class AnnotationDependencyInjection {
 
     }
 
-    private static class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
+    private class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
@@ -211,7 +212,7 @@ public final class AnnotationDependencyInjection {
         }
     }
 
-    private static class SpringBeanPostProcessorInjector implements CamelBeanPostProcessorInjector {
+    private class SpringBeanPostProcessorInjector implements CamelBeanPostProcessorInjector {
 
         private final CamelContext context;
         private final CamelPostProcessorHelper helper;
@@ -252,7 +253,13 @@ public final class AnnotationDependencyInjection {
         public void onMethodInject(Method method, Object bean, String beanName) {
             Bean bi = method.getAnnotation(Bean.class);
             if (bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Bean");
+                Object instance;
+                if (lazyBean) {
+                    instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
+                            "Bean");
+                } else {
+                    instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Bean");
+                }
                 if (instance != null) {
                     String name = method.getName();
                     if (bi.name().length > 0) {
@@ -264,7 +271,7 @@ public final class AnnotationDependencyInjection {
         }
     }
 
-    private static class QuarkusAnnotationCompilePostProcessor implements CompilePostProcessor {
+    private class QuarkusAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
         public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
@@ -285,7 +292,7 @@ public final class AnnotationDependencyInjection {
         }
     }
 
-    private static class QuarkusBeanPostProcessorInjector implements CamelBeanPostProcessorInjector {
+    private class QuarkusBeanPostProcessorInjector implements CamelBeanPostProcessorInjector {
 
         private final CamelContext context;
         private final CamelPostProcessorHelper helper;
@@ -324,7 +331,13 @@ public final class AnnotationDependencyInjection {
             Produces produces = method.getAnnotation(Produces.class);
             Named bi = method.getAnnotation(Named.class);
             if (produces != null || bi != null) {
-                Object instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Produces");
+                Object instance;
+                if (lazyBean) {
+                    instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
+                            "Produces");
+                } else {
+                    instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Produces");
+                }
                 if (instance != null) {
                     String name = method.getName();
                     if (bi != null && !bi.value().isBlank()) {

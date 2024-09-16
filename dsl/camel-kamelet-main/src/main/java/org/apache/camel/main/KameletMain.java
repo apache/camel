@@ -477,7 +477,9 @@ public class KameletMain extends MainCommandLineSupport {
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
         // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
-        AnnotationDependencyInjection.initAnnotationBasedDependencyInjection(answer);
+
+        boolean lazyBean = "true".equals(getInitialProperties().get("camel.jbang.lazyBean"));
+        new AnnotationDependencyInjection(answer, lazyBean);
 
         if (!silent) {
             // silent should not include cli-connector
