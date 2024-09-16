@@ -28,11 +28,6 @@ public abstract class PahoMqtt5ITSupport extends CamelTestSupport {
     protected int mqttPort;
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
         mqttPort = service.getPort();
