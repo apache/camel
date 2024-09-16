@@ -33,11 +33,6 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
     private BeanIntrospection bi;
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
