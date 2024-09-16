@@ -46,11 +46,6 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
     public InOutQueueProducerAsyncLoadTest() {
     }
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @BeforeEach
     public void setupConsumers() throws Exception {
         mc1 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");

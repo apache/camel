@@ -44,11 +44,6 @@ public class InOutQueueProducerTest extends JmsTestSupport {
     public InOutQueueProducerTest() {
     }
 
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testInOutQueueProducer() throws Exception {
         MessageConsumer mc = createQueueConsumer(TEST_DESTINATION_NAME + ".request");

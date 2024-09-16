@@ -49,11 +49,6 @@ public abstract class JmsExclusiveTestSupport extends JmsCommonTestSupport {
     }
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     protected void setupFactoryExternal(ActiveMQConnectionFactory factory) {
         setupFactoryExternal(factory, getService());
     }

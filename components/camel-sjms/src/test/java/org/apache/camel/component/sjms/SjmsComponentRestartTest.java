@@ -51,11 +51,6 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
     }
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
