@@ -218,6 +218,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--lazy-bean" },
+                        description = "Whether to use lazy bean initialization (can help with complex classloading issues")
+    protected boolean lazyBean;
+
     protected boolean symbolicLink;     // copy source files using symbolic link
 
     protected boolean javaLiveReload; // reload java codes in dev
@@ -296,7 +300,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return null;
     }
 
-    protected Integer runSilently(boolean ignoreLoadingError) throws Exception {
+    protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.dependencies = dependencies;
@@ -311,6 +315,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
         run.ignoreLoadingError = ignoreLoadingError;
+        run.lazyBean = lazyBean;
         return run.runExport(ignoreLoadingError);
     }
 

@@ -19,12 +19,14 @@ package org.apache.camel.spring.xml;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Service;
@@ -65,6 +67,8 @@ public class CamelBeanPostProcessor
     private String camelId;
     @XmlTransient
     private boolean bindToRegistrySupported;
+    @XmlTransient
+    private Predicate<BindToRegistry> lazyBeanStrategy;
 
     // must use a delegate, as we cannot extend DefaultCamelBeanPostProcessor, as this will cause the
     // XSD schema generator to include the DefaultCamelBeanPostProcessor as a type, which we do not want to
@@ -234,4 +238,15 @@ public class CamelBeanPostProcessor
     public boolean isEnabled() {
         return delegate.isEnabled();
     }
+
+    @Override
+    public void setLazyBeanStrategy(Predicate<BindToRegistry> strategy) {
+        this.lazyBeanStrategy = strategy;
+    }
+
+    @Override
+    public Predicate<BindToRegistry> getLazyBeanStrategy() {
+        return lazyBeanStrategy;
+    }
+
 }

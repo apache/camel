@@ -283,6 +283,10 @@ public class Run extends CamelCommand {
             description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
+    @Option(names = { "--lazy-bean" },
+            description = "Whether to use lazy bean initialization (can help with complex classloading issues")
+    protected boolean lazyBean;
+
     @Option(names = { "--prompt" },
             description = "Allow user to type in required parameters in prompt if not present in application")
     boolean prompt;
@@ -528,6 +532,9 @@ public class Run extends CamelCommand {
         }
         if (ignoreLoadingError) {
             writeSetting(main, profileProperties, "camel.jbang.ignoreLoadingError", "true");
+        }
+        if (lazyBean) {
+            writeSetting(main, profileProperties, "camel.jbang.lazyBean", "true");
         }
         if (prompt) {
             writeSetting(main, profileProperties, "camel.jbang.prompt", "true");
@@ -892,6 +899,7 @@ public class Run extends CamelCommand {
         eq.logging = false;
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
+        eq.lazyBean = this.lazyBean;
 
         // run export
         int exit = eq.export();
@@ -966,6 +974,7 @@ public class Run extends CamelCommand {
         eq.logging = false;
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
+        eq.lazyBean = this.lazyBean;
 
         // run export
         int exit = eq.export();

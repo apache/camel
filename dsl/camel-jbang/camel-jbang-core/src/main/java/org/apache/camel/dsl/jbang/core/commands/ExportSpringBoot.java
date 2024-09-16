@@ -67,7 +67,7 @@ class ExportSpringBoot extends Export {
             if (!quiet) {
                 printer().println("Generating fresh run data");
             }
-            int silent = runSilently(ignoreLoadingError);
+            int silent = runSilently(ignoreLoadingError, lazyBean);
             if (silent != 0) {
                 return silent;
             }
