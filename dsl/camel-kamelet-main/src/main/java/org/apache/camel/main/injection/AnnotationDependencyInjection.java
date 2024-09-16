@@ -84,7 +84,6 @@ public final class AnnotationDependencyInjection {
         registry.bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
         cbbp.addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));
 
-
     }
 
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
