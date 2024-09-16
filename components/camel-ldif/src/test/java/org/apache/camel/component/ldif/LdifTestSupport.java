@@ -28,11 +28,6 @@ public class LdifTestSupport extends CamelTestSupport {
     protected int port;
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
         port = service.getPort();
