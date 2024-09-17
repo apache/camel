@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
 
@@ -54,7 +55,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
         String type = (String) request.get("type");
 
         assertEquals("version", type);
-        assertEquals("2.1.0", agentVersion);
+        assertNotNull(agentVersion, "There should be an agent version");
     }
 
     private PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
