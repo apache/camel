@@ -107,6 +107,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
+    @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
+    boolean quiet;
+
     @CommandLine.Option(names = { "--cleanup" },
                         defaultValue = "true",
                         description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
@@ -316,12 +319,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         if (dev || wait || logs) {
 
-            String kubectlCmd = "kubectl get pod";
-            if (namespace != null) {
-                kubectlCmd += " -n %s".formatted(namespace);
+            if (!quiet) {
+                String kubectlCmd = "kubectl get pod";
+                if (namespace != null) {
+                    kubectlCmd += " -n %s".formatted(namespace);
+                }
+                kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+                printer().println("Run: " + kubectlCmd);
             }
-            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
-            printer().println(kubectlCmd);
 
             client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
                     .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
@@ -424,10 +429,17 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        args.add("--quiet");
+        if (quiet) {
+            args.add("--quiet");
+        }
         args.add("--file");
         args.add(workingDir);
         args.add("package");
+
+        if (!quiet) {
+            printer().println("Run: " + String.join(" ", args));
+        }
+
         pb.command(args.toArray(String[]::new));
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -455,7 +467,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        args.add("--quiet");
+        if (quiet) {
+            args.add("--quiet");
+        }
         args.add("--file");
         args.add(workingDir);
 
@@ -465,18 +479,16 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 args.add("-Dquarkus.jib.platforms=%s".formatted(imagePlatforms));
             }
 
-            if (imageBuild) {
-                args.add("-Dquarkus.container-image.build=true");
-            }
-
-            if (imagePush) {
-                args.add("-Dquarkus.container-image.push=true");
-            }
+            args.add("-Dquarkus.container-image.build=" + imageBuild);
+            args.add("-Dquarkus.container-image.push=" + imagePush);
 
             if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 args.add("-Dquarkus.openshift.deploy=true");
             } else {
                 args.add("-Dquarkus.kubernetes.deploy=true");
+                if (namespace != null) {
+                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
+                }
             }
 
             args.add("package");
@@ -497,6 +509,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             args.add("package");
             args.add("k8s:deploy");
+        }
+
+        if (!quiet) {
+            printer().println("Run: " + String.join(" ", args));
         }
 
         pb.command(args.toArray(String[]::new));
