@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.namespaces;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -131,8 +132,15 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
                     String.format("%s a specific namespace require specify a namespace name", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
-        Namespace ns
-                = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
+        HashMap<String, String> annotations
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_ANNOTATIONS, HashMap.class);
+        Namespace ns;
+        if (ObjectHelper.isEmpty(annotations)) {
+            ns = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
+        } else {
+            ns = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels)
+                    .withAnnotations(annotations).endMetadata().build();
+        }
         Namespace namespace = operation.apply(getEndpoint().getKubernetesClient().namespaces().resource(ns));
 
         prepareOutboundMessage(exchange, namespace);

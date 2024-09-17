@@ -53,6 +53,9 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The namespace labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_NAMESPACES)
     public static final String KUBERNETES_NAMESPACE_LABELS = "CamelKubernetesNamespaceLabels";
+    @Metadata(label = "producer", description = "The namespace annotations", javaType = "Map<String, String>",
+              applicableFor = SCHEME_NAMESPACES)
+    public static final String KUBERNETES_NAMESPACE_ANNOTATIONS = "CamelKubernetesNamespaceAnnotations";
     @Metadata(label = "producer", description = "The service labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_SERVICES)
     public static final String KUBERNETES_SERVICE_LABELS = "CamelKubernetesServiceLabels";
