@@ -1,1 +1,0 @@
-../../../../../components/camel-ai/camel-langchain4j-tokenizer/src/main/docs/langchain4j-tokenizer-component.adoc
