@@ -215,6 +215,7 @@
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.3</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
+        <!-- See CAMEL-21232 before upgrading -->
         <httpcore-version>5.2.5</httpcore-version>
         <httpclient-version>5.2.1</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
