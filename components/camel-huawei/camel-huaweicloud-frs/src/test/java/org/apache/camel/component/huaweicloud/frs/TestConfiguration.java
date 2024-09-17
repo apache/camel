@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.huaweicloud.frs;
 
-import java.io.*;
 import java.util.*;
 
+import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +37,8 @@ public class TestConfiguration {
             propertyMap = new HashMap<>();
             String propertyFileName = "test_configuration.properties";
             try {
-                properties = new Properties();
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertyFileName);
-                if (inputStream != null) {
-                    properties.load(inputStream);
-                } else {
-                    throw new FileNotFoundException(
-                            "property file '" + propertyFileName + "' not found in the classpath");
-                }
+
+                properties = TestSupport.loadExternalProperties(getClass().getClassLoader(), "test_configuration.properties");
 
                 for (String key : properties.stringPropertyNames()) {
                     propertyMap.put(key, properties.getProperty(key));

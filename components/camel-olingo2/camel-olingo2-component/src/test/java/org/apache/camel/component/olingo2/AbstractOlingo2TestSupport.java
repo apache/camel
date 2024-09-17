@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.olingo2;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Assumptions;
 
 /**
@@ -58,11 +58,7 @@ public class AbstractOlingo2TestSupport extends CamelTestSupport {
         final CamelContext context = super.createCamelContext();
 
         // read Olingo component configuration from TEST_OPTIONS_PROPERTIES
-        try {
-            properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
-        }
+        TestSupport.loadExternalProperties(properties, getClass(), TEST_OPTIONS_PROPERTIES);
 
         final Olingo2Configuration configuration = new Olingo2Configuration();
         configuration.setServiceUri(properties.getProperty("serviceUri"));

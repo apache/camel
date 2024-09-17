@@ -17,13 +17,12 @@
 package org.apache.camel.component.minio;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Properties;
 
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
+import org.apache.camel.test.junit5.TestSupport;
 
 public final class MinioTestUtils {
 
@@ -31,15 +30,8 @@ public final class MinioTestUtils {
     }
 
     public static Properties loadMinioPropertiesFile() throws IOException {
-        final Properties properties = new Properties();
         final String fileName = "minio_key.properties";
-
-        final InputStream inputStream
-                = Objects.requireNonNull(MinioTestUtils.class.getClassLoader().getResourceAsStream(fileName));
-
-        properties.load(inputStream);
-
-        return properties;
+        return TestSupport.loadExternalProperties(MinioTestUtils.class.getClassLoader(), fileName);
     }
 
     /**

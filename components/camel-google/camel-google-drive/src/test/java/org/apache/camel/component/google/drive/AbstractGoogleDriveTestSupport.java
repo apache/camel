@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -29,9 +24,9 @@ import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.File;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -64,30 +59,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     }
 
     private static Properties loadProperties() {
-        final InputStream in = AbstractGoogleDriveTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES);
-        if (in == null) {
-            throw new RuntimeCamelException(TEST_OPTIONS_PROPERTIES + " could not be found");
-        }
-
-        final StringBuilder builder = new StringBuilder();
-
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append(System.lineSeparator());
-            }
-            propertyText = builder.toString();
-
-            final Properties properties = new Properties();
-
-            properties.load(new StringReader(propertyText));
-
-            return properties;
-        } catch (IOException e) {
-            throw new RuntimeCamelException(
-                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                    e);
-        }
+        return TestSupport.loadExternalPropertiesQuietly(AbstractGoogleDriveTestSupport.class, TEST_OPTIONS_PROPERTIES);
     }
 
     protected File uploadTestFile() {
