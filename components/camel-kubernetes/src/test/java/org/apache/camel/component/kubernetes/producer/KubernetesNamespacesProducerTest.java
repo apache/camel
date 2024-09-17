@@ -90,6 +90,27 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createNamespaceWithAnnotations() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
+        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).withAnnotations(annotations)
+                .endMetadata().build();
+        server.expect().post().withPath("/api/v1/namespaces").andReturn(200, ns1).once();
+
+        Exchange ex = template.request("direct:createNamespace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_ANNOTATIONS, annotations);
+        });
+
+        Namespace result = ex.getMessage().getBody(Namespace.class);
+
+        assertEquals("ns1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(annotations, result.getMetadata().getAnnotations());
+    }
+
+    @Test
     void updateNamespace() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();

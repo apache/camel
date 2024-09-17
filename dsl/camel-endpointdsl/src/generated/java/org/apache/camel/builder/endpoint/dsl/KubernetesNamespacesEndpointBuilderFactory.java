@@ -1487,6 +1487,19 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
             return "CamelKubernetesNamespaceLabels";
         }
         /**
+         * The namespace annotations.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesNamespaceAnnotations}.
+         */
+        public String kubernetesNamespaceAnnotations() {
+            return "CamelKubernetesNamespaceAnnotations";
+        }
+        /**
          * Action watched by the consumer.
          * 
          * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
