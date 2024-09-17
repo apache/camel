@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.bigquery.integration;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -36,13 +36,13 @@ import com.google.cloud.bigquery.TableInfo;
 import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,16 +69,7 @@ public class BigQueryITSupport extends CamelTestSupport {
     }
 
     private static Properties loadProperties() {
-        Properties testProperties = new Properties();
-        InputStream fileIn = BigQueryITSupport.class.getClassLoader().getResourceAsStream("simple.properties");
-        try {
-            testProperties.load(fileIn);
-
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
-
-        return testProperties;
+        return TestSupport.loadExternalPropertiesQuietly(BigQueryITSupport.class.getClassLoader(), "simple.properties");
     }
 
     // This is used by JUnit to to dynamically enable / disable the integration tests
@@ -129,7 +120,7 @@ public class BigQueryITSupport extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    public Properties loadRegProperties() {
+    public Properties loadRegProperties() throws IOException {
         return loadProperties();
     }
 

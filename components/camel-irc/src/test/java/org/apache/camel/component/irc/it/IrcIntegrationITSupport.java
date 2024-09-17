@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +49,7 @@ public class IrcIntegrationITSupport extends CamelTestSupport {
     }
 
     private Properties loadProperties() throws IOException {
-        Properties p = new Properties();
-        p.load(this.getClass().getResourceAsStream("/it-tests.properties"));
-        return p;
+        return TestSupport.loadExternalProperties(getClass(), "/it-tests.properties");
     }
 
     @Override

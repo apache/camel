@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntConsumer;
 
@@ -716,4 +717,71 @@ public final class TestSupport {
         // lookup endpoints in registry and try to find it
         return CamelContextTestHelper.lookupEndpoint(context, uri, create, target);
     }
+
+    public static Properties loadExternalPropertiesQuietly(Class<?> clazz, String path) {
+        try {
+            return loadExternalProperties(clazz, path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Properties loadExternalPropertiesQuietly(ClassLoader loader, String path) {
+        try {
+            return loadExternalProperties(loader, path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Properties loadExternalPropertiesQuietly(Properties properties, Class<?> clazz, String path) {
+        try {
+            return loadExternalProperties(properties, clazz, path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Properties loadExternalPropertiesQuietly(Properties properties, ClassLoader loader, String path) {
+        try {
+            return loadExternalProperties(properties, loader, path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Properties loadExternalProperties(Class<?> clazz, String path) throws IOException {
+        final Properties properties = new Properties();
+        return loadExternalProperties(properties, clazz, path);
+    }
+
+    public static Properties loadExternalProperties(ClassLoader loader, String path) throws IOException {
+        final Properties properties = new Properties();
+        return loadExternalProperties(properties, loader, path);
+    }
+
+    public static Properties loadExternalProperties(Properties properties, Class<?> clazz, String path) throws IOException {
+        try (var stream = clazz.getResourceAsStream(path)) {
+            properties.load(stream);
+
+            return properties;
+        } catch (Exception e) {
+            throw new IOException(
+                    String.format("%s could not be loaded: %s", path, e.getMessage()),
+                    e);
+        }
+    }
+
+    public static Properties loadExternalProperties(Properties properties, ClassLoader loader, String path) throws IOException {
+        try (var stream = loader.getResourceAsStream(path)) {
+            properties.load(stream);
+
+            return properties;
+        } catch (Exception e) {
+            throw new IOException(
+                    String.format("%s could not be loaded: %s", path, e.getMessage()),
+                    e);
+        }
+    }
+
 }

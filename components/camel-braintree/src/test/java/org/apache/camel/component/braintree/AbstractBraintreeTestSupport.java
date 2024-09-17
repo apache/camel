@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.braintree;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +31,7 @@ import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
@@ -78,19 +77,7 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
     }
 
     protected BraintreeConfiguration buildBraintreeConfiguration(CamelContext context) throws Exception {
-
-        final Properties properties = new Properties();
-        try {
-            final String propertiesLocation = System.getProperty("braintree.properties.location");
-
-            if (propertiesLocation != null) {
-                properties.load(new FileInputStream(propertiesLocation));
-            } else {
-                properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-            }
-        } catch (Exception e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
-        }
+        final Properties properties = TestSupport.loadExternalProperties(getClass(), TEST_OPTIONS_PROPERTIES);
 
         Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {

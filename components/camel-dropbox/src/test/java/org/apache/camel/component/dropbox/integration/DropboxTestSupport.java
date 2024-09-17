@@ -19,7 +19,6 @@ package org.apache.camel.component.dropbox.integration;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import com.dropbox.core.DbxDownloader;
@@ -29,6 +28,7 @@ import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,19 +64,12 @@ public class DropboxTestSupport extends CamelTestSupport {
     }
 
     private static Properties loadProperties() {
-        final Properties properties = new Properties();
-        try (InputStream inStream = DropboxTestSupport.class.getResourceAsStream("/test-options.properties")) {
-            properties.load(inStream);
-        } catch (IOException e) {
-            LOG.error("I/O error: reading test-options.properties: {}", e.getMessage(), e);
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
-        return properties;
+        return TestSupport.loadExternalPropertiesQuietly(DropboxTestSupport.class, "/test-options.properties");
     }
 
     // Used by JUnit to automatically trigger the integration tests
     @SuppressWarnings("unused")
-    private static boolean hasCredentials() {
+    private static boolean hasCredentials() throws IOException {
         Properties properties = loadProperties();
 
         return !properties.getProperty("accessToken", "").isEmpty();

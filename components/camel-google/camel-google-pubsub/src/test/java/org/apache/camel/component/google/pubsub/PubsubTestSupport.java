@@ -41,6 +41,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubService;
 import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,16 +68,7 @@ public class PubsubTestSupport extends CamelTestSupport {
     }
 
     private static Properties loadProperties() {
-        Properties testProperties = new Properties();
-        InputStream fileIn = PubsubTestSupport.class.getClassLoader().getResourceAsStream("simple.properties");
-        try {
-            testProperties.load(fileIn);
-
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
-
-        return testProperties;
+        return TestSupport.loadExternalPropertiesQuietly(PubsubTestSupport.class.getClassLoader(), "simple.properties");
     }
 
     protected void addPubsubComponent(CamelContext context) {

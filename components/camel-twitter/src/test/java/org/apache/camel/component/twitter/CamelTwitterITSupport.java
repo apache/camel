@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -54,14 +52,7 @@ public class CamelTwitterITSupport extends CamelTestSupport {
                 || !properties.containsKey("access.token")
                 || !properties.containsKey("access.token.secret")) {
 
-            URL url = getClass().getResource("/test-options.properties");
-
-            try (InputStream inStream = url.openStream()) {
-                properties.load(inStream);
-            } catch (IOException e) {
-                log.warn("I/O exception loading test-options.properties: {}", e.getMessage(), e);
-                throw new IllegalAccessError("test-options.properties could not be found");
-            }
+            TestSupport.loadExternalPropertiesQuietly(properties, getClass(), "/test-options.properties");
         }
 
         consumerKey = properties.getProperty("consumer.key");

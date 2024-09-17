@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.as2;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
@@ -29,6 +27,7 @@ import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,13 +52,8 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
 
     @BeforeAll
     public static void setupTest() {
-        InputStream is = MendelsonSslEndpointManualTest.class
-                .getClassLoader().getResourceAsStream("test-server.properties");
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            LOG.error("Failed to load properties from file test_server.properties");
-        }
+        TestSupport.loadExternalPropertiesQuietly(props, MendelsonSslEndpointManualTest.class.getClassLoader(),
+                "test-server.properties");
 
         // NoopHostnameVerifier needed since we connect to non-localhost remote AS2 server
         hostnameVerifier = new NoopHostnameVerifier();

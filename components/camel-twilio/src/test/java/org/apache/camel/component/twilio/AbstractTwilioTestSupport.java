@@ -22,9 +22,9 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.TestInstance;
 
 /**
@@ -42,13 +42,8 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
 
     private static void loadProperties() {
         // read Twilio component configuration from TEST_OPTIONS_PROPERTIES
-        try {
-            properties.load(AbstractTwilioTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new RuntimeCamelException(
-                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                    e);
-        }
+        TestSupport.loadExternalPropertiesQuietly(properties, AbstractTwilioTestSupport.class, TEST_OPTIONS_PROPERTIES);
+
     }
 
     private static boolean hasCredentials() {
