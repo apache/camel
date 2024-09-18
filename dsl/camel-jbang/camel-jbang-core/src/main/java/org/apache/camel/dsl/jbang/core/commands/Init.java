@@ -158,7 +158,10 @@ public class Init extends CamelCommand {
             File dir = new File(directory);
             dir.mkdirs();
         }
-        File target = new File(directory, file);
+        File target = new File(file);
+        if (!target.isAbsolute()) {
+            target = new File(directory, file);
+        }
         content = content.replaceFirst("\\{\\{ \\.Name }}", name);
         if (fromKamelet != null) {
             content = content.replaceFirst("\\s\\sname:\\s" + fromKamelet, "  name: " + name);
@@ -183,15 +186,21 @@ public class Init extends CamelCommand {
             String packageDeclaration = computeJavaPackageDeclaration(target);
             content = content.replaceFirst("\\{\\{ \\.PackageDeclaration }}", packageDeclaration);
         }
+        // in case of using relative paths in the file name
+        File p = target.getParentFile();
+        if (p != null) {
+            if (".".equals(p.getName())) {
+                target = new File(file);
+            } else {
+                p.mkdirs();
+            }
+        }
         IOHelper.writeText(content, new FileOutputStream(target, false));
         return 0;
     }
 
     /**
-     * @param  target
-     * @return             The package declaration lines to insert at the beginning of the file or empty string if no
-     *                     package found
-     * @throws IOException
+     * @return The package declaration lines to insert at the beginning of the file or empty string if no package found
      */
     private String computeJavaPackageDeclaration(File target) throws IOException {
         String packageDeclaration = "";
