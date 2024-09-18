@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonStreamTest {
 
@@ -35,13 +35,10 @@ public class JsonStreamTest {
     }
 
     @Test
-    public void iSO88591() throws Exception {
-        try {
-            test("json_stream/jsonISO8859-1.txt", "ISO-8859-1");
-            fail("Error expected");
-        } catch (AssertionError e) {
-            assertEquals("expected: <ISO-8859-1> but was: <UTF-8>", e.getMessage());
-        }
+    public void iSO88591() {
+        AssertionError error = assertThrows(AssertionError.class, () -> test("json_stream/jsonISO8859-1.txt", "ISO-8859-1"),
+                "Error expected");
+        assertEquals("expected: <ISO-8859-1> but was: <UTF-8>", error.getMessage());
     }
 
     @Test
@@ -123,7 +120,6 @@ public class JsonStreamTest {
         byte[] buffer = new byte[2048];
         int len = js.read(buffer);
         js.close();
-        byte[] result = Arrays.copyOf(buffer, len);
-        return result;
+        return Arrays.copyOf(buffer, len);
     }
 }

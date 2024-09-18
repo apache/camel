@@ -77,18 +77,14 @@ public class MailSorterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSortMessages() throws Exception {
+    public void testSortMessages() {
         Message[] expected = new Message[] { MESSAGES[0], MESSAGES[1], MESSAGES[2] };
 
         // Sort using all the terms. Message order should be the same no matter what term is used
         for (SortTerm term : POSSIBLE_TERMS) {
             Message[] actual = MESSAGES.clone();
             MailSorter.sortMessages(actual, new SortTerm[] { term });
-            try {
-                assertArrayEquals(actual, expected);
-            } catch (Exception ex) {
-                throw new Exception("Term: " + term.toString(), ex);
-            }
+            assertArrayEquals(actual, expected, "Term: " + term.toString());
         }
     }
 
@@ -100,11 +96,7 @@ public class MailSorterTest extends CamelTestSupport {
         for (SortTerm term : POSSIBLE_TERMS) {
             Message[] actual = MESSAGES.clone();
             MailSorter.sortMessages(actual, new SortTerm[] { SortTerm.REVERSE, term });
-            try {
-                assertArrayEquals(actual, expected);
-            } catch (AssertionError ex) {
-                throw new AssertionError("Term: " + term.toString(), ex);
-            }
+            assertArrayEquals(actual, expected, "Term: " + term.toString());
         }
     }
 
@@ -118,11 +110,7 @@ public class MailSorterTest extends CamelTestSupport {
             for (SortTerm term2 : POSSIBLE_TERMS) {
                 Message[] actual = MESSAGES.clone();
                 MailSorter.sortMessages(actual, new SortTerm[] { term1, SortTerm.REVERSE, term2 });
-                try {
-                    assertArrayEquals(actual, expected);
-                } catch (AssertionError ex) {
-                    throw new AssertionError(String.format("Terms: %s, %s", term1.toString(), term2.toString()), ex);
-                }
+                assertArrayEquals(actual, expected, String.format("Terms: %s, %s", term1.toString(), term2.toString()));
             }
 
         }
