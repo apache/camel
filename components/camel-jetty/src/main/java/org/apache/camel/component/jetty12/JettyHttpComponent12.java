@@ -26,12 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
@@ -45,6 +47,8 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
     public static final Map<String, Throwable> connectorCreation = new ConcurrentHashMap<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent12.class);
+
+    private RequestLog requestLog;
 
     @Override
     protected JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException {
@@ -78,6 +82,9 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
             }
             if (useXForwardedForHeader) {
                 httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+            }
+            if (requestLog != null) {
+                server.setRequestLog(requestLog);
             }
             HttpConnectionFactory httpFactory = new org.eclipse.jetty.server.HttpConnectionFactory(httpConfig);
 
@@ -127,6 +134,18 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+    }
+
+    /**
+     * To configure Jetty request logging.
+     */
+    @Metadata(description = "To configure Jetty request logging", label = "advanced")
+    public void setRequestLog(RequestLog requestLog) {
+        this.requestLog = requestLog;
+    }
+
+    public RequestLog getRequestLog() {
+        return requestLog;
     }
 
 }
