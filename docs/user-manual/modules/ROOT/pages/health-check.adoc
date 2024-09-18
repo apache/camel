@@ -14,19 +14,19 @@ Camel provides the following health checks out of the box:
 
 - _context_ - A `HealthCheck` which performs check whether the `CamelContext` is started. This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
 - _routes_ - A `HealthCheckRegistry` which discovers all the available routes in `CamelContext` and checks whether they are all started.
-  This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
-  Combining with the supervised `RouteController` this allows to perform readiness check for routes that are under supervising,
-  such as troublesome routes that may not start up the first time, and are retried to be started in the background with backoff delays.
+This can be used for readiness checks; to know when Camel is fully started and ready to handle traffic.
+Combining with the supervised `RouteController` this allows to perform readiness check for routes that are under supervising,
+such as troublesome routes that may not start up the first time, and are retried to be started in the background with backoff delays.
 - _consumers_ A `HealthCheckRegistry` which discovers all the consumers from all the routes in `CamelContext`
-  enabling fine-grained checks for the route input. This means if the consumer is failing to poll new messages
-  then the health check can detect this and report as un-healthy. Note that the consumer will be DOWN during its initialization and until at least
-  one poll run has been executed, to know whether that poll was a success or not. And if the poll was a success
-  then the consumer is UP. This is on purpose to avoid having the health check to be initially UP
-  and then after first poll run then DOWN again because the consumer cannot poll from external system;
-  which causes the health check to be _flaky_.
+enabling fine-grained checks for the route input. This means if the consumer is failing to poll new messages
+then the health check can detect this and report as un-healthy. Note that the consumer will be DOWN during its initialization and until at least
+one poll run has been executed, to know whether that poll was a success or not. And if the poll was a success
+then the consumer is UP. This is on purpose to avoid having the health check to be initially UP
+and then after first poll run then DOWN again because the consumer cannot poll from external system;
+which causes the health check to be _flaky_.
 - _producers_ A `HealthCheckRegistry` which are for producer based health-checks. There are a few components
-  which comes with producer health checks such as `camel-kafka` and many of the `AWS` components.
-  However, producer health checks are by default disabled. See further below for how to enable producer health checks.
+which comes with producer health checks such as `camel-kafka` and many of the `AWS` components.
+However, producer health checks are by default disabled. See further below for how to enable producer health checks.
 - _registry_ - A `HealthCheckRegistry` which discovers all the available custom `HealthCheck` instances in the `Registry`.
 
 == IDs
@@ -76,6 +76,22 @@ camel.health.consumersEnabled=false
 camel.health.registryEnabled=false
 ----
 
+=== Configuring initial state
+
+The initial state of health-checks (readiness). There are the following states: UP, DOWN, UNKNOWN.
+
+By default, the state is DOWN, is regarded as being pessimistic/careful. This means that the overall health
+checks may report as DOWN during startup and then only if everything is up and running flip to being UP.
+
+Setting the initial state to UP, is regarded as being optimistic. This means that the overall health checks may
+report as UP during startup and then if a consumer or other service is in fact un-healthy, then the health-checks
+can flip being DOWN.
+
+Setting the state to UNKNOWN means that some health-check would be reported in unknown state, especially during
+early bootstrap where a consumer may not be fully initialized or validated a connection to a remote system.
+
+This option allows to pre-configure the state for different modes.
+
 === Excluding health-checks
 
 By default, all enabled health-checks are invoked by Camel when check the health status.
@@ -119,7 +135,6 @@ camel.health.exclude-pattern = consumer:myroute*
 ----
 
 which will turn off checks for all consumers on routes that starts with `myroute` in the route ID.
-
 
 Or you can turn off producer based health checks by their component name:
 
