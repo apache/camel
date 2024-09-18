@@ -42,11 +42,13 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.csimple.CSimpleLanguage;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
@@ -171,6 +173,19 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertEquals(exchange, exp.evaluate(exchange, Object.class));
 
         assertExpression("${exchange}", exchange);
+    }
+
+    @Test
+    public void testLogExchangeExpression() {
+        Expression exp = context.resolveLanguage("csimple").createExpression("${logExchange}");
+        assertNotNull(exp);
+
+        // will use exchange formatter
+        ExchangeFormatter ef = LanguageHelper.getOrCreateExchangeFormatter(context, null);
+        String expected = ef.format(exchange);
+        assertEquals(expected, exp.evaluate(exchange, Object.class));
+
+        assertExpression("${logExchange}", expected);
     }
 
     @Test

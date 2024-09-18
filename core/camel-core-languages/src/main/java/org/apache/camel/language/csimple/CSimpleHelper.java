@@ -289,6 +289,11 @@ public final class CSimpleHelper {
         return exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
     }
 
+    public static String logExchange(Exchange exchange) {
+        ExchangeFormatter formatter = LanguageHelper.getOrCreateExchangeFormatter(exchange.getContext(), null);
+        return formatter.format(exchange);
+    }
+
     public static String fileName(Message message) {
         return message.getHeader(Exchange.FILE_NAME, String.class);
     }
