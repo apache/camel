@@ -187,6 +187,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
+    @CommandLine.Option(names = { "--clean-dir" },
+                        description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
+    protected boolean cleanExportDir;
+
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
     protected String loggingLevel = "info";
 

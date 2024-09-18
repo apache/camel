@@ -133,7 +133,9 @@ class ExportQuarkus extends Export {
             }
         }
 
-        if (!exportDir.equals(".")) {
+        if (cleanExportDir || !exportDir.equals(".")) {
+            // cleaning current dir can be a bit dangerous so only clean if explicit enabled
+            // otherwise always clean export-dir to avoid stale data
             CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
