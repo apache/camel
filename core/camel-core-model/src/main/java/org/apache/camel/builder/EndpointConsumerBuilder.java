@@ -28,6 +28,7 @@ import org.apache.camel.Expression;
  * @see EndpointProducerBuilder
  */
 public interface EndpointConsumerBuilder extends EndpointConsumerResolver {
+
     /**
      * Builds the encoded url of this endpoint. This API is only intended for Camel internally.
      */
