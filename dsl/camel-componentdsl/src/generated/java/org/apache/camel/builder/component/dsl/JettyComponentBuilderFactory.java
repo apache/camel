@@ -484,6 +484,22 @@ public interface JettyComponentBuilderFactory {
         }
     
         /**
+         * To configure Jetty request logging.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.jetty.server.RequestLog&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestLog the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder requestLog(org.eclipse.jetty.server.RequestLog requestLog) {
+            doSetProperty("requestLog", requestLog);
+            return this;
+        }
+    
+        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -718,6 +734,7 @@ public interface JettyComponentBuilderFactory {
             case "httpBinding": ((JettyHttpComponent12) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpConfiguration": ((JettyHttpComponent12) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
             case "mbContainer": ((JettyHttpComponent12) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
+            case "requestLog": ((JettyHttpComponent12) component).setRequestLog((org.eclipse.jetty.server.RequestLog) value); return true;
             case "headerFilterStrategy": ((JettyHttpComponent12) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyHost": ((JettyHttpComponent12) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": ((JettyHttpComponent12) component).setProxyPort((java.lang.Integer) value); return true;
