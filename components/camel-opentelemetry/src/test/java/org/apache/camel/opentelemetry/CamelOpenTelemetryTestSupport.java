@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Tags({ @Tag("not-parallel") })
+@SetSystemProperty(key = "io.opentelemetry.context.enableStrictContext", value = "true")
 class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
