@@ -67,7 +67,8 @@ public final class RouteCoverageHelper {
                 NodeList routes = dom.getElementsByTagName("route");
                 for (int i = 0; i < routes.getLength(); i++) {
                     Node route = routes.item(i);
-                    String id = route.getAttributes().getNamedItem("id").getNodeValue();
+                    Node n = route.getAttributes().getNamedItem("id");
+                    String id = n != null ? n.getNodeValue() : null;
                     if (routeId.equals(id)) {
                         // parse each route and build a List<CoverageData> for line by line coverage data
                         AtomicInteger counter = new AtomicInteger();
