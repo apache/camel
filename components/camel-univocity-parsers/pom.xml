@@ -28,7 +28,7 @@
 
     <artifactId>camel-univocity-parsers</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: UniVocity Parsers (deprecated)</name>
+    <name>Camel :: UniVocity Parsers</name>
     <description>Camel UniVocity parsers data format support</description>
 
     <properties>
@@ -40,7 +40,7 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.univocity</groupId>
+            <groupId>com.sonofab1rd</groupId>
             <artifactId>univocity-parsers</artifactId>
             <version>${univocity-parsers-version}</version>
             <type>jar</type>
