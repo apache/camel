@@ -284,7 +284,7 @@ public boolean isDumpRouteCoverage() {
 }
 ----
 
-Routes that can be route coveraged must have an unique id assigned, in other words you cannot use anonymous routes.
+IMPORTANT: Routes that can be route coveraged **MUST** have a unique id assigned, in other words you cannot use anonymous routes.
 
 You do this using `routeId` in Java DSL:
 
