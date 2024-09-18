@@ -1430,9 +1430,9 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns a dump of the exchange using {@link org.apache.camel.spi.ExchangeFormatter}.
+     * Dumps the exchange for logging purpose (uses {@link ExchangeFormatter} to format the output).
      */
-    public static Expression dumpExchange() {
+    public static Expression logExchange() {
         return new ExpressionAdapter() {
             private ExchangeFormatter formatter;
 
@@ -1449,7 +1449,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "dumpExchange";
+                return "logExchange";
             }
         };
     }

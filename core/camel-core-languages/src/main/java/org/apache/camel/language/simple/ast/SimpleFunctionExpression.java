@@ -596,7 +596,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(expression, "exchange")) {
             return ExpressionBuilder.exchangeExpression();
         } else if (ObjectHelper.equal(expression, "logExchange")) {
-            return ExpressionBuilder.dumpExchange();
+            return ExpressionBuilder.logExchange();
         } else if (ObjectHelper.equal(expression, "exception")) {
             return ExpressionBuilder.exchangeExceptionExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {
