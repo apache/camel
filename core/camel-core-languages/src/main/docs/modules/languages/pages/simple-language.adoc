@@ -323,17 +323,53 @@ true, otherwise the value of `falseExp` is returned. This function is similar to
 
 == OGNL expression support
 
+The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a Camel xref:ognl-language.adoc[OGNL] notation for invoking beans in a chain like fashion.
+
+https://en.wikipedia.org/wiki/OGNL[OGNL] (Object-Graph Navigation Language) is a powerful expression language used in Java. In Camel you can use OGNL dot notation to invoke methods. If you for instance have a body that contains a POJO that has a `getFamilyName` method then
+you can construct the Simple syntax as follows:
+
+[source,java]
+----
+simple("${body.familyName}")
+----
+
+Or use similar syntax as in Java:
+
+[source,java]
+----
+simple("${body.getFamilyName()}")
+----
+
+Camel's OGNL support is for invoking methods only. You cannot access fields. Camel support accessing the length field of Java arrays.
+
+[NOTE]
+====
 When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
+====
 
-Camel's OGNL support is for invoking methods only. You cannot access
-fields. Camel support accessing the length field of Java arrays.
+=== OGNL Variables
 
-The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages now
-support a Camel OGNL notation for invoking beans in a chain like
-fashion. Suppose the Message IN body contains a POJO which has a `getAddress()`
-method.
+The following variables support OGNL:
 
-Then you can use Camel OGNL notation to access the address object:
+[width="100%",options="header",]
+|=======================================================================
+|Variable
+|camelContext
+|exchange
+|exception
+|body
+|bodyAs(type)
+|messageAs(type)
+|header.foo
+|exchangePropety.foo
+|variable.foo
+|=======================================================================
+
+
+=== Basic OGNL examples
+
+Suppose the Message IN body contains a POJO which has a `getAddress()`
+method. Then you can use Camel OGNL notation to access the address object:
 
 [source,java]
 --------------------------------
@@ -360,6 +396,8 @@ example, the body does NOT have an address
 ----------------------------------
 simple("${body?.address?.street}")
 ----------------------------------
+
+=== Advanced OGNL examples
 
 It is also possible to index in `Map` or `List` types, so you can do:
 
