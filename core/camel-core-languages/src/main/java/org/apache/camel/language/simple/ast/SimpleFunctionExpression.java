@@ -595,6 +595,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.exchangeIdExpression();
         } else if (ObjectHelper.equal(expression, "exchange")) {
             return ExpressionBuilder.exchangeExpression();
+        } else if (ObjectHelper.equal(expression, "logExchange")) {
+            return ExpressionBuilder.dumpExchange();
         } else if (ObjectHelper.equal(expression, "exception")) {
             return ExpressionBuilder.exchangeExceptionExpression();
         } else if (ObjectHelper.equal(expression, "exception.message")) {
@@ -1106,6 +1108,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "exchange.getExchangeId()";
         } else if (ObjectHelper.equal(expression, "exchange")) {
             return "exchange";
+        } else if (ObjectHelper.equal(expression, "logExchange")) {
+            return "logExchange(exchange)";
         } else if (ObjectHelper.equal(expression, "exception")) {
             return "exception(exchange)";
         } else if (ObjectHelper.equal(expression, "exception.message")) {

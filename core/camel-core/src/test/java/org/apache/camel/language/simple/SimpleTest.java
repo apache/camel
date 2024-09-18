@@ -41,6 +41,7 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.myconverter.MyCustomDate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
@@ -48,6 +49,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
@@ -160,9 +162,22 @@ public class SimpleTest extends LanguageTestSupport {
     public void testExchangeExpression() {
         Expression exp = context.resolveLanguage("simple").createExpression("${exchange}");
         assertNotNull(exp);
-        assertEquals(exchange, exp.evaluate(exchange, Object.class));
 
+        assertEquals(exchange, exp.evaluate(exchange, Object.class));
         assertExpression("${exchange}", exchange);
+    }
+
+    @Test
+    public void testLogExchangeExpression() {
+        Expression exp = context.resolveLanguage("simple").createExpression("${logExchange}");
+        assertNotNull(exp);
+
+        // will use exchange formatter
+        ExchangeFormatter ef = LanguageHelper.getOrCreateExchangeFormatter(context, null);
+        String expected = ef.format(exchange);
+        assertEquals(expected, exp.evaluate(exchange, Object.class));
+
+        assertExpression("${logExchange}", expected);
     }
 
     @Test

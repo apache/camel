@@ -43,6 +43,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
@@ -1424,6 +1425,31 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "exchange";
+            }
+        };
+    }
+
+    /**
+     * Returns a dump of the exchange using {@link org.apache.camel.spi.ExchangeFormatter}.
+     */
+    public static Expression dumpExchange() {
+        return new ExpressionAdapter() {
+            private ExchangeFormatter formatter;
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                this.formatter = LanguageHelper.getOrCreateExchangeFormatter(context, null);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return formatter.format(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "dumpExchange";
             }
         };
     }
