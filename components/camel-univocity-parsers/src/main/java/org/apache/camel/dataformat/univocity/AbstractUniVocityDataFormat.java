@@ -47,7 +47,6 @@ import static org.apache.camel.support.ExchangeHelper.getCharsetName;
  * @param <P>   uniVocity parser class
  * @param <DF>  the data format class (for providing a fluent API)
  */
-@Deprecated(since = "4.8.0")
 public abstract class AbstractUniVocityDataFormat<
         F extends Format, CWS extends CommonWriterSettings<F>,
         W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>,
@@ -70,14 +69,11 @@ public abstract class AbstractUniVocityDataFormat<
     protected boolean asMap;
 
     private volatile CWS writerSettings;
-    private final Object writerSettingsToken = new Object();
     private volatile Marshaller<W> marshaller;
 
-    // We're using a ThreadLocal for the parser settings because in order to retrieve the headers we need to change the
-    // settings each time we're parsing
-    private volatile ThreadLocal<CPS> parserSettings;
-    private final Object parserSettingsToken = new Object();
+    private volatile CPS parserSettings;
     private volatile Unmarshaller<P> unmarshaller;
+    private final HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
 
     /**
      * {@inheritDoc}
@@ -85,19 +81,14 @@ public abstract class AbstractUniVocityDataFormat<
     @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         if (writerSettings == null) {
-            synchronized (writerSettingsToken) {
-                if (writerSettings == null) {
-                    marshaller = new Marshaller<>(headers, headers == null);
-                    writerSettings = createAndConfigureWriterSettings();
-                }
-            }
+            writerSettings = createAndConfigureWriterSettings();
+        }
+        if (marshaller == null) {
+            marshaller = new Marshaller<>(headers, headers == null);
         }
 
-        Writer writer = new OutputStreamWriter(stream, getCharsetName(exchange));
-        try {
+        try (Writer writer = new OutputStreamWriter(stream, getCharsetName(exchange))) {
             marshaller.marshal(exchange, body, createWriter(writer, writerSettings));
-        } finally {
-            writer.close();
         }
     }
 
@@ -107,23 +98,13 @@ public abstract class AbstractUniVocityDataFormat<
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (parserSettings == null) {
-            synchronized (parserSettingsToken) {
-                if (parserSettings == null) {
-                    unmarshaller = new Unmarshaller<>(lazyLoad, asMap);
-                    parserSettings = new ThreadLocal<CPS>() {
-                        @Override
-                        protected CPS initialValue() {
-                            return createAndConfigureParserSettings();
-                        }
-                    };
-                }
-            }
+            parserSettings = createAndConfigureParserSettings();
+        }
+        if (unmarshaller == null) {
+            unmarshaller = new Unmarshaller<>(lazyLoad, asMap);
         }
 
-        HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
-        CPS settings = parserSettings.get();
-        settings.setProcessor(headerRowProcessor);
-        P parser = createParser(settings);
+        P parser = createParser(parserSettings);
         // univocity-parsers is responsible for closing the reader, even in case of error
         Reader reader = new InputStreamReader(stream, getCharsetName(exchange));
         return unmarshaller.unmarshal(reader, parser, headerRowProcessor);
@@ -152,9 +133,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not empty lines should be ignored. If {@code null} then the default settings value is used.
+     * Gets whether empty lines should be ignored. If {@code null} then the default settings value is used.
      *
-     * @return whether or not empty lines should be ignored
+     * @return whether empty lines should be ignored
      * @see    com.univocity.parsers.common.CommonSettings#getSkipEmptyLines()
      */
     public Boolean getSkipEmptyLines() {
@@ -162,9 +143,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Sets whether or not empty lines should be ignored. If {@code null} then the default settings value is used.
+     * Sets whether empty lines should be ignored. If {@code null} then the default settings value is used.
      *
-     * @param  skipEmptyLines whether or not empty lines should be ignored
+     * @param  skipEmptyLines whether empty lines should be ignored
      * @return                current data format instance, fluent API
      * @see                   com.univocity.parsers.common.CommonSettings#setSkipEmptyLines(boolean)
      */
@@ -174,10 +155,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not trailing whitespaces should be ignored. If {@code null} then the default settings value is
-     * used.
+     * Gets whether trailing whitespaces should be ignored. If {@code null} then the default settings value is used.
      *
-     * @return whether or not trailing whitespaces should be ignored
+     * @return whethertrailing whitespaces should be ignored
      * @see    com.univocity.parsers.common.CommonSettings#getIgnoreTrailingWhitespaces()
      */
     public Boolean getIgnoreTrailingWhitespaces() {
@@ -185,10 +165,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Sets whether or not trailing whitespaces should be ignored. If {@code null} then the default settings value is
-     * used.
+     * Sets whether trailing whitespaces should be ignored. If {@code null} then the default settings value is used.
      *
-     * @param  ignoreTrailingWhitespaces whether or not trailing whitespaces should be ignored
+     * @param  ignoreTrailingWhitespaces whether trailing whitespaces should be ignored
      * @return                           current data format instance, fluent API
      * @see                              com.univocity.parsers.common.CommonSettings#setIgnoreTrailingWhitespaces(boolean)
      */
@@ -198,10 +177,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not leading whitespaces should be ignored. If {@code null} then the default settings value is
-     * used.
+     * Gets whetherleading whitespaces should be ignored. If {@code null} then the default settings value is used.
      *
-     * @return whether or not leading whitespaces should be ignored
+     * @return whetherleading whitespaces should be ignored
      * @see    com.univocity.parsers.common.CommonSettings#getIgnoreLeadingWhitespaces()
      */
     public Boolean getIgnoreLeadingWhitespaces() {
@@ -209,10 +187,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Sets whether or not leading whitespaces should be ignored. If {@code null} then the default settings value is
-     * used.
+     * Sets whetherleading whitespaces should be ignored. If {@code null} then the default settings value is used.
      *
-     * @param  ignoreLeadingWhitespaces whether or not leading whitespaces should be ignored
+     * @param  ignoreLeadingWhitespaces whetherleading whitespaces should be ignored
      * @return                          current data format instance, fluent API
      * @see                             com.univocity.parsers.common.CommonSettings#setIgnoreLeadingWhitespaces(boolean)
      */
@@ -222,10 +199,10 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not headers are disabled. If {@code true} then it passes {@code null} to
+     * Gets whetherheaders are disabled. If {@code true} then it passes {@code null} to
      * {@link com.univocity.parsers.common.CommonSettings#setHeaders(String...)} in order to disabled them.
      *
-     * @return whether or not headers are disabled
+     * @return whetherheaders are disabled
      * @see    com.univocity.parsers.common.CommonSettings#getHeaders()
      */
     public boolean isHeadersDisabled() {
@@ -233,10 +210,10 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Sets whether or not headers are disabled. If {@code true} then it passes {@code null} to
+     * Sets whetherheaders are disabled. If {@code true} then it passes {@code null} to
      * {@link com.univocity.parsers.common.CommonSettings#setHeaders(String...)} in order to disabled them.
      *
-     * @param  headersDisabled whether or not headers are disabled
+     * @param  headersDisabled whetherheaders are disabled
      * @return                 current data format instance, fluent API
      * @see                    com.univocity.parsers.common.CommonSettings#setHeaders(String...)
      */
@@ -268,9 +245,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not the header extraction is enabled. If {@code null} then the default settings value is used.
+     * Gets whetherthe header extraction is enabled. If {@code null} then the default settings value is used.
      *
-     * @return whether or not the header extraction is enabled
+     * @return whetherthe header extraction is enabled
      * @see    com.univocity.parsers.common.CommonParserSettings#isHeaderExtractionEnabled()
      */
     public Boolean getHeaderExtractionEnabled() {
@@ -278,9 +255,9 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Sets whether or not the header extraction is enabled. If {@code null} then the default settings value is used.
+     * Sets whetherthe header extraction is enabled. If {@code null} then the default settings value is used.
      *
-     * @param  headerExtractionEnabled whether or not the header extraction is enabled
+     * @param  headerExtractionEnabled whetherthe header extraction is enabled
      * @return                         current data format instance, fluent API
      * @see                            com.univocity.parsers.common.CommonParserSettings#setHeaderExtractionEnabled(boolean)
      */
@@ -400,18 +377,18 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not the unmarshalling should read lines lazily.
+     * Gets whetherthe unmarshalling should read lines lazily.
      *
-     * @return whether or not the unmarshalling should read lines lazily
+     * @return whetherthe unmarshalling should read lines lazily
      */
     public boolean isLazyLoad() {
         return lazyLoad;
     }
 
     /**
-     * Sets whether or not the unmarshalling should read lines lazily.
+     * Sets whetherthe unmarshalling should read lines lazily.
      *
-     * @param  lazyLoad whether or not the unmarshalling should read lines lazily
+     * @param  lazyLoad whetherthe unmarshalling should read lines lazily
      * @return          current data format instance, fluent API
      */
     public DF setLazyLoad(boolean lazyLoad) {
@@ -420,18 +397,18 @@ public abstract class AbstractUniVocityDataFormat<
     }
 
     /**
-     * Gets whether or not the unmarshalling should produces maps instead of lists.
+     * Gets whetherthe unmarshalling should produces maps instead of lists.
      *
-     * @return whether or not the unmarshalling should produces maps instead of lists
+     * @return whetherthe unmarshalling should produces maps instead of lists
      */
     public boolean isAsMap() {
         return asMap;
     }
 
     /**
-     * Sets whether or not the unmarshalling should produces maps instead of lists.
+     * Sets whetherthe unmarshalling should produces maps instead of lists.
      *
-     * @param  asMap whether or not the unmarshalling should produces maps instead of lists
+     * @param  asMap whetherthe unmarshalling should produces maps instead of lists
      * @return       current data format instance, fluent API
      */
     public DF setAsMap(boolean asMap) {
@@ -537,6 +514,7 @@ public abstract class AbstractUniVocityDataFormat<
         CPS settings = createParserSettings();
         configureParserSettings(settings);
         configureFormat(settings.getFormat());
+        settings.setProcessor(headerRowProcessor);
         return settings;
     }
 

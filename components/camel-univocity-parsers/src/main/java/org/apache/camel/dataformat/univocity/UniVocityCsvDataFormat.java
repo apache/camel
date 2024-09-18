@@ -29,7 +29,6 @@ import org.apache.camel.spi.annotations.Dataformat;
  * This class is the data format that uses the CSV uniVocity parser.
  */
 @Dataformat("univocityCsv")
-@Deprecated(since = "4.8.0")
 public class UniVocityCsvDataFormat
         extends
         AbstractUniVocityDataFormat<CsvFormat, CsvWriterSettings, CsvWriter, CsvParserSettings, CsvParser, UniVocityCsvDataFormat> {
