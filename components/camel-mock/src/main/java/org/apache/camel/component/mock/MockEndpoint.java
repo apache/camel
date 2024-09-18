@@ -514,6 +514,38 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
+     * Validates that the assertions fail on this endpoint with the expected error message
+     *
+     * @param expectedErrorString the message of the assertion failure error
+     */
+    public void assertIsNotSatisfied(String expectedErrorString) throws InterruptedException {
+        boolean failed = false;
+        try {
+            assertIsSatisfied();
+            // did not throw error... fail!
+            failed = true;
+        } catch (AssertionError e) {
+            String actualErrorString = e.getMessage();
+            if (actualErrorString.contains(expectedErrorString)) {
+                if (LOG.isDebugEnabled()) {
+                    // log incl stacktrace
+                    LOG.debug("Caught expected failure: {}", e.getMessage(), e);
+                } else {
+                    LOG.info("Caught expected failure: {}", e.getMessage());
+                }
+            } else {
+                // did not throw expected error... fail!
+                fail(e);
+            }
+
+        }
+        if (failed) {
+            // fail() throws the AssertionError to indicate the test failed.
+            fail("Expected assertion failure but test succeeded!");
+        }
+    }
+
+    /**
      * Validates that the assertions fail on this endpoint
      *
      * @param timeoutForEmptyEndpoints the timeout in milliseconds that we should wait for the test to be true
