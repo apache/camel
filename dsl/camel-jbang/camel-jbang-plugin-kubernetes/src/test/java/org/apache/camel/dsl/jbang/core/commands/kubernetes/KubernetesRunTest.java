@@ -81,7 +81,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
 
         Assertions.assertEquals(0, exit);
 
-        List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
+        var manifest = getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        List<HasMetadata> resources = kubernetesClient.load(manifest).items();
         Assertions.assertEquals(2, resources.size());
 
         Deployment deployment = resources.stream()

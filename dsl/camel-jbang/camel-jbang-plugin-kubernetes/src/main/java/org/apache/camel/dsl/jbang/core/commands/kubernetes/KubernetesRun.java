@@ -279,7 +279,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" -> manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                case "yaml" ->
+                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
                 case "json" ->
                     manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
                 default -> {
