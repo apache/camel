@@ -1,0 +1,64 @@
+= ClickUp Component
+:doctitle: ClickUp
+:shortname: clickup
+:artifactid: camel-clickup
+:description: Receives events from ClickUp webhooks.
+:since: 4.9.0-SNAPSHOT
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+== URI format
+
+----------------------------------------------------
+clickup:workspaceId[?options]
+----------------------------------------------------
+
+== Usage
+
+The ClickUp component supports only webhook mode.
+
+== Examples
+
+=== Webhook Mode
+
+The ClickUp component supports usage in the *webhook mode* using the *camel-webhook* component.
+
+To enable webhook mode, users need first to add a REST implementation to their application.
+Maven users, for example, can add *netty-http* to their `pom.xml` file:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-netty-http</artifactId>
+</dependency>
+------------------------------------------------------------
+
+In Java DSL:
+
+[source,java]
+---------------------------------------------------------
+from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>>&events=taskTimeTrackedUpdated")
+                .choice()
+                    .when(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent)
+                        .process(exchange -> {
+                            TaskTimeTrackedUpdatedEvent event = exchange.getIn().getBody(TaskTimeTrackedUpdatedEvent.class);
+
+                            LOG.info("TaskTimeTrackedUpdatedEvent {}", event);
+
+                            exchange.getMessage().setBody(event);
+                        })
+                    .otherwise()
+                        .log("Unknown Event: ${body}")
+                .endChoice();
+
+---------------------------------------------------------
+
+You can follow the
+https://clickup.com/api/developer-portal/webhooks[set up webhooks guide]
+to enable and configure the webhook.
