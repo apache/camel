@@ -25,12 +25,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
+import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
@@ -64,6 +67,8 @@ public final class URISupport {
     // (applies to URI with authority component and userinfo token in the form
     // "user:password").
     private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*?:)(.*)(@)");
+
+    private static final SensitiveRegistry SENSITIVE_REGISTRY = new SensitiveRegistry();
 
     // Match the user password in the URI path as second capture group
     // (applies to URI path with authority component and userinfo token in the
@@ -940,4 +945,118 @@ public final class URISupport {
         return uri;
     }
 
+    /** Store sensitive values in a local registry and replace them with UUIDs. */
+    public static String desensitizeUri(String uri) {
+        String sanitized = uri;
+        if (uri != null) {
+            sanitized = ALL_SECRETS.matcher(sanitized).replaceAll(URISupport::sanitizeSecret);
+            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst(URISupport::sanitizeUserInfoPassword);
+        }
+        return sanitized;
+    }
+
+    /** Replace UUIDs used as sensitive value placeholders with the real values held in a local registry. */
+    public static String restoreSensitiveUri(String uri) {
+        String unSanitized = uri;
+        if (uri != null) {
+            unSanitized = ALL_SECRETS.matcher(unSanitized).replaceAll(URISupport::unSanitizeSecret);
+            unSanitized = USERINFO_PASSWORD.matcher(unSanitized).replaceFirst(URISupport::unSanitizeUserInfoPassword);
+        }
+        return unSanitized;
+    }
+
+    private static String sanitizeSecret(MatchResult mr) {
+        String key = storeSensitive(mr.group(2));
+        return mr.group(1) + "=" + key;
+    }
+
+    private static String unSanitizeSecret(MatchResult mr) {
+        String str = new String(SENSITIVE_REGISTRY.getSensitive(mr.group(2)));
+        return mr.group(1) + "=" + str;
+    }
+
+    private static String sanitizeUserInfoPassword(MatchResult mr) {
+        String key = storeSensitive(mr.group(2));
+        return mr.group(1) + key + mr.group(3);
+    }
+
+    private static String unSanitizeUserInfoPassword(MatchResult mr) {
+        String str = new String(SENSITIVE_REGISTRY.getSensitive(mr.group(2)));
+        return mr.group(1) + str + mr.group(3);
+    }
+
+    public static boolean isStoredSensitive(String key) {
+        return getStoredSensitive(key) != null;
+    }
+
+    public static String getStoredSensitive(String key) {
+        if (key == null) {
+            return null;
+        }
+        char[] val = SENSITIVE_REGISTRY.getSensitive(key);
+        return val == null ? null : new String(val);
+    }
+
+    public static boolean updateStoredSensitive(String key, String value) {
+        if (key == null || value == null) {
+            return false;
+        }
+        return SENSITIVE_REGISTRY.updateSensitive(key, value.toCharArray());
+    }
+
+    public static boolean removeStoredSensitive(String key) {
+        if (key == null) {
+            return false;
+        }
+        return SENSITIVE_REGISTRY.deleteSensitive(key);
+    }
+
+    public static String storeSensitive(String value) {
+        if (value == null) {
+            return null;
+        }
+        String key = UUID.randomUUID().toString();
+        SENSITIVE_REGISTRY.addSensitive(key, value.toCharArray());
+        return key;
+    }
+
+    private static class SensitiveRegistry {
+
+        private Map<String, char[]> registry;
+
+        public SensitiveRegistry() {
+            this.registry = new HashMap<>();
+        }
+
+        public synchronized char[] getSensitive(String key) {
+            return registry.get(key);
+        }
+
+        public synchronized boolean updateSensitive(String key, char[] value) {
+            if (!registry.containsKey(key)) {
+                return false;
+            }
+            registry.put(key, value);
+            return true;
+        }
+
+        public synchronized boolean deleteSensitive(String key) {
+            if (!registry.containsKey(key)) {
+                return false;
+            }
+            char[] val = registry.remove(key);
+            for (int i = 0; i < val.length; i++) {
+                val[i] = '0';
+            }
+            return true;
+        }
+
+        public synchronized boolean addSensitive(String key, char[] value) {
+            if (registry.containsKey(key)) {
+                return false;
+            }
+            registry.put(key, value);
+            return true;
+        }
+    }
 }
