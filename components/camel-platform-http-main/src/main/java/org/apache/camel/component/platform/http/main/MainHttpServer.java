@@ -1165,9 +1165,13 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     ctx.response().setStatusCode(200);
                     ctx.end(sj.toString());
                 } else {
-                    // load file as resource
+                    // load file as resource (try both classpath and file)
                     ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
                     Resource res = loader.resolveResource("classpath:" + name);
+                    if (res == null || !res.exists()) {
+                        // attempt without path
+                        res = loader.resolveResource("classpath:" + FileUtil.stripPath(name));
+                    }
                     if (res == null || !res.exists()) {
                         for (org.apache.camel.Route route : camelContext.getRoutes()) {
                             String loc = route.getSourceLocation();
