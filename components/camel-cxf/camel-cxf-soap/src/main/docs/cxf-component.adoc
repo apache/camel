@@ -638,7 +638,7 @@ public class TextServiceImpl implements TextService {
 ----
 
 
-Then we can use https://camel.apache.org/components/next/bean-component.html[Bean] (don't forget to add `camel-bean` dependency to your project) invocation based on requested operation name:
+Then we can use xref:components::quartz-component.adoc[Bean Component] (don't forget to add `camel-bean` dependency to your project) invocation based on requested operation name:
 
 [source,java]
 ----
