@@ -18,6 +18,7 @@ package org.apache.camel.test.main.junit5.legacy;
 
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.api.Test;
@@ -30,13 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class WithUseJMXTest extends CamelMainTestSupport {
 
     @Override
-    protected Class<?> getMainClass() {
-        return MyMainClass.class;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    protected Class<?> getMainClass() {
+        return MyMainClass.class;
     }
 
     @Test

@@ -25,11 +25,18 @@ import org.apache.camel.test.junit5.util.CamelContextTestHelper;
  * execution environment.
  */
 public class TestExecutionConfiguration {
-    private boolean jmx;
-    private boolean dumpRouteCoverage = false;
-    private boolean useAdviceWith = false;
-    private boolean createCamelContextPerClass = false;
-    private boolean useRouteBuilder = true;
+    public static final boolean DEFAULT_USE_JMX = false;
+    public static final boolean DEFAULT_USE_ROUTE_BUILDER = true;
+    public static final boolean DEFAULT_DUMP_ROUTE_COVERAGE = false;
+    public static final boolean DEFAULT_USE_ADVICE_WITH = false;
+    @Deprecated(since = "4.10.0")
+    public static final boolean DEFAULT_CREATE_CONTEXT_PER_CLASS = false;
+
+    private boolean jmx = DEFAULT_USE_JMX;
+    private boolean dumpRouteCoverage = DEFAULT_DUMP_ROUTE_COVERAGE;
+    private boolean useAdviceWith = DEFAULT_USE_ADVICE_WITH;
+    private boolean createCamelContextPerClass = DEFAULT_CREATE_CONTEXT_PER_CLASS;
+    private boolean useRouteBuilder = DEFAULT_USE_ROUTE_BUILDER;
     private boolean autoStartContext = true;
 
     public boolean isJmxEnabled() {

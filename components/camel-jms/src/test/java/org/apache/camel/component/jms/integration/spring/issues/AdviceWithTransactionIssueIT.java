@@ -20,6 +20,7 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.jms.integration.spring.SpringJMSBasic;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -33,8 +34,10 @@ public class AdviceWithTransactionIssueIT extends SpringJMSBasic {
     }
 
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(true);
     }
 
     @Test

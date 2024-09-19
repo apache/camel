@@ -22,15 +22,30 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestSupport {
 
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(true);
+    }
+
+    @Override
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        Properties pc = new Properties();
+        pc.put("ftp.username", "scott");
+        pc.put("ftp.password", "tiger");
+
+        camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(pc);
     }
 
     @BeforeEach
@@ -44,14 +59,6 @@ public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestS
             }
         };
         AdviceWith.adviceWith(context.getRouteDefinition("myRoute"), context, mocker);
-    }
-
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        Properties pc = new Properties();
-        pc.put("ftp.username", "scott");
-        pc.put("ftp.password", "tiger");
-        return pc;
     }
 
     @Test

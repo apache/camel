@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.zookeeper.ZooKeeperEndpoint;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.jmx.support.JmxUtils;
 
@@ -32,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SuppressWarnings("all")
 public class ZooKeeperManagedEndpointIT extends ZooKeeperITSupport {
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     protected MBeanServer getMBeanServer() {

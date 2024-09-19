@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
@@ -32,16 +33,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OverridePropertiesTest extends CamelMainTestSupport {
 
     @Override
-    protected void configure(MainConfigurationProperties configuration) {
-        // Add the configuration class
-        configuration.addConfiguration(MyConfiguration.class);
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        Properties prop = new Properties();
+        prop.setProperty("name", "John");
+        camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(prop);
     }
 
     @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        Properties prop = new Properties();
-        prop.setProperty("name", "John");
-        return prop;
+    protected void configure(MainConfigurationProperties configuration) {
+        // Add the configuration class
+        configuration.addConfiguration(MyConfiguration.class);
     }
 
     @Test

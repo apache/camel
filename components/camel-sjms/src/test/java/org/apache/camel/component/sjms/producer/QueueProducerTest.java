@@ -32,14 +32,6 @@ public class QueueProducerTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.QueueProducerTest";
 
-    public QueueProducerTest() {
-    }
-
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testQueueProducer() throws Exception {
         MessageConsumer mc = createQueueConsumer(TEST_DESTINATION_NAME);

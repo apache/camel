@@ -28,6 +28,7 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Tag;
@@ -49,8 +50,10 @@ public class JMSTransactionIsTransactedRedeliveredIT extends AbstractSpringJMSIT
     }
 
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(true);
     }
 
     protected MBeanServer getMBeanServer() {
