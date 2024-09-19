@@ -133,7 +133,6 @@ The maven plugin *validate* goal supports the following options which can be con
 
 |===
 | Parameter | Default Value | Description
-| skip | false | Whether to skip the plugin execution.
 | downloadVersion | true | Whether to allow downloading Camel catalog version from the internet. This is needed if the project uses a different Camel version than this plugin is using by default.
 | failOnError | false | Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level.
 | coverageThreshold | 100 | The minimum route coverage in percent when using failOnError.
@@ -285,7 +284,7 @@ public boolean isDumpRouteCoverage() {
 }
 ----
 
-Routes that can be route coveraged must have an unique id assigned, in other words you cannot use anonymous routes.
+IMPORTANT: Routes that can be route coveraged **MUST** have a unique id assigned, in other words you cannot use anonymous routes.
 
 You do this using `routeId` in Java DSL:
 
@@ -352,7 +351,6 @@ The maven plugin *coverage* goal supports the following options which can be con
 
 |===
 | Parameter | Default Value | Description
-| skip | false | Whether to skip the plugin execution.
 | failOnError | false | Whether to fail if any of the routes has not 100% coverage.
 | includeTest | false | Whether to include test source code.
 | includes | | To filter the names of java and xml files to only include files matching any of the given list of

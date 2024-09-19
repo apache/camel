@@ -34,7 +34,7 @@
     <description>Camel JBang Generate Plugin</description>
 
     <properties>
-        <firstVersion>4.7.0</firstVersion>
+        <firstVersion>4.8.0</firstVersion>
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
