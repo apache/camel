@@ -28,6 +28,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.SensitiveUtils;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -57,6 +58,9 @@ public class ListProperties extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--startup" }, description = "List only startup configuration")
     boolean startup;
+
+    @CommandLine.Option(names = { "--verbose" }, description = "Whether to include more details")
+    boolean verbose;
 
     @CommandLine.Option(names = { "--internal" }, description = "Whether to include internal configuration")
     boolean internal;
@@ -109,7 +113,13 @@ public class ListProperties extends ProcessWatchCommand {
                                 value = "xxxxxx";
                             }
                             row.value = value;
+                            value = jo.getString("originalValue");
+                            if (mask && SensitiveUtils.containsSensitive(row.key)) {
+                                value = "xxxxxx";
+                            }
+                            row.originalValue = value;
                             row.internalLoc = jo.getBooleanOrDefault("internal", false);
+                            row.source = jo.getString("source");
                             row.loc = sanitizeLocation(jo.getString("location"));
                             boolean accept = internal || !row.internalLoc;
                             if (accept) {
@@ -132,10 +142,20 @@ public class ListProperties extends ProcessWatchCommand {
                     new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.key),
                     new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> "" + r.value))));
+                            .with(r -> "" + r.value),
+                    new Column().header("FUNCTION").visible(verbose).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(this::getFunction),
+                    new Column().header("ORIGINAL VALUE").visible(verbose).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(80, OverflowBehaviour.NEWLINE)
+                            .with(r -> "" + r.originalValue))));
         }
 
         return 0;
+    }
+
+    protected String getFunction(Row r) {
+        return StringHelper.before(r.source, ":", r.source);
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -162,6 +182,8 @@ public class ListProperties extends ProcessWatchCommand {
         String name;
         String key;
         Object value;
+        Object originalValue;
+        String source;
         String loc;
         boolean internalLoc;
 
@@ -182,7 +204,7 @@ public class ListProperties extends ProcessWatchCommand {
             loc = "camel-main";
         } else if ("SYS".equals(loc)) {
             loc = "JVM System Property";
-        } else if ("ENV".equals(loc)) {
+        } else if ("ENV".equals(loc) || "env".equals(loc)) {
             loc = "OS Environment Variable";
         } else if ("arguments".equals(loc) || "CLI".equals(loc)) {
             loc = "Command Line";

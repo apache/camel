@@ -85,6 +85,14 @@ public interface PropertiesComponent extends StaticService {
     Optional<String> resolveProperty(String key);
 
     /**
+     * Returns metadata about a property which has successfully been resolved.
+     *
+     * @param  key the name of the property
+     * @return     the property value and metadata if present
+     */
+    Optional<PropertiesResolvedValue> getResolvedValue(String key);
+
+    /**
      * Loads the properties from the default locations and sources.
      *
      * @return the properties loaded.

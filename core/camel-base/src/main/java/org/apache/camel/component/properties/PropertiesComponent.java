@@ -36,6 +36,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.spi.PropertiesResolvedValue;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.PropertiesSourceFactory;
 import org.apache.camel.spi.annotations.JdkService;
@@ -111,6 +112,7 @@ public class PropertiesComponent extends ServiceSupport
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
     private final PropertiesSourceFactory propertiesSourceFactory = new DefaultPropertiesSourceFactory(this);
+    private final DefaultPropertiesLookupListener defaultPropertiesLookupListener = new DefaultPropertiesLookupListener();
     private final List<PropertiesSource> sources = new ArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
@@ -128,6 +130,7 @@ public class PropertiesComponent extends ServiceSupport
     private boolean autoDiscoverPropertiesSources = true;
 
     public PropertiesComponent() {
+        addPropertiesLookupListener(defaultPropertiesLookupListener);
         // include out of the box functions
         addPropertiesFunction(new EnvPropertiesFunction());
         addPropertiesFunction(new SysPropertiesFunction());
@@ -185,6 +188,15 @@ public class PropertiesComponent extends ServiceSupport
             // property not found
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<PropertiesResolvedValue> getResolvedValue(String key) {
+        return Optional.ofNullable(defaultPropertiesLookupListener.getProperty(key));
+    }
+
+    public void updateResolvedValue(String key, String newValue, String newSource) {
+        defaultPropertiesLookupListener.updateValue(key, newValue, newSource);
     }
 
     @Override
@@ -784,27 +796,27 @@ public class PropertiesComponent extends ServiceSupport
         }
 
         sources.sort(OrderedComparator.get());
-        ServiceHelper.initService(sources, propertiesFunctionResolver);
+        ServiceHelper.initService(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
     @Override
     protected void doBuild() throws Exception {
-        ServiceHelper.buildService(sources, propertiesFunctionResolver);
+        ServiceHelper.buildService(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(sources, propertiesFunctionResolver);
+        ServiceHelper.startService(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(sources, propertiesFunctionResolver);
+        ServiceHelper.stopService(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(sources, propertiesFunctionResolver);
+        ServiceHelper.stopAndShutdownServices(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
     private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location, int order) {

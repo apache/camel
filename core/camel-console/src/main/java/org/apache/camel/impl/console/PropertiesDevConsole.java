@@ -82,10 +82,28 @@ public class PropertiesDevConsole extends AbstractDevConsole {
             String k = entry.getKey().toString();
             Object v = entry.getValue();
             String loc = olp != null ? olp.getLocation(k) : null;
-
+            String originalValue = null;
+            String defaultValue = null;
+            String source = null;
+            var m = pc.getResolvedValue(k);
+            if (m.isPresent()) {
+                originalValue = m.get().originalValue();
+                defaultValue = m.get().defaultValue();
+                source = m.get().source();
+                v = m.get().value();
+            }
             JsonObject jo = new JsonObject();
             jo.put("key", k);
             jo.put("value", v);
+            if (originalValue != null) {
+                jo.put("originalValue", originalValue);
+            }
+            if (defaultValue != null) {
+                jo.put("defaultValue", defaultValue);
+            }
+            if (source != null) {
+                jo.put("source", source);
+            }
             if (loc != null) {
                 jo.put("location", loc);
                 jo.put("internal", isInternal(loc));

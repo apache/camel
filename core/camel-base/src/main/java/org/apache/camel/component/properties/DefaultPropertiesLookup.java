@@ -24,12 +24,16 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.util.OrderedLocationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link PropertiesLookup} which lookup properties from a {@link java.util.Properties} with all existing
  * properties.
  */
 public class DefaultPropertiesLookup implements PropertiesLookup {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultPropertiesLookup.class);
 
     private final PropertiesComponent component;
 
@@ -40,7 +44,9 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
     @Override
     public String lookup(String name, String defaultValue) {
         try {
-            return doLookup(name, defaultValue);
+            String answer = doLookup(name, defaultValue);
+            LOG.trace("lookup(name: {} default: {}) -> {}", name, defaultValue, answer);
+            return answer;
         } catch (NoTypeConversionAvailableException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
@@ -119,6 +125,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
     }
 
     private void onLookup(String name, String value, String defaultValue, String source) {
+        LOG.trace("Property (name: {} default: {}) resolved from source: {} -> {}", name, defaultValue, source, value);
         for (PropertiesLookupListener listener : component.getPropertiesLookupListeners()) {
             try {
                 listener.onLookup(name, value, defaultValue, source);
