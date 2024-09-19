@@ -21,6 +21,7 @@ import java.util.Map;
 import jakarta.ws.rs.ProcessingException;
 
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
@@ -36,8 +37,10 @@ public class ServiceNowComponentVerifierIT extends ServiceNowITSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     protected ComponentVerifierExtension getVerifier() {

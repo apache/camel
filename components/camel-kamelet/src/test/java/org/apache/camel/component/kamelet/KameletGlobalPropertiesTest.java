@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,24 @@ import static org.apache.camel.util.PropertiesHelper.asProperties;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KameletGlobalPropertiesTest extends CamelTestSupport {
+
+    @Override
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        final Properties properties = asProperties(
+                "proxy.usr", "u+sr",
+                "proxy.pwd", "p+wd",
+                "raw.proxy.usr", "RAW(u+sr)",
+                "raw.proxy.pwd", "RAW(p+wd)",
+                "bodyValue", "from-uri",
+                Kamelet.PROPERTIES_PREFIX + "setBody.bodyValue", "from-template",
+                Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue", "from-route",
+                Kamelet.PROPERTIES_PREFIX + "setBody.someId.bodyValue", "from-route-someId");
+
+        camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(properties);
+    }
+
     @Test
     public void propertiesAreTakenFromRouteId() {
         assertThat(
@@ -129,25 +148,6 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                 .getEndpoint("kamelet:timer-source?message=messaging.knative.dev%2Fv1beta1&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
                 .containsEntry("message", "messaging.knative.dev/v1beta1");
-    }
-
-    // **********************************************
-    //
-    // test set-up
-    //
-    // **********************************************
-
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        return asProperties(
-                "proxy.usr", "u+sr",
-                "proxy.pwd", "p+wd",
-                "raw.proxy.usr", "RAW(u+sr)",
-                "raw.proxy.pwd", "RAW(p+wd)",
-                "bodyValue", "from-uri",
-                Kamelet.PROPERTIES_PREFIX + "setBody.bodyValue", "from-template",
-                Kamelet.PROPERTIES_PREFIX + "setBody.test.bodyValue", "from-route",
-                Kamelet.PROPERTIES_PREFIX + "setBody.someId.bodyValue", "from-route-someId");
     }
 
     @Override

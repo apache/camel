@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -33,10 +34,16 @@ public final class HttpProducerJMXBeansIssueManualIT extends BaseJettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducerJMXBeansIssueManualIT.class);
 
     @Override
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withEnableJMX();
+    }
+
+    @Override
     @BeforeEach
     public void doPreSetup() throws Exception {
         // to enable the JMX connector
-        enableJMX();
         System.setProperty("org.apache.camel.jmx.createRmiConnector", "True");
     }
 

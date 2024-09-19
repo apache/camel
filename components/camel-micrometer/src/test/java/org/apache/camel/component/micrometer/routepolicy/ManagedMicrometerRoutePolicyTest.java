@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,8 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     protected MBeanServer getMBeanServer() {

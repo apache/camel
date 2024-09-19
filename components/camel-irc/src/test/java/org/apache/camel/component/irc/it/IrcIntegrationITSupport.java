@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.irc.it;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,9 +37,16 @@ public class IrcIntegrationITSupport extends CamelTestSupport {
 
     protected Properties properties;
 
-    @BeforeEach
-    public void doBefore() throws IOException {
+    @Override
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
         properties = loadProperties();
+        camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(properties);
+    }
+
+    @BeforeEach
+    public void doBefore() {
         resetMock(resultEndpoint);
     }
 
@@ -48,18 +55,8 @@ public class IrcIntegrationITSupport extends CamelTestSupport {
         mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
     }
 
-    private Properties loadProperties() throws IOException {
-        return TestSupport.loadExternalProperties(getClass(), "/it-tests.properties");
-    }
-
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        try {
-            return loadProperties();
-        } catch (IOException e) {
-            LOGGER.error("Can't load configuration properties");
-            return null;
-        }
+    private Properties loadProperties() {
+        return TestSupport.loadExternalPropertiesQuietly(getClass(), "/it-tests.properties");
     }
 
     protected String sendUri() {

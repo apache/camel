@@ -34,6 +34,14 @@ import org.apache.camel.support.EndpointHelper;
  * Configures a context for test execution
  */
 public class CamelContextConfiguration {
+    public static final String DEFAULT_MOCK_ENDPOINTS = null;
+    public static final String DEFAULT_MOCK_ENDPOINTS_AND_SKIP = null;
+    public static final String DEFAULT_ROUTE_FILTER_INCLUDE_PATTERN = null;
+    public static final String DEFAULT_ROUTE_FILTER_EXCLUDE_PATTERN = null;
+    public static final Properties DEFAULT_USE_OVERRIDE_PROPERTIES_WITH_PROPERTIES_COMPONENT = null;
+    public static final Boolean DEFAULT_IGNORE_MISSING_LOCATION_WITH_PROPERTIES_COMPONENT = null;
+    public static final boolean DEFAULT_USE_DEBUGGER = false;
+
     @FunctionalInterface
     public interface CamelContextSupplier {
         CamelContext createCamelContext() throws Exception;
@@ -54,14 +62,14 @@ public class CamelContextConfiguration {
         void postSetup() throws Exception;
     }
 
-    private String routeFilterIncludePattern;
-    private String routeFilterExcludePattern;
+    private String routeFilterIncludePattern = DEFAULT_ROUTE_FILTER_INCLUDE_PATTERN;
+    private String routeFilterExcludePattern = DEFAULT_ROUTE_FILTER_EXCLUDE_PATTERN;
     private Registry registry;
     private Breakpoint breakpoint;
-    private String mockEndpoints;
-    private String mockEndpointsAndSkip;
-    private Properties useOverridePropertiesWithPropertiesComponent;
-    private Boolean ignoreMissingLocationWithPropertiesComponent;
+    private String mockEndpoints = DEFAULT_MOCK_ENDPOINTS;
+    private String mockEndpointsAndSkip = DEFAULT_MOCK_ENDPOINTS_AND_SKIP;
+    private Properties useOverridePropertiesWithPropertiesComponent = DEFAULT_USE_OVERRIDE_PROPERTIES_WITH_PROPERTIES_COMPONENT;
+    private Boolean ignoreMissingLocationWithPropertiesComponent = DEFAULT_IGNORE_MISSING_LOCATION_WITH_PROPERTIES_COMPONENT;
 
     private CamelContextSupplier camelContextSupplier;
     private RegistryBinder registryBinder;
@@ -136,6 +144,11 @@ public class CamelContextConfiguration {
         return this;
     }
 
+    /**
+     * Whether the debugger is enabled. Set a breakpoint using {@link #withBreakpoint(DebugBreakpoint)} to do so.
+     *
+     * @return true if the debugger is enabled or false otherwise
+     */
     public boolean useDebugger() {
         return this.breakpoint != null;
     }
@@ -296,12 +309,12 @@ public class CamelContextConfiguration {
     }
 
     /**
-     * To replace from routes with a different one
+     * To replace the 'from' routes with a different one
      *
      * @param routeId
      * @param fromEndpoint
      */
-    void replaceRouteFromWith(String routeId, String fromEndpoint) {
+    public void replaceRouteFromWith(String routeId, String fromEndpoint) {
         fromEndpoints.put(routeId, fromEndpoint);
     }
 

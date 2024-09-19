@@ -17,6 +17,7 @@
 package org.apache.camel.test.issues;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -30,8 +31,10 @@ public class MockEndpointsAndSkipTest extends CamelSpringTestSupport {
     }
 
     @Override
-    public String isMockEndpointsAndSkip() {
-        return "seda*";
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        camelContextConfiguration.withMockEndpoints("seda*");
     }
 
     @Test

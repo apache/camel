@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.util.Map;
 
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -37,8 +38,10 @@ public class JettyComponentSpringConfiguredTest extends CamelSpringTestSupport {
     protected AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     @Override

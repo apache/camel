@@ -25,13 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RouteFilterPatternIncludeExcludeTest extends CamelTestSupport {
 
     @Override
-    public String getRouteFilterIncludePattern() {
-        return "foo*";
-    }
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
 
-    @Override
-    public String getRouteFilterExcludePattern() {
-        return "jms:*";
+        camelContextConfiguration.withRouteFilterIncludePattern("foo*")
+                .withRouteFilterExcludePattern("jms:*");
     }
 
     @Test

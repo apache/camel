@@ -24,6 +24,7 @@ import org.apache.camel.component.lucene.LuceneConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,10 @@ public class LuceneQueryProcessorIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneQueryProcessorIT.class);
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     private void sendRequest() {

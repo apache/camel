@@ -19,6 +19,7 @@ package org.apache.camel.test.junit5.patterns;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -31,8 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
 
     @Override
-    public boolean isDumpRouteCoverage() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withDumpRouteCoverage(true);
     }
 
     @Test

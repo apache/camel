@@ -17,7 +17,6 @@
 package org.apache.camel.openapi;
 
 import java.util.List;
-import java.util.Properties;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
@@ -27,6 +26,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.openapi.producer.DummyRestProducerFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
@@ -47,16 +47,10 @@ public class RestOpenApiReaderPropertyPlaceholderTest extends CamelTestSupport {
     private DummyRestConsumerFactory consumerFactory = new DummyRestConsumerFactory();
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
 
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        Properties prop = new Properties();
-        prop.put("foo", "hello");
-        prop.put("bar", "bye");
-        return prop;
+        testExecutionConfiguration.withJMX(true);
     }
 
     @Override

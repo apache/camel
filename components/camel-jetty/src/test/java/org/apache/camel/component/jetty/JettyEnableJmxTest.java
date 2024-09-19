@@ -28,6 +28,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -46,6 +47,13 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     private String serverUri2;
     private String serverUri3;
     private MBeanServerConnection mbsc;
+
+    @Override
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
+    }
 
     @Override
     public void doPostTearDown() throws Exception {
@@ -115,11 +123,6 @@ public class JettyEnableJmxTest extends BaseJettyTest {
 
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals(0, s.size(), "Could not find 0 Jetty Server: " + s);
-    }
-
-    @Override
-    protected boolean useJmx() {
-        return true;
     }
 
     @Override

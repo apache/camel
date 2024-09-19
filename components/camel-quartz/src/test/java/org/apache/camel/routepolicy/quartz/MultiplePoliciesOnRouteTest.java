@@ -26,6 +26,7 @@ import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 
@@ -43,8 +44,10 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     private RoutePolicy createRouteStartPolicy() {

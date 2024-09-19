@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,8 +33,9 @@ public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshalTe
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
 
+        testConfigurationBuilder.withUseRouteBuilder(false);
+    }
 }

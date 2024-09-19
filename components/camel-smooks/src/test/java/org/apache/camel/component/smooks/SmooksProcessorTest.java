@@ -40,6 +40,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.smooks.Smooks;
 import org.smooks.cartridges.javabean.Bean;
@@ -69,13 +70,12 @@ public class SmooksProcessorTest extends CamelTestSupport {
     private MockEndpoint result;
 
     @Override
-    protected boolean useJmx() {
-        return true;
-    }
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+        testExecutionConfiguration
+                .withJMX(true)
+                .withUseRouteBuilder(false);
     }
 
     private void assertOneProcessedMessage() throws Exception {
@@ -143,7 +143,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
             }
 
         });
-        enableJMX();
+        testConfiguration().withEnableJMX();
         context.start();
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) {
@@ -188,7 +188,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
                                         "x", "/coord/@x", Integer.class, smooks.getApplicationContext().getRegistry())));
             }
         });
-        enableJMX();
+        testConfiguration().withEnableJMX();
         context.start();
         Exchange response
                 = template.request("direct:a", exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' />")));

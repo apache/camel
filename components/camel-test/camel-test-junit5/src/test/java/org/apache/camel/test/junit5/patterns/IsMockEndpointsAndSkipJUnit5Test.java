@@ -19,6 +19,7 @@ package org.apache.camel.test.junit5.patterns;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,11 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class IsMockEndpointsAndSkipJUnit5Test extends CamelTestSupport {
 
     @Override
-    public String isMockEndpointsAndSkip() {
-        // override this method and return the pattern for which endpoints to
-        // mock,
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        // set the pattern for which endpoints to mock,
         // and skip sending to the original endpoint.
-        return "direct:foo";
+        camelContextConfiguration.withMockEndpointsAndSkip("direct:foo");
     }
 
     @Test

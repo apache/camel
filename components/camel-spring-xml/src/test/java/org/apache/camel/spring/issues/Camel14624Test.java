@@ -22,6 +22,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -58,8 +59,10 @@ public class Camel14624Test extends CamelTestSupport {
     }
 
     @Override
-    public boolean isDumpRouteCoverage() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withDumpRouteCoverage(true);
     }
 
     class MockTransactionManager implements PlatformTransactionManager {

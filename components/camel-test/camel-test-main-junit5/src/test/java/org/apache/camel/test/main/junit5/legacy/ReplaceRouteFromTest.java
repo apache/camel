@@ -33,7 +33,7 @@ class ReplaceRouteFromTest extends CamelMainTestSupport {
 
     @Override
     public void doPreSetup() {
-        replaceRouteFromWith("foo", "direct:foo");
+        camelContextConfiguration.replaceRouteFromWith("foo", "direct:foo");
     }
 
     @Override

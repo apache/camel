@@ -19,6 +19,7 @@ package org.apache.camel.test.main.junit5.legacy;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.MainConfigurationProperties;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AdviceRouteTest extends CamelMainTestSupport {
 
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(true);
     }
 
     @Override

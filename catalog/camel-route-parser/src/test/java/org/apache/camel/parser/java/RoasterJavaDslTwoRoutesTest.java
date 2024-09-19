@@ -23,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.jupiter.api.Test;
@@ -37,8 +38,10 @@ public class RoasterJavaDslTwoRoutesTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RoasterJavaDslTwoRoutesTest.class);
 
     @Override
-    public boolean isDumpRouteCoverage() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withDumpRouteCoverage(true);
     }
 
     @Test

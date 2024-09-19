@@ -18,6 +18,7 @@ package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -29,8 +30,10 @@ public class AsyncSendMockTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncSendMockTest.class);
 
     @Override
-    public String isMockEndpoints() {
-        return "seda*";
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        camelContextConfiguration.withMockEndpoints("seda*");
     }
 
     @Test

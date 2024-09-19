@@ -40,8 +40,10 @@ public class GzipDataFormatTest extends CamelTestSupport {
                                        + "And by opposing end them? To die: to sleep;";
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(org.apache.camel.test.junit5.TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     private byte[] sendText() {
