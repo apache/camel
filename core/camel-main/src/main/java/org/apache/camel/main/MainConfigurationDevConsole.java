@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.Map;
 
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -68,6 +69,8 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        PropertiesComponent pc = getCamelContext().getPropertiesComponent();
+
         JsonObject root = new JsonObject();
         if (!startupConfiguration.isEmpty()) {
             JsonArray arr = new JsonArray();
@@ -75,10 +78,25 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
                 String k = entry.getKey().toString();
                 Object v = entry.getValue();
                 String loc = startupConfiguration.getLocation(k);
+                Object defaultValue = startupConfiguration.getDefaultValue(k);
 
                 JsonObject jo = new JsonObject();
                 jo.put("key", k);
                 jo.put("value", v);
+                if (defaultValue != null) {
+                    jo.put("defaultValue", defaultValue);
+                }
+                // enrich if present
+                pc.getResolvedValue(k).ifPresent(r -> {
+                    String ov = r.originalValue();
+                    if (ov != null) {
+                        jo.put("originalValue", ov);
+                    }
+                    String src = r.source();
+                    if (src != null) {
+                        jo.put("source", src);
+                    }
+                });
                 if (loc != null) {
                     jo.put("location", loc);
                     jo.put("internal", isInternal(loc));
