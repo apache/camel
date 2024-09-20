@@ -1,4 +1,23 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.clickup;
+
+import java.net.http.HttpClient;
+import java.util.List;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -16,13 +35,11 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.http.HttpClient;
-import java.util.List;
-
 /**
  * Receives events from ClickUp webhooks.
  */
-@UriEndpoint(firstVersion = "4.9.0-SNAPSHOT", scheme = "clickup", title = "ClickUp", syntax = "clickup:workspaceId", category = {Category.CLOUD})
+@UriEndpoint(firstVersion = "4.9.0-SNAPSHOT", scheme = "clickup", title = "ClickUp", syntax = "clickup:workspaceId",
+             category = { Category.CLOUD })
 public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClickUpEndpoint.class);
@@ -42,10 +59,9 @@ public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEn
     private ClickUpWebhookProcessor clickUpWebhookProcessor;
 
     public ClickUpEndpoint(
-            String uri,
-            ClickUpComponent component,
-            ClickUpConfiguration configuration
-    ) {
+                           String uri,
+                           ClickUpComponent component,
+                           ClickUpConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -62,7 +78,8 @@ public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEn
     public Processor createWebhookHandler(Processor next) {
         this.initClickUpWebhookService();
 
-        this.clickUpWebhookProcessor = new ClickUpWebhookProcessor(next, this.clickUpWebhookService, this.configuration.getWebhookSecret());
+        this.clickUpWebhookProcessor
+                = new ClickUpWebhookProcessor(next, this.clickUpWebhookService, this.configuration.getWebhookSecret());
 
         return clickUpWebhookProcessor;
     }
@@ -72,11 +89,13 @@ public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEn
         Long workspaceId = this.configuration.getWorkspaceId();
         String webhookExternalUrl = this.webhookConfiguration.computeFullExternalUrl();
 
-        this.registeredWebhook = this.clickUpWebhookService.registerWebhook(workspaceId, webhookExternalUrl, this.configuration.getEvents());
+        this.registeredWebhook
+                = this.clickUpWebhookService.registerWebhook(workspaceId, webhookExternalUrl, this.configuration.getEvents());
 
         this.clickUpWebhookProcessor.setWebhookSecret(this.registeredWebhook.getSecret());
 
-        LOG.info("Webhook registered for workspace {} at the url {} with the following id {}.", workspaceId, webhookExternalUrl, this.registeredWebhook.getId());
+        LOG.info("Webhook registered for workspace {} at the url {} with the following id {}.", workspaceId, webhookExternalUrl,
+                this.registeredWebhook.getId());
     }
 
     @Override
@@ -106,8 +125,7 @@ public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEn
         this.clickUpService = new ClickUpServiceApiImpl(
                 httpClient,
                 this.configuration.getBaseUrl() != null ? this.configuration.getBaseUrl() : API_BASE_URL,
-                this.configuration.getAuthorizationToken()
-        );
+                this.configuration.getAuthorizationToken());
 
         // TODO: refactor - better encapsulate API client (ClickUpService) and higher-level service such as ClickUpWebhookService
         this.clickUpWebhookService = new ClickUpWebhookService(this.clickUpService);
