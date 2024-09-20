@@ -16,14 +16,14 @@ public class ClickUpConfiguration {
     @Metadata(required = true)
     private Long workspaceId;
 
-    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security", secret = true)
-    private String webhookSecret;
+    @UriParam(description = "Can be used to set an alternative base URL, e.g. when you want to test the component against a mock ClickUp API", label = "advanced")
+    private String baseUrl;
 
     @UriParam(description = "The authorization token for authenticating against the ClickUp API.", label = "security", secret = true)
     private String authorizationToken;
 
-    @UriParam(description = "Can be used to set an alternative base URL, e.g. when you want to test the component against a mock ClickUp API", label = "advanced")
-    private String baseUrl;
+    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security", secret = true)
+    private String webhookSecret;
 
     @UriParam(description = "The comma separated list of events to which the webhook must subscribe")
     @Metadata(required = true)
