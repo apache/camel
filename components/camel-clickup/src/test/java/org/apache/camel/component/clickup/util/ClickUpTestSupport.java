@@ -19,7 +19,6 @@ package org.apache.camel.component.clickup.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.clickup.ClickUpComponent;
-import org.apache.camel.component.telegram.TelegramComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;

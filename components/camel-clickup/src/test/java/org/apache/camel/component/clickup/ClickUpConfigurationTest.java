@@ -2,6 +2,7 @@ package org.apache.camel.component.clickup;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.util.ClickUpTestSupport;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
