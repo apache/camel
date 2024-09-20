@@ -33,7 +33,7 @@
 
     <properties>
         <firstVersion>3.21</firstVersion>
-        <supportLevel>Experimental</supportLevel>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>

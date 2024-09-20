@@ -4,7 +4,7 @@
 :artifactid: camel-zeebe
 :description: Zeebe component which integrates with Camunda Zeebe to interact with the API.
 :since: 3.21
-:supportlevel: Experimental
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
