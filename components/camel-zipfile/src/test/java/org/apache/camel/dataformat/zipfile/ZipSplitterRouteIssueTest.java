@@ -21,14 +21,15 @@ import java.io.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
-    @Override
-    public void doPreSetup() throws Exception {
+    @BeforeEach
+    public void deleteTestDirs() {
         deleteDirectory("target/zip");
     }
 

@@ -34,47 +34,77 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
+public class ZipAggregationStrategyNullBodyTest extends CamelTestSupport {
 
-    private static final int EXPECTED_NO_EMPTY_FILES = 3;
-    private static final int EXPECTED_WITH_EMPTY_FILE = 4;
-    private static final String TEST_DIR = "target/out_ZipAggregationStrategyEmptyFileTest";
+    private static final String TEST_DIR = "target/out_ZipAggregationStrategyNullBodyTest";
+    public static final String MOCK_AGGREGATE_TO_ZIP_ENTRY = "mock:aggregateToZipEntry";
 
     @BeforeEach
     public void deleteTestDirs() {
-        deleteDirectory("target/foo");
-        deleteDirectory("target/bar");
         deleteDirectory(TEST_DIR);
     }
 
     @Test
-    public void testNoEmptyFile() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
+    public void testNullBodyLast() throws Exception {
+        MockEndpoint mock = getMockEndpoint(MOCK_AGGREGATE_TO_ZIP_ENTRY);
         mock.expectedMessageCount(1);
 
-        template.sendBody("file:target/foo", "Hello");
-        // empty file which is not aggregated
-        template.sendBody("file:target/foo", "");
-        template.sendBody("file:target/foo", "Bye");
-        template.sendBody("file:target/foo", "Howdy");
+        template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:start", "Hello again");
+        template.sendBody("direct:start", null);
 
-        checkResult(ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_EMPTY_FILES);
+        assertZipContainsFiles(2);
     }
 
     @Test
-    public void testAddEmptyFile() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
+    public void testNullBodyFirst() throws Exception {
+        MockEndpoint mock = getMockEndpoint(MOCK_AGGREGATE_TO_ZIP_ENTRY);
         mock.expectedMessageCount(1);
 
-        template.sendBody("file:target/bar", "Hello");
-        template.sendBody("file:target/bar", "");
-        template.sendBody("file:target/bar", "Bye");
-        template.sendBody("file:target/bar", "Howdy");
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:start", "Hello again");
 
-        checkResult(ZipAggregationStrategyEmptyFileTest.EXPECTED_WITH_EMPTY_FILE);
+        assertZipContainsFiles(2);
     }
 
-    private void checkResult(int expectedCount) throws InterruptedException, IOException {
+    @Test
+    public void testNullBodyMiddle() throws Exception {
+        MockEndpoint mock = getMockEndpoint(MOCK_AGGREGATE_TO_ZIP_ENTRY);
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Hello again");
+
+        assertZipContainsFiles(2);
+    }
+
+    @Test
+    public void testNullBodiesOnly() throws Exception {
+        MockEndpoint mock = getMockEndpoint(MOCK_AGGREGATE_TO_ZIP_ENTRY);
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
+
+        assertZipContainsFiles(0);
+    }
+
+    @Test
+    public void testTwoNullBodies() throws Exception {
+        MockEndpoint mock = getMockEndpoint(MOCK_AGGREGATE_TO_ZIP_ENTRY);
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Hello");
+
+        assertZipContainsFiles(1);
+    }
+
+    private void assertZipContainsFiles(int expectedCount) throws InterruptedException, IOException {
         MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
@@ -101,25 +131,15 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/foo")
+                from("direct:start")
                         .aggregate(new ZipAggregationStrategy())
                         .constant(true)
-                        .completionSize(4)
+                        .completionSize(3)
                         .eagerCheckCompletion()
                         .to("file:" + TEST_DIR)
-                        .to("mock:aggregateToZipEntry")
+                        .to(MOCK_AGGREGATE_TO_ZIP_ENTRY)
                         .log("Done processing zip file: ${header.CamelFileName}");
 
-                ZipAggregationStrategy allowEmptyFilesZipAggregationStrategy = new ZipAggregationStrategy();
-                allowEmptyFilesZipAggregationStrategy.setAllowEmptyFiles(true);
-                from("file:target/bar")
-                        .aggregate(allowEmptyFilesZipAggregationStrategy)
-                        .constant(true)
-                        .completionSize(4)
-                        .eagerCheckCompletion()
-                        .to("file:" + TEST_DIR)
-                        .to("mock:aggregateToZipEntry")
-                        .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 
