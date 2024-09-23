@@ -130,12 +130,13 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     private String excludes;
 
     /**
-     * Whether to allow anonymous routes (routes without any route id assigned). By using route id's then its safer to
-     * match the route cover data with the route source code. Anonymous routes are less safe to use for route coverage
-     * as its harder to know exactly which route that was tested corresponds to which of the routes from the source
-     * code.
+     * Deprecated: Whether to allow anonymous routes (routes without any route id assigned). By using route id's then
+     * its safer to match the route cover data with the route source code. Anonymous routes are less safe to use for
+     * route coverage as its harder to know exactly which route that was tested corresponds to which of the routes from
+     * the source code.
      */
     @Parameter(property = "camel.anonymousRoutes", defaultValue = "false")
+    @Deprecated
     private boolean anonymousRoutes;
 
     /**
@@ -152,6 +153,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (anonymousRoutes) {
+            getLog().warn("AnonymousRoutes is deprecated. Add route ids to these routes for route coverage support.");
+        }
 
         Set<File> javaFiles = new LinkedHashSet<>();
         Set<File> xmlFiles = new LinkedHashSet<>();
@@ -177,7 +181,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         long anonymous = routeTrees.stream().filter(t -> t.getRouteId() == null).count();
         if (!anonymousRoutes && anonymous > 0) {
             getLog().warn(
-                    "Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support");
+                    "Discovered " + anonymous + " anonymous routes. Add route ids to these routes for route coverage support.");
         }
 
         final AtomicInteger notCovered = new AtomicInteger();
