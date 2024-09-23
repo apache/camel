@@ -239,11 +239,16 @@ public class AWS2S3Producer extends DefaultProducer {
                 }
             }
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
-            CompleteMultipartUploadRequest compRequest
-                    = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
-                            .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
+            CompleteMultipartUploadRequest.Builder compRequestBuilder;
+            compRequestBuilder = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
+                    .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId());
 
-            uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+            String conditionalWriteCondition
+                    = exchange.getIn().getHeader(AWS2S3Constants.IF_NONE_MATCH_WRITE_CONDITION, String.class);
+            if (conditionalWriteCondition != null) {
+                compRequestBuilder.ifNoneMatch(conditionalWriteCondition);
+            }
+            uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequestBuilder.build());
 
         } catch (Exception e) {
             getEndpoint().getS3Client()
@@ -390,6 +395,12 @@ public class AWS2S3Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
                 putObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
             }
+        }
+
+        String regexConditionalWrite = exchange.getIn().getHeader(AWS2S3Constants.IF_NONE_MATCH_WRITE_CONDITION, String.class);
+
+        if (regexConditionalWrite != null) {
+            putObjectRequest.ifNoneMatch(regexConditionalWrite);
         }
 
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);

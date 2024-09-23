@@ -142,4 +142,7 @@ public interface AWS2S3Constants {
     @Metadata(description = "The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only list objects we are interested in",
               javaType = "String")
     String DELIMITER = "CamelAwsS3Delimiter";
+    @Metadata(description = "Conditional Write condition: if you set this regex expression, the write on the s3 bucket will only happen if no object in the bucket matches the regex",
+              javaType = "String")
+    String IF_NONE_MATCH_WRITE_CONDITION = "CamelAwsS3Delimiter";
 }
