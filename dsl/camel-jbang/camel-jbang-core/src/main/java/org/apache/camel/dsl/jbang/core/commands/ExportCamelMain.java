@@ -187,6 +187,7 @@ class ExportCamelMain extends Export {
         } else {
             context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
         }
+        context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
