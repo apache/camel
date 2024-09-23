@@ -189,6 +189,7 @@ class ExportSpringBoot extends Export {
         } else {
             context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
         }
+        context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
 
         context = replaceBuildProperties(context);
 

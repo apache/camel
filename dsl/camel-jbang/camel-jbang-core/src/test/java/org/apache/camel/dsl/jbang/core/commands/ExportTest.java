@@ -166,4 +166,17 @@ class ExportTest {
     private String toGAV(Dependency d) {
         return d.getGroupId() + ":" + d.getArtifactId() + ":" + d.getVersion();
     }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateReproducibleBuild(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertNotNull(model.getProperties().get("project.build.outputTimestamp"));
+    }
+
 }

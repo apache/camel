@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.camel.RuntimeCamelException;
@@ -230,6 +232,12 @@ public class Export extends ExportBaseCommand {
                 }
             }
         };
+    }
+
+    protected String getBuildMavenProjectDate() {
+        // 2024-09-23T10:00:00Z
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        return sdf.format(new Date());
     }
 
 }
