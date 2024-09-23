@@ -16,7 +16,6 @@
  */
 package org.apache.camel.service.lra;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,8 @@ public class LRASagaRoutesTest {
     void testParseQuerySuccessUnencoded() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
         Map<String, String> testResult = (Map<String, String>) getParseQueryMethod()
-                .invoke(new LRASagaRoutes(null), "Camel-Saga-Compensate=direct://saga1_participant1_compensate&Camel-Saga-Complete=direct://saga1_participant1_complete");
+                .invoke(new LRASagaRoutes(null),
+                        "Camel-Saga-Compensate=direct://saga1_participant1_compensate&Camel-Saga-Complete=direct://saga1_participant1_complete");
 
         System.out.println(testResult.toString());
 
@@ -80,7 +80,8 @@ public class LRASagaRoutesTest {
     void testParseQuerySuccessEncoded() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
         Map<String, String> testResult = (Map<String, String>) getParseQueryMethod()
-                .invoke(new LRASagaRoutes(null), "Camel-Saga-Compensate=direct%3A%2F%2Fsaga1_participant1_compensate&Camel-Saga-Complete=direct%3A%2F%2Fsaga1_participant1_complete");
+                .invoke(new LRASagaRoutes(null),
+                        "Camel-Saga-Compensate=direct%3A%2F%2Fsaga1_participant1_compensate&Camel-Saga-Complete=direct%3A%2F%2Fsaga1_participant1_complete");
 
         System.out.println(testResult.toString());
 
