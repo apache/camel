@@ -239,11 +239,14 @@ public class AWS2S3Producer extends DefaultProducer {
                 }
             }
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
-            CompleteMultipartUploadRequest compRequest
-                    = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
-                            .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
+            CompleteMultipartUploadRequest.Builder compRequestBuilder;
+            compRequestBuilder = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
+                    .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId());
 
-            uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+            if (getConfiguration().isConditionalWritesEnabled()) {
+                compRequestBuilder.ifNoneMatch("*");
+            }
+            uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequestBuilder.build());
 
         } catch (Exception e) {
             getEndpoint().getS3Client()
@@ -390,6 +393,10 @@ public class AWS2S3Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerAlgorithm())) {
                 putObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
             }
+        }
+
+        if (getConfiguration().isConditionalWritesEnabled()) {
+            putObjectRequest.ifNoneMatch("*");
         }
 
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
