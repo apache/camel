@@ -60,8 +60,8 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
     }
 
     @Test
-    public void sendInWithContentType() {
-        result.expectedMessageCount(1);
+    public void sendInWithContentType() throws Exception {
+        result.expectedMessageCount(2);
 
         template.send("direct:putObject", new Processor() {
 
@@ -77,11 +77,13 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
         ResponseInputStream<GetObjectResponse> response
                 = s.getObject(GetObjectRequest.builder().bucket(name.get()).key("camel-content-type.txt").build());
         assertEquals("application/text", response.response().contentType());
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void sendZeroLength() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(3);
 
         File zero = new File("target/zero.txt");
         IOHelper.writeText("", zero);
