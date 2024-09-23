@@ -98,7 +98,8 @@ public abstract class JBangTestSupport {
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
         MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml"),
         BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
-        DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java");
+        DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
+        SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml");
 
         private String name;
         private String resPath;
