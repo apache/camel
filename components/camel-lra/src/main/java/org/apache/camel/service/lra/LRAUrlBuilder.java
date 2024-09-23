@@ -16,9 +16,6 @@
  */
 package org.apache.camel.service.lra;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -96,7 +93,7 @@ public class LRAUrlBuilder {
         } else {
             copy.query += "&";
         }
-        copy.query += key + "=" + value;
+        copy.query += toNonnullString(key) + "=" + toNonnullString(value);
         return copy;
     }
 
