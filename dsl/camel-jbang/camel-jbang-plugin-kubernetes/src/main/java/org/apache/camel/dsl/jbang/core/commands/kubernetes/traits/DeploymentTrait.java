@@ -21,7 +21,7 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.LabelSelectorBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
-import org.apache.camel.v1.integrationspec.Traits;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 public class DeploymentTrait extends BaseTrait {
 

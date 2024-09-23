@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeServiceTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.v1.integrationspec.Traits;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 /**
  * Catalog of traits that get applied to a trait context in order to generate a set of Kubernetes resources as a

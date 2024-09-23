@@ -34,17 +34,16 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Addons;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Camel;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Mount;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Openapi;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.ServiceBinding;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.AddonsBuilder;
-import org.apache.camel.v1.integrationspec.traits.Builder;
-import org.apache.camel.v1.integrationspec.traits.Camel;
-import org.apache.camel.v1.integrationspec.traits.Container;
-import org.apache.camel.v1.integrationspec.traits.Environment;
-import org.apache.camel.v1.integrationspec.traits.Mount;
-import org.apache.camel.v1.integrationspec.traits.Openapi;
-import org.apache.camel.v1.integrationspec.traits.ServiceBinding;
 
 /**
  * Utility class manages trait expressions and its conversion to proper trait model.
@@ -141,7 +140,7 @@ public final class TraitHelper {
             for (Map.Entry<String, Map<String, Object>> traitConfig : traitConfigMap.entrySet()) {
                 if (!knownTraits.contains(traitConfig.getKey())) {
                     traitModel.getAddons().put(traitConfig.getKey(),
-                            new AddonsBuilder().addToAdditionalProperties(traitConfig.getValue()).build());
+                            new Addons(traitConfig.getValue()));
                 }
             }
         }
@@ -216,19 +215,6 @@ public final class TraitHelper {
         }
         environmentTrait.getVars().addAll(List.of(envVars));
         traitsSpec.setEnvironment(environmentTrait);
-    }
-
-    public static void configureBuildProperties(Traits traitsSpec, String[] buildProperties) {
-        if (buildProperties == null || buildProperties.length == 0) {
-            return;
-        }
-
-        Builder builderTrait = Optional.ofNullable(traitsSpec.getBuilder()).orElseGet(Builder::new);
-        if (builderTrait.getProperties() == null) {
-            builderTrait.setProperties(new ArrayList<>());
-        }
-        builderTrait.getProperties().addAll(List.of(buildProperties));
-        traitsSpec.setBuilder(builderTrait);
     }
 
     public static void configureProperties(Traits traitsSpec, String[] properties) {

@@ -20,9 +20,9 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Camel;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.Camel;
 
 public class CamelTrait extends BaseTrait {
 
