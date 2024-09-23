@@ -108,6 +108,8 @@ public class AWS2S3Configuration implements Cloneable {
     private String customerAlgorithm;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useSSES3;
+    @UriParam(label = "producer,advanced", defaultValue = "false")
+    private boolean conditionalWritesEnabled;
     @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
     @UriParam(label = "security")
@@ -763,6 +765,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
+    }
+
+    public boolean isConditionalWritesEnabled() {
+        return conditionalWritesEnabled;
+    }
+
+    /**
+     * Uploads the object only if the object key name does not already exist in the bucket specified.
+     */
+    public void setConditionalWritesEnabled(boolean conditionalWritesEnabled) {
+        this.conditionalWritesEnabled = conditionalWritesEnabled;
     }
 
     public AWS2S3Configuration copy() {
