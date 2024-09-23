@@ -102,6 +102,22 @@ public class SyncPropertiesMojo extends AbstractMojo {
     private List<String> propertyIncludes;
 
     /**
+     * Check for invalid versions
+     *
+     * @since 4.9.0
+     */
+    @Parameter(defaultValue = "false")
+    private Boolean checkForInvalidVersions;
+
+    /**
+     * List of regular expressions with invalid versions
+     *
+     * @since 4.9.0
+     */
+    @Parameter(defaultValue = ".*[^\\-]version")
+    private List<String> propertyInvalidVersions;
+
+    /**
      * List of regular expressions to ignore from {@link #sourcePomXml}
      *
      * @since 4.0.0
@@ -154,6 +170,27 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
         final Predicate<String> includes = toPredicate(propertyIncludes, true);
         final Predicate<String> excludes = toPredicate(propertyExcludes, false);
+        final Predicate<String> invalids = toPredicate(propertyInvalidVersions, true);
+
+        // Check for versions that do not fit the .*-version pattern and log an error
+        // Enforce the .*-version standard
+        if (checkForInvalidVersions.booleanValue()) {
+            List invalidProperties = Stream.concat(camelParentPomXmlModel.getProperties().entrySet().stream(),
+                    camelPomXmlModel.getProperties().entrySet().stream()
+                            .filter(property -> !(property.getKey().equals("jdk.version"))))
+                    .filter(property -> invalids.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
+                    .map(property -> property.getKey())
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            if (invalidProperties.size() > 0) {
+                throw new MojoExecutionException(
+                        "sync-properties-maven-plugin will only synchronize properties matching "
+                                                 + propertyIncludes + ".  " + "Properties were found that will not be synced "
+                                                 + invalidProperties.toString());
+            }
+        }
+
         final String properties = Stream.concat(
                 camelParentPomXmlModel.getProperties().entrySet().stream(),
                 camelPomXmlModel.getProperties().entrySet().stream()
