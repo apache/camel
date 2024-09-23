@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
@@ -40,8 +41,8 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 5;
     private static final String TEST_DIR = "target/out_AggregationStrategyWithPreservationTest";
 
-    @Override
-    public void doPreSetup() {
+    @BeforeEach
+    public void deleteTestDirs() {
         deleteDirectory(TEST_DIR);
     }
 

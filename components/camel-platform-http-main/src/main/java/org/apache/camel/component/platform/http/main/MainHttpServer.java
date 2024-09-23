@@ -918,7 +918,10 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     ctx.end("Developer Console is not enabled on CamelContext. Set camel.context.dev-console=true in application.properties");
                 }
                 DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
-                if (dcr == null || !dcr.isEnabled()) {
+                if (dcr == null) {
+                    ctx.end("Developer Console is not included. Add camel-console to classpath.");
+                    return;
+                } else if (!dcr.isEnabled()) {
                     ctx.end("Developer Console is not enabled");
                     return;
                 }

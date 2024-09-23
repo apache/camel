@@ -8,7 +8,7 @@
     "firstVersion": "3.21.0",
     "label": "workflow,saas",
     "javaType": "org.apache.camel.component.zeebe.ZeebeComponent",
-    "supportLevel": "Experimental",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zeebe",
     "version": "4.9.0-SNAPSHOT",
