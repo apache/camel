@@ -377,7 +377,8 @@ public interface FhirComponentBuilderFactory {
         }
     
         /**
-         * Request that the server modify the response using the _summary param.
+         * Request that the server modify the response using the _summary
+         * param.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

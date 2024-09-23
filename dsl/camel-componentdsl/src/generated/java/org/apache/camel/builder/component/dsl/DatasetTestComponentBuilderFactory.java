@@ -125,7 +125,8 @@ public interface DatasetTestComponentBuilderFactory {
          * DefaultExchangeFormatter.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 

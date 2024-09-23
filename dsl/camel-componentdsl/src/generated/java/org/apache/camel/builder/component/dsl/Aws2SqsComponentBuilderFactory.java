@@ -445,7 +445,8 @@ public interface Aws2SqsComponentBuilderFactory {
     
         /**
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
-         * will wait until a message is in the queue to include in the response.
+         * will wait until a message is in the queue to include in the
+         * response.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
