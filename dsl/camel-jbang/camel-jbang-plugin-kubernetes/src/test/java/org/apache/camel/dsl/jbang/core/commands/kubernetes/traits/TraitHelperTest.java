@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 import java.util.Arrays;
 import java.util.Properties;
 
-import org.apache.camel.v1.integrationspec.Traits;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
