@@ -16,15 +16,15 @@
  */
 package org.apache.camel.service.lra;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.service.lra.LRAConstants.*;
 
@@ -32,7 +32,7 @@ public class LRASagaRoutes extends RouteBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(LRASagaRoutes.class);
 
-    private LRASagaService sagaService;
+    private final LRASagaService sagaService;
 
     public LRASagaRoutes(LRASagaService sagaService) {
         this.sagaService = sagaService;
