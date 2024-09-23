@@ -153,6 +153,12 @@ public abstract class JBangTestSupport {
                 .contains(contains);
     }
 
+    protected void checkCommandOutputsPattern(String command, String contains) {
+        Assertions.assertThat(execute(command))
+                .as("command camel" + command + "should output pattern" + contains)
+                .containsPattern(contains);
+    }
+
     protected void checkCommandDoesNotOutput(String command, String contains) {
         Assertions.assertThat(execute(command))
                 .as("command camel" + command + "should not output" + contains)
