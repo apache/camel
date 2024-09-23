@@ -3972,9 +3972,9 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3Prefix";
         }
         /**
-         * The delimiter which is used in the
-         * com.amazonaws.services.s3.model.ListObjectsRequest to only list
-         * objects we are interested in.
+         * Conditional Write condition: if you set this regex expression, the
+         * write on the s3 bucket will only happen if no object in the bucket
+         * matches the regex.
          * 
          * The option is a: {@code String} type.
          * 
