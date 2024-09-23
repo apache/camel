@@ -23,9 +23,9 @@ import io.fabric8.kubernetes.api.model.networking.v1.HTTPIngressPathBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressRule;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressRuleBuilder;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.Container;
-import org.apache.camel.v1.integrationspec.traits.Ingress;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Ingress;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait.DEFAULT_CONTAINER_PORT_NAME;
 
