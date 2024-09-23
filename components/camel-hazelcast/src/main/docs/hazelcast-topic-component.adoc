@@ -34,7 +34,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== Topic producer – to(“hazelcast-topic:foo”)
+== Topic producer – to(“hazelcast-topic:foo�?)
 
 The topic producer provides only one operation (publish).
 
@@ -51,7 +51,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.PUBLISH_OPERATION);
 ----------------------------------------------------------------------------------------
 
-== Topic consumer – from(“hazelcast-topic:foo”)
+== Topic consumer – from(“hazelcast-topic:foo�?)
 
 The topic consumer provides only one operation (received). This
 component is supposed to support multiple consumption as it's expected
