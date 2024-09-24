@@ -17,8 +17,6 @@
 package org.apache.camel.component.sjms.support;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 import jakarta.jms.Connection;
@@ -36,6 +34,7 @@ import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -70,10 +69,7 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
 
     @BeforeEach
     protected void loadTestProperties() throws IOException {
-        final URL url = getClass().getResource("/test-options.properties");
-        try (InputStream inStream = url.openStream()) {
-            properties.load(inStream);
-        }
+        TestSupport.loadExternalProperties(properties, getClass(), "/test-options.properties");
     }
 
     protected abstract String getBrokerUri();

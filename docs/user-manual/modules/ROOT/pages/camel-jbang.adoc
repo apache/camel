@@ -617,12 +617,12 @@ camel run foo.java --maven-settings=false
 Camel JBang will automatically detect dependencies for Camel components, languages, data formats, etc. that
 from its own release. This means you often do not have to specify which JARs to use.
 
-However, if you need to add 3rd-party custom JARs, then you can specify these with `--deps` as CLI argument in Maven
+However, if you need to add 3rd-party custom JARs, then you can specify these with `--dep` as CLI argument in Maven
 GAV syntax (`groupId:artifactId:version`), such as:
 
 [source,bash]
 ----
-camel run foo.java --deps=com.foo:acme:1.0
+camel run foo.java --dep=com.foo:acme:1.0
 ----
 
 In case you need to explicit add a Camel dependency you can use a shorthand syntax (starting with `camel:` or `camel-`)
@@ -630,14 +630,14 @@ such as:
 
 [source,bash]
 ----
-camel run foo.java --deps=camel-saxon
+camel run foo.java --dep=camel-saxon
 ----
 
 You can specify multiple dependencies separated by comma:
 
 [source,bash]
 ----
-camel run foo.java --deps=camel-saxon,com.foo:acme:1.0
+camel run foo.java --dep=camel-saxon,com.foo:acme:1.0
 ----
 
 === Using 3rd-party Maven repositories
@@ -1824,7 +1824,7 @@ The logging level can be changed at runtime, for example, to change foo to DEBUG
 
 [source,bash]
 ----
-camel cmd logger --level=DEBUG foo
+camel cmd logger --logging-level=DEBUG foo
 ----
 
 TIP: You can use `--all` to change logging levels for all running integrations.

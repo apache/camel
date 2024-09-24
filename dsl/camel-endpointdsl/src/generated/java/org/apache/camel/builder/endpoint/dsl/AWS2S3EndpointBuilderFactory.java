@@ -2650,6 +2650,38 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Uploads the object only if the object key name does not already exist
+         * in the bucket specified.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param conditionalWritesEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder conditionalWritesEnabled(boolean conditionalWritesEnabled) {
+            doSetProperty("conditionalWritesEnabled", conditionalWritesEnabled);
+            return this;
+        }
+        /**
+         * Uploads the object only if the object key name does not already exist
+         * in the bucket specified.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param conditionalWritesEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAWS2S3EndpointProducerBuilder conditionalWritesEnabled(String conditionalWritesEnabled) {
+            doSetProperty("conditionalWritesEnabled", conditionalWritesEnabled);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

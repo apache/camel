@@ -63,6 +63,9 @@
                         <goals>
                             <goal>sync-properties</goal>
                         </goals>
+                        <configuration>
+                            <checkForInvalidVersions>true</checkForInvalidVersions>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

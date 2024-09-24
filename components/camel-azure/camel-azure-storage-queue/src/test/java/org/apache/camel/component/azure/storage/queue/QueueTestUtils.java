@@ -17,9 +17,9 @@
 package org.apache.camel.component.azure.storage.queue;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
 import java.util.Properties;
+
+import org.apache.camel.test.junit5.TestSupport;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -29,15 +29,7 @@ public final class QueueTestUtils {
     }
 
     public static Properties loadAzurePropertiesFile() throws IOException {
-        final Properties properties = new Properties();
-        final String fileName = "azure_key.properties";
-
-        final InputStream inputStream
-                = Objects.requireNonNull(QueueTestUtils.class.getClassLoader().getResourceAsStream(fileName));
-
-        properties.load(inputStream);
-
-        return properties;
+        return TestSupport.loadExternalProperties(QueueTestUtils.class, "azure_key.properties");
     }
 
     public static Properties loadAzureAccessFromJvmEnv() {

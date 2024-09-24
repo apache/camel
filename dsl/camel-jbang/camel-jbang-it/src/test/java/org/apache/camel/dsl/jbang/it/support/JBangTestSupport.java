@@ -98,7 +98,9 @@ public abstract class JBangTestSupport {
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
         MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml"),
         BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
-        DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java");
+        DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
+        SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
+        CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java");
 
         private String name;
         private String resPath;
@@ -151,6 +153,12 @@ public abstract class JBangTestSupport {
         Assertions.assertThat(execute(command))
                 .as("command camel" + command + "should output" + contains)
                 .contains(contains);
+    }
+
+    protected void checkCommandOutputsPattern(String command, String contains) {
+        Assertions.assertThat(execute(command))
+                .as("command camel" + command + "should output pattern" + contains)
+                .containsPattern(contains);
     }
 
     protected void checkCommandDoesNotOutput(String command, String contains) {

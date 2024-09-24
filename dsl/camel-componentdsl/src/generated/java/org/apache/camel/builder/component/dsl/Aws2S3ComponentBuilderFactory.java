@@ -776,6 +776,24 @@ public interface Aws2S3ComponentBuilderFactory {
     
         
         /**
+         * Uploads the object only if the object key name does not already exist
+         * in the bucket specified.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param conditionalWritesEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder conditionalWritesEnabled(boolean conditionalWritesEnabled) {
+            doSetProperty("conditionalWritesEnabled", conditionalWritesEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Define if KMS must be used or not.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1162,6 +1180,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "streamingUploadMode": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadMode((boolean) value); return true;
             case "streamingUploadTimeout": getOrCreateConfiguration((AWS2S3Component) component).setStreamingUploadTimeout((long) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
+            case "conditionalWritesEnabled": getOrCreateConfiguration((AWS2S3Component) component).setConditionalWritesEnabled((boolean) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
             case "useSSES3": getOrCreateConfiguration((AWS2S3Component) component).setUseSSES3((boolean) value); return true;

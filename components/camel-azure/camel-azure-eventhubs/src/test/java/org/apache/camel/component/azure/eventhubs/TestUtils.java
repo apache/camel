@@ -17,9 +17,9 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
 import java.util.Properties;
+
+import org.apache.camel.test.junit5.TestSupport;
 
 public final class TestUtils {
 
@@ -31,14 +31,7 @@ public final class TestUtils {
     }
 
     public static Properties loadAzurePropertiesFile() throws IOException {
-        final Properties properties = new Properties();
-        final String fileName = "azure_key.properties";
-
-        final InputStream inputStream = Objects.requireNonNull(TestUtils.class.getClassLoader().getResourceAsStream(fileName));
-
-        properties.load(inputStream);
-
-        return properties;
+        return TestSupport.loadExternalProperties(TestUtils.class, "azure_key.properties");
     }
 
     public static Properties loadAzureAccessFromJvmEnv() throws Exception {

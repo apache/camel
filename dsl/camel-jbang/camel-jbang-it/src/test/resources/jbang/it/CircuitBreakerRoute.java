@@ -14,18 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.blob;
+import org.apache.camel.builder.RouteBuilder;
 
-import java.util.Properties;
-
-import org.apache.camel.test.junit5.TestSupport;
-
-public final class BlobTestUtils {
-
-    private BlobTestUtils() {
-    }
-
-    public static Properties getAzuriteProperties() {
-        return TestSupport.loadExternalPropertiesQuietly(BlobTestUtils.class, "azurite.properties");
+public class CircuitBreakerRoute extends RouteBuilder {
+    @Override
+    public void configure() {
+        from("direct:start")
+                .circuitBreaker()
+                .to("http://localhost:8080/faulty")
+                .onFallback()
+                .transform().constant("Fallback message")
+                .end()
+                .to("mock:result");
     }
 }

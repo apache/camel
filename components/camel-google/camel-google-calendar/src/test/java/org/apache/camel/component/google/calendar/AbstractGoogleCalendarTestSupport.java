@@ -24,9 +24,9 @@ import java.util.Properties;
 import com.google.api.services.calendar.model.Calendar;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
@@ -48,15 +48,7 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
     private static Properties loadProperties() {
         // read GoogleCalendar component configuration from
         // TEST_OPTIONS_PROPERTIES
-        final Properties properties = new Properties();
-        try {
-            properties.load(AbstractGoogleCalendarTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new RuntimeCamelException(
-                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
-        }
-
-        return properties;
+        return TestSupport.loadExternalPropertiesQuietly(AbstractGoogleCalendarTestSupport.class, TEST_OPTIONS_PROPERTIES);
     }
 
     // Used by JUnit to determine whether or not to run the integration tests

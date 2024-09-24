@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.TestInstance;
 
 /**
@@ -49,13 +49,7 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
     public static final String ENV_ZENDESK_OAUTH_TOKEN = "zendesk.oauthToken";
 
     private static Properties loadProperties() {
-        final Properties properties = new Properties();
-        try {
-            properties.load(AbstractZendeskTestSupport.class.getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Unable to load test properties", e);
-        }
-        return properties;
+        return TestSupport.loadExternalPropertiesQuietly(AbstractZendeskTestSupport.class, TEST_OPTIONS_PROPERTIES);
     }
 
     @SuppressWarnings("unused")

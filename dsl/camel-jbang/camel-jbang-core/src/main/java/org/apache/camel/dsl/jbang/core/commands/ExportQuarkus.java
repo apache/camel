@@ -378,6 +378,7 @@ class ExportQuarkus extends Export {
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
+        context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
 
         context = replaceBuildProperties(context);
 

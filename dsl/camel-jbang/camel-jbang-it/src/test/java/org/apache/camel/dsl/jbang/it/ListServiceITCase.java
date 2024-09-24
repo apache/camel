@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.storage.blob;
+package org.apache.camel.dsl.jbang.it;
 
-import java.util.Properties;
+import java.io.IOException;
 
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.junit.jupiter.api.Test;
 
-public final class BlobTestUtils {
-
-    private BlobTestUtils() {
+public class ListServiceITCase extends JBangTestSupport {
+    @Test
+    public void listServicesTest() throws IOException {
+        copyResourceInDataFolder(TestResources.SERVER_ROUTE);
+        executeBackground(String.format("run %s/server.yaml", mountPoint()));
+        checkLogContains("http://0.0.0.0:8080/hello");
+        checkCommandOutputs("get service", "platform-http");
     }
 
-    public static Properties getAzuriteProperties() {
-        return TestSupport.loadExternalPropertiesQuietly(BlobTestUtils.class, "azurite.properties");
-    }
 }
