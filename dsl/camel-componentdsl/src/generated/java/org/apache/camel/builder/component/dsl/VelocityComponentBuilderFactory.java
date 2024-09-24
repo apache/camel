@@ -143,8 +143,7 @@ public interface VelocityComponentBuilderFactory {
          * To use the VelocityEngine otherwise a new engine is created.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.velocity.app.VelocityEngine&lt;/code&gt;
-         * type.
+         * &lt;code&gt;org.apache.velocity.app.VelocityEngine&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

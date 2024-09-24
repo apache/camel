@@ -286,8 +286,7 @@ public interface CryptoComponentBuilderFactory {
     
         
         /**
-         * Set the size of the buffer used to read in the Exchange payload
-         * data.
+         * Set the size of the buffer used to read in the Exchange payload data.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 

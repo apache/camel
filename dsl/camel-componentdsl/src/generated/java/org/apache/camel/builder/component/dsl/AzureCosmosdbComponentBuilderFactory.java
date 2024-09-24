@@ -589,8 +589,7 @@ public interface AzureCosmosdbComponentBuilderFactory {
          * and it will be taken into account when the latter is true.
          * 
          * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt;
-         * type.
+         * &lt;code&gt;com.azure.cosmos.models.IndexingPolicy&lt;/code&gt; type.
          * 
          * Group:  advanced
          * 
