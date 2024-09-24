@@ -33,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Tests a producer that sends media information.
- */
 public class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ClickUpWebhookCallTest.class);
