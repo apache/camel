@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * testing.
  */
 public abstract class CamelTestSupport extends AbstractTestSupport
-        implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
+        implements BeforeTestExecutionCallback, AfterTestExecutionCallback, ConfigurableTest, ConfigurableContext {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
 
     @RegisterExtension
@@ -71,11 +71,13 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     protected CamelTestSupport() {
         super(new TestExecutionConfiguration(), new CamelContextConfiguration());
 
-        testConfigurationBuilder.withJMX(useJmx())
-                .withUseRouteBuilder(isUseRouteBuilder())
-                .withUseAdviceWith(isUseAdviceWith())
-                .withDumpRouteCoverage(isDumpRouteCoverage());
+        configureTest(testConfigurationBuilder);
+        configureContext(camelContextConfiguration);
+        contextManagerExtension = new ContextManagerExtension(testConfigurationBuilder, camelContextConfiguration);
+    }
 
+    @Override
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
         camelContextConfiguration
                 .withCamelContextSupplier(this::createCamelContext)
                 .withRegistryBinder(this::bindToRegistry)
@@ -86,8 +88,14 @@ public abstract class CamelTestSupport extends AbstractTestSupport
                 .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
                 .withMockEndpoints(isMockEndpoints())
                 .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
+    }
 
-        contextManagerExtension = new ContextManagerExtension(testConfigurationBuilder, camelContextConfiguration);
+    @Override
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        testExecutionConfiguration.withJMX(useJmx())
+                .withUseRouteBuilder(isUseRouteBuilder())
+                .withUseAdviceWith(isUseAdviceWith())
+                .withDumpRouteCoverage(isDumpRouteCoverage());
     }
 
     @Override
