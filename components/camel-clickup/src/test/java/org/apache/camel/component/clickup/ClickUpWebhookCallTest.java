@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.clickup;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.clickup.model.TaskTimeTrackedUpdatedEvent;
 import org.apache.camel.component.clickup.util.ClickUpTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -31,6 +29,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Tests a producer that sends media information.
@@ -42,7 +43,10 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
     private final static Long WORKSPACE_ID = 12345L;
     private final static String AUTHORIZATION_TOKEN = "mock-authorization-token";
     private final static String WEBHOOK_SECRET = "mock-webhook-secret";
-    private final static Set<String> EVENTS = new HashSet<>(Arrays.asList("taskTimeTrackedUpdated"));
+    private final static Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
+
+    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME = "messages/events/time-tracking-created.json";
+    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE = "721c3fc370f74d777e784d12889b2ca51f95c72ca627d1ef8efd61d96d476772";
 
     private static int port;
 
@@ -60,17 +64,19 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
         LOGGER.info("Webhook external url: {}", url);
 
         try (InputStream content
-                = getClass().getClassLoader().getResourceAsStream("messages/events/time-tracking-created.json")) {
+                     = getClass().getClassLoader().getResourceAsStream(MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME)) {
             LOGGER.info("message content: {}", content);
 
-            /*
             MockEndpoint mock = getMockEndpoint("mock:endpoint");
-            mock.expectedBodiesReceived("aho");
-            mock.expectedMinimumMessageCount(1);
+            mock.expectedMessageCount(1);
+            mock.expectedMessagesMatches(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent);
 
-            template().sendBodyAndHeader("netty-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
+            Map<String, Object> headers = new HashMap<>();
+            headers.put(Exchange.HTTP_METHOD, "POST");
+            headers.put(Exchange.CONTENT_TYPE, "application/json");
+            headers.put("x-signature", MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE);
+            template().sendBodyAndHeaders("netty-http:" + url, content, headers);
             mock.assertIsSatisfied();
-             */
         }
     }
 
@@ -84,9 +90,8 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
                         .port(port);
 
                 from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN + "&webhookSecret="
-                     + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS) + "&webhookAutoRegister=false")
+                        + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS) + "&webhookAutoRegister=false")
                         .id("webhook")
-                        .convertBodyTo(String.class)
                         .to("mock:endpoint");
             }
         };
