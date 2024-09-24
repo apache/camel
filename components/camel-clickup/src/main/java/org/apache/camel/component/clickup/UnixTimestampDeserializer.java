@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// https://github.com/apache/camel/blob/main/components/camel-telegram/src/main/java/org/apache/camel/component/telegram/model/UnixTimestampDeserializer.java
 
 package org.apache.camel.component.clickup;
 
