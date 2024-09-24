@@ -48,6 +48,8 @@ import software.amazon.kinesis.lifecycle.events.LeaseLostInput;
 import software.amazon.kinesis.lifecycle.events.ProcessRecordsInput;
 import software.amazon.kinesis.lifecycle.events.ShardEndedInput;
 import software.amazon.kinesis.lifecycle.events.ShutdownRequestedInput;
+import software.amazon.kinesis.metrics.MetricsLevel;
+import software.amazon.kinesis.metrics.NullMetricsFactory;
 import software.amazon.kinesis.processor.ShardRecordProcessor;
 import software.amazon.kinesis.processor.ShardRecordProcessorFactory;
 import software.amazon.kinesis.retrieval.KinesisClientRecord;
@@ -136,7 +138,8 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         }
         this.executor = this.getEndpoint().createExecutor();
         this.executor.submit(new KclKinesisConsumingTask(
-                configuration.getStreamName(), kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient));
+                configuration.getStreamName(), kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient,
+                configuration.isKclDisableCloudwatchMetricsExport()));
     }
 
     @Override
@@ -247,13 +250,16 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         private final DynamoDbAsyncClient dynamoDbAsyncClient;
         private final CloudWatchAsyncClient cloudWatchAsyncClient;
         private final String streamName;
+        private final boolean disableMetricsExport;
 
         KclKinesisConsumingTask(String streamName, KinesisAsyncClient kinesisAsyncClient,
-                                DynamoDbAsyncClient dynamoDbAsyncClient, CloudWatchAsyncClient cloudWatchAsyncClient) {
+                                DynamoDbAsyncClient dynamoDbAsyncClient, CloudWatchAsyncClient cloudWatchAsyncClient,
+                                boolean disableMetricsExport) {
             this.cloudWatchAsyncClient = cloudWatchAsyncClient;
             this.dynamoDbAsyncClient = dynamoDbAsyncClient;
             this.kinesisAsyncClient = kinesisAsyncClient;
             this.streamName = streamName;
+            this.disableMetricsExport = disableMetricsExport;
         }
 
         @Override
@@ -270,7 +276,10 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                         configsBuilder.coordinatorConfig(),
                         configsBuilder.leaseManagementConfig(),
                         configsBuilder.lifecycleConfig(),
-                        configsBuilder.metricsConfig(),
+                        disableMetricsExport
+                                ? configsBuilder.metricsConfig().metricsLevel(MetricsLevel.NONE)
+                                        .metricsFactory(new NullMetricsFactory())
+                                : configsBuilder.metricsConfig(),
                         configsBuilder.processorConfig(),
                         configsBuilder.retrievalConfig().retrievalSpecificConfig(new PollingConfig(
                                 getEndpoint().getConfiguration().getStreamName(), kinesisAsyncClient)));

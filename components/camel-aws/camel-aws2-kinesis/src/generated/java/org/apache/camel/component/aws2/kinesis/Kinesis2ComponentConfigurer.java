@@ -53,6 +53,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "iteratortype":
         case "iteratorType": getOrCreateConfiguration(target).setIteratorType(property(camelContext, software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class, value)); return true;
+        case "kcldisablecloudwatchmetricsexport":
+        case "kclDisableCloudwatchMetricsExport": getOrCreateConfiguration(target).setKclDisableCloudwatchMetricsExport(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresultsperrequest":
@@ -127,6 +129,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "healthCheckProducerEnabled": return boolean.class;
         case "iteratortype":
         case "iteratorType": return software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class;
+        case "kcldisablecloudwatchmetricsexport":
+        case "kclDisableCloudwatchMetricsExport": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxresultsperrequest":
@@ -197,6 +201,8 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "iteratortype":
         case "iteratorType": return getOrCreateConfiguration(target).getIteratorType();
+        case "kcldisablecloudwatchmetricsexport":
+        case "kclDisableCloudwatchMetricsExport": return getOrCreateConfiguration(target).isKclDisableCloudwatchMetricsExport();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresultsperrequest":

@@ -116,6 +116,9 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "advanced",
               description = "If we want to a KCL Consumer, we can pass an instance of CloudWatchAsyncClient")
     private CloudWatchAsyncClient cloudWatchAsyncClient;
+    @UriParam(label = "advanced",
+              description = "If we want to use a KCL Consumer and disable the CloudWatch Metrics Export")
+    private boolean kclDisableCloudwatchMetricsExport;
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -331,6 +334,14 @@ public class Kinesis2Configuration implements Cloneable {
 
     public void setCloudWatchAsyncClient(CloudWatchAsyncClient cloudWatchAsyncClient) {
         this.cloudWatchAsyncClient = cloudWatchAsyncClient;
+    }
+
+    public boolean isKclDisableCloudwatchMetricsExport() {
+        return kclDisableCloudwatchMetricsExport;
+    }
+
+    public void setKclDisableCloudwatchMetricsExport(boolean kclDisableCloudwatchMetricsExport) {
+        this.kclDisableCloudwatchMetricsExport = kclDisableCloudwatchMetricsExport;
     }
 
     // *************************************************
