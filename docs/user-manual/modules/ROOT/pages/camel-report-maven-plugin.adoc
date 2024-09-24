@@ -359,7 +359,7 @@ The maven plugin *coverage* goal supports the following options which can be con
  patterns (wildcard and regular expression). Multiple values can be separated by comma.
 | excludes | | To filter the names of java and xml files to exclude files matching any of the given list of
  patterns (wildcard and regular expression). Multiple values can be separated by comma.
-| anonymousRoutes | false | Whether to allow anonymous routes (routes without any route id assigned).
+| anonymousRoutes | false | **Deprecated** Whether to allow anonymous routes (routes without any route id assigned).
  By using route id's then it is safer to match the route cover data with the route source code.
  Anonymous routes are less safe to use for route coverage as its harder to know exactly which route
  that was tested corresponds to which of the routes from the source code.
