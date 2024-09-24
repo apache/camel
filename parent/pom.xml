@@ -429,7 +429,7 @@
         <rssreader-version>3.8.2</rssreader-version>
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.5</saxon-version>
-        <scala-datasonnet-version>2.13.14</scala-datasonnet-version>
+        <scala-datasonnet-version>2.13.15</scala-datasonnet-version>
         <shiro-version>2.0.1</shiro-version>
         <sisu-maven-plugin-version>0.9.0.M3</sisu-maven-plugin-version>
         <slack-api-model-version>1.43.1</slack-api-model-version>
