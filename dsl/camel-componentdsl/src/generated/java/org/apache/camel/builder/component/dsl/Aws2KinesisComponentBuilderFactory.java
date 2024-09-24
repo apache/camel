@@ -385,6 +385,24 @@ public interface Aws2KinesisComponentBuilderFactory {
     
         
         /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder kclDisableCloudwatchMetricsExport(boolean kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
+            return this;
+        }
+    
+        
+        /**
          * If we want to a KCL Consumer set it to true.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -660,6 +678,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "autowiredEnabled": ((Kinesis2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "cloudWatchAsyncClient": getOrCreateConfiguration((Kinesis2Component) component).setCloudWatchAsyncClient((software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient) value); return true;
             case "dynamoDbAsyncClient": getOrCreateConfiguration((Kinesis2Component) component).setDynamoDbAsyncClient((software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient) value); return true;
+            case "kclDisableCloudwatchMetricsExport": getOrCreateConfiguration((Kinesis2Component) component).setKclDisableCloudwatchMetricsExport((boolean) value); return true;
             case "useKclConsumers": getOrCreateConfiguration((Kinesis2Component) component).setUseKclConsumers((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((Kinesis2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((Kinesis2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
