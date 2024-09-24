@@ -27,4 +27,11 @@ public interface ConfigurableContext {
      * @param camelContextConfiguration
      */
     void configureContext(CamelContextConfiguration camelContextConfiguration);
+
+    /**
+     * Gets the {@link CamelContextConfiguration} for the test
+     *
+     * @return the camel context configuration
+     */
+    CamelContextConfiguration camelContextConfiguration();
 }

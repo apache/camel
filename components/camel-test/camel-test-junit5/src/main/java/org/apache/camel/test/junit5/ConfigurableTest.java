@@ -27,4 +27,11 @@ public interface ConfigurableTest {
      * @param testExecutionConfiguration
      */
     void configureTest(TestExecutionConfiguration testExecutionConfiguration);
+
+    /**
+     * Gets the {@link TestExecutionConfiguration} test execution configuration instance for the test
+     *
+     * @return the configuration instance for the test
+     */
+    TestExecutionConfiguration testConfiguration();
 }

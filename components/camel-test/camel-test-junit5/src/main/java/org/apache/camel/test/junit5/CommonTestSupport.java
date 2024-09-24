@@ -17,24 +17,9 @@
 
 package org.apache.camel.test.junit5;
 
-import org.apache.camel.CamelContext;
-
 /**
  * A common interface for tests that use the CamelContext.
  */
-public interface CommonTestSupport {
+public interface CommonTestSupport extends ConfigurableTest, ConfigurableContext {
 
-    /**
-     * Gets the {@link CamelContextConfiguration} for the test
-     *
-     * @return the camel context configuration
-     */
-    CamelContextConfiguration camelContextConfiguration();
-
-    /**
-     * Gets the {@link TestExecutionConfiguration} test execution configuration instance for the test
-     *
-     * @return the configuration instance for the test
-     */
-    TestExecutionConfiguration testConfiguration();
 }

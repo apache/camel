@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * testing.
  */
 public abstract class CamelTestSupport extends AbstractTestSupport
-        implements BeforeTestExecutionCallback, AfterTestExecutionCallback, ConfigurableTest, ConfigurableContext {
+        implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
 
     @RegisterExtension
