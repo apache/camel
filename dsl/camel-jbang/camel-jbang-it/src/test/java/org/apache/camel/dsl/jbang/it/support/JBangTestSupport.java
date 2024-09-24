@@ -99,7 +99,8 @@ public abstract class JBangTestSupport {
         MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml"),
         BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
         DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
-        SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml");
+        SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
+        CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java");
 
         private String name;
         private String resPath;
