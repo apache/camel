@@ -133,11 +133,6 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
         assertRefused(exchange, ":80");
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return true;
-    }
-
     private void assertRefused(Exchange exchange, String portExt) {
         Map<String, Object> headers = exchange.getMessage().getHeaders();
         //no http response:
