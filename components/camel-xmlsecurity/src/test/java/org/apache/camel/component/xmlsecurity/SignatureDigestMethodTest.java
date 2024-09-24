@@ -358,7 +358,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     @Override
     public void doPreSetup() {
         setUpKeys("RSA", 1024);
-        disableJMX();
+        testConfigurationBuilder.withDisableJMX();
     }
 
     public void setUpKeys(String algorithm, int keylength) {

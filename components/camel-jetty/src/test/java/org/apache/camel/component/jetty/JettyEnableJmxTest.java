@@ -51,12 +51,12 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     public void doPostTearDown() throws Exception {
         releaseMBeanServers();
         mbsc = null;
-        disableJMX();
+        testConfigurationBuilder.withDisableJMX();
     }
 
     @Override
     public void doPreSetup() throws Exception {
-        enableJMX();
+        testConfigurationBuilder.withEnableJMX();
         releaseMBeanServers();
 
     }

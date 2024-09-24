@@ -125,10 +125,4 @@ public class ECDSASignatureTest extends CamelTestSupport {
             context.stop();
         }
     }
-
-    @Override
-    public void doPreSetup() {
-        disableJMX();
-    }
-
 }
