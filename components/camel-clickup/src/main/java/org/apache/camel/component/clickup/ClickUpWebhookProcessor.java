@@ -26,7 +26,7 @@ import org.apache.camel.component.clickup.service.ClickUpWebhookService;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 
-public class ClickUpWebhookProcessor extends AsyncProcessorSupport implements AsyncProcessor {
+public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

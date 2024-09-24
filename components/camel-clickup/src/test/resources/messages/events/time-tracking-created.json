@@ -1,0 +1,40 @@
+{
+    "event": "taskTimeTrackedUpdated",
+    "history_items": [
+        {
+            "id": "4208692686691836291",
+            "type": 1,
+            "date": "1726653772182",
+            "field": "time_spent",
+            "parent_id": "901506311745",
+            "data": {
+                "total_time": "7200000",
+                "rollup_time": "7200000"
+            },
+            "source": null,
+            "user": {
+                "id": 2478114,
+                "username": "Nicolò Scarpa",
+                "email": "nicolo.scarpa@blutec.it",
+                "color": "#2ea52c",
+                "initials": "NS",
+                "profilePicture": null
+            },
+            "before": null,
+            "after": {
+                "id": "4208692686691837932",
+                "start": "1726646571335",
+                "end": "1726653771335",
+                "time": "7200000",
+                "source": "clickup",
+                "date_added": "1726653772182"
+            }
+        }
+    ],
+    "task_id": "86bztbjjf",
+    "data": {
+        "description": "Time Tracking Created",
+        "interval_id": "4208692686691837932"
+    },
+    "webhook_id": "cf90066f-5a31-4105-b5fd-3e8204cce052"
+}

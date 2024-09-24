@@ -61,7 +61,7 @@ public class ClickUpWebhookService {
         }
     }
 
-    public static void validateMessageSignature(Message message, String sharedSecret) {
+    public void validateMessageSignature(Message message, String sharedSecret) {
         if (message == null) {
             throw new IllegalArgumentException("message cannot be null");
         }

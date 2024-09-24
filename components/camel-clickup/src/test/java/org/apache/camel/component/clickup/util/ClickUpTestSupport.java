@@ -62,6 +62,7 @@ public class ClickUpTestSupport extends CamelTestSupport {
         final ClickUpComponent component = new ClickUpComponent();
 
         context.addComponent("clickup", component);
+
         return context;
     }
 
