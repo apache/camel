@@ -33,6 +33,8 @@ public class ClickUpTestSupport extends CamelTestSupport {
 
     protected static volatile int port;
 
+    private ClickUpMockRoutes mockRoutes;
+
     @BeforeAll
     public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
@@ -64,6 +66,17 @@ public class ClickUpTestSupport extends CamelTestSupport {
         context.addComponent("clickup", component);
 
         return context;
+    }
+
+    protected ClickUpMockRoutes getMockRoutes() {
+        if (mockRoutes == null) {
+            mockRoutes = createMockRoutes();
+        }
+        return mockRoutes;
+    }
+
+    protected ClickUpMockRoutes createMockRoutes() {
+        throw new UnsupportedOperationException();
     }
 
 }
