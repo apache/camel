@@ -390,7 +390,6 @@ public class SignatureTest extends CamelTestSupport {
     @Override
     public void doPreSetup() throws Exception {
         setUpKeys();
-        disableJMX();
     }
 
     public void setUpKeys() throws Exception {

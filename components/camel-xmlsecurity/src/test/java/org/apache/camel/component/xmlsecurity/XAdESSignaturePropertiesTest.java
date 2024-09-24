@@ -91,11 +91,6 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    public void doPreSetup() {
-        disableJMX();
-    }
-
-    @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("keyAccessorDefault", TestKeystore.getKeyAccessor("bob"));
         registry.bind("xmlSignatureProperties", getXmlSignatureProperties("bob"));
