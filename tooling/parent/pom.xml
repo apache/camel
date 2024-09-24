@@ -42,7 +42,7 @@
         <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
-        <plexus-utils-version>4.0.1</plexus-utils-version>
+        <plexus-utils-version>4.0.2</plexus-utils-version>
         <plexus-xml-version>4.0.4</plexus-xml-version>
         <maven-archiver-version>3.6.2</maven-archiver-version>
         <plexus-archiver-version>4.10.0</plexus-archiver-version>
