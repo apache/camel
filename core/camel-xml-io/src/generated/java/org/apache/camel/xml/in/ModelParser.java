@@ -1241,6 +1241,19 @@ public class ModelParser extends BaseParser {
     protected ToDynamicDefinition doParseToDynamicDefinition() throws IOException, XmlPullParserException {
         return doParse(new ToDynamicDefinition(), toDynamicDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected TokenizerDefinition doParseTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TokenizerDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
+                case "langChain4jCharacterTokenizer": def.setTokenizerImplementation(doParseLangChain4jCharacterTokenizerDefinition()); yield true;
+                case "langChain4jLineTokenizer": def.setTokenizerImplementation(doParseLangChain4jTokenizerDefinition()); yield true;
+                case "langChain4jParagraphTokenizer": def.setTokenizerImplementation(doParseLangChain4jParagraphTokenizerDefinition()); yield true;
+                case "langChain4jSentenceTokenizer": def.setTokenizerImplementation(doParseLangChain4jSentenceTokenizerDefinition()); yield true;
+                case "langChain4jWordTokenizer": def.setTokenizerImplementation(doParseLangChain4jWordTokenizerDefinition()); yield true;
+                default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
+    }
+    protected TokenizerImplementationDefinition doParseTokenizerImplementationDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TokenizerImplementationDefinition(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+    }
     protected TransactedDefinition doParseTransactedDefinition() throws IOException, XmlPullParserException {
         return doParse(new TransactedDefinition(), (def, key, val) -> switch (key) {
                 case "ref": def.setRef(val); yield true;
@@ -2623,13 +2636,31 @@ public class ModelParser extends BaseParser {
         }
         return Optional.empty();
     }
+    protected LangChain4jCharacterTokenizerDefinition doParseLangChain4jCharacterTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LangChain4jCharacterTokenizerDefinition(), langChain4jTokenizerDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected <T extends LangChain4jTokenizerDefinition> AttributeHandler<T> langChain4jTokenizerDefinitionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "maxOverlap": def.setMaxOverlap(val); yield true;
+            case "maxTokens": def.setMaxTokens(val); yield true;
+            case "tokenizerType": def.setTokenizerType(val); yield true;
+            default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+        };
+    }
     protected LangChain4jTokenizerDefinition doParseLangChain4jTokenizerDefinition() throws IOException, XmlPullParserException {
-        return doParse(new LangChain4jTokenizerDefinition(), (def, key, val) -> switch (key) {
-                case "maxOverlap": def.setMaxOverlap(val); yield true;
-                case "maxTokens": def.setMaxTokens(val); yield true;
-                case "tokenizerType": def.setTokenizerType(val); yield true;
-                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+        return doParse(new LangChain4jTokenizerDefinition(), langChain4jTokenizerDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected LangChain4jLineTokenizerDefinition doParseLangChain4jLineTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LangChain4jLineTokenizerDefinition(), langChain4jTokenizerDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected LangChain4jParagraphTokenizerDefinition doParseLangChain4jParagraphTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LangChain4jParagraphTokenizerDefinition(), langChain4jTokenizerDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected LangChain4jSentenceTokenizerDefinition doParseLangChain4jSentenceTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LangChain4jSentenceTokenizerDefinition(), langChain4jTokenizerDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected LangChain4jWordTokenizerDefinition doParseLangChain4jWordTokenizerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new LangChain4jWordTokenizerDefinition(), langChain4jTokenizerDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected CustomTransformerDefinition doParseCustomTransformerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CustomTransformerDefinition(), (def, key, val) -> switch (key) {
@@ -2785,6 +2816,7 @@ public class ModelParser extends BaseParser {
             case "throwException": return doParseThrowExceptionDefinition();
             case "to": return doParseToDefinition();
             case "toD": return doParseToDynamicDefinition();
+            case "tokenizer": return doParseTokenizerDefinition();
             case "transacted": return doParseTransactedDefinition();
             case "transform": return doParseTransformDefinition();
             case "doTry": return doParseTryDefinition();
@@ -2792,7 +2824,6 @@ public class ModelParser extends BaseParser {
             case "validate": return doParseValidateDefinition();
             case "wireTap": return doParseWireTapDefinition();
             case "serviceCall": return doParseServiceCallDefinition();
-            case "langChain4j": return doParseLangChain4jTokenizerDefinition();
             default: return null;
         }
     }
