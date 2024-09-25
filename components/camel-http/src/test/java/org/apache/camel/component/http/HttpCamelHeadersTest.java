@@ -46,11 +46,12 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         expectedHeaders.put(ACCEPT_LANGUAGE, "pl");
 
         localServer
-                = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                = ServerBootstrap.bootstrap()
+                        .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                         .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                         .setSslContext(getSSLContext())
                         .register("/",
-                                new MyHeaderValidationHandler(GET.name(), "HTTP/1.0", getExpectedContent(), expectedHeaders))
+                                new MyHeaderValidationHandler(GET.name(), "HTTP/1.1", getExpectedContent(), expectedHeaders))
                         .create();
         localServer.start();
     }
@@ -85,7 +86,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
                 exchange -> {
                     exchange.getIn().setHeader("TestHeader", "test");
                     exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
-                    exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
+                    exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.1");
                 });
     }
 

@@ -17,7 +17,6 @@
 package org.apache.camel.component.http.rest;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.RequestValidateHost;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +48,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost")
                 .setHttpProcessor(getHttpProcessor())
                 .register("/verify", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .create();
@@ -81,7 +82,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
     private HttpProcessor getHttpProcessor() {
         return new DefaultHttpProcessor(
-                Collections.singletonList(
+                Arrays.asList(
+                        new RequestValidateHost(),
                         new RequestBasicAuth()),
                 Arrays.asList(
                         new ResponseContent(),

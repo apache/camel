@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.Collections;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -23,6 +25,9 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.routing.RequestRouter;
+import org.apache.hc.core5.http.protocol.UriPatternType;
+import org.apache.hc.core5.net.URIAuthority;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -49,7 +54,14 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
 
     @Override
     public void setupResources() throws Exception {
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setRequestRouter(RequestRouter.create(
+                        new URIAuthority("localhost"),
+                        UriPatternType.URI_PATTERN,
+                        Collections.EMPTY_LIST,
+                        RequestRouter.LOCAL_AUTHORITY_RESOLVER,
+                        null))
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext()).create();
         localServer.start();

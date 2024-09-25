@@ -32,6 +32,7 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.RequestValidateHost;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +49,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
         // Don't test anymore the Proxy-Connection header as it is highly discouraged, so its support has been removed
         // https://issues.apache.org/jira/browse/HTTPCLIENT-1957
         //        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
-        proxy = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        proxy = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("127.0.0.1").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("*",
@@ -68,6 +70,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
         List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
+        requestInterceptors.add(new RequestValidateHost());
         requestInterceptors.add(new RequestProxyBasicAuth());
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());

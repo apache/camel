@@ -17,7 +17,6 @@
 package org.apache.camel.component.http;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.RequestValidateHost;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setHttpProcessor(getHttpProcessor())
+                .setCanonicalHostName("localhost").setHttpProcessor(getHttpProcessor())
                 .register("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .register("/auth",
                         new AuthenticationValidationHandler(
@@ -83,7 +83,8 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
     private HttpProcessor getHttpProcessor() {
         return new DefaultHttpProcessor(
-                Collections.singletonList(
+                Arrays.asList(
+                        new RequestValidateHost(),
                         new RequestBasicAuth()),
                 Arrays.asList(
                         new ResponseContent(),
