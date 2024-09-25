@@ -53,7 +53,31 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Examples
 
+=== Polling files
+
 For instance, polling all the files from an SMB file share and reading their contents would look like this:
+
+[source,java]
+----
+private void process(Exchange exchange) throws IOException {
+    final byte[] data = exchange.getMessage().getBody(byte[].class);
+    LOG.debug("Read exchange as bytes with contents: {}", new String(data));
+}
+
+public void configure() {
+    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+        .process(this::process)
+        .to("mock:result");
+}
+----
+
+NOTE: you may also get the file contents as an InputStream using `exchange.getMessage().getBody(InputStream.class)`.
+
+=== Polling files (advanced)
+
+
+You can also get access to the file using the underlying `File` implementation provided by smbj. In that case, polling all the
+files from an SMB file share and reading their contents would look like this:
 
 [source,java]
 ----
@@ -74,6 +98,8 @@ public void configure() {
 [NOTE]
 ====
 Beware that the File object provided is not a `java.io.File` instance, but, instead a `com.hierynomus.smbj.share.File` instance.
+Relying on the underlying implementation may make your code more susceptible to problems between version upgrades of the library
+used to implement this component.
 ====
 
 
