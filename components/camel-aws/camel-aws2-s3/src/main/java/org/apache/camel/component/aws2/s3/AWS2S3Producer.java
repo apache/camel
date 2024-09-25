@@ -467,6 +467,25 @@ public class AWS2S3Producer extends DefaultProducer {
                     copyObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                 }
             }
+            final String ifMatchCondition = exchange.getMessage().getHeader(AWS2S3Constants.IF_MATCH_CONDITION, String.class);
+            final Instant ifModifiedSinceCondition
+                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_MODIFIED_SINCE_CONDITION, Instant.class);
+            final String ifNoneMatchCondition
+                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_NONE_MATCH_CONDITION, String.class);
+            final Instant ifUnmodifiedSince
+                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_UNMODIFIED_SINCE_CONDITION, Instant.class);
+            if (ObjectHelper.isNotEmpty(ifMatchCondition)) {
+                copyObjectRequest.copySourceIfMatch(ifMatchCondition);
+            }
+            if (ObjectHelper.isNotEmpty(ifModifiedSinceCondition)) {
+                copyObjectRequest.copySourceIfModifiedSince(ifModifiedSinceCondition);
+            }
+            if (ObjectHelper.isNotEmpty(ifNoneMatchCondition)) {
+                copyObjectRequest.copySourceIfNoneMatch(ifNoneMatchCondition);
+            }
+            if (ObjectHelper.isNotEmpty(ifUnmodifiedSince)) {
+                copyObjectRequest.copySourceIfUnmodifiedSince(ifUnmodifiedSince);
+            }
 
             CopyObjectResponse copyObjectResult = s3Client.copyObject(copyObjectRequest.build());
 

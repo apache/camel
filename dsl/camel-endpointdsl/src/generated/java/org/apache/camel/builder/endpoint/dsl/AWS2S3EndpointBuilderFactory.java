@@ -4018,8 +4018,8 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3Delimiter";
         }
         /**
-         * Return the object only if its entity tag (ETag) is the same as the
-         * one specified in this header.
+         * Return/copy the object only if its entity tag (ETag) is the same as
+         * the one specified in this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4031,8 +4031,8 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3IfMatchCondition";
         }
         /**
-         * Return the object only if it has been modified since the specified
-         * time; otherwise, return a 304 Not Modified error.
+         * Return/copy the object only if it has been modified since the
+         * specified time; otherwise, return a 304 Not Modified error.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4044,8 +4044,8 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3IfModifiedSinceCondition";
         }
         /**
-         * Return the object only if its entity tag (ETag) is different from the
-         * one specified in this header.
+         * Return/copy the object only if its entity tag (ETag) is different
+         * from the one specified in this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4057,7 +4057,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3IfNoneMatchCondition";
         }
         /**
-         * Return the object only if it has not been modified since the
+         * Return/copy the object only if it has not been modified since the
          * specified time.
          * 
          * The option is a: {@code String} type.

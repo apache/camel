@@ -142,16 +142,16 @@ public interface AWS2S3Constants {
     @Metadata(description = "The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only list objects we are interested in",
               javaType = "String")
     String DELIMITER = "CamelAwsS3Delimiter";
-    @Metadata(description = "Return the object only if its entity tag (ETag) is the same as the one specified in this header.",
+    @Metadata(description = "Return/copy the object only if its entity tag (ETag) is the same as the one specified in this header.",
               javaType = "String")
     String IF_MATCH_CONDITION = "CamelAwsS3IfMatchCondition";
-    @Metadata(description = "Return the object only if it has been modified since the specified time; otherwise, return a 304 Not Modified error.",
+    @Metadata(description = "Return/copy the object only if it has been modified since the specified time; otherwise, return a 304 Not Modified error.",
               javaType = "String")
     String IF_MODIFIED_SINCE_CONDITION = "CamelAwsS3IfModifiedSinceCondition";
-    @Metadata(description = "Return the object only if its entity tag (ETag) is different from the one specified in this header.",
+    @Metadata(description = "Return/copy the object only if its entity tag (ETag) is different from the one specified in this header.",
               javaType = "String")
     String IF_NONE_MATCH_CONDITION = "CamelAwsS3IfNoneMatchCondition";
-    @Metadata(description = "Return the object only if it has not been modified since the specified time.",
+    @Metadata(description = "Return/copy the object only if it has not been modified since the specified time.",
               javaType = "String")
     String IF_UNMODIFIED_SINCE_CONDITION = "CamelAwsS3IfUnmodifiedSinceCondition";
 }
