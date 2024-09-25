@@ -27,7 +27,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.bind.TemplateProvider;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.v1.Pipe;
 import org.apache.camel.v1.integrationspec.Traits;
@@ -163,14 +162,14 @@ public class Bind extends KubernetesBaseCommand {
         String integrationSpec = "";
         Traits traitsSpec = null;
         if (traits != null && traits.length > 0) {
-            traitsSpec = TraitHelper.parseTraits(traits);
+            traitsSpec = IntegrationTraitHelper.parseTraits(traits);
         }
 
         if (connects != null) {
             if (traitsSpec == null) {
                 traitsSpec = new Traits();
             }
-            TraitHelper.configureConnects(traitsSpec, connects);
+            IntegrationTraitHelper.configureConnects(traitsSpec, connects);
         }
 
         if (traitsSpec != null) {
