@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.util.FileUtil;
@@ -37,7 +38,8 @@ class InitTest {
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        workingDir = Files.createTempDirectory("camel-init").toFile();
+        Path base = Paths.get("target");
+        workingDir = Files.createTempDirectory(base, "camel-init").toFile();
     }
 
     @AfterEach
