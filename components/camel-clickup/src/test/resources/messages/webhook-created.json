@@ -2,10 +2,10 @@
     "id": "ad0bb021-a33a-481b-ab9d-f7a9a8906bac",
     "webhook": {
         "id": "ad0bb021-a33a-481b-ab9d-f7a9a8906bac",
-        "userid": 2478114,
-        "team_id": 2174398,
-        "endpoint": "https://rich-bears-stare.loca.lt/CQE2wywxYhflRUeN-XlPxAtr_1Ncs2Ajd3nApKgn79Q=",
-        "client_id": "pk_2478114_3KSI9KJA6YJ7R3LGERX49ID048HU8K90",
+        "userid": 7654321,
+        "team_id": 1234567,
+        "endpoint": "https://yourdomain.com/webhook",
+        "client_id": "mock-authorization-token",
         "events": [
             "taskTimeTrackedUpdated"
         ],
@@ -18,6 +18,6 @@
             "status": "active",
             "fail_count": 0
         },
-        "secret": "0545C3HEUH1T2K6FX8W9IX6EG21N1VXZR5GCLU30RPULBUAT2O3XRS083DR14BZF"
+        "secret": "0545C3HEUH12TK6FX8W9IX6EG21N1VXZR5GCLU30RPULBUAT2O3XRS083DR14BZF"
     }
 }

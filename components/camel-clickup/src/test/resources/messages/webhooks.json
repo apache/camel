@@ -2,8 +2,8 @@
   "webhooks": [
     {
       "id": "5c8458ee-c440-4110-938f-a049526ddf69",
-      "userid": 2478114,
-      "team_id": 2174398,
+      "userid": 7654321,
+      "team_id": 1234567,
       "endpoint": "https://yourdomain.com/webhook",
       "client_id": "mock-authorization-token",
       "events": [
