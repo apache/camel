@@ -47,7 +47,8 @@ public class HttpProxyAndBasicAuthTest extends BaseHttpTest {
 
     @Override
     public void setupResources() throws Exception {
-        proxy = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        proxy = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .registerVirtual("authtest.org", "*", new ProxyAndBasicAuthenticationValidationHandler(

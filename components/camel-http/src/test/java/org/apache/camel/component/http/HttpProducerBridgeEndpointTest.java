@@ -49,7 +49,8 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
         noBridgeExpectedHeaders.put("qp4", LONG.toString());
         noBridgeExpectedHeaders.put("qp5", BOOLEAN.toString());
 
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/bridged",

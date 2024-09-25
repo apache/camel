@@ -35,7 +35,8 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
 
     @Override
     public void setupResources() throws Exception {
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/joes", new DrinkAuthValidationHandler(GET.name(), null, null, "drink")).create();
