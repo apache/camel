@@ -43,7 +43,7 @@ In Java DSL:
 
 [source,java]
 ---------------------------------------------------------
-from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>>&events=taskTimeTrackedUpdated")
+from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&events=taskTimeTrackedUpdated")
                 .choice()
                     .when(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent)
                         .process(exchange -> {
