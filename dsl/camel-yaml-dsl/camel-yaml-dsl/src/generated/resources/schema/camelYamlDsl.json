@@ -211,8 +211,20 @@
           "serviceCall" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ServiceCallDefinition"
           },
-          "langChain4j" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition"
+          "langChain4jCharacterTokenizer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition"
+          },
+          "langChain4jLineTokenizer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition"
+          },
+          "langChain4jParagraphTokenizer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition"
+          },
+          "langChain4jSentenceTokenizer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition"
+          },
+          "langChain4jWordTokenizer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition"
           }
         }
       },
@@ -15756,9 +15768,164 @@
         },
         "required" : [ "key" ]
       },
-      "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition" : {
-        "title" : "LangChain4J Tokenizer",
-        "description" : "Tokenizer that uses LangChain4j for tokenization.",
+      "org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with character splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with line splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with paragraph splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with sentence splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with word splitter",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

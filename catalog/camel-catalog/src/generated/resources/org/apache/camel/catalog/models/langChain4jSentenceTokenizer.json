@@ -1,13 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "langChain4j",
-    "title": "LangChain4J Tokenizer",
-    "description": "Tokenizer that uses LangChain4j for tokenization.",
+    "name": "langChain4jSentenceTokenizer",
+    "title": "LangChain4J Tokenizer with sentence splitter",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",
-    "javaType": "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition",
+    "javaType": "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition",
     "abstract": false,
     "input": true,
     "output": false

@@ -754,8 +754,20 @@ public class ModelWriter extends BaseWriter {
     public void writeSecurityDefinition(SecurityDefinition def) throws IOException {
         doWriteSecurityDefinition("security", def);
     }
-    public void writeLangChain4jTokenizerDefinition(LangChain4jTokenizerDefinition def) throws IOException {
-        doWriteLangChain4jTokenizerDefinition("langChain4j", def);
+    public void writeLangChain4jCharacterTokenizerDefinition(LangChain4jCharacterTokenizerDefinition def) throws IOException {
+        doWriteLangChain4jCharacterTokenizerDefinition("langChain4jCharacterTokenizer", def);
+    }
+    public void writeLangChain4jLineTokenizerDefinition(LangChain4jLineTokenizerDefinition def) throws IOException {
+        doWriteLangChain4jLineTokenizerDefinition("langChain4jLineTokenizer", def);
+    }
+    public void writeLangChain4jParagraphTokenizerDefinition(LangChain4jParagraphTokenizerDefinition def) throws IOException {
+        doWriteLangChain4jParagraphTokenizerDefinition("langChain4jParagraphTokenizer", def);
+    }
+    public void writeLangChain4jSentenceTokenizerDefinition(LangChain4jSentenceTokenizerDefinition def) throws IOException {
+        doWriteLangChain4jSentenceTokenizerDefinition("langChain4jSentenceTokenizer", def);
+    }
+    public void writeLangChain4jWordTokenizerDefinition(LangChain4jWordTokenizerDefinition def) throws IOException {
+        doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", def);
     }
     public void writeTransformersDefinition(TransformersDefinition def) throws IOException {
         doWriteTransformersDefinition("transformers", def);
@@ -3471,12 +3483,40 @@ public class ModelWriter extends BaseWriter {
         doWriteVerbDefinitionElements(def);
         endElement(name);
     }
-    protected void doWriteLangChain4jTokenizerDefinition(String name, LangChain4jTokenizerDefinition def) throws IOException {
+    protected void doWriteLangChain4jCharacterTokenizerDefinition(String name, LangChain4jCharacterTokenizerDefinition def) throws IOException {
         startElement(name);
+        doWriteLangChain4jTokenizerDefinitionAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteLangChain4jLineTokenizerDefinition(String name, LangChain4jLineTokenizerDefinition def) throws IOException {
+        startElement(name);
+        doWriteLangChain4jTokenizerDefinitionAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteLangChain4jParagraphTokenizerDefinition(String name, LangChain4jParagraphTokenizerDefinition def) throws IOException {
+        startElement(name);
+        doWriteLangChain4jTokenizerDefinitionAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteLangChain4jSentenceTokenizerDefinition(String name, LangChain4jSentenceTokenizerDefinition def) throws IOException {
+        startElement(name);
+        doWriteLangChain4jTokenizerDefinitionAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteLangChain4jTokenizerDefinitionAttributes(LangChain4jTokenizerDefinition def) throws IOException {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("maxTokens", def.getMaxTokens());
         doWriteAttribute("tokenizerType", def.getTokenizerType());
         doWriteAttribute("maxOverlap", def.getMaxOverlap());
+    }
+    protected void doWriteLangChain4jTokenizerDefinition(String name, LangChain4jTokenizerDefinition def) throws IOException {
+        startElement(name);
+        doWriteLangChain4jTokenizerDefinitionAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteLangChain4jWordTokenizerDefinition(String name, LangChain4jWordTokenizerDefinition def) throws IOException {
+        startElement(name);
+        doWriteLangChain4jTokenizerDefinitionAttributes(def);
         endElement(name);
     }
     protected void doWriteCustomTransformerDefinition(String name, CustomTransformerDefinition def) throws IOException {
@@ -3722,7 +3762,11 @@ public class ModelWriter extends BaseWriter {
                 case "RestBindingDefinition" -> doWriteRestBindingDefinition("restBinding", (RestBindingDefinition) v);
                 case "RestDefinition" -> doWriteRestDefinition("rest", (RestDefinition) v);
                 case "RestsDefinition" -> doWriteRestsDefinition("rests", (RestsDefinition) v);
-                case "LangChain4jTokenizerDefinition" -> doWriteLangChain4jTokenizerDefinition("langChain4j", (LangChain4jTokenizerDefinition) v);
+                case "LangChain4jCharacterTokenizerDefinition" -> doWriteLangChain4jCharacterTokenizerDefinition("langChain4jCharacterTokenizer", (LangChain4jCharacterTokenizerDefinition) v);
+                case "LangChain4jLineTokenizerDefinition" -> doWriteLangChain4jLineTokenizerDefinition("langChain4jLineTokenizer", (LangChain4jLineTokenizerDefinition) v);
+                case "LangChain4jParagraphTokenizerDefinition" -> doWriteLangChain4jParagraphTokenizerDefinition("langChain4jParagraphTokenizer", (LangChain4jParagraphTokenizerDefinition) v);
+                case "LangChain4jSentenceTokenizerDefinition" -> doWriteLangChain4jSentenceTokenizerDefinition("langChain4jSentenceTokenizer", (LangChain4jSentenceTokenizerDefinition) v);
+                case "LangChain4jWordTokenizerDefinition" -> doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", (LangChain4jWordTokenizerDefinition) v);
             }
         }
     }
@@ -3808,7 +3852,11 @@ public class ModelWriter extends BaseWriter {
                 case "WhenDefinition" -> doWriteWhenDefinition("when", (WhenDefinition) v);
                 case "WireTapDefinition" -> doWriteWireTapDefinition("wireTap", (WireTapDefinition) v);
                 case "ServiceCallDefinition" -> doWriteServiceCallDefinition("serviceCall", (ServiceCallDefinition) v);
-                case "LangChain4jTokenizerDefinition" -> doWriteLangChain4jTokenizerDefinition("langChain4j", (LangChain4jTokenizerDefinition) v);
+                case "LangChain4jCharacterTokenizerDefinition" -> doWriteLangChain4jCharacterTokenizerDefinition("langChain4jCharacterTokenizer", (LangChain4jCharacterTokenizerDefinition) v);
+                case "LangChain4jLineTokenizerDefinition" -> doWriteLangChain4jLineTokenizerDefinition("langChain4jLineTokenizer", (LangChain4jLineTokenizerDefinition) v);
+                case "LangChain4jParagraphTokenizerDefinition" -> doWriteLangChain4jParagraphTokenizerDefinition("langChain4jParagraphTokenizer", (LangChain4jParagraphTokenizerDefinition) v);
+                case "LangChain4jSentenceTokenizerDefinition" -> doWriteLangChain4jSentenceTokenizerDefinition("langChain4jSentenceTokenizer", (LangChain4jSentenceTokenizerDefinition) v);
+                case "LangChain4jWordTokenizerDefinition" -> doWriteLangChain4jWordTokenizerDefinition("langChain4jWordTokenizer", (LangChain4jWordTokenizerDefinition) v);
             }
         }
     }
