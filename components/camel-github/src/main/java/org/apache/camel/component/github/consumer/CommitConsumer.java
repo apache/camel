@@ -84,7 +84,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
 
             if (startingSha.equals("last")) {
                 LOG.info("Indexing current commits on: {}/{}@{}", getEndpoint().getRepoOwner(), getEndpoint().getRepoName(),
-                    branchName);
+                        branchName);
                 List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
                 if (!commits.isEmpty()) {
                     lastSha = commits.get(0).getSha();
