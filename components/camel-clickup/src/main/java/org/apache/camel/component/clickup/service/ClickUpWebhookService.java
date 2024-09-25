@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.Message;
 import org.apache.camel.component.clickup.InvalidMessageSignatureException;
 import org.apache.camel.component.clickup.model.Webhook;
+import org.apache.camel.component.clickup.model.WebhookCreationCommand;
 import org.apache.camel.component.clickup.model.errors.WebhookAlreadyExistsException;
 import org.apache.camel.component.clickup.util.Utils;
 import org.slf4j.Logger;
@@ -41,7 +42,11 @@ public class ClickUpWebhookService {
 
     public Webhook registerWebhook(Long workspaceId, String endpointUrl, Set<String> events) {
         try {
-            return this.clickUpService.createWebhook(workspaceId, endpointUrl, events);
+            WebhookCreationCommand command = new WebhookCreationCommand();
+            command.setEndpoint(endpointUrl);
+            command.setEvents(events);
+
+            return this.clickUpService.createWebhook(workspaceId, command);
         } catch (WebhookAlreadyExistsException e) {
             LOG.info("Another webhook with the same configuration already exists, trying to reuse it...");
 

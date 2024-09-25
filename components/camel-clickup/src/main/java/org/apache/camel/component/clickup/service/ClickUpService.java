@@ -19,14 +19,13 @@ package org.apache.camel.component.clickup.service;
 import java.util.Set;
 
 import org.apache.camel.component.clickup.model.Webhook;
+import org.apache.camel.component.clickup.model.WebhookCreationCommand;
 
 public interface ClickUpService {
 
-    Webhook createWebhook(Long workspaceId, String endpointUrl, Set<String> events);
+    Webhook createWebhook(Long workspaceId, WebhookCreationCommand command);
 
     Set<Webhook> getWebhooks(Long workspaceId);
-
-    void updateWebhook(String webhookId, String endpointUrl, Set<String> events, String status);
 
     void deleteWebhook(String webhookId);
 

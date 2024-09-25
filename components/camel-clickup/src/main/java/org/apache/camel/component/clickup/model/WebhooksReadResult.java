@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.clickup.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class WebhooksReadResult {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class WebhooksReadResult implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 0L;
 
     @JsonProperty("webhooks")
     private Set<Webhook> webhooks;

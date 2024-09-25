@@ -20,12 +20,14 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.camel.component.clickup.UnixTimestampDeserializer;
 import org.apache.camel.component.clickup.UnixTimestampSerializer;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeSpentHistoryItemState implements Serializable {
 
     @Serial

@@ -16,9 +16,18 @@
  */
 package org.apache.camel.component.clickup.model;
 
+import java.io.Serial;
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class WebhookHealth {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class WebhookHealth implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 0L;
+
     @JsonProperty("status")
     private String status = null;
 
@@ -48,4 +57,5 @@ public class WebhookHealth {
                ", failCount=" + failCount +
                '}';
     }
+
 }

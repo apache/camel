@@ -19,8 +19,10 @@ package org.apache.camel.component.clickup.model;
 import java.io.Serial;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
 
     @Serial

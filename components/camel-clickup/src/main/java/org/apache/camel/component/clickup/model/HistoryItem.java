@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.clickup.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,7 +28,10 @@ import org.apache.camel.component.clickup.UnixTimestampDeserializer;
 import org.apache.camel.component.clickup.UnixTimestampSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class HistoryItem {
+public abstract class HistoryItem implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 0L;
 
     @JsonProperty("date")
     @JsonDeserialize(using = UnixTimestampDeserializer.class)

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.clickup.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +26,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Webhook {
+public class Webhook implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 0L;
+
     @JsonProperty("id")
     private String id = null;
 
@@ -181,4 +187,5 @@ public class Webhook {
                ", secret='" + secret + '\'' +
                '}';
     }
+
 }
