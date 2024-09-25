@@ -44,7 +44,7 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
     public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME = "messages/events/time-tracking-created.json";
     public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE
-            = "721c3fc370f74d777e784d12889b2ca51f95c72ca627d1ef8efd61d96d476772";
+            = "ac99f10017e28db6839941c184964890ec3262b1d6b1756d33ff53d972d5a361";
 
     private static int port;
 

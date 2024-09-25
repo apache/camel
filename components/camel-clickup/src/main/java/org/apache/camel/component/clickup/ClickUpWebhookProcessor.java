@@ -25,7 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.clickup.model.Event;
 import org.apache.camel.component.clickup.service.ClickUpWebhookService;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -53,7 +52,7 @@ public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
 
         try {
             this.clickUpWebhookService.validateMessageSignature(incomingMessage, this.webhookSecret);
-        } catch (RuntimeCamelException e) {
+        } catch (RuntimeException e) {
             exchange.setException(e);
 
             callback.done(true);
