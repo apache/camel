@@ -4017,6 +4017,59 @@ public interface AWS2S3EndpointBuilderFactory {
         public String awsS3Delimiter() {
             return "CamelAwsS3Delimiter";
         }
+        /**
+         * Return/copy the object only if its entity tag (ETag) is the same as
+         * the one specified in this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3IfMatchCondition}.
+         */
+        public String awsS3IfMatchCondition() {
+            return "CamelAwsS3IfMatchCondition";
+        }
+        /**
+         * Return/copy the object only if it has been modified since the
+         * specified time; otherwise, return a 304 Not Modified error.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3IfModifiedSinceCondition}.
+         */
+        public String awsS3IfModifiedSinceCondition() {
+            return "CamelAwsS3IfModifiedSinceCondition";
+        }
+        /**
+         * Return/copy the object only if its entity tag (ETag) is different
+         * from the one specified in this header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3IfNoneMatchCondition}.
+         */
+        public String awsS3IfNoneMatchCondition() {
+            return "CamelAwsS3IfNoneMatchCondition";
+        }
+        /**
+         * Return/copy the object only if it has not been modified since the
+         * specified time.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsS3IfUnmodifiedSinceCondition}.
+         */
+        public String awsS3IfUnmodifiedSinceCondition() {
+            return "CamelAwsS3IfUnmodifiedSinceCondition";
+        }
     }
     static AWS2S3EndpointBuilder endpointBuilder(String componentName, String path) {
         class AWS2S3EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2S3EndpointBuilder, AdvancedAWS2S3EndpointBuilder {
