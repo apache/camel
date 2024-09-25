@@ -44,6 +44,9 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata(defaultValue = "false", label = "producer,advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     public CxfRsComponent() {
     }
@@ -63,6 +66,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
         }
 
         final CxfRsEndpoint answer = doCreateEndpoint(remaining);
+        answer.setSynchronous(isSynchronous());
 
         final String resourceClass = getAndRemoveParameter(parameters, "resourceClass", String.class);
         if (resourceClass != null) {
@@ -166,5 +170,13 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
     }
 }
