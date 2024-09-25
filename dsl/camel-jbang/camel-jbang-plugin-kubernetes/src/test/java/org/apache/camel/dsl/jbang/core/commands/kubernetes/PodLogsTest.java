@@ -53,9 +53,10 @@ class PodLogsTest extends KubernetesBaseTest {
 
         kubernetesClient.pods().resource(pod).create();
 
-        PodLogs command = createCommand();
-        command.name = "routes";
-        int exit = command.doCall();
+        var podLog = createCommand();
+        podLog.maxLogMessages = 10;
+        podLog.name = "routes";
+        int exit = podLog.doCall();
         Assertions.assertEquals(0, exit);
     }
 
