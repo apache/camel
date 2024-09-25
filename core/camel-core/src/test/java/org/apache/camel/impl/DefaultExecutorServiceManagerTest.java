@@ -18,10 +18,13 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -562,6 +565,48 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         assertTrue(pool.isShutdown());
         assertTrue(pool.isTerminated());
+    }
+
+    @Test
+    public void testThreadFactoryListener() {
+        // custom thread factory
+        ThreadFactory myFactory = r -> new Thread(r, "MyFactory");
+        // hook custom factory into Camel
+        context.getExecutorServiceManager().addThreadFactoryListener(factory -> myFactory);
+        // create thread
+        Thread thread = context.getExecutorServiceManager().newThread("Cool", () -> {
+            // noop
+        });
+
+        assertNotNull(thread);
+        assertTrue(thread.isDaemon());
+        // should be created by custom factory instead of Camel
+        assertTrue(thread.getName().contains("MyFactory"));
+    }
+
+    @Test
+    public void testThreadFactoryListenerViaRegistry() {
+        // create another CamelContext as camelContext is already started in this test-class
+        CamelContext c = new DefaultCamelContext();
+
+        // custom thread factory
+        ThreadFactory myFactory = r -> new Thread(r, "MyFactory2");
+        // hook custom factory into Camel via registry
+        ExecutorServiceManager.ThreadFactoryListener listener = factory -> myFactory;
+        c.getRegistry().bind("myListener", listener);
+        c.start();
+
+        // create thread
+        Thread thread = c.getExecutorServiceManager().newThread("Cool2", () -> {
+            // noop
+        });
+
+        assertNotNull(thread);
+        assertTrue(thread.isDaemon());
+        // should be created by custom factory instead of Camel
+        assertTrue(thread.getName().contains("MyFactory2"));
+
+        c.stop();
     }
 
 }
