@@ -102,6 +102,21 @@ public interface CxfrsComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets whether synchronous processing should be strictly used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default CxfrsComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -174,6 +189,7 @@ public interface CxfrsComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((CxfRsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CxfRsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "synchronous": ((CxfRsComponent) component).setSynchronous((boolean) value); return true;
             case "autowiredEnabled": ((CxfRsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "headerFilterStrategy": ((CxfRsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "useGlobalSslContextParameters": ((CxfRsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;

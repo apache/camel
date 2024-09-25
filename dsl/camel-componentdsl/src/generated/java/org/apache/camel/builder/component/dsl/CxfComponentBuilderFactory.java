@@ -101,6 +101,21 @@ public interface CxfComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets whether synchronous processing should be strictly used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default CxfComponentBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
          * This option controls whether the CXF component, when running in
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
@@ -191,6 +206,7 @@ public interface CxfComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((CxfComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CxfComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "synchronous": ((CxfComponent) component).setSynchronous((boolean) value); return true;
             case "allowStreaming": ((CxfComponent) component).setAllowStreaming((java.lang.Boolean) value); return true;
             case "autowiredEnabled": ((CxfComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "headerFilterStrategy": ((CxfComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
