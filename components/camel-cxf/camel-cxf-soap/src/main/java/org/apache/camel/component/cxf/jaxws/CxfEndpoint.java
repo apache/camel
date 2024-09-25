@@ -220,7 +220,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(defaultValue = "false", label = "producer,advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
-
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Enable schema validation for request and response. Disabled by default for performance reason")
     private Boolean schemaValidationEnabled;
