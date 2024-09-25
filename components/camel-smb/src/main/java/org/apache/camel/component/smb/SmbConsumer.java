@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smb;
 
+import java.io.IOException;
+
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.smbj.SMBClient;
 import com.hierynomus.smbj.auth.AuthenticationContext;
@@ -27,12 +29,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.util.IOHelper;
 
 public class SmbConsumer extends ScheduledPollConsumer {
     private final SmbEndpoint endpoint;
     private final SmbConfiguration configuration;
 
     private final SMBClient smbClient;
+    private Connection connection;
+    private Session session;
+    private DiskShare share;
 
     public SmbConsumer(SmbEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -104,19 +110,41 @@ public class SmbConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         int polledCount = 0;
 
-        // start a single threaded pool to monitor events
-        try (Connection connection = smbClient.connect(endpoint.getHostname(), endpoint.getPort())) {
-            AuthenticationContext ac = new AuthenticationContext(
-                    configuration.getUsername(), configuration.getPassword().toCharArray(),
-                    configuration.getDomain());
-            Session session = connection.authenticate(ac);
-
-            // Connect to Share
-            try (DiskShare share = (DiskShare) session.connectShare(endpoint.getShareName())) {
-                polledCount = pollDirectory(share, configuration, polledCount, configuration.getPath());
-            }
-        }
+        polledCount = pollDirectory(share, configuration, polledCount, configuration.getPath());
 
         return polledCount;
+    }
+
+    private void refreshConnection() throws IOException {
+        if (connection != null && connection.isConnected()) {
+            return;
+        }
+
+        connection = smbClient.connect(endpoint.getHostname(), endpoint.getPort());
+
+        // start a single threaded pool to monitor events
+        AuthenticationContext ac = new AuthenticationContext(
+                configuration.getUsername(), configuration.getPassword().toCharArray(),
+                configuration.getDomain());
+        session = connection.authenticate(ac);
+
+        // Connect to the share
+        share = (DiskShare) session.connectShare(endpoint.getShareName());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        refreshConnection();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (connection != null) {
+            IOHelper.close(connection);
+        }
+
+        super.doStop();
     }
 }
