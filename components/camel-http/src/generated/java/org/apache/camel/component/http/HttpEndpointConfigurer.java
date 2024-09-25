@@ -85,6 +85,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": target.setOauth2CacheTokens(property(camelContext, boolean.class, value)); return true;
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": target.setOauth2CachedTokensDefaultExpirySeconds(property(camelContext, long.class, value)); return true;
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": target.setOauth2CachedTokensExpirationMarginSeconds(property(camelContext, long.class, value)); return true;
         case "oauth2clientid":
         case "oauth2ClientId": target.setOauth2ClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2clientsecret":
@@ -200,6 +206,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": return boolean.class;
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": return long.class;
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": return long.class;
         case "oauth2clientid":
         case "oauth2ClientId": return java.lang.String.class;
         case "oauth2clientsecret":
@@ -316,6 +328,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": return target.isOauth2CacheTokens();
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": return target.getOauth2CachedTokensDefaultExpirySeconds();
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": return target.getOauth2CachedTokensExpirationMarginSeconds();
         case "oauth2clientid":
         case "oauth2ClientId": return target.getOauth2ClientId();
         case "oauth2clientsecret":
