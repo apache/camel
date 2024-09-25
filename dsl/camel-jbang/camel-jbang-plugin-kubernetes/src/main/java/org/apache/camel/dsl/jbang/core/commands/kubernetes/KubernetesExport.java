@@ -175,6 +175,10 @@ public class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
+        if (!quiet) {
+            printer().println("Exporting application ...");
+        }
+
         if (!buildTool.equals("maven")) {
             printer().printf("--build-tool=%s is not yet supported%n", buildTool);
         }
@@ -423,8 +427,11 @@ public class KubernetesExport extends Export {
     private void addLabel(String key, String value) {
         var labelArray = Optional.ofNullable(labels).orElse(new String[0]);
         var labelList = new ArrayList<>(Arrays.asList(labelArray));
-        labelList.add("%s=%s".formatted(key, value));
-        labels = labelList.toArray(new String[0]);
+        var labelEntry = "%s=%s".formatted(key, value);
+        if (!labelList.contains(labelEntry)) {
+            labelList.add(labelEntry);
+            labels = labelList.toArray(new String[0]);
+        }
     }
 
     private String resolveImageGroup() {
