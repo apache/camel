@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -541,7 +542,26 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
             final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
+            final String ifMatchCondition = exchange.getMessage().getHeader(AWS2S3Constants.IF_MATCH_CONDITION, String.class);
+            final Instant ifModifiedSinceCondition
+                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_MODIFIED_SINCE_CONDITION, Instant.class);
+            final String ifNoneMatchCondition
+                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_NONE_MATCH_CONDITION, String.class);
+            final Instant ifUnmodifiedSince
+                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_UNMODIFIED_SINCE_CONDITION, Instant.class);
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(keyName);
+            if (ObjectHelper.isNotEmpty(ifMatchCondition)) {
+                req.ifMatch(ifMatchCondition);
+            }
+            if (ObjectHelper.isNotEmpty(ifModifiedSinceCondition)) {
+                req.ifModifiedSince(ifModifiedSinceCondition);
+            }
+            if (ObjectHelper.isNotEmpty(ifNoneMatchCondition)) {
+                req.ifNoneMatch(ifNoneMatchCondition);
+            }
+            if (ObjectHelper.isNotEmpty(ifUnmodifiedSince)) {
+                req.ifUnmodifiedSince(ifUnmodifiedSince);
+            }
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
