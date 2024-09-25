@@ -43,6 +43,9 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     private Boolean allowStreaming;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata(defaultValue = "false", label = "producer,advanced",
+              description = "Sets whether synchronous processing should be strictly used")
+    private boolean synchronous;
 
     private final Map<String, BeanCacheEntry> beanCache = new HashMap<>();
 
@@ -79,6 +82,14 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
     /**
      * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having URI format cxf:bean:<i>beanId</i> or
      * transport address endpoint having URI format cxf://<i>transportAddress</i>.
@@ -102,6 +113,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
         result.setComponent(this);
         result.setCamelContext(getCamelContext());
+        result.setSynchronous(isSynchronous());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
 

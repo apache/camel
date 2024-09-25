@@ -31,6 +31,7 @@ public class CxfRsComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -48,6 +49,7 @@ public class CxfRsComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
@@ -66,6 +68,7 @@ public class CxfRsComponentConfigurer extends PropertyConfigurerSupport implemen
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
