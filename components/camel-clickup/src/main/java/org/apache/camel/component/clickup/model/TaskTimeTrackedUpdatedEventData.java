@@ -51,7 +51,8 @@ public class TaskTimeTrackedUpdatedEventData implements Serializable {
             case TIME_TRACKING_CREATED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.CREATION;
             case TIME_TRACKING_EDITED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.UPDATE;
             case TIME_TRACKING_DELETED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.DELETION;
-            default -> throw new RuntimeException("Could not determine event action. Unknown event description: " + this.description);
+            default ->
+                throw new RuntimeException("Could not determine event action. Unknown event description: " + this.description);
         };
     }
 
