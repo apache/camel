@@ -46,7 +46,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     private boolean started = false;
 
     public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName,
-        String startingSha) throws Exception {
+                          String startingSha) throws Exception {
         super(endpoint, processor);
         this.branchName = branchName;
         this.startingSha = startingSha;
