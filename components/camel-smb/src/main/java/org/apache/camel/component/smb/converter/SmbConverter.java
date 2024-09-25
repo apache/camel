@@ -14,18 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.smb;
 
-import org.apache.camel.spi.Metadata;
+package org.apache.camel.component.smb.converter;
 
-public interface SmbConstants {
-    @Metadata(label = "producer", description = "The expected behavior if the file already exists.",
-              javaType = "org.apache.camel.component.file.GenericFileExist")
-    String SMB_FILE_EXISTS = "CamelSmbFileExists";
+import java.io.IOException;
+import java.io.InputStream;
 
-    @Metadata(label = "consumer", description = "The path of the file being processed within the share")
-    String SMB_FILE_PATH = "CamelSmbFilePath";
+import org.apache.camel.Converter;
 
-    @Metadata(label = "consumer", description = "The UNC path of the file being processed within the share")
-    String SMB_UNC_PATH = "CamelSmbUncPath";
+@Converter(generateLoader = true)
+public class SmbConverter {
+
+    @Converter
+    public InputStream toInputStream(com.hierynomus.smbj.share.File smbFile) {
+        return smbFile.getInputStream();
+    }
+
+    @Converter
+    public byte[] toByteArray(com.hierynomus.smbj.share.File smbFile) {
+        try (InputStream is = toInputStream(smbFile)) {
+            return is.readAllBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

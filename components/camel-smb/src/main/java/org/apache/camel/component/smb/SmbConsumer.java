@@ -82,6 +82,8 @@ public class SmbConsumer extends ScheduledPollConsumer {
                         smbIOBean.createOptions());
 
                 repository.add(fullFilePath);
+                exchange.getMessage().setHeader(SmbConstants.SMB_FILE_PATH, file.getPath());
+                exchange.getMessage().setHeader(SmbConstants.SMB_UNC_PATH, file.getUncPath());
                 exchange.getMessage().setBody(file);
                 try {
                     getProcessor().process(exchange);
