@@ -4222,8 +4222,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  tokenizerDefinition The tokenizer
      * @return                     the builder
      */
-    public Type tokenize(TokenizerDefinition tokenizerDefinition) {
-        addOutput(tokenizerDefinition);
+    public Type tokenize(TokenizerImplementationDefinition tokenizerDefinition) {
+        addOutput(new TokenizerDefinition(tokenizerDefinition));
         return asType();
     }
 

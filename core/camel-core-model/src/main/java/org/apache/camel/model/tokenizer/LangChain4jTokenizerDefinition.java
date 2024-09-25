@@ -19,21 +19,22 @@ package org.apache.camel.model.tokenizer;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.builder.TokenizerBuilder;
-import org.apache.camel.model.TokenizerDefinition;
+import org.apache.camel.model.TokenizerImplementationDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Tokenizer;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Tokenizer that uses LangChain4j for tokenization.
  */
 @Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer")
-@XmlRootElement(name = "langChain4j")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
+@XmlType(name = "langChain4jTokenizerImplementation")
+public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefinition {
 
     @XmlAttribute(required = true)
     @Metadata(javaType = "org.apache.camel.model.tokenizer.TokenizerType", required = true,
@@ -100,13 +101,13 @@ public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
         this.tokenizerType = tokenizerType;
     }
 
-    private static String toName(String name) {
-        return "langchain4j-" + name;
-    }
-
     @Override
     public LangChain4jTokenizerDefinition copyDefinition() {
-        return new LangChain4jTokenizerDefinition(this);
+        throw new UnsupportedOperationException("Must be implemented in the concrete classes");
+    }
+
+    protected static String toName(String name) {
+        return "langChain4j" + StringHelper.capitalize(name);
     }
 
     @XmlTransient
@@ -153,10 +154,7 @@ public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
             return this;
         }
 
-        @Override
-        public LangChain4jTokenizerDefinition end() {
-            LangChain4jTokenizerDefinition tokenizer = new LangChain4jTokenizerDefinition();
-
+        protected void setup(LangChain4jTokenizerDefinition tokenizer) {
             if (configuration != null) {
                 tokenizer.setConfiguration(configuration);
             } else {
@@ -166,50 +164,9 @@ public class LangChain4jTokenizerDefinition extends TokenizerDefinition {
             }
 
             tokenizer.setTokenizerName(name());
-
-            return tokenizer;
         }
 
         protected abstract String name();
     }
 
-    @XmlTransient
-    public static class ParagraphBuilder extends Builder {
-        @Override
-        protected String name() {
-            return toName("paragraph");
-        }
-    }
-
-    @XmlTransient
-    public static class WordBuilder extends Builder {
-        @Override
-        protected String name() {
-            return toName("word");
-        }
-    }
-
-    @XmlTransient
-    public static class SentenceBuilder extends Builder {
-        @Override
-        protected String name() {
-            return toName("sentence");
-        }
-    }
-
-    @XmlTransient
-    public static class LineBuilder extends Builder {
-        @Override
-        protected String name() {
-            return toName("line");
-        }
-    }
-
-    @XmlTransient
-    public static class CharacterBuilder extends Builder {
-        @Override
-        protected String name() {
-            return toName("character");
-        }
-    }
 }
