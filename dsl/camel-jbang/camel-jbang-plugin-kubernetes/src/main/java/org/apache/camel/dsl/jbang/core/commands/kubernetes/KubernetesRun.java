@@ -310,7 +310,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private String getIndexedWorkingDir(String projectName) {
-        return RUN_PLATFORM_DIR + "/" + "%s-%03d".formatted(projectName, reloadCount);
+        var workingDir = RUN_PLATFORM_DIR + "/" + projectName;
+        if (reloadCount > 0) {
+            workingDir += "-%03d".formatted(reloadCount);
+        }
+        return workingDir;
     }
 
     private KubernetesExport configureExport(String workingDir) {
