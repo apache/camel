@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 @Configurer
 public class NettyHttpConfiguration extends NettyConfiguration {
 
-    @UriPath(enums = "http,https")
+    @UriPath(enums = "http,https,proxy")
     @Metadata(required = true)
     private String protocol;
     @UriPath
@@ -109,7 +109,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * The protocol to use which is either http, https or proxy - a consumer only option.
+     * The protocol to use which is either http, https or proxy (consumer only).
      */
     @Override
     public void setProtocol(String protocol) {

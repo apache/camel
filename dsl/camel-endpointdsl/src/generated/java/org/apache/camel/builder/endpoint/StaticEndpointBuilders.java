@@ -10619,9 +10619,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>netty-http:protocol://host:port/path</code>
      * 
      * Path parameter: protocol (required)
-     * The protocol to use which is either http, https or proxy - a consumer
-     * only option.
-     * There are 2 enums and the value can be one of: http, https
+     * The protocol to use which is either http, https or proxy (consumer only).
+     * There are 3 enums and the value can be one of: http, https, proxy
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
@@ -10650,9 +10649,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>netty-http:protocol://host:port/path</code>
      * 
      * Path parameter: protocol (required)
-     * The protocol to use which is either http, https or proxy - a consumer
-     * only option.
-     * There are 2 enums and the value can be one of: http, https
+     * The protocol to use which is either http, https or proxy (consumer only).
+     * There are 3 enums and the value can be one of: http, https, proxy
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
