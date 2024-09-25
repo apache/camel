@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,7 +68,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
         super.setup();
 
         try {
-            workingDir = Files.createTempDirectory("camel-k8s-export").toFile();
+            Path base = Paths.get("target");
+            workingDir = Files.createTempDirectory(base, "camel-k8s-export").toFile();
             workingDir.deleteOnExit();
         } catch (IOException e) {
             throw new RuntimeCamelException(e);

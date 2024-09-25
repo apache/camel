@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
@@ -44,7 +46,8 @@ class ExportMainJibTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        workingDir = Files.createTempDirectory("camel-export").toFile();
+        Path base = Paths.get("target");
+        workingDir = Files.createTempDirectory(base, "camel-export").toFile();
     }
 
     @AfterEach

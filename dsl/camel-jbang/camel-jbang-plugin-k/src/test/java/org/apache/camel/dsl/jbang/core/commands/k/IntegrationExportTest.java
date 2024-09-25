@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +46,8 @@ class IntegrationExportTest extends CamelKBaseTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        workingDir = Files.createTempDirectory("camel-k-integration-export").toFile();
+        Path base = Paths.get("target");
+        workingDir = Files.createTempDirectory(base, "camel-k-integration-export").toFile();
         workingDir.deleteOnExit();
     }
 
