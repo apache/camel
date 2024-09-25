@@ -63,7 +63,7 @@
         <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.2</apache-drill-version>
-        <arangodb-java-version>7.8.0</arangodb-java-version>
+        <arangodb-java-version>7.9.0</arangodb-java-version>
         <as2-lib-version>5.1.3</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>9.7</asm-version>
@@ -76,7 +76,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.28.7</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.28.8</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.27</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.25</azure-storage-blob-changefeed-version>
@@ -85,7 +85,7 @@
         <box-java-sdk-version>4.11.1</box-java-sdk-version>
         <braintree-gateway-version>3.36.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
-        <bytebuddy-version>1.15.1</bytebuddy-version>
+        <bytebuddy-version>1.15.2</bytebuddy-version>
         <c3p0-version>0.10.1</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
         <californium-version>3.12.1</californium-version>
@@ -106,7 +106,7 @@
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.4</commons-collections4-version>
         <commons-compress-version>1.27.1</commons-compress-version>
-        <commons-csv-version>1.11.0</commons-csv-version>
+        <commons-csv-version>1.12.0</commons-csv-version>
         <commons-cli-version>1.4</commons-cli-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.12.0</commons-dbcp2-version>
@@ -182,7 +182,7 @@
         <gmavenplus-plugin-version>3.0.2</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.27.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.7.0</google-api-client-version>
-        <google-api-services-drive-version>v3-rev20240903-2.0.0</google-api-services-drive-version>
+        <google-api-services-drive-version>v3-rev20240914-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240906-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20240826-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
@@ -281,7 +281,7 @@
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>6.0.1</jira-rest-client-api-version>
-        <libthrift-version>0.20.0</libthrift-version>
+        <libthrift-version>0.21.0</libthrift-version>
         <jodatime2-version>2.13.0</jodatime2-version>
         <jolokia-version>2.1.1</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
@@ -304,7 +304,7 @@
         <jt400-version>20.0.7</jt400-version>
         <jte-version>3.1.12</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
-        <junit-jupiter-version>5.11.0</junit-jupiter-version>
+        <junit-jupiter-version>5.11.1</junit-jupiter-version>
         <junit-pioneer-version>2.2.0</junit-pioneer-version>
         <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
@@ -362,7 +362,7 @@
         <mockwebserver-version>6.13.3</mockwebserver-version>
         <mockito-version>5.13.0</mockito-version>
         <mojo-executor-version>2.4.0</mojo-executor-version>
-        <mongo-java-driver-version>5.1.4</mongo-java-driver-version>
+        <mongo-java-driver-version>5.2.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.17.1</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
@@ -404,7 +404,7 @@
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.5</protobuf-version>
-        <protobuf-maven-plugin-version>2.5.0</protobuf-maven-plugin-version>
+        <protobuf-maven-plugin-version>2.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.8.Final</protostream-version>
         <prowide-version>SRU2023-10.1.7</prowide-version>

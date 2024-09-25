@@ -1412,7 +1412,6 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Override
     public void doPreSetup() {
         setUpKeys("RSA", 1024);
-        disableJMX();
     }
 
     public void setUpKeys(String algorithm, int keylength) {

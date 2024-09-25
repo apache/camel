@@ -466,7 +466,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     @Override
     public void doPreSetup() {
         setUpKeys("RSA", 2048);
-        disableJMX();
+        testConfigurationBuilder.withDisableJMX();
     }
 
     public void setUpKeys(String algorithm, int keylength) {
