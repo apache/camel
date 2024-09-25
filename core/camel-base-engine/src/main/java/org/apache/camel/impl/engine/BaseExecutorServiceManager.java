@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -457,12 +456,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         ServiceHelper.initService(threadPoolFactory);
 
         // discover custom thread factory listener via Camel factory finder
-        Optional<ThreadFactoryListener> listener = ResolverHelper.resolveService(
+        ResolverHelper.resolveService(
                 camelContext,
                 camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 ThreadFactoryListener.FACTORY,
-                ThreadFactoryListener.class);
-        listener.ifPresent(this::addThreadFactoryListener);
+                ThreadFactoryListener.class).ifPresent(this::addThreadFactoryListener);
     }
 
     @Override
@@ -593,8 +591,8 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         onNewExecutorService(executorService);
     }
 
-    protected ThreadFactory createThreadFactory(String name, boolean isDaemon) {
-        ThreadFactory factory = new CamelThreadFactory(threadNamePattern, name, isDaemon);
+    protected ThreadFactory createThreadFactory(String name, boolean daemon) {
+        ThreadFactory factory = new CamelThreadFactory(threadNamePattern, name, daemon);
         for (ThreadFactoryListener listener : threadFactoryListeners) {
             factory = listener.onNewThreadFactory(factory);
         }
