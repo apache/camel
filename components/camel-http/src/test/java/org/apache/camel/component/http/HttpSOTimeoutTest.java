@@ -33,7 +33,8 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Override
     public void setupResources() throws Exception {
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 2000)).create();

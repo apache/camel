@@ -30,7 +30,8 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
 
     @Override
     public final void doPreSetup() throws Exception {
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();

@@ -42,7 +42,8 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/token", new OAuth2TokenRequestHandler(FAKE_TOKEN, clientId, clientSecret))

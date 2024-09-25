@@ -35,7 +35,8 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Override
     public void setupResources() throws Exception {
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).create();
@@ -54,7 +55,7 @@ public class HttpCharsetTest extends BaseHttpTest {
     public void sendCharsetInExchangeProperty() {
         Exchange exchange = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
                     exchange1.getIn().setBody(getBody());
                 });
 
@@ -65,7 +66,7 @@ public class HttpCharsetTest extends BaseHttpTest {
     public void sendByteArrayCharsetInExchangeProperty() {
         Exchange exchange = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
                     exchange1.getIn().setBody(getBody().getBytes(charset));
                 });
 
@@ -76,7 +77,7 @@ public class HttpCharsetTest extends BaseHttpTest {
     public void sendInputStreamCharsetInExchangeProperty() {
         Exchange exchange = template.request(
                 "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
                     exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
                 });
 

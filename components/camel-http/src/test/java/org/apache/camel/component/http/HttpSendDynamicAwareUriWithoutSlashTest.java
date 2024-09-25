@@ -36,7 +36,8 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
 
     @Override
     public void setupResources() throws Exception {
-        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+        localServer = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/users/*", new BasicValidationHandler("GET", null, null, "a user")).create();
