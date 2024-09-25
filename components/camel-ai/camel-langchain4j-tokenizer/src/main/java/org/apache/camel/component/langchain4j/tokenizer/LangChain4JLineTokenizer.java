@@ -20,7 +20,7 @@ package org.apache.camel.component.langchain4j.tokenizer;
 import org.apache.camel.component.langchain4j.tokenizer.config.LangChain4JConfiguration;
 import org.apache.camel.component.langchain4j.tokenizer.util.SplitterTypes;
 
-@org.apache.camel.spi.annotations.Tokenizer("langchain4j-line")
+@org.apache.camel.spi.annotations.Tokenizer("langChain4jLineTokenizer")
 public class LangChain4JLineTokenizer extends AbstractLangChain4JTokenizer<LangChain4JConfiguration> {
 
     @Override
