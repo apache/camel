@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StaticService;
@@ -51,6 +52,34 @@ import org.apache.camel.StaticService;
  * @see ThreadPoolFactory
  */
 public interface ExecutorServiceManager extends ShutdownableService, StaticService {
+
+    /**
+     * Listener when a new {@link ThreadFactory} is created, which allows to plugin custom behaviour.
+     */
+    @FunctionalInterface
+    interface ThreadFactoryListener {
+
+        /**
+         * Service factory key.
+         */
+        String FACTORY = "thread-factory-listener";
+
+        /**
+         * Listener when Camel has created a new {@link ThreadFactory} to be used by this
+         * {@link ExecutorServiceManager}.
+         *
+         * @param  factory the created factory
+         * @return         the factory to use by this {@link ExecutorServiceManager}.
+         */
+        ThreadFactory onNewThreadFactory(ThreadFactory factory);
+    }
+
+    /**
+     * Adds a custom {@link ThreadFactoryListener} to use
+     *
+     * @param threadFactoryListener the thread factory listener
+     */
+    void addThreadFactoryListener(ThreadFactoryListener threadFactoryListener);
 
     /**
      * Gets the {@link ThreadPoolFactory} to use for creating the thread pools.

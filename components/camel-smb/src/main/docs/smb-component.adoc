@@ -58,7 +58,7 @@ For instance, polling all the files from an SMB file share and reading their con
 [source,java]
 ----
 private void process(Exchange exchange) throws IOException {
-    final File file = exchange.getMessage().getBody(File.class);
+    final com.hierynomus.smbj.share.File file = exchange.getMessage().getBody(com.hierynomus.smbj.share.File.class);
     try (InputStream inputStream = file.getInputStream()) {
         LOG.debug("Read exchange: {}, with contents: {}", file.getFileInformation(), new String(inputStream.readAllBytes()));
     }

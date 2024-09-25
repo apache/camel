@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
@@ -55,7 +56,7 @@ public class PodLogs extends KubernetesBaseCommand {
                         description = "The number of lines from the end of the logs to show. Defaults to -1 to show all the lines.")
     int tail = -1;
 
-    int maxWaitAttempts = 20; // total timeout of 60 seconds
+    int maxWaitAttempts = 30; // total timeout of 60 seconds
 
     public PodLogs(CamelJBangMain main) {
         super(main);
@@ -84,16 +85,18 @@ public class PodLogs extends KubernetesBaseCommand {
         }
 
         boolean shouldResume = true;
-        int resumeCount = 0;
+        AtomicInteger resumeCount = new AtomicInteger();
         while (shouldResume) {
             shouldResume = watchLogs(parts[0], parts[1], container, resumeCount);
-            resumeCount++;
+            resumeCount.incrementAndGet();
+            printer().printf("PodLogs: [resume=%b, count=%d]%n", shouldResume, resumeCount.get());
+            sleepWell();
         }
 
         return 0;
     }
 
-    public boolean watchLogs(String label, String labelValue, String container, int resumeCount) {
+    public boolean watchLogs(String label, String labelValue, String container, AtomicInteger resumeCount) {
         PodList pods = pods().withLabel(label, labelValue).list();
 
         Pod pod = pods.getItems().stream()
@@ -102,17 +105,13 @@ public class PodLogs extends KubernetesBaseCommand {
                 .orElse(null);
 
         if (pod == null) {
-            if (resumeCount == 0) {
+            if (resumeCount.get() == 0) {
                 printer().printf("Pod for label %s=%s not available - Waiting ...%n".formatted(label, labelValue));
             }
 
             // use 2-sec delay in waiting for pod logs mode
-            try {
-                Thread.sleep(2000L);
-            } catch (InterruptedException e) {
-                printer().printf("Interrupted while waiting for pod - %s%n", e.getMessage());
-            }
-            return resumeCount < maxWaitAttempts;
+            sleepWell();
+            return resumeCount.get() < maxWaitAttempts;
         }
 
         String containerName = null;
@@ -145,11 +144,20 @@ public class PodLogs extends KubernetesBaseCommand {
             String line;
             while ((line = reader.readLine()) != null) {
                 printer().println(line);
+                resumeCount.set(0);
             }
         } catch (IOException e) {
             printer().println("Failed to read pod logs - " + e.getMessage());
         }
 
-        return resumeCount < 25;
+        return resumeCount.get() < maxWaitAttempts;
+    }
+
+    private void sleepWell() {
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            printer().printf("Interrupted while waiting for pod - %s%n", e.getMessage());
+        }
     }
 }
