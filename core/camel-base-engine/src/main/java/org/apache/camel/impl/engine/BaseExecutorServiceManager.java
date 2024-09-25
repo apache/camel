@@ -39,6 +39,7 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -63,6 +64,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     private final CamelContext camelContext;
     private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<>();
     private final Map<String, ThreadPoolProfile> threadPoolProfiles = new ConcurrentHashMap<>();
+    private final List<ThreadFactoryListener> threadFactoryListeners = new CopyOnWriteArrayList<>();
     private ThreadPoolFactory threadPoolFactory;
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
@@ -87,6 +89,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    public void addThreadFactoryListener(ThreadFactoryListener threadFactoryListener) {
+        threadFactoryListeners.add(threadFactoryListener);
     }
 
     @Override
@@ -445,11 +452,26 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         }
         CamelContextAware.trySetCamelContext(threadPoolFactory, camelContext);
         ServiceHelper.initService(threadPoolFactory);
+
+        // discover custom thread factory listener via Camel factory finder
+        ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                ThreadFactoryListener.FACTORY,
+                ThreadFactoryListener.class).ifPresent(this::addThreadFactoryListener);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        Set<ThreadFactoryListener> listeners = camelContext.getRegistry().findByType(ThreadFactoryListener.class);
+        if (listeners != null && !listeners.isEmpty()) {
+            threadFactoryListeners.addAll(listeners);
+        }
+        if (!threadFactoryListeners.isEmpty()) {
+            threadFactoryListeners.sort(OrderedComparator.get());
+        }
         ServiceHelper.startService(threadPoolFactory);
     }
 
@@ -502,6 +524,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         }
 
         ServiceHelper.stopAndShutdownServices(threadPoolFactory);
+        threadFactoryListeners.clear();
     }
 
     /**
@@ -566,8 +589,12 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         onNewExecutorService(executorService);
     }
 
-    protected ThreadFactory createThreadFactory(String name, boolean isDaemon) {
-        return new CamelThreadFactory(threadNamePattern, name, isDaemon);
+    protected ThreadFactory createThreadFactory(String name, boolean daemon) {
+        ThreadFactory factory = new CamelThreadFactory(threadNamePattern, name, daemon);
+        for (ThreadFactoryListener listener : threadFactoryListeners) {
+            factory = listener.onNewThreadFactory(factory);
+        }
+        return factory;
     }
 
 }
