@@ -66,7 +66,7 @@ class ExportMainJibTest {
         Files.copy(new File("src/test/resources/application-jib.properties").toPath(), profile.toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        Export command = new ExportCamelMain(new CamelJBangMain());
+        Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "target/test-classes/route.yaml");
         int exit = command.doCall();
