@@ -68,15 +68,7 @@
             <version>${knative-client-version}</version>
         </dependency>
 
-        <!-- Camel K-->
-        <!-- TODO: remove dependency in favor of using trait domain model in Camel JBang -->
-        <dependency>
-            <groupId>org.apache.camel.k</groupId>
-            <artifactId>camel-k-crds</artifactId>
-            <version>${camel-k-version}</version>
-        </dependency>
-
-        <!-- Test dependencies -->
+       <!-- Test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
