@@ -48,16 +48,8 @@ public class TaskTimeTrackedUpdatedEvent extends Event implements Serializable {
         return data;
     }
 
-    public TaskTimeTrackedUpdatedEventType getType() {
-        if (this.historyItems == null) {
-            return TaskTimeTrackedUpdatedEventType.DELETION;
-        }
-
-        if (this.data.isCreation()) {
-            return TaskTimeTrackedUpdatedEventType.CREATION;
-        }
-
-        return TaskTimeTrackedUpdatedEventType.UPDATE;
+    public TaskTimeTrackedUpdatedEventAction getAction() {
+        return this.data.getEventAction();
     }
 
     @Override

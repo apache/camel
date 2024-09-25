@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.clickup.model;
 
-public enum TaskTimeTrackedUpdatedEventType {
+public enum TaskTimeTrackedUpdatedEventAction {
     CREATION,
     UPDATE,
     DELETION

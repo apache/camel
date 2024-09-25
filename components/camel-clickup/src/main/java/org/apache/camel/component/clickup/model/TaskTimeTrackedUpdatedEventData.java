@@ -29,6 +29,8 @@ public class TaskTimeTrackedUpdatedEventData implements Serializable {
     private static final long serialVersionUID = 0L;
 
     public static final String TIME_TRACKING_CREATED_DESCRIPTION = "Time Tracking Created";
+    public static final String TIME_TRACKING_EDITED_DESCRIPTION = "Time Tracking Edited";
+    public static final String TIME_TRACKING_DELETED_DESCRIPTION = "Time Tracking Deleted";
 
     @JsonProperty("description")
     private String description; // example: "Time Tracking Created",
@@ -44,8 +46,13 @@ public class TaskTimeTrackedUpdatedEventData implements Serializable {
         return IntervalId;
     }
 
-    public boolean isCreation() {
-        return this.description.equals(TIME_TRACKING_CREATED_DESCRIPTION);
+    public TaskTimeTrackedUpdatedEventAction getEventAction() {
+        return switch (this.description) {
+            case TIME_TRACKING_CREATED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.CREATION;
+            case TIME_TRACKING_EDITED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.UPDATE;
+            case TIME_TRACKING_DELETED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.DELETION;
+            default -> throw new RuntimeException("Could not determine event action. Unknown event description: " + this.description);
+        };
     }
 
     @Override
