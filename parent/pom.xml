@@ -281,7 +281,7 @@
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>6.0.1</jira-rest-client-api-version>
-        <libthrift-version>0.21.0</libthrift-version>
+        <libthrift-version>0.20.0</libthrift-version>
         <jodatime2-version>2.13.0</jodatime2-version>
         <jolokia-version>2.1.1</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
@@ -475,7 +475,7 @@
         <twilio-version>10.5.1</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-version>2.3.17.Final</undertow-version>
-        <univocity-parsers-version>2.10.0</univocity-parsers-version>
+        <univocity-parsers-version>2.10.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.4</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
