@@ -1,4 +1,6 @@
-= Camel K plugin
+= Camel K plugin (deprecated)
+
+IMPORTANT: This plugin is deprecated, and expected to be removed in the upcoming releases.
 
 Please make sure to meet these prerequisites for running Camel integrations on Kubernetes:
 

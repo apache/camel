@@ -20,8 +20,9 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand;
 import picocli.CommandLine;
 
+@Deprecated
 @CommandLine.Command(name = "k",
-                     description = "Manage Camel integrations on Kubernetes (use k --help to see sub commands)")
+                     description = "DEPRECATED: Manage Camel integrations on Kubernetes (use k --help to see sub commands)")
 public class CamelKCommand extends KubernetesBaseCommand {
 
     static final String OPERATOR_ID_LABEL = "camel.apache.org/operator.id";
