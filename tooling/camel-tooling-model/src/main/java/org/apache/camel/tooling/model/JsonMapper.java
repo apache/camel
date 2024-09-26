@@ -371,7 +371,7 @@ public final class JsonMapper {
         artifactToJson(model, obj);
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
-        wrapper.put("model", obj);
+        wrapper.put("bean", obj);
         wrapper.put("properties", asJsonObject(model.getOptions()));
         return wrapper;
     }
