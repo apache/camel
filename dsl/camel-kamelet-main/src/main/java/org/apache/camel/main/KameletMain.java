@@ -67,6 +67,7 @@ import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
+import org.apache.camel.main.download.SagaDownloader;
 import org.apache.camel.main.download.StubBeanRepository;
 import org.apache.camel.main.download.TransactedDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
@@ -467,6 +468,9 @@ public class KameletMain extends MainCommandLineSupport {
 
         // in case we use transacted
         TransactedDownloader.registerDownloadReifiers(this);
+
+        // in case we use saga
+        SagaDownloader.registerDownloadReifiers(this);
 
         if (silent || "*".equals(stubPattern)) {
             // turn off auto-wiring when running in silent mode (or stub = *)
