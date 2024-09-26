@@ -2,13 +2,15 @@
 :doctitle: ClickUp
 :shortname: clickup
 :artifactid: camel-clickup
-:description: Receives events from ClickUp webhooks.
+:description: Receives events from ClickUp
 :since: 4.9.0-SNAPSHOT
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only consumer is supported
 
 *Since Camel {since}*
+
+This component is for receiving events from ClickUp.
 
 *{component-header}*
 
@@ -48,14 +50,12 @@ from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&eve
                     .when(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent)
                         .process(exchange -> {
                             TaskTimeTrackedUpdatedEvent event = exchange.getIn().getBody(TaskTimeTrackedUpdatedEvent.class);
-
                             LOG.info("TaskTimeTrackedUpdatedEvent {}", event);
-
                             exchange.getMessage().setBody(event);
                         })
                     .otherwise()
                         .log("Unknown Event: ${body}")
-                .endChoice();
+                .end();
 
 ---------------------------------------------------------
 

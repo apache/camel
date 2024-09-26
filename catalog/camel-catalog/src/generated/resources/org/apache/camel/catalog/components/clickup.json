@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "clickup",
     "title": "ClickUp",
-    "description": "Receives events from ClickUp webhooks.",
+    "description": "Receives events from ClickUp",
     "deprecated": false,
     "firstVersion": "4.9.0-SNAPSHOT",
     "label": "cloud",

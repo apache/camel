@@ -36,10 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Receives events from ClickUp webhooks.
+ * Receives events from ClickUp
  */
-@UriEndpoint(
-             firstVersion = "4.9.0-SNAPSHOT",
+@UriEndpoint(firstVersion = "4.9.0-SNAPSHOT",
              scheme = "clickup",
              title = "ClickUp",
              syntax = "clickup:workspaceId",
@@ -56,15 +55,11 @@ public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEn
 
     private ClickUpService clickUpService;
     private ClickUpWebhookService clickUpWebhookService;
-
     private WebhookConfiguration webhookConfiguration;
-
     private Webhook registeredWebhook;
-
     private ClickUpWebhookProcessor clickUpWebhookProcessor;
 
-    public ClickUpEndpoint(
-                           String uri,
+    public ClickUpEndpoint(String uri,
                            ClickUpComponent component,
                            ClickUpConfiguration configuration) {
         super(uri, component);
@@ -76,7 +71,7 @@ public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEn
     }
 
     public Consumer createConsumer(Processor processor) {
-        throw new UnsupportedOperationException("consumer not supported");
+        throw new UnsupportedOperationException("Use webhook component to wrap this endpoint");
     }
 
     @Override

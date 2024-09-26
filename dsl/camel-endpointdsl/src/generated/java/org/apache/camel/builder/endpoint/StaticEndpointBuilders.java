@@ -2564,7 +2564,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * ClickUp (camel-clickup)
-     * Receives events from ClickUp webhooks.
+     * Receives events from ClickUp
      * 
      * Category: cloud
      * Since: 4.9.0-SNAPSHOT
@@ -2583,7 +2583,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * ClickUp (camel-clickup)
-     * Receives events from ClickUp webhooks.
+     * Receives events from ClickUp
      * 
      * Category: cloud
      * Since: 4.9.0-SNAPSHOT
