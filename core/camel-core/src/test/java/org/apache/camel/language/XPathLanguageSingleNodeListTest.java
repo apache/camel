@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests new converters added to XmlConverters to make Camel intelligent when needing to convert a NodeList of length 1
@@ -66,13 +66,12 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
         getMockEndpoint("mock:notfound").expectedMessageCount(0);
         getMockEndpoint("mock:notfound").setResultWaitTime(500);
 
-        try {
-            template.requestBody("direct:doTest", XML_INPUT_MULTIPLE, String.class);
-            fail("NoTypeConversionAvailableException expected");
-        } catch (CamelExecutionException ex) {
-            assertEquals(RuntimeCamelException.class, ex.getCause().getClass());
-            assertEquals(NoTypeConversionAvailableException.class, ex.getCause().getCause().getClass());
-        }
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:doTest", XML_INPUT_MULTIPLE, String.class),
+                "NoTypeConversionAvailableException expected");
+
+        assertEquals(RuntimeCamelException.class, ex.getCause().getClass());
+        assertEquals(NoTypeConversionAvailableException.class, ex.getCause().getCause().getClass());
 
         assertMockEndpointsSatisfied();
     }

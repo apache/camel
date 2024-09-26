@@ -21,19 +21,18 @@ import org.apache.camel.NoSuchLanguageException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NoSuchLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testNoSuchLanguage() {
-        try {
-            assertPredicate("foo");
-            fail("Should have thrown an exception");
-        } catch (NoSuchLanguageException e) {
-            assertEquals("No language could be found for: unknown", e.getMessage());
-            assertEquals("unknown", e.getLanguage());
-        }
+        NoSuchLanguageException e = assertThrows(NoSuchLanguageException.class,
+                () -> assertPredicate("foo"),
+                "Should have thrown an exception");
+
+        assertEquals("No language could be found for: unknown", e.getMessage());
+        assertEquals("unknown", e.getLanguage());
     }
 
     @Override

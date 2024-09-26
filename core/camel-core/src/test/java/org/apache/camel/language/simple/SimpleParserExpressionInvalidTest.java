@@ -21,7 +21,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -31,59 +31,50 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
     @Test
     public void testSimpleUnbalanceFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body is a nice day", true, null);
-        try {
-            parser.parseExpression();
-            fail("Should thrown exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(19, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                parser::parseExpression, "Should thrown exception");
+
+        assertEquals(19, e.getIndex());
     }
 
     @Test
     public void testSimpleNestedUnbalanceFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "${body${foo}", true, null);
-        try {
-            parser.parseExpression();
-            fail("Should thrown exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(11, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                parser::parseExpression, "Should thrown exception");
+
+        assertEquals(11, e.getIndex());
     }
 
     @Test
     public void testSimpleUnknownFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${foo} how are you?", true, null);
-        try {
-            parser.parseExpression();
-            fail("Should thrown exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(6, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                parser::parseExpression, "Should thrown exception");
+
+        assertEquals(6, e.getIndex());
     }
 
     @Test
     public void testSimpleNestedUnknownFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${bodyAs(${foo})} how are you?", true, null);
-        try {
-            // nested functions can only be syntax evaluated when evaluating an
-            // exchange at runtime
-            parser.parseExpression().evaluate(exchange, String.class);
-            fail("Should thrown exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            // its a nested function is it reset the index
-            assertEquals(0, e.getIndex());
-        }
+        // nested functions can only be syntax evaluated when evaluating an
+        // exchange at runtime
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> parser.parseExpression().evaluate(exchange, String.class),
+                "Should thrown exception");
+
+        assertEquals(0, e.getIndex());
     }
 
     @Test
     public void testNoEndFunction() {
         SimpleExpressionParser parser = new SimpleExpressionParser(context, "Hello ${body", true, null);
-        try {
-            parser.parseExpression();
-            fail("Should thrown exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(11, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                parser::parseExpression,
+                "Should thrown exception");
+
+        assertEquals(11, e.getIndex());
     }
 
 }

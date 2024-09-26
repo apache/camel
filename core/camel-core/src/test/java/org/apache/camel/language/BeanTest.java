@@ -54,12 +54,11 @@ public class BeanTest extends LanguageTestSupport {
     @Test
     public void testDoubleColon() {
         assertPredicate("foo::isFooHeaderAbc");
-        try {
-            assertPredicateFails("foo:isFooHeaderAbc");
-            fail("Should throw exception");
-        } catch (NoSuchBeanException e) {
-            assertEquals("foo:isFooHeaderAbc", e.getName());
-        }
+        NoSuchBeanException e = assertThrows(NoSuchBeanException.class,
+                () -> assertPredicateFails("foo:isFooHeaderAbc"),
+                "Should throw exception");
+
+        assertEquals("foo:isFooHeaderAbc", e.getName());
     }
 
     @Test
@@ -96,26 +95,24 @@ public class BeanTest extends LanguageTestSupport {
     @Test
     public void testNoMethod() {
         MyUser user = new MyUser();
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             Expression exp = new BeanExpression(user, "unknown");
             exp.init(context);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e);
-            assertSame(user, mnfe.getBean());
-            assertEquals("unknown", mnfe.getMethodName());
-        }
+        }, "Should throw exception");
+
+        MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, e);
+        assertSame(user, mnfe.getBean());
+        assertEquals("unknown", mnfe.getMethodName());
     }
 
     @Test
     public void testNoMethodBeanLookup() {
-        try {
+        MethodNotFoundException e = assertThrows(MethodNotFoundException.class, () -> {
             Expression exp = new BeanExpression("foo", "cake");
             exp.init(context);
-            fail("Should throw exception");
-        } catch (MethodNotFoundException e) {
-            assertEquals("cake", e.getMethodName());
-        }
+        }, "Should throw exception");
+
+        assertEquals("cake", e.getMethodName());
     }
 
     @Override
