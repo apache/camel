@@ -99,8 +99,7 @@ public class Export extends ExportBaseCommand {
             this.exportDir = props.getProperty("camel.jbang.exportDir", this.exportDir);
             this.buildTool = props.getProperty("camel.jbang.buildTool", this.buildTool);
             this.openapi = props.getProperty("camel.jbang.openApi", this.openapi);
-            this.repositories
-                    = RuntimeUtil.getCommaSeparatedPropertyAsList(props, "camel.jbang.repositories", this.repositories);
+            this.repositories = props.getProperty("camel.jbang.repos", this.repositories);
             this.mavenSettings = props.getProperty("camel.jbang.maven-settings", this.mavenSettings);
             this.mavenSettingsSecurity = props.getProperty("camel.jbang.maven-settings-security", this.mavenSettingsSecurity);
             this.mavenCentralEnabled = "true"
