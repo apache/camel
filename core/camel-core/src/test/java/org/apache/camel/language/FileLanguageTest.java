@@ -32,8 +32,8 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for File Language.
@@ -68,12 +68,11 @@ public class FileLanguageTest extends LanguageTestSupport {
     @Test
     public void testInvalidSyntax() {
         assertExpression("${file:onlyname}", file.getName());
-        try {
-            assertExpression("${file:onlyName}", file.getName());
-            fail("Should have thrown exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Unknown file language syntax: onlyName at location 0"));
-        }
+        ExpressionIllegalSyntaxException e = assertThrows(ExpressionIllegalSyntaxException.class,
+                () -> assertExpression("${file:onlyName}", file.getName()),
+                "Should have thrown exception");
+
+        assertTrue(e.getMessage().startsWith("Unknown file language syntax: onlyName at location 0"));
     }
 
     @Test
@@ -130,12 +129,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("backup-${date:header.birthday:yyyyMMdd}", "backup-19740420");
         assertExpression("hello-${date:header.special:yyyyMMdd}", "hello-20080808");
 
-        try {
-            this.assertExpression("nodate-${date:header.xxx:yyyyMMdd}", null);
-            fail("Should have thrown IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+                () -> this.assertExpression("nodate-${date:header.xxx:yyyyMMdd}", null),
+                "Should have thrown IllegalArgumentException");
     }
 
     @Test
@@ -149,12 +145,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("backup-$simple{date:header.birthday:yyyyMMdd}", "backup-19740420");
         assertExpression("hello-$simple{date:header.special:yyyyMMdd}", "hello-20080808");
 
-        try {
-            this.assertExpression("nodate-$simple{date:header.xxx:yyyyMMdd}", null);
-            fail("Should have thrown IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+                () -> this.assertExpression("nodate-$simple{date:header.xxx:yyyyMMdd}", null),
+                "Should have thrown IllegalArgumentException");
     }
 
     @Test
@@ -226,27 +219,23 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testIllegalSyntax() {
-        try {
-            // it should be with colon
-            assertExpression("${file.name}", "");
-            fail("Should have thrown an exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Unknown function: file.name at location 0"));
-        }
+        ExpressionIllegalSyntaxException e1 = assertThrows(ExpressionIllegalSyntaxException.class,
+                () -> assertExpression("${file.name}", ""),
+                "Should have thrown an exception");
 
-        try {
-            assertExpression("hey ${xxx} how are you?", "");
-            fail("Should have thrown an exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Unknown function: xxx at location 4"));
-        }
+        assertTrue(e1.getMessage().startsWith("Unknown function: file.name at location 0"));
 
-        try {
-            assertExpression("${xxx}", "");
-            fail("Should have thrown an exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Unknown function: xxx at location 0"));
-        }
+        ExpressionIllegalSyntaxException e2 = assertThrows(ExpressionIllegalSyntaxException.class,
+                () -> assertExpression("hey ${xxx} how are you?", ""),
+                "Should have thrown an exception");
+
+        assertTrue(e2.getMessage().startsWith("Unknown function: xxx at location 4"));
+
+        ExpressionIllegalSyntaxException e3 = assertThrows(ExpressionIllegalSyntaxException.class,
+                () -> assertExpression("${xxx}", ""),
+                "Should have thrown an exception");
+
+        assertTrue(e3.getMessage().startsWith("Unknown function: xxx at location 0"));
     }
 
     @Test

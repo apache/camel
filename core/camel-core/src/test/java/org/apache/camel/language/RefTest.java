@@ -23,7 +23,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RefTest extends LanguageTestSupport {
 
@@ -41,12 +41,11 @@ public class RefTest extends LanguageTestSupport {
 
     @Test
     public void testRefExpressionsNotFound() {
-        try {
-            assertExpression("foo", "Hello World");
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Cannot find expression or predicate in registry with ref: foo", e.getMessage());
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> assertExpression("foo", "Hello World"),
+                "Should have thrown an exception");
+
+        assertEquals("Cannot find expression or predicate in registry with ref: foo", e.getMessage());
     }
 
     @Test
@@ -58,12 +57,11 @@ public class RefTest extends LanguageTestSupport {
     @Test
     public void testRefDynamicExpressionsNotFound() {
         exchange.getMessage().setHeader("foo", "myExp2");
-        try {
-            assertExpression("${header.foo}", "Hello World");
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Cannot find expression or predicate in registry with ref: myExp2", e.getMessage());
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> assertExpression("${header.foo}", "Hello World"),
+                "Should have thrown an exception");
+
+        assertEquals("Cannot find expression or predicate in registry with ref: myExp2", e.getMessage());
     }
 
     @Test
