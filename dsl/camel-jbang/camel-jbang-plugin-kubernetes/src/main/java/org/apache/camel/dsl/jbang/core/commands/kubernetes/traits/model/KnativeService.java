@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "auto", "autoscalingMetric", "autoscalingTarget", "class", "configuration", "enabled", "maxScale",
+        "annotations", "auto", "autoscalingMetric", "autoscalingTarget", "class", "enabled", "maxScale",
         "minScale", "rolloutDuration", "timeoutSeconds", "visibility" })
 public class KnativeService {
     @JsonProperty("annotations")
@@ -38,7 +38,7 @@ public class KnativeService {
                 nulls = Nulls.SKIP)
     private Map<String, String> annotations;
     @JsonProperty("auto")
-    @JsonPropertyDescription("Automatically deploy the integration as Knative service when all conditions hold: \n * Integration is using the Knative profile * All routes are either starting from an HTTP based consumer or a passive consumer (e.g. `direct` is a passive consumer)")
+    @JsonPropertyDescription("Automatically deploy the camel rouyte as Knative service when all conditions hold: \n * Camel route is using the Knative profile * All routes are either starting from an HTTP based consumer or a passive consumer (e.g. `direct` is a passive consumer)")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean auto;
@@ -57,23 +57,18 @@ public class KnativeService {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Class _class;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
     @JsonProperty("maxScale")
-    @JsonPropertyDescription("An upper bound for the number of Pods that can be running in parallel for the integration. Knative has its own cap value that depends on the installation. \n Refer to the Knative documentation for more information.")
+    @JsonPropertyDescription("An upper bound for the number of Pods that can be running in parallel for the camel route. Knative has its own cap value that depends on the installation. \n Refer to the Knative documentation for more information.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Long maxScale;
     @JsonProperty("minScale")
-    @JsonPropertyDescription("The minimum number of Pods that should be running at any time for the integration. It's **zero** by default, meaning that the integration is scaled down to zero when not used for a configured amount of time. \n Refer to the Knative documentation for more information.")
+    @JsonPropertyDescription("The minimum number of Pods that should be running at any time for the camel route. It's **zero** by default, meaning that the camel route is scaled down to zero when not used for a configured amount of time. \n Refer to the Knative documentation for more information.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Long minScale;
@@ -83,7 +78,7 @@ public class KnativeService {
                 nulls = Nulls.SKIP)
     private String rolloutDuration;
     @JsonProperty("timeoutSeconds")
-    @JsonPropertyDescription("The maximum duration in seconds that the request instance is allowed to respond to a request. This field propagates to the integration pod's terminationGracePeriodSeconds \n Refer to the Knative documentation for more information.")
+    @JsonPropertyDescription("The maximum duration in seconds that the request instance is allowed to respond to a request. This field propagates to the camel route pod's terminationGracePeriodSeconds \n Refer to the Knative documentation for more information.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Long timeoutSeconds;
@@ -134,14 +129,6 @@ public class KnativeService {
 
     public void set_class(Class _class) {
         this._class = _class;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {
