@@ -807,7 +807,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ClickUp (camel-clickup)
-     * Receives events from ClickUp webhooks.
+     * Receives events from ClickUp
      * 
      * Category: cloud
      * Since: 4.9.0-SNAPSHOT
