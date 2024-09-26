@@ -34,34 +34,35 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.logging.log4j.core.util.IOUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
+class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
 
-    @Override
-    public void doPreSetup() {
+    @BeforeEach
+    public void cleanOutputDirectory() {
         TestSupport.deleteDirectory("target/out");
     }
 
     @Test
-    public void testNormal() throws Exception {
+    void testNormal() throws Exception {
         doTest("A", "B", "C");
     }
 
     @Test
-    public void testEmptyFirst() throws Exception {
+    void testEmptyFirst() throws Exception {
         doTest("", "A");
     }
 
     @Test
-    public void testEmptyOnly() throws Exception {
+    void testEmptyOnly() throws Exception {
         doTest("");
     }
 
     @Test
-    public void testEmptyMiddle() throws Exception {
+    void testEmptyMiddle() throws Exception {
         doTest("Start", "", "", "End");
     }
 
@@ -122,9 +123,9 @@ public class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
         Map<String, String> content = new TreeMap<>();
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(file));
         try {
-            for (TarArchiveEntry te = (TarArchiveEntry) tin.getNextEntry();
+            for (TarArchiveEntry te = tin.getNextEntry();
                  te != null;
-                 te = (TarArchiveEntry) tin.getNextEntry()) {
+                 te = tin.getNextEntry()) {
                 String c = IOUtils.toString(new InputStreamReader(tin));
                 content.put(te.getName(), c);
             }
