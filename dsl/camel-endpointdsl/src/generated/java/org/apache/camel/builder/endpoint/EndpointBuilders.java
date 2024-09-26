@@ -56,6 +56,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ClickUpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory,

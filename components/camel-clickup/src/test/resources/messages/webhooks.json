@@ -1,0 +1,24 @@
+{
+  "webhooks": [
+    {
+      "id": "5c8458ee-c440-4110-938f-a049526ddf69",
+      "userid": 7654321,
+      "team_id": 1234567,
+      "endpoint": "https://yourdomain.com/webhook",
+      "client_id": "mock-authorization-token",
+      "events": [
+        "taskTimeTrackedUpdated"
+      ],
+      "task_id": null,
+      "list_id": null,
+      "folder_id": null,
+      "space_id": null,
+      "view_id": null,
+      "health": {
+        "status": "active",
+        "fail_count": 0
+      },
+      "secret": "77XA2DKUDG4SAXEYDNX7EMLQ4OD7HNS73HY62962XL6KAIB3H9CU0R2738Z6ODPK"
+    }
+  ]
+}

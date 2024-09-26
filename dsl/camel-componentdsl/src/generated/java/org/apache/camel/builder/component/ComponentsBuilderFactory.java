@@ -806,6 +806,19 @@ public interface ComponentsBuilderFactory {
         return ClasComponentBuilderFactory.clas();
     }
     /**
+     * ClickUp (camel-clickup)
+     * Receives events from ClickUp webhooks.
+     * 
+     * Category: cloud
+     * Since: 4.9.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-clickup
+     * 
+     * @return the dsl builder
+     */
+    static ClickupComponentBuilderFactory.ClickupComponentBuilder clickup() {
+        return ClickupComponentBuilderFactory.clickup();
+    }
+    /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
      * 

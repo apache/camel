@@ -1,0 +1,23 @@
+{
+    "id": "ad0bb021-a33a-481b-ab9d-f7a9a8906bac",
+    "webhook": {
+        "id": "ad0bb021-a33a-481b-ab9d-f7a9a8906bac",
+        "userid": 7654321,
+        "team_id": 1234567,
+        "endpoint": "https://yourdomain.com/webhook",
+        "client_id": "mock-authorization-token",
+        "events": [
+            "taskTimeTrackedUpdated"
+        ],
+        "task_id": null,
+        "list_id": null,
+        "folder_id": null,
+        "space_id": null,
+        "view_id": null,
+        "health": {
+            "status": "active",
+            "fail_count": 0
+        },
+        "secret": "0545C3HEUH12TK6FX8W9IX6EG21N1VXZR5GCLU30RPULBUAT2O3XRS083DR14BZF"
+    }
+}

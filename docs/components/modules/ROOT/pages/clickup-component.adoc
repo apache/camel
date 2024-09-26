@@ -1,0 +1,1 @@
+../../../../../components/camel-clickup/src/main/docs/clickup-component.adoc
