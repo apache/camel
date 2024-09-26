@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.processor.OnCompletionTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
 
@@ -58,12 +58,8 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:fail").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"),
+                "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -75,12 +71,8 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "Hello World");
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"),
+                "Should throw exception");
 
         assertMockEndpointsSatisfied();
     }
