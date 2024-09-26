@@ -70,7 +70,13 @@ public class KubernetesBaseTest {
     }
 
     protected InputStream getKubernetesManifestAsStream(String printerOutput) {
-        return new ByteArrayInputStream(StringHelper.after(printerOutput, "---").getBytes(StandardCharsets.UTF_8));
+        return getKubernetesManifestAsStream(printerOutput, "yaml");
     }
 
+    protected InputStream getKubernetesManifestAsStream(String printerOutput, String output) {
+        if (output.equals("yaml")) {
+            return new ByteArrayInputStream(StringHelper.after(printerOutput, "---").getBytes(StandardCharsets.UTF_8));
+        }
+        throw new RuntimeException("Unsupported output format: " + output);
+    }
 }

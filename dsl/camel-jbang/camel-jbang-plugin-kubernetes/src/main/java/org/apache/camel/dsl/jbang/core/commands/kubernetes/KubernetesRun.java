@@ -24,19 +24,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
-import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
@@ -107,6 +105,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
+    @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
+    boolean quiet;
+
     @CommandLine.Option(names = { "--cleanup" },
                         defaultValue = "true",
                         description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
@@ -136,17 +137,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     @CommandLine.Option(names = { "--cluster-type" },
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
-    String clusterType;
+    String clusterType = "Kubernetes";
 
-    @CommandLine.Option(names = { "--image-build" },
-                        defaultValue = "true",
-                        description = "Weather to build container image as part of the run.")
+    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
+                        description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" },
-                        defaultValue = "true",
-                        description = "Weather to push image to given image registry as part of the run.")
-    boolean imagePush = true;
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "false",
+                        description = "Whether to push image to given image registry as part of the run.")
+    boolean imagePush = false;
 
     @CommandLine.Option(names = { "--image-platforms" },
                         description = "List of target platforms. Each platform is defined using the pattern.")
@@ -238,40 +237,32 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
+    CamelContext reloadContext;
+    int reloadCount;
+
     public KubernetesRun(CamelJBangMain main) {
         super(main);
+    }
+
+    public KubernetesRun(CamelJBangMain main, String[] files) {
+        super(main);
+        filePaths = files;
     }
 
     public Integer doCall() throws Exception {
         String projectName = getProjectName();
 
-        String workingDir = RUN_PLATFORM_DIR + "/" + projectName;
-
-        printer().println("Exporting application ...");
-
-        // Cache export output in String for later usage in case of error
-        Printer runPrinter = printer();
-        StringPrinter exportPrinter = new StringPrinter();
-        getMain().withPrinter(exportPrinter);
-
+        String workingDir = getIndexedWorkingDir(projectName);
         KubernetesExport export = configureExport(workingDir);
         int exit = export.export();
-
-        // Revert printer to this run command's printer
-        getMain().withPrinter(runPrinter);
         if (exit != 0) {
-            // print export command output with error details
-            printer().println(exportPrinter.getOutput());
+            printer().println("Project export failed!");
             return exit;
         }
 
         if (output != null) {
-            if (RuntimeType.quarkus == runtime) {
-                exit = buildQuarkus(workingDir);
-            } else if (RuntimeType.springBoot == runtime) {
-                exit = buildSpringBoot(workingDir);
-            }
 
+            exit = buildProject(workingDir);
             if (exit != 0) {
                 printer().println("Project build failed!");
                 return exit;
@@ -279,7 +270,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" -> manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                case "yaml" ->
+                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
                 case "json" ->
                     manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
                 default -> {
@@ -295,41 +287,34 @@ public class KubernetesRun extends KubernetesBaseCommand {
             return 0;
         }
 
-        if (RuntimeType.quarkus == runtime) {
-            exit = deployQuarkus(workingDir);
-        } else if (RuntimeType.springBoot == runtime) {
-            exit = deploySpringBoot(workingDir);
-        }
-
+        exit = deployProject(workingDir, false);
         if (exit != 0) {
-            printer().println("Deployment to %s failed!".formatted(Optional.ofNullable(clusterType)
-                    .map(StringHelper::capitalize).orElse("Kubernetes")));
+            printer().println("Project deploy failed!");
             return exit;
         }
 
-        if (dev) {
-            DefaultCamelContext reloadContext = new DefaultCamelContext(false);
-            configureFileWatch(reloadContext, workingDir);
-            reloadContext.start();
-
-            if (cleanup) {
-                installShutdownInterceptor(projectName, workingDir);
-            }
+        if (dev || wait || logs) {
+            waitForRunningPod(projectName);
         }
 
-        if (dev || wait || logs) {
-            client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
-                    .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
+        if (dev) {
+            setupDevMode(projectName, workingDir);
         }
 
         if (dev || logs) {
-            PodLogs logsCommand = new PodLogs(getMain());
-            logsCommand.withClient(client());
-            logsCommand.label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
-            logsCommand.doCall();
+            startPodLogging(projectName);
+            printer().println("Stopped pod logging!");
         }
 
         return 0;
+    }
+
+    private String getIndexedWorkingDir(String projectName) {
+        var workingDir = RUN_PLATFORM_DIR + "/" + projectName;
+        if (reloadCount > 0) {
+            workingDir += "-%03d".formatted(reloadCount);
+        }
+        return workingDir;
     }
 
     private KubernetesExport configureExport(String workingDir) {
@@ -391,6 +376,84 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return export;
     }
 
+    private void setupDevMode(String projectName, String workingDir) throws Exception {
+
+        String watchDir = ".";
+        FileFilter filter = null;
+        if (filePaths != null && filePaths.length > 0) {
+            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+            if (filePath != null) {
+                watchDir = filePath;
+            }
+
+            filter = pathname -> Arrays.stream(filePaths)
+                    .map(FileUtil::stripPath)
+                    .anyMatch(name -> name.equals(pathname.getName()));
+        }
+
+        FileWatcherResourceReloadStrategy reloadStrategy = new FileWatcherResourceReloadStrategy(watchDir);
+        reloadStrategy.setResourceReload((name, resource) -> {
+            reloadCount += 1;
+            reloadContext.close();
+            printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
+            String reloadWorkingDir = getIndexedWorkingDir(projectName);
+            KubernetesExport export = configureExport(reloadWorkingDir);
+            int exit = export.export();
+            if (exit != 0) {
+                printer().printf("Project reexport failed for: %s%n", reloadWorkingDir);
+                return;
+            }
+            exit = deployProject(reloadWorkingDir, true);
+            if (exit != 0) {
+                printer().printf("Project redeploy failed for: %s%n", reloadWorkingDir);
+                return;
+            }
+            if (dev || wait || logs) {
+                waitForRunningPod(projectName);
+            }
+            if (dev) {
+                setupDevMode(projectName, reloadWorkingDir);
+            }
+            printer().printf("Project reloaded: %s%n", reloadWorkingDir);
+        });
+        if (filter != null) {
+            reloadStrategy.setFileFilter(filter);
+        }
+
+        reloadContext = new DefaultCamelContext(false);
+        reloadContext.addService(reloadStrategy);
+        reloadContext.start();
+
+        if (cleanup) {
+            installShutdownInterceptor(projectName, workingDir);
+        }
+    }
+
+    private void startPodLogging(String projectName) throws Exception {
+        try {
+            PodLogs logsCommand = new PodLogs(getMain());
+            logsCommand.withClient(client());
+            logsCommand.label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            logsCommand.doCall();
+        } catch (Exception e) {
+            printer().println("Failed to read pod logs - " + e);
+            throw e;
+        }
+    }
+
+    private void waitForRunningPod(String projectName) {
+        if (!quiet) {
+            String kubectlCmd = "kubectl get pod";
+            if (namespace != null) {
+                kubectlCmd += " -n %s".formatted(namespace);
+            }
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            printer().println("Run: " + kubectlCmd);
+        }
+        client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
+                .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
+    }
+
     private void installShutdownInterceptor(String projectName, String workingDir) {
         KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
         deleteCommand.name = projectName;
@@ -407,10 +470,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         Runtime.getRuntime().addShutdownHook(task);
     }
 
-    private Integer buildQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Building Quarkus application ...");
+    private Integer buildProject(String workingDir) throws IOException, InterruptedException {
+        printer().println("Building Camel application ...");
 
-        // Run Quarkus build via Maven
+        // Run build via Maven
         String mvnw = "/mvnw";
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
@@ -419,10 +482,17 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        args.add("--quiet");
+        if (quiet) {
+            args.add("--quiet");
+        }
         args.add("--file");
         args.add(workingDir);
         args.add("package");
+
+        if (!quiet) {
+            printer().println("Run: " + String.join(" ", args));
+        }
+
         pb.command(args.toArray(String[]::new));
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -437,11 +507,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return 0;
     }
 
-    private Integer deployQuarkus(String workingDir) throws IOException, InterruptedException {
-        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
-                .map(StringHelper::capitalize).orElse("Kubernetes")));
+    private Integer deployProject(String workingDir, boolean reload) throws Exception {
 
-        // Run Quarkus build via Maven
+        printer().println("Deploying to %s ...".formatted(clusterType));
+
+        // Run build via Maven
         String mvnw = "/mvnw";
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
@@ -450,33 +520,57 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        args.add("--quiet");
+        if (quiet) {
+            args.add("--quiet");
+        }
         args.add("--file");
         args.add(workingDir);
 
-        if (imagePlatforms != null) {
-            args.add("-Dquarkus.jib.platforms=%s".formatted(imagePlatforms));
-        }
+        if (runtime == RuntimeType.quarkus) {
 
-        if (imageBuild) {
-            args.add("-Dquarkus.container-image.build=true");
-        }
+            if (imagePlatforms != null) {
+                args.add("-Dquarkus.jib.platforms=%s".formatted(imagePlatforms));
+            }
 
-        if (imagePush) {
-            args.add("-Dquarkus.container-image.push=true");
-        }
+            args.add("-Dquarkus.container-image.build=" + imageBuild);
+            args.add("-Dquarkus.container-image.push=" + imagePush);
 
-        if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
-            args.add("-Dquarkus.openshift.deploy=true");
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                args.add("-Dquarkus.openshift.deploy=true");
+            } else {
+                args.add("-Dquarkus.kubernetes.deploy=true");
+                if (namespace != null) {
+                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
+                }
+            }
+
+            args.add("package");
+
         } else {
-            args.add("-Dquarkus.kubernetes.deploy=true");
+
+            if (!imageBuild) {
+                args.add("-Djkube.skip.build=true");
+            }
+
+            if (imagePush) {
+                args.add("-Djkube.%s.push=true".formatted(imageBuilder));
+            }
+
+            if (namespace != null) {
+                args.add("-Djkube.namespace=%s".formatted(namespace));
+            }
+
+            args.add("package");
+            if (reload) {
+                args.add("k8s:undeploy");
+            }
+            args.add("k8s:deploy");
         }
 
-        if (namespace != null) {
-            args.add("-Dquarkus.kubernetes.namespace=%s".formatted(namespace));
+        if (!quiet) {
+            printer().println("Run: " + String.join(" ", args));
         }
 
-        args.add("package");
         pb.command(args.toArray(String[]::new));
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
@@ -484,64 +578,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // wait for that process to exit as we run in foreground
         int exit = p.waitFor();
         if (exit != 0) {
-            printer().println("Deployment failed!");
+            printer().println("Deployment to %s failed!".formatted(clusterType));
             return exit;
         }
 
         return 0;
-    }
-
-    private Integer buildSpringBoot(String workingDir) {
-        printer().println("Building Spring Boot application ...");
-
-        // TODO: implement SpringBoot project build
-        return 0;
-    }
-
-    private Integer deploySpringBoot(String workingDir) {
-        printer().println("Deploying to %s ...".formatted(Optional.ofNullable(clusterType)
-                .map(StringHelper::capitalize).orElse("Kubernetes")));
-
-        // TODO: implement SpringBoot Kubernetes deployment
-        return 0;
-    }
-
-    private void configureFileWatch(DefaultCamelContext camelContext, String workingDir)
-            throws Exception {
-        String watchDir = ".";
-        FileFilter filter = null;
-        if (filePaths != null && filePaths.length > 0) {
-            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
-            if (filePath != null) {
-                watchDir = filePath;
-            }
-
-            filter = pathname -> Arrays.stream(filePaths)
-                    .map(FileUtil::stripPath)
-                    .anyMatch(name -> name.equals(pathname.getName()));
-        }
-
-        FileWatcherResourceReloadStrategy reloadStrategy
-                = new FileWatcherResourceReloadStrategy(watchDir);
-        reloadStrategy.setResourceReload((name, resource) -> {
-            printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
-            KubernetesExport export = configureExport(workingDir);
-            int refresh = export.export();
-            if (refresh == 0) {
-                if (RuntimeType.quarkus == runtime) {
-                    deployQuarkus(workingDir);
-                } else if (RuntimeType.springBoot == runtime) {
-                    deploySpringBoot(workingDir);
-                }
-            } else {
-                // print export command output with error details
-                printer().printf("Reloading project failed - export failed with code: %d%n", refresh);
-            }
-        });
-        if (filter != null) {
-            reloadStrategy.setFileFilter(filter);
-        }
-        camelContext.addService(reloadStrategy);
     }
 
     private String getProjectName() {
@@ -563,5 +604,4 @@ public class KubernetesRun extends KubernetesBaseCommand {
         throw new RuntimeCamelException(
                 "Failed to resolve project name - please provide --gav, --image option or at least one source file");
     }
-
 }
