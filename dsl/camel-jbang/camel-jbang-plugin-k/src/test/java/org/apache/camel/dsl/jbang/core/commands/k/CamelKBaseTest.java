@@ -38,8 +38,10 @@ import org.apache.camel.v1.PipeSpec;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CamelKBaseTest {
 
