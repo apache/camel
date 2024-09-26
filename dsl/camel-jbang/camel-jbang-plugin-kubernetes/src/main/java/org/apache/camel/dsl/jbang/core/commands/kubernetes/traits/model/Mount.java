@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "configs", "configuration", "emptyDirs", "enabled", "hotReload", "resources", "scanKameletsImplicitLabelSecrets",
+        "configs", "emptyDirs", "enabled", "hotReload", "resources", "scanKameletsImplicitLabelSecrets",
         "volumes" })
 public class Mount {
     @JsonProperty("configs")
@@ -36,18 +36,13 @@ public class Mount {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> configs;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("emptyDirs")
     @JsonPropertyDescription("A list of EmptyDir volumes to be mounted. Syntax: [name:/container/path]")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> emptyDirs;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Deprecated: no longer in use.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -81,14 +76,6 @@ public class Mount {
 
     public void setConfigs(List<String> configs) {
         this.configs = configs;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public List<String> getEmptyDirs() {

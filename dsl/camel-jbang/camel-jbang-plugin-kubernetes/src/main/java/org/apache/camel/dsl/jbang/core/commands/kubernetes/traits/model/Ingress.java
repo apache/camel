@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "auto", "configuration", "enabled", "host", "path", "pathType", "tlsHosts", "tlsSecretName" })
+        "annotations", "auto", "enabled", "host", "path", "pathType", "tlsHosts", "tlsSecretName" })
 public class Ingress {
     @JsonProperty("annotations")
     @JsonPropertyDescription("The annotations added to the ingress. This can be used to set controller specific annotations, e.g., when using the NGINX Ingress controller: See https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md")
@@ -38,17 +38,12 @@ public class Ingress {
                 nulls = Nulls.SKIP)
     private Map<String, String> annotations;
     @JsonProperty("auto")
-    @JsonPropertyDescription("To automatically add an ingress whenever the integration uses an HTTP endpoint consumer.")
+    @JsonPropertyDescription("To automatically add an ingress whenever the camel route uses an HTTP endpoint consumer.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean auto;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -95,14 +90,6 @@ public class Ingress {
 
     public void setAuto(Boolean auto) {
         this.auto = auto;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

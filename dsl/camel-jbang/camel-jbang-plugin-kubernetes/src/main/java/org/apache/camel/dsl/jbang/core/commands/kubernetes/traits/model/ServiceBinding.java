@@ -27,15 +27,10 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "configuration", "enabled", "services" })
+@JsonPropertyOrder({ "enabled", "services" })
 public class ServiceBinding {
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -46,14 +41,6 @@ public class ServiceBinding {
     private List<String> services;
 
     public ServiceBinding() {
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

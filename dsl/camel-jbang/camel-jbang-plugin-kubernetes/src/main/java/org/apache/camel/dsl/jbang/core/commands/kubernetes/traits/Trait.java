@@ -17,8 +17,8 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 
 public interface Trait extends Comparable<Trait> {
 

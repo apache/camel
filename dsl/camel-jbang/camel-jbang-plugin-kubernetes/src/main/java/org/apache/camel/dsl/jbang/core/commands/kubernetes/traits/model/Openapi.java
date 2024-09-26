@@ -27,20 +27,15 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "configmaps", "configuration", "enabled" })
+@JsonPropertyOrder({ "configmaps", "enabled" })
 public class Openapi {
     @JsonProperty("configmaps")
     @JsonPropertyDescription("The configmaps holding the spec of the OpenAPI")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> configmaps;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Deprecated: no longer in use.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -54,14 +49,6 @@ public class Openapi {
 
     public void setConfigmaps(List<String> configmaps) {
         this.configmaps = configmaps;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

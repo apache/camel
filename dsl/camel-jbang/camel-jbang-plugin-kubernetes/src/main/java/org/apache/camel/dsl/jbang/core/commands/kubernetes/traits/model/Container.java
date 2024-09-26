@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "allowPrivilegeEscalation", "auto", "capabilitiesAdd", "capabilitiesDrop", "configuration", "enabled", "expose",
+        "allowPrivilegeEscalation", "auto", "capabilitiesAdd", "capabilitiesDrop", "enabled", "expose",
         "image", "imagePullPolicy", "limitCPU", "limitMemory", "name", "port", "portName", "requestCPU", "requestMemory",
         "runAsNonRoot", "runAsUser", "seccompProfileType", "servicePort", "servicePortName" })
 public class Container {
@@ -53,13 +53,8 @@ public class Container {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> capabilitiesDrop;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Deprecated: no longer in use.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -172,14 +167,6 @@ public class Container {
 
     public void setCapabilitiesDrop(List<String> capabilitiesDrop) {
         this.capabilitiesDrop = capabilitiesDrop;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

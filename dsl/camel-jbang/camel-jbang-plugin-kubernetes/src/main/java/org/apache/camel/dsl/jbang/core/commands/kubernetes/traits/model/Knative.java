@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "auto", "channelSinks", "channelSources", "config", "configuration", "enabled", "endpointSinks", "endpointSources",
+        "auto", "channelSinks", "channelSources", "config", "enabled", "endpointSinks", "endpointSources",
         "eventSinks", "eventSources", "filterEventType", "filterSourceChannels", "filters", "namespaceLabel", "sinkBinding" })
 public class Knative {
     @JsonProperty("auto")
@@ -37,12 +37,12 @@ public class Knative {
                 nulls = Nulls.SKIP)
     private Boolean auto;
     @JsonProperty("channelSinks")
-    @JsonPropertyDescription("List of channels used as destination of integration routes. Can contain simple channel names or full Camel URIs.")
+    @JsonPropertyDescription("List of channels used as destination of camel routes. Can contain simple channel names or full Camel URIs.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> channelSinks;
     @JsonProperty("channelSources")
-    @JsonPropertyDescription("List of channels used as source of integration routes. Can contain simple channel names or full Camel URIs.")
+    @JsonPropertyDescription("List of channels used as source of camel routes. Can contain simple channel names or full Camel URIs.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> channelSources;
@@ -51,33 +51,28 @@ public class Knative {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private String config;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
     @JsonProperty("endpointSinks")
-    @JsonPropertyDescription("List of endpoints used as destination of integration routes. Can contain simple endpoint names or full Camel URIs.")
+    @JsonPropertyDescription("List of endpoints used as destination of camel routes. Can contain simple endpoint names or full Camel URIs.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> endpointSinks;
     @JsonProperty("endpointSources")
-    @JsonPropertyDescription("List of channels used as source of integration routes.")
+    @JsonPropertyDescription("List of channels used as source of camel routes.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> endpointSources;
     @JsonProperty("eventSinks")
-    @JsonPropertyDescription("List of event types that the integration will produce. Can contain simple event types or full Camel URIs (to use a specific broker).")
+    @JsonPropertyDescription("List of event types that the camel route will produce. Can contain simple event types or full Camel URIs (to use a specific broker).")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> eventSinks;
     @JsonProperty("eventSources")
-    @JsonPropertyDescription("List of event types that the integration will be subscribed to. Can contain simple event types or full Camel URIs (to use a specific broker different from \"default\").")
+    @JsonPropertyDescription("List of event types that the camel route will be subscribed to. Can contain simple event types or full Camel URIs (to use a specific broker different from \"default\").")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> eventSources;
@@ -102,7 +97,7 @@ public class Knative {
                 nulls = Nulls.SKIP)
     private Boolean namespaceLabel;
     @JsonProperty("sinkBinding")
-    @JsonPropertyDescription("Allows binding the integration to a sink via a Knative SinkBinding resource. This can be used when the integration targets a single sink. It's enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).")
+    @JsonPropertyDescription("Allows binding the camel route to a sink via a Knative SinkBinding resource. This can be used when the camel route targets a single sink. It's enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean sinkBinding;
@@ -140,14 +135,6 @@ public class Knative {
 
     public void setConfig(String config) {
         this.config = config;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

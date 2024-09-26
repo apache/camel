@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "baseImage", "configuration", "enabled", "incrementalImageBuild", "limitCPU", "limitMemory",
+        "annotations", "baseImage", "enabled", "incrementalImageBuild", "limitCPU", "limitMemory",
         "mavenProfiles", "nodeSelector", "orderStrategy", "platforms", "properties", "requestCPU", "requestMemory", "strategy",
         "tasks", "tasksFilter", "tasksLimitCPU", "tasksLimitMemory", "tasksRequestCPU", "tasksRequestMemory", "verbose" })
 public class Builder {
@@ -44,13 +44,8 @@ public class Builder {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private String baseImage;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Deprecated: no longer in use.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -162,14 +157,6 @@ public class Builder {
 
     public void setBaseImage(String baseImage) {
         this.baseImage = baseImage;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

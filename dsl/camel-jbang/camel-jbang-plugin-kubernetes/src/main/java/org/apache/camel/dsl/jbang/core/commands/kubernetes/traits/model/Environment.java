@@ -27,20 +27,15 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "configuration", "containerMeta", "enabled", "httpProxy", "vars" })
+@JsonPropertyOrder({ "containerMeta", "enabled", "httpProxy", "vars" })
 public class Environment {
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("containerMeta")
     @JsonPropertyDescription("Enables injection of `NAMESPACE` and `POD_NAME` environment variables (default `true`)")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean containerMeta;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Deprecated: no longer in use.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -56,14 +51,6 @@ public class Environment {
     private List<String> vars;
 
     public Environment() {
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getContainerMeta() {

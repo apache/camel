@@ -27,39 +27,20 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "configuration", "enabled", "properties", "runtimeVersion" })
+@JsonPropertyOrder({ "enabled", "properties", "runtimeVersion" })
 public class Camel {
-
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Deprecated: no longer in use.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
     @JsonProperty("properties")
-    @JsonPropertyDescription("A list of properties to be provided to the Integration runtime")
+    @JsonPropertyDescription("A list of properties to be provided to the camel route runtime")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> properties;
-    @JsonProperty("runtimeVersion")
-    @JsonPropertyDescription("The camel-k-runtime version to use for the integration. It overrides the default version set in the Integration Platform. You can use a fixed version (for example \"3.2.3\") or a semantic version (for example \"3.x\") which will try to resolve to the best matching Catalog existing on the cluster.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private String runtimeVersion;
 
     public Camel() {
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {
@@ -76,13 +57,5 @@ public class Camel {
 
     public void setProperties(List<String> properties) {
         this.properties = properties;
-    }
-
-    public String getRuntimeVersion() {
-        return this.runtimeVersion;
-    }
-
-    public void setRuntimeVersion(String runtimeVersion) {
-        this.runtimeVersion = runtimeVersion;
     }
 }
