@@ -133,7 +133,9 @@ class ExportSpringBoot extends Export {
                 copyGradleWrapper();
             }
         }
-
+        copyDockerFiles(BUILD_DIR);
+        String appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
+        copyReadme(BUILD_DIR, appJar);
         if (cleanExportDir || !exportDir.equals(".")) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
