@@ -26,20 +26,15 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "auto", "configuration", "enabled", "nodePort", "type" })
+@JsonPropertyOrder({ "auto", "enabled", "nodePort", "type" })
 public class Service {
     @JsonProperty("auto")
     @JsonPropertyDescription("To automatically detect from the code if a Service needs to be created.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean auto;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -63,14 +58,6 @@ public class Service {
 
     public void setAuto(Boolean auto) {
         this.auto = auto;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "configuration", "enabled", "host", "tlsCACertificate", "tlsCACertificateSecret", "tlsCertificate",
+        "annotations", "enabled", "host", "tlsCACertificate", "tlsCACertificateSecret", "tlsCertificate",
         "tlsCertificateSecret", "tlsDestinationCACertificate", "tlsDestinationCACertificateSecret",
         "tlsInsecureEdgeTerminationPolicy", "tlsKey", "tlsKeySecret", "tlsTermination" })
 public class Route {
@@ -38,13 +38,8 @@ public class Route {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Map<String, String> annotations;
-    @JsonProperty("configuration")
-    @JsonPropertyDescription("Legacy trait configuration parameters. Deprecated: for backward compatibility.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Configuration configuration;
     @JsonProperty("enabled")
-    @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
+    @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
@@ -113,14 +108,6 @@ public class Route {
 
     public void setAnnotations(Map<String, String> annotations) {
         this.annotations = annotations;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {
