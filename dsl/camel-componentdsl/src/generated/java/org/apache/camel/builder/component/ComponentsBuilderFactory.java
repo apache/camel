@@ -810,8 +810,8 @@ public interface ComponentsBuilderFactory {
      * Receives events from ClickUp webhooks.
      * 
      * Category: cloud
-     * Since: 1.0.0-SNAPSHOT
-     * Maven coordinates: org.apache.camel.components:camel-clickup
+     * Since: 4.9.0-SNAPSHOT
+     * Maven coordinates: org.apache.camel:camel-clickup
      * 
      * @return the dsl builder
      */

@@ -35,337 +35,11 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface ClickUpEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint consumers for the ClickUp component.
-     */
-    public interface ClickUpEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedClickUpEndpointConsumerBuilder advanced() {
-            return (AdvancedClickUpEndpointConsumerBuilder) this;
-        }
-        /**
-         * The comma separated list of events to which the webhook must
-         * subscribe.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param events the value to set
-         * @return the dsl builder
-         */
-        default ClickUpEndpointConsumerBuilder events(String events) {
-            doSetProperty("events", events);
-            return this;
-        }
-        /**
-         * The authorization token for authenticating against the ClickUp API.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param authorizationToken the value to set
-         * @return the dsl builder
-         */
-        default ClickUpEndpointConsumerBuilder authorizationToken(String authorizationToken) {
-            doSetProperty("authorizationToken", authorizationToken);
-            return this;
-        }
-        /**
-         * The shared secret obtained in the webhook creation response.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param webhookSecret the value to set
-         * @return the dsl builder
-         */
-        default ClickUpEndpointConsumerBuilder webhookSecret(String webhookSecret) {
-            doSetProperty("webhookSecret", webhookSecret);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the ClickUp component.
-     */
-    public interface AdvancedClickUpEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default ClickUpEndpointConsumerBuilder basic() {
-            return (ClickUpEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder exchangePattern(String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Can be used to set an alternative base URL, e.g. when you want to
-         * test the component against a mock ClickUp API.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param baseUrl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointConsumerBuilder baseUrl(String baseUrl) {
-            doSetProperty("baseUrl", baseUrl);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the ClickUp component.
-     */
-    public interface ClickUpEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedClickUpEndpointProducerBuilder advanced() {
-            return (AdvancedClickUpEndpointProducerBuilder) this;
-        }
-
-        /**
-         * The comma separated list of events to which the webhook must
-         * subscribe.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         * 
-         * @param events the value to set
-         * @return the dsl builder
-         */
-        default ClickUpEndpointProducerBuilder events(String events) {
-            doSetProperty("events", events);
-            return this;
-        }
-        /**
-         * The authorization token for authenticating against the ClickUp API.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param authorizationToken the value to set
-         * @return the dsl builder
-         */
-        default ClickUpEndpointProducerBuilder authorizationToken(String authorizationToken) {
-            doSetProperty("authorizationToken", authorizationToken);
-            return this;
-        }
-        /**
-         * The shared secret obtained in the webhook creation response.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param webhookSecret the value to set
-         * @return the dsl builder
-         */
-        default ClickUpEndpointProducerBuilder webhookSecret(String webhookSecret) {
-            doSetProperty("webhookSecret", webhookSecret);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the ClickUp component.
-     */
-    public interface AdvancedClickUpEndpointProducerBuilder extends EndpointProducerBuilder {
-        default ClickUpEndpointProducerBuilder basic() {
-            return (ClickUpEndpointProducerBuilder) this;
-        }
-
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Can be used to set an alternative base URL, e.g. when you want to
-         * test the component against a mock ClickUp API.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param baseUrl the value to set
-         * @return the dsl builder
-         */
-        default AdvancedClickUpEndpointProducerBuilder baseUrl(String baseUrl) {
-            doSetProperty("baseUrl", baseUrl);
-            return this;
-        }
-    }
-
-    /**
      * Builder for endpoint for the ClickUp component.
      */
     public interface ClickUpEndpointBuilder
             extends
-                ClickUpEndpointConsumerBuilder,
-                ClickUpEndpointProducerBuilder {
+                EndpointConsumerBuilder {
         default AdvancedClickUpEndpointBuilder advanced() {
             return (AdvancedClickUpEndpointBuilder) this;
         }
@@ -377,7 +51,7 @@ public interface ClickUpEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
-         * Group: common
+         * Group: consumer
          * 
          * @param events the value to set
          * @return the dsl builder
@@ -421,12 +95,128 @@ public interface ClickUpEndpointBuilderFactory {
      */
     public interface AdvancedClickUpEndpointBuilder
             extends
-                AdvancedClickUpEndpointConsumerBuilder,
-                AdvancedClickUpEndpointProducerBuilder {
+                EndpointConsumerBuilder {
         default ClickUpEndpointBuilder basic() {
             return (ClickUpEndpointBuilder) this;
         }
 
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedClickUpEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedClickUpEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedClickUpEndpointBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedClickUpEndpointBuilder exceptionHandler(String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedClickUpEndpointBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedClickUpEndpointBuilder exchangePattern(String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
         /**
          * Can be used to set an alternative base URL, e.g. when you want to
          * test the component against a mock ClickUp API.
@@ -450,8 +240,8 @@ public interface ClickUpEndpointBuilderFactory {
          * Receives events from ClickUp webhooks.
          * 
          * Category: cloud
-         * Since: 1.0.0-SNAPSHOT
-         * Maven coordinates: org.apache.camel.components:camel-clickup
+         * Since: 4.9.0-SNAPSHOT
+         * Maven coordinates: org.apache.camel:camel-clickup
          * 
          * Syntax: <code>clickup:workspaceId</code>
          * 
@@ -469,8 +259,8 @@ public interface ClickUpEndpointBuilderFactory {
          * Receives events from ClickUp webhooks.
          * 
          * Category: cloud
-         * Since: 1.0.0-SNAPSHOT
-         * Maven coordinates: org.apache.camel.components:camel-clickup
+         * Since: 4.9.0-SNAPSHOT
+         * Maven coordinates: org.apache.camel:camel-clickup
          * 
          * Syntax: <code>clickup:workspaceId</code>
          * 
