@@ -3346,7 +3346,7 @@ The dependency output by default is _vanilla_ Apache Camel with the camel-main a
 
 [source,bash]
 ----
-camel dependency
+camel dependency list
 org.apache.camel:camel-dsl-modeline:3.20.0
 org.apache.camel:camel-health:3.20.0
 org.apache.camel:camel-kamelet:3.20.0
@@ -3365,7 +3365,7 @@ You can also specify the output should be in _Maven format_ as shown:
 
 [source,bash]
 ----
-camel dependency --output=maven
+camel dependency list --output=maven
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-main</artifactId>
