@@ -92,8 +92,8 @@ public class PodLogs extends KubernetesBaseCommand {
         AtomicInteger resumeCount = new AtomicInteger();
         while (shouldResume) {
             shouldResume = watchLogs(parts[0], parts[1], container, resumeCount);
-            resumeCount.incrementAndGet();
             printer().printf("PodLogs: [resume=%b, count=%d]%n", shouldResume, resumeCount.get());
+            resumeCount.incrementAndGet();
             sleepWell();
         }
 
