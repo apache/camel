@@ -21,6 +21,7 @@ import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
+@Deprecated
 @CamelJBangPlugin(name = "camel-jbang-plugin-k", firstVersion = "4.4.0")
 public class CamelKPlugin implements Plugin {
 

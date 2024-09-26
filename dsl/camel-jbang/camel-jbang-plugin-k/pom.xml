@@ -30,7 +30,7 @@
 
     <artifactId>camel-jbang-plugin-k</artifactId>
 
-    <name>Camel :: JBang :: Plugin :: Camel K</name>
+    <name>Camel :: JBang :: Plugin :: Camel K (deprecated)</name>
     <description>Camel JBang Camel K Plugin</description>
 
     <properties>
