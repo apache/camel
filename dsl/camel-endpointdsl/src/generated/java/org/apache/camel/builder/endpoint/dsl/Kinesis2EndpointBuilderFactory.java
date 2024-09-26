@@ -1343,6 +1343,38 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder kclDisableCloudwatchMetricsExport(boolean kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
+            return this;
+        }
+        /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder kclDisableCloudwatchMetricsExport(String kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
+            return this;
+        }
+        /**
          * If we want to a KCL Consumer set it to true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1926,6 +1958,38 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder kclDisableCloudwatchMetricsExport(boolean kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
+            return this;
+        }
+        /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder kclDisableCloudwatchMetricsExport(String kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
+            return this;
+        }
+        /**
          * If we want to a KCL Consumer set it to true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2464,6 +2528,38 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointBuilder dynamoDbAsyncClient(String dynamoDbAsyncClient) {
             doSetProperty("dynamoDbAsyncClient", dynamoDbAsyncClient);
+            return this;
+        }
+        /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder kclDisableCloudwatchMetricsExport(boolean kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
+            return this;
+        }
+        /**
+         * If we want to use a KCL Consumer and disable the CloudWatch Metrics
+         * Export.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param kclDisableCloudwatchMetricsExport the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder kclDisableCloudwatchMetricsExport(String kclDisableCloudwatchMetricsExport) {
+            doSetProperty("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport);
             return this;
         }
         /**
