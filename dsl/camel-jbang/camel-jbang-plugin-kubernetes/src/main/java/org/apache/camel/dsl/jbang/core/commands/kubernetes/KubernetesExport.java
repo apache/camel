@@ -529,7 +529,7 @@ public class KubernetesExport extends Export {
             String quarkusVersion,
             List<String> files,
             String gav,
-            List<String> repositories,
+            String repositories,
             List<String> dependencies,
             List<String> excludes,
             String mavenSettings,

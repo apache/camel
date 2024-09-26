@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -88,8 +89,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
-    protected List<String> repositories = new ArrayList<>();
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    protected String repositories;
 
     @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
                         split = ",")
@@ -777,8 +779,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
-        if (!repositories.isEmpty()) {
-            answer.addAll(repositories);
+        if (repositories != null) {
+            Collections.addAll(answer, this.repositories.split(","));
         }
 
         return answer.stream()
