@@ -172,14 +172,22 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
-    public void shouldGenerateReproducibleBuild(RuntimeType rt) throws Exception {
+    public void shouldGenerateContent(RuntimeType rt) throws Exception {
         Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
+        // In this test we can validate any generic resource that must be created along the export.
+        // Exporting once to reduce the time to execute the test and the resource required to test.
+
+        // Reproducible build
         Model model = readMavenModel();
         Assertions.assertNotNull(model.getProperties().get("project.build.outputTimestamp"));
+        // Dockerfile
+        Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists());
+        // Readme
+        Assertions.assertTrue(new File(workingDir, "readme.md").exists());
     }
 
 }

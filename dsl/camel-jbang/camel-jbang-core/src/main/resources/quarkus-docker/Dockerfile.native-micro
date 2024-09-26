@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+#
+# WARNING: this image is deprecated and won't be used in future versions: use Dockerfile.native instead
+#
+
 ####
 # This Dockerfile is used in order to build a container that runs the Quarkus application in native (no JVM) mode.
 # It uses a micro base image, tuned for Quarkus native executables.

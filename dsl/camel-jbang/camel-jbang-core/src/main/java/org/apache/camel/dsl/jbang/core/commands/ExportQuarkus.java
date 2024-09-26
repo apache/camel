@@ -114,7 +114,9 @@ class ExportQuarkus extends Export {
             return prop;
         });
         // copy docker files
-        copyDockerFiles();
+        copyDockerFiles(BUILD_DIR);
+        String appJar = "target" + File.separator + "quarkus-app" + File.separator + "quarkus-run.jar";
+        copyReadme(BUILD_DIR, appJar);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
@@ -339,16 +341,22 @@ class ExportQuarkus extends Export {
         return super.applicationPropertyLine(key, value);
     }
 
-    private void copyDockerFiles() throws Exception {
-        File docker = new File(BUILD_DIR, "src/main/docker");
+    @Override
+    protected void copyDockerFiles(String buildDir) throws Exception {
+        File docker = new File(buildDir, "src/main/docker");
         docker.mkdirs();
         // copy files
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
+        // Deprecated, use Dockerfile instead
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.jvm")));
+        is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile")));
+        // Deprecated, to be removed in the future
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.legacy-jar");
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.legacy-jar")));
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native");
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.native")));
+        // Deprecated, to be removed in the future
         is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native-micro");
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(docker, "Dockerfile.native-micro")));
     }

@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -29,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
@@ -72,6 +75,7 @@ public class Export extends ExportBaseCommand {
                 return 1;
             }
         }
+
     }
 
     private void doLoadAndInitProfileProperties(File file) throws Exception {
@@ -234,10 +238,37 @@ public class Export extends ExportBaseCommand {
         };
     }
 
+    // Maven reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html
     protected String getBuildMavenProjectDate() {
         // 2024-09-23T10:00:00Z
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         return sdf.format(new Date());
     }
 
+    // Copy the dockerfile into the same Maven project root directory.
+    protected void copyDockerFiles(String buildDir) throws Exception {
+        File docker = new File(buildDir, "src/main/docker");
+        docker.mkdirs();
+        String[] ids = gav.split(":");
+        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        String appJar = ids[1] + "-" + ids[2] + ".jar";
+        context = context.replaceAll("\\{\\{ \\.AppJar }}", appJar);
+        IOHelper.writeText(context, new FileOutputStream(new File(docker, "Dockerfile"), false));
+    }
+
+    // Copy the readme.md into the same Maven project root directory.
+    protected void copyReadme(String buildDir, String appJar) throws Exception {
+        String[] ids = gav.split(":");
+        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/readme.md.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.AppRuntimeJar }}", appJar);
+        IOHelper.writeText(context, new FileOutputStream(new File(buildDir, "readme.md"), false));
+    }
 }
