@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
@@ -73,7 +74,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         File manifest = KubernetesHelper.resolveKubernetesManifest(new File(resolvedWorkingDir, "target/kubernetes"));
         try (FileInputStream fis = new FileInputStream(manifest)) {
             List<StatusDetails> status;
-            if (namespace != null) {
+            if (!ObjectHelper.isEmpty(namespace)) {
                 status = client().load(fis).inNamespace(namespace).delete();
             } else {
                 status = client().load(fis).delete();
