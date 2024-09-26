@@ -30,6 +30,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.logging.log4j.core.util.IOUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -37,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TarAggregationStrategyNullBodyTest extends CamelTestSupport {
 
-    @Override
-    public void doPreSetup() {
+    @BeforeEach
+    public void cleanOutputDir() {
         TestSupport.deleteDirectory("target/out");
     }
 
@@ -94,10 +95,10 @@ class TarAggregationStrategyNullBodyTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // @formatter:off
                 from("direct:start")
                         .aggregate(new TarAggregationStrategy(false))
