@@ -73,7 +73,7 @@ public class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupp
 
             /* Make sure the ClickUp mock API is up and running */
             Awaitility.await()
-                    .atMost(25, TimeUnit.SECONDS)
+                    .atMost(5, TimeUnit.SECONDS)
                     .until(() -> {
                         HttpClient client = HttpClient.newBuilder().build();
                         HttpRequest request = HttpRequest.newBuilder()
