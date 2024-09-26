@@ -27,6 +27,7 @@ import io.fabric8.kubernetes.client.dsl.PodResource;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine;
 
 /**
@@ -59,7 +60,7 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
      */
     protected <T extends HasMetadata> NonNamespaceOperation<T, KubernetesResourceList<T>, Resource<T>> client(
             Class<T> resourceType) {
-        if (namespace != null) {
+        if (!ObjectHelper.isEmpty(namespace)) {
             return client().resources(resourceType).inNamespace(namespace);
         }
 
@@ -73,7 +74,7 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
      * @return namespaced client if applicable.
      */
     protected NonNamespaceOperation<Pod, PodList, PodResource> pods() {
-        if (namespace != null) {
+        if (!ObjectHelper.isEmpty(namespace)) {
             return client().pods().inNamespace(namespace);
         }
 
