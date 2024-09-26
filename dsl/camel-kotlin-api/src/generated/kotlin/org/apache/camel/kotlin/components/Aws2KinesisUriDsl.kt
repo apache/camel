@@ -289,6 +289,20 @@ public class Aws2KinesisUriDsl(
   }
 
   /**
+   * If we want to use a KCL Consumer and disable the CloudWatch Metrics Export
+   */
+  public fun kclDisableCloudwatchMetricsExport(kclDisableCloudwatchMetricsExport: String) {
+    it.property("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport)
+  }
+
+  /**
+   * If we want to use a KCL Consumer and disable the CloudWatch Metrics Export
+   */
+  public fun kclDisableCloudwatchMetricsExport(kclDisableCloudwatchMetricsExport: Boolean) {
+    it.property("kclDisableCloudwatchMetricsExport", kclDisableCloudwatchMetricsExport.toString())
+  }
+
+  /**
    * If we want to a KCL Consumer set it to true
    */
   public fun useKclConsumers(useKclConsumers: String) {
