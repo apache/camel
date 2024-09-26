@@ -77,7 +77,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
-        Export command = new ExportSpringBoot(new CamelJBangMain());
+        Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--build-property=foo=bar", "target/test-classes/route.yaml");
         int exit = command.doCall();
@@ -94,7 +94,7 @@ class ExportTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void testShouldGenerateProjectMultivalue(RuntimeType rt) throws Exception {
-        Export command = new ExportSpringBoot(new CamelJBangMain());
+        Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
                 "--runtime=%s".formatted(rt.runtime()), "--dep=foo:bar:1.0,jupiter:rocks:2.0",
                 // it's important for the --build-property to be the last parameter to test a previous
@@ -117,7 +117,7 @@ class ExportTest {
     }
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
-        Export command = new ExportSpringBoot(new CamelJBangMain());
+        Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
                 "--runtime=%s".formatted(rt.runtime()));
         if (args != null) {

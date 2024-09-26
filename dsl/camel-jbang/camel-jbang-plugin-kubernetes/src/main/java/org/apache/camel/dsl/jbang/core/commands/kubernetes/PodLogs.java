@@ -58,6 +58,10 @@ public class PodLogs extends KubernetesBaseCommand {
 
     int maxWaitAttempts = 30; // total timeout of 60 seconds
 
+    // used for testing
+    int maxLogMessages = -1;
+    long messageCount = 0;
+
     public PodLogs(CamelJBangMain main) {
         super(main);
     }
@@ -144,6 +148,9 @@ public class PodLogs extends KubernetesBaseCommand {
             String line;
             while ((line = reader.readLine()) != null) {
                 printer().println(line);
+                if (messageCount++ > maxLogMessages && maxLogMessages > 0) {
+                    return false;
+                }
                 resumeCount.set(0);
             }
         } catch (IOException e) {
