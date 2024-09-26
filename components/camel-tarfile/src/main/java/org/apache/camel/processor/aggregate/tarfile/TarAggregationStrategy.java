@@ -151,13 +151,13 @@ public class TarAggregationStrategy implements AggregationStrategy {
         File tarFile;
         Exchange answer = oldExchange;
 
+        boolean isFirstTimeInAggregation = oldExchange == null;
         // Guard against empty new exchanges
-        if (newExchange == null) {
+        if (newExchange.getIn().getBody() == null && !isFirstTimeInAggregation) {
             return oldExchange;
         }
 
-        // First time for this aggregation
-        if (oldExchange == null) {
+        if (isFirstTimeInAggregation) {
             try {
                 tarFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
                 LOG.trace("Created temporary file: {}", tarFile);
@@ -171,13 +171,12 @@ public class TarAggregationStrategy implements AggregationStrategy {
         }
 
         Object body = newExchange.getIn().getBody();
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof WrappedFile wrappedFile) {
+            body = wrappedFile.getFile();
         }
 
-        if (body instanceof File) {
+        if (body instanceof File appendFile) {
             try {
-                File appendFile = (File) body;
                 // do not try to append empty files
                 if (appendFile.length() > 0) {
                     String entryName = preserveFolderStructure
@@ -190,17 +189,19 @@ public class TarAggregationStrategy implements AggregationStrategy {
             }
         } else {
             // Handle all other messages
-            try {
-                byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
-                // do not try to append empty data
-                if (buffer.length > 0) {
-                    String entryName = useFilenameHeader
+            if (newExchange.getIn().getBody() != null) {
+                try {
+                    byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
+                    // do not try to append empty data
+                    if (buffer.length > 0) {
+                        String entryName = useFilenameHeader
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
-                    addEntryToTar(tarFile, entryName, buffer, buffer.length);
+                        addEntryToTar(tarFile, entryName, buffer, buffer.length);
+                    }
+                } catch (Exception e) {
+                    throw new GenericFileOperationFailedException(e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
         GenericFile<File> genericFile = FileConsumer.asGenericFile(
