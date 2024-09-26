@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSupport {
 
@@ -84,12 +84,9 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
 
         getMockEndpoint("mock:error").expectedBodiesReceived("Bye World");
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"),
+                "Should throw exception");
+
         template.sendBody("direct:start2", "Bye World");
 
         assertMockEndpointsSatisfied();
@@ -242,12 +239,12 @@ public class RoutesConfigurationBuilderIdOrPatternTest extends ContextTestSuppor
                 routeConfiguration("foo").onException(IllegalArgumentException.class).handled(true).to("mock:foo");
             }
         };
-        try {
-            context.addRoutesConfigurations(rcb);
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Route configuration already exists with id: foo", e.getMessage());
-        }
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> context.addRoutesConfigurations(rcb),
+                "Should throw exception");
+
+        assertEquals("Route configuration already exists with id: foo", e.getMessage());
     }
 
 }

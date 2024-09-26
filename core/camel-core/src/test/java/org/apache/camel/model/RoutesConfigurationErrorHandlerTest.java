@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
 
@@ -115,12 +115,9 @@ public class RoutesConfigurationErrorHandlerTest extends ContextTestSupport {
 
         getMockEndpoint("mock:error").expectedBodiesReceived("Bye World");
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"),
+                "Should throw exception");
+
         template.sendBody("direct:start2", "Bye World");
 
         assertMockEndpointsSatisfied();

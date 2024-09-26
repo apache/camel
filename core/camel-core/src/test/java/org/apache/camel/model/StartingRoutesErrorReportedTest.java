@@ -20,14 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class StartingRoutesErrorReportedTest extends ContextTestSupport {
 
     @Test
     public void testInvalidFrom() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -35,16 +35,15 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
-            fail();
-        } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith(
-                    "Failed to create route route1: Route(route1)[From[direct:start?foo=bar] -> [To[mock:result]... because of"));
-        }
+        });
+
+        assertTrue(e.getMessage().startsWith(
+                "Failed to create route route1: Route(route1)[From[direct:start?foo=bar] -> [To[mock:result]... because of"));
     }
 
     @Test
     public void testInvalidTo() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -52,16 +51,15 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
-            fail();
-        } catch (Exception e) {
-            assertTrue(
-                    e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
-        }
+        });
+
+        assertTrue(
+                e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
     }
 
     @Test
     public void testMaskPassword() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -69,16 +67,15 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
-            fail();
-        } catch (Exception e) {
-            assertTrue(
-                    e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
-        }
+        });
+
+        assertTrue(
+                e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
     }
 
     @Test
     public void testInvalidBean() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -86,15 +83,14 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("Failed to create route route3 at: >>> Bean[ref:] <<< in route:"));
-        }
+        }, "Should have thrown exception");
+
+        assertTrue(e.getMessage().startsWith("Failed to create route route3 at: >>> Bean[ref:] <<< in route:"));
     }
 
     @Test
     public void testUnavailableDataFormatOnClasspath() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -102,11 +98,10 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 }
             });
             context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getMessage().contains(
-                    "Ensure that the data format is valid and the associated Camel component is present on the classpath"));
-        }
+        }, "Should have thrown exception");
+
+        assertTrue(e.getMessage().contains(
+                "Ensure that the data format is valid and the associated Camel component is present on the classpath"));
     }
 
     @Override
