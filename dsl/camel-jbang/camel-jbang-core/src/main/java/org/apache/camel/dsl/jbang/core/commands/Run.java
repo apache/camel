@@ -153,8 +153,9 @@ public class Run extends CamelCommand {
             split = ",")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
-    List<String> repositories = new ArrayList<>();
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
     String gav;
@@ -1097,7 +1098,7 @@ public class Run extends CamelCommand {
                     = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
             loggingJson
                     = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            repositories = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, "camel.jbang.repositories", repositories);
+            repositories = answer.getProperty("camel.jbang.repos", repositories);
             mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
             mavenCentralEnabled = "true"

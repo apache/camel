@@ -154,8 +154,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     // Export base options
 
-    @CommandLine.Option(names = { "--repository" }, description = "Additional maven repositories")
-    List<String> repositories = new ArrayList<>();
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
 
     @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
                         split = ",")

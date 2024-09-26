@@ -32,6 +32,8 @@ if the parameter `includeProperties` is set to true.
 
 The `camel trace` command has changed to show tracing status (by default). To dump traced messages use `camel trace --action=dump`.
 
+*Breaking changes only in 4.8.0* The parameter `--repos` has been renamed `--repository` for `run` and `export` commands. It requires to be updated when using from command-line and in `application.properties`. In 4.8.1, the `--repos` has been set back and  `--repository` removed.
+
 === Deprecated Components
 
 The following components that were marked as deprecated:
