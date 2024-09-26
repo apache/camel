@@ -39,6 +39,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import picocli.CommandLine;
@@ -431,10 +432,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private void startPodLogging(String projectName) throws Exception {
         try {
-            PodLogs logsCommand = new PodLogs(getMain());
-            logsCommand.withClient(client());
-            logsCommand.label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
-            logsCommand.doCall();
+            var podLogs = new PodLogs(getMain());
+            podLogs.withClient(client());
+            podLogs.label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            if (!ObjectHelper.isEmpty(namespace)) {
+                podLogs.namespace = namespace;
+            }
+            podLogs.doCall();
         } catch (Exception e) {
             printer().println("Failed to read pod logs - " + e);
             throw e;
@@ -444,10 +448,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void waitForRunningPod(String projectName) {
         if (!quiet) {
             String kubectlCmd = "kubectl get pod";
-            if (namespace != null) {
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            if (!ObjectHelper.isEmpty(namespace)) {
                 kubectlCmd += " -n %s".formatted(namespace);
             }
-            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
             printer().println("Run: " + kubectlCmd);
         }
         client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
@@ -487,6 +491,22 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
         args.add("--file");
         args.add(workingDir);
+
+        if (runtime == RuntimeType.quarkus) {
+
+            if (ClusterType.KUBERNETES.isEqualTo(clusterType)) {
+                if (!ObjectHelper.isEmpty(namespace)) {
+                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
+                }
+            }
+
+        } else {
+
+            if (!ObjectHelper.isEmpty(namespace)) {
+                args.add("-Djkube.namespace=%s".formatted(namespace));
+            }
+        }
+
         args.add("package");
 
         if (!quiet) {
@@ -539,7 +559,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 args.add("-Dquarkus.openshift.deploy=true");
             } else {
                 args.add("-Dquarkus.kubernetes.deploy=true");
-                if (namespace != null) {
+                if (!ObjectHelper.isEmpty(namespace)) {
                     args.add("-Dquarkus.kubernetes.namespace=" + namespace);
                 }
             }
@@ -556,7 +576,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 args.add("-Djkube.%s.push=true".formatted(imageBuilder));
             }
 
-            if (namespace != null) {
+            if (!ObjectHelper.isEmpty(namespace)) {
                 args.add("-Djkube.namespace=%s".formatted(namespace));
             }
 

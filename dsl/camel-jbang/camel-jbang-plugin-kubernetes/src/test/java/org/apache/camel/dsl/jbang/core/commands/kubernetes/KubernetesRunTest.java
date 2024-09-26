@@ -111,6 +111,37 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertTrue(printer.getOutput().endsWith("Unsupported output format 'wrong' (supported: yaml, json)"));
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateKubernetesNamespace(RuntimeType rt) throws Exception {
+        KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+                "--namespace", "custom",
+                "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        var manifest = getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        List<HasMetadata> resources = kubernetesClient.load(manifest).items();
+        Assertions.assertEquals(2, resources.size());
+
+        Deployment deployment = resources.stream()
+                .filter(it -> Deployment.class.isAssignableFrom(it.getClass()))
+                .map(Deployment.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
+
+        Assertions.assertEquals("route", deployment.getMetadata().getName());
+        Assertions.assertEquals("custom", deployment.getMetadata().getNamespace());
+        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
+        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
+        Assertions.assertEquals("route", container.getName());
+        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", container.getImage());
+    }
+
     private KubernetesRun createCommand(String[] files, String... args) {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
