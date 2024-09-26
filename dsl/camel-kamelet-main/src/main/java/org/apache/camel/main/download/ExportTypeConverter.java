@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * During export then we can be more flexible and allow missing property placeholders to resolve to a hardcoded value,
@@ -32,18 +31,23 @@ public class ExportTypeConverter extends TypeConverterSupport {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
         if (PropertyConfigurerSupport.MAGIC_VALUE.equals(value)) {
             // attempt to convert to the given type using different common inputs (boolean, numeric, string)
-            T answer = null;
             if (boolean.class == type || Boolean.class == type) {
-                answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, "true");
+                return (T) Boolean.TRUE;
+            } else if (type == int.class || type == Integer.class) {
+                return (T) Integer.valueOf("1");
+            } else if (type == long.class || type == Long.class) {
+                return (T) Long.valueOf("1");
+            } else if (type == double.class || type == Double.class) {
+                return (T) Double.valueOf("1");
+            } else if (type == float.class || type == Float.class) {
+                return (T) Float.valueOf("1");
+            } else if (type == short.class || type == Short.class) {
+                return (T) Short.valueOf("1");
+            } else if (type == byte.class || type == Byte.class) {
+                return (T) Byte.valueOf("0");
+            } else if (type == String.class) {
+                return (T) PropertyConfigurerSupport.MAGIC_VALUE;
             }
-            if (answer == null && ObjectHelper.isNumericType(type)) {
-                answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, "1");
-            }
-            if (answer == null && type == String.class) {
-                answer = exchange.getContext().getTypeConverter().tryConvertTo(type, exchange,
-                        PropertyConfigurerSupport.MAGIC_VALUE);
-            }
-            return answer;
         }
         return null;
     }

@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.dsl.support.SourceLoader;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -410,7 +411,17 @@ public class KameletMain extends MainCommandLineSupport {
             addInitialProperty("camel.component.properties.ignore-missing-location", "true");
             PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
             pc.setPropertiesParser(new ExportPropertiesParser());
-            answer.getTypeConverterRegistry().addFallbackTypeConverter(new ExportTypeConverter(), false);
+
+            // override default type converters with our export converter that is more flexible during exporting
+            ExportTypeConverter ec = new ExportTypeConverter();
+            answer.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
+            answer.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
+            answer.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
+            answer.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
+            answer.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
+            answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
+            answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
+            answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
         }
 
         boolean prompt = "true".equals(getInitialProperties().get("camel.jbang.prompt"));
