@@ -38,8 +38,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Receives events from ClickUp webhooks.
  */
-@UriEndpoint(firstVersion = "4.9.0-SNAPSHOT", scheme = "clickup", title = "ClickUp", syntax = "clickup:workspaceId",
-             category = { Category.CLOUD })
+@UriEndpoint(
+             firstVersion = "4.9.0-SNAPSHOT",
+             scheme = "clickup",
+             title = "ClickUp",
+             syntax = "clickup:workspaceId",
+             category = { Category.CLOUD },
+             consumerOnly = true)
 public class ClickUpEndpoint extends DefaultEndpoint implements WebhookCapableEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClickUpEndpoint.class);

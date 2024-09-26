@@ -34,8 +34,6 @@ public class ClickUpEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "webhooksecret":
         case "webhookSecret": target.getConfiguration().setWebhookSecret(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -56,8 +54,6 @@ public class ClickUpEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "lazystartproducer":
-        case "lazyStartProducer": return boolean.class;
         case "webhooksecret":
         case "webhookSecret": return java.lang.String.class;
         default: return null;
@@ -79,8 +75,6 @@ public class ClickUpEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "lazystartproducer":
-        case "lazyStartProducer": return target.isLazyStartProducer();
         case "webhooksecret":
         case "webhookSecret": return target.getConfiguration().getWebhookSecret();
         default: return null;

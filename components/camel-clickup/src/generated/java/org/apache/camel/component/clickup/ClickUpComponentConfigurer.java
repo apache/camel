@@ -27,8 +27,6 @@ public class ClickUpComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -40,8 +38,6 @@ public class ClickUpComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "lazystartproducer":
-        case "lazyStartProducer": return boolean.class;
         default: return null;
         }
     }
@@ -54,8 +50,6 @@ public class ClickUpComponentConfigurer extends PropertyConfigurerSupport implem
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "lazystartproducer":
-        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

@@ -29,8 +29,13 @@
 
     <artifactId>camel-clickup</artifactId>
     <packaging>jar</packaging>
+
     <name>Camel :: ClickUp</name>
     <description>Camel ClickUp support</description>
+
+    <properties>
+        <firstVersion>4.9.0-SNAPSHOT</firstVersion>
+    </properties>
 
     <dependencies>
         <!-- Apache Camel -->

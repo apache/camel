@@ -6,7 +6,7 @@
 :since: 4.9.0-SNAPSHOT
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only consumer is supported
 
 *Since Camel {since}*
 

@@ -23,14 +23,13 @@ public class ClickUpEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(8);
         props.add("authorizationToken");
         props.add("baseUrl");
         props.add("bridgeErrorHandler");
         props.add("events");
         props.add("exceptionHandler");
         props.add("exchangePattern");
-        props.add("lazyStartProducer");
         props.add("webhookSecret");
         props.add("workspaceId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
