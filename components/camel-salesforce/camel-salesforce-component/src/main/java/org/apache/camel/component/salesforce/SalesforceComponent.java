@@ -145,7 +145,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry"
                             + " with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be"
                             + " a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app.",
-              label = "common,security", secret = true)
+              label = "common,security")
     private KeyStoreParameters keystore;
 
     @Metadata(description = "Value to use for the Audience claim (aud) when using OAuth JWT flow. If not set, the login URL will be used, which is"

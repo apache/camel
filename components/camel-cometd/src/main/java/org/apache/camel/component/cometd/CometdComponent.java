@@ -67,7 +67,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
     private String sslKeyPassword;
     @Metadata(label = "security", secret = true)
     private String sslPassword;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security")
     private String sslKeystore;
     @Metadata(label = "security")
     private SecurityPolicy securityPolicy;
