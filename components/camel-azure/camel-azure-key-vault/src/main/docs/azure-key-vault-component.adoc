@@ -22,7 +22,8 @@ Prerequisites
 You must have a valid Windows Azure Key Vault account. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
-== URI Format
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -34,6 +35,12 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 </dependency>
 ------------------------------------------------------------
 
+== URI Format
+
+[source,text]
+------------------------------
+azure-key-vault://vaultName[?options]
+------------------------------
 
 // component-configure options: START
 
