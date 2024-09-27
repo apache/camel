@@ -52,6 +52,7 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
@@ -258,7 +259,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      *         the value of the system property {@link #SUSPEND_MODE_SYSTEM_PROP_NAME}, {@code false} by default.
      */
     private static boolean resolveSuspendMode() {
-        final String value = System.getenv(SUSPEND_MODE_ENV_VAR_NAME);
+        final String value = IOHelper.lookupEnvironmentVariable(SUSPEND_MODE_ENV_VAR_NAME);
         return value == null ? Boolean.getBoolean(SUSPEND_MODE_SYSTEM_PROP_NAME) : Boolean.parseBoolean(value);
     }
 

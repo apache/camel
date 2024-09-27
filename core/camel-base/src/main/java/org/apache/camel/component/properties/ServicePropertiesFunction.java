@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.util.Locale;
 
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -57,8 +58,8 @@ public class ServicePropertiesFunction implements PropertiesFunction {
             key = key.toUpperCase(Locale.ENGLISH).replace('-', '_');
 
             // a service should have both the host and port defined
-            String host = System.getenv(key + HOST_PREFIX);
-            String port = System.getenv(key + PORT_PREFIX);
+            String host = IOHelper.lookupEnvironmentVariable(key + HOST_PREFIX);
+            String port = IOHelper.lookupEnvironmentVariable(key + PORT_PREFIX);
 
             if (host != null && port != null) {
                 return host + ":" + port;

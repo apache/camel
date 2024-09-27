@@ -111,7 +111,7 @@ public final class MainHelper {
     public static Optional<String> lookupPropertyFromSysOrEnv(String name) {
         String answer = System.getProperty(name);
         if (answer == null) {
-            answer = System.getenv(toEnvVar(name));
+            answer = IOHelper.lookupEnvironmentVariable(name);
         }
 
         return Optional.ofNullable(answer);

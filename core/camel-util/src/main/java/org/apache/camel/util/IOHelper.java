@@ -668,6 +668,15 @@ public final class IOHelper {
 
     /**
      * Lookup the OS environment variable in a safe manner by using upper case keys and underscore instead of dash.
+     *
+     * At first lookup attempt is made without considering camelCase keys. The second lookup is converting camelCase to
+     * underscores.
+     *
+     * For example given an ENV variable in either format: - CAMEL_KAMELET_AWS_S3_SOURCE_BUCKETNAMEORARN=myArn -
+     * CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn
+     *
+     * Then the following keys can lookup both ENV formats above: - camel.kamelet.awsS3Source.bucketNameOrArn -
+     * camel.kamelet.aws-s3-source.bucketNameOrArn - camel.kamelet.aws-s3-source.bucket-name-or-arn
      */
     public static String lookupEnvironmentVariable(String key) {
         // lookup OS env with upper case key
@@ -677,6 +686,19 @@ public final class IOHelper {
         if (value == null) {
             // some OS do not support dashes in keys, so replace with underscore
             String normalizedKey = upperKey.replace('-', '_');
+
+            // and replace dots with underscores so keys like my.key are
+            // translated to MY_KEY
+            normalizedKey = normalizedKey.replace('.', '_');
+
+            value = System.getenv(normalizedKey);
+        }
+        if (value == null) {
+            // camelCase keys should use underscore as separator
+            String caseKey = StringHelper.camelCaseToDash(key);
+            caseKey = caseKey.toUpperCase();
+            // some OS do not support dashes in keys, so replace with underscore
+            String normalizedKey = caseKey.replace('-', '_');
 
             // and replace dots with underscores so keys like my.key are
             // translated to MY_KEY
