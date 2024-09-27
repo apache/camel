@@ -98,9 +98,7 @@ class ExportSpringBoot extends Export {
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
         File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
-        srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
-        srcKameletsResourcesDir.mkdirs();
         // copy application properties files
         copyApplicationPropertiesFiles(srcResourcesDir);
 
@@ -348,7 +346,8 @@ class ExportSpringBoot extends Export {
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
 
-        if (openapi != null) {
+        boolean http = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+        if (openapi != null && !http) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");
         }

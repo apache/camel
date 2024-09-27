@@ -361,7 +361,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+        // are we using any of the official ASF Kamelets
         boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
+        // are we using custom kamelets
+        boolean customKamelets
+                = lines.stream().anyMatch(l -> (l.startsWith("camel.main.routesIncludePattern=") && l.contains(".kamelet.yaml"))
+                        || l.startsWith("camel.component.kamelet.location=") && l.contains(".kamelet.yaml"));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
                 String v = StringHelper.after(line, "dependency=");
@@ -370,25 +375,32 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
                         || v.contains("org.apache.camel:camel-java-joor-dsl")
                         || v.contains("camel-endpointdsl")
-                        || !kamelets && v.contains("org.apache.camel:camel-kamelet");
+                        || !(kamelets && !customKamelets) && v.contains("org.apache.camel:camel-kamelet");
                 if (!skip) {
                     answer.add(v);
                 }
-                if (kamelets && v != null && v.contains("org.apache.camel:camel-kamelet")) {
-                    // include yaml-dsl and kamelet catalog if we use kamelets
+                if ((kamelets || customKamelets) && v != null && v.contains("org.apache.camel:camel-kamelet")) {
+                    // kamelets need yaml-dsl
                     answer.add("camel:yaml-dsl");
-                    answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                    answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    if (kamelets) {
+                        // include JARs for official ASF kamelets
+                        answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                        answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    }
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
                 if (!deps.isEmpty()) {
                     for (String d : deps.split(",")) {
                         answer.add(d.trim());
-                        if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
-                            // include yaml-dsl and kamelet catalog if we use kamelets
+                        if ((kamelets || customKamelets) && d.contains("org.apache.camel:camel-kamelet")) {
+                            // kamelets need yaml-dsl
                             answer.add("camel:yaml-dsl");
-                            answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                            if (kamelets) {
+                                // include JARs for official ASF kamelets
+                                answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                                answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                            }
                         }
                     }
                 }
@@ -425,16 +437,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                 // is it a kamelet?
                                 ext = FileUtil.onlyExt(r, false);
                                 if ("kamelet.yaml".equals(ext)) {
-                                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                                    answer.add("camel:kamelet");
+                                    if (kamelets) {
+                                        answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            } else if (kamelets && line.startsWith("camel.component.kamelet.location=")) {
-                // include kamelet catalog if we use kamelets
-                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+            } else if ((kamelets || customKamelets) && line.startsWith("camel.component.kamelet.location=")) {
+                // kamelets need yaml-dsl
+                answer.add("camel:kamelet");
+                answer.add("camel:yaml-dsl");
+                if (kamelets) {
+                    // include JARs for official ASF kamelets
+                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                }
             } else if (line.startsWith("modeline=")) {
                 answer.add("camel:dsl-modeline");
             }
@@ -499,16 +519,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     if (skip) {
                         continue;
                     }
+                    if ("github".equals(scheme)) {
+                        continue;
+                    }
                     String ext = FileUtil.onlyExt(f, true);
+                    String ext2 = FileUtil.onlyExt(f, false);
+                    if (ext == null) {
+                        continue;
+                    }
                     boolean java = "java".equals(ext);
-                    boolean camel = "camel.main.routesIncludePattern".equals(k);
                     boolean kamelet = "camel.component.kamelet.location".equals(k)
-                            || "camel.jbang.localKameletDir".equals(k);
+                            || "camel.jbang.localKameletDir".equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
+                    boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
                     boolean jkube = "camel.jbang.jkubeFiles".equals(k);
                     boolean web = "html".equals(ext) || "js".equals(ext) || "css".equals(ext) || "jpeg".equals(ext)
                             || "jpg".equals(ext) || "png".equals(ext) || "ico".equals(ext);
                     File srcWeb = new File(srcResourcesDir, "META-INF/resources");
-                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : web ? srcWeb : srcResourcesDir;
+                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
+                            : web ? srcWeb : srcResourcesDir;
                     File source = new File(f);
                     File out;
                     if (source.isDirectory()) {
@@ -518,17 +546,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     if (!java) {
                         if (kamelet) {
-                            out = srcKameletsResourcesDir;
+                            out.getParentFile().mkdirs();
                             safeCopy(source, out, true);
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
                             f = f.replace(".jkube.yaml", ".yaml");
                             f = f.replace(".jkube.yml", ".yml");
                             out = new File(srcCamelResourcesDir.getParentFile().getParentFile(), "jkube/" + f);
-                            out.mkdirs();
+                            out.getParentFile().mkdirs();
                             safeCopy(source, out, true);
                         } else {
-                            out.mkdirs();
+                            out.getParentFile().mkdirs();
                             safeCopy(source, out, true);
                         }
                     } else {

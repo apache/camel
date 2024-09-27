@@ -83,10 +83,6 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
         // special for kamelet as we want to track loading kamelets
         RoutesBuilderLoader loader;
         if (KameletRoutesBuilderLoader.EXTENSION.equals(extension)) {
-            if (!downloader.alreadyOnClasspath("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion)) {
-                downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion);
-            }
-
             loader = new KnownKameletRoutesBuilderLoader(kameletsVersion);
             CamelContextAware.trySetCamelContext(loader, getCamelContext());
             // allows for custom initialization
