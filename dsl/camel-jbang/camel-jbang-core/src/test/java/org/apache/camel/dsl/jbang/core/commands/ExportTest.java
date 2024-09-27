@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -52,7 +52,7 @@ class ExportTest {
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        //        FileUtil.removeDir(workingDir);
+        FileUtil.removeDir(workingDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
