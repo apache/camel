@@ -210,6 +210,9 @@ class ExportQuarkus extends Export {
         if (s.contains(":")) {
             s = StringHelper.after(s, ":");
         }
+        if (s.contains(File.separator)) {
+            s = StringHelper.afterLast(s, File.separator);
+        }
         s = s.replace(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/", "");
         return s;
     }
