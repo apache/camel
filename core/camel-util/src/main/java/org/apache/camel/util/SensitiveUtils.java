@@ -55,6 +55,7 @@ public final class SensitiveUtils {
                     "emailaddress",
                     "httpproxypassword",
                     "keystore",
+                    "keystorePassword",
                     "login",
                     "oauthclientid",
                     "oauthclientsecret",
@@ -134,6 +135,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qhttpproxypassword\\E"
                                                     + "|\\Qkeystore\\E"
+                                                    + "|\\QkeystorePassword\\E"
                                                     + "|\\Qlogin\\E"
                                                     + "|\\Qoauthclientid\\E"
                                                     + "|\\Qoauthclientsecret\\E"
