@@ -6,8 +6,8 @@
         <version>4.12.0</version>
     </extension>
     <extension>
-        <groupId>kr.motd.maven</groupId>
-        <artifactId>os-maven-plugin</artifactId>
-        <version>1.7.1</version>
+        <groupId>com.tisonkun.os</groupId>
+        <artifactId>os-detector-maven-plugin</artifactId>
+        <version>0.4.0</version>
     </extension>
 </extensions>
