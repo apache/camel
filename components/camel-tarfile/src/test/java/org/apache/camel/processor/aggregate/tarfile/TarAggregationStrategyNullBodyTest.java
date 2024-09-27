@@ -20,14 +20,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.IOHelper;
@@ -37,83 +33,80 @@ import org.apache.logging.log4j.core.util.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
+class TarAggregationStrategyNullBodyTest extends CamelTestSupport {
 
     @BeforeEach
-    public void cleanOutputDirectory() {
+    public void cleanOutputDir() {
         TestSupport.deleteDirectory("target/out");
     }
 
     @Test
-    void testNormal() throws Exception {
-        doTest("A", "B", "C");
+    void testNullBodyLast() throws Exception {
+        template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:start", "Hello again");
+        template.sendBody("direct:start", null);
+        assertTarFileContains(2);
     }
 
     @Test
-    void testEmptyFirst() throws Exception {
-        doTest("", "A");
+    void testNullBodyFirst() throws Exception {
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:start", "Hello again");
+        assertTarFileContains(2);
     }
 
     @Test
-    void testEmptyOnly() throws Exception {
-        doTest("");
+    void testNullBodyMiddle() throws Exception {
+        template.sendBody("direct:start", "Hello");
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Hello again");
+        assertTarFileContains(2);
     }
 
     @Test
-    void testEmptyMiddle() throws Exception {
-        doTest("Start", "", "", "End");
+    void testNullBodiesOnly() throws Exception {
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
+        assertTarFileContains(0);
     }
 
-    public void doTest(String... messages) throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregateToTarEntry");
-        mock.expectedMessageCount(1);
+    @Test
+    void testTwoNullBodies() throws Exception {
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
+        template.sendBody("direct:start", "Hello");
+        assertTarFileContains(1);
+    }
 
-        StringBuilder input = new StringBuilder();
-        int nonEmptyFile = 0;
-        for (String m : messages) {
-            input.append("#").append(m);
-            if (!m.isEmpty()) {
-                nonEmptyFile++;
-            }
-        }
-        if (input.toString().endsWith("#")) {
-            input.append("#");
-        }
-
-        template.sendBody("direct:start", input.toString());
-
-        MockEndpoint.assertIsSatisfied(context);
-
+    public void assertTarFileContains(int filesInTarExpected) throws Exception {
+        await("Should be a file in target/out directory").until(() -> {
+            File[] files = new File("target/out").listFiles();
+            return files != null && files.length > 0;
+        });
         File[] files = new File("target/out").listFiles();
-        if (files != null) {
-            assertEquals(1, files.length, "Should only be one file in target/out directory");
-            Map<String, String> tar = readTar(files[0]);
-            assertEquals(nonEmptyFile, tar.size(), "Tar file " + tar + " should contain " + nonEmptyFile + " files");
-            Iterator<Entry<String, String>> i = tar.entrySet().iterator();
-            for (int n = 0; n < messages.length; n++) {
-                if (!messages[n].isEmpty()) {
-                    Map.Entry<String, String> entry = i.next();
-                    assertEquals(Integer.toString(n), entry.getKey(), "Tar file should contain entry named " + n);
-                    assertEquals(messages[n], entry.getValue(), "Tar entry " + n + " content is wrong");
-                }
-            }
-        }
+        assertEquals(1, files.length, "Should only be one file in target/out directory");
+        Map<String, String> tar = readTar(files[0]);
+        assertEquals(filesInTarExpected, tar.size());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // @formatter:off
                 from("direct:start")
-                    .split(body().tokenize("#"), new TarAggregationStrategy(false, true))
-                    .setHeader(Exchange.FILE_NAME, simple("${exchangeProperty.CamelSplitIndex}"))
-                .end()
-                .to("file:target/out")
-                .to("mock:aggregateToTarEntry");
+                        .aggregate(new TarAggregationStrategy(false))
+                        .constant(true)
+                        .completionSize(3)
+                        .eagerCheckCompletion()
+                        .to("file:target/out")
+                        .to("mock:aggregateToTarEntry");
                 // @formatter:on
             }
         };
