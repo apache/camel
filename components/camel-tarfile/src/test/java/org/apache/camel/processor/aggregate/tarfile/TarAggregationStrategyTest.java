@@ -25,27 +25,28 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TarAggregationStrategyTest extends CamelTestSupport {
+class TarAggregationStrategyTest extends CamelTestSupport {
 
     private static final int EXPECTED_NO_FILES = 3;
 
     private TarAggregationStrategy tar = new TarAggregationStrategy();
 
-    @Override
-    public void doPreSetup() {
+    @BeforeEach
+    public void cleanOutputDirectories() {
         tar.setParentDir("target/temp");
         deleteDirectory("target/temp");
         deleteDirectory("target/out");
     }
 
     @Test
-    public void testSplitter() throws Exception {
+    void testSplitter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregateToTarEntry");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");

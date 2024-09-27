@@ -25,10 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class TarFileSplitIteratorCorruptTest extends CamelTestSupport {
+class TarFileSplitIteratorCorruptTest extends CamelTestSupport {
 
     @Test
-    public void testTarFileUnmarshal() throws Exception {
+    void testTarFileUnmarshal() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalStateException.class);
