@@ -538,7 +538,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
      * key entry.
      */
     @Metadata(description = "Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry.",
-              label = "security", secret = true)
+              label = "security")
     public void setKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
     }
