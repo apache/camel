@@ -18,8 +18,10 @@ package org.apache.camel.main.download;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * During export then we can be more flexible and allow missing property placeholders to resolve to a hardcoded value,
@@ -47,6 +49,26 @@ public class ExportTypeConverter extends TypeConverterSupport {
                 return (T) Byte.valueOf("0");
             } else if (type == String.class) {
                 return (T) PropertyConfigurerSupport.MAGIC_VALUE;
+            }
+        } else {
+            String s = value.toString();
+            // regular values so convert normally
+            if (boolean.class == type || Boolean.class == type) {
+                return (T) ObjectHelper.toBoolean(s);
+            } else if (type == int.class || type == Integer.class) {
+                return (T) ObjectConverter.toInteger(s);
+            } else if (type == long.class || type == Long.class) {
+                return (T) ObjectConverter.toLong(s);
+            } else if (type == double.class || type == Double.class) {
+                return (T) ObjectConverter.toDouble(s);
+            } else if (type == float.class || type == Float.class) {
+                return (T) ObjectConverter.toFloat(s);
+            } else if (type == short.class || type == Short.class) {
+                return (T) ObjectConverter.toShort(s);
+            } else if (type == byte.class || type == Byte.class) {
+                return (T) ObjectConverter.toByte(s);
+            } else if (type == String.class) {
+                return (T) s;
             }
         }
         return null;
