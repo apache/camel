@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -53,7 +52,7 @@ class ExportTest {
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        FileUtil.removeDir(workingDir);
+        //        FileUtil.removeDir(workingDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -144,6 +143,84 @@ class ExportTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportCustomKamelet(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/route.yaml", "src/test/resources/user-source.kamelet.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        }
+
+        File f = workingDir.toPath().resolve("src/main/resources/kamelets/user-source.kamelet.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+        f = workingDir.toPath().resolve("src/main/resources/camel/route.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportOfficialKamelet(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "src/test/resources/counter.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions
+                    .assertTrue(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions
+                    .assertTrue(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions
+                    .assertTrue(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        }
+
+        File f = workingDir.toPath().resolve("src/main/resources/camel/counter.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+    }
+
     private Model readMavenModel() throws Exception {
         File f = workingDir.toPath().resolve("pom.xml").toFile();
         Assertions.assertTrue(f.isFile(), "Not a pom.xml file: " + f);
@@ -161,6 +238,9 @@ class ExportTest {
         boolean found = false;
         for (int i = 0; i < deps.size() && !found; i++) {
             Dependency d = deps.get(i);
+            if (version == null) {
+                d.setVersion(null);
+            }
             found = toGAV(d).equals(toGAV(dep));
         }
         return found;
