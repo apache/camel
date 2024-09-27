@@ -137,13 +137,13 @@ public class TarAggregationStrategy implements AggregationStrategy {
         File tarFile;
         Exchange answer = oldExchange;
 
+        boolean isFirstTimeInAggregation = oldExchange == null;
         // Guard against empty new exchanges
-        if (newExchange == null) {
+        if (newExchange.getIn().getBody() == null && !isFirstTimeInAggregation) {
             return oldExchange;
         }
 
-        // First time for this aggregation
-        if (oldExchange == null) {
+        if (isFirstTimeInAggregation) {
             try {
                 tarFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
                 LOG.trace("Created temporary file: {}", tarFile);
@@ -157,25 +157,23 @@ public class TarAggregationStrategy implements AggregationStrategy {
         }
 
         Object body = newExchange.getIn().getBody();
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof WrappedFile wrappedFile) {
+            body = wrappedFile.getFile();
         }
 
-        if (body instanceof File) {
-            try {
-                File appendFile = (File) body;
-                // do not try to append empty files
-                if (appendFile.length() > 0) {
-                    String entryName = preserveFolderStructure
-                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
-                            : newExchange.getIn().getMessageId();
-                    addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? entryName : null);
-                }
-            } catch (Exception e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
-            }
+        if (body instanceof File appendFile) {
+            addFileToTar(newExchange, appendFile, tarFile);
         } else {
-            // Handle all other messages
+            appendIncomingBodyAsBytesToTar(newExchange, tarFile);
+        }
+        GenericFile<File> genericFile = FileConsumer.asGenericFile(
+                tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
+        genericFile.bindToExchange(answer);
+        return answer;
+    }
+
+    private void appendIncomingBodyAsBytesToTar(Exchange newExchange, File tarFile) {
+        if (newExchange.getIn().getBody() != null) {
             try {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
                 // do not try to append empty data
@@ -189,10 +187,20 @@ public class TarAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
-        GenericFile<File> genericFile = FileConsumer.asGenericFile(
-                tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
-        genericFile.bindToExchange(answer);
-        return answer;
+    }
+
+    private void addFileToTar(Exchange newExchange, File appendFile, File tarFile) {
+        try {
+            // do not try to append empty files
+            if (appendFile.length() > 0) {
+                String entryName = preserveFolderStructure
+                        ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                        : newExchange.getIn().getMessageId();
+                addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? entryName : null);
+            }
+        } catch (Exception e) {
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -205,13 +213,13 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
     private void addFileToTar(File source, File file, String fileName) throws IOException, ArchiveException {
         File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
-        tmpTar.delete();
+        Files.delete(tmpTar.toPath());
         if (!source.renameTo(tmpTar)) {
             throw new IOException("Could not make temp file (" + source.getName() + ")");
         }
 
         try (FileInputStream fis = new FileInputStream(tmpTar)) {
-            try (TarArchiveInputStream tin = (TarArchiveInputStream) new ArchiveStreamFactory()
+            try (TarArchiveInputStream tin = new ArchiveStreamFactory()
                     .createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
                 try (TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source))) {
                     tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
@@ -250,13 +258,13 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
     private void addEntryToTar(File source, String entryName, byte[] buffer, int length) throws IOException, ArchiveException {
         File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
-        tmpTar.delete();
+        Files.delete(tmpTar.toPath());
         if (!source.renameTo(tmpTar)) {
             throw new IOException("Cannot create temp file: " + source.getName());
         }
 
         try (FileInputStream fis = new FileInputStream(tmpTar)) {
-            try (TarArchiveInputStream tin = (TarArchiveInputStream) new ArchiveStreamFactory()
+            try (TarArchiveInputStream tin = new ArchiveStreamFactory()
                     .createArchiveInputStream(ArchiveStreamFactory.TAR, fis)) {
                 try (TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source))) {
                     tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
