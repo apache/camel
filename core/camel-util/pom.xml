@@ -266,6 +266,7 @@
                             <environmentVariables>
                                 <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
+                                <CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN>mys3arn</CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN>
                             </environmentVariables>
                         </configuration>
                     </plugin>

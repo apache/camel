@@ -32,6 +32,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 
 public final class LanguageHelper {
@@ -169,18 +170,7 @@ public final class LanguageHelper {
      * @return      the environment variable value
      */
     public static String sysenv(String name) {
-        String answer = null;
-        if (name != null) {
-            // lookup OS env with upper case key
-            name = name.toUpperCase();
-            answer = System.getenv(name);
-            // some OS do not support dashes in keys, so replace with underscore
-            if (answer == null) {
-                String noDashKey = name.replace('-', '_');
-                answer = System.getenv(noDashKey);
-            }
-        }
-        return answer;
+        return IOHelper.lookupEnvironmentVariable(name);
     }
 
     public static String escapeQuotes(String text) {

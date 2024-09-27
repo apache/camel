@@ -49,7 +49,7 @@ public final class FilePathResolver {
             int pos = fun.indexOf("${env:");
             if (pos != -1) {
                 String key = fun.substring(pos + 6);
-                String value = System.getenv(key);
+                String value = IOHelper.lookupEnvironmentVariable(key);
                 if (value != null) {
                     path = path.replace("${env:" + key + "}", value);
                 }
@@ -57,7 +57,7 @@ public final class FilePathResolver {
             pos = fun.indexOf("${env.");
             if (pos != -1) {
                 String key = fun.substring(pos + 6);
-                String value = System.getenv(key);
+                String value = IOHelper.lookupEnvironmentVariable(key);
                 if (value != null) {
                     path = path.replace("${env." + key + "}", value);
                 }
