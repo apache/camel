@@ -102,9 +102,7 @@ class ExportCamelMain extends Export {
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
         File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
-        srcCamelResourcesDir.mkdirs();
         File srcKameletsResourcesDir = new File(BUILD_DIR, "src/main/resources/kamelets");
-        srcKameletsResourcesDir.mkdirs();
         // copy application properties files
         copyApplicationPropertiesFiles(srcResourcesDir);
         // copy source files
@@ -350,17 +348,19 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
 
-        if (openapi != null) {
+        boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));
+        if (openapi != null && !main) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http-main");
         }
-
         // if platform-http is included then we need to switch to use camel-platform-http-main as implementation
-        if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-platform-http-main"))) {
+        if (!main && answer.stream().anyMatch(s -> s.contains("camel-platform-http"))) {
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            main = true;
+        }
+        if (main) {
             answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http:"));
             answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http-vertx:"));
-            // version does not matter
-            answer.add("mvn:org.apache.camel:camel-platform-http-main:1.0-SNAPSHOT");
         }
 
         return answer;
