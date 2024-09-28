@@ -332,13 +332,16 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.3.0</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.3.0</maven-archetype-packaging-version>
-        <maven-owasp-plugin-version>10.0.4</maven-owasp-plugin-version>
+        <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
+        <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.10.0</maven-javadoc-plugin-version>
+        <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
+        <maven-owasp-plugin-version>10.0.4</maven-owasp-plugin-version>
         <maven-plugin-plugin-version>3.15.0</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.9.0</maven-plugin-annotations-version>
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
-        <!-- resources plugin needed by Camel maven archetypes -->
+        <maven-project-version>2.2.1</maven-project-version>
         <maven-resources-plugin-version>3.3.1</maven-resources-plugin-version>
         <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
         <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
@@ -400,6 +403,10 @@
         <picocli-version>4.7.6</picocli-version>
         <pinecone-client-version>1.2.2</pinecone-client-version>
         <plc4x-version>0.12.0</plc4x-version>
+        <plexus-build-api-version>1.2.0</plexus-build-api-version>
+        <plexus-container-default-version>2.1.1</plexus-container-default-version>
+        <plexus-utils-version>4.0.2</plexus-utils-version>
+        <plexus-xml-version>4.0.4</plexus-xml-version>
         <pooled-jms-version>3.1.6</pooled-jms-version>
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
@@ -2893,12 +2900,193 @@
                 <type>pom</type>
             </dependency>
 
+
+            <!--
+            If we import the grpc-bom, we get a lot of duplicate dependencies
+            and conflicts between BOMs.  The only way is to manually manage
+            those dependencies.
+            
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-bom</artifactId>
                 <version>${grpc-version}</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-all</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-alts</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-android</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-api</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-auth</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-benchmarks</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-binder</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-census</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-context</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-core</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-cronet</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-gcp-csm-observability</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-gcp-observability</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-googleapis</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-grpclb</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-inprocess</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-interop-testing</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty-shaded</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-okhttp</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-opentelemetry</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf-lite</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-rls</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-services</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-servlet</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-servlet-jakarta</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-testing</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-testing-proto</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-util</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-xds</artifactId>
+                <version>${grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>protoc-gen-grpc-java</artifactId>
+                <version>${grpc-version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${google-cloud-bom-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
@@ -3002,6 +3190,168 @@
                 <version>${bytebuddy-version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-nop</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-repository-metadata</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-toolchain</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact-manager</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-compat</artifactId>
+                <version>${maven-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-annotations-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-descriptor</artifactId>
+                <version>${maven-maven-plugin-descriptor-version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-project</artifactId>
+                <version>${maven-project-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-dependency-tree</artifactId>
+                <version>${maven-dependency-tree-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-artifact-transfer</artifactId>
+                <version>${maven-artifact-transfer-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.reporting</groupId>
+                <artifactId>maven-reporting-api</artifactId>
+                <version>${maven-reporting-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.reporting</groupId>
+                <artifactId>maven-reporting-impl</artifactId>
+                <version>${maven-reporting-impl-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-api</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.resolver</groupId>
+                <artifactId>maven-resolver-util</artifactId>
+                <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-container-default</artifactId>
+                <version>${plexus-container-default-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-xml</artifactId>
+                <version>${plexus-xml-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-xml-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-build-api</artifactId>
+                <version>${plexus-build-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-archiver</artifactId>
+                <version>${maven-archiver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-archiver</artifactId>
+                <version>${plexus-archiver-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
