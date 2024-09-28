@@ -40,6 +40,8 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
+        context.getRouteController().startAllRoutes();
+
         // wait a bit to give the filesystem time to complete the operation before checking the result
         mock.assertIsSatisfied(1000L);
     }
@@ -58,6 +60,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello London");
 
         template.sendBodyAndHeader(fileUri("reports"), "Hello London", Exchange.FILE_NAME, "london.txt");
+        context.getRouteController().startAllRoutes();
 
         mock.assertIsSatisfied();
 
@@ -72,7 +75,8 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("reports?move=../done/${file:name}&initialDelay=0&delay=10")).convertBodyTo(String.class)
+                from(fileUri("reports?move=../done/${file:name}&initialDelay=0&delay=10")).autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:report");
             }
         };
