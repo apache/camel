@@ -68,7 +68,7 @@ public class HttpHeaderTest extends BaseJettyTest {
             public void configure() {
                 from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
                         .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
-                        .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.0"))
+                        .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.1"))
                         .to("http://localhost:{{port}}/myapp/mytest");
 
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
@@ -76,7 +76,7 @@ public class HttpHeaderTest extends BaseJettyTest {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
                         ServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
                         assertNotNull(request);
-                        assertEquals("HTTP/1.0", request.getProtocol(), "Get a wong http protocol version");
+                        assertEquals("HTTP/1.1", request.getProtocol(), "Get a wong http protocol version");
                         for (Entry<String, Object> entry : headers.entrySet()) {
                             if ("SOAPAction".equals(entry.getKey())
                                     && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {
