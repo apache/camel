@@ -90,8 +90,8 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
         authCache.put(new HttpHost("localhost", 8083), basicAuth);
 
         HttpClientContext context = HttpClientContext.create();
-        context.setAuthCache(authCache);
-        context.setCredentialsProvider(provider);
+        context.setAttribute(HttpClientContext.AUTH_CACHE, authCache);
+        context.setAttribute(HttpClientContext.CREDS_PROVIDER, provider);
 
         return context;
     }

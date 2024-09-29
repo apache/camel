@@ -83,7 +83,7 @@ public abstract class WordpressMockServerTestSupport {
         usersSingleUpdateRequestHandlers.put("DELETE", "/data/users/delete.json");
 
         // @formatter:off
-        return ServerBootstrap.bootstrap().setListenerPort(port)
+        return ServerBootstrap.bootstrap().setCanonicalHostName("localhost").setListenerPort(port)
                 .register("/wp/v2/posts", new WordpressServerHttpRequestHandler(postsListCreateRequestHandlers))
                 .register("/wp/v2/posts/*", new WordpressServerHttpRequestHandler(postsSingleUpdateRequestHandlers))
                 .register("/wp/v2/users", new WordpressServerHttpRequestHandler(usersListCreateRequestHandlers))
