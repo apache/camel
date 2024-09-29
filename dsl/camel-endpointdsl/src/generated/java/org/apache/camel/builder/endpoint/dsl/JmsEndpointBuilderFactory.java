@@ -2468,7 +2468,8 @@ public interface JmsEndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -2485,7 +2486,8 @@ public interface JmsEndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(String waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -5024,7 +5026,8 @@ public interface JmsEndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -5041,7 +5044,8 @@ public interface JmsEndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(String waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -6751,7 +6755,8 @@ public interface JmsEndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -6768,7 +6773,8 @@ public interface JmsEndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(String waitForProvisionCorrelationToBeUpdatedCounter) {
