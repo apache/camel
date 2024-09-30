@@ -819,6 +819,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-fury</artifactId>
+        <version>4.9.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-geocoder</artifactId>
         <version>4.9.0-SNAPSHOT</version>
       </dependency>

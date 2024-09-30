@@ -478,6 +478,9 @@ public class ModelWriter extends BaseWriter {
     public void writeFlatpackDataFormat(FlatpackDataFormat def) throws IOException {
         doWriteFlatpackDataFormat("flatpack", def);
     }
+    public void writeFuryDataFormat(FuryDataFormat def) throws IOException {
+        doWriteFuryDataFormat("fury", def);
+    }
     public void writeGrokDataFormat(GrokDataFormat def) throws IOException {
         doWriteGrokDataFormat("grok", def);
     }
@@ -2544,6 +2547,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("parserFactoryRef", def.getParserFactoryRef());
         doWriteAttribute("textQualifier", def.getTextQualifier());
         doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns());
+        endElement(name);
+    }
+    protected void doWriteFuryDataFormat(String name, FuryDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
         endElement(name);
     }
     protected void doWriteGrokDataFormat(String name, GrokDataFormat def) throws IOException {

@@ -36,6 +36,7 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
+import org.apache.camel.model.dataformat.FuryDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -302,6 +303,23 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T custom(String ref) {
         return dataFormat(new CustomDataFormat(ref));
+    }
+
+    /**
+     * Use the Fury data format
+     */
+    public T fury() {
+        return dataFormat(new FuryDataFormat());
+    }
+
+    /**
+     * Use the Fury data format with the given unmarshalType
+     */
+
+    public T fury(Class type) {
+        FuryDataFormat format = new FuryDataFormat();
+        format.setUnmarshalType(type);
+        return dataFormat(format);
     }
 
     /**

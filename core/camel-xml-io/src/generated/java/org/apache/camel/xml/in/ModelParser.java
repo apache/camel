@@ -1840,6 +1840,12 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected FuryDataFormat doParseFuryDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new FuryDataFormat(), (def, key, val) -> switch (key) {
+                case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected GrokDataFormat doParseGrokDataFormat() throws IOException, XmlPullParserException {
         return doParse(new GrokDataFormat(), (def, key, val) -> switch (key) {
                 case "allowMultipleMatchesPerLine": def.setAllowMultipleMatchesPerLine(val); yield true;
@@ -2841,6 +2847,7 @@ public class ModelParser extends BaseParser {
             case "fhirJson": return doParseFhirJsonDataFormat();
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();
+            case "fury": return doParseFuryDataFormat();
             case "grok": return doParseGrokDataFormat();
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
