@@ -77,7 +77,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     // all maven-resolver work is delegated to camel-tooling-maven
     private MavenDownloader mavenDownloader;
 
-    // repository URLs set from "camel.jbang.repositories" property or --repository option.
+    // repository URLs set from "camel.jbang.repos" property or --repos option.
     private String repositories;
     private boolean fresh;
 
