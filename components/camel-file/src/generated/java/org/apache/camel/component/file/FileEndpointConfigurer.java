@@ -35,6 +35,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "appendChars": target.setAppendChars(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreate":
         case "autoCreate": target.setAutoCreate(property(camelContext, boolean.class, value)); return true;
+        case "autocreatestepwise":
+        case "autoCreateStepwise": target.setAutoCreateStepwise(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -221,6 +223,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "appendChars": return java.lang.String.class;
         case "autocreate":
         case "autoCreate": return boolean.class;
+        case "autocreatestepwise":
+        case "autoCreateStepwise": return boolean.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -408,6 +412,8 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "appendChars": return target.getAppendChars();
         case "autocreate":
         case "autoCreate": return target.isAutoCreate();
+        case "autocreatestepwise":
+        case "autoCreateStepwise": return target.isAutoCreateStepwise();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
