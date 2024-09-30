@@ -281,7 +281,7 @@
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>6.0.1</jira-rest-client-api-version>
-        <libthrift-version>0.20.0</libthrift-version>
+        <libthrift-version>0.21.0</libthrift-version>
         <jodatime2-version>2.13.0</jodatime2-version>
         <jolokia-version>2.1.1</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
@@ -323,7 +323,7 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.21.1</log4j2-version>
         <logback-version>1.5.8</logback-version>
-        <lucene-version>9.11.1</lucene-version>
+        <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.3.0</littleproxy-version>
         <mapstruct-version>1.6.2</mapstruct-version>

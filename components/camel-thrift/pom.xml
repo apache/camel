@@ -89,4 +89,29 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <replace token= "@javax.annotation.Generated"
+                                         value="@jakarta.annotation.Generated"
+                                         dir="src/test/java">
+                                    <include name="**/*.java"/>
+                                </replace>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
