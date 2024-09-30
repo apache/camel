@@ -130,10 +130,13 @@ public class FileOperations implements GenericFileOperations<File> {
                 File subDir = new File(base, part);
                 if (!subDir.exists()) {
                     if (subDir.mkdir()) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Setting chmod: {} on directory: {}", PosixFilePermissions.toString(permissions), subDir);
+                        if (permissions != null) {
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Setting chmod: {} on directory: {}", PosixFilePermissions.toString(permissions),
+                                        subDir);
+                            }
+                            Files.setPosixFilePermissions(subDir.toPath(), permissions);
                         }
-                        Files.setPosixFilePermissions(subDir.toPath(), permissions);
                     } else {
                         return false;
                     }
