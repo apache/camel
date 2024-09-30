@@ -42,6 +42,9 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         map.put("ProxyPassword", java.lang.String.class);
         map.put("ProxyPort", java.lang.Integer.class);
         map.put("ProxyUser", java.lang.String.class);
+        map.put("ResourceName", java.lang.String.class);
+        map.put("SearchParameters", java.util.Map.class);
+        map.put("SearchStyle", ca.uhn.fhir.rest.api.SearchStyleEnum.class);
         map.put("ServerUrl", java.lang.String.class);
         map.put("SessionCookie", java.lang.String.class);
         map.put("SocketTimeout", java.lang.Integer.class);
@@ -91,6 +94,12 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyuser":
         case "proxyUser": target.setProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "resourcename":
+        case "resourceName": target.setResourceName(property(camelContext, java.lang.String.class, value)); return true;
+        case "searchparameters":
+        case "searchParameters": target.setSearchParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "searchstyle":
+        case "searchStyle": target.setSearchStyle(property(camelContext, ca.uhn.fhir.rest.api.SearchStyleEnum.class, value)); return true;
         case "serverurl":
         case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "sessioncookie":
@@ -149,6 +158,12 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         case "proxyPort": return java.lang.Integer.class;
         case "proxyuser":
         case "proxyUser": return java.lang.String.class;
+        case "resourcename":
+        case "resourceName": return java.lang.String.class;
+        case "searchparameters":
+        case "searchParameters": return java.util.Map.class;
+        case "searchstyle":
+        case "searchStyle": return ca.uhn.fhir.rest.api.SearchStyleEnum.class;
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
         case "sessioncookie":
@@ -203,6 +218,12 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         case "proxyPort": return target.getProxyPort();
         case "proxyuser":
         case "proxyUser": return target.getProxyUser();
+        case "resourcename":
+        case "resourceName": return target.getResourceName();
+        case "searchparameters":
+        case "searchParameters": return target.getSearchParameters();
+        case "searchstyle":
+        case "searchStyle": return target.getSearchStyle();
         case "serverurl":
         case "serverUrl": return target.getServerUrl();
         case "sessioncookie":
@@ -223,6 +244,8 @@ public class FhirSearchEndpointConfigurationConfigurer extends org.apache.camel.
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "extraparameters":
         case "extraParameters": return java.lang.Object.class;
+        case "searchparameters":
+        case "searchParameters": return java.util.List.class;
         default: return null;
         }
     }

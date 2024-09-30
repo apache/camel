@@ -23,7 +23,7 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(81);
+        Set<String> props = new HashSet<>(84);
         props.add("accessToken");
         props.add("apiName");
         props.add("asynchronous");
@@ -77,6 +77,7 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("resource");
         props.add("resourceAsString");
         props.add("resourceClass");
+        props.add("resourceName");
         props.add("resourceType");
         props.add("resources");
         props.add("respondToUri");
@@ -88,6 +89,8 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("scheduledExecutorService");
         props.add("scheduler");
         props.add("schedulerProperties");
+        props.add("searchParameters");
+        props.add("searchStyle");
         props.add("sendEmptyMessageWhenIdle");
         props.add("serverUrl");
         props.add("sessionCookie");

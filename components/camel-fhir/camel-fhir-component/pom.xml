@@ -284,6 +284,8 @@
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirSearch</proxyClass>
                                     <fromJavasource />
                                     <nullableOptions>
+                                        <nullableOption>searchParameters</nullableOption>
+                                        <nullableOption>searchStyle</nullableOption>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
                                 </api>

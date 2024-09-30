@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirSearchApiMethod;
@@ -27,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs. The class source won't be generated again
@@ -47,6 +52,23 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
         Patient patient = (Patient) result.getEntry().get(0).getResource();
         assertNotNull(patient);
         assertEquals("Freeman", patient.getName().get(0).getFamily());
+        assertTrue(result.getLinkFirstRep().getUrl().endsWith("/fhir/Patient?_format=json&family=Freeman&given=Vincent"));
+    }
+
+    @Test
+    public void testSearchByResource() {
+        String resourceName = "Patient";
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("CamelFhir.searchParameters", Map.of("given", List.of("Vincent"), "family", List.of("Freeman")));
+        Bundle result = requestBodyAndHeaders("direct://SEARCH_BY_RESOURCE", resourceName, headers);
+
+        LOG.debug("searchByResource: {}", result);
+        assertNotNull(result, "searchByResource result");
+        Patient patient = (Patient) result.getEntry().get(0).getResource();
+        assertNotNull(patient);
+        assertEquals("Freeman", patient.getName().get(0).getFamily());
+        assertTrue(result.getLinkFirstRep().getUrl().endsWith("/fhir/Patient/_search"));
     }
 
     @Override
@@ -57,7 +79,12 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
                 from("direct://SEARCH_BY_URL")
                         .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
 
+                // test route for searchByResource
+                from("direct://SEARCH_BY_RESOURCE")
+                        .to("fhir://" + PATH_PREFIX
+                            + "/searchByResource?inBody=resourceName");
             }
+
         };
     }
 }
