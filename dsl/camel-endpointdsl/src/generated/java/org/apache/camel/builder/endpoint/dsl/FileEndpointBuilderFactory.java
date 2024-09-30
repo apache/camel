@@ -2520,6 +2520,40 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
+         * When auto-creating directories should each subdirectory be created
+         * one at a time. This may be needed due to security issues on some
+         * file-shares.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param autoCreateStepwise the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointConsumerBuilder autoCreateStepwise(boolean autoCreateStepwise) {
+            doSetProperty("autoCreateStepwise", autoCreateStepwise);
+            return this;
+        }
+        /**
+         * When auto-creating directories should each subdirectory be created
+         * one at a time. This may be needed due to security issues on some
+         * file-shares.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param autoCreateStepwise the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointConsumerBuilder autoCreateStepwise(String autoCreateStepwise) {
+            doSetProperty("autoCreateStepwise", autoCreateStepwise);
+            return this;
+        }
+        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
@@ -3310,6 +3344,40 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
+         * When auto-creating directories should each subdirectory be created
+         * one at a time. This may be needed due to security issues on some
+         * file-shares.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param autoCreateStepwise the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointProducerBuilder autoCreateStepwise(boolean autoCreateStepwise) {
+            doSetProperty("autoCreateStepwise", autoCreateStepwise);
+            return this;
+        }
+        /**
+         * When auto-creating directories should each subdirectory be created
+         * one at a time. This may be needed due to security issues on some
+         * file-shares.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param autoCreateStepwise the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointProducerBuilder autoCreateStepwise(String autoCreateStepwise) {
+            doSetProperty("autoCreateStepwise", autoCreateStepwise);
+            return this;
+        }
+        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
@@ -3580,6 +3648,40 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
+            return this;
+        }
+        /**
+         * When auto-creating directories should each subdirectory be created
+         * one at a time. This may be needed due to security issues on some
+         * file-shares.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param autoCreateStepwise the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointBuilder autoCreateStepwise(boolean autoCreateStepwise) {
+            doSetProperty("autoCreateStepwise", autoCreateStepwise);
+            return this;
+        }
+        /**
+         * When auto-creating directories should each subdirectory be created
+         * one at a time. This may be needed due to security issues on some
+         * file-shares.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param autoCreateStepwise the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFileEndpointBuilder autoCreateStepwise(String autoCreateStepwise) {
+            doSetProperty("autoCreateStepwise", autoCreateStepwise);
             return this;
         }
         /**

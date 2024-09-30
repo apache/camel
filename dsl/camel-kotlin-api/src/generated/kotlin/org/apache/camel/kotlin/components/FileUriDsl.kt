@@ -671,6 +671,22 @@ public class FileUriDsl(
   }
 
   /**
+   * When auto-creating directories should each subdirectory be created one at a time. This may be
+   * needed due to security issues on some file-shares.
+   */
+  public fun autoCreateStepwise(autoCreateStepwise: String) {
+    it.property("autoCreateStepwise", autoCreateStepwise)
+  }
+
+  /**
+   * When auto-creating directories should each subdirectory be created one at a time. This may be
+   * needed due to security issues on some file-shares.
+   */
+  public fun autoCreateStepwise(autoCreateStepwise: Boolean) {
+    it.property("autoCreateStepwise", autoCreateStepwise.toString())
+  }
+
+  /**
    * Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading
    * files).
    */

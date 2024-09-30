@@ -63,6 +63,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriPath(name = "directoryName")
     @Metadata(required = true)
     private File file;
+    @UriParam(label = "advanced")
+    protected boolean autoCreateStepwise;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam(label = "advanced")
@@ -286,6 +288,18 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @Override
     public boolean isHiddenFilesEnabled() {
         return includeHiddenFiles;
+    }
+
+    public boolean isAutoCreateStepwise() {
+        return autoCreateStepwise;
+    }
+
+    /**
+     * When auto-creating directories should each subdirectory be created one at a time. This may be needed due to
+     * security issues on some file-shares.
+     */
+    public void setAutoCreateStepwise(boolean autoCreateStepwise) {
+        this.autoCreateStepwise = autoCreateStepwise;
     }
 
     public boolean isCopyAndDeleteOnRenameFail() {

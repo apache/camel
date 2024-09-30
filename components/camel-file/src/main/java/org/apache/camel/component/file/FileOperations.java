@@ -105,12 +105,12 @@ public class FileOperations implements GenericFileOperations<File> {
         return file.exists();
     }
 
-    protected boolean buildDirectory(File dir, Set<PosixFilePermission> permissions, boolean absolute) {
+    protected boolean buildDirectory(File dir, Set<PosixFilePermission> permissions, boolean absolute, boolean stepwise) {
         if (dir.exists()) {
             return true;
         }
 
-        if (permissions == null || permissions.isEmpty()) {
+        if (!stepwise && (permissions == null || permissions.isEmpty())) {
             return dir.mkdirs();
         }
 
@@ -154,7 +154,7 @@ public class FileOperations implements GenericFileOperations<File> {
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
             LOG.trace("Building starting directory: {}", endpoint.getFile());
-            buildDirectory(endpoint.getFile(), endpoint.getDirectoryPermissions(), absolute);
+            buildDirectory(endpoint.getFile(), endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
         }
 
         if (ObjectHelper.isEmpty(directory)) {
@@ -199,7 +199,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 return true;
             } else {
                 LOG.trace("Building directory: {}", path);
-                return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute);
+                return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute, endpoint.isAutoCreateStepwise());
             }
         } finally {
             lock.unlock();
