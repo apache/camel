@@ -332,6 +332,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.3.0</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.3.0</maven-archetype-packaging-version>
+        <maven-archiver-version>3.6.2</maven-archiver-version>
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
@@ -403,6 +404,7 @@
         <picocli-version>4.7.6</picocli-version>
         <pinecone-client-version>1.2.2</pinecone-client-version>
         <plc4x-version>0.12.0</plc4x-version>
+        <plexus-archiver-version>4.10.0</plexus-archiver-version>
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
         <plexus-utils-version>4.0.2</plexus-utils-version>
