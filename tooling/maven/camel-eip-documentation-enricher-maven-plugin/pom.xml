@@ -36,17 +36,6 @@
         <camel.surefire.fork.additional-vmargs>--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>tooling-parent</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
 
         <dependency>
