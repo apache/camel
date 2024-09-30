@@ -37,6 +37,7 @@ import com.azure.storage.file.share.ShareServiceClientBuilder;
 import com.azure.storage.file.share.models.ShareFileItem;
 import com.azure.storage.file.share.models.ShareFileRange;
 import com.azure.storage.file.share.models.ShareStorageException;
+import com.azure.storage.file.share.models.ShareTokenIntent;
 import com.azure.storage.file.share.options.ShareDirectoryCreateOptions;
 import com.azure.storage.file.share.options.ShareFileRenameOptions;
 import com.azure.storage.file.share.options.ShareListFilesAndDirectoriesOptions;
@@ -717,6 +718,7 @@ public class FilesOperations extends NormalizedOperations {
             builder = builder.sasToken(token.toURIQuery());
         } else if (configuration.getCredentialType().equals(CredentialType.AZURE_IDENTITY)) {
             builder = builder.credential(new DefaultAzureCredentialBuilder().build());
+            builder.shareTokenIntent(ShareTokenIntent.BACKUP);
         }
         return builder.buildClient();
     }
