@@ -15,6 +15,9 @@ If its succesful, you can type
 
     thrift --version
 
+TIP: On mac you can install thrift via brew
+
+
 To display the version of the thrift compiler.
 
 You then need to compile the sample test source for the `camel-thrift` component.
