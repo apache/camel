@@ -43,6 +43,7 @@ public class GraphqlServer {
     public GraphqlServer() {
         this.graphql = GraphqlFactory.newGraphQL();
         this.server = ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost")
                 .register("/graphql", new GraphqlHandler())
                 .create();
     }
