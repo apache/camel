@@ -78,7 +78,12 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
                 // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
                 out = exchange.getOut();
                 out.copyFrom(in);
-                result = dataFormat.unmarshal(exchange, body);
+                if (body instanceof InputStream is) {
+                    stream = is;
+                    result = dataFormat.unmarshal(exchange, stream);
+                } else {
+                    result = dataFormat.unmarshal(exchange, body);
+                }
             }
             if (result instanceof Exchange) {
                 if (result != exchange) {
