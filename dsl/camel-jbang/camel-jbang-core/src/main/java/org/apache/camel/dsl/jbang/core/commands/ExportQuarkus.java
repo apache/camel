@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -306,6 +307,9 @@ class ExportQuarkus extends Export {
             gavs.add(gav);
         }
 
+        // replace dependencies with special quarkus dependencies if we can find any
+        replaceQuarkusDependencies(gavs);
+
         // sort artifacts
         gavs.sort(mavenGavComparator());
 
@@ -327,6 +331,38 @@ class ExportQuarkus extends Export {
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
         IOHelper.writeText(context, new FileOutputStream(gradleBuild, false));
+    }
+
+    private void replaceQuarkusDependencies(List<MavenGav> gavs) {
+        // load information about dependencies that should be replaced
+        Map<MavenGav, MavenGav> replace = new HashMap<>();
+        try {
+            InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-dependencies.properties");
+            if (is != null) {
+                Properties prop = new Properties();
+                prop.load(is);
+                for (String k : prop.stringPropertyNames()) {
+                    String v = prop.getProperty(k);
+                    MavenGav from = parseMavenGav(k);
+                    MavenGav to = parseMavenGav(v);
+                    if (from != null && to != null) {
+                        replace.put(from, to);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        // find and replace dependencies from the pom JARs
+        for (MavenGav gav : gavs) {
+            replace.keySet().stream().filter(q -> compareGav(q, gav)).findFirst().ifPresent(q -> {
+                MavenGav to = replace.get(q);
+                gav.setGroupId(to.getGroupId());
+                gav.setArtifactId(to.getArtifactId());
+                gav.setVersion(to.getVersion());
+            });
+        }
     }
 
     @Override
@@ -420,6 +456,9 @@ class ExportQuarkus extends Export {
             gavs.add(gav);
         }
 
+        // replace dependencies with special quarkus dependencies if we can find any
+        replaceQuarkusDependencies(gavs);
+
         // sort artifacts
         gavs.sort(mavenGavComparator());
 
@@ -467,6 +506,11 @@ class ExportQuarkus extends Export {
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
 
         return answer;
+    }
+
+    private static boolean compareGav(MavenGav g1, MavenGav g2) {
+        // only check for groupId and artifactId
+        return g1.getGroupId().equals(g2.getGroupId()) && g1.getArtifactId().equals(g2.getArtifactId());
     }
 
 }
