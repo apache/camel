@@ -17,11 +17,11 @@
 package org.apache.camel.component.smb;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.hierynomus.smbj.SmbConfig;
-import com.hierynomus.smbj.share.File;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,9 +62,9 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         template.sendBodyAndHeader("seda:send", "Hello World", Exchange.FILE_NAME, "file_send.doc");
 
         mock.assertIsSatisfied();
-        File hFile = mock.getExchanges().get(0).getIn().getBody(File.class);
+        SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
 
-        Assert.assertEquals("Hello World", new String(hFile.getInputStream().readAllBytes(), "UTF-8"));
+        Assert.assertEquals("Hello World", new String(file.getInputStream().readAllBytes(), "UTF-8"));
     }
 
     @Test
@@ -77,8 +77,8 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         template.sendBodyAndHeader("seda:send", "Good Bye", Exchange.FILE_NAME, "file_ignore.doc");
 
         mock.assertIsSatisfied();
-        File hFile = mock.getExchanges().get(0).getIn().getBody(File.class);
-        Assert.assertEquals("Hello World", new String(hFile.getInputStream().readAllBytes(), "UTF-8"));
+        SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
+        Assert.assertEquals("Hello World", new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -91,18 +91,21 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                 SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Override.name()));
 
         mock.assertIsSatisfied();
-        File hFile = mock.getExchanges().get(0).getIn().getBody(File.class);
-        Assert.assertEquals("Good Bye", new String(hFile.getInputStream().readAllBytes(), "UTF-8"));
+        SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
+        Assert.assertEquals("Good Bye", new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             private void process(Exchange exchange) throws IOException {
-                final byte[] data = exchange.getMessage().getBody(byte[].class);
+                final SmbFile data = exchange.getMessage().getBody(SmbFile.class);
                 final String filePath = exchange.getMessage().getHeader(SmbConstants.SMB_FILE_PATH, String.class);
                 final String uncPath = exchange.getMessage().getHeader(SmbConstants.SMB_UNC_PATH, String.class);
-                LOG.debug("Read exchange {} ({}) with contents: {}", filePath, uncPath, new String(data));
+                final String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
+
+                LOG.debug("Read exchange name {} at {} ({}) with contents: {} (bytes {})", name, filePath, uncPath,
+                        new String(data.getInputStream().readAllBytes(), StandardCharsets.UTF_8), data.getSize());
             }
 
             public void configure() {
