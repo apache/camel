@@ -318,6 +318,34 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportActiveMQ(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "src/test/resources/ActiveMQRoute.java" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-activemq", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.messaginghub", "pooled-jms", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-activemq-starter", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.messaginghub", "pooled-jms", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-activemq", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "io.quarkiverse.messaginghub", "quarkus-pooled-jms", null));
+        }
+    }
+
     // Each runtime may have a different logic
     public void assertApplicationPropertiesContentJava(RuntimeType rt, File appProps, String appPackage) throws Exception {
         try (FileInputStream fis = new FileInputStream(appProps)) {
