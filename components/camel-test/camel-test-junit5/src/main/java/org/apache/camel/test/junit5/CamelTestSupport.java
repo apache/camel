@@ -22,11 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.legacy.LegacyBuiltinAssertions;
@@ -436,26 +434,5 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     protected final Endpoint getMandatoryEndpoint(String uri) {
         return TestSupport.getMandatoryEndpoint(context(), uri);
-    }
-
-    /**
-     * Single step debugs and Camel invokes this method before entering the given processor. This method is NOOP.
-     *
-     * @deprecated Use {@link #camelContextConfiguration()} to set an instance of {@link DebugBreakpoint}
-     */
-    @Deprecated(since = "4.7.0")
-    protected void debugBefore(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
-    }
-
-    /**
-     * Single step debugs and Camel invokes this method after processing the given processor. This method is NOOP.
-     *
-     * @deprecated Use {@link #camelContextConfiguration()} to set an instance of {@link DebugBreakpoint}
-     */
-    @Deprecated(since = "4.7.0")
-    protected void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
-            long timeTaken) {
     }
 }
