@@ -426,7 +426,7 @@ class ExportQuarkus extends Export {
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
             //Special case, quarkus-pom.tmpl already have them included.
-            if ("camel-quarkus-core".equals(gav.getArtifactId()) || "camel-quarkus-platform-http".equals(gav.getArtifactId())
+            if ("camel-quarkus-core".equals(gav.getArtifactId())
                     || "camel-quarkus-microprofile-health".equals(gav.getArtifactId())) {
                 continue;
             }
@@ -463,7 +463,6 @@ class ExportQuarkus extends Export {
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
-        answer.removeIf(s -> s.contains("camel-platform-http"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
 
         return answer;
