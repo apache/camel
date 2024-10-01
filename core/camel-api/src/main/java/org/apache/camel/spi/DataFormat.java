@@ -18,10 +18,12 @@ package org.apache.camel.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Service;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Represents a <a href="http://camel.apache.org/data-format.html">data format</a> used to marshal objects to and from
@@ -79,7 +81,15 @@ public interface DataFormat extends Service {
      * @throws Exception can be thrown
      */
     default Object unmarshal(Exchange exchange, Object body) throws Exception {
+        Object result = null;
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
-        return unmarshal(exchange, is);
+        try {
+            result = unmarshal(exchange, is);
+        } finally {
+            if (!(result instanceof Iterator)) {
+                IOHelper.close(is, "input stream");
+            }
+        }
+        return result;
     }
 }
