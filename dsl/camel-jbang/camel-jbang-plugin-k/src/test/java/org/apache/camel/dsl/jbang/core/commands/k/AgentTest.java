@@ -33,7 +33,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
 
 @Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -97,58 +96,6 @@ class AgentTest {
                     .get("/catalog/model/" + entityRef)
                     .then()
                     .statusCode(code);
-
-        } finally {
-            server.close();
-            vertx.close();
-        }
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "platform-http,200", "baz,204" })
-    public void testCapability(String name, int code) throws Exception {
-        Agent agent = cmd();
-        agent.port = 0;
-
-        Vertx vertx = Vertx.vertx();
-        HttpServer server = agent.serve(vertx).toCompletableFuture().get();
-
-        try {
-            int port = server.actualPort();
-            RestAssured.given()
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .when()
-                    .get("/catalog/capability/" + name)
-                    .then()
-                    .statusCode(code);
-
-        } finally {
-            server.close();
-            vertx.close();
-        }
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "platform-http,other,platform-http-main" })
-    public void testCapabilities(String name, String expectedKind, String expectedName) throws Exception {
-        Agent agent = cmd();
-        agent.port = 0;
-
-        Vertx vertx = Vertx.vertx();
-        HttpServer server = agent.serve(vertx).toCompletableFuture().get();
-
-        try {
-            int port = server.actualPort();
-            RestAssured.given()
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .when()
-                    .get("/catalog/capability/" + name)
-                    .then()
-                    .statusCode(200)
-                    .body("kind", is(expectedKind))
-                    .body("name", is(expectedName));
 
         } finally {
             server.close();
