@@ -27,8 +27,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -47,6 +49,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list", description = "Displays available Camel versions",
@@ -82,6 +85,10 @@ public class VersionList extends CamelCommand {
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by (version, or date)", defaultValue = "version")
@@ -176,23 +183,40 @@ public class VersionList extends CamelCommand {
         rows.sort(this::sortRow);
 
         // camel-quarkus is not LTS and have its own release schedule
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("CAMEL VERSION")
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion),
-                new Column().header("QUARKUS").visible(RuntimeType.quarkus == runtime)
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
-                new Column().header("SPRING-BOOT").visible(RuntimeType.springBoot == runtime)
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
-                new Column().header("JDK")
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
-                new Column().header("KIND")
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(this::kind),
-                new Column().header("RELEASED")
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::releaseDate),
-                new Column().header("SUPPORTED UNTIL")
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate))));
+        if (jsonOutput) {
+            printer().println(
+                    Jsoner.serialize(
+                            rows.stream().map(VersionList::mapOf).collect(Collectors.toList())));
+        } else {
+            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                    new Column().header("CAMEL VERSION")
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion),
+                    new Column().header("QUARKUS").visible(RuntimeType.quarkus == runtime)
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
+                    new Column().header("SPRING-BOOT").visible(RuntimeType.springBoot == runtime)
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
+                    new Column().header("JDK")
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
+                    new Column().header("KIND")
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(this::kind),
+                    new Column().header("RELEASED")
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::releaseDate),
+                    new Column().header("SUPPORTED UNTIL")
+                            .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate))));
+        }
 
         return 0;
+    }
+
+    private static Map<String, Object> mapOf(Row r) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("camelVersion", r.coreVersion);
+        map.put("runtimeVersion", r.runtimeVersion);
+        map.put("jdkVersion", r.jdks);
+        map.put("kind", r.kind);
+        map.put("releaseDate", r.releaseDate);
+        map.put("eolDate", r.eolDate);
+        return map;
     }
 
     protected int sortRow(Row o1, Row o2) {
