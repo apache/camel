@@ -32,37 +32,37 @@
 		<route>
 			<from
 				uri="spring-ws:action:http://default-ok.com/?endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<process ref="okResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:action:http://default-fault.com/?endpointMapping=#wsaEndpointMapping" />
-			<to uri="causeFault" />
+			<process ref="causeFault" />
 		</route>
 
 
 		<route>
 			<from
 				uri="spring-ws:action:http://uri-ok.com?outputAction=http://customURIOutputAction&amp;faultAction=http://customURIFaultAction&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<process ref="okResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:action:http://uri-fault.com?outputAction=http://customURIOutputAction&amp;faultAction=http://customURIFaultAction&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="causeFault" />
+			<process ref="causeFault" />
 		</route>
 
 
 		<route>
 			<from
 				uri="spring-ws:action:http://override-ok.com?outputAction=http://do-not-use.com&amp;faultAction=http://do-not-use.com&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="overrideOkResponse" />
+			<process ref="overrideOkResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:action:http://override-fault.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="overrideOkResponse" />
-			<to uri="causeFault" />
+			<process ref="overrideOkResponse" />
+			<process ref="causeFault" />
 		</route>
 
 
@@ -70,13 +70,13 @@
 		<route>
 			<from
 				uri="spring-ws:action:http://headerOnly-ok.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="overrideOkResponse" />
+			<process ref="overrideOkResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:action:http://headerOnly-fault.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="overrideOkResponse" />
-			<to uri="causeFault" />
+			<process ref="overrideOkResponse" />
+			<process ref="causeFault" />
 		</route>
 
 
@@ -86,24 +86,24 @@
 		<route>
 			<from
 				uri="spring-ws:action:http://uriOutputOnly-ok.com/?outputAction=http://customURIOutputAction&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<process ref="okResponse" />
 		</route>
 		<route>
 			<from
 					uri="spring-ws:action:http://uriOutputOnly-fault.com/?outputAction=http://customURIOutputAction&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="causeFault" />
+			<process ref="causeFault" />
 		</route>
 		
 		
 		<route>
 			<from
 				uri="spring-ws:action:http://uriFaultOnly-ok.com/?faultAction=http://customURIFaultAction&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<process ref="okResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:action:http://uriFaultOnly-fault.com/?faultAction=http://customURIFaultAction&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="causeFault" />
+			<process ref="causeFault" />
 		</route>
 		
 
