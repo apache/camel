@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "auto", "channelSinks", "channelSources", "config", "enabled", "endpointSinks", "endpointSources",
+        "auto", "channelSinks", "channelSources", "configuration", "enabled", "endpointSinks", "endpointSources",
         "eventSinks", "eventSources", "filterEventType", "filters", "sinkBinding" })
 public class Knative {
     @JsonProperty("auto")
