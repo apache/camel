@@ -64,9 +64,9 @@
         <asterisk-java-version>3.39.0</asterisk-java-version>
         <atlassian-fugue-version>5.0.0</atlassian-fugue-version>
         <atmosphere-version>3.0.4</atmosphere-version>
-        <avro-version>1.11.3</avro-version>
-        <avro-ipc-jetty-version>1.11.3</avro-ipc-jetty-version>
-        <avro-ipc-netty-version>1.11.3</avro-ipc-netty-version>
+        <avro-version>1.11.4</avro-version>
+        <avro-ipc-jetty-version>1.11.4</avro-ipc-jetty-version>
+        <avro-ipc-netty-version>1.11.4</avro-ipc-netty-version>
         <awaitility-version>4.2.1</awaitility-version>
         <aws-java-sdk2-version>2.24.0</aws-java-sdk2-version>
         <aws-xray-version>2.15.0</aws-xray-version>
