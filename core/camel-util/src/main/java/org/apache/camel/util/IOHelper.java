@@ -276,9 +276,9 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot force FileChannel: {}. Reason: {}", name, e.getMessage(), e);
+                log.debug("Cannot force FileChannel: {}. Reason: {}", name, e.getMessage(), e);
             } else {
-                log.warn("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
+                log.debug("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
             }
         }
     }
@@ -302,9 +302,9 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot sync FileDescriptor: {}. Reason: {}", name, e.getMessage(), e);
+                log.debug("Cannot sync FileDescriptor: {}. Reason: {}", name, e.getMessage(), e);
             } else {
-                log.warn("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
+                log.debug("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
             }
         }
     }
@@ -331,9 +331,9 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot flush Writer: {}. Reason: {}", name, e.getMessage(), e);
+                    log.debug("Cannot flush Writer: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
-                    log.warn("Cannot flush Writer. Reason: {}", e.getMessage(), e);
+                    log.debug("Cannot flush Writer. Reason: {}", e.getMessage(), e);
                 }
             }
             force(os, name, log);
@@ -359,9 +359,9 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot close: {}. Reason: {}", name, e.getMessage(), e);
+                    log.debug("Cannot close: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
-                    log.warn("Cannot close. Reason: {}", e.getMessage(), e);
+                    log.debug("Cannot close. Reason: {}", e.getMessage(), e);
                 }
             }
         }
@@ -370,8 +370,7 @@ public final class IOHelper {
     /**
      * Closes the given resource if it is available and don't catch the exception
      *
-     * @param  closeable   the object to close
-     * @throws IOException
+     * @param closeable the object to close
      */
     public static void closeWithException(Closeable closeable) throws IOException {
         if (closeable != null) {
