@@ -46,6 +46,8 @@ public final class PdfConverterLoader implements TypeConverterLoader, CamelConte
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.pdfbox.pdmodel.PDDocument.class, byte[].class, false,
             (type, exchange, value) -> getPdfConverter().convertToPDF((byte[]) value));
+        addTypeConverter(registry, org.apache.pdfbox.pdmodel.PDDocument.class, java.io.InputStream.class, false,
+            (type, exchange, value) -> getPdfConverter().toPDDocument((java.io.InputStream) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
