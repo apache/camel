@@ -204,6 +204,47 @@ public interface PlatformHttpEndpointBuilderFactory {
             return (PlatformHttpEndpointBuilder) this;
         }
         /**
+         * When Camel is complete processing the message, and the HTTP server is
+         * writing response. This option controls whether Camel should catch any
+         * failure during writing response and store this on the Exchange, which
+         * allows onCompletion/UnitOfWork to regard the Exchange as failed and
+         * have access to the caused exception from the HTTP server.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param handleWriteResponseError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder handleWriteResponseError(
+                boolean handleWriteResponseError) {
+            doSetProperty("handleWriteResponseError", handleWriteResponseError);
+            return this;
+        }
+        /**
+         * When Camel is complete processing the message, and the HTTP server is
+         * writing response. This option controls whether Camel should catch any
+         * failure during writing response and store this on the Exchange, which
+         * allows onCompletion/UnitOfWork to regard the Exchange as failed and
+         * have access to the caused exception from the HTTP server.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param handleWriteResponseError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder handleWriteResponseError(
+                String handleWriteResponseError) {
+            doSetProperty("handleWriteResponseError", handleWriteResponseError);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will

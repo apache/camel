@@ -70,6 +70,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
     private final List<Handler<RoutingContext>> handlers;
     private final String fileNameExtWhitelist;
     private final boolean muteExceptions;
+    private final boolean handleWriteResponseError;
     private Set<Method> methods;
     private String path;
     private Route route;
@@ -85,6 +86,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
         this.fileNameExtWhitelist
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
         this.muteExceptions = endpoint.isMuteException();
+        this.handleWriteResponseError = endpoint.isHandleWriteResponseError();
     }
 
     @Override
@@ -228,6 +230,14 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer implements Suspen
                 "Failed handling platform-http endpoint " + getEndpoint().getPath(),
                 failure);
         ctx.fail(failure);
+        if (handleWriteResponseError && failure != null) {
+            Exception existing = exchange.getException();
+            if (existing != null) {
+                failure.addSuppressed(existing);
+            }
+            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, failure);
+            exchange.setException(failure);
+        }
         handleExchangeComplete(exchange);
     }
 

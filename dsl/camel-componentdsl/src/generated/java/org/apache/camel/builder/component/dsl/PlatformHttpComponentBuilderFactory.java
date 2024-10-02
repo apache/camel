@@ -80,6 +80,26 @@ public interface PlatformHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * When Camel is complete processing the message, and the HTTP server is
+         * writing response. This option controls whether Camel should catch any
+         * failure during writing response and store this on the Exchange, which
+         * allows onCompletion/UnitOfWork to regard the Exchange as failed and
+         * have access to the caused exception from the HTTP server.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param handleWriteResponseError the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpComponentBuilder handleWriteResponseError(
+                boolean handleWriteResponseError) {
+            doSetProperty("handleWriteResponseError", handleWriteResponseError);
+            return this;
+        }
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -134,6 +154,7 @@ public interface PlatformHttpComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((PlatformHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "handleWriteResponseError": ((PlatformHttpComponent) component).setHandleWriteResponseError((boolean) value); return true;
             case "autowiredEnabled": ((PlatformHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "engine": ((PlatformHttpComponent) component).setEngine((org.apache.camel.component.platform.http.spi.PlatformHttpEngine) value); return true;
             default: return false;

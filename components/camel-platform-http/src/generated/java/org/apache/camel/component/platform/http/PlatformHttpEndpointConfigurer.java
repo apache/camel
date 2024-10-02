@@ -30,6 +30,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filenameextwhitelist":
         case "fileNameExtWhitelist": target.setFileNameExtWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "handlewriteresponseerror":
+        case "handleWriteResponseError": target.setHandleWriteResponseError(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpmethodrestrict":
@@ -59,6 +61,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filenameextwhitelist":
         case "fileNameExtWhitelist": return java.lang.String.class;
+        case "handlewriteresponseerror":
+        case "handleWriteResponseError": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpmethodrestrict":
@@ -89,6 +93,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "exchangePattern": return target.getExchangePattern();
         case "filenameextwhitelist":
         case "fileNameExtWhitelist": return target.getFileNameExtWhitelist();
+        case "handlewriteresponseerror":
+        case "handleWriteResponseError": return target.isHandleWriteResponseError();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpmethodrestrict":

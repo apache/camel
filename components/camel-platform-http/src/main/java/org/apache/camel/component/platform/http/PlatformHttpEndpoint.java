@@ -72,6 +72,11 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @UriParam(label = "consumer",
               description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
+    @UriParam(label = "advanced,consumer", defaultValue = "false",
+              description = "When Camel is complete processing the message, and the HTTP server is writing response. This option controls whether Camel"
+                            + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
+                            + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
+    private boolean handleWriteResponseError;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -177,6 +182,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
+    }
+
+    public boolean isHandleWriteResponseError() {
+        return handleWriteResponseError;
+    }
+
+    public void setHandleWriteResponseError(boolean handleWriteResponseError) {
+        this.handleWriteResponseError = handleWriteResponseError;
     }
 
     PlatformHttpEngine getOrCreateEngine() {
