@@ -48,6 +48,14 @@ public class PlatformHttpUriDsl(
     it.property("consumes", consumes)
   }
 
+  public fun handleWriteResponseError(handleWriteResponseError: String) {
+    it.property("handleWriteResponseError", handleWriteResponseError)
+  }
+
+  public fun handleWriteResponseError(handleWriteResponseError: Boolean) {
+    it.property("handleWriteResponseError", handleWriteResponseError.toString())
+  }
+
   public fun httpMethodRestrict(httpMethodRestrict: String) {
     it.property("httpMethodRestrict", httpMethodRestrict)
   }
