@@ -30,38 +30,38 @@
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="direct:noAction" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
 		
 		<route>
 			<from uri="direct:defaultOk" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>		
 		<route>
 			<from uri="direct:defaultFault" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
 		<route>
 			<from uri="direct:replyTo" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;replyTo=mailto://replyTo@chocolatejar.eu&amp;endpointMapping=#endpointMapping&amp;faultTo=http://fault.to" />
 		</route>
 		<route>
 			<from uri="direct:replyTo-customMessageIdStrategy" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;replyTo=mailto://replyTo@chocolatejar.eu&amp;endpointMapping=#endpointMapping&amp;faultTo=http://fault.to&amp;messageIdStrategy=#staticId" />
 		</route>
 		<route>
 			<from uri="direct:faultTo" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;faultTo=http://fault.to&amp;endpointMapping=#endpointMapping" />
 		</route>
@@ -69,13 +69,13 @@
 		
 		<route>
 			<from uri="direct:omittedFaultTo" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;replyTo=http://reply.to&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
 		<route>
 			<from uri="direct:omittedReplyTo" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;faultTo=http://fault.to&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>
@@ -83,7 +83,7 @@
 		
 		<route>
 			<from uri="direct:empty" />
-			<to uri="bean:wsaResponseProcessor" />
+			<process ref="wsaResponseProcessor" />
 			<to
 				uri="spring-ws:http://google.com?wsAddressingAction=http://turnOnWSA.com&amp;webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping" />
 		</route>

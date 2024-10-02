@@ -31,19 +31,19 @@
 		<route>
 			<from
 				uri="spring-ws:to:http://sender-default.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="bean:okResponse" />
+			<process ref="okResponse" />
 		</route>
 
 		<route>
 			<from
 				uri="spring-ws:to:http://sender-custom.com?messageSender=#customMessageSender&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="bean:okResponse" />
+			<process ref="okResponse" />
 		</route>
 
 		<route>
 			<from
 				uri="spring-ws:to:http://sender-camel.com?messageSender=#camelDirectMessageSender&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="bean:okResponse" />
+			<process ref="okResponse" />
 		</route>
 
 		<route>
@@ -55,12 +55,12 @@
 		<route>
 			<from
 				uri="spring-ws:to:http://messageIdStrategy-default.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="bean:okResponse" />
+			<process ref="okResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:to:http://messageIdStrategy-custom.com?endpointMapping=#wsaEndpointMapping&amp;messageIdStrategy=#staticId" />
-			<to uri="bean:okResponse" />
+			<process ref="okResponse" />
 		</route>
 
 	</camelContext>
