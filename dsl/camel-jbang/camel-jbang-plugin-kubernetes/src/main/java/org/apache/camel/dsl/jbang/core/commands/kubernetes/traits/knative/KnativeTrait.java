@@ -38,6 +38,7 @@ import io.fabric8.knative.internal.pkg.apis.duck.v1.KReferenceBuilder;
 import io.fabric8.knative.internal.pkg.tracker.ReferenceBuilder;
 import io.fabric8.knative.messaging.v1.SubscriptionBuilder;
 import io.fabric8.knative.sources.v1.SinkBindingBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ServiceTrait;
@@ -119,7 +120,7 @@ public class KnativeTrait extends KnativeBaseTrait {
         Knative knativeTrait = Optional.ofNullable(traitConfig.getKnative()).orElseGet(Knative::new);
 
         configureChannels(knativeTrait, context);
-        configureEndpoints(knativeTrait, context);
+        configureEndpoints(knativeTrait);
         configureEvents(knativeTrait, context);
 
         if (knativeTrait.getSinkBinding() != null && knativeTrait.getSinkBinding()) {
@@ -145,7 +146,7 @@ public class KnativeTrait extends KnativeBaseTrait {
 
     private void configureChannels(Knative knativeTrait, TraitContext context) {
         for (String uri : knativeTrait.getChannelSources()) {
-            createSubscription(toKnativeUri(KnativeResourceType.CHANNEL, uri), knativeTrait, context);
+            createSubscription(toKnativeUri(KnativeResourceType.CHANNEL, uri), context);
         }
 
         for (String uri : knativeTrait.getChannelSinks()) {
@@ -161,7 +162,7 @@ public class KnativeTrait extends KnativeBaseTrait {
         }
     }
 
-    private void configureEndpoints(Knative knativeTrait, TraitContext context) {
+    private void configureEndpoints(Knative knativeTrait) {
         for (String uri : knativeTrait.getEndpointSources()) {
             String endpointName = extractKnativeResource(uri);
             addKnativeResourceConfiguration(new KnativeResourceConfiguration(
@@ -207,7 +208,7 @@ public class KnativeTrait extends KnativeBaseTrait {
         }
     }
 
-    private void createSubscription(String uri, Knative knativeTrait, TraitContext context) {
+    private void createSubscription(String uri, TraitContext context) {
         String channelName = extractKnativeResource(uri);
 
         String subscriptionName = createSubscriptionName(context.getName(), channelName);
@@ -286,21 +287,23 @@ public class KnativeTrait extends KnativeBaseTrait {
 
     private Map<String, String> getFilterAttributes(Knative knativeTrait, String eventType) {
         Map<String, String> filterAttributes = new HashMap<>();
-        filterAttributes.put("type", eventType);
 
-        // TODO: use this as soon as new Camel K CRD model has been released
-        //        for (String filterExpression : knativeTrait.getFilters()) {
-        //            String[] keyValue = filterExpression.split("=", 2);
-        //            if (keyValue.length != 2) {
-        //                throw new RuntimeCamelException("Invalid Knative trigger filter expression: %s".formatted(filterExpression));
-        //            }
-        //            filterAttributes.put(keyValue[0].trim(), keyValue[1].trim());
-        //        }
-        //
-        //        if (!filterAttributes.containsKey("type") && Optional.ofNullable(knativeTrait.getFilterEventType()).orElse(true) && ObjectHelper.isNotEmpty(eventType)) {
-        //            // Apply default trigger filter attribute for the event type
-        //            filterAttributes.put("type", eventType);
-        //        }
+        if (knativeTrait.getFilters() != null) {
+            for (String filterExpression : knativeTrait.getFilters()) {
+                String[] keyValue = filterExpression.split("=", 2);
+                if (keyValue.length != 2) {
+                    throw new RuntimeCamelException(
+                            "Invalid Knative trigger filter expression: %s".formatted(filterExpression));
+                }
+                filterAttributes.put(keyValue[0].trim(), keyValue[1].trim());
+            }
+        }
+
+        if (!filterAttributes.containsKey("type") && Optional.ofNullable(knativeTrait.getFilterEventType()).orElse(true)
+                && ObjectHelper.isNotEmpty(eventType)) {
+            // Apply default trigger filter attribute for the event type
+            filterAttributes.put("type", eventType);
+        }
 
         return filterAttributes;
     }
