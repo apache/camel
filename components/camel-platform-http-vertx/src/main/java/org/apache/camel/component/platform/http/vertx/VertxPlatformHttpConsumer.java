@@ -245,6 +245,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             if (existing != null) {
                 failure.addSuppressed(existing);
             }
+            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, failure);
             exchange.setException(failure);
         }
         handleExchangeComplete(exchange);
