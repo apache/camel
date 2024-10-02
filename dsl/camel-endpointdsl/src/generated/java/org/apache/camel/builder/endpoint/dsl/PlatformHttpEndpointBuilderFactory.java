@@ -324,6 +324,44 @@ public interface PlatformHttpEndpointBuilderFactory {
         }
 
         /**
+         * When Camel is complete processing the message, and the HTTP server is
+         * writing response. This option controls whether Camel should catch any
+         * failure during writing response and store this on the Exchange, which
+         * allows onCompletion/UnitOfWork to regard the Exchange as failed and
+         * have access to the caused exception from the HTTP server.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param handleWriteResponseError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder handleWriteResponseError(boolean handleWriteResponseError) {
+            doSetProperty("handleWriteResponseError", handleWriteResponseError);
+            return this;
+        }
+        /**
+         * When Camel is complete processing the message, and the HTTP server is
+         * writing response. This option controls whether Camel should catch any
+         * failure during writing response and store this on the Exchange, which
+         * allows onCompletion/UnitOfWork to regard the Exchange as failed and
+         * have access to the caused exception from the HTTP server.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param handleWriteResponseError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder handleWriteResponseError(String handleWriteResponseError) {
+            doSetProperty("handleWriteResponseError", handleWriteResponseError);
+            return this;
+        }
+        /**
          * Whether to include HTTP request headers (Accept, User-Agent, etc.)
          * into HTTP response produced by this endpoint.
          * 
