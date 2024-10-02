@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.pdf.converter;
 
+import java.io.InputStream;
+
 import org.apache.camel.Converter;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -27,5 +29,11 @@ public class PdfConverter {
     @Converter
     public PDDocument convertToPDF(byte[] bytes) throws Exception {
         return Loader.loadPDF(bytes);
+    }
+
+    @Converter
+    public PDDocument toPDDocument(InputStream stream) throws Exception {
+        final byte[] bytes = stream.readAllBytes();
+        return convertToPDF(bytes);
     }
 }
