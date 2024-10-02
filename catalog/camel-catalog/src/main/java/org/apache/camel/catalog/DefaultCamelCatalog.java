@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -41,9 +40,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.EntityRef;
 import org.apache.camel.tooling.model.JsonMapper;
-import org.apache.camel.tooling.model.Kind;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
@@ -310,11 +307,6 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     public List<String> findOtherNames(String filter) {
         // should not cache when filter parameter can by any kind of value
         return findNames(filter, this::findOtherNames, this::otherModel);
-    }
-
-    @Override
-    public List<String> findCapabilityNames() {
-        return List.copyOf(runtimeProvider.findCapabilities().keySet());
     }
 
     private List<String> findNames(
@@ -643,23 +635,6 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public List<ReleaseModel> camelQuarkusReleases() {
         return camelReleases("camel-quarkus-releases.json");
-    }
-
-    @Override
-    public Optional<EntityRef> findCapabilityRef(String capability) {
-        Map<String, String> capabilities = cache("capabilities", runtimeProvider::findCapabilities);
-
-        String ref = capabilities.get(capability);
-        if (ref == null) {
-            return Optional.empty();
-        }
-
-        String[] items = ref.split("/");
-        if (items.length != 2) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new EntityRef(Kind.valueOf(items[0]), items[1]));
     }
 
     private List<ReleaseModel> camelReleases(String file) {
