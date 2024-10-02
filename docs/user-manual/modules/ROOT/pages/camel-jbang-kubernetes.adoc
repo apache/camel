@@ -514,7 +514,64 @@ Apache Camel also provides a Knative component that makes you easily interact wi
 
 The Knative component enables you to exchange data with the Knative eventing broker and other Knative services deployed on Kubernetes.
 The Camel JBang Kubernetes plugin provides some autoconfiguration options when connecting with the Knative component.
-The export command assists you in configuring both the Knative component and the Kubernetes manifest for connecting to Knative resources on the Kubenretes cluster.
+The export command assists you in configuring both the Knative component and the Kubernetes manifest for connecting to Knative resources on the Kubernetes cluster.
+
+You can configure the Knative component with the Knative trait.
+
+The trait offers following options for customization:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| knative.enabled
+| bool
+| Can be used to enable or disable a trait. (default: true)
+
+| knative.configuration
+| string
+| Can be used to inject a Knative complete configuration in JSON format
+
+| knative.channel-sinks
+| []string
+| List of channels used as destination of camel routes. Can contain simple channel names or full Camel URIs.
+
+Refer to the Knative documentation for more information.
+
+| knative.channel-sources
+| []string
+| List of channels used as source of camel routes. Can contain simple channel names or full Camel URIs.
+
+| knative.endpoint-sinks
+| []string
+| List of endpoints used as destination of camel routes. Can contain simple endpoint names or full Camel URIs.
+
+| knative.endpoint-sources
+| []string
+| List of endpoints used as sources of camel routes. Can contain simple endpoint names or full Camel URIs.
+
+| knative.event-sinks
+| []string
+| List of endpoints used as destination of integration routes. Can contain simple endpoint names or full Camel URIs.
+
+| knative.event-sources
+| []string
+| List of event types that the integration will be subscribed to. Can contain simple event types or full Camel URIs (to use a specific broker different from "default").
+
+| knative.sink-binding
+| bool
+| Allows binding the integration to a sink via a Knative SinkBinding resource. This can be used when the integration targets a single sink. It’s enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).
+
+| knative.filters
+| []string
+| Sets filter attributes on the event stream (such as event type, source, subject and so on). A list of key-value pairs that represent filter attributes and its values. The syntax is KEY=VALUE, e.g., source="my.source". Filter attributes get set on the Knative trigger that is being created as part of this integration.
+
+| knative.filter-event-type
+| bool
+| Enables the default filtering for the Knative trigger using the event type If this is true, the created Knative trigger uses the event type as a filter on the event stream when no other filter criteria is given. (default: true)
+
+|===
+
 
 === Knative trigger
 
