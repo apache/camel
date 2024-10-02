@@ -92,6 +92,8 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeTrigger(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-event-source.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.traits = new String[] {
+                "knative.filters=source=my-source" };
         command.doCall();
 
         Assertions.assertTrue(hasService(rt));
@@ -102,8 +104,9 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
 
         Assertions.assertEquals("my-broker-knative-event-source-camel-event", trigger.getMetadata().getName());
         Assertions.assertEquals("my-broker", trigger.getSpec().getBroker());
-        Assertions.assertEquals(1, trigger.getSpec().getFilter().getAttributes().size());
+        Assertions.assertEquals(2, trigger.getSpec().getFilter().getAttributes().size());
         Assertions.assertEquals("camel-event", trigger.getSpec().getFilter().getAttributes().get("type"));
+        Assertions.assertEquals("my-source", trigger.getSpec().getFilter().getAttributes().get("source"));
         Assertions.assertEquals("knative-event-source", trigger.getSpec().getSubscriber().getRef().getName());
         Assertions.assertEquals("Service", trigger.getSpec().getSubscriber().getRef().getKind());
         Assertions.assertEquals("v1", trigger.getSpec().getSubscriber().getRef().getApiVersion());
