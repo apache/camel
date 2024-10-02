@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "openshift-builds",
-    "title": "Openshift Builds",
+    "title": "OpenShift Builds",
     "description": "Perform operations on OpenShift Builds.",
     "deprecated": false,
     "firstVersion": "2.17.0",
@@ -31,8 +31,8 @@
   "headers": {
     "CamelKubernetesOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Producer operation", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_OPERATION" },
     "CamelKubernetesNamespaceName": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The namespace name", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_NAMESPACE_NAME" },
-    "CamelKubernetesBuildsLabels": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Openshift build labels", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILDS_LABELS" },
-    "CamelKubernetesBuildName": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Openshift build name", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILD_NAME" }
+    "CamelKubernetesBuildsLabels": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OpenShift build labels", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILDS_LABELS" },
+    "CamelKubernetesBuildName": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OpenShift build name", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILD_NAME" }
   },
   "properties": {
     "masterUrl": { "index": 0, "kind": "path", "displayName": "Master Url", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.kubernetes.KubernetesConfiguration", "configurationField": "configuration", "description": "URL to a remote Kubernetes API server. This should only be used when your Camel application is connecting from outside Kubernetes. If you run your Camel application inside Kubernetes, then you can use local or client as the URL to tell Camel to run in local mode. If you connect remotely to Kubernetes, then you may also need some of the many other configuration options for secured connection with certificates, etc." },

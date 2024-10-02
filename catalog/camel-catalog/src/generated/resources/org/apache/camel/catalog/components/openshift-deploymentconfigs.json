@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "openshift-deploymentconfigs",
-    "title": "Openshift Deployment Configs",
-    "description": "Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.",
+    "title": "OpenShift Deployment Configs",
+    "description": "Perform operations on OpenShift Deployment Configs and get notified on Deployment Config changes.",
     "deprecated": false,
     "firstVersion": "3.18.0",
     "label": "container,cloud",

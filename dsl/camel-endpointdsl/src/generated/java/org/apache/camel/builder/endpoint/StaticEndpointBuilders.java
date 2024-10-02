@@ -10931,7 +10931,7 @@ public class StaticEndpointBuilders {
         return OpensearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Openshift Build Config (camel-kubernetes)
+     * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
      * Category: container,cloud
@@ -10955,7 +10955,7 @@ public class StaticEndpointBuilders {
         return openshiftBuildConfigs("openshift-build-configs", path);
     }
     /**
-     * Openshift Build Config (camel-kubernetes)
+     * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
      * Category: container,cloud
@@ -10981,7 +10981,7 @@ public class StaticEndpointBuilders {
         return OpenshiftBuildConfigsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Openshift Builds (camel-kubernetes)
+     * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
      * 
      * Category: container,cloud
@@ -11005,7 +11005,7 @@ public class StaticEndpointBuilders {
         return openshiftBuilds("openshift-builds", path);
     }
     /**
-     * Openshift Builds (camel-kubernetes)
+     * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
      * 
      * Category: container,cloud
@@ -11031,8 +11031,8 @@ public class StaticEndpointBuilders {
         return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Openshift Deployment Configs (camel-kubernetes)
-     * Perform operations on Openshift Deployment Configs and get notified on
+     * OpenShift Deployment Configs (camel-kubernetes)
+     * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
      * 
      * Category: container,cloud
@@ -11056,8 +11056,8 @@ public class StaticEndpointBuilders {
         return openshiftDeploymentconfigs("openshift-deploymentconfigs", path);
     }
     /**
-     * Openshift Deployment Configs (camel-kubernetes)
-     * Perform operations on Openshift Deployment Configs and get notified on
+     * OpenShift Deployment Configs (camel-kubernetes)
+     * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
      * 
      * Category: container,cloud

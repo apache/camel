@@ -32,7 +32,7 @@ import org.apache.camel.component.openshift.build_configs.OpenshiftBuildConfigsC
 public interface OpenshiftBuildConfigsComponentBuilderFactory {
 
     /**
-     * Openshift Build Config (camel-kubernetes)
+     * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
      * Category: container,cloud
@@ -46,7 +46,7 @@ public interface OpenshiftBuildConfigsComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Openshift Build Config component.
+     * Builder for the OpenShift Build Config component.
      */
     interface OpenshiftBuildConfigsComponentBuilder extends ComponentBuilder<OpenshiftBuildConfigsComponent> {
     

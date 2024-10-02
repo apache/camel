@@ -190,12 +190,12 @@ public final class KubernetesConstants {
     @Metadata(label = "producer", description = "The ConfigMap annotations", javaType = "Map<String, String>",
               applicableFor = SCHEME_CONFIG_MAPS)
     public static final String KUBERNETES_CONFIGMAPS_ANNOTATIONS = "CamelKubernetesConfigMapsAnnotations";
-    @Metadata(label = "producer", description = "The Openshift build labels", javaType = "Map<String, String>",
+    @Metadata(label = "producer", description = "The OpenShift build labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_BUILDS)
     public static final String KUBERNETES_BUILDS_LABELS = "CamelKubernetesBuildsLabels";
-    @Metadata(label = "producer", description = "The Openshift build name", javaType = "String", applicableFor = SCHEME_BUILDS)
+    @Metadata(label = "producer", description = "The OpenShift build name", javaType = "String", applicableFor = SCHEME_BUILDS)
     public static final String KUBERNETES_BUILD_NAME = "CamelKubernetesBuildName";
-    @Metadata(label = "producer", description = "The Openshift Config Build labels", javaType = "Map<String, String>",
+    @Metadata(label = "producer", description = "The OpenShift Config Build labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_BUILD_CONFIG)
     public static final String KUBERNETES_BUILD_CONFIGS_LABELS = "CamelKubernetesBuildConfigsLabels";
     @Metadata(label = "producer", description = "The Openshift Config Build name", javaType = "String",

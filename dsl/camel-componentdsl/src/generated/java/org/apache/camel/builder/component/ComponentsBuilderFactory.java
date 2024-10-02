@@ -3261,7 +3261,7 @@ public interface ComponentsBuilderFactory {
         return OpensearchComponentBuilderFactory.opensearch();
     }
     /**
-     * Openshift Build Config (camel-kubernetes)
+     * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
      * Category: container,cloud
@@ -3274,7 +3274,7 @@ public interface ComponentsBuilderFactory {
         return OpenshiftBuildConfigsComponentBuilderFactory.openshiftBuildConfigs();
     }
     /**
-     * Openshift Builds (camel-kubernetes)
+     * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
      * 
      * Category: container,cloud
@@ -3287,8 +3287,8 @@ public interface ComponentsBuilderFactory {
         return OpenshiftBuildsComponentBuilderFactory.openshiftBuilds();
     }
     /**
-     * Openshift Deployment Configs (camel-kubernetes)
-     * Perform operations on Openshift Deployment Configs and get notified on
+     * OpenShift Deployment Configs (camel-kubernetes)
+     * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
      * 
      * Category: container,cloud
