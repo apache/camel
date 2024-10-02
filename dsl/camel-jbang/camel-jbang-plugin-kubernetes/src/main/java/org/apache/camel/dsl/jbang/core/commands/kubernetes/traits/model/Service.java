@@ -38,11 +38,6 @@ public class Service {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
-    @JsonProperty("nodePort")
-    @JsonPropertyDescription("Enable Service to be exposed as NodePort (default `false`). Deprecated: Use service type instead.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Boolean nodePort;
     @JsonProperty("type")
     @JsonPropertyDescription("The type of service to be used, either 'ClusterIP', 'NodePort' or 'LoadBalancer'.")
     @JsonSetter(
@@ -66,14 +61,6 @@ public class Service {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public Boolean getNodePort() {
-        return this.nodePort;
-    }
-
-    public void setNodePort(Boolean nodePort) {
-        this.nodePort = nodePort;
     }
 
     public Type getType() {

@@ -29,21 +29,11 @@ import com.fasterxml.jackson.annotation.Nulls;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "containerMeta", "enabled", "httpProxy", "vars" })
 public class Environment {
-    @JsonProperty("containerMeta")
-    @JsonPropertyDescription("Enables injection of `NAMESPACE` and `POD_NAME` environment variables (default `true`)")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Boolean containerMeta;
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean enabled;
-    @JsonProperty("httpProxy")
-    @JsonPropertyDescription("Propagates the `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` environment variables (default `true`)")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Boolean httpProxy;
     @JsonProperty("vars")
     @JsonPropertyDescription("A list of environment variables to be added to the integration container. The syntax is KEY=VALUE, e.g., `MY_VAR=\"my value\"`. These take precedence over the previously defined environment variables.")
     @JsonSetter(
@@ -53,28 +43,12 @@ public class Environment {
     public Environment() {
     }
 
-    public Boolean getContainerMeta() {
-        return this.containerMeta;
-    }
-
-    public void setContainerMeta(Boolean containerMeta) {
-        this.containerMeta = containerMeta;
-    }
-
     public Boolean getEnabled() {
         return this.enabled;
     }
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public Boolean getHttpProxy() {
-        return this.httpProxy;
-    }
-
-    public void setHttpProxy(Boolean httpProxy) {
-        this.httpProxy = httpProxy;
     }
 
     public List<String> getVars() {

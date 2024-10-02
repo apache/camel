@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "auto", "channelSinks", "channelSources", "config", "enabled", "endpointSinks", "endpointSources",
-        "eventSinks", "eventSources", "filterEventType", "filterSourceChannels", "filters", "namespaceLabel", "sinkBinding" })
+        "eventSinks", "eventSources", "filterEventType", "filters", "sinkBinding" })
 public class Knative {
     @JsonProperty("auto")
     @JsonPropertyDescription("Enable automatic discovery of all trait properties.")
@@ -81,21 +81,11 @@ public class Knative {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Boolean filterEventType;
-    @JsonProperty("filterSourceChannels")
-    @JsonPropertyDescription("Enables filtering on events based on the header \"ce-knativehistory\". Since this header has been removed in newer versions of Knative, filtering is disabled by default.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Boolean filterSourceChannels;
     @JsonProperty("filters")
     @JsonPropertyDescription("Sets filter attributes on the event stream (such as event type, source, subject and so on). A list of key-value pairs that represent filter attributes and its values. The syntax is KEY=VALUE, e.g., `source=\"my.source\"`. Filter attributes get set on the Knative trigger that is being created as part of this integration.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> filters;
-    @JsonProperty("namespaceLabel")
-    @JsonPropertyDescription("Enables the camel-k-operator to set the \"bindings.knative.dev/include=true\" label to the namespace As Knative requires this label to perform injection of K_SINK URL into the service. If this is false, the integration pod may start and fail, read the SinkBinding Knative documentation. (default: true)")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Boolean namespaceLabel;
     @JsonProperty("sinkBinding")
     @JsonPropertyDescription("Allows binding the camel route to a sink via a Knative SinkBinding resource. This can be used when the camel route targets a single sink. It's enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).")
     @JsonSetter(
@@ -185,28 +175,12 @@ public class Knative {
         this.filterEventType = filterEventType;
     }
 
-    public Boolean getFilterSourceChannels() {
-        return this.filterSourceChannels;
-    }
-
-    public void setFilterSourceChannels(Boolean filterSourceChannels) {
-        this.filterSourceChannels = filterSourceChannels;
-    }
-
     public List<String> getFilters() {
         return this.filters;
     }
 
     public void setFilters(List<String> filters) {
         this.filters = filters;
-    }
-
-    public Boolean getNamespaceLabel() {
-        return this.namespaceLabel;
-    }
-
-    public void setNamespaceLabel(Boolean namespaceLabel) {
-        this.namespaceLabel = namespaceLabel;
     }
 
     public Boolean getSinkBinding() {
