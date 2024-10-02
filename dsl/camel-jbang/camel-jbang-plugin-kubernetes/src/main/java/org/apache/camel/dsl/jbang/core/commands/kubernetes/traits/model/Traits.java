@@ -38,12 +38,6 @@ public class Traits {
                 nulls = Nulls.SKIP)
     private Map<String, Addons> addons;
 
-    @JsonProperty("builder")
-    @JsonPropertyDescription("The configuration of Builder trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private Builder builder;
-
     @JsonProperty("camel")
     @JsonPropertyDescription("The configuration of Camel trait")
     @JsonSetter(
@@ -115,14 +109,6 @@ public class Traits {
 
     public void setAddons(Map<String, Addons> addons) {
         this.addons = addons;
-    }
-
-    public Builder getBuilder() {
-        return this.builder;
-    }
-
-    public void setBuilder(Builder builder) {
-        this.builder = builder;
     }
 
     public Camel getCamel() {
