@@ -59,6 +59,8 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.Exchange.ACTIVE_SPAN;
+
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF JAXRS client, it will turn the normal Object
  * invocation to a RESTful request according to resource annotation. Any response will be bound to Camel exchange.
@@ -108,6 +110,16 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        // if using camel-tracer then execute this synchronously due to CXF-9063
+        if (exchange.getProperty(ACTIVE_SPAN) != null) {
+            try {
+                process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            return true;
+        }
+
         try {
             Message inMessage = exchange.getIn();
             Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
