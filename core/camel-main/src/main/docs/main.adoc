@@ -349,7 +349,7 @@ The camel.vault.azure supports 12 options, which are listed below.
 |===
 
 
-=== Camel OpenTelemtry configurations
+=== Camel OpenTelemetry configurations
 The camel.opentelemetry supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
