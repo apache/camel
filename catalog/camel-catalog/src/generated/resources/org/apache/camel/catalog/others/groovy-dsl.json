@@ -4,7 +4,7 @@
     "name": "groovy-dsl",
     "title": "Groovy DSL",
     "description": "Camel DSL with Groovy",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.9.0",
     "label": "dsl",
     "supportLevel": "Experimental",

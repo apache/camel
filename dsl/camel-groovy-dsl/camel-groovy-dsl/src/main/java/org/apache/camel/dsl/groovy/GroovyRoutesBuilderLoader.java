@@ -33,6 +33,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 @Experimental
 @ManagedResource(description = "Managed GroovyRoutesBuilderLoader")
 @RoutesLoader(GroovyRoutesBuilderLoader.EXTENSION)
+@Deprecated
 public class GroovyRoutesBuilderLoader extends EndpointRouteBuilderLoaderSupport {
     public static final String EXTENSION = "groovy";
 
