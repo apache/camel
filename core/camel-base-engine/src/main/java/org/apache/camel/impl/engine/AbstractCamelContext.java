@@ -1712,6 +1712,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
+        // ensure camel context is injected in factory
+        CamelContextAware.trySetCamelContext(lifecycleStrategy, this);
         // avoid adding double which can happen with spring xml on spring boot
         if (!getLifecycleStrategies().contains(lifecycleStrategy)) {
             getLifecycleStrategies().add(lifecycleStrategy);
@@ -1745,6 +1747,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory) {
+        // ensure camel context is injected in factory
+        CamelContextAware.trySetCamelContext(routePolicyFactory, this);
         // avoid adding double which can happen with spring xml on spring boot
         if (!getRoutePolicyFactories().contains(routePolicyFactory)) {
             getRoutePolicyFactories().add(routePolicyFactory);
