@@ -29,7 +29,7 @@
 
     <artifactId>camel-groovy-dsl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Groovy DSL</name>
+    <name>Camel :: Groovy DSL (deprecated)</name>
     <description>Camel DSL with Groovy</description>
 
     <properties>

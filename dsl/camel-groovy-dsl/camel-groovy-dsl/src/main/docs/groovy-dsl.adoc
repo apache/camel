@@ -1,10 +1,11 @@
-= Groovy DSL Component
+= Groovy DSL Component (deprecated)
 :doctitle: Groovy DSL
 :shortname: groovy-dsl
 :artifactid: camel-groovy-dsl
 :description: Camel DSL with Groovy
 :since: 3.9
-:supportlevel: Experimental
+:supportlevel: Experimental-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :group: DSL

@@ -29,7 +29,7 @@
 
     <artifactId>camel-groovy-dsl-test</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Groovy DSL :: Test</name>
+    <name>Camel :: Groovy DSL :: Test (deprecated)</name>
     <description>Camel DSL with Groovy (Test)</description>
 
     <properties>

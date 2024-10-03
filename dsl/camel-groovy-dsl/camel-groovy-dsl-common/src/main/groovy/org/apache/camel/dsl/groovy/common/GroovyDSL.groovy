@@ -39,6 +39,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.spi.Registry
 
+@Deprecated
 class GroovyDSL extends BuilderSupport implements EndpointBuilderFactory {
     final Registry registry
     final Components components
