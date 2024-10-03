@@ -723,6 +723,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
+    // Returns true if it has either an openapi spec or it uses contract-first DSL
+    protected boolean hasOpenapi(Set<String> dependencies) {
+        return openapi != null || dependencies.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-rest-openapi"));
+    }
+
     protected Properties mapBuildProperties() {
         var answer = new Properties();
         buildProperties.stream().map(item -> item.split("=")).forEach(toks -> answer.setProperty(toks[0], toks[1]));
