@@ -352,7 +352,7 @@ class ExportSpringBoot extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
 
         boolean http = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
-        if (openapi != null && !http) {
+        if (hasOpenapi(answer) && !http) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");
         }
