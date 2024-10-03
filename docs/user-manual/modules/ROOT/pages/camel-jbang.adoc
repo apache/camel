@@ -2114,6 +2114,10 @@ NOTE: If a kamelet is loaded from GitHub, then they cannot be live reloaded.
 
 === Using the platform-http component
 
+NOTE: Camel JBang is only intended for working with `platform-http` as HTTP server component for rest-dsl,
+and for HTTP serer in general. It is not intended to work with `camel-servlet` or `camel-jetty`. If you find a need for using Jetty,
+then Camel JBang will not support seamless rest-dsl support and exporting.
+
 When a route is started from `platform-http` then Camel JBang will automatically include a VertX HTTP server
 running on port 8080. For example, the following route in a file named `server.yaml`:
 
