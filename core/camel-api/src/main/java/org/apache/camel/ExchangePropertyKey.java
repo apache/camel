@@ -89,6 +89,8 @@ public enum ExchangePropertyKey {
 
     public static ExchangePropertyKey asExchangePropertyKey(String name) {
         switch (name) {
+            case Exchange.ACTIVE_SPAN:
+                return ACTIVE_SPAN;
             case Exchange.AGGREGATED_COMPLETED_BY:
                 return AGGREGATED_COMPLETED_BY;
             case Exchange.AGGREGATED_CORRELATION_KEY:
