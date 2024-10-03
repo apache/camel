@@ -108,6 +108,7 @@ public class CxfProducer extends DefaultAsyncProducer {
             } catch (Exception e) {
                 camelExchange.setException(e);
             }
+            callback.done(true);
             return true;
         }
 
