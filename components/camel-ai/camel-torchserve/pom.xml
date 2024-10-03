@@ -29,7 +29,7 @@
     <artifactId>camel-torchserve</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: TorchServe</name>
-    <description>Camel PyTorch TorchServe support</description>
+    <description>Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely</description>
 
     <properties>
     </properties>

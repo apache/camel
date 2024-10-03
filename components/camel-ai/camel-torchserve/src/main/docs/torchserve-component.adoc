@@ -2,7 +2,7 @@
 :doctitle: TorchServe
 :shortname: torchserve
 :artifactid: camel-torchserve
-:description: Camel PyTorch TorchServe support
+:description: Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely
 :since: 4.9
 :supportlevel: Preview
 :tabs-sync-option:

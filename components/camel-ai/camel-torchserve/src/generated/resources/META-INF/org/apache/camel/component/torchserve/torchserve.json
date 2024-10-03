@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "torchserve",
     "title": "TorchServe",
-    "description": "Camel PyTorch TorchServe support",
+    "description": "Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely",
     "deprecated": false,
     "firstVersion": "4.9.0",
     "label": "ai",
