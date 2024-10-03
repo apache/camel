@@ -41,6 +41,7 @@ import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +57,13 @@ public class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupp
     private static final ObjectMapper MAPPER = new ObjectMapper();
     public static final String WEBHOOK_ALREADY_EXISTS_JSON = "messages/webhook-already-exists.json";
     public static final String WEBHOOKS = "messages/webhooks.json";
+
+    @Override
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
+    }
 
     @Test
     public void testAutomaticRegistrationWhenWebhookConfigurationAlreadyExists() throws Exception {
@@ -197,10 +205,5 @@ public class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupp
                 });
 
         return clickUpMockRoutes;
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }
