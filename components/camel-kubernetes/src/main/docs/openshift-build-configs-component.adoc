@@ -1,5 +1,5 @@
-= Openshift Build Config Component
-:doctitle: Openshift Build Config
+= OpenShift Build Config Component
+:doctitle: OpenShift Build Config
 :shortname: openshift-build-configs
 :artifactid: camel-kubernetes
 :description: Perform operations on OpenShift Build Configs.

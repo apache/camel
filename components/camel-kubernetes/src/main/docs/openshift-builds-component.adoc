@@ -1,5 +1,5 @@
-= Openshift Builds Component
-:doctitle: Openshift Builds
+= OpenShift Builds Component
+:doctitle: OpenShift Builds
 :shortname: openshift-builds
 :artifactid: camel-kubernetes
 :description: Perform operations on OpenShift Builds.

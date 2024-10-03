@@ -67,7 +67,7 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        LOG.debug("Stopping Openshift DeploymentConfigs Consumer");
+        LOG.debug("Stopping OpenShift DeploymentConfigs Consumer");
         if (executor != null) {
             KubernetesHelper.close(deploymentsWatcher, deploymentsWatcher::getWatch);
 
