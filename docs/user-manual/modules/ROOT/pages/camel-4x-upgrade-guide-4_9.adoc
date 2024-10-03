@@ -23,6 +23,12 @@ as header filter strategy which is the old implementation.
 
 Added `int limit` as parameter to the `browse` method in `org.apache.camel.component.jms.QueueBrowseStrategy`.
 
+=== camel-opentelemetry
+
+The `camel-opentelemetry` component has had significant bug fixes to handle span activation/deactivations
+better when Camel route messages synchronously and asynchronously. This component should also work better
+on Spring Boot.
+
 === camel-hashicorp-vault properties function
 
 The syntax for retrieving a single field of a secret has been changed.
