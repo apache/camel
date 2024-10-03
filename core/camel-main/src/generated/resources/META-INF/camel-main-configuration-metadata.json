@@ -12,8 +12,6 @@
     { "name": "camel.vault.aws", "description": "Camel AWS Vault configurations", "sourceType": "org.apache.camel.vault.AwsVaultConfiguration" },
     { "name": "camel.vault.gcp", "description": "Camel GCP Vault configurations", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration" },
     { "name": "camel.vault.azure", "description": "Camel Azure Key Vault configurations", "sourceType": "org.apache.camel.vault.AzureVaultConfiguration" },
-    { "name": "camel.vault.kubernetes", "description": "Camel Kubernetes Vault configurations", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration" },
-    { "name": "camel.vault.hashicorp", "description": "Camel Hashicorp Vault configurations", "sourceType": "org.apache.camel.vault.HashicorpVaultConfiguration" },
     { "name": "camel.opentelemetry", "description": "Camel OpenTelemetry configurations", "sourceType": "org.apache.camel.main.OtelConfigurationProperties" },
     { "name": "camel.metrics", "description": "Camel Micrometer Metrics configurations", "sourceType": "org.apache.camel.main.MetricsConfigurationProperties" },
     { "name": "camel.faulttolerance", "description": "Fault Tolerance EIP Circuit Breaker configurations", "sourceType": "org.apache.camel.main.FaultToleranceConfigurationProperties" },
