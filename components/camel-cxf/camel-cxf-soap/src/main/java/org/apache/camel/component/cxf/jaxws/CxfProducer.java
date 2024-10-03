@@ -32,7 +32,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
@@ -52,8 +51,6 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.Exchange.ACTIVE_SPAN;
-
 /**
  * CxfProducer binds a Camel exchange to a CXF exchange, acts as a CXF client, and sends the request to a CXF to a
  * server. Any response will be bound to Camel exchange.
@@ -61,6 +58,8 @@ import static org.apache.camel.Exchange.ACTIVE_SPAN;
 public class CxfProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);
+
+    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
 
     private Client client;
     private CxfEndpoint endpoint;
@@ -103,7 +102,7 @@ public class CxfProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
         // if using camel-tracer then execute this synchronously due to CXF-9063
-        if (camelExchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN) != null) {
+        if (camelExchange.getProperty(ACTIVE_SPAN_PROPERTY) != null) {
             try {
                 process(camelExchange);
             } catch (Exception e) {
