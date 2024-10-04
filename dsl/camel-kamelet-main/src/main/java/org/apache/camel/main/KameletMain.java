@@ -411,7 +411,8 @@ public class KameletMain extends MainCommandLineSupport {
             addInitialProperty("camel.component.properties.ignore-missing-property", "true");
             addInitialProperty("camel.component.properties.ignore-missing-location", "true");
             PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
-            pc.setPropertiesParser(new ExportPropertiesParser());
+            pc.setPropertiesParser(new ExportPropertiesParser(answer));
+            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, export));
 
             // override default type converters with our export converter that is more flexible during exporting
             ExportTypeConverter ec = new ExportTypeConverter();
@@ -423,6 +424,9 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
             answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
             answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+        } else {
+            PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
+            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, false));
         }
 
         boolean prompt = "true".equals(getInitialProperties().get("camel.jbang.prompt"));
@@ -703,16 +707,6 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
-    }
-
-    @Override
-    protected void configurePropertiesService(CamelContext camelContext) throws Exception {
-        super.configurePropertiesService(camelContext);
-
-        org.apache.camel.component.properties.PropertiesComponent pc
-                = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
-        boolean export = "true".equals(getInitialProperties().get("camel.jbang.export"));
-        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(camelContext, export));
     }
 
     @Override
