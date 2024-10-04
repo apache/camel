@@ -29,7 +29,7 @@ public class Api {
     }
 
     @SuppressWarnings("unchecked")
-    public static Api from(org.apache.camel.component.torchserve.client.inference.model.InlineResponse200 src) {
+    public static Api from(org.apache.camel.component.torchserve.client.inference.model.ApiDescription200Response src) {
         Api api = new Api();
         api.setOpenapi(src.getOpenapi());
         api.setInfo((Map<String, String>) src.getInfo());
@@ -38,7 +38,7 @@ public class Api {
     }
 
     @SuppressWarnings("unchecked")
-    public static Api from(org.apache.camel.component.torchserve.client.management.model.InlineResponse200 src) {
+    public static Api from(org.apache.camel.component.torchserve.client.management.model.ApiDescription200Response src) {
         Api api = new Api();
         api.setOpenapi(src.getOpenapi());
         api.setInfo((Map<String, String>) src.getInfo());

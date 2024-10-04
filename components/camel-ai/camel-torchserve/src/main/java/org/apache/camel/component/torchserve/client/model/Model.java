@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.torchserve.client.model;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import org.apache.camel.component.torchserve.client.management.model.ListModels200ResponseModelsInner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,21 +30,11 @@ public class Model {
     public Model() {
     }
 
-    public static Model fromMap(Object src) {
-        if (!(src instanceof Map)) {
-            LOG.error("Unexpected model data: {}", src);
-            return new Model();
-        }
-        @SuppressWarnings("unchecked")
-        Map<String, String> map = (Map<String, String>) src;
+    public static Model from(ListModels200ResponseModelsInner src) {
         Model model = new Model();
-        model.setModelName(map.get("modelName"));
-        model.setModelUrl(map.get("modelUrl"));
+        model.setModelName(src.getModelName());
+        model.setModelUrl(src.getModelUrl());
         return model;
-    }
-
-    public static List<Model> fromMap(List<Object> src) {
-        return src.stream().map(Model::fromMap).collect(Collectors.toList());
     }
 
     public String getModelName() {

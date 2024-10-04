@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.torchserve.client.impl;
 
+import java.util.Map;
+
 import org.apache.camel.component.torchserve.client.Inference;
 import org.apache.camel.component.torchserve.client.inference.api.DefaultApi;
 import org.apache.camel.component.torchserve.client.inference.invoker.ApiClient;
@@ -52,7 +54,8 @@ public class DefaultInference implements Inference {
     @Override
     public Api apiDescription() throws ApiException {
         try {
-            return Api.from(api.apiDescription());
+            // Workaround for HTTPClient 5.4 requiring content-type for OPTIONS requests
+            return Api.from(api.apiDescription(Map.of("Content-Type", "application/json")));
         } catch (org.apache.camel.component.torchserve.client.inference.invoker.ApiException e) {
             throw new ApiException(e);
         }
@@ -71,7 +74,7 @@ public class DefaultInference implements Inference {
     public Object predictions(String modelName, Object body) throws ApiException {
         try {
             // /predictions/{model_name}
-            return api.predictions_1(body, modelName);
+            return api.predictions_1(modelName, body);
         } catch (org.apache.camel.component.torchserve.client.inference.invoker.ApiException e) {
             throw new ApiException(e);
         }
@@ -80,7 +83,7 @@ public class DefaultInference implements Inference {
     @Override
     public Object predictions(String modelName, String modelVersion, Object body) throws ApiException {
         try {
-            return api.versionPredictions(body, modelName, modelVersion);
+            return api.versionPredictions(modelName, modelVersion, body);
         } catch (org.apache.camel.component.torchserve.client.inference.invoker.ApiException e) {
             throw new ApiException(e);
         }

@@ -19,7 +19,7 @@ package org.apache.camel.component.torchserve.client.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.component.torchserve.client.management.model.InlineResponse2001;
+import org.apache.camel.component.torchserve.client.management.model.ListModels200Response;
 
 public class ModelList {
 
@@ -29,10 +29,10 @@ public class ModelList {
     public ModelList() {
     }
 
-    public static ModelList from(InlineResponse2001 inlineResponse2001) {
+    public static ModelList from(ListModels200Response src) {
         ModelList modelList = new ModelList();
-        modelList.setNextPageToken(inlineResponse2001.getNextPageToken());
-        modelList.setModels(Model.fromMap(inlineResponse2001.getModels()));
+        modelList.setNextPageToken(src.getNextPageToken());
+        modelList.setModels(src.getModels().stream().map(Model::from).toList());
         return modelList;
     }
 

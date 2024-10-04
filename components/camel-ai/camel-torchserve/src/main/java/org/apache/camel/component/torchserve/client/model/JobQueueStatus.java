@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.torchserve.client.model;
 
-import org.apache.camel.component.torchserve.client.management.model.ModelsmodelNameJobQueueStatus;
+import org.apache.camel.component.torchserve.client.management.model.DescribeModel200ResponseInnerJobQueueStatus;
 
 public class JobQueueStatus {
 
@@ -26,7 +26,7 @@ public class JobQueueStatus {
     public JobQueueStatus() {
     }
 
-    public static JobQueueStatus from(ModelsmodelNameJobQueueStatus src) {
+    public static JobQueueStatus from(DescribeModel200ResponseInnerJobQueueStatus src) {
         if (src == null) {
             return null;
         }

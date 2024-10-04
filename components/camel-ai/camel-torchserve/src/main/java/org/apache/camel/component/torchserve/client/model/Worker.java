@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.torchserve.client.model;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.camel.component.torchserve.client.management.model.ModelsmodelNameWorkers;
+import org.apache.camel.component.torchserve.client.management.model.DescribeModel200ResponseInnerWorkersInner;
 
 public class Worker {
 
@@ -31,7 +28,7 @@ public class Worker {
     public Worker() {
     }
 
-    public static Worker from(ModelsmodelNameWorkers src) {
+    public static Worker from(DescribeModel200ResponseInnerWorkersInner src) {
         if (src == null) {
             return null;
         }
@@ -39,13 +36,9 @@ public class Worker {
         Worker worker = new Worker();
         worker.setId(src.getId());
         worker.setStartTime(src.getStartTime());
-        worker.setGpu(src.isGpu());
+        worker.setGpu(src.getGpu());
         worker.setStatus(Status.from(src.getStatus()));
         return worker;
-    }
-
-    public static List<Worker> from(List<ModelsmodelNameWorkers> src) {
-        return src.stream().map(Worker::from).collect(Collectors.toList());
     }
 
     public String getId() {
@@ -95,7 +88,7 @@ public class Worker {
         LOADING,
         UNLOADING;
 
-        public static Status from(ModelsmodelNameWorkers.StatusEnum status) {
+        public static Status from(DescribeModel200ResponseInnerWorkersInner.StatusEnum status) {
             return switch (status) {
                 case READY -> READY;
                 case LOADING -> LOADING;

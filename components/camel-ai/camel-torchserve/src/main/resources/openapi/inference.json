@@ -147,8 +147,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "type": "string",
-                "format": "binary"
+                "AnyValue": {}
               }
             }
           },
@@ -275,8 +274,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "type": "string",
-                "format": "binary"
+                "AnyValue": {}
               }
             }
           },
@@ -403,8 +401,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "type": "string",
-                "format": "binary"
+                "AnyValue": {}
               }
             }
           },
@@ -540,8 +537,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "type": "string",
-                "format": "binary"
+                "AnyValue": {}
               }
             }
           },

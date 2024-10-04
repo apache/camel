@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.torchserve.client.model;
 
+import org.apache.camel.component.torchserve.client.inference.model.Ping200Response;
+import org.apache.camel.component.torchserve.client.management.model.RegisterModel200Response;
+
 public class Response {
 
     private String status;
@@ -23,13 +26,13 @@ public class Response {
     public Response() {
     }
 
-    public static Response from(org.apache.camel.component.torchserve.client.inference.model.InlineResponse2001 src) {
+    public static Response from(Ping200Response src) {
         Response response = new Response();
         response.setStatus(src.getStatus());
         return response;
     }
 
-    public static Response from(org.apache.camel.component.torchserve.client.management.model.InlineResponse2002 src) {
+    public static Response from(RegisterModel200Response src) {
         Response response = new Response();
         response.setStatus(src.getStatus());
         return response;
