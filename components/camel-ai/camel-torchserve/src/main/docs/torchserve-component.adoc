@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The TorchServe component provides support for invoking the https://pytorch.org/serve/rest_api.html[TorchServe REST API].
+The TorchServe component provides support for invoking the https://pytorch.org/serve/rest_api.html[TorchServe REST API]. It enables Camel to access PyTorch TorchServe servers to run inference with PyTorch models remotely.
 
 To use the TorchServe component, Maven users will need to add the following dependency to their `pom.xml`:
 
