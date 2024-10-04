@@ -56,18 +56,16 @@ public class TorchServeClient {
 
     public static class Builder {
 
-        private final Configuration configuration = Configuration.load();
+        private Optional<String> inferenceKey = Optional.empty();
+        private Optional<String> inferenceAddress = Optional.empty();
+        private Optional<Integer> inferencePort = Optional.empty();
 
-        private Optional<String> inferenceKey = configuration.getInferenceKey();
-        private Optional<String> inferenceAddress = configuration.getInferenceAddress();
-        private Optional<Integer> inferencePort = configuration.getInferencePort();
+        private Optional<String> managementKey = Optional.empty();
+        private Optional<String> managementAddress = Optional.empty();
+        private Optional<Integer> managementPort = Optional.empty();
 
-        private Optional<String> managementKey = configuration.getManagementKey();
-        private Optional<String> managementAddress = configuration.getManagementAddress();
-        private Optional<Integer> managementPort = configuration.getManagementPort();
-
-        private Optional<String> metricsAddress = configuration.getMetricsAddress();
-        private Optional<Integer> metricsPort = configuration.getMetricsPort();
+        private Optional<String> metricsAddress = Optional.empty();
+        private Optional<Integer> metricsPort = Optional.empty();
 
         public Builder inferenceKey(String key) {
             this.inferenceKey = Optional.of(key);

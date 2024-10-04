@@ -47,7 +47,7 @@ public class TorchServeEndpoint extends DefaultEndpoint {
     @UriParam
     private TorchServeConfiguration configuration;
 
-    private final TorchServeClient client;
+    private TorchServeClient client;
 
     public TorchServeEndpoint(String uri, TorchServeComponent component, String path,
                               TorchServeConfiguration configuration) {
@@ -56,7 +56,6 @@ public class TorchServeEndpoint extends DefaultEndpoint {
         this.api = parts[0];
         this.operation = parts[1];
         this.configuration = configuration;
-        this.client = createClient(configuration);
     }
 
     private static String[] extractPath(String path) {
@@ -70,7 +69,14 @@ public class TorchServeEndpoint extends DefaultEndpoint {
         return parts;
     }
 
-    private static TorchServeClient createClient(TorchServeConfiguration configuration) {
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        client = createClient();
+    }
+
+    private TorchServeClient createClient() {
         TorchServeClient.Builder builder = TorchServeClient.builder();
         // Inference
         if (configuration.getInferenceKey() != null) {
