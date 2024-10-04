@@ -232,6 +232,7 @@
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
+        <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.0.0</jackson-jq-version>
         <jackson2-version>2.17.2</jackson2-version>
         <jackrabbit-version>2.22.0</jackrabbit-version>
@@ -382,7 +383,7 @@
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.3</ognl-version>
-        <openapi-generator>7.8.0</openapi-generator>
+        <openapi-generator-version>7.8.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.17.1</opensearch-rest-client-version>
         <opensearch-java-client-version>2.14.0</opensearch-java-client-version>
@@ -2452,6 +2453,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-timer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-torchserve</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

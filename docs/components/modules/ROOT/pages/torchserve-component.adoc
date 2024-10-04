@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-torchserve/src/main/docs/torchserve-component.adoc

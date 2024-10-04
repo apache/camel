@@ -265,6 +265,7 @@
                                     <exclude>**/*.jslt</exclude>
                                     <exclude>**/*.key</exclude>
                                     <exclude>**/*.keystore</exclude>
+                                    <exclude>**/*.mar</exclude>
                                     <exclude>**/*.model</exclude>
                                     <exclude>**/*.mp3</exclude>
                                     <exclude>**/*.mp4</exclude>

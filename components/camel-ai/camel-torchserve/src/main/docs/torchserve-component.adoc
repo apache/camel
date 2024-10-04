@@ -1,0 +1,236 @@
+= TorchServe Component
+:doctitle: TorchServe
+:shortname: torchserve
+:artifactid: camel-torchserve
+:description: Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: torchserve
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The TorchServe component provides support for invoking the https://pytorch.org/serve/rest_api.html[TorchServe REST API]. It enables Camel to access PyTorch TorchServe servers to run inference with PyTorch models remotely.
+
+To use the TorchServe component, Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-torchserve</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+torchserve:api/operation[?options]
+----
+
+Where `api` represents one of the https://pytorch.org/serve/rest_api.html[TorchServe REST API], and `operation` represents a specific operation supported by the API.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+Each API endpoint support the following operations.
+
+=== Inference API
+
+The Inference API provides the inference operations.
+
+----
+torchserve:inference/<operation>[?options]
+----
+
+[width="100%",cols="2,5,1,2",options="header"]
+|===
+| Operation | Description | Options | Result
+
+| `ping` | Get TorchServe status. | - | `String`
+
+| `predictions` | Predictions entry point to get inference using a model. |
+`modelName` +
+`modelVersion`
+| `Object`
+
+| `explanations` | Not supported yet. | - | `Object`
+|===
+
+=== Management API
+
+The Management API provides the operations to manage models at runtime.
+
+----
+torchserve:management/<operation>[?options]
+----
+
+[width="100%",cols="2,5,1,2",options="header"]
+|===
+| Operation | Description | Options | Result
+
+| `register` | Register a new model in TorchServe. |
+`url` +
+`registerOptions`
+| `String`
+
+| `scale-worker`
+| Configure number of workers for a model. This is an asynchronous call by default.
+Caller need to call `describe` to check if the model workers has been changed. |
+`modelName` +
+`modelVersion` +
+`scaleWorkerOptions`
+| `String`
+
+| `describe`
+| Provides detailed information about a model. If "all" is specified as version,
+returns the details about all the versions of the model. |
+`modelName` +
+`modelVersion`
+| `List<ModelDetail>` footnote:[`org.apache.camel.component.torchserve.client.model.ModelDetail`]
+
+| `unregister`
+| Unregister a model from TorchServe. This is an asynchronous call by default.
+Caller can call `list` to confirm the model is unregistered. |
+`modelName` +
+`modelVersion` +
+`unregisterOptions`
+| `String`
+
+| `list` | List registered models in TorchServe. |
+`listLimit` +
+`listNextPageToken`
+| `ModelList` footnote:[`org.apache.camel.component.torchserve.client.model.ModelList`]
+
+| `set-default` | Set default version of a model. |
+`modelName` +
+`modelVersion`
+| `String`
+|===
+
+=== Metrics API
+
+The Metrics API provides the operations to fetch metrics in the Prometheus format.
+
+----
+torchserve:mertrics/<operation>[?options]
+----
+
+[width="100%",cols="2,5,1,2",options="header"]
+|===
+| operation | Description | Headers | Result
+| `metrics` | Get TorchServe application metrics in prometheus format. | `metricsName` | `String`
+|===
+
+== Examples
+
+=== Inference API
+
+.Health checking
+[source,java]
+----
+from("direct:ping")
+    .to("torchserve:inference/ping")
+    .log("Status: ${body}");
+----
+
+.Prediction
+[source,java]
+----
+from("file:data/kitten.jpg")
+    .to("torchserve:inference/predictions?modelName=squeezenet1_1")
+    .log("Result: ${body}");;
+----
+
+=== Management API
+
+.Register a model
+[source,java]
+----
+from("direct:register")
+    .to("torchserve:management/register?url=https://torchserve.pytorch.org/mar_files/mnist_v2.mar")
+    .log("Status: ${body}");
+----
+
+.Scale workers for a registered model
+[source,java]
+----
+from("direct:scale-worker")
+    .setHeader(TorchServeConstants.SCALE_WORKER_OPTIONS,
+        constant(ScaleWorkerOptions.builder().minWorker(1).maxWorker(2).build()))
+    .to("torchserve:management/scale-worker?modelName=mnist_v2")
+    .log("Status: ${body}");
+----
+
+.Get the detailed information about a model
+[source,java]
+----
+from("direct:describe")
+    .to("torchserve:management/describe?modelName=mnist_v2")
+    .log("${body[0]}");
+----
+
+.Unregister a model
+[source,java]
+----
+from("direct:register")
+    .to("torchserve:management/unregister?modelName=mnist_v2")
+    .log("Status: ${body}");
+----
+
+.List models
+[source,java]
+----
+from("direct:list")
+    .to("torchserve:management/list")
+    .log("${body.models}");
+----
+
+.Set the default version of a model
+[source,java]
+----
+from("direct:set-default")
+    .to("torchserve:management/set-default?modelName=mnist_v2&modelVersion=2.0")
+    .log("Status: ${body}");
+----
+
+=== Metrics API
+
+.All metrics
+[source,java]
+----
+from("direct:metrics")
+    .to("torchserve:metrics/metrics");
+----
+
+.`MemoryUsed` metrics only
+[source,java]
+----
+from("direct:metrics")
+    .to("torchserve:metrics/metrics?metricsName=MemoryUsed");
+----
+
+include::spring-boot:partial$starter.adoc[]
