@@ -192,6 +192,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": getOrCreateConfiguration(target).setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": getOrCreateConfiguration(target).setSnapshotIsolationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotlockingmode":
@@ -417,6 +419,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotFetchSize": return int.class;
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return java.lang.String.class;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return long.class;
         case "snapshotlockingmode":
@@ -643,6 +647,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": return getOrCreateConfiguration(target).getSnapshotIncludeCollectionList();
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return getOrCreateConfiguration(target).getSnapshotIsolationMode();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
         case "snapshotlockingmode":

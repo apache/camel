@@ -1156,6 +1156,87 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the inner body the Ehcache tag for the events cache, but
+         * should not include the nor the attributes as these are managed by
+         * Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheEventsConfig the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheEventsConfig(String logMiningBufferEhcacheEventsConfig) {
+            doSetProperty("logMiningBufferEhcacheEventsConfig", logMiningBufferEhcacheEventsConfig);
+            return this;
+        }
+        /**
+         * Specifies any Ehcache global configurations such as services or
+         * persistence. This cannot include nor tags as these are managed by
+         * Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheGlobalConfig the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheGlobalConfig(String logMiningBufferEhcacheGlobalConfig) {
+            doSetProperty("logMiningBufferEhcacheGlobalConfig", logMiningBufferEhcacheGlobalConfig);
+            return this;
+        }
+        /**
+         * Specifies the inner body the Ehcache tag for the processed
+         * transaction cache, but should not include the nor the attributes as
+         * these are managed by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheProcessedtransactionsConfig the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheProcessedtransactionsConfig(String logMiningBufferEhcacheProcessedtransactionsConfig) {
+            doSetProperty("logMiningBufferEhcacheProcessedtransactionsConfig", logMiningBufferEhcacheProcessedtransactionsConfig);
+            return this;
+        }
+        /**
+         * Specifies the inner body the Ehcache tag for the schema changes
+         * cache, but should not include the nor the attributes as these are
+         * managed by Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheSchemachangesConfig the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheSchemachangesConfig(String logMiningBufferEhcacheSchemachangesConfig) {
+            doSetProperty("logMiningBufferEhcacheSchemachangesConfig", logMiningBufferEhcacheSchemachangesConfig);
+            return this;
+        }
+        /**
+         * Specifies the inner body the Ehcache tag for the transaction cache,
+         * but should not include the nor the attributes as these are managed by
+         * Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheTransactionsConfig the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheTransactionsConfig(String logMiningBufferEhcacheTransactionsConfig) {
+            doSetProperty("logMiningBufferEhcacheTransactionsConfig", logMiningBufferEhcacheTransactionsConfig);
+            return this;
+        }
+        /**
          * Specifies the XML configuration for the Infinispan 'events' cache.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1274,7 +1355,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * transaction data. infinispan_embedded - This option uses an embedded
          * Infinispan cache to buffer transaction data and persist it to disk.
          * infinispan_remote - This option uses a remote Infinispan cluster to
-         * buffer transaction data and persist it to disk.
+         * buffer transaction data and persist it to disk. ehcache - Use ehcache
+         * in embedded mode to buffer transaction data and persist it to disk.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1649,7 +1731,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: redo_log_catalog
+         * Default: online_catalog
          * Group: oracle
          * 
          * @param logMiningStrategy the value to set

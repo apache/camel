@@ -100,6 +100,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String notificationEnabledChannels;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
+    @UriParam(label = LABEL_NAME, defaultValue = "serializable")
+    private String snapshotIsolationMode = "serializable";
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME)
@@ -828,6 +830,23 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getEventProcessingFailureHandlingMode() {
         return eventProcessingFailureHandlingMode;
+    }
+
+    /**
+     * Controls which transaction isolation level is used. The default is
+     * 'serializable', which means that serializable isolation level is used.
+     * When 'repeatable_read' is specified, connector runs the initial snapshot
+     * in REPEATABLE READ isolation level. When 'read_committed' is specified,
+     * connector runs the initial snapshot in READ COMMITTED isolation level. In
+     * 'read_uncommitted' is specified, connector runs the initial snapshot in
+     * READ UNCOMMITTED isolation level.
+     */
+    public void setSnapshotIsolationMode(String snapshotIsolationMode) {
+        this.snapshotIsolationMode = snapshotIsolationMode;
+    }
+
+    public String getSnapshotIsolationMode() {
+        return snapshotIsolationMode;
     }
 
     /**
@@ -1573,6 +1592,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.isolation.mode", snapshotIsolationMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
