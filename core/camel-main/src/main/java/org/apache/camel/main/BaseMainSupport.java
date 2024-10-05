@@ -131,6 +131,13 @@ public abstract class BaseMainSupport extends BaseService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
+    private static final String[] GROUP_PREFIXES = new String[] {
+            "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
+            "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
+            "camel.lra.", "camel.opentelemetry.", "camel.metrics.", "camel.routeTemplate",
+            "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
+            "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
+
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
@@ -1007,14 +1014,14 @@ public abstract class BaseMainSupport extends BaseService {
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterConfigure(camelContext);
 
-        // now configure context/resilience4j/rest with additional properties
+        // now configure the various camel groups
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
                 .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
             Properties propENV
-                    = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+                    = MainHelper.loadEnvironmentVariablesAsProperties(GROUP_PREFIXES);
             if (!propENV.isEmpty()) {
                 prop.putAll("ENV", propENV);
                 LOG.debug("Properties from OS environment variables:");
@@ -1025,7 +1032,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         // load properties from JVM (override existing)
         if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
-            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.component.properties." });
+            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(GROUP_PREFIXES);
             if (!propJVM.isEmpty()) {
                 prop.putAll("SYS", propJVM);
                 LOG.debug("Properties from JVM system properties:");
@@ -1055,6 +1062,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
+
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
             if (startsWithIgnoreCase(key, "camel.context.")) {
