@@ -17,7 +17,26 @@ import org.apache.camel.main.GcpVaultConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AwsVaultConfiguration", org.apache.camel.vault.AwsVaultConfiguration.class);
+        map.put("AzureVaultConfiguration", org.apache.camel.vault.AzureVaultConfiguration.class);
+        map.put("GcpVaultConfiguration", org.apache.camel.vault.GcpVaultConfiguration.class);
+        map.put("HashicorpVaultConfiguration", org.apache.camel.vault.HashicorpVaultConfiguration.class);
+        map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
+        map.put("ProjectId", java.lang.String.class);
+        map.put("RefreshEnabled", boolean.class);
+        map.put("RefreshPeriod", long.class);
+        map.put("Secrets", java.lang.String.class);
+        map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("SubscriptionName", java.lang.String.class);
+        map.put("UseDefaultInstance", boolean.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(GcpVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -48,6 +67,15 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "useDefaultInstance": target.setUseDefaultInstance(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Tracer configuration.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class TracerConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

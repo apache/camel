@@ -17,7 +17,19 @@ import org.apache.camel.main.LraConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class LraConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class LraConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("CoordinatorContextPath", java.lang.String.class);
+        map.put("CoordinatorUrl", java.lang.String.class);
+        map.put("Enabled", boolean.class);
+        map.put("LocalParticipantContextPath", java.lang.String.class);
+        map.put("LocalParticipantUrl", java.lang.String.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(LraConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -34,6 +46,15 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "localParticipantUrl": target.setLocalParticipantUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

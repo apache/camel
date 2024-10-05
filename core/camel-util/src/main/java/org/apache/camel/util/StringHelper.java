@@ -1186,6 +1186,20 @@ public final class StringHelper {
     }
 
     /**
+     * Converts the string from camel case into dot format (helloGreatWorld -> hello.great.world)
+     *
+     * @param  text the string
+     * @return      the string dot cased
+     */
+    public static String camelCaseToDot(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        text = camelCaseToDash(text);
+        return text.replace('-', '.');
+    }
+
+    /**
      * Converts the string from camel case into dash format (helloGreatWorld -> hello-great-world)
      *
      * @param  text the string

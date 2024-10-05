@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Route controller configuration.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class RouteControllerConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

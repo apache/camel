@@ -17,7 +17,22 @@ import org.apache.camel.main.HealthConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ConsumersEnabled", java.lang.Boolean.class);
+        map.put("Enabled", java.lang.Boolean.class);
+        map.put("ExcludePattern", java.lang.String.class);
+        map.put("ExposureLevel", java.lang.String.class);
+        map.put("InitialState", java.lang.String.class);
+        map.put("ProducersEnabled", java.lang.Boolean.class);
+        map.put("RegistryEnabled", java.lang.Boolean.class);
+        map.put("RoutesEnabled", java.lang.Boolean.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -40,6 +55,15 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "routesEnabled": target.setRoutesEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

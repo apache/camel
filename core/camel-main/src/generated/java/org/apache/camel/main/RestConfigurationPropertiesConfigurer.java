@@ -17,7 +17,43 @@ import org.apache.camel.main.RestConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class RestConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class RestConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiComponent", java.lang.String.class);
+        map.put("ApiContextPath", java.lang.String.class);
+        map.put("ApiContextRouteId", java.lang.String.class);
+        map.put("ApiHost", java.lang.String.class);
+        map.put("ApiProperties", java.util.Map.class);
+        map.put("ApiVendorExtension", boolean.class);
+        map.put("BindingMode", java.lang.String.class);
+        map.put("BindingPackageScan", java.lang.String.class);
+        map.put("ClientRequestValidation", boolean.class);
+        map.put("Component", java.lang.String.class);
+        map.put("ComponentProperties", java.util.Map.class);
+        map.put("ConsumerProperties", java.util.Map.class);
+        map.put("ContextPath", java.lang.String.class);
+        map.put("CorsHeaders", java.util.Map.class);
+        map.put("DataFormatProperties", java.util.Map.class);
+        map.put("EnableCORS", boolean.class);
+        map.put("EnableNoContentResponse", boolean.class);
+        map.put("EndpointProperties", java.util.Map.class);
+        map.put("Host", java.lang.String.class);
+        map.put("HostNameResolver", java.lang.String.class);
+        map.put("InlineRoutes", boolean.class);
+        map.put("JsonDataFormat", java.lang.String.class);
+        map.put("Port", int.class);
+        map.put("ProducerApiDoc", java.lang.String.class);
+        map.put("ProducerComponent", java.lang.String.class);
+        map.put("Scheme", java.lang.String.class);
+        map.put("SkipBindingOnErrorCode", boolean.class);
+        map.put("UseXForwardHeaders", boolean.class);
+        map.put("XmlDataFormat", java.lang.String.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(RestConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -79,6 +115,15 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "xmlDataFormat": target.setXmlDataFormat(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
