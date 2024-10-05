@@ -316,6 +316,26 @@ public final class MainHelper {
             configurer = PluginHelper.getBootstrapConfigurerResolver(context).resolvePropertyConfigurer(name, context);
         }
 
+        // we should be flexible in terms of property names as the user may type in names using different cases and
+        // with or without dots (especially from ENV variables)
+        if (configurer instanceof ExtendedPropertyConfigurerGetter ec) {
+            Map<String, Object> options = ec.getAllOptions(target);
+            for (String key : options.keySet()) {
+                // first char is upper case
+                key = Character.toLowerCase(key.charAt(0)) + key.substring(1);
+                String actualKey = key;
+                // convert camelCase to dot notation (via toDash)
+                key = StringHelper.camelCaseToDot(key);
+                if (properties.get(key) != null) {
+                    Object value = properties.get(key);
+                    String loc = properties.getLocation(key);
+                    properties.remove(key);
+                    properties.put(loc, actualKey, value);
+                    LOG.debug("Adjusting property key: {} -> {}", key, actualKey);
+                }
+            }
+        }
+
         try {
             // keep a reference of the original keys
             OrderedLocationProperties backup = new OrderedLocationProperties();
@@ -362,6 +382,13 @@ public final class MainHelper {
                 LOG.debug(
                         "Error configuring property ({}) with name: {}) on bean: {} with value: {}. This exception is ignored as failIfNotSet=false.",
                         key, e.getPropertyName(), target, e.getValue(), e);
+            }
+        } catch (Exception e) {
+            if (failIfNotSet) {
+                throw e;
+            } else {
+                LOG.debug("Error configuring properties on bean: {}. This exception is ignored as failIfNotSet=false.", target,
+                        e);
             }
         }
 

@@ -23,7 +23,7 @@ import org.apache.camel.vault.GcpVaultConfiguration;
 /**
  * Configuration for access to GCP Secret.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class GcpVaultConfigurationProperties extends GcpVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

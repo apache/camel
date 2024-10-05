@@ -64,6 +64,39 @@ public class StringHelperTest {
     }
 
     @Test
+    public void testCamelCashToDot() {
+        assertNull(camelCaseToDot(null));
+        assertEquals("", camelCaseToDot(""));
+
+        assertEquals("hello.world", camelCaseToDot("HelloWorld"));
+        assertEquals("hello.big.world", camelCaseToDot("HelloBigWorld"));
+        assertEquals("hello.big.world", camelCaseToDot("Hello-bigWorld"));
+        assertEquals("my.id", camelCaseToDot("MyId"));
+        assertEquals("my.id", camelCaseToDot("MyID"));
+        assertEquals("my.url", camelCaseToDot("MyUrl"));
+        assertEquals("my.url", camelCaseToDot("MyURL"));
+        assertEquals("my.big.id", camelCaseToDot("MyBigId"));
+        assertEquals("my.big.id", camelCaseToDot("MyBigID"));
+        assertEquals("my.big.url", camelCaseToDot("MyBigUrl"));
+        assertEquals("my.big.url", camelCaseToDot("MyBigURL"));
+        assertEquals("my.big.id.again", camelCaseToDot("MyBigIdAgain"));
+        assertEquals("my.big.id.again", camelCaseToDot("MyBigIDAgain"));
+        assertEquals("my.big.url.again", camelCaseToDot("MyBigUrlAgain"));
+        assertEquals("my.big.url.again", camelCaseToDot("MyBigURLAgain"));
+
+        assertEquals("use.mdc.logging", camelCaseToDot("UseMDCLogging"));
+        assertEquals("mdc.logging.keys.pattern", camelCaseToDot("MDCLoggingKeysPattern"));
+        assertEquals("available.phone.number.country", camelCaseToDot("AVAILABLE_PHONE_NUMBER_COUNTRY"));
+        assertEquals("available.phone.number.country", camelCaseToDot("AVAILABLE-PHONE_NUMBER-COUNTRY"));
+        assertEquals("available.phone.number.country", camelCaseToDot("Available-Phone-Number-Country"));
+        assertEquals("available.phone.number.country", camelCaseToDot("Available_Phone_Number_Country"));
+        assertEquals("available.phone.number.country", camelCaseToDot("available_phone_number_country"));
+        assertEquals("available.phone.number.country", camelCaseToDot("availablePhoneNumberCountry"));
+        assertEquals("available.phone.number.country", camelCaseToDot("AvailablePhoneNumberCountry"));
+        assertEquals("enable.cors", camelCaseToDot("enableCORS"));
+    }
+
+    @Test
     public void testDashToCamelCase() {
         assertEquals("enableCors", dashToCamelCase("enable-cors"));
 

@@ -17,7 +17,22 @@ import org.apache.camel.main.ThreadPoolProfileConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class ThreadPoolProfileConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class ThreadPoolProfileConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowCoreThreadTimeOut", java.lang.Boolean.class);
+        map.put("Id", java.lang.String.class);
+        map.put("KeepAliveTime", java.lang.Long.class);
+        map.put("MaxPoolSize", java.lang.Integer.class);
+        map.put("MaxQueueSize", java.lang.Integer.class);
+        map.put("PoolSize", java.lang.Integer.class);
+        map.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
+        map.put("TimeUnit", java.util.concurrent.TimeUnit.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(ThreadPoolProfileConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -40,6 +55,15 @@ public class ThreadPoolProfileConfigurationPropertiesConfigurer extends org.apac
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
