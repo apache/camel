@@ -2310,10 +2310,10 @@ public abstract class BaseMainSupport extends BaseService {
     protected void doAutowireWildcardProperties(String name, Component component) {
         Map<PropertyOptionKey, OrderedLocationProperties> properties = new LinkedHashMap<>();
         OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
-        String match = ("camel.component." + name).toLowerCase(Locale.ENGLISH);
+        String match = ("camel.component." + name).toLowerCase(Locale.US);
 
         for (String key : wildcardProperties.stringPropertyNames()) {
-            String mKey = key.substring(0, key.indexOf('*')).toLowerCase(Locale.ENGLISH);
+            String mKey = key.substring(0, key.indexOf('*')).toLowerCase(Locale.US);
             if (match.startsWith(mKey)) {
                 computeProperties("camel.component.", key, wildcardProperties, properties,
                         s -> Collections.singleton(component));
