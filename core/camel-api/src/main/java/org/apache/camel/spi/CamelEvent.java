@@ -64,6 +64,8 @@ public interface CamelEvent {
         RouteStarted,
         RouteStopping,
         RouteStopped,
+        RouteRestarting,
+        RouteRestartingFailure,
         ServiceStartupFailure,
         ServiceStopFailure,
         StepStarted,
@@ -423,6 +425,38 @@ public interface CamelEvent {
         @Override
         default Type getType() {
             return Type.RouteStopped;
+        }
+    }
+
+    interface RouteRestartingEvent extends RouteEvent {
+
+        /**
+         * Restart attempt (0 = initial start, 1 = first restart attempt)
+         */
+        long getAttempt();
+
+        @Override
+        default Type getType() {
+            return Type.RouteRestarting;
+        }
+    }
+
+    interface RouteRestartingFailureEvent extends RouteEvent, FailureEvent {
+
+        /**
+         * Failure attempt (0 = initial start, 1 = first restart attempt)
+         */
+        long getAttempt();
+
+        /**
+         * Whether all restarts have failed and the route controller will not attempt to restart the route anymore due
+         * to maximum attempts reached and being exhausted.
+         */
+        boolean isExhausted();
+
+        @Override
+        default Type getType() {
+            return Type.RouteRestartingFailure;
         }
     }
 

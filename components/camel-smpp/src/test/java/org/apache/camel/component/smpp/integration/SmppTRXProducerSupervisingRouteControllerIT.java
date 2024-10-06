@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.smpp.integration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +31,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.smpp.SmppConstants;
 import org.apache.camel.component.smpp.SmppMessageType;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.SupervisingRouteController;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jsmpp.examples.SMPPServerSimulator;
@@ -41,6 +45,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
@@ -63,6 +68,8 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
     @EndpointInject("direct:start")
     private Endpoint start;
 
+    private List<CamelEvent.RouteRestartingEvent> events;
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -72,6 +79,16 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
         src.setBackOffMaxAttempts(20);
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
+
+        events = new ArrayList<>();
+        context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (event instanceof CamelEvent.RouteRestartingEvent rre) {
+                    events.add(rre);
+                }
+            }
+        });
 
         return context;
     }
@@ -109,6 +126,9 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
 
         assertNotNull(exchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getIn().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+
+        // there should be some restart events
+        assertTrue(events.size() >= 3, "There should be restarting events, size: " + events.size());
     }
 
     @Override
