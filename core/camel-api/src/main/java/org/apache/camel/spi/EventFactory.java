@@ -244,6 +244,27 @@ public interface EventFactory {
     CamelEvent createRouteReloaded(Route route, int index, int total);
 
     /**
+     * Creates an {@link CamelEvent} for {@link Route} being restarted by {@link SupervisingRouteController}.
+     *
+     * @param  route   the route
+     * @param  attempt the attempt number for restarting the route
+     * @return         the restarting event
+     */
+    CamelEvent createRouteRestarting(Route route, long attempt);
+
+    /**
+     * Creates an {@link CamelEvent} for {@link Route} being restarted and failed by {@link SupervisingRouteController}.
+     *
+     * @param  route     the route
+     * @param  attempt   the attempt number for restarting the route
+     * @param  cause     the exception causing the failure
+     * @param  exhausted whether the supervising controller is exhausted and will not attempt to restart this route
+     *                   anymore
+     * @return           the restarting failure event
+     */
+    CamelEvent createRouteRestartingFailure(Route route, long attempt, Throwable cause, boolean exhausted);
+
+    /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has been created
      *
      * @param  exchange the exchange

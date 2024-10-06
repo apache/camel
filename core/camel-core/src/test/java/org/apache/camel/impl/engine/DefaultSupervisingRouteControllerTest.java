@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +30,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.impl.event.RouteRestartingEvent;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.SupervisingRouteController;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +56,20 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setBackOffMaxAttempts(3);
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
+
+        List<CamelEvent.RouteRestartingFailureEvent> failure = new ArrayList<>();
+        List<CamelEvent.RouteRestartingEvent> events = new ArrayList<>();
+
+        context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (event instanceof CamelEvent.RouteRestartingFailureEvent rfe) {
+                    failure.add(rfe);
+                } else if (event instanceof RouteRestartingEvent rre) {
+                    events.add(rre);
+                }
+            }
+        });
 
         context.start();
 
@@ -82,6 +101,15 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+
+        // 2 x 1 initial + 2 x 3 restart failure + 2 x 1 exhausted
+        assertEquals(10, failure.size());
+        // 2 x 3 restart attempts
+        assertEquals(6, events.size());
+
+        // last should be exhausted
+        assertTrue(failure.get(8).isExhausted());
+        assertTrue(failure.get(9).isExhausted());
     }
 
     @Test
@@ -95,6 +123,20 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setBackOffMaxAttempts(10);
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
+
+        List<CamelEvent.RouteRestartingFailureEvent> failure = new ArrayList<>();
+        List<CamelEvent.RouteRestartingEvent> events = new ArrayList<>();
+
+        context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (event instanceof CamelEvent.RouteRestartingFailureEvent rfe) {
+                    failure.add(rfe);
+                } else if (event instanceof RouteRestartingEvent rre) {
+                    events.add(rre);
+                }
+            }
+        });
 
         context.start();
 
@@ -118,6 +160,11 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("cake").toString());
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+
+        // 2 x 1 initial + 2 x 4 restart failure attempts
+        assertEquals(10, failure.size());
+        // 2 x 5 restart attempts
+        assertEquals(10, events.size());
     }
 
     private static class MyRoute extends RouteBuilder {

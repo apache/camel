@@ -214,6 +214,24 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
+    public CamelEvent createRouteRestarting(Route route, long attempt) {
+        CamelEvent answer = new RouteRestartingEvent(route, attempt);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
+    public CamelEvent createRouteRestartingFailure(Route route, long attempt, Throwable cause, boolean exhausted) {
+        CamelEvent answer = new RouteRestartingFailureEvent(route, attempt, cause, exhausted);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
     public CamelEvent createRouteStoppingEvent(Route route) {
         CamelEvent answer = new RouteStoppingEvent(route);
         if (timestampEnabled) {
