@@ -26,27 +26,24 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
+import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
-public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
+public class SecretsManagerPutSecretValueProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
-    public void createSecretTest() throws InterruptedException {
+    public void createSecretTest() {
 
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Test Body");
         Exchange exchange = template.request("direct:createSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(SecretsManagerConstants.SECRET_NAME, "TestSecret4");
+                exchange.getIn().setHeader(SecretsManagerConstants.SECRET_NAME, "TestSecret10");
                 exchange.getIn().setBody("Body");
             }
         });
@@ -54,18 +51,18 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
         CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
 
-        exchange = template.request("direct:updateSecret", new Processor() {
+        exchange = template.request("direct:putSecretValue", new Processor() {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
-                exchange.getIn().setBody("Test Body");
+                exchange.getIn().setBody("Test New Value");
             }
         });
         Assertions.assertNotNull(exchange);
 
-        UpdateSecretResponse resultUpdate = (UpdateSecretResponse) exchange.getIn().getBody();
+        PutSecretValueResponse resultUpdate = (PutSecretValueResponse) exchange.getIn().getBody();
         assertTrue(resultUpdate.sdkHttpResponse().isSuccessful());
-        assertEquals("TestSecret4", resultUpdate.name());
+        assertEquals("TestSecret10", resultUpdate.name());
 
         exchange = template.request("direct:getSecret", new Processor() {
             @Override
@@ -75,7 +72,8 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
         });
         Assertions.assertNotNull(exchange);
 
-        mock.assertIsSatisfied();
+        String secret = exchange.getIn().getBody(String.class);
+        assertEquals("Test New Value", secret);
     }
 
     @Override
@@ -86,8 +84,8 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
                 from("direct:createSecret")
                         .to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:updateSecret")
-                        .to("aws-secrets-manager://test?operation=updateSecret");
+                from("direct:putSecretValue")
+                        .to("aws-secrets-manager://test?operation=putSecretValue");
 
                 from("direct:getSecret")
                         .to("aws-secrets-manager://test?operation=getSecret")
