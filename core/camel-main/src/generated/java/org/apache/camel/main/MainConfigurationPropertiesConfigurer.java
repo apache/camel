@@ -82,7 +82,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("LoadTypeConverters", boolean.class);
         map.put("LogDebugMaxChars", int.class);
         map.put("LogExhaustedMessageBody", boolean.class);
-        map.put("LogLanguage", java.lang.String.class);
         map.put("LogMask", boolean.class);
         map.put("LogName", java.lang.String.class);
         map.put("MainListenerClasses", java.lang.String.class);
