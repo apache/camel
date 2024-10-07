@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.torchserve.producer;
 
+import java.util.Optional;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.torchserve.TorchServeConfiguration;
+import org.apache.camel.component.torchserve.TorchServeConstants;
 import org.apache.camel.component.torchserve.TorchServeEndpoint;
 import org.apache.camel.component.torchserve.client.Inference;
 import org.apache.camel.component.torchserve.client.model.ApiException;
@@ -56,21 +61,31 @@ public class InferenceProducer extends TorchServeProducer {
     }
 
     private void predictions(Exchange exchange) throws ApiException {
-        String modelName = getEndpoint().getConfiguration().getModelName();
-        String modelVersion = getEndpoint().getConfiguration().getModelVersion();
-        Object body = exchange.getMessage().getBody(byte[].class);
+        Message message = exchange.getMessage();
+        TorchServeConfiguration configuration = getEndpoint().getConfiguration();
+        String modelName = Optional
+                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+                .orElse(configuration.getModelName());
+        String modelVersion = Optional
+                .ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
+                .orElse(configuration.getModelVersion());
+        Object body = message.getBody(byte[].class);
         Object response;
         if (modelVersion == null) {
             response = this.inference.predictions(modelName, body);
         } else {
             response = this.inference.predictions(modelName, modelVersion, body);
         }
-        exchange.getMessage().setBody(response);
+        message.setBody(response);
     }
 
     private void explanations(Exchange exchange) throws ApiException {
-        String modelName = getEndpoint().getConfiguration().getModelName();
+        Message message = exchange.getMessage();
+        TorchServeConfiguration configuration = getEndpoint().getConfiguration();
+        String modelName = Optional
+                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+                .orElse(configuration.getModelName());
         Object response = this.inference.explanations(modelName);
-        exchange.getMessage().setBody(response);
+        message.setBody(response);
     }
 }
