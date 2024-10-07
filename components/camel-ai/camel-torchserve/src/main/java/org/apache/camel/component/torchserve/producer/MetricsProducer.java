@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.torchserve.producer;
 
+import java.util.Optional;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.torchserve.TorchServeConfiguration;
+import org.apache.camel.component.torchserve.TorchServeConstants;
 import org.apache.camel.component.torchserve.TorchServeEndpoint;
 import org.apache.camel.component.torchserve.client.Metrics;
 import org.apache.camel.component.torchserve.client.model.ApiException;
@@ -42,8 +47,12 @@ public class MetricsProducer extends TorchServeProducer {
     }
 
     private void metrics(Exchange exchange) throws ApiException {
-        String metricsName = getEndpoint().getConfiguration().getMetricsName();
+        Message message = exchange.getMessage();
+        TorchServeConfiguration configuration = getEndpoint().getConfiguration();
+        String metricsName = Optional
+                .ofNullable(message.getHeader(TorchServeConstants.METRICS_NAME, String.class))
+                .orElse(configuration.getMetricsName());
         String response = metricsName == null ? this.metrics.metrics() : this.metrics.metrics(metricsName);
-        exchange.getMessage().setBody(response);
+        message.setBody(response);
     }
 }

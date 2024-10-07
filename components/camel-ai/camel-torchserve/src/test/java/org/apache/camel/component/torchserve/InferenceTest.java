@@ -75,6 +75,25 @@ class InferenceTest extends TorchServeTestSupport {
     }
 
     @Test
+    void testPredictions_headers() throws Exception {
+        mockServer.stubFor(post("/predictions/" + TEST_MODEL)
+                .willReturn(okJson("{ \"cat\": 1.0 }")));
+        var mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived()
+                .body(Map.class)
+                .isEqualTo(Map.of("cat", 1.0));
+
+        var body = Files.readAllBytes(Path.of(TEST_DATA));
+        template.send("direct:predictions_headers", exchange -> {
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, TEST_MODEL);
+            exchange.getMessage().setBody(body);
+        });
+
+        mock.await(1, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     void testPredictions_version() throws Exception {
         mockServer.stubFor(post("/predictions/" + TEST_MODEL + "/" + TEST_MODEL_VERSION)
                 .willReturn(okJson("{ \"cat\": 1.0 }")));
@@ -85,6 +104,26 @@ class InferenceTest extends TorchServeTestSupport {
 
         var body = Files.readAllBytes(Path.of(TEST_DATA));
         template.sendBody("direct:predictions_version", body);
+
+        mock.await(1, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testPredictions_versionHeaders() throws Exception {
+        mockServer.stubFor(post("/predictions/" + TEST_MODEL + "/" + TEST_MODEL_VERSION)
+                .willReturn(okJson("{ \"cat\": 1.0 }")));
+        var mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived()
+                .body(Map.class)
+                .isEqualTo(Map.of("cat", 1.0));
+
+        var body = Files.readAllBytes(Path.of(TEST_DATA));
+        template.send("direct:predictions_headers", exchange -> {
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, TEST_MODEL);
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_VERSION, TEST_MODEL_VERSION);
+            exchange.getMessage().setBody(body);
+        });
 
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
@@ -103,6 +142,9 @@ class InferenceTest extends TorchServeTestSupport {
                         .to("mock:result");
                 from("direct:predictions_version")
                         .toF("torchserve:inference/predictions?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
+                        .to("mock:result");
+                from("direct:predictions_headers")
+                        .to("torchserve:inference/predictions")
                         .to("mock:result");
             }
         };
