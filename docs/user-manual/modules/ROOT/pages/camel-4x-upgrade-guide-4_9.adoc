@@ -100,8 +100,9 @@ The logs will print a warning message if this behavior is detected.
 
 === Removed deprecated components
 
-The following experimental DSL has been removed
+The following experimental DSL has been removed:
 
+- `camel-groovy-dsl`
 - `camel-js-dsl`
 - `camel-jsh-dsl`
 

@@ -2680,11 +2680,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-groovy-dsl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-java-joor-dsl</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2714,11 +2709,6 @@
                 <version>${project.version}</version>
             </dependency>
         <!-- camel dsl: END -->
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-groovy-dsl-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-yaml-dsl-common</artifactId>

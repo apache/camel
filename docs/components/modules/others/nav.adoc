@@ -13,7 +13,6 @@
 ** xref:debug.adoc[Debug]
 ** xref:dsl.adoc[DSL]
 *** xref:dsl-modeline.adoc[DSL Modeline]
-*** xref:groovy-dsl.adoc[Groovy DSL]
 *** xref:java-joor-dsl.adoc[Java DSL (runtime compiled)]
 *** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
 *** xref:kamelet-main.adoc[Kamelet Main]
