@@ -382,6 +382,10 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
      * handles this REST call.
      */
     public void setTo(ToDefinition to) {
+        if (this.to != null) {
+            throw new IllegalArgumentException(
+                    "This verb has already set to endpoint. It is not possible to configure multiple 'to' with Rest DSL.");
+        }
         this.to = to;
     }
 
