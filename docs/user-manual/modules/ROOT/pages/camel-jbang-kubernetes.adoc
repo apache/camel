@@ -985,8 +985,6 @@ The trait volume mounts follow some best practices in specifying the mount paths
 
 The ingress trait enhance the Kubernetes manifest with an Ingress resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
 
-The Camel JBang plugin automatically creates an Ingress Resource if the Service Resource is generated for the Camel route's service trait application.
-
 The ingress trait provides the following configuration options:
 
 [cols="2m,1m,5a"]
@@ -995,7 +993,7 @@ The ingress trait provides the following configuration options:
 
 | ingress.enabled
 | bool
-| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+| Can be used to enable or disable a trait. All traits share this common property (default `false`).
 
 | ingress.annotations
 | map[string]string
@@ -1030,7 +1028,7 @@ You may specify these options with the export command to customize the Ingress R
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait ingress.host=example.com --trait ingress.path=/sample(/|$)(.*) --trait ingress.pathType=ImplementationSpecific --trait ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/\$2 --trait ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true
+camel kubernetes export Sample.java --trait ingress.enabled=true --trait ingress.host=example.com --trait ingress.path=/sample(/|$)(.*) --trait ingress.pathType=ImplementationSpecific --trait ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/\$2 --trait ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true
 ----
 
 
@@ -1074,8 +1072,6 @@ The Route trait enhance the Kubernetes manifest with a Route resource to expose 
 
 NOTE: You need to enable the OpenShift profile trait with `--trait-profile=openshift` option.
 
-The Camel JBang plugin automatically creates an Route Resource if the Service Resource is generated for the Camel route's service trait application.
-
 The Route trait provides the following configuration options:
 
 [cols="2m,1m,5a"]
@@ -1084,7 +1080,7 @@ The Route trait provides the following configuration options:
 
 | route.enabled
 | bool
-| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+| Can be used to enable or disable a trait. All traits share this common property (default `false`).
 
 | route.annotations
 | map[string]string
@@ -1132,7 +1128,7 @@ You may specify these options with the export command to customize the Route Res
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait-profile=openshift --trait ingress.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
+camel kubernetes export Sample.java --trait-profile=openshift -t route.enabled=true --trait route.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
 ----
 
 
