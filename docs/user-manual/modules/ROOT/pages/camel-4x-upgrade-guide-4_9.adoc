@@ -100,9 +100,12 @@ The logs will print a warning message if this behavior is detected.
 
 === Removed deprecated components
 
-The following components has been removed
+The following experimental DSL has been removed
 
-- `camel-jsh-dsl` - This DSL was an experiment. The Camel team is only focusing on Java, XML and YAML DSL.
+- `camel-js-dsl`
+- `camel-jsh-dsl`
+
+The Camel team is only focusing on Java, XML and YAML DSL.
 
 === Removed API
 

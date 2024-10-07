@@ -51,7 +51,6 @@
         <module>camel-xml-jaxb-dsl</module>
         <module>camel-xml-jaxb-dsl-test</module>
         <module>camel-yaml-dsl</module>
-        <module>camel-js-dsl</module>
         <module>camel-kamelet-main</module>
         <module>camel-jbang</module>
     </modules>

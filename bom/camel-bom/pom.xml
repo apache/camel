@@ -1204,11 +1204,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-js-dsl</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsch</artifactId>
         <version>4.9.0-SNAPSHOT</version>
       </dependency>
