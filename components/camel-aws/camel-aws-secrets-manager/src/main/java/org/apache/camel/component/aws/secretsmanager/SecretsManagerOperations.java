@@ -27,5 +27,6 @@ public enum SecretsManagerOperations {
     rotateSecret,
     updateSecret,
     restoreSecret,
-    replicateSecretToRegions
+    replicateSecretToRegions,
+    putSecretValue
 }
