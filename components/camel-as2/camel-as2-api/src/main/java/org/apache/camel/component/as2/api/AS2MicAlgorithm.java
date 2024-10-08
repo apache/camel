@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api;
 
+import java.util.Locale;
 import java.util.Optional;
 
 interface Constants {
@@ -42,7 +43,7 @@ public enum AS2MicAlgorithm {
     private final String jdkAlgorithmName;
     private final String as2AlgorithmName;
 
-    private AS2MicAlgorithm(String jdkAlgorithmName, String as2AlgorithmName) {
+    AS2MicAlgorithm(String jdkAlgorithmName, String as2AlgorithmName) {
         this.jdkAlgorithmName = jdkAlgorithmName;
         this.as2AlgorithmName = as2AlgorithmName;
     }
@@ -57,6 +58,7 @@ public enum AS2MicAlgorithm {
 
     public static String getJdkAlgorithmName(String as2AlgorithmName) {
         return Optional.ofNullable(as2AlgorithmName)
+                .map(alg -> alg.toLowerCase(Locale.US))
                 .map(alg -> alg.replaceAll("-", ""))
                 .map(alg -> switch (alg) {
                     case Constants.MD5_AS2_ALGORITHM_NAME -> Constants.MD5_JDK_ALGORITHM_NAME;
@@ -71,6 +73,7 @@ public enum AS2MicAlgorithm {
 
     public static String getAS2AlgorithmName(String jdkAlgorithmName) {
         return Optional.ofNullable(jdkAlgorithmName)
+                .map(alg -> alg.toUpperCase(Locale.US))
                 .map(alg -> switch (alg) {
                     case Constants.MD5_JDK_ALGORITHM_NAME -> Constants.MD5_AS2_ALGORITHM_NAME;
                     case Constants.SHA_1_JDK_ALGORITHM_NAME -> Constants.SHA_1_AS2_ALGORITHM_NAME;
