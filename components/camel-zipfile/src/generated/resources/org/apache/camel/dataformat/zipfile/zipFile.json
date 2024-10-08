@@ -1,0 +1,25 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "zipFile",
+    "title": "Zip File",
+    "description": "Compression and decompress streams using java.util.zip.ZipStream.",
+    "deprecated": false,
+    "firstVersion": "2.11.0",
+    "label": "dataformat,transformation,file",
+    "javaType": "org.apache.camel.dataformat.zipfile.ZipFileDataFormat",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-zipfile",
+    "version": "4.4.4-SNAPSHOT",
+    "modelName": "zipFile",
+    "modelJavaType": "org.apache.camel.model.dataformat.ZipFileDataFormat"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "usingIterator": { "index": 1, "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the zip file has more than one entry, the setting this option to true, allows working with the splitter EIP, to split the data using an iterator in a streaming mode." },
+    "allowEmptyDirectory": { "index": 2, "kind": "attribute", "displayName": "Allow Empty Directory", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the zip file has more than one entry, setting this option to true, allows to get the iterator even if the directory is empty" },
+    "preservePathElements": { "index": 3, "kind": "attribute", "displayName": "Preserve Path Elements", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If the file name contains path elements, setting this option to true, allows the path to be maintained in the zip file." },
+    "maxDecompressedSize": { "index": 4, "kind": "attribute", "displayName": "Max Decompressed Size", "label": "advanced", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1073741824", "description": "Set the maximum decompressed size of a zip file (in bytes). The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable setting a maximum decompressed size." }
+  }
+}
