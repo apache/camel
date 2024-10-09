@@ -114,8 +114,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File actionFile;
     private File outputFile;
     private File traceFile;
+    private long traceFilePos;   // keep track of trace offset
     private File debugFile;
-    private long traceFilePos; // keep track of trace offset
+    private File receiveFile;
+    private long receiveFilePos; // keep track of receive offset
     private byte[] lastSource;
     private ExpressionDefinition lastSourceExpression;
 
@@ -180,6 +182,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             outputFile = createLockFile(lockFile.getName() + "-output.json");
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
+            receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel JBang CLI enabled");
         } else {
@@ -223,7 +226,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         actionTask();
         statusTask();
         // only run this every 2nd time as gathering this data has more overhead
-        // and are only needed when doing tracing or debugging
+        // and are only needed when doing tracing/debugging/receive
         if (++counter % 2 == 0) {
             traceTask();
         }
@@ -280,6 +283,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionTraceTask(root);
             } else if ("browse".equals(action)) {
                 doActionBrowseTask(root);
+            } else if ("receive".equals(action)) {
+                doActionReceiveTask(root);
             }
         } catch (Exception e) {
             // ignore
@@ -811,6 +816,24 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
+    private void doActionReceiveTask(JsonObject root) throws IOException {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("receive");
+        if (dc != null) {
+            JsonObject json;
+            String endpoint = root.getString("endpoint");
+            if (endpoint != null) {
+                json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", "true", "endpoint", endpoint));
+            } else {
+                json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("enabled", "false"));
+            }
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
     private void doActionBeanTask(JsonObject root) throws IOException {
         String filter = root.getStringOrDefault("filter", "");
         String properties = root.getStringOrDefault("properties", "true");
@@ -1206,6 +1229,33 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             LOG.trace("Error updating debug file: {} due to: {}. This exception is ignored.",
                     debugFile, e.getMessage(), e);
         }
+        try {
+            DevConsole dc14 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("receive");
+            if (dc14 != null) {
+                JsonObject json = (JsonObject) dc14.call(DevConsole.MediaType.JSON, Map.of("dump", "true"));
+                JsonArray arr = json.getCollection("messages");
+                // filter based on last uid
+                if (receiveFilePos > 0) {
+                    arr.removeIf(r -> {
+                        JsonObject jo = (JsonObject) r;
+                        return jo.getLong("uid") <= receiveFilePos;
+                    });
+                }
+                if (arr != null && !arr.isEmpty()) {
+                    // store messages in a special file
+                    LOG.trace("Updating receive file: {}", receiveFile);
+                    String data = json.toJson() + System.lineSeparator();
+                    IOHelper.appendText(data, receiveFile);
+                    json = arr.getMap(arr.size() - 1);
+                    receiveFilePos = json.getLong("uid");
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.trace("Error updating receive file: {} due to: {}. This exception is ignored.",
+                    receiveFile, e.getMessage(), e);
+        }
     }
 
     private JsonObject collectMemory() {
@@ -1330,6 +1380,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (debugFile != null) {
             FileUtil.deleteFile(debugFile);
+        }
+        if (receiveFile != null) {
+            FileUtil.deleteFile(receiveFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
