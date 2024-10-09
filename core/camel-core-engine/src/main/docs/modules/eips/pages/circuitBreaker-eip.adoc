@@ -81,3 +81,7 @@ Camel provides two implementations of this pattern:
 
 * xref:resilience4j-eip.adoc[Resilience4j]: Using the Resilience4j implementation
 * xref:fault-tolerance-eip.adoc[Fault Tolerance]: Using the MicroProfile Fault Tolerance implementation
+
+== Challenges
+
+Circuit breakers can misinterpret a partial failure as total system failure and inadvertently bring down the entire system. In particular, sharded systems and cell-based architectures are vulnerable to this issue. A workaround is that the server indicates to the client which specific part is overloaded and the client uses a corresponding mini circuit breaker. However, this workaround can be complex and expensive.
