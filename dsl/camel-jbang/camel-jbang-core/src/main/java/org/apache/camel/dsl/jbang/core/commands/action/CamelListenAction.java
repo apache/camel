@@ -149,6 +149,14 @@ public class CamelListenAction extends ActionBaseCommand {
                         description = "Compact output (no empty line separating messages)")
     boolean compact = true;
 
+    @CommandLine.Option(names = { "--short-uri" },
+            description = "List endpoint URI without query parameters (short)")
+    boolean shortUri;
+
+    @CommandLine.Option(names = { "--wide-uri" },
+            description = "List endpoint URI in full details")
+    boolean wideUri;
+
     @CommandLine.Option(names = { "--mask" },
                         description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
@@ -225,14 +233,25 @@ public class CamelListenAction extends ActionBaseCommand {
                         row.pid = Long.toString(ph.pid());
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
-                        // TODO: receive
-                        JsonObject jo = root.getMap("trace");
+                        JsonObject jo = root.getMap("receive");
                         if (jo != null) {
                             row.enabled = jo.getBoolean("enabled");
-                            row.counter = jo.getLong("counter");
-                            row.pattern = jo.getString("tracePattern");
+                            row.counter = jo.getLong("total");
+                            JsonArray arr = jo.getCollection("endpoints");
+                            if (arr != null) {
+                                for (Object e : arr) {
+                                    jo = (JsonObject) e;
+                                    row.uri = jo.getString("uri");
+                                    if (mask) {
+                                        row.uri = URISupport.sanitizeUri(row.uri);
+                                    }
+                                    rows.add(row);
+                                    row = row.copy();
+                                }
+                            } else {
+                                rows.add(row);
+                            }
                         }
-                        rows.add(row);
                     }
                 });
 
@@ -246,8 +265,13 @@ public class CamelListenAction extends ActionBaseCommand {
                             .with(r -> r.name),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("STATUS").with(this::getStatus),
-                    new Column().header("TOTAL").with(r -> "" + r.counter),
-                    new Column().header("PATTERN").with(r -> r.pattern))));
+                    new Column().header("COUNTER").with(r -> "" + r.counter),
+                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(this::getEndpointUri),
+                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(140, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.uri))));
         }
 
         return 0;
@@ -696,6 +720,17 @@ public class CamelListenAction extends ActionBaseCommand {
         return tableHelper.getDataAsTable(null, null, r.endpoint, r.endpointService, r.message, null);
     }
 
+    protected String getEndpointUri(StatusRow r) {
+        String u = r.uri;
+        if (shortUri) {
+            int pos = u.indexOf('?');
+            if (pos > 0) {
+                u = u.substring(0, pos);
+            }
+        }
+        return u;
+    }
+
     private static class Pid {
         String pid;
         String name;
@@ -726,7 +761,15 @@ public class CamelListenAction extends ActionBaseCommand {
         long uptime;
         boolean enabled;
         long counter;
-        String pattern;
+        String uri;
+
+        StatusRow copy() {
+            try {
+                return (StatusRow) clone();
+            } catch (CloneNotSupportedException e) {
+                return null;
+            }
+        }
     }
 
 }

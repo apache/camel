@@ -269,12 +269,13 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             }
         }
 
-        root.put("enabled", true);
+        root.put("enabled", this.enabled.get());
         root.put("total", uuid.get());
         JsonArray arr = new JsonArray();
         for (Consumer c : consumers) {
             JsonObject jo = new JsonObject();
             jo.put("uri", c.getEndpoint().toString());
+            jo.put("remote", c.getEndpoint().isRemote());
             arr.add(jo);
         }
         root.put("endpoints", arr);
