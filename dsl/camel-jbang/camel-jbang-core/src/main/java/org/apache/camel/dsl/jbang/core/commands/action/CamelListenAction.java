@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
@@ -88,7 +89,7 @@ public class CamelListenAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--action" }, completionCandidates = CamelTraceAction.ActionCompletionCandidates.class,
+    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
                         defaultValue = "status",
                         description = "Action to start, stop, clear, list status, or dump messages")
     String action;
@@ -114,7 +115,7 @@ public class CamelListenAction extends ActionBaseCommand {
     boolean follow = true;
 
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto",
-                        completionCandidates = CamelTraceAction.PrefixCompletionCandidates.class,
+                        completionCandidates = PrefixCompletionCandidates.class,
                         description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
     String prefix = "auto";
 
@@ -237,6 +238,8 @@ public class CamelListenAction extends ActionBaseCommand {
                         if (jo != null) {
                             row.enabled = jo.getBoolean("enabled");
                             row.counter = jo.getLong("total");
+                            row.firstTimestamp = jo.getLongOrDefault("firstTimestamp", 0);
+                            row.lastTimestamp = jo.getLongOrDefault("lastTimestamp", 0);
                             JsonArray arr = jo.getCollection("endpoints");
                             if (arr != null) {
                                 for (Object e : arr) {
@@ -265,7 +268,9 @@ public class CamelListenAction extends ActionBaseCommand {
                             .with(r -> r.name),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("STATUS").with(this::getStatus),
-                    new Column().header("COUNTER").with(r -> "" + r.counter),
+                    new Column().header("TOTAL").with(r -> "" + r.counter),
+                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
+                            .with(this::getMessageAgo),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getEndpointUri),
@@ -731,6 +736,13 @@ public class CamelListenAction extends ActionBaseCommand {
         return u;
     }
 
+    protected String getMessageAgo(StatusRow r) {
+        if (r.lastTimestamp > 0) {
+            return TimeUtils.printSince(r.lastTimestamp);
+        }
+        return "";
+    }
+
     private static class Pid {
         String pid;
         String name;
@@ -761,6 +773,8 @@ public class CamelListenAction extends ActionBaseCommand {
         long uptime;
         boolean enabled;
         long counter;
+        long firstTimestamp;
+        long lastTimestamp;
         String uri;
 
         StatusRow copy() {

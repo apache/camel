@@ -24,6 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import netscape.javascript.JSObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -73,6 +74,8 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong uuid = new AtomicLong();
     private Queue<JsonObject> queue;
+    private long firstTimestamp;
+    private long lastTimestamp;
 
     public ReceiveDevConsole() {
         super("camel", "receive", "Camel Receive", "Consume messages from endpoints");
@@ -127,6 +130,10 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             if (removeOnDump) {
                 queue.clear();
             }
+            JsonObject jo = (JsonObject) arr.get(0);
+            firstTimestamp = jo.getLongOrDefault("timestamp", 0);
+            jo = (JsonObject) arr.get(arr.size() - 1);
+            lastTimestamp = jo.getLongOrDefault("timestamp", 0);
             String json = arr.toJson();
             sb.append(json).append("\n");
             return sb.toString();
@@ -181,7 +188,8 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         json.put("uid", uuid.incrementAndGet());
         json.put("endpointUri", exchange.getFromEndpoint().toString());
         json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());
-        json.put("timestamp", exchange.getMessage().getMessageTimestamp());
+        lastTimestamp = exchange.getMessage().getMessageTimestamp();
+        json.put("timestamp", lastTimestamp);
 
         // ensure there is space on the queue by polling until at least single slot is free
         int drain = queue.size() - capacity + 1;
@@ -240,6 +248,10 @@ public class ReceiveDevConsole extends AbstractDevConsole {
                 queue.clear();
             }
             root.put("messages", arr);
+            JsonObject jo = (JsonObject) arr.get(0);
+            firstTimestamp = jo.getLongOrDefault("timestamp", 0);
+            jo = (JsonObject) arr.get(arr.size() - 1);
+            lastTimestamp = jo.getLongOrDefault("timestamp", 0);
             return root;
         }
 
@@ -271,6 +283,9 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
         root.put("enabled", this.enabled.get());
         root.put("total", uuid.get());
+        root.put("firstTimestamp", firstTimestamp);
+        root.put("lastTimestamp", lastTimestamp);
+
         JsonArray arr = new JsonArray();
         for (Consumer c : consumers) {
             JsonObject jo = new JsonObject();
