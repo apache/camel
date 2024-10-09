@@ -104,6 +104,9 @@ public class AWS2S3Producer extends DefaultProducer {
                 case headBucket:
                     headBucket(getEndpoint().getS3Client(), exchange);
                     break;
+                case headObject:
+                    headObject(getEndpoint().getS3Client(), exchange);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
             }
@@ -710,6 +713,19 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(headBucketResponse);
+    }
+
+    private void headObject(S3Client s3Client, Exchange exchange) {
+        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
+        if (ObjectHelper.isEmpty(key)) {
+            throw new IllegalArgumentException(
+                    "Head Object operation requires to specify a bucket name via Header");
+        }
+        HeadObjectResponse headObjectResponse = s3Client.headObject(HeadObjectRequest.builder()
+                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration())).key(key).build());
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(headObjectResponse);
     }
 
     private AWS2S3Operations determineOperation(Exchange exchange) {

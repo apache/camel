@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws2.s3.integration;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
@@ -24,7 +26,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class S3HeadBucketIT extends Aws2S3Base {
+public class S3HeadObjectIT extends Aws2S3Base {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -33,12 +35,22 @@ public class S3HeadBucketIT extends Aws2S3Base {
     private MockEndpoint result;
 
     @Test
-    public void sendInHeadBucket() throws InterruptedException {
+    public void sendInHeadObject() throws InterruptedException {
         result.expectedMessageCount(1);
 
-        template.send("direct:headBucket", exchange -> {
-            exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.headBucket);
-            exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "mycamel");
+        template.send("direct:putObject", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
+                exchange.getIn().setHeader(AWS2S3Constants.CONTENT_TYPE, "application/text");
+                exchange.getIn().setBody("Camel rocks!");
+            }
+        });
+
+        template.send("direct:headObject", exchange -> {
+            exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.headObject);
+            exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel.txt");
         });
 
         result.assertIsSatisfied();
@@ -49,9 +61,11 @@ public class S3HeadBucketIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://test-ss3-s3";
+                String awsEndpoint = "aws2-s3://" + name.get();
+                String awsEndpointCreate = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
-                from("direct:headBucket").to(awsEndpoint).log("${body}").to("mock:result");
+                from("direct:putObject").to(awsEndpointCreate);
+                from("direct:headObject").to(awsEndpoint).log("${body}").to("mock:result");
 
             }
         };
