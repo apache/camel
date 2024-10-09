@@ -45,6 +45,10 @@ public class RegisterOptions {
      */
     private Integer responseTimeout = null;
     /**
+     * Maximum time, in seconds, the TorchServe waits for the model to startup/initialize, default: 120. (optional)
+     */
+    private Integer startupTimeout = null;
+    /**
      * Number of initial workers, default: 0. (optional)
      */
     private Integer initialWorkers = null;
@@ -92,6 +96,10 @@ public class RegisterOptions {
         return responseTimeout;
     }
 
+    public Integer getStartupTimeout() {
+        return startupTimeout;
+    }
+
     public Integer getInitialWorkers() {
         return initialWorkers;
     }
@@ -135,6 +143,11 @@ public class RegisterOptions {
 
         public Builder responseTimeout(Integer responseTimeout) {
             options.responseTimeout = responseTimeout;
+            return this;
+        }
+
+        public Builder startupTimeout(Integer startupTimeout) {
+            options.startupTimeout = startupTimeout;
             return this;
         }
 

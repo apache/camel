@@ -29,7 +29,8 @@
     <artifactId>camel-torchserve</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: TorchServe</name>
-    <description>Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely</description>
+    <description>Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely
+    </description>
 
     <properties>
     </properties>
@@ -96,6 +97,15 @@
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-torchserve</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>
