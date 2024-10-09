@@ -178,7 +178,10 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     private void addMessage(Exchange exchange) {
         JsonObject json
                 = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, false, true, true, true, true, bodyMaxChars);
-        json.put("uuid", uuid.incrementAndGet());
+        json.put("uid", uuid.incrementAndGet());
+        json.put("endpointUri", exchange.getFromEndpoint().toString());
+        json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());
+        json.put("timestamp", exchange.getMessage().getMessageTimestamp());
 
         // ensure there is space on the queue by polling until at least single slot is free
         int drain = queue.size() - capacity + 1;
@@ -192,7 +195,6 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
     protected Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {
         // TODO: find all processors that are endpoint aware and match pattern
-
 
         Endpoint target = null;
         // is the endpoint a pattern or route id
@@ -279,4 +281,9 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         return root;
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        stopConsumers();
+    }
 }
