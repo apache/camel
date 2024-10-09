@@ -68,6 +68,7 @@ public class DefaultManagement implements Management {
                     options.getBatchSize(),
                     options.getMaxBatchDelay(),
                     options.getResponseTimeout(),
+                    options.getStartupTimeout(),
                     options.getInitialWorkers(),
                     options.getSynchronous(),
                     options.getS3SseKms(),

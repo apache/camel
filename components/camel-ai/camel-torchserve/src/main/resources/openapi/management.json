@@ -3,7 +3,7 @@
   "info": {
     "title": "TorchServe APIs",
     "description": "TorchServe is a flexible and easy to use tool for serving deep learning models",
-    "version": "0.11.1"
+    "version": "0.12.0"
   },
   "paths": {
     "/": {
@@ -240,6 +240,16 @@
             "schema": {
               "type": "integer",
               "default": "2"
+            }
+          },
+          {
+            "in": "query",
+            "name": "startup_timeout",
+            "description": "Maximum time, in seconds, the TorchServe waits for the model to startup/initialize, default: 120.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": "120"
             }
           },
           {
@@ -669,7 +679,7 @@
         }
       },
       "put": {
-        "description": "Configure number of workers for a default version of a model.This is a asynchronous call by default. Caller need to call describeModel to check if the model workers has been changed.",
+        "description": "Configure number of workers for a default version of a model. This is an asynchronous call by default. Caller need to call describeModel to check if the model workers has been changed.",
         "operationId": "setAutoScale",
         "parameters": [
           {
@@ -880,7 +890,7 @@
         }
       },
       "delete": {
-        "description": "Unregister the default version of a model from TorchServe if it is the only version available.This is a asynchronous call by default. Caller can call listModels to confirm model is unregistered",
+        "description": "Unregister the default version of a model from TorchServe if it is the only version available. This is an asynchronous call by default. Caller can call listModels to confirm model is unregistered.",
         "operationId": "unregisterModel",
         "parameters": [
           {
@@ -1260,7 +1270,7 @@
         }
       },
       "put": {
-        "description": "Configure number of workers for a specified version of a model. This is a asynchronous call by default. Caller need to call describeModel to check if the model workers has been changed.",
+        "description": "Configure number of workers for a specified version of a model. This is an asynchronous call by default. Caller need to call describeModel to check if the model workers has been changed.",
         "operationId": "version_setAutoScale",
         "parameters": [
           {
@@ -1677,7 +1687,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Default vesion succsesfully updated for model",
+            "description": "Default version successfully updated for model",
             "content": {
               "application/json": {
                 "schema": {
