@@ -132,6 +132,28 @@ public class TarAggregationStrategy implements AggregationStrategy {
         this.parentDir = new File(parentDir);
     }
 
+    public boolean isPreserveFolderStructure() {
+        return preserveFolderStructure;
+    }
+
+    /**
+     * If the incoming message is from a file, then the folder structure of said file can be preserved
+     */
+    public void setPreserveFolderStructure(boolean preserveFolderStructure) {
+        this.preserveFolderStructure = preserveFolderStructure;
+    }
+
+    public boolean isUseFilenameHeader() {
+        return useFilenameHeader;
+    }
+
+    /**
+     * Whether to use CamelFileName header for the filename instead of using unique message id
+     */
+    public void setUseFilenameHeader(boolean useFilenameHeader) {
+        this.useFilenameHeader = useFilenameHeader;
+    }
+
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         File tarFile;
@@ -157,7 +179,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
         }
 
         Object body = newExchange.getIn().getBody();
-        if (body instanceof WrappedFile wrappedFile) {
+        if (body instanceof WrappedFile<?> wrappedFile) {
             body = wrappedFile.getFile();
         }
 
@@ -206,7 +228,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
     @Override
     public void onCompletion(Exchange exchange, Exchange inputExchange) {
         // this aggregation strategy added onCompletion which we should handover when we are complete
-        if (inputExchange != null) {
+        if (exchange != null && inputExchange != null) {
             exchange.getExchangeExtension().handoverCompletions(inputExchange);
         }
     }
