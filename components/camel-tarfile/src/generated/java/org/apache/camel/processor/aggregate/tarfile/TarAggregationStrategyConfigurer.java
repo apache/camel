@@ -29,6 +29,10 @@ public class TarAggregationStrategyConfigurer extends org.apache.camel.support.c
         case "fileSuffix": target.setFileSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "parentdir":
         case "parentDir": target.setParentDir(property(camelContext, java.io.File.class, value)); return true;
+        case "preservefolderstructure":
+        case "preserveFolderStructure": target.setPreserveFolderStructure(property(camelContext, boolean.class, value)); return true;
+        case "usefilenameheader":
+        case "useFilenameHeader": target.setUseFilenameHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -42,6 +46,10 @@ public class TarAggregationStrategyConfigurer extends org.apache.camel.support.c
         case "fileSuffix": return java.lang.String.class;
         case "parentdir":
         case "parentDir": return java.io.File.class;
+        case "preservefolderstructure":
+        case "preserveFolderStructure": return boolean.class;
+        case "usefilenameheader":
+        case "useFilenameHeader": return boolean.class;
         default: return null;
         }
     }
@@ -56,6 +64,10 @@ public class TarAggregationStrategyConfigurer extends org.apache.camel.support.c
         case "fileSuffix": return target.getFileSuffix();
         case "parentdir":
         case "parentDir": return target.getParentDir();
+        case "preservefolderstructure":
+        case "preserveFolderStructure": return target.isPreserveFolderStructure();
+        case "usefilenameheader":
+        case "useFilenameHeader": return target.isUseFilenameHeader();
         default: return null;
         }
     }
