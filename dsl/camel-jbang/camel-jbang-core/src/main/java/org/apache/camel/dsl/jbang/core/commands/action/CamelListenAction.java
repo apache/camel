@@ -197,11 +197,13 @@ public class CamelListenAction extends ActionBaseCommand {
             } else {
                 JsonObject root = new JsonObject();
                 root.put("action", "receive");
-                if (endpoint != null) {
-                    root.put("endpoint", endpoint);
-                }
                 if ("start".equals(action)) {
                     root.put("enabled", "true");
+                    if (endpoint != null) {
+                        root.put("endpoint", endpoint);
+                    } else {
+                        root.put("endpoint", "*");
+                    }
                 } else if ("stop".equals(action)) {
                     root.put("enabled", "false");
                 }

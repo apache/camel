@@ -24,17 +24,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import netscape.javascript.JSObject;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -202,34 +206,23 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     }
 
     protected Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {
-        // TODO: find all processors that are endpoint aware and match pattern
+        // TODO: Use ManagedProducerMBean as those are also toD (dynamic)
+
 
         Endpoint target = null;
-        // is the endpoint a pattern or route id
         boolean scheme = endpoint.contains(":");
         boolean pattern = endpoint.endsWith("*");
         if (!scheme || pattern) {
-            if (!scheme) {
+            if (!scheme && !endpoint.endsWith("*")) {
                 endpoint = endpoint + "*";
             }
+            List<EndpointAware> match = new ArrayList<>();
             for (Route route : camelContext.getRoutes()) {
-                // find last output
-                Endpoint e = route.getEndpoint();
-                if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
-                    target = e;
-                    break;
-                }
+                doFilter(endpoint, route.navigate(), match);
             }
-            if (target == null) {
-                // okay it may refer to a route id
-                for (Route route : camelContext.getRoutes()) {
-                    String id = route.getRouteId();
-                    Endpoint e = route.getEndpoint();
-                    if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
-                        target = e;
-                        break;
-                    }
-                }
+            // grab last matched processor that sends to an endpoint
+            if (!match.isEmpty()) {
+                target = match.get(match.size() - 1).getEndpoint();
             }
         } else {
             target = camelContext.getEndpoint(endpoint);
@@ -302,4 +295,31 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         super.doStop();
         stopConsumers();
     }
+
+    @SuppressWarnings("unchecked")
+    private void doFilter(String pattern, Navigate<Processor> nav, List<EndpointAware> match) {
+        List<Processor> list = nav.next();
+        if (list != null) {
+            for (Processor proc : list) {
+                if (proc instanceof Channel channel) {
+                    proc = channel.getNextProcessor();
+                }
+                if (proc instanceof EndpointAware ea) {
+                    String id = null;
+                    if (proc instanceof IdAware idAware) {
+                        id = idAware.getId();
+                    }
+                    String uri = ea.getEndpoint().getEndpointUri();
+                    if (PatternHelper.matchPattern(id, pattern) || PatternHelper.matchPattern(uri, pattern)) {
+                        match.add(ea);
+                    }
+                }
+                if (proc instanceof Navigate) {
+                    Navigate<Processor> child = (Navigate<Processor>) proc;
+                    doFilter(pattern, child, match);
+                }
+            }
+        }
+    }
+
 }
