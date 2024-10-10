@@ -43,8 +43,10 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -195,6 +197,10 @@ public class CamelListenAction extends ActionBaseCommand {
                     IOHelper.writeText("{}", f);
                 }
             } else {
+                // ensure output file is deleted before executing action
+                File outputFile = getOutputFile(Long.toString(pid));
+                FileUtil.deleteFile(outputFile);
+
                 JsonObject root = new JsonObject();
                 root.put("action", "receive");
                 if ("start".equals(action)) {
@@ -209,10 +215,38 @@ public class CamelListenAction extends ActionBaseCommand {
                 }
                 File f = getActionFile(Long.toString(pid));
                 IOHelper.writeText(root.toJson(), f);
+
+                JsonObject jo = waitForOutputFile(outputFile);
+                if (jo != null) {
+                    String error = jo.getString("error");
+                    if (error != null) {
+                        error = Jsoner.unescape(error);
+                        String url = jo.getString("url");
+                        List<String> stackTrace = jo.getCollection("stackTrace");
+                        if (url != null) {
+                            printer().println("Error starting listening on: " + url + " due to: " + error);
+
+                        } else {
+                            printer().println("Error starting listening due to: " + error);
+                        }
+                        printer().println(StringHelper.fillChars('-', 120));
+                        printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
+                        printer().println(StringHelper.fillChars('-', 120));
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < stackTrace.size(); i++) {
+                            sb.append(String.format("\t%s%n", stackTrace.get(i)));
+                        }
+                        printer().println(String.valueOf(sb));
+                    }
+                }
             }
         }
 
         return 0;
+    }
+
+    protected JsonObject waitForOutputFile(File outputFile) {
+        return getJsonObject(outputFile);
     }
 
     protected Integer doStatusCall() {
@@ -270,7 +304,7 @@ public class CamelListenAction extends ActionBaseCommand {
                             .with(r -> r.name),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("STATUS").with(this::getStatus),
-                    new Column().header("TOTAL").with(r -> "" + r.counter),
+                    new Column().header("TOTAL").with(r -> r.enabled ? "" + r.counter : ""),
                     new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
                             .with(this::getMessageAgo),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)

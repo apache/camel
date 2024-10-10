@@ -17,6 +17,7 @@
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -29,17 +30,13 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.Navigate;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.Configurer;
-import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -47,6 +44,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "receive", displayName = "Camel Receive", description = "Consume messages from endpoints")
 @Configurer(bootstrap = true, extended = true)
@@ -78,7 +76,6 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     public static final String ENDPOINT = "endpoint";
 
     private final List<Consumer> consumers = new ArrayList<>();
-
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong uuid = new AtomicLong();
     private Queue<JsonObject> queue;
@@ -119,6 +116,11 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             throw new IllegalArgumentException("Capacity must be between 50 and 1000");
         }
         this.queue = new LinkedBlockingQueue<>(capacity);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        stopConsumers();
     }
 
     protected void stopConsumers() {
@@ -162,7 +164,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             Endpoint target = findMatchingEndpoint(getCamelContext(), pattern);
             if (target != null) {
                 try {
-                    Consumer consumer = createConsumer(getCamelContext(), target);
+                    Consumer consumer = createConsumer(target);
                     if (!consumers.contains(consumer)) {
                         consumers.add(consumer);
                         ServiceHelper.startService(consumer);
@@ -179,88 +181,6 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             sb.append("    ").append(c.getEndpoint().toString()).append("\n");
         }
         return sb.toString();
-    }
-
-    private Consumer createConsumer(CamelContext camelContext, Endpoint target) throws Exception {
-        for (Consumer c : consumers) {
-            if (c.getEndpoint() == target) {
-                return c;
-            }
-        }
-        return target.createConsumer(this::addMessage);
-    }
-
-    private void addMessage(Exchange exchange) {
-        JsonObject json
-                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, false, true, true, true, true, bodyMaxChars);
-        json.put("uid", uuid.incrementAndGet());
-        json.put("endpointUri", exchange.getFromEndpoint().toString());
-        json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());
-        lastTimestamp = exchange.getMessage().getMessageTimestamp();
-        json.put("timestamp", lastTimestamp);
-
-        // ensure there is space on the queue by polling until at least single slot is free
-        int drain = queue.size() - capacity + 1;
-        if (drain > 0) {
-            for (int i = 0; i < drain; i++) {
-                queue.poll();
-            }
-        }
-        queue.add(json);
-    }
-
-    protected Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {
-        Endpoint target = null;
-        boolean scheme = endpoint.contains(":");
-        boolean pattern = endpoint.endsWith("*");
-        if (!scheme || pattern) {
-            if (!scheme && !endpoint.endsWith("*")) {
-                endpoint = endpoint + "*";
-            }
-            MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-            if (mbeanServer != null) {
-                try {
-                    // find all producers for this camel context mbean
-                    String jmxDomain
-                            = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                    String prefix
-                            = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                    ObjectName query = ObjectName.getInstance(
-                            jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
-                    Set<ObjectName> set = mbeanServer.queryNames(query, null);
-                    if (set != null && !set.isEmpty()) {
-                        for (ObjectName on : set) {
-                            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-                            if (PatternHelper.matchPattern(uri, endpoint)) {
-                                // is the endpoint able to create a consumer
-                                target = getCamelContext().getEndpoint(uri);
-                                // is the target able to create a consumer
-                                org.apache.camel.spi.UriEndpoint ann
-                                        = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
-                                if (ann != null) {
-                                    if (ann.producerOnly()) {
-                                        // skip if the endpoint cannot consume (we need to be able to consume to receive)
-                                        target = null;
-                                    }
-                                    if ("*".equals(endpoint) && !ann.remote()) {
-                                        // skip internal when matching everything
-                                        target = null;
-                                    }
-                                }
-                                if (target != null) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        } else {
-            target = camelContext.getEndpoint(endpoint);
-        }
-        return target;
     }
 
     protected JsonObject doCallJson(Map<String, Object> options) {
@@ -292,18 +212,23 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
         String pattern = (String) options.get(ENDPOINT);
         if (pattern != null) {
-            this.enabled.set(true);
-            Endpoint target = findMatchingEndpoint(getCamelContext(), pattern);
-            if (target != null) {
-                try {
-                    Consumer consumer = createConsumer(getCamelContext(), target);
+            try {
+                Endpoint target = findMatchingEndpoint(getCamelContext(), pattern);
+                if (target != null) {
+                    root.put("url", target.getEndpointUri());
+                    Consumer consumer = createConsumer(target);
                     if (!consumers.contains(consumer)) {
                         consumers.add(consumer);
                         ServiceHelper.startService(consumer);
                     }
-                } catch (Exception e) {
-                    // ignore
                 }
+                this.enabled.set(true);
+            } catch (Exception e) {
+                root.put("error", Jsoner.escape(e.getMessage()));
+                JsonArray arr2 = new JsonArray();
+                final String trace = ExceptionHelper.stackTraceToString(e);
+                root.put("stackTrace", arr2);
+                Collections.addAll(arr2, trace.split("\n"));
             }
         }
 
@@ -319,40 +244,101 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             jo.put("remote", c.getEndpoint().isRemote());
             arr.add(jo);
         }
-        root.put("endpoints", arr);
+        if (!arr.isEmpty()) {
+            root.put("endpoints", arr);
+        }
         return root;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        stopConsumers();
+    private Consumer createConsumer(Endpoint target) throws Exception {
+        for (Consumer c : consumers) {
+            if (c.getEndpoint() == target) {
+                return c;
+            }
+        }
+        return target.createConsumer(this::addMessage);
     }
 
-    @SuppressWarnings("unchecked")
-    private void doFilter(String pattern, Navigate<Processor> nav, List<EndpointAware> match) {
-        List<Processor> list = nav.next();
-        if (list != null) {
-            for (Processor proc : list) {
-                if (proc instanceof Channel channel) {
-                    proc = channel.getNextProcessor();
-                }
-                if (proc instanceof EndpointAware ea) {
-                    String id = null;
-                    if (proc instanceof IdAware idAware) {
-                        id = idAware.getId();
+    private void addMessage(Exchange exchange) {
+        JsonObject json
+                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, false, true, true, true, true, bodyMaxChars);
+        json.put("uid", uuid.incrementAndGet());
+        json.put("endpointUri", exchange.getFromEndpoint().toString());
+        json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());
+        lastTimestamp = exchange.getMessage().getMessageTimestamp();
+        json.put("timestamp", lastTimestamp);
+
+        // ensure there is space on the queue by polling until at least single slot is free
+        int drain = queue.size() - capacity + 1;
+        if (drain > 0) {
+            for (int i = 0; i < drain; i++) {
+                queue.poll();
+            }
+        }
+        queue.add(json);
+    }
+
+    protected static Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {
+        Endpoint target = null;
+        boolean scheme = endpoint.contains(":");
+        boolean pattern = endpoint.endsWith("*");
+        if (!scheme || pattern) {
+            if (!scheme && !endpoint.endsWith("*")) {
+                endpoint = endpoint + "*";
+            }
+            // find all producers for this camel context via JMX mbeans (this allows to find also producers created via dynamic EIPs)
+            MBeanServer mbeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
+            if (mbeanServer != null) {
+                try {
+                    String jmxDomain
+                            = camelContext.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+                    String prefix
+                            = camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                    ObjectName query = ObjectName.getInstance(
+                            jmxDomain + ":context=" + prefix + camelContext.getManagementName() + ",type=producers,*");
+                    Set<ObjectName> set = mbeanServer.queryNames(query, null);
+                    if (set != null && !set.isEmpty()) {
+                        for (ObjectName on : set) {
+                            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
+                            if (PatternHelper.matchPattern(uri, endpoint)) {
+                                // is the endpoint able to create a consumer
+                                target = camelContext.getEndpoint(uri);
+                                // is the target able to create a consumer
+                                org.apache.camel.spi.UriEndpoint ann
+                                        = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+                                if (ann != null) {
+                                    if (ann.producerOnly()) {
+                                        // skip if the endpoint cannot consume (we need to be able to consume to receive)
+                                        target = null;
+                                    }
+                                    if ("*".equals(endpoint) && !ann.remote()) {
+                                        // skip internal when matching everything
+                                        target = null;
+                                    }
+                                }
+                                if (target != null) {
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    String uri = ea.getEndpoint().getEndpointUri();
-                    if (PatternHelper.matchPattern(id, pattern) || PatternHelper.matchPattern(uri, pattern)) {
-                        match.add(ea);
-                    }
+                } catch (Exception e) {
+                    // ignore
                 }
-                if (proc instanceof Navigate) {
-                    Navigate<Processor> child = (Navigate<Processor>) proc;
-                    doFilter(pattern, child, match);
+            }
+        } else {
+            target = camelContext.getEndpoint(endpoint);
+            // is the target able to create a consumer
+            org.apache.camel.spi.UriEndpoint ann
+                    = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+            if (ann != null) {
+                if (ann.producerOnly()) {
+                    // skip if the endpoint cannot consume (we need to be able to consume to receive)
+                    throw new IllegalArgumentException("Cannot consume from endpoint: " + endpoint);
                 }
             }
         }
+        return target;
     }
 
 }
