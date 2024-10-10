@@ -228,20 +228,28 @@ public class ReceiveDevConsole extends AbstractDevConsole {
                     ObjectName query = ObjectName.getInstance(
                             jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
                     Set<ObjectName> set = mbeanServer.queryNames(query, null);
-                    for (ObjectName on : set) {
-                        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-                        if (PatternHelper.matchPattern(uri, endpoint)) {
-                            // is the endpoint able to create a consumer
-                            target = getCamelContext().getEndpoint(uri);
-                            // is the target able to create a consumer
-                            org.apache.camel.spi.UriEndpoint ann = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
-                            if (ann != null) {
-                                if (ann.producerOnly()) {
-                                    target = null;
+                    if (set != null && !set.isEmpty()) {
+                        for (ObjectName on : set) {
+                            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
+                            if (PatternHelper.matchPattern(uri, endpoint)) {
+                                // is the endpoint able to create a consumer
+                                target = getCamelContext().getEndpoint(uri);
+                                // is the target able to create a consumer
+                                org.apache.camel.spi.UriEndpoint ann
+                                        = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+                                if (ann != null) {
+                                    if (ann.producerOnly()) {
+                                        // skip if the endpoint cannot consume (we need to be able to consume to receive)
+                                        target = null;
+                                    }
+                                    if ("*".equals(endpoint) && !ann.remote()) {
+                                        // skip internal when matching everything
+                                        target = null;
+                                    }
                                 }
-                            }
-                            if (target != null) {
-                                break;
+                                if (target != null) {
+                                    break;
+                                }
                             }
                         }
                     }
