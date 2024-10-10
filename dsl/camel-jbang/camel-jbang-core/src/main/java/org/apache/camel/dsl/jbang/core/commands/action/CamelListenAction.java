@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
@@ -43,7 +42,6 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.FileUtil;
@@ -97,7 +95,7 @@ public class CamelListenAction extends ActionBaseCommand {
     String action;
 
     @CommandLine.Option(names = { "--endpoint" },
-            description = "Endpoint to browse messages (can be uri, pattern, or refer to a route id)")
+                        description = "Endpoint to browse messages (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
@@ -134,16 +132,20 @@ public class CamelListenAction extends ActionBaseCommand {
     String[] find;
 
     @CommandLine.Option(names = { "--grep" },
-                        description = "Filter messages to only output trace matching text (ignore case).", arity = "0..*")
+                        description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
     String[] grep;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in traced messages")
+                        description = "Show message headers in received messages")
     boolean showHeaders = true;
 
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in traced messages")
+                        description = "Show message body in received messages")
     boolean showBody = true;
+
+    @CommandLine.Option(names = { "--only-body" }, defaultValue = "false",
+                        description = "Show only message body in received messages")
+    boolean onlyBody;
 
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
@@ -153,11 +155,11 @@ public class CamelListenAction extends ActionBaseCommand {
     boolean compact = true;
 
     @CommandLine.Option(names = { "--short-uri" },
-            description = "List endpoint URI without query parameters (short)")
+                        description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
     @CommandLine.Option(names = { "--wide-uri" },
-            description = "List endpoint URI in full details")
+                        description = "List endpoint URI in full details")
     boolean wideUri;
 
     @CommandLine.Option(names = { "--mask" },
@@ -355,7 +357,7 @@ public class CamelListenAction extends ActionBaseCommand {
         // find new pids
         updatePids(pids);
         if (!pids.isEmpty()) {
-            // read existing trace files (skip by tail/since)
+            // read existing received files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
                 for (int i = 0; i < find.length; i++) {
@@ -383,10 +385,10 @@ public class CamelListenAction extends ActionBaseCommand {
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }
-            // dump existing traces
+            // dump existing messages
             if (tail != 0) {
-                tailTraceFiles(pids, tail);
-                dumpTraceFiles(pids, tail, limit);
+                tailReceiveFiles(pids, tail);
+                dumpReceiveFiles(pids, tail, limit);
             }
         }
 
@@ -411,7 +413,7 @@ public class CamelListenAction extends ActionBaseCommand {
                     }
                     int lines = readReceiveFiles(pids);
                     if (lines > 0) {
-                        more = dumpTraceFiles(pids, 0, null);
+                        more = dumpReceiveFiles(pids, 0, null);
                     } else if (lines == 0) {
                         Thread.sleep(100);
                     } else {
@@ -424,7 +426,7 @@ public class CamelListenAction extends ActionBaseCommand {
         return 0;
     }
 
-    private void tailTraceFiles(Map<Long, Pid> pids, int tail) throws Exception {
+    private void tailReceiveFiles(Map<Long, Pid> pids, int tail) throws Exception {
         for (Pid pid : pids.values()) {
             File file = getReceiveFile(pid.pid);
             if (file.exists()) {
@@ -514,7 +516,7 @@ public class CamelListenAction extends ActionBaseCommand {
                         line = pid.reader.readLine();
                         if (line != null) {
                             lines++;
-                            // switch fifo to be unlimited as we use it for new traces
+                            // switch fifo to be unlimited as we use it for new messages
                             if (pid.fifo == null || pid.fifo instanceof ArrayBlockingQueue) {
                                 pid.fifo = new ArrayDeque<>();
                             }
@@ -569,11 +571,16 @@ public class CamelListenAction extends ActionBaseCommand {
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
                     row.message.remove("exchangeProperties");
-                    if (!showHeaders) {
+                    if (onlyBody) {
                         row.message.remove("headers");
-                    }
-                    if (!showBody) {
-                        row.message.remove("body");
+                        row.message.remove("messageType");
+                    } else {
+                        if (!showHeaders) {
+                            row.message.remove("headers");
+                        }
+                        if (!showBody) {
+                            row.message.remove("body");
+                        }
                     }
                     rows.add(row);
                 }
@@ -583,7 +590,7 @@ public class CamelListenAction extends ActionBaseCommand {
         return null;
     }
 
-    private boolean dumpTraceFiles(Map<Long, Pid> pids, int tail, Date limit) {
+    private boolean dumpReceiveFiles(Map<Long, Pid> pids, int tail, Date limit) {
         Set<String> names = new HashSet<>();
         List<Row> rows = new ArrayList<>();
         for (Pid pid : pids.values()) {
@@ -634,7 +641,7 @@ public class CamelListenAction extends ActionBaseCommand {
         }
 
         for (Row r : rows) {
-            printTrace(r.name, pids.size(), r, limit);
+            printDump(r.name, pids.size(), r, limit);
         }
         return true;
     }
@@ -660,7 +667,7 @@ public class CamelListenAction extends ActionBaseCommand {
         return row.compareTo(limit) >= 0;
     }
 
-    protected void printTrace(String name, int pids, Row row, Date limit) {
+    protected void printDump(String name, int pids, Row row, Date limit) {
         if (!prefixShown) {
             // compute whether to show prefix or not
             if ("false".equals(prefix) || "auto".equals(prefix) && pids <= 1) {
@@ -718,14 +725,12 @@ public class CamelListenAction extends ActionBaseCommand {
         }
         printer().print(" ");
         // uuid
-        String u = String.format("%5.5s", row.uid);
+        String u = String.format("Received Message: (%s)", row.uid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
+            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(u).reset());
         } else {
             printer().print(u);
         }
-        printer().print(" - ");
-        // trace message
         String[] lines = data.split(System.lineSeparator());
         if (lines.length > 0) {
             printer().println();
