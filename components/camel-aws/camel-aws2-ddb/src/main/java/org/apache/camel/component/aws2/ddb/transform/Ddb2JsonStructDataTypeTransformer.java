@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kamelet.utils.transform.aws2.ddb;
+package org.apache.camel.component.aws2.ddb.transform;
 
 import java.time.Instant;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.camel.Message;
-import org.apache.camel.component.kamelet.utils.serialization.gson.JavaTimeInstantTypeAdapter;
+import org.apache.camel.component.aws2.ddb.transform.serialization.gson.JavaTimeInstantTypeAdapter;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;

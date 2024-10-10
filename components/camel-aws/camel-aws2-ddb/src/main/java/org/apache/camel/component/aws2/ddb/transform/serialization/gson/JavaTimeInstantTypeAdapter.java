@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kamelet.utils.serialization.gson;
+package org.apache.camel.component.aws2.ddb.transform.serialization.gson;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
