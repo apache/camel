@@ -160,18 +160,19 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
         String pattern = (String) options.get(ENDPOINT);
         if (pattern != null) {
-            this.enabled.set(true);
-            Endpoint target = findMatchingEndpoint(getCamelContext(), pattern);
-            if (target != null) {
-                try {
+            try {
+                Endpoint target = findMatchingEndpoint(getCamelContext(), pattern);
+                if (target != null) {
+                    sb.append("Starting to receive messages from: ").append(target.getEndpointUri());
                     Consumer consumer = createConsumer(target);
                     if (!consumers.contains(consumer)) {
                         consumers.add(consumer);
                         ServiceHelper.startService(consumer);
                     }
-                } catch (Exception e) {
-                    // ignore
                 }
+                this.enabled.set(true);
+            } catch (Exception e) {
+                sb.append("Error starting to receive messages due to: ").append(e.getMessage());
             }
         }
 

@@ -55,9 +55,9 @@ import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "listen",
-                     description = "Listen (receive) messages from endpoints", sortOptions = false)
-public class CamelListenAction extends ActionBaseCommand {
+@CommandLine.Command(name = "receive",
+                     description = "Receive and dump messages from remote endpoints", sortOptions = false)
+public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
@@ -166,7 +166,7 @@ public class CamelListenAction extends ActionBaseCommand {
     private MessageTableHelper tableHelper;
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
 
-    public CamelListenAction(CamelJBangMain main) {
+    public CamelReceiveAction(CamelJBangMain main) {
         super(main);
     }
 
@@ -213,10 +213,10 @@ public class CamelListenAction extends ActionBaseCommand {
                         String url = jo.getString("url");
                         List<String> stackTrace = jo.getCollection("stackTrace");
                         if (url != null) {
-                            printer().println("Error starting listening on: " + url + " due to: " + error);
+                            printer().println("Error starting to receive messages from: " + url + " due to: " + error);
 
                         } else {
-                            printer().println("Error starting listening due to: " + error);
+                            printer().println("Error starting to receive messages due to: " + error);
                         }
                         printer().println(StringHelper.fillChars('-', 120));
                         printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
