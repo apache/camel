@@ -18,7 +18,7 @@ package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.MockSpanAdapter;
+import org.apache.camel.support.tracing.decorators.InMemorySpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ public class AbstractMessagingSpanDecoratorTest {
             }
         };
 
-        MockSpanAdapter span = new MockSpanAdapter();
+        InMemorySpanAdapter span = new InMemorySpanAdapter();
 
         decorator.pre(span, null, endpoint);
 
@@ -99,7 +99,7 @@ public class AbstractMessagingSpanDecoratorTest {
             }
         };
 
-        MockSpanAdapter span = new MockSpanAdapter();
+        InMemorySpanAdapter span = new InMemorySpanAdapter();
 
         decorator.pre(span, exchange, endpoint);
 

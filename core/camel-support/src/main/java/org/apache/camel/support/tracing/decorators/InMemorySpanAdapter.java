@@ -14,14 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing;
+package org.apache.camel.support.tracing.decorators;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MockSpanAdapter implements SpanAdapter {
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.TagConstants;
+
+/**
+ * In memory implementation of {@link SpanAdapter} used for testing and mocking.
+ */
+public class InMemorySpanAdapter implements SpanAdapter {
 
     private final List<LogEntry> logEntries = new ArrayList<>();
     private final Map<String, Object> tags = new HashMap<>();
@@ -29,12 +36,12 @@ public class MockSpanAdapter implements SpanAdapter {
     private String spanId;
     private boolean isCurrent;
 
-    static long nowMicros() {
+    public static long nowMicros() {
         return System.currentTimeMillis() * 1000;
     }
 
-    static MockSpanAdapter buildSpan(String operation) {
-        return new MockSpanAdapter().setOperation(operation);
+    public static InMemorySpanAdapter buildSpan(String operation) {
+        return new InMemorySpanAdapter().setOperation(operation);
     }
 
     public Map<String, Object> tags() {
@@ -102,25 +109,10 @@ public class MockSpanAdapter implements SpanAdapter {
         return this.isCurrent;
     }
 
-    public static final class LogEntry {
-        private final long timestampMicros;
-        private final Map<String, ?> fields;
-
-        public LogEntry(long timestampMicros, Map<String, ?> fields) {
-            this.timestampMicros = timestampMicros;
-            this.fields = fields;
-        }
-
-        public long timestampMicros() {
-            return timestampMicros;
-        }
-
-        public Map<String, ?> fields() {
-            return fields;
-        }
+    public record LogEntry(long timestampMicros, Map<String, ?> fields) {
     }
 
-    public MockSpanAdapter setOperation(String operation) {
+    public InMemorySpanAdapter setOperation(String operation) {
         return this;
     }
 

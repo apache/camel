@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing.decorators;
+package org.apache.camel.support.tracing.decorators;
 
 import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.support.tracing.propagators.CamelHeadersExtractAdapter;
+import org.apache.camel.support.tracing.propagators.CamelHeadersInjectAdapter;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
-import org.apache.camel.tracing.SpanKind;
 import org.apache.camel.tracing.TagConstants;
-import org.apache.camel.tracing.propagation.CamelHeadersExtractAdapter;
-import org.apache.camel.tracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -81,11 +80,6 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
 
     private static String getSchemeName(Endpoint endpoint) {
         return StringHelper.before(endpoint.getEndpointUri(), ":");
-    }
-
-    @Override
-    public boolean newSpan() {
-        return true;
     }
 
     @Override
@@ -153,16 +147,6 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
                 span.log(logEvent);
             }
         }
-    }
-
-    @Override
-    public SpanKind getInitiatorSpanKind() {
-        return SpanKind.SPAN_KIND_CLIENT;
-    }
-
-    @Override
-    public SpanKind getReceiverSpanKind() {
-        return SpanKind.SPAN_KIND_SERVER;
     }
 
     @Override

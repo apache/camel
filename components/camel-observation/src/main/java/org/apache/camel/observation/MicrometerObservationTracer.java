@@ -29,12 +29,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.tracing.decorators.AbstractInternalSpanDecorator;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.tracing.InjectAdapter;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
-import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 
 @ManagedResource(description = "MicrometerObservationTracer")
 public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer {
