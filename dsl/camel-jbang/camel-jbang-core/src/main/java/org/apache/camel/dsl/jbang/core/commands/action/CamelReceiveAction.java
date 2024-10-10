@@ -172,6 +172,13 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        boolean autoDump = false;
+        if (endpoint != null) {
+            // if using --endpoint then action should be start and auto-dump
+            action = "start";
+            autoDump = true;
+        }
+
         if ("dump".equals(action)) {
             return doDumpCall();
         } else if ("status".equals(action)) {
@@ -229,6 +236,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     }
                 }
             }
+        }
+
+        if (autoDump) {
+            return doDumpCall();
         }
 
         return 0;
