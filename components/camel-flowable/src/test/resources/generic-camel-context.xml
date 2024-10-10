@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd
+            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+            
+    <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring" />
+
+    <!-- This bean is needed in context xml in order for the jdbc properties to work -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+        <property name="targetDataSource">
+            <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+                <property name="driverClass" value="${jdbc.driver:org.h2.Driver}" />
+                <property name="url" value="${jdbc.url:jdbc:h2:mem:flowable;DB_CLOSE_DELAY=1000}" />
+                <property name="username" value="${jdbc.username:sa}" />
+                <property name="password" value="${jdbc.password:}" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="eventRegistryConfiguration" class="org.flowable.eventregistry.spring.SpringEventRegistryEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="enableEventRegistryChangeDetection" value="false"/>
+        <property name="channelModelProcessors">
+            <list>
+                <ref bean="camelChannelDefinitionProcessor" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="eventRegistryConfigurator" class="org.flowable.eventregistry.spring.configurator.SpringEventRegistryConfigurator">
+        <property name="eventEngineConfiguration" ref="eventRegistryConfiguration" />
+    </bean>
+    
+    <bean id="processEngineConfiguration" class="org.flowable.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="eventRegistryConfigurator" ref="eventRegistryConfigurator"/>
+        <property name="disableIdmEngine" value="true" />
+        <property name="asyncExecutorActivate" value="false" />
+        <property name="asyncExecutorDefaultAsyncJobAcquireWaitTime" value="1000" />
+        <property name="asyncExecutorDefaultTimerJobAcquireWaitTime" value="1000" />
+    </bean>
+
+    <bean id="processEngine" class="org.flowable.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+    <bean id="taskService" factory-bean="processEngine"  factory-method="getTaskService" />
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+    
+    <bean id="camelChannelDefinitionProcessor" class="org.apache.camel.component.flowable.CamelChannelModelProcessor">
+        <constructor-arg ref="camelContext"/>
+    </bean>
+
+</beans>

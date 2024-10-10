@@ -1,0 +1,10 @@
+{
+    "name": "Camel user inbound channel",
+    "key": "userInboundChannel",
+    "channelType": "inbound",
+    "type": "camel",
+    "deserializerType": "json",
+    "channelEventKeyDetection": {
+        "fixedValue": "userInboundEvent"
+    }
+}
