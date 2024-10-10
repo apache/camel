@@ -55,8 +55,10 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
                                        + "Her udder shrivels and the milk goes dry.";
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(org.apache.camel.test.junit5.TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -39,7 +40,9 @@ public class AvroHttpSpringProducerTest extends AvroHttpProducerTest {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 }

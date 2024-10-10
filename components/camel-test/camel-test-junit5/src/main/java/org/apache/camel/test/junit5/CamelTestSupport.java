@@ -22,14 +22,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.legacy.LegacyBuiltinAssertions;
 import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
 import org.apache.camel.util.StopWatch;
@@ -44,15 +42,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes along with a
  * {@link org.apache.camel.ProducerTemplate} for use in the test case Do <tt>not</tt> use this class for Spring Boot
  * testing.
  */
 public abstract class CamelTestSupport extends AbstractTestSupport
-        implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
+        implements BeforeTestExecutionCallback, AfterTestExecutionCallback, LegacyBuiltinAssertions {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
 
     @RegisterExtension
@@ -82,20 +78,12 @@ public abstract class CamelTestSupport extends AbstractTestSupport
                 .withCamelContextSupplier(this::createCamelContext)
                 .withRegistryBinder(this::bindToRegistry)
                 .withPostProcessor(this::postProcessTest)
-                .withRoutesSupplier(this::createRouteBuilders)
-                .withUseOverridePropertiesWithPropertiesComponent(useOverridePropertiesWithPropertiesComponent())
-                .withRouteFilterExcludePattern(getRouteFilterExcludePattern())
-                .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
-                .withMockEndpoints(isMockEndpoints())
-                .withMockEndpointsAndSkip(isMockEndpointsAndSkip());
+                .withRoutesSupplier(this::createRouteBuilders);
     }
 
     @Override
     public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
-        testExecutionConfiguration.withJMX(useJmx())
-                .withUseRouteBuilder(isUseRouteBuilder())
-                .withUseAdviceWith(isUseAdviceWith())
-                .withDumpRouteCoverage(isDumpRouteCoverage());
+        // NO-OP (use defaults)
     }
 
     @Override
@@ -316,8 +304,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
     /**
      * Override to use a custom {@link Registry}.
      * <p>
-     * However if you need to bind beans to the registry then this is possible already with the bind method on registry,
-     * and there is no need to override this method.
+     * However, if you need to bind beans to the registry, then this is possible already with the bind method on
+     * registry, and there is no need to override this method.
      */
     @Deprecated(since = "4.7.0")
     protected Registry createCamelRegistry() throws Exception {
@@ -440,68 +428,11 @@ public abstract class CamelTestSupport extends AbstractTestSupport
         return TestSupport.createExchangeWithBody(context, body);
     }
 
-    /**
-     * Asserts that the given language name and expression evaluates to the given value on a specific exchange
-     */
-    @Deprecated(since = "4.7.0")
-    protected final void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
-        TestSupport.assertExpression(context, exchange, languageName, expressionText, expectedValue);
-    }
-
-    /**
-     * Asserts that the given language name and predicate expression evaluates to the expected value on the message
-     * exchange
-     */
-    @Deprecated(since = "4.7.0")
-    protected final void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
-        TestSupport.assertPredicate(context, languageName, expressionText, exchange, expected);
-    }
-
-    /**
-     * Asserts that the language name can be resolved
-     */
-    @Deprecated(since = "4.7.0")
-    protected final Language assertResolveLanguage(String languageName) {
-        return TestSupport.assertResolveLanguage(context, languageName);
-    }
-
-    /**
-     * Asserts the validity of the context
-     *
-     * @deprecated         Use JUnit's assertions if needed
-     * @param      context
-     */
-    @Deprecated(since = "4.7.0")
-    protected final void assertValidContext(CamelContext context) {
-        assertNotNull(context, "No context found!");
-    }
-
     protected final <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
         return TestSupport.getMandatoryEndpoint(context(), uri, type);
     }
 
     protected final Endpoint getMandatoryEndpoint(String uri) {
         return TestSupport.getMandatoryEndpoint(context(), uri);
-    }
-
-    /**
-     * Single step debugs and Camel invokes this method before entering the given processor. This method is NOOP.
-     *
-     * @deprecated Use {@link #camelContextConfiguration()} to set an instance of {@link DebugBreakpoint}
-     */
-    @Deprecated(since = "4.7.0")
-    protected void debugBefore(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
-    }
-
-    /**
-     * Single step debugs and Camel invokes this method after processing the given processor. This method is NOOP.
-     *
-     * @deprecated Use {@link #camelContextConfiguration()} to set an instance of {@link DebugBreakpoint}
-     */
-    @Deprecated(since = "4.7.0")
-    protected void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
-            long timeTaken) {
     }
 }

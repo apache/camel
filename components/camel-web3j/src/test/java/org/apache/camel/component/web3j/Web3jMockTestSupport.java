@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mock;
@@ -45,8 +46,10 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     protected Flowable subscription;
 
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(true);
     }
 
     protected String getUrl() {

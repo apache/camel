@@ -26,6 +26,7 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -35,9 +36,10 @@ import static java.util.Map.entry;
 public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
 
     @Override
-    public boolean useJmx() {
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
 
-        return true;
+        testExecutionConfiguration.withJMX(true);
     }
 
     @Override
