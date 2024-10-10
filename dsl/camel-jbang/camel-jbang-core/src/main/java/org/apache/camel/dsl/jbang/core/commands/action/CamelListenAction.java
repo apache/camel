@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,20 +94,12 @@ public class CamelListenAction extends ActionBaseCommand {
     String action;
 
     @CommandLine.Option(names = { "--endpoint" },
-                        description = "Endpoint to browse messages (can be uri, pattern, or refer to a route id)")
+                        description = "Endpoint to browse messages (can be uri or pattern to refer to existing endpoint)")
     String endpoint;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age for showing status of messages", defaultValue = "pid")
     String sort;
-
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
-                        description = "Print timestamp.")
-    boolean timestamp = true;
-
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
-    boolean ago;
 
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
                         description = "Keep following and outputting new messages (use ctrl + c to exit).")
@@ -171,12 +162,9 @@ public class CamelListenAction extends ActionBaseCommand {
     boolean pretty;
 
     String findAnsi;
-
     private int nameMaxWidth;
     private boolean prefixShown;
-
     private MessageTableHelper tableHelper;
-
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
 
     public CamelListenAction(CamelJBangMain main) {
@@ -396,6 +384,7 @@ public class CamelListenAction extends ActionBaseCommand {
             boolean waitMessage = true;
             StopWatch watch = new StopWatch();
             boolean more = true;
+            boolean init = true;
             do {
                 if (pids.isEmpty()) {
                     if (waitMessage) {
@@ -414,7 +403,12 @@ public class CamelListenAction extends ActionBaseCommand {
                     int lines = readReceiveFiles(pids);
                     if (lines > 0) {
                         more = dumpReceiveFiles(pids, 0, null);
+                        init = false;
                     } else if (lines == 0) {
+                        if (init) {
+                            printer().println("Waiting for messages ...");
+                            init = false;
+                        }
                         Thread.sleep(100);
                     } else {
                         break;
@@ -429,7 +423,7 @@ public class CamelListenAction extends ActionBaseCommand {
     private void tailReceiveFiles(Map<Long, Pid> pids, int tail) throws Exception {
         for (Pid pid : pids.values()) {
             File file = getReceiveFile(pid.pid);
-            if (file.exists()) {
+            if (file.exists() && file.length() > 0) {
                 pid.reader = new LineNumberReader(new FileReader(file));
                 String line;
                 if (tail <= 0) {
@@ -699,41 +693,15 @@ public class CamelListenAction extends ActionBaseCommand {
             }
             printer().print(nameWithPrefix);
         }
-        if (timestamp) {
-            String ts;
-            if (ago) {
-                ts = String.format("%12s", TimeUtils.printSince(row.timestamp) + " ago");
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                ts = sdf.format(new Date(row.timestamp));
-            }
-            if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
-            } else {
-                printer().print(ts);
-            }
-            printer().print("  ");
-        }
-        // pid
-        String p = String.format("%5.5s", row.pid);
+        // header
+        String header = String.format("Received Message: (%s)", row.uid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            printer().println(Ansi.ansi().fgGreen().a(header).reset().toString());
         } else {
-            printer().print(p);
-            printer().print(" --- ");
-        }
-        printer().print(" ");
-        // uuid
-        String u = String.format("Received Message: (%s)", row.uid);
-        if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(u).reset());
-        } else {
-            printer().print(u);
+            printer().println(header);
         }
         String[] lines = data.split(System.lineSeparator());
         if (lines.length > 0) {
-            printer().println();
             for (String line : lines) {
                 if (find != null) {
                     for (String f : find) {
