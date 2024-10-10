@@ -116,6 +116,7 @@
 ** xref:file-watch-component.adoc[File Watch]
 ** xref:flatpack-component.adoc[Flatpack]
 ** xref:flink-component.adoc[Flink]
+** xref:flowable-component.adoc[Flowable]
 ** xref:fop-component.adoc[FOP]
 ** xref:freemarker-component.adoc[Freemarker]
 ** xref:ftp-component.adoc[FTP]
