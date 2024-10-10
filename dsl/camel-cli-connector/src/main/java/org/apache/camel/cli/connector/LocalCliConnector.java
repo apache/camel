@@ -910,18 +910,24 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private void doActionRouteTask(JsonObject root) {
         // id is a pattern
         String[] patterns = root.getString("id").split(",");
-        // find matching IDs
-        List<String> ids = camelContext.getRoutes()
-                .stream().map(Route::getRouteId)
-                .filter(routeId -> {
-                    for (String p : patterns) {
-                        if (PatternHelper.matchPattern(routeId, p)) {
-                            return true;
+        boolean all = patterns.length == 1 && "*".equals(patterns[0]);
+        List<String> ids;
+        if (all) {
+            ids = List.of("*");
+        } else {
+            // find matching IDs
+            ids = camelContext.getRoutes()
+                    .stream().map(Route::getRouteId)
+                    .filter(routeId -> {
+                        for (String p : patterns) {
+                            if (PatternHelper.matchPattern(routeId, p)) {
+                                return true;
+                            }
                         }
-                    }
-                    return false;
-                })
-                .toList();
+                        return false;
+                    })
+                    .toList();
+        }
         for (String id : ids) {
             String command = root.getString("command");
             try {
