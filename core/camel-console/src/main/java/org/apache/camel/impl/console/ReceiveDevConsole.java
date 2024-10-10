@@ -20,9 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
@@ -32,7 +36,6 @@ import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.Metadata;
@@ -41,6 +44,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -206,9 +210,6 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     }
 
     protected Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {
-        // TODO: Use ManagedProducerMBean as those are also toD (dynamic)
-
-
         Endpoint target = null;
         boolean scheme = endpoint.contains(":");
         boolean pattern = endpoint.endsWith("*");
@@ -216,13 +217,37 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             if (!scheme && !endpoint.endsWith("*")) {
                 endpoint = endpoint + "*";
             }
-            List<EndpointAware> match = new ArrayList<>();
-            for (Route route : camelContext.getRoutes()) {
-                doFilter(endpoint, route.navigate(), match);
-            }
-            // grab last matched processor that sends to an endpoint
-            if (!match.isEmpty()) {
-                target = match.get(match.size() - 1).getEndpoint();
+            MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            if (mbeanServer != null) {
+                try {
+                    // find all producers for this camel context mbean
+                    String jmxDomain
+                            = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+                    String prefix
+                            = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                    ObjectName query = ObjectName.getInstance(
+                            jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
+                    Set<ObjectName> set = mbeanServer.queryNames(query, null);
+                    for (ObjectName on : set) {
+                        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
+                        if (PatternHelper.matchPattern(uri, endpoint)) {
+                            // is the endpoint able to create a consumer
+                            target = getCamelContext().getEndpoint(uri);
+                            // is the target able to create a consumer
+                            org.apache.camel.spi.UriEndpoint ann = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+                            if (ann != null) {
+                                if (ann.producerOnly()) {
+                                    target = null;
+                                }
+                            }
+                            if (target != null) {
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
             }
         } else {
             target = camelContext.getEndpoint(endpoint);
