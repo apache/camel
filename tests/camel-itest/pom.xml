@@ -356,7 +356,7 @@
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-transaction-spi-jakarta</artifactId>
-            <version>${jboss-transaction-spi.version}</version>
+            <version>${jboss-transaction-spi-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
