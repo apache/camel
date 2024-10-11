@@ -25,6 +25,7 @@ public final class OpenSearchProperties {
     public static final String OPEN_SEARCH_USERNAME = "opensearch.username";
     public static final String OPEN_SEARCH_PASSWORD = "opensearch.password";
     public static final String OPEN_SEARCH_CONTAINER = "opensearch.container";
+    public static final String OPEN_SEARCH_CONTAINER_PPC64LE = "opensearch.container.ppc64le";
     public static final String OPEN_SEARCH_CONTAINER_STARTUP
             = OPEN_SEARCH_CONTAINER + ContainerEnvironmentUtil.STARTUP_ATTEMPTS_PROPERTY;
 
