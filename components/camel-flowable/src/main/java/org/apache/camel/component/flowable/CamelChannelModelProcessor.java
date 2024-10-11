@@ -25,35 +25,18 @@ import org.flowable.eventregistry.api.EventRegistry;
 import org.flowable.eventregistry.api.EventRepositoryService;
 import org.flowable.eventregistry.api.OutboundEventChannelAdapter;
 import org.flowable.eventregistry.impl.EventRegistryEngineConfiguration;
+import org.flowable.eventregistry.impl.util.CommandContextUtil;
 import org.flowable.eventregistry.model.CamelInboundChannelModel;
 import org.flowable.eventregistry.model.CamelOutboundChannelModel;
 import org.flowable.eventregistry.model.ChannelModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.EmbeddedValueResolver;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.util.StringValueResolver;
 
-public class CamelChannelModelProcessor
-        implements BeanFactoryAware, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>,
-        ChannelModelProcessor {
+public class CamelChannelModelProcessor implements ChannelModelProcessor {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected CamelContext camelContext;
-
-    protected BeanFactory beanFactory;
-    protected ApplicationContext applicationContext;
-    protected boolean contextRefreshed;
-
-    protected StringValueResolver embeddedValueResolver;
 
     public CamelChannelModelProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -89,8 +72,9 @@ public class CamelChannelModelProcessor
     }
 
     protected void processInboundDefinition(CamelInboundChannelModel channelModel, String tenantId) {
+        EventRegistryEngineConfiguration eventRegistryEngineConfiguration = CommandContextUtil.getEventRegistryConfiguration();
         try (FlowableEndpoint endpoint
-                = new FlowableEndpoint(channelModel, getEventRegistryEngineConfiguration(), camelContext)) {
+                = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration, camelContext)) {
 
             camelContext.addEndpoint(endpoint.getEndpointUri(), endpoint);
             if (StringUtils.isNotEmpty(channelModel.getSourceUri())) {
@@ -120,9 +104,10 @@ public class CamelChannelModelProcessor
     protected OutboundEventChannelAdapter<String> createOutboundEventChannelAdapter(
             CamelOutboundChannelModel channelModel, String tenantId) {
 
+        EventRegistryEngineConfiguration eventRegistryEngineConfiguration = CommandContextUtil.getEventRegistryConfiguration();
         String destination = resolve(channelModel.getDestination());
         try (FlowableEndpoint endpoint
-                = new FlowableEndpoint(channelModel, getEventRegistryEngineConfiguration(), camelContext)) {
+                = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration, camelContext)) {
             camelContext.addEndpoint(endpoint.getEndpointUri(), endpoint);
             camelContext.addRoutes(new RouteBuilder() {
 
@@ -147,35 +132,11 @@ public class CamelChannelModelProcessor
 
     }
 
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     protected String resolve(String value) {
-        if (embeddedValueResolver != null) {
-            return embeddedValueResolver.resolveStringValue(value);
-        } else {
-            return value;
-        }
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-        if (beanFactory instanceof ConfigurableBeanFactory) {
-            this.embeddedValueResolver = new EmbeddedValueResolver((ConfigurableBeanFactory) beanFactory);
-        }
-    }
-
-    protected EventRegistryEngineConfiguration getEventRegistryEngineConfiguration() {
-        return applicationContext.getBean(EventRegistryEngineConfiguration.class);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (event.getApplicationContext() == this.applicationContext) {
-            this.contextRefreshed = true;
-        }
+        return value;
     }
 }

@@ -19,19 +19,16 @@ package org.apache.camel.component.flowable;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.test.Deployment;
 import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ContextConfiguration("classpath:generic-camel-context.xml")
 public class FlowableOutboundChannelTest extends CamelFlowableTestCase {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void deployEventRegistryModels() throws Exception {
         eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
                 .addClasspathResource("channel/userOutboundChannel.channel")
                 .addClasspathResource("event/userEvent.event")
@@ -39,24 +36,29 @@ public class FlowableOutboundChannelTest extends CamelFlowableTestCase {
     }
 
     @Test
-    @Deployment(resources = { "process/sendEvent.bpmn20.xml" })
     public void testSendBasicEvent() throws Exception {
-        ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder().processDefinitionKey("camelProcess")
-                .variable("name", "John Doe")
-                .variable("age", 23)
-                .start();
+        String deploymentId = deployProcessDefinition("process/sendEvent.bpmn20.xml");
+        try {
+            ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder().processDefinitionKey("camelProcess")
+                    .variable("name", "John Doe")
+                    .variable("age", 23)
+                    .start();
 
-        assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
-        assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
+            assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
+            assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
 
-        Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
-        taskService.complete(task.getId());
+            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            taskService.complete(task.getId());
 
-        MockEndpoint mockEndpoint = (MockEndpoint) camelContext.getEndpoint("mock:testQueue");
-        assertEquals(1, mockEndpoint.getExchanges().size());
-        String bodyString = mockEndpoint.getExchanges().get(0).getIn().getBody(String.class);
-        JsonNode bodyNode = processEngineConfiguration.getObjectMapper().readTree(bodyString);
-        assertEquals("John Doe", bodyNode.get("name").asText());
-        assertEquals(23, bodyNode.get("age").asInt());
+            MockEndpoint mockEndpoint = (MockEndpoint) context.getEndpoint("mock:testQueue");
+            assertEquals(1, mockEndpoint.getExchanges().size());
+            String bodyString = mockEndpoint.getExchanges().get(0).getIn().getBody(String.class);
+            JsonNode bodyNode = processEngineConfiguration.getObjectMapper().readTree(bodyString);
+            assertEquals("John Doe", bodyNode.get("name").asText());
+            assertEquals(23, bodyNode.get("age").asInt());
+
+        } finally {
+            repositoryService.deleteDeployment(deploymentId, true);
+        }
     }
 }

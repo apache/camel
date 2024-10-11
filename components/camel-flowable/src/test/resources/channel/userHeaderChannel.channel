@@ -3,6 +3,7 @@
     "key": "userHeaderChannel",
     "channelType": "inbound",
     "type": "camel",
+    "sourceUri": "direct:start",
     "deserializerType": "json",
     "channelEventKeyDetection": {
         "fixedValue": "userHeaderEvent"

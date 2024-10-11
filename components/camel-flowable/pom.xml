@@ -42,15 +42,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
-        <dependency>
-      		<groupId>org.apache.camel</groupId>
-      		<artifactId>camel-spring</artifactId>
-    	</dependency>
 
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         
@@ -62,12 +58,7 @@
         </dependency>
         <dependency>
       		<groupId>org.flowable</groupId>
-      		<artifactId>flowable-spring</artifactId>
-      		<version>${flowable-version}</version>
-    	</dependency>
-    	<dependency>
-      		<groupId>org.flowable</groupId>
-      		<artifactId>flowable-event-registry-spring</artifactId>
+      		<artifactId>flowable-event-registry</artifactId>
       		<version>${flowable-version}</version>
     	</dependency>
         <dependency>
@@ -77,34 +68,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-      		<groupId>org.springframework</groupId>
-      		<artifactId>spring-test</artifactId>
-      		<scope>provided</scope>
-      		<version>${spring-version}</version>
-    	</dependency>
-    	<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <scope>provided</scope>
-            <version>${spring-version}</version>
-        </dependency>
-    	<dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <scope>test</scope>
-            <version>${hikari-version}</version>
-        </dependency>
-    	<dependency>
       		<groupId>com.h2database</groupId>
       		<artifactId>h2</artifactId>
       		<scope>test</scope>
       		<version>${h2-version}</version>
     	</dependency>
-    	<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>${junit-version}</version>
-        </dependency>
     </dependencies>
 </project>

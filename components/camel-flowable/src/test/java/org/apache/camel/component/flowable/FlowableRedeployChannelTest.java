@@ -21,56 +21,58 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.test.Deployment;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ContextConfiguration("classpath:generic-camel-context.xml")
 public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
 
     @Test
-    @Deployment(resources = { "process/start.bpmn20.xml" })
     public void testUnregisterChannelModel() throws Exception {
-        eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
-                .addClasspathResource("channel/userChannel.channel")
-                .addClasspathResource("event/userEvent.event")
-                .deploy();
+        String deploymentId = deployProcessDefinition("process/start.bpmn20.xml");
+        try {
+            eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+                    .addClasspathResource("channel/userChannel.channel")
+                    .addClasspathResource("event/userEvent.event")
+                    .deploy();
 
-        ProducerTemplate tpl = camelContext.createProducerTemplate();
-        ObjectNode bodyNode = new ObjectMapper().createObjectNode();
-        bodyNode.put("name", "John Doe");
-        bodyNode.put("age", 23);
-        Exchange exchange = camelContext.getEndpoint("direct:start").createExchange();
-        exchange.getIn().setBody(bodyNode);
-        tpl.send("direct:start", exchange);
+            ProducerTemplate tpl = context.createProducerTemplate();
+            ObjectNode bodyNode = new ObjectMapper().createObjectNode();
+            bodyNode.put("name", "John Doe");
+            bodyNode.put("age", 23);
+            Exchange exchange = context.getEndpoint("direct:start").createExchange();
+            exchange.getIn().setBody(bodyNode);
+            tpl.send("direct:start", exchange);
 
-        ProcessInstance processInstance
-                = runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").singleResult();
-        assertNotNull(processInstance);
+            ProcessInstance processInstance
+                    = runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").singleResult();
+            assertNotNull(processInstance);
 
-        assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
-        assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
+            assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
+            assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
 
-        eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
-                .addClasspathResource("channel/userChannelUpdated.channel")
-                .addClasspathResource("event/userEventUpdated.event")
-                .deploy();
+            eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+                    .addClasspathResource("channel/userChannelUpdated.channel")
+                    .addClasspathResource("event/userEventUpdated.event")
+                    .deploy();
 
-        bodyNode = new ObjectMapper().createObjectNode();
-        bodyNode.put("name", "Jane Doe");
-        bodyNode.put("age", 28);
-        bodyNode.put("address", "Main street 1");
-        assertEquals(null, camelContext.hasEndpoint("direct:start"));
+            bodyNode = new ObjectMapper().createObjectNode();
+            bodyNode.put("name", "Jane Doe");
+            bodyNode.put("age", 28);
+            bodyNode.put("address", "Main street 1");
+            assertEquals(null, context.hasEndpoint("direct:start"));
 
-        assertEquals(1, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
+            assertEquals(1, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
 
-        exchange = camelContext.getEndpoint("direct:startUpdated").createExchange();
-        exchange.getIn().setBody(bodyNode);
-        tpl.send("direct:startUpdated", exchange);
+            exchange = context.getEndpoint("direct:startUpdated").createExchange();
+            exchange.getIn().setBody(bodyNode);
+            tpl.send("direct:startUpdated", exchange);
 
-        assertEquals(2, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
+            assertEquals(2, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
+
+        } finally {
+            repositoryService.deleteDeployment(deploymentId, true);
+        }
     }
 }

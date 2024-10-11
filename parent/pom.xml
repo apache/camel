@@ -214,7 +214,6 @@
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
-        <hikari-version>5.0.1</hikari-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.3</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
@@ -307,7 +306,6 @@
         <jsoup-version>1.18.1</jsoup-version>
         <jt400-version>20.0.7</jt400-version>
         <jte-version>3.1.13</jte-version>
-        <junit-version>4.13.2</junit-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.11.2</junit-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>

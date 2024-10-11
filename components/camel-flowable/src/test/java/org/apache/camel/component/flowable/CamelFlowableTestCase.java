@@ -18,34 +18,49 @@ package org.apache.camel.component.flowable;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.flowable.engine.ProcessEngine;
+import org.flowable.engine.ProcessEngineConfiguration;
+import org.flowable.engine.RepositoryService;
+import org.flowable.engine.RuntimeService;
+import org.flowable.engine.TaskService;
 import org.flowable.eventregistry.api.EventDeployment;
 import org.flowable.eventregistry.impl.EventRegistryEngineConfiguration;
-import org.flowable.spring.impl.test.SpringFlowableTestCase;
 import org.junit.jupiter.api.AfterEach;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.BeforeEach;
 
-public abstract class CamelFlowableTestCase extends SpringFlowableTestCase {
+public abstract class CamelFlowableTestCase extends CamelTestSupport {
 
-    @Autowired
+    protected ProcessEngineConfiguration processEngineConfiguration;
     protected EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
+    protected RepositoryService repositoryService;
+    protected RuntimeService runtimeService;
+    protected TaskService taskService;
 
-    @Autowired
-    protected CamelContext camelContext;
+    @BeforeEach
+    public void initialize() {
+        ProcessEngine processEngine = FlowableEngineUtil.getProcessEngine(context);
+        processEngineConfiguration = processEngine.getProcessEngineConfiguration();
+        eventRegistryEngineConfiguration = FlowableEngineUtil.getEventRegistryEngineConfiguration();
+        repositoryService = processEngine.getRepositoryService();
+        runtimeService = processEngine.getRuntimeService();
+        taskService = processEngine.getTaskService();
+    }
 
     @AfterEach
     public void tearDown() throws Exception {
-        List<Route> routes = camelContext.getRoutes();
-        for (Route r : routes) {
-            camelContext.getRouteController().stopRoute(r.getId());
-            camelContext.removeRoute(r.getId());
-        }
-
         List<EventDeployment> eventDeployments
                 = eventRegistryEngineConfiguration.getEventRepositoryService().createDeploymentQuery().list();
         for (EventDeployment eventDeployment : eventDeployments) {
             eventRegistryEngineConfiguration.getEventRepositoryService().deleteDeployment(eventDeployment.getId());
         }
+    }
+
+    protected String deployProcessDefinition(String resource) {
+        return repositoryService.createDeployment().addClasspathResource(resource).deploy().getId();
+    }
+
+    protected void deleteDeployment(String id) {
+        repositoryService.deleteDeployment(id);
     }
 }

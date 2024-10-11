@@ -20,60 +20,53 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.test.Deployment;
 import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ContextConfiguration("classpath:generic-camel-context.xml")
 public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void deployEventRegistryModels() throws Exception {
         eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
                 .addClasspathResource("channel/userHeaderChannel.channel")
                 .addClasspathResource("event/userWithHeaderEvent.event")
                 .deploy();
-
-        camelContext.addRoutes(new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("flowable:userHeaderChannel");
-            }
-        });
     }
 
     @Test
-    @Deployment(resources = { "process/startWithHeader.bpmn20.xml" })
     public void testStartProcessWithHeaderEvent() throws Exception {
-        ProducerTemplate tpl = camelContext.createProducerTemplate();
-        ObjectNode bodyNode = new ObjectMapper().createObjectNode();
-        bodyNode.put("name", "John Doe");
-        bodyNode.put("age", 23);
-        Exchange exchange = camelContext.getEndpoint("direct:start").createExchange();
-        exchange.getIn().setBody(bodyNode);
-        exchange.getIn().setHeader("headerProperty1", "headerTestValue");
-        exchange.getIn().setHeader("headerProperty2", 99);
-        tpl.send("direct:start", exchange);
+        String deploymentId = deployProcessDefinition("process/startWithHeader.bpmn20.xml");
+        try {
+            ProducerTemplate tpl = context.createProducerTemplate();
+            ObjectNode bodyNode = new ObjectMapper().createObjectNode();
+            bodyNode.put("name", "John Doe");
+            bodyNode.put("age", 23);
+            Exchange exchange = context.getEndpoint("direct:start").createExchange();
+            exchange.getIn().setBody(bodyNode);
+            exchange.getIn().setHeader("headerProperty1", "headerTestValue");
+            exchange.getIn().setHeader("headerProperty2", 99);
+            tpl.send("direct:start", exchange);
 
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
-                .processDefinitionKey("camelProcess")
-                .singleResult();
-        assertNotNull(processInstance);
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                    .processDefinitionKey("camelProcess")
+                    .singleResult();
+            assertNotNull(processInstance);
 
-        assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
-        assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
-        assertEquals("headerTestValue", runtimeService.getVariable(processInstance.getId(), "header1"));
-        assertEquals(99, runtimeService.getVariable(processInstance.getId(), "header2"));
+            assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
+            assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
+            assertEquals("headerTestValue", runtimeService.getVariable(processInstance.getId(), "header1"));
+            assertEquals(99, runtimeService.getVariable(processInstance.getId(), "header2"));
 
-        Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
-        assertNotNull(task);
+            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            assertNotNull(task);
+
+        } finally {
+            repositoryService.deleteDeployment(deploymentId, true);
+        }
     }
 }
