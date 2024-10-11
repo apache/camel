@@ -63,7 +63,8 @@ YAML::
 - from:
     uri: seda:b
     steps:
-      - removeHeaders: "*"
+      - removeHeaders:
+          pattern: "*"
       - to:
           uri: mock:result
 ----

@@ -29,9 +29,13 @@
     <artifactId>camel-torchserve</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: TorchServe</name>
-    <description>Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely</description>
+    <description>Provide access to PyTorch TorchServe servers to run inference with PyTorch models remotely
+    </description>
 
     <properties>
+        <!-- TorchServe container is not available on these platforms -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -96,6 +100,15 @@
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-torchserve</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>

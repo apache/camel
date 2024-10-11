@@ -899,16 +899,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-groovy-dsl</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-groovy-dsl-common</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-grpc</artifactId>
         <version>4.9.0-SNAPSHOT</version>
       </dependency>
@@ -1204,17 +1194,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-js-dsl</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsch</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jsh-dsl</artifactId>
         <version>4.9.0-SNAPSHOT</version>
       </dependency>
       <dependency>

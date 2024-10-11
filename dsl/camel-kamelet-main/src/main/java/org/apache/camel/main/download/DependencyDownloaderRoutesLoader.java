@@ -59,15 +59,9 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
     protected RoutesBuilderLoader resolveService(String extension) {
         // we need to eager capture that we use this route loader extension so lets
         // attempt to download it even if its already on classpath
-        if ("groovy".equals(extension)) {
-            downloadLoader("camel-groovy-dsl");
-        } else if ("java".equals(extension)) {
+        if ("java".equals(extension)) {
             downloadLoader("camel-java-joor-dsl");
             downloadLoader("camel-endpointdsl");
-        } else if ("js".equals(extension)) {
-            downloadLoader("camel-js-dsl");
-        } else if ("jsh".equals(extension)) {
-            downloadLoader("camel-jsh-dsl");
         } else if ("xml".equals(extension)
                 || "camel.xml".equals(extension)) {
             downloadLoader("camel-xml-io-dsl");

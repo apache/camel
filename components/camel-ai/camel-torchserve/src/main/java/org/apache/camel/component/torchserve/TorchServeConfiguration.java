@@ -79,10 +79,6 @@ public class TorchServeConfiguration implements Cloneable {
     @UriParam(label = "metrics")
     private String metricsName;
 
-    public String getMetricsName() {
-        return metricsName;
-    }
-
     public String getInferenceKey() {
         return inferenceKey;
     }
@@ -260,6 +256,10 @@ public class TorchServeConfiguration implements Cloneable {
      */
     public void setListNextPageToken(String listNextPageToken) {
         this.listNextPageToken = listNextPageToken;
+    }
+
+    public String getMetricsName() {
+        return metricsName;
     }
 
     /**

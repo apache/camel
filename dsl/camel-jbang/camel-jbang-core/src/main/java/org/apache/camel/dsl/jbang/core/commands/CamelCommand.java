@@ -110,6 +110,10 @@ public abstract class CamelCommand implements Callable<Integer> {
         return new File(CommandLineHelper.getCamelDir(), pid + "-trace.json");
     }
 
+    public File getReceiveFile(String pid) {
+        return new File(CommandLineHelper.getCamelDir(), pid + "-receive.json");
+    }
+
     public File getDebugFile(String pid) {
         return new File(CommandLineHelper.getCamelDir(), pid + "-debug.json");
     }

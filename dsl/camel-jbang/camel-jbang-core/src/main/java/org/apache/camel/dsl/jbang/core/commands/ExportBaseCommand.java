@@ -446,13 +446,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         if (ext != null) {
                             // java is moved into src/main/java and compiled during build
                             // for the other DSLs we need to add dependencies
-                            if ("groovy".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-groovy-dsl");
-                            } else if ("js".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-js-dsl");
-                            } else if ("jsh".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-jsh-dsl");
-                            } else if ("xml".equals(ext)) {
+                            if ("xml".equals(ext)) {
                                 answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
                             } else if ("yaml".equals(ext)) {
                                 answer.add("mvn:org.apache.camel:camel-yaml-dsl");

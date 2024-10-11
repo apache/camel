@@ -90,6 +90,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     private static final String SECRETSMANAGER_UPDATE_EVENT = "PutSecretValue";
 
+    private static final String SECRETSMANAGER_UPDATE_SECRET_EVENT = "UpdateSecret";
+
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
@@ -286,7 +288,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 LOG.debug("Found {} events", events.size());
                 for (Event event : events) {
                     if (event.eventSource().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                        if (event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
+                        if (event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
+                                || event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT)) {
                             List<Resource> a = event.resources();
                             for (Resource res : a) {
                                 String name = res.resourceName();
@@ -332,7 +335,9 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                     if (ObjectHelper.isNotEmpty(event.get("detail"))) {
                         JsonNode innerDetail = event.get("detail");
                         if (innerDetail.get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                            if (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
+                            if (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
+                                    || innerDetail.get("eventName").asText()
+                                            .equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT)) {
                                 String name = innerDetail.get("requestParameters").get("secretId").asText();
                                 if (matchSecret(name)) {
                                     updates.put(name, Instant.parse(innerDetail.get("eventTime").asText()));

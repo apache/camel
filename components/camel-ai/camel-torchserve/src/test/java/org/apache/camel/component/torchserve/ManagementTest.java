@@ -75,13 +75,17 @@ class ManagementTest extends TorchServeTestSupport {
     }
 
     @Test
-    void testScaleWorker_version() throws Exception {
+    void testScaleWorker_headers() throws Exception {
+        mockServer.stubFor(put(urlPathEqualTo("/models/" + ADDED_MODEL))
+                .willReturn(okJson("{ \"status\": \"processing\" }")));
         var mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodyReceived().constant("processing");
 
-        template.sendBody("direct:list", null);
+        template.send("direct:scale-worker_headers", exchange -> {
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL);
+        });
+
         mock.await(1, TimeUnit.SECONDS);
-
         mock.assertIsSatisfied();
     }
 
@@ -121,6 +125,21 @@ class ManagementTest extends TorchServeTestSupport {
     }
 
     @Test
+    void testUnregister_headers() throws Exception {
+        mockServer.stubFor(delete("/models/" + ADDED_MODEL)
+                .willReturn(okJson("{ \"status\": \"unregistered\" }")));
+        var mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived().constant("unregistered");
+
+        template.send("direct:unregister_headers", exchange -> {
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL);
+        });
+
+        mock.await(1, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
     void testUnregister_version() throws Exception {
         mockServer.stubFor(delete("/models/" + ADDED_MODEL + "/" + ADDED_MODEL_VERSION)
                 .willReturn(okJson("{ \"status\": \"unregistered\" }")));
@@ -128,6 +147,22 @@ class ManagementTest extends TorchServeTestSupport {
         mock.expectedBodyReceived().constant("unregistered");
 
         template.sendBody("direct:unregister_version", null);
+
+        mock.await(1, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testUnregister_versionHeaders() throws Exception {
+        mockServer.stubFor(delete("/models/" + ADDED_MODEL + "/" + ADDED_MODEL_VERSION)
+                .willReturn(okJson("{ \"status\": \"unregistered\" }")));
+        var mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived().constant("unregistered");
+
+        template.send("direct:unregister_headers", exchange -> {
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL);
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_VERSION, ADDED_MODEL_VERSION);
+        });
 
         mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
@@ -160,6 +195,22 @@ class ManagementTest extends TorchServeTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    void testSetDefault_headers() throws Exception {
+        mockServer.stubFor(put("/models/" + TEST_MODEL + "/" + TEST_MODEL_VERSION + "/set-default")
+                .willReturn(okJson("{ \"status\": \"Default vesion succsesfully updated\" }")));
+        var mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived().constant("Default vesion succsesfully updated");
+
+        template.send("direct:set-default_headers", exchange -> {
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, TEST_MODEL);
+            exchange.getMessage().setHeader(TorchServeConstants.MODEL_VERSION, TEST_MODEL_VERSION);
+        });
+
+        mock.await(1, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -171,6 +222,9 @@ class ManagementTest extends TorchServeTestSupport {
                 from("direct:scale-worker")
                         .toF("torchserve:management/scale-worker?modelName=%s", ADDED_MODEL)
                         .to("mock:result");
+                from("direct:scale-worker_headers")
+                        .to("torchserve:management/scale-worker")
+                        .to("mock:result");
                 from("direct:describe")
                         .to("torchserve:management/describe")
                         .to("mock:result");
@@ -180,11 +234,17 @@ class ManagementTest extends TorchServeTestSupport {
                 from("direct:unregister_version")
                         .toF("torchserve:management/unregister?modelName=%s&modelVersion=%s", ADDED_MODEL, ADDED_MODEL_VERSION)
                         .to("mock:result");
+                from("direct:unregister_headers")
+                        .to("torchserve:management/unregister")
+                        .to("mock:result");
                 from("direct:list")
                         .to("torchserve:management/list")
                         .to("mock:result");
                 from("direct:set-default")
                         .toF("torchserve:management/set-default?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
+                        .to("mock:result");
+                from("direct:set-default_headers")
+                        .to("torchserve:management/set-default")
                         .to("mock:result");
             }
         };
