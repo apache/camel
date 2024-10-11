@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Locale;
-
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -57,12 +56,8 @@ public class ServicePortPropertiesFunction implements PropertiesFunction {
 
         // make sure to use upper case
         if (key != null) {
-            // make sure to use underscore as dash is not supported as ENV variables
-            key = key.toUpperCase(Locale.ENGLISH).replace('-', '_');
-
             // a service should have both the host and port defined
-            String port = System.getenv(key + PORT_PREFIX);
-
+            String port = IOHelper.lookupEnvironmentVariable(key + PORT_PREFIX);
             if (port != null) {
                 return port;
             } else {

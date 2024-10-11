@@ -28,6 +28,10 @@ public class IOHelperTest {
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("foo-service.port"));
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("foo-service-port"));
         assertEquals("8081", IOHelper.lookupEnvironmentVariable("foo.service.port"));
+
+        assertEquals("mys3arn", IOHelper.lookupEnvironmentVariable("camel.kamelet.aws-s3-source.bucketNameOrArn"));
+        assertEquals("mys3arn", IOHelper.lookupEnvironmentVariable("camel.kamelet.aws-s3-source.bucket-name-or-arn"));
+        assertEquals("mys3arn", IOHelper.lookupEnvironmentVariable("camel.kamelet.awsS3Source.bucketNameOrArn"));
     }
 
     @Test
