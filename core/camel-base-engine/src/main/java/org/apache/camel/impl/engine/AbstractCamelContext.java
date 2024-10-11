@@ -1062,14 +1062,16 @@ public abstract class AbstractCamelContext extends BaseService
         routesOrdered.sort(comparator);
         for (RouteStartupOrder order : routesOrdered) {
             Route route = order.getRoute();
-            boolean stopped = controller.getRouteStatus(route.getRouteId()).isStopped();
+            var status = controller.getRouteStatus(route.getRouteId());
+            boolean stopped = status == null || status.isStopped();
             if (!stopped) {
                 stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
             }
         }
         // stop any remainder routes
         for (Route route : getRoutes()) {
-            boolean stopped = controller.getRouteStatus(route.getRouteId()).isStopped();
+            var status = controller.getRouteStatus(route.getRouteId());
+            boolean stopped = status == null || status.isStopped();
             if (!stopped) {
                 stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
             }
