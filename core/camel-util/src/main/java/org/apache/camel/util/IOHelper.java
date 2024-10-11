@@ -674,7 +674,7 @@ public final class IOHelper {
      * For example given an ENV variable in either format: - CAMEL_KAMELET_AWS_S3_SOURCE_BUCKETNAMEORARN=myArn -
      * CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn
      *
-     * Then the following keys can lookup both ENV formats above: - camel.kamelet.awsS3Source.bucketNameOrArn -
+     * Then the following keys can look up both ENV formats above: - camel.kamelet.awsS3Source.bucketNameOrArn -
      * camel.kamelet.aws-s3-source.bucketNameOrArn - camel.kamelet.aws-s3-source.bucket-name-or-arn
      */
     public static String lookupEnvironmentVariable(String key) {
@@ -683,29 +683,28 @@ public final class IOHelper {
         String value = System.getenv(upperKey);
 
         if (value == null) {
-            // some OS do not support dashes in keys, so replace with underscore
-            String normalizedKey = upperKey.replace('-', '_');
-
-            // and replace dots with underscores so keys like my.key are
-            // translated to MY_KEY
-            normalizedKey = normalizedKey.replace('.', '_');
-
-            value = System.getenv(normalizedKey);
+            value = System.getenv(normalizeEnvironmentVariable(upperKey));
         }
         if (value == null) {
             // camelCase keys should use underscore as separator
             String caseKey = StringHelper.camelCaseToDash(key);
-            caseKey = caseKey.toUpperCase();
-            // some OS do not support dashes in keys, so replace with underscore
-            String normalizedKey = caseKey.replace('-', '_');
-
-            // and replace dots with underscores so keys like my.key are
-            // translated to MY_KEY
-            normalizedKey = normalizedKey.replace('.', '_');
-
-            value = System.getenv(normalizedKey);
+            value = System.getenv(normalizeEnvironmentVariable(caseKey));
         }
         return value;
+    }
+
+    /**
+     * Convert given key into an OS environment variable. Uses uppercase keys and converts dashes and dots to
+     * underscores.
+     */
+    public static String normalizeEnvironmentVariable(String key) {
+        String upperKey = key.toUpperCase();
+        // some OS do not support dashes in keys, so replace with underscore
+        String normalizedKey = upperKey.replace('-', '_');
+
+        // and replace dots with underscores so keys like my.key are
+        // translated to MY_KEY
+        return normalizedKey.replace('.', '_');
     }
 
     /**
