@@ -1064,7 +1064,7 @@ public abstract class AbstractCamelContext extends BaseService
             Route route = order.getRoute();
             var status = controller.getRouteStatus(route.getRouteId());
             boolean stopped = status == null || status.isStopped();
-            if (!stopped) {Fi
+            if (!stopped) {
                 stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
             }
         }
