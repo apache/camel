@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -42,9 +43,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaIdempotentRepositoryNonEagerIT extends SimpleIdempotentTest {
 
+    private static final String REPOSITORY_TOPIC = "TEST_NON_EAGER_" + UUID.randomUUID();
+
+    @BeforeAll
+    public static void createRepositoryTopic() {
+        KafkaTestUtil.createTopic(service, REPOSITORY_TOPIC, 1);
+    }
+
     @BindToRegistry("kafkaIdempotentRepositoryNonEager")
     private final KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_NON_EAGER_" + UUID.randomUUID(), service.getBootstrapServers());
+            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, service.getBootstrapServers());
 
     @ContextFixture
     public void configureKafka(CamelContext context) {

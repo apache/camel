@@ -17,7 +17,10 @@
 
 package org.apache.camel.component.kafka.integration.common;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.KafkaComponent;
@@ -26,9 +29,17 @@ import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.TopicPartitionInfo;
+import org.apache.kafka.common.requests.CreateTopicsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class KafkaTestUtil {
     public static final String MOCK_RESULT = "mock:result";
@@ -77,5 +88,21 @@ public final class KafkaTestUtil {
         kafka.init();
         kafka.getConfiguration().setBrokers(bootstrapServers);
         context.addComponent("kafka", kafka);
+    }
+
+    public static void createTopic(KafkaService service, String topic, int numPartitions) {
+        AdminClient kafkaAdminClient = createAdminClient(service);
+        NewTopic testTopic = new NewTopic(topic, numPartitions, CreateTopicsRequest.NO_REPLICATION_FACTOR);
+        kafkaAdminClient.createTopics(Collections.singleton(testTopic));
+        KafkaFuture<TopicDescription> tdFuture
+                = kafkaAdminClient.describeTopics(Collections.singletonList(topic)).topicNameValues().get(topic);
+
+        try {
+            TopicDescription td = tdFuture.get(5L, TimeUnit.SECONDS);
+            List<TopicPartitionInfo> pi = td.partitions();
+            assertEquals(numPartitions, pi.size());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 }
