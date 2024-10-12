@@ -20,7 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ContextEvents;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.clock.EventClock;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 
@@ -170,6 +172,7 @@ public class Main extends MainCommandLineSupport {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
         answer.getCamelContextExtension().setRegistry(registry);
+
         if (mainClass != null) {
             answer.getGlobalOptions().put("CamelMainClass", mainClass.getName());
         } else {

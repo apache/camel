@@ -21,9 +21,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ContextEvents;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.clock.Clock;
+import org.apache.camel.clock.ContextClock;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.support.ResetableClock;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +48,7 @@ public abstract class MainSupport extends BaseMainSupport {
     protected volatile ProducerTemplate camelTemplate;
 
     private String appName = "Apache Camel (Main)";
+    private Clock clock;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
     private long durationMaxSeconds;
@@ -65,6 +71,7 @@ public abstract class MainSupport extends BaseMainSupport {
     protected void doInit() throws Exception {
         // we want this logging to be as early as possible
         LOG.info("{} {} is starting", appName, helper.getVersion());
+        clock = new ResetableClock();
         super.doInit();
     }
 
@@ -336,6 +343,7 @@ public abstract class MainSupport extends BaseMainSupport {
         if (camelContext == null) {
             throw new IllegalStateException("Created CamelContext is null");
         }
+        camelContext.getClock().add(ContextEvents.BOOT, clock);
         postProcessCamelContext(camelContext);
     }
 }

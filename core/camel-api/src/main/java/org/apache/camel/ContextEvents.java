@@ -21,6 +21,12 @@ package org.apache.camel;
  * Context events that can be traced by an {@link org.apache.camel.clock.EventClock}
  */
 public enum ContextEvents {
+
+    /**
+     * Boot event
+     */
+    BOOT,
+
     /**
      * Start event
      */
