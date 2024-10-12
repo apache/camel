@@ -71,14 +71,12 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.CompileStrategy;
-import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteTemplateParameterSource;
@@ -86,7 +84,6 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -110,7 +107,6 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -499,24 +495,6 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
     }
 
-    private void scheduleRefresh(CamelContext camelContext, String key, long period) throws Exception {
-        final Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                .newInstance(key, Runnable.class);
-        if (task.isPresent()) {
-            Runnable r = task.get();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-            }
-            if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                // refresh is enabled then we need to automatically enable context-reload as well
-                ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                camelContext.addService(reloader);
-            }
-            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
-            scheduler.schedulePeriodTask(r, period);
-        }
-    }
-
     protected void autoconfigure(CamelContext camelContext) throws Exception {
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
@@ -796,9 +774,11 @@ public abstract class BaseMainSupport extends BaseService {
         postProcessCamelRegistry(camelContext, mainConfigurationProperties);
 
         // allow doing custom configuration before camel is started
+        step = recorder.beginStep(BaseMainSupport.class, "afterConfigure", "MainListener");
         for (MainListener listener : listeners) {
             listener.afterConfigure(this);
         }
+        recorder.endStep(step);
 
         // we want to log the property placeholder summary after routes has been started,
         // but before camel context logs that it has been started, so we need to use an event listener
