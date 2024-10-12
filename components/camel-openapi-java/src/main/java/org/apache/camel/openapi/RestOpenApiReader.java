@@ -555,58 +555,58 @@ public class RestOpenApiReader {
                 }
                 parameter.setRequired(param.getRequired());
 
+                final String dataType
+                        = getValue(camelContext, param.getDataType() != null ? param.getDataType() : "string");
+
                 // set type on parameter
                 if (!"body".equals(parameter.getIn())) {
                     Schema schema = new Schema<>();
-                    final boolean isArray = getValue(camelContext, param.getDataType()).equalsIgnoreCase("array");
+                    final boolean isArray = "array".equalsIgnoreCase(dataType);
                     final List<String> allowableValues = getValue(camelContext, param.getAllowableValuesAsStringList());
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
-                    if (param.getDataType() != null) {
-                        parameter.setSchema(schema);
-                        String type = getValue(camelContext, param.getDataType());
-                        schema.setType(type);
-                        if (openApi.getSpecVersion().equals(SpecVersion.V31)) {
-                            schema.addType(type);
-                        }
-                        if (param.getDataFormat() != null) {
-                            schema.setFormat(getValue(camelContext, param.getDataFormat()));
-                        }
-                        if (isArray) {
-                            String arrayType = getValue(camelContext, param.getArrayType());
-                            if (arrayType != null) {
-                                if (arrayType.equalsIgnoreCase("string")) {
-                                    defineSchemas(parameter, allowableValues, String.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("int") || arrayType.equalsIgnoreCase("integer")) {
-                                    defineSchemas(parameter, allowableValues, Integer.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("long")) {
-                                    defineSchemas(parameter, allowableValues, Long.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("float")) {
-                                    defineSchemas(parameter, allowableValues, Float.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("double")) {
-                                    defineSchemas(parameter, allowableValues, Double.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("boolean")) {
-                                    defineSchemas(parameter, allowableValues, Boolean.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("byte")) {
-                                    defineSchemas(parameter, allowableValues, ByteArraySchema.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("binary")) {
-                                    defineSchemas(parameter, allowableValues, BinarySchema.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("date")) {
-                                    defineSchemas(parameter, allowableValues, DateSchema.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("date-time")) {
-                                    defineSchemas(parameter, allowableValues, DateTimeSchema.class);
-                                }
-                                if (arrayType.equalsIgnoreCase("password")) {
-                                    defineSchemas(parameter, allowableValues, PasswordSchema.class);
-                                }
+                    parameter.setSchema(schema);
+                    schema.setType(dataType);
+                    if (openApi.getSpecVersion().equals(SpecVersion.V31)) {
+                        schema.addType(dataType);
+                    }
+                    if (param.getDataFormat() != null) {
+                        schema.setFormat(getValue(camelContext, param.getDataFormat()));
+                    }
+                    if (isArray) {
+                        String arrayType = getValue(camelContext, param.getArrayType());
+                        if (arrayType != null) {
+                            if (arrayType.equalsIgnoreCase("string")) {
+                                defineSchemas(parameter, allowableValues, String.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("int") || arrayType.equalsIgnoreCase("integer")) {
+                                defineSchemas(parameter, allowableValues, Integer.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("long")) {
+                                defineSchemas(parameter, allowableValues, Long.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("float")) {
+                                defineSchemas(parameter, allowableValues, Float.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("double")) {
+                                defineSchemas(parameter, allowableValues, Double.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("boolean")) {
+                                defineSchemas(parameter, allowableValues, Boolean.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("byte")) {
+                                defineSchemas(parameter, allowableValues, ByteArraySchema.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("binary")) {
+                                defineSchemas(parameter, allowableValues, BinarySchema.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("date")) {
+                                defineSchemas(parameter, allowableValues, DateSchema.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("date-time")) {
+                                defineSchemas(parameter, allowableValues, DateTimeSchema.class);
+                            }
+                            if (arrayType.equalsIgnoreCase("password")) {
+                                defineSchemas(parameter, allowableValues, PasswordSchema.class);
                             }
                         }
                     }
@@ -644,7 +644,10 @@ public class RestOpenApiReader {
                     reqBody.setRequired(param.getRequired());
                     reqBody.setDescription(getValue(camelContext, param.getDescription()));
                     op.setRequestBody(reqBody);
-                    String type = getValue(camelContext, param.getDataType() != null ? param.getDataType() : verb.getType());
+                    String type = getValue(camelContext, verb.getType());
+                    if (type == null) {
+                        type = dataType;
+                    }
                     Schema<?> bodySchema = null;
                     if (type != null) {
                         if (type.endsWith("[]")) {
@@ -675,8 +678,6 @@ public class RestOpenApiReader {
                         }
                     }
                 }
-
-                //                op.addParameter(parameter);
             }
         }
 

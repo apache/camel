@@ -348,7 +348,6 @@
           "pet"
         ],
         "summary": "Updates a pet in the store with form data",
-        "description": "",
         "operationId": "updatePetWithForm",
         "parameters": [
           {
@@ -397,13 +396,11 @@
           "pet"
         ],
         "summary": "Deletes a pet",
-        "description": "",
         "operationId": "deletePet",
         "parameters": [
           {
             "name": "api_key",
             "in": "header",
-            "description": "",
             "required": false,
             "schema": {
               "type": "string"
@@ -441,7 +438,6 @@
           "pet"
         ],
         "summary": "uploads an image",
-        "description": "",
         "operationId": "uploadFile",
         "parameters": [
           {
@@ -739,7 +735,6 @@
           "user"
         ],
         "summary": "Logs user into the system",
-        "description": "",
         "operationId": "loginUser",
         "parameters": [
           {
@@ -805,7 +800,6 @@
           "user"
         ],
         "summary": "Logs out current logged in user session",
-        "description": "",
         "operationId": "logoutUser",
         "parameters": [],
         "responses": {
@@ -821,7 +815,6 @@
           "user"
         ],
         "summary": "Get user by user name",
-        "description": "",
         "operationId": "getUserByName",
         "parameters": [
           {
