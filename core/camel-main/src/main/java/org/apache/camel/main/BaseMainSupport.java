@@ -739,18 +739,24 @@ public abstract class BaseMainSupport extends BaseService {
         // ensure camel context is build
         camelContext.build();
 
-        for (MainListener listener : listeners) {
-            listener.beforeInitialize(this);
-        }
-
-        // allow doing custom configuration before camel is started
-        for (MainListener listener : listeners) {
-            listener.beforeConfigure(this);
-        }
-
         // we want to capture startup events for import tasks during main bootstrap
         StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
         StartupStep step;
+
+        if (!listeners.isEmpty()) {
+            step = recorder.beginStep(BaseMainSupport.class, "beforeInitialize", "MainListener");
+            for (MainListener listener : listeners) {
+                listener.beforeInitialize(this);
+            }
+            recorder.endStep(step);
+
+            // allow doing custom configuration before camel is started
+            step = recorder.beginStep(BaseMainSupport.class, "beforeConfigure", "MainListener");
+            for (MainListener listener : listeners) {
+                listener.beforeConfigure(this);
+            }
+            recorder.endStep(step);
+        }
 
         if (standalone) {
             step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
@@ -774,11 +780,13 @@ public abstract class BaseMainSupport extends BaseService {
         postProcessCamelRegistry(camelContext, mainConfigurationProperties);
 
         // allow doing custom configuration before camel is started
-        step = recorder.beginStep(BaseMainSupport.class, "afterConfigure", "MainListener");
-        for (MainListener listener : listeners) {
-            listener.afterConfigure(this);
+        if (!listeners.isEmpty()) {
+            step = recorder.beginStep(BaseMainSupport.class, "afterConfigure", "MainListener");
+            for (MainListener listener : listeners) {
+                listener.afterConfigure(this);
+            }
+            recorder.endStep(step);
         }
-        recorder.endStep(step);
 
         // we want to log the property placeholder summary after routes has been started,
         // but before camel context logs that it has been started, so we need to use an event listener

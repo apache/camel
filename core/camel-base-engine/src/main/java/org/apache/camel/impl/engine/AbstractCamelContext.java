@@ -2749,7 +2749,7 @@ public abstract class AbstractCamelContext extends BaseService
                 }
             }
             String msg = String.format("Apache Camel %s (%s) started in %s (build:%s init:%s start:%s", getVersion(),
-                        camelContextExtension.getName(), total, built, init, start);
+                    camelContextExtension.getName(), total, built, init, start);
             if (boot != null) {
                 msg += " boot:" + boot;
             }

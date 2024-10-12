@@ -20,9 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextEvents;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.clock.EventClock;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 

@@ -24,11 +24,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextEvents;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.clock.Clock;
-import org.apache.camel.clock.ContextClock;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.ResetableClock;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
