@@ -16,6 +16,7 @@
  */
 package org.apache.camel.generator.openapi;
 
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
@@ -27,6 +28,8 @@ import javax.annotation.processing.Filer;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -238,5 +241,15 @@ public abstract class RestDslGenerator<G> {
 
     public static RestDslYamlGenerator toYaml(final OpenAPI document) {
         return new RestDslYamlGenerator(document);
+    }
+
+    public static RestDslYamlGenerator toYaml(File path) {
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        OpenAPI document = parser.read(path.getAbsolutePath());
+        return new RestDslYamlGenerator(document);
+    }
+
+    public static String generateToYaml(CamelContext camelContext, File path) throws Exception {
+        return toYaml(path).generate(camelContext);
     }
 }

@@ -76,7 +76,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.28.19</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.28.20</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.28</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.25</azure-storage-blob-changefeed-version>
@@ -85,7 +85,7 @@
         <box-java-sdk-version>4.11.1</box-java-sdk-version>
         <braintree-gateway-version>3.36.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
-        <bytebuddy-version>1.15.3</bytebuddy-version>
+        <bytebuddy-version>1.15.4</bytebuddy-version>
         <c3p0-version>0.10.1</c3p0-version>
         <caffeine-version>3.1.8</caffeine-version>
         <californium-version>3.13.0</californium-version>
@@ -189,9 +189,9 @@
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.36.0</google-oauth-client-version>
         <google-cloud-bom-version>26.48.0</google-cloud-bom-version>
-        <google-cloud-functions-bom-version>2.53.0</google-cloud-functions-bom-version>
+        <google-cloud-functions-bom-version>2.54.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.45.0</google-cloud-http-client-version>
-        <google-cloud-secretmanager-bom-version>2.51.0</google-cloud-secretmanager-bom-version>
+        <google-cloud-secretmanager-bom-version>2.52.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.1.0</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
         <greenmail-version>2.1.0</greenmail-version>
@@ -223,7 +223,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.9</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.116</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.117</huaweicloud-sdk-version>
         <ical4j-version>4.0.4</ical4j-version>
         <icu4j-version>75.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
@@ -236,7 +236,7 @@
         <ivy-version>2.5.2</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.0.0</jackson-jq-version>
-        <jackson2-version>2.17.2</jackson2-version>
+        <jackson2-version>2.18.0</jackson2-version>
         <jackrabbit-version>2.22.0</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
         <jandex-version>3.2.2</jandex-version>
@@ -385,7 +385,7 @@
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.3</ognl-version>
-        <openapi-generator-version>7.8.0</openapi-generator-version>
+        <openapi-generator-version>7.9.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.17.1</opensearch-rest-client-version>
         <opensearch-java-client-version>2.14.0</opensearch-java-client-version>
@@ -416,10 +416,10 @@
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.5</protobuf-version>
-        <protobuf-maven-plugin-version>2.6.1</protobuf-maven-plugin-version>
+        <protobuf-maven-plugin-version>2.6.2</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.12.Final</protostream-version>
-        <prowide-version>SRU2023-10.1.7</prowide-version>
+        <prowide-version>SRU2024-10.2.3</prowide-version>
         <pubnub-version>9.2.4</pubnub-version>
         <pulsar-version>3.3.1</pulsar-version>
         <qdrant-client-version>1.12.0</qdrant-client-version>
@@ -513,7 +513,7 @@
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.4</yasson-version>
         <yetus-audience-annotations-version>0.15.0</yetus-audience-annotations-version>
-        <zeebe-version>8.6.0</zeebe-version>
+        <zeebe-version>8.6.1</zeebe-version>
         <zendesk-client-version>1.0.0</zendesk-client-version>
         <zookeeper-version>3.9.2</zookeeper-version>
         <zxing-version>3.5.3</zxing-version>

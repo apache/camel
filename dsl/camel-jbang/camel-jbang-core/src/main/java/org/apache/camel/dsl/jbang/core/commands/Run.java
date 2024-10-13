@@ -137,6 +137,14 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
+    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+                        defaultValue = "io.quarkus.platform")
+    String quarkusGroupId = "io.quarkus.platform";
+
+    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+                        defaultValue = "quarkus-bom")
+    String quarkusArtifactId = "quarkus-bom";
+
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
             defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion = RuntimeType.QUARKUS_VERSION;
@@ -558,6 +566,8 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
         writeSetting(main, profileProperties, "camel.jbang.springBootVersion", springBootVersion);
         writeSetting(main, profileProperties, "camel.jbang.quarkusVersion", quarkusVersion);
+        writeSetting(main, profileProperties, "camel.jbang.quarkusGroupId", quarkusGroupId);
+        writeSetting(main, profileProperties, "camel.jbang.quarkusArtifactId", quarkusArtifactId);
 
         // command line arguments
         if (property != null) {
@@ -882,6 +892,8 @@ public class Run extends CamelCommand {
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
         eq.quarkusVersion = this.quarkusVersion;
+        eq.quarkusGroupId = this.quarkusGroupId;
+        eq.quarkusArtifactId = this.quarkusArtifactId;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
@@ -1123,6 +1135,8 @@ public class Run extends CamelCommand {
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
             springBootVersion = answer.getProperty("camel.jbang.springBootVersion", springBootVersion);
+            quarkusGroupId = answer.getProperty("camel.jbang.quarkusGroupId", quarkusGroupId);
+            quarkusArtifactId = answer.getProperty("camel.jbang.quarkusArtifactId", quarkusArtifactId);
             quarkusVersion = answer.getProperty("camel.jbang.quarkusVersion", quarkusVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
