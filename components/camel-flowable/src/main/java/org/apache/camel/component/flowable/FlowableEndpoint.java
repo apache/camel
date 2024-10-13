@@ -16,43 +16,48 @@
  */
 package org.apache.camel.component.flowable;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.support.DefaultEndpoint;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.eventregistry.impl.EventRegistryEngineConfiguration;
 import org.flowable.eventregistry.model.CamelInboundChannelModel;
 import org.flowable.eventregistry.model.CamelOutboundChannelModel;
 
+@UriEndpoint(firstVersion = "4.19.0", scheme = "flowable", title = "Flowable", syntax = "flowable:channelKey",
+    category = { Category.WORKFLOW })
 public class FlowableEndpoint extends DefaultEndpoint {
 
     protected EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
 
     protected FlowableConsumer flowableConsumer;
+    protected String channelKey;
     protected CamelInboundChannelModel camelInboundChannel;
     protected CamelOutboundChannelModel camelOutboundChannel;
-
-    public FlowableEndpoint(CamelInboundChannelModel camelInboundChannel,
-                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration, CamelContext camelContext) {
-
+    
+    public FlowableEndpoint(String channelKey) {
         super();
-        setCamelContext(camelContext);
+        this.channelKey = channelKey;
+    }
+
+    public FlowableEndpoint(CamelInboundChannelModel camelInboundChannel, 
+                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
+        
+        super();
         this.camelInboundChannel = camelInboundChannel;
         this.eventRegistryEngineConfiguration = eventRegistryEngineConfiguration;
-        setEndpointUri("flowable:" + camelInboundChannel.getKey());
     }
 
     public FlowableEndpoint(CamelOutboundChannelModel camelOutboundChannel,
-                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration, CamelContext camelContext) {
+                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
 
         super();
-        setCamelContext(camelContext);
         this.camelOutboundChannel = camelOutboundChannel;
         this.eventRegistryEngineConfiguration = eventRegistryEngineConfiguration;
-        setEndpointUri("flowable-event:" + camelOutboundChannel.getKey());
     }
 
     public void process(Exchange ex) throws Exception {
@@ -64,13 +69,23 @@ public class FlowableEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        FlowableProducer producer = new FlowableProducer(camelInboundChannel, this, eventRegistryEngineConfiguration);
-        return producer;
+        return new FlowableProducer(camelInboundChannel, this, eventRegistryEngineConfiguration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new FlowableConsumer(this, processor);
+    }
+    
+    @Override
+    protected String createEndpointUri() {
+        if (channelKey != null) {
+            return "flowable:" + channelKey;
+        } else if (camelInboundChannel != null) {
+            return "flowable:" + camelInboundChannel.getKey();
+        } else {
+            return "flowable:" + camelOutboundChannel.getKey();
+        }
     }
 
     protected void addConsumer(FlowableConsumer consumer) {

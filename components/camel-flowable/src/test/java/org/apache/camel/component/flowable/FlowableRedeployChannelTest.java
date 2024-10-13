@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.flowable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
 
@@ -37,13 +37,12 @@ public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
                     .addClasspathResource("event/userEvent.event")
                     .deploy();
 
-            ProducerTemplate tpl = context.createProducerTemplate();
             ObjectNode bodyNode = new ObjectMapper().createObjectNode();
             bodyNode.put("name", "John Doe");
             bodyNode.put("age", 23);
             Exchange exchange = context.getEndpoint("direct:start").createExchange();
             exchange.getIn().setBody(bodyNode);
-            tpl.send("direct:start", exchange);
+            template.send("direct:start", exchange);
 
             ProcessInstance processInstance
                     = runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").singleResult();
@@ -67,7 +66,7 @@ public class FlowableRedeployChannelTest extends CamelFlowableTestCase {
 
             exchange = context.getEndpoint("direct:startUpdated").createExchange();
             exchange.getIn().setBody(bodyNode);
-            tpl.send("direct:startUpdated", exchange);
+            template.send("direct:startUpdated", exchange);
 
             assertEquals(2, runtimeService.createProcessInstanceQuery().processDefinitionKey("camelProcess").count());
 

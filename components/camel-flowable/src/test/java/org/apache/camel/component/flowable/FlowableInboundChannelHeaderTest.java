@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.flowable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
 
@@ -42,7 +42,6 @@ public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
     public void testStartProcessWithHeaderEvent() throws Exception {
         String deploymentId = deployProcessDefinition("process/startWithHeader.bpmn20.xml");
         try {
-            ProducerTemplate tpl = context.createProducerTemplate();
             ObjectNode bodyNode = new ObjectMapper().createObjectNode();
             bodyNode.put("name", "John Doe");
             bodyNode.put("age", 23);
@@ -50,7 +49,7 @@ public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
             exchange.getIn().setBody(bodyNode);
             exchange.getIn().setHeader("headerProperty1", "headerTestValue");
             exchange.getIn().setHeader("headerProperty2", 99);
-            tpl.send("direct:start", exchange);
+            template.send("direct:start", exchange);
 
             ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
                     .processDefinitionKey("camelProcess")

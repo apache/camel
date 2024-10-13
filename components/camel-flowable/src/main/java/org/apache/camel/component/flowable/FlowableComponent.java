@@ -18,42 +18,18 @@ package org.apache.camel.component.flowable;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.flowable.common.engine.api.FlowableException;
-import org.flowable.common.engine.impl.interceptor.EngineConfigurationConstants;
-import org.flowable.engine.ProcessEngine;
-import org.flowable.eventregistry.impl.EventRegistryEngineConfiguration;
 
 @Component("flowable")
 public class FlowableComponent extends DefaultComponent {
-
-    protected EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
 
     public FlowableComponent() {
     }
 
     @Override
-    public void setCamelContext(CamelContext context) {
-        super.setCamelContext(context);
-        ProcessEngine processEngine = getByType(context, ProcessEngine.class);
-        this.eventRegistryEngineConfiguration = (EventRegistryEngineConfiguration) processEngine.getProcessEngineConfiguration()
-                .getEngineConfigurations().get(EngineConfigurationConstants.KEY_EVENT_REGISTRY_CONFIG);
-    }
-
-    private <T> T getByType(CamelContext ctx, Class<T> kls) {
-        Map<String, T> looked = ctx.getRegistry().findByTypeWithName(kls);
-        if (looked.isEmpty()) {
-            return null;
-        }
-        return looked.values().iterator().next();
-
-    }
-
-    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        throw new FlowableException("not supported");
+        return new FlowableEndpoint(remaining);
     }
 }

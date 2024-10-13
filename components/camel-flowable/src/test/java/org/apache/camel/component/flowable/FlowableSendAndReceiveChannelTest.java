@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.flowable;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class FlowableSendAndReceiveChannelTest extends CamelFlowableTestCase {
 
@@ -63,13 +63,12 @@ public class FlowableSendAndReceiveChannelTest extends CamelFlowableTestCase {
             assertEquals("John Doe", bodyNode.get("name").asText());
             assertEquals(23, bodyNode.get("age").asInt());
 
-            ProducerTemplate tpl = context.createProducerTemplate();
             ObjectNode sendBodyNode = new ObjectMapper().createObjectNode();
             sendBodyNode.put("name", "John Doe");
             sendBodyNode.put("city", "Amsterdam");
             Exchange exchange = context.getEndpoint("direct:start").createExchange();
             exchange.getIn().setBody(sendBodyNode);
-            tpl.send("direct:start", exchange);
+            template.send("direct:start", exchange);
 
             assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "correlationName"));
             assertEquals("Amsterdam", runtimeService.getVariable(processInstance.getId(), "city"));

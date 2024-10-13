@@ -58,23 +58,21 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
             EventRepositoryService eventRepositoryService,
             boolean fallbackToDefaultTenant) {
 
-        if (channelModel instanceof CamelInboundChannelModel) {
-            CamelInboundChannelModel camelInboundChannelModel = (CamelInboundChannelModel) channelModel;
-            logger.info("Starting to register inbound channel {} in tenant {}", channelModel.getKey(), tenantId);
+        if (channelModel instanceof CamelInboundChannelModel camelInboundChannelModel) {
+            logger.debug("Starting to register inbound channel {} in tenant {}", channelModel.getKey(), tenantId);
             processInboundDefinition(camelInboundChannelModel, tenantId);
-            logger.info("Finished registering inbound channel {} in tenant {}", channelModel.getKey(), tenantId);
+            logger.debug("Finished registering inbound channel {} in tenant {}", channelModel.getKey(), tenantId);
 
-        } else if (channelModel instanceof CamelOutboundChannelModel) {
-            logger.info("Starting to register outbound channel {} in tenant {}", channelModel.getKey(), tenantId);
-            processOutboundDefinition((CamelOutboundChannelModel) channelModel, tenantId);
-            logger.info("Finished registering outbound channel {} in tenant {}", channelModel.getKey(), tenantId);
+        } else if (channelModel instanceof CamelOutboundChannelModel camelOutboundChannelModel) {
+            logger.debug("Starting to register outbound channel {} in tenant {}", channelModel.getKey(), tenantId);
+            processOutboundDefinition(camelOutboundChannelModel, tenantId);
+            logger.debug("Finished registering outbound channel {} in tenant {}", channelModel.getKey(), tenantId);
         }
     }
 
     protected void processInboundDefinition(CamelInboundChannelModel channelModel, String tenantId) {
         EventRegistryEngineConfiguration eventRegistryEngineConfiguration = CommandContextUtil.getEventRegistryConfiguration();
-        try (FlowableEndpoint endpoint
-                = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration, camelContext)) {
+        try (FlowableEndpoint endpoint = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration)) {
 
             camelContext.addEndpoint(endpoint.getEndpointUri(), endpoint);
             if (StringUtils.isNotEmpty(channelModel.getSourceUri())) {
@@ -88,7 +86,6 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
             }
 
         } catch (Exception e) {
-            logger.error("Error creating producer for inbound channel {} in tenant {}", channelModel.getKey(), tenantId);
             throw new FlowableException(
                     "Error creating producer for inbound channel " + channelModel.getKey() + " in tenant " + tenantId);
         }
@@ -106,8 +103,7 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
 
         EventRegistryEngineConfiguration eventRegistryEngineConfiguration = CommandContextUtil.getEventRegistryConfiguration();
         String destination = resolve(channelModel.getDestination());
-        try (FlowableEndpoint endpoint
-                = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration, camelContext)) {
+        try (FlowableEndpoint endpoint = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration)) {
             camelContext.addEndpoint(endpoint.getEndpointUri(), endpoint);
             camelContext.addRoutes(new RouteBuilder() {
 
@@ -120,7 +116,6 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
             return new CamelOperationsOutboundEventChannelAdapter(endpoint);
 
         } catch (Exception e) {
-            logger.error("Error creating route for outbound channel {} in tenant {}", channelModel.getKey(), tenantId);
             throw new FlowableException(
                     "Error creating route for outbound channel " + channelModel.getKey() + " in tenant " + tenantId);
         }
