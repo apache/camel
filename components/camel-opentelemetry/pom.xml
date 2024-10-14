@@ -49,33 +49,15 @@
         <dependencies>
             <dependency>
                 <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-sdk</artifactId>
-                <version>${opentelemetry-version}</version>
+                <artifactId>opentelemetry-bom-alpha</artifactId>
+                <version>1.43.0-alpha</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-api</artifactId>
-                <version>${opentelemetry-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-context</artifactId>
-                <version>${opentelemetry-version}</version>
-            </dependency>
-            <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
-            <version>${opentelemetry-alpha-version}</version>
-        </dependency>
-            <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-sdk-testing</artifactId>
-            <version>${opentelemetry-version}</version>
-        </dependency>
-            <dependency>
-                <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-sdk-extension-incubator</artifactId>
-                <version>${opentelemetry-incubator-version}</version>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>${opentelemetry-alpha-version}</version>
             </dependency>
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
