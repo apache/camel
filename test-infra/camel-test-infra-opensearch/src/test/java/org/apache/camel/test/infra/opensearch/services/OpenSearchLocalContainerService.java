@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
-import org.testcontainers.utility.DockerImageName;
 
 public class OpenSearchLocalContainerService implements OpenSearchService, ContainerService<OpensearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerService.class);
@@ -51,9 +50,7 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
     }
 
     protected OpensearchContainer initContainer(String imageName) {
-        DockerImageName customImage = DockerImageName.parse(imageName)
-                .asCompatibleSubstituteFor("opensearchproject/opensearch");
-        OpensearchContainer opensearchContainer = new OpensearchContainer(customImage);
+        OpensearchContainer opensearchContainer = new OpensearchContainer(imageName);
         // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
         // on the build pipeline
         opensearchContainer.setWaitStrategy(
