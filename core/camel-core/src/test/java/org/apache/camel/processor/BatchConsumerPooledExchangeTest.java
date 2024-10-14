@@ -94,7 +94,7 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // maxMessagesPerPoll=1 to force polling 3 times to use pooled exchanges
-                from(fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=1")).noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=1")).autoStartup(false)
                         .setProperty("myprop", counter::incrementAndGet)
                         .setHeader("myheader", counter::incrementAndGet)
                         .process(new Processor() {

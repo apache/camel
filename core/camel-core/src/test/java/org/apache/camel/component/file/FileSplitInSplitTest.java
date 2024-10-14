@@ -77,7 +77,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
                         .split(body().tokenize(comma)).parallelProcessing().streaming()
                         .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
                         .split(body().tokenize(LS)).parallelProcessing().streaming()

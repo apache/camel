@@ -63,7 +63,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10"))
-                        .routeId("foo").noAutoStartup().to("mock:result");
+                        .routeId("foo").autoStartup(false).to("mock:result");
             }
         };
     }

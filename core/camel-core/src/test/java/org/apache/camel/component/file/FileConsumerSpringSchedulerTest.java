@@ -35,7 +35,7 @@ public class FileConsumerSpringSchedulerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?scheduler=spring")).routeId("foo").noAutoStartup().to("mock:result");
+                from(fileUri("?scheduler=spring")).routeId("foo").autoStartup(false).to("mock:result");
             }
         });
 

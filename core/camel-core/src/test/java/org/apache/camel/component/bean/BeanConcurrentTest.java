@@ -73,7 +73,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=10").routeId("foo").noAutoStartup().to("bean:myBean").to("mock:result");
+                from("seda:foo?concurrentConsumers=10").routeId("foo").autoStartup(false).to("bean:myBean").to("mock:result");
             }
         };
     }

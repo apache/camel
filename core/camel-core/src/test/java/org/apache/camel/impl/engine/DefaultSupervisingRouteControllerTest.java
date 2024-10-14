@@ -178,7 +178,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
             from("jms:cake").to("mock:cake").routeId("cake");
 
-            from("seda:bar").routeId("bar").noAutoStartup().to("mock:bar");
+            from("seda:bar").routeId("bar").autoStartup(false).to("mock:bar");
         }
     }
 

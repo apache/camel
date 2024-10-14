@@ -97,7 +97,7 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
 
                 from("direct:bar").routeId("D").startupOrder(9).to("direct:baz");
 
-                from("direct:baz").routeId("C").noAutoStartup().startupOrder(5).to("mock:other");
+                from("direct:baz").routeId("C").autoStartup(false).startupOrder(5).to("mock:other");
             }
         };
     }

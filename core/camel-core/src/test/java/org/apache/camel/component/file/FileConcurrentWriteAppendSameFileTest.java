@@ -108,7 +108,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
                         .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))
                         .to(fileUri("outbox?fileExist=Append&fileName=result.txt")).to("mock:result").end();

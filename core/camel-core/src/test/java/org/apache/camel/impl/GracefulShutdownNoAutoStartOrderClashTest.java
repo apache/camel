@@ -36,7 +36,7 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo").startupOrder(5).to("mock:foo");
-                from("direct:bar").routeId("bar").startupOrder(5).noAutoStartup().to("mock:bar");
+                from("direct:bar").routeId("bar").startupOrder(5).autoStartup(false).to("mock:bar");
             }
         });
 

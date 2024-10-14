@@ -70,7 +70,7 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name&filter=#myFilter"))
-                        .routeId("foo").noAutoStartup().convertBodyTo(String.class)
+                        .routeId("foo").autoStartup(false).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
