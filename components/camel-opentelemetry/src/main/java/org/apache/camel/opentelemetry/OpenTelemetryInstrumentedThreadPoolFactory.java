@@ -23,7 +23,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import io.opentelemetry.context.Context;
-import org.apache.camel.opentelemetry.internal.CurrentContextScheduledExecutorService;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.annotations.JdkService;
@@ -64,7 +63,7 @@ public class OpenTelemetryInstrumentedThreadPoolFactory extends DefaultThreadPoo
 
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        return new CurrentContextScheduledExecutorService(super.newScheduledThreadPool(profile, threadFactory));
+        return Context.taskWrapping(super.newScheduledThreadPool(profile, threadFactory));
     }
 
 }
