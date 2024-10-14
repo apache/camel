@@ -17,35 +17,54 @@
 package org.apache.camel.component.kafka.integration;
 
 import java.math.BigInteger;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.UUID;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempotentTestSupport {
-    public static final String TOPIC = "testidemp3";
-
+    private static final String TOPIC;
+    private static final String REPOSITORY_TOPIC;
     private final int size = 200;
+
+    static {
+        UUID topicId = UUID.randomUUID();
+        TOPIC = "idempt_" + topicId;
+        REPOSITORY_TOPIC = "TEST_IDEMPOTENT_" + topicId;
+    }
+
+    @BeforeAll
+    public static void createRepositoryTopic() {
+        KafkaTestUtil.createTopic(service, REPOSITORY_TOPIC, 1);
+    }
+
+    @AfterAll
+    public static void removeRepositoryTopic() {
+        kafkaAdminClient.deleteTopics(Collections.singleton(REPOSITORY_TOPIC)).all();
+    }
+
     @BindToRegistry("kafkaIdempotentRepository")
     private final KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
+            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
 
     @BeforeEach
     public void before() {
-        kafkaAdminClient.deleteTopics(Arrays.asList(TOPIC, "TEST_IDEMPOTENT")).all();
         doSend(size, TOPIC);
     }
 
     @AfterEach
     public void after() {
-        // clean all test topics
-        kafkaAdminClient.deleteTopics(Arrays.asList(TOPIC, "TEST_IDEMPOTENT")).all();
+        // clean test topic
+        kafkaAdminClient.deleteTopics(Collections.singleton(TOPIC)).all();
     }
 
     @Override

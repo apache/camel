@@ -53,7 +53,7 @@ public class SedaDiscardWhenFullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?size=2").routeId("foo").noAutoStartup()
+                from("seda:foo?size=2").routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
         };

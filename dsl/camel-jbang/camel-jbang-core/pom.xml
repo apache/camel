@@ -65,6 +65,13 @@
             <artifactId>camel-xml-io-util</artifactId>
         </dependency>
 
+        <!-- yaml -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml-version}</version>
+        </dependency>
+
         <!-- cli -->
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -39,7 +39,7 @@ public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("foo").noAutoStartup().loadBalance().failover(3, true, true).to("direct:x",
+                from("direct:start").routeId("foo").autoStartup(false).loadBalance().failover(3, true, true).to("direct:x",
                         "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").throwException(new IllegalArgumentException("Forced"));

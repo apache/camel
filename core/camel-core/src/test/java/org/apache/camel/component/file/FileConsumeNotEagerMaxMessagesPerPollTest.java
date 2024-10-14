@@ -58,7 +58,7 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&"
                              + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name"))
-                        .routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                        .routeId("foo").autoStartup(false).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

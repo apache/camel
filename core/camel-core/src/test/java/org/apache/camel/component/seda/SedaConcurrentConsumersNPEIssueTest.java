@@ -71,11 +71,11 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=5").routeId("first").noAutoStartup().to("mock:result");
+                from("seda:foo?concurrentConsumers=5").routeId("first").autoStartup(false).to("mock:result");
 
                 from("seda:foo?concurrentConsumers=5").routeId("second").to("mock:result");
 
-                from("direct:foo").routeId("third").noAutoStartup().to("mock:result");
+                from("direct:foo").routeId("third").autoStartup(false).to("mock:result");
             }
         };
     }

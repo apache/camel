@@ -77,6 +77,24 @@ public interface JsonValidatorComponentBuilderFactory {
     
         
         /**
+         * Whether to lookup and use default Jackson ObjectMapper from the
+         * registry.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param useDefaultObjectMapper the value to set
+         * @return the dsl builder
+         */
+        default JsonValidatorComponentBuilder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
+            doSetProperty("useDefaultObjectMapper", useDefaultObjectMapper);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -98,18 +116,16 @@ public interface JsonValidatorComponentBuilderFactory {
         }
     
         /**
-         * To use a custom ObjectMapper.
+         * Lookup and use the existing ObjectMapper with the given id.
          * 
-         * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default JsonValidatorComponentBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default JsonValidatorComponentBuilder objectMapper(java.lang.String objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -129,8 +145,9 @@ public interface JsonValidatorComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((JsonValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "useDefaultObjectMapper": ((JsonValidatorComponent) component).setUseDefaultObjectMapper((boolean) value); return true;
             case "autowiredEnabled": ((JsonValidatorComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "objectMapper": ((JsonValidatorComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
+            case "objectMapper": ((JsonValidatorComponent) component).setObjectMapper((java.lang.String) value); return true;
             default: return false;
             }
         }

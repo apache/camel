@@ -28,12 +28,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StartupStep;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.FileUtil;
@@ -156,12 +158,16 @@ public class RoutesConfigurer {
      * @param camelContext the Camel context
      */
     public void configureRoutes(CamelContext camelContext) throws Exception {
+        StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
+        StartupStep step;
+
         final List<RoutesBuilder> routes = new ArrayList<>();
         if (getRoutesBuilders() != null) {
             routes.addAll(getRoutesBuilders());
         }
 
         if (getRoutesBuilderClasses() != null) {
+            step = recorder.beginStep(RoutesConfigurer.class, "resolveRoutesBuilderClasses", "Routes Configurer");
             String[] routeClasses = getRoutesBuilderClasses().split(",");
             for (String routeClass : routeClasses) {
                 try {
@@ -183,9 +189,11 @@ public class RoutesConfigurer {
                     }
                 }
             }
+            recorder.endStep(step);
         }
 
         if (getBasePackageScan() != null) {
+            step = recorder.beginStep(RoutesConfigurer.class, "packageScan", "Routes Configurer");
             String[] pkgs = getBasePackageScan().split(",");
             Set<Class<?>> set = PluginHelper.getPackageScanClassResolver(camelContext)
                     .findImplementations(RoutesBuilder.class, pkgs);
@@ -205,9 +213,11 @@ public class RoutesConfigurer {
                     }
                 }
             }
+            recorder.endStep(step);
         }
 
         if (getRoutesCollector() != null) {
+            step = recorder.beginStep(RoutesConfigurer.class, "routesCollector", "Routes Configurer");
             try {
                 LOG.debug("RoutesCollectorEnabled: {}", getRoutesCollector());
 
@@ -241,10 +251,13 @@ public class RoutesConfigurer {
                 } else {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
+            } finally {
+                recorder.endStep(step);
             }
         }
 
         if (getBeanPostProcessor() != null) {
+            step = recorder.beginStep(RoutesConfigurer.class, "beanPostProcessor", "Routes Configurer");
             // lets use Camel's bean post processor on any existing route builder classes
             // so the instance has some support for dependency injection
             for (RoutesBuilder routeBuilder : routes) {
@@ -259,10 +272,13 @@ public class RoutesConfigurer {
                     }
                 }
             }
+            recorder.endStep(step);
         }
 
         // add the discovered routes
+        step = recorder.beginStep(RoutesConfigurer.class, "addDiscoveredRoutes", "Routes Configurer");
         addDiscoveredRoutes(camelContext, routes);
+        recorder.endStep(step);
     }
 
     private void addDiscoveredRoutes(CamelContext camelContext, List<RoutesBuilder> routes) throws Exception {
@@ -370,6 +386,9 @@ public class RoutesConfigurer {
     protected void doConfigureModeline(CamelContext camelContext, Collection<Resource> resources, boolean optional)
             throws Exception {
 
+        StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
+        StartupStep step;
+
         // sort groups so java is first
         List<Resource> sort = new ArrayList<>(resources);
         sort.sort((o1, o2) -> {
@@ -386,14 +405,21 @@ public class RoutesConfigurer {
         // group resources by loader (java, xml, yaml in their own group)
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
         for (Resource resource : sort) {
-            RoutesBuilderLoader loader = resolveRoutesBuilderLoader(camelContext, resource, optional);
-            if (loader != null) {
-                List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
-                list.add(resource);
-                groups.put(loader, list);
+            final String extension = FileUtil.onlyExt(resource.getLocation(), false);
+            step = recorder.beginStep(RoutesConfigurer.class, "resolveRoutesBuilderLoader:" + extension, "Routes Configurer");
+            try {
+                RoutesBuilderLoader loader = resolveRoutesBuilderLoader(camelContext, resource, optional);
+                if (loader != null) {
+                    List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
+                    list.add(resource);
+                    groups.put(loader, list);
+                }
+            } finally {
+                recorder.endStep(step);
             }
         }
 
+        step = recorder.beginStep(RoutesConfigurer.class, "parseModeline", "Routes Configurer");
         if (camelContext.isModeline()) {
             // parse modelines for all resources
             ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
@@ -403,6 +429,7 @@ public class RoutesConfigurer {
                 }
             }
         }
+        recorder.endStep(step);
 
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
@@ -410,6 +437,7 @@ public class RoutesConfigurer {
             if (loader instanceof ExtendedRoutesBuilderLoader extLoader) {
                 // extended loader can pre-parse all resources ine one unit
                 List<Resource> files = entry.getValue();
+                step = recorder.beginStep(RoutesConfigurer.class, "preParseRoutes", "Routes Configurer");
                 try {
                     extLoader.preParseRoutes(files);
                 } catch (Exception e) {
@@ -418,9 +446,13 @@ public class RoutesConfigurer {
                     } else {
                         throw e;
                     }
+                } finally {
+                    recorder.endStep(step);
                 }
             } else {
                 for (Resource resource : entry.getValue()) {
+                    step = recorder.beginStep(RoutesConfigurer.class, "preParseRoute:" + resource.getLocation(),
+                            "Routes Configurer");
                     try {
                         loader.preParseRoute(resource);
                     } catch (Exception e) {
@@ -430,6 +462,8 @@ public class RoutesConfigurer {
                         } else {
                             throw e;
                         }
+                    } finally {
+                        recorder.endStep(step);
                     }
                 }
             }

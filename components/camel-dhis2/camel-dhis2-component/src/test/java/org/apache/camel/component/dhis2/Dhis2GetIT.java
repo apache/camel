@@ -48,7 +48,7 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
         final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelDhis2.path", "organisationUnits");
         headers.put("CamelDhis2.arrayName", "organisationUnits");
-        headers.put("CamelDhis2.paging", true);
+        headers.put("CamelDhis2.paging", false); // https://github.com/dhis2/dhis2-java-sdk/issues/209
         headers.put("CamelDhis2.fields", null);
         headers.put("CamelDhis2.filter", null);
         headers.put("CamelDhis2.queryParams", new HashMap<>());
@@ -79,7 +79,7 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
             public void configure() {
                 // test route for collection
                 from("direct://COLLECTION")
-                        .to("dhis2://" + PATH_PREFIX + "/collection")
+                        .to("dhis2://" + PATH_PREFIX + "/collection?paging=false")
                         .split().body().aggregationStrategy(new GroupedBodyAggregationStrategy())
                         .convertBodyTo(OrganisationUnit.class);
 

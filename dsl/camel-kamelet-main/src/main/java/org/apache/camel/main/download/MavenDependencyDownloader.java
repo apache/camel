@@ -283,9 +283,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     transitively, useApacheSnapshots);
             List<File> files = new ArrayList<>();
             if (verbose) {
-                LOG.info("Resolved: {} -> [{}]", gav, artifacts);
+                LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
             } else {
-                LOG.debug("Resolved: {} -> [{}]", gav, artifacts);
+                LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
             }
 
             for (MavenArtifact a : artifacts) {
@@ -338,9 +338,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, null, false, useApacheSnapshots);
         if (verbose) {
-            LOG.info("Resolved: {} -> [{}]", gav, artifacts);
+            LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
         } else {
-            LOG.debug("Resolved: {} -> [{}]", gav, artifacts);
+            LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
         }
 
         if (artifacts.size() == 1) {

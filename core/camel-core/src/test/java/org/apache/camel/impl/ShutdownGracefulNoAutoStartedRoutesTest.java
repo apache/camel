@@ -49,7 +49,7 @@ public class ShutdownGracefulNoAutoStartedRoutesTest extends ContextTestSupport 
             public void configure() {
                 from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").routeId("bar").noAutoStartup().to("mock:bar");
+                from("direct:bar").routeId("bar").autoStartup(false).to("mock:bar");
             }
         };
     }

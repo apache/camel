@@ -170,6 +170,7 @@ public class Main extends MainCommandLineSupport {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
         answer.getCamelContextExtension().setRegistry(registry);
+
         if (mainClass != null) {
             answer.getGlobalOptions().put("CamelMainClass", mainClass.getName());
         } else {

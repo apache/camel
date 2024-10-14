@@ -22,7 +22,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,9 +34,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class KafkaIdempotentRepositoryEagerIT extends SimpleIdempotentTest {
 
+    private static final String REPOSITORY_TOPIC = "TEST_EAGER_" + UUID.randomUUID();
+
+    @BeforeAll
+    public static void createRepositoryTopic() {
+        KafkaTestUtil.createTopic(service, REPOSITORY_TOPIC, 1);
+    }
+
     @BindToRegistry("kafkaIdempotentRepositoryEager")
     private final KafkaIdempotentRepository idempotentRepository
-            = new KafkaIdempotentRepository("TEST_EAGER_" + UUID.randomUUID(), service.getBootstrapServers());
+            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, service.getBootstrapServers());
 
     @Override
     protected RouteBuilder createRouteBuilder() {

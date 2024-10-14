@@ -43,7 +43,7 @@ public class TimerNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(uri).noAutoStartup().to("mock:result");
+                from(uri).autoStartup(false).to("mock:result");
             }
         };
     }

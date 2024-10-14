@@ -71,14 +71,12 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMetricsService;
 import org.apache.camel.spi.CamelTracingService;
 import org.apache.camel.spi.CompileStrategy;
-import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteTemplateParameterSource;
@@ -86,7 +84,6 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -110,7 +107,6 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.TimeUtils;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -499,62 +495,74 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
     }
 
-    private void scheduleRefresh(CamelContext camelContext, String key, long period) throws Exception {
-        final Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                .newInstance(key, Runnable.class);
-        if (task.isPresent()) {
-            Runnable r = task.get();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
-            }
-            if (camelContext.hasService(ContextReloadStrategy.class) == null) {
-                // refresh is enabled then we need to automatically enable context-reload as well
-                ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
-                camelContext.addService(reloader);
-            }
-            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
-            scheduler.schedulePeriodTask(r, period);
-        }
-    }
-
     protected void autoconfigure(CamelContext camelContext) throws Exception {
+        StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
+
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
 
         // configure the profile with pre-configured settings
+        StartupStep step = recorder.beginStep(BaseMainSupport.class, "configureMain", "Profile Configure");
         ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
+        recorder.endStep(step);
 
         // need to eager allow to auto-configure properties component
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationFailFast", "Auto Configure");
             autoConfigurationFailFast(camelContext, autoConfiguredProperties);
+            recorder.endStep(step);
+            step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationPropertiesComponent", "Auto Configure");
             autoConfigurationPropertiesComponent(camelContext, autoConfiguredProperties);
-
+            recorder.endStep(step);
+            step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationSingleOption", "Auto Configure");
             autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesIncludePattern",
                     value -> {
                         mainConfigurationProperties.setRoutesIncludePattern(value);
                         return null;
                     });
+            recorder.endStep(step);
+
             if (mainConfigurationProperties.isModeline()) {
                 camelContext.setModeline(true);
             }
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
             // also load other non-route related configuration (e.g., beans)
+            step = recorder.beginStep(BaseMainSupport.class, "modelineRoutes", "Auto Configure");
             modelineRoutes(camelContext);
+            recorder.endStep(step);
 
+            step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationMainConfiguration", "Auto Configure");
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
+            recorder.endStep(step);
         }
 
         // configure from main configuration properties
+        step = recorder.beginStep(BaseMainSupport.class, "doConfigureCamelContextFromMainConfiguration", "Auto Configure");
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
+        recorder.endStep(step);
 
         // try to load custom beans/configuration classes via package scanning
+        step = recorder.beginStep(BaseMainSupport.class, "configurePackageScan", "Auto Configure");
         configurePackageScan(camelContext);
+        recorder.endStep(step);
+
+        step = recorder.beginStep(BaseMainSupport.class, "loadCustomBeans", "Auto Configure");
         loadCustomBeans(camelContext);
+        recorder.endStep(step);
+
+        step = recorder.beginStep(BaseMainSupport.class, "loadConfigurations", "Auto Configure");
         loadConfigurations(camelContext);
+        recorder.endStep(step);
 
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationFromProperties", "Auto Configure");
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
+            recorder.endStep(step);
+
+            step = recorder.beginStep(BaseMainSupport.class, "autowireWildcardProperties", "Auto Configure");
             autowireWildcardProperties(camelContext);
+            recorder.endStep(step);
+
             // register properties reloader so we can auto-update if updated
             camelContext.addService(new MainPropertiesReload(this));
         }
@@ -695,13 +703,11 @@ public abstract class BaseMainSupport extends BaseService {
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
         // then configure and add the routes
         RoutesConfigurer configurer = doCommonRouteConfiguration(camelContext);
-
         configurer.configureModeline(camelContext);
     }
 
     protected void configureRoutes(CamelContext camelContext) throws Exception {
         RoutesConfigurer configurer = doCommonRouteConfiguration(camelContext);
-
         configurer.configureRoutes(camelContext);
     }
 
@@ -761,18 +767,24 @@ public abstract class BaseMainSupport extends BaseService {
         // ensure camel context is build
         camelContext.build();
 
-        for (MainListener listener : listeners) {
-            listener.beforeInitialize(this);
-        }
-
-        // allow doing custom configuration before camel is started
-        for (MainListener listener : listeners) {
-            listener.beforeConfigure(this);
-        }
-
         // we want to capture startup events for import tasks during main bootstrap
         StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
         StartupStep step;
+
+        if (!listeners.isEmpty()) {
+            step = recorder.beginStep(BaseMainSupport.class, "beforeInitialize", "MainListener");
+            for (MainListener listener : listeners) {
+                listener.beforeInitialize(this);
+            }
+            recorder.endStep(step);
+
+            // allow doing custom configuration before camel is started
+            step = recorder.beginStep(BaseMainSupport.class, "beforeConfigure", "MainListener");
+            for (MainListener listener : listeners) {
+                listener.beforeConfigure(this);
+            }
+            recorder.endStep(step);
+        }
 
         if (standalone) {
             step = recorder.beginStep(BaseMainSupport.class, "autoconfigure", "Auto Configure");
@@ -796,8 +808,12 @@ public abstract class BaseMainSupport extends BaseService {
         postProcessCamelRegistry(camelContext, mainConfigurationProperties);
 
         // allow doing custom configuration before camel is started
-        for (MainListener listener : listeners) {
-            listener.afterConfigure(this);
+        if (!listeners.isEmpty()) {
+            step = recorder.beginStep(BaseMainSupport.class, "afterConfigure", "MainListener");
+            for (MainListener listener : listeners) {
+                listener.afterConfigure(this);
+            }
+            recorder.endStep(step);
         }
 
         // we want to log the property placeholder summary after routes has been started,

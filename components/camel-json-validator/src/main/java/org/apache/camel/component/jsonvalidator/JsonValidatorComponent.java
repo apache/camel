@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 
 /**
@@ -30,25 +31,44 @@ import org.apache.camel.support.DefaultComponent;
 @Component("json-validator")
 public class JsonValidatorComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced", autowired = true)
-    private ObjectMapper objectMapper;
+    @Metadata(defaultValue = "true")
+    private boolean useDefaultObjectMapper = true;
+    @Metadata(label = "advanced")
+    private String objectMapper;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JsonValidatorEndpoint endpoint = new JsonValidatorEndpoint(uri, this, remaining);
-        endpoint.setObjectMapper(objectMapper);
+        if (objectMapper != null) {
+            ObjectMapper om = CamelContextHelper.lookup(getCamelContext(), objectMapper, ObjectMapper.class);
+            endpoint.setObjectMapper(om);
+        } else if (useDefaultObjectMapper) {
+            ObjectMapper om = CamelContextHelper.findSingleByType(getCamelContext(), ObjectMapper.class);
+            endpoint.setObjectMapper(om);
+        }
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
-    /**
-     * To use a custom {@link ObjectMapper}
-     */
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public boolean isUseDefaultObjectMapper() {
+        return useDefaultObjectMapper;
     }
 
-    public ObjectMapper getObjectMapper() {
+    /**
+     * Whether to lookup and use default Jackson ObjectMapper from the registry.
+     */
+    public void setUseDefaultObjectMapper(boolean useDefaultObjectMapper) {
+        this.useDefaultObjectMapper = useDefaultObjectMapper;
+    }
+
+    public String getObjectMapper() {
         return objectMapper;
+    }
+
+    /**
+     * Lookup and use the existing ObjectMapper with the given id.
+     */
+    public void setObjectMapper(String objectMapper) {
+        this.objectMapper = objectMapper;
     }
 }

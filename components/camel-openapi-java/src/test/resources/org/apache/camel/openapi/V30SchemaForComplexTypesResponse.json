@@ -9,7 +9,6 @@
         "summary" : "Demo complex response type",
         "operationId" : "verb",
         "requestBody" : {
-          "description" : "",
           "content" : {
             "application/json" : {
               "schema" : {

@@ -56,7 +56,7 @@ public class FileConsumerIdempotentKeyChangedIssueTest extends ContextTestSuppor
                         fileUri("?noop=true&readLock=changed&initialDelay=0&delay=10&readLockCheckInterval=100"
                                 + "&idempotentKey=${file:onlyname}-${file:size}-${date:file:yyyyMMddHHmmss}"));
 
-                from(endpoint).noAutoStartup().convertBodyTo(String.class).to("log:file").to("mock:file");
+                from(endpoint).autoStartup(false).convertBodyTo(String.class).to("log:file").to("mock:file");
             }
         };
     }

@@ -50,7 +50,7 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&readLock=markerFile&readLockDeleteOrphanLockFiles=false&recursive=true"))
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo").autoStartup(false)
                         .convertBodyTo(String.class).to("log:result", "mock:result");
             }
         };

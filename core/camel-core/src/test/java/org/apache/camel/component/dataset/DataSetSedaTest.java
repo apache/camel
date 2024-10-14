@@ -52,7 +52,7 @@ public class DataSetSedaTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).to("seda:test").noAutoStartup();
+                from(uri).to("seda:test").autoStartup(false);
 
                 from("seda:test").to(uri);
             }

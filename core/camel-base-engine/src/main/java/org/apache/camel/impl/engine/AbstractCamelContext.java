@@ -2739,8 +2739,22 @@ public abstract class AbstractCamelContext extends BaseService
             String start = TimeUtils.printDuration(taken, true);
             String init = TimeUtils.printDuration(initTaken, true);
             String built = TimeUtils.printDuration(buildTaken, true);
-            LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{})", getVersion(),
+            String boot = null;
+            Clock bc = getClock().get(ContextEvents.BOOT);
+            if (bc != null) {
+                // calculate boot time as time before camel is starting
+                long delta = bc.elapsed() - max;
+                if (delta > 0) {
+                    boot = TimeUtils.printDuration(delta, true);
+                }
+            }
+            String msg = String.format("Apache Camel %s (%s) started in %s (build:%s init:%s start:%s", getVersion(),
                     camelContextExtension.getName(), total, built, init, start);
+            if (boot != null) {
+                msg += " boot:" + boot;
+            }
+            msg += ")";
+            LOG.info(msg);
         }
     }
 
