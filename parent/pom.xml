@@ -124,7 +124,7 @@
         <consul-client-version>1.4.1</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <couchbase-client-version>3.7.4</couchbase-client-version>
-        <curator-version>5.7.0</curator-version>
+        <curator-version>5.7.1</curator-version>
         <cxf-version>4.0.5</cxf-version>
         <cxf-codegen-plugin-version>4.0.5</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
