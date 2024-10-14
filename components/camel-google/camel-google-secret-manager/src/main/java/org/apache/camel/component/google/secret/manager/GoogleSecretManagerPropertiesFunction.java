@@ -86,6 +86,15 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private String projectId;
     private final Set<String> secrets = new HashSet<>();
 
+    public GoogleSecretManagerPropertiesFunction() {
+        super();
+    }
+
+    public GoogleSecretManagerPropertiesFunction(SecretManagerServiceClient client) {
+        super();
+        this.client = client;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
