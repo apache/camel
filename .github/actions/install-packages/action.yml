@@ -22,5 +22,5 @@ runs:
   steps:
     - run: sudo apt-get update
       shell: bash
-    - run: sudo apt-get install -qqy --no-install-recommends libtinfo5
+    - run: sudo apt-get install -qqy --no-install-recommends libtinfo6
       shell: bash
