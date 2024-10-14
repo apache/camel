@@ -290,12 +290,8 @@ public final class TraitHelper {
                 registryPrefix = imageRegistry + "/";
             }
 
-            imageGroup = Optional.ofNullable(imageGroup).orElse("");
-            if (!imageGroup.isEmpty()) {
-                containerTrait.setImage("%s%s/%s:%s".formatted(registryPrefix, imageGroup, imageName, version));
-            } else {
-                containerTrait.setImage("%s%s:%s".formatted(registryPrefix, imageName, version));
-            }
+            var resolvedImageName = getResolvedImageName(imageGroup, imageName, version);
+            containerTrait.setImage("%s%s".formatted(registryPrefix, resolvedImageName));
 
             // Plain export command always exposes a health endpoint on 8080.
             // Skip this, when we decide that the health endpoint can be disabled.
@@ -305,6 +301,15 @@ public final class TraitHelper {
             }
 
             traitsSpec.setContainer(containerTrait);
+        }
+    }
+
+    public static String getResolvedImageName(String imageGroup, String imageName, String version) {
+        imageGroup = Optional.ofNullable(imageGroup).orElse("");
+        if (!imageGroup.isEmpty()) {
+            return "%s/%s:%s".formatted(imageGroup, imageName, version);
+        } else {
+            return "%s:%s".formatted(imageName, version);
         }
     }
 
