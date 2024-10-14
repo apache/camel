@@ -275,7 +275,8 @@ public class KubernetesExport extends Export {
 
         Container container = traitsSpec.getContainer();
 
-        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, container.getImage()));
+        var resolvedImageName = TraitHelper.getResolvedImageName(resolvedImageGroup, projectName, getVersion());
+        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, resolvedImageName));
         buildProperties.add("%s.kubernetes.ports.%s.container-port=%d".formatted(propPrefix,
                 Optional.ofNullable(container.getPortName()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
                 Optional.ofNullable(container.getPort()).map(Long::intValue).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT)));
@@ -356,7 +357,7 @@ public class KubernetesExport extends Export {
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 
         // Quarkus: dump joined fragments to kubernetes.yml
-        if (runtime == RuntimeType.quarkus) {
+        if (runtime == RuntimeType.quarkus && !ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
             var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
             safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)),
                     KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes"));
