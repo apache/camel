@@ -26,25 +26,26 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 
 public class S3HeadBucketIT extends Aws2S3Base {
 
     @EndpointInject
     private ProducerTemplate template;
 
-    @EndpointInject("mock:bucket")
-    private MockEndpoint bucket;
+    @EndpointInject("mock:exists")
+    private MockEndpoint exists;
 
-    @EndpointInject("mock:noBucket")
-    private MockEndpoint noBucket;
+    @EndpointInject("mock:result")
+    private MockEndpoint result;
 
     @Test
     public void sendInHeadBucket() throws Exception {
-        bucket.expectedMessageCount(0);
-        noBucket.expectedMessageCount(1);
+        exists.expectedMessageCount(0);
+        result.expectedBodiesReceived("Hello World");
+        result.expectedHeaderReceived(AWS2S3Constants.BUCKET_EXISTS, false);
 
         Exchange res = template.send("direct:headBucket", exchange -> {
+            exchange.getIn().setBody("Hello World");
             exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.headBucket);
             exchange.getIn().setHeader(AWS2S3Constants.BUCKET_NAME, "doesnotexist" + UUID.randomUUID().toString());
         });
@@ -60,14 +61,14 @@ public class S3HeadBucketIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint = "aws2-s3://test-ss3-s3";
+                String awsEndpoint = "aws2-s3://test-ss3-s3?ignoreBody=true";
 
                 from("direct:headBucket")
-                    .doTry()
-                        .to(awsEndpoint).log("${body}").to("mock:bucket")
-                    .doCatch(NoSuchBucketException.class)
-                        .to("mock:noBucket")
-                    .end();
+                    .to(awsEndpoint)
+                    .filter(header(AWS2S3Constants.BUCKET_EXISTS))
+                        .to("mock:exists")
+                    .end()
+                    .to("mock:result");
             }
         };
     }
