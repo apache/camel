@@ -38,7 +38,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -54,9 +53,6 @@ import picocli.CommandLine.Command;
 @Command(name = "export", description = "Export as Maven/Gradle project that contains a Kubernetes deployment manifest",
          sortOptions = false)
 public class KubernetesExport extends Export {
-
-    @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
-    protected String traitProfile;
 
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     protected String serviceAccount;
@@ -114,7 +110,7 @@ public class KubernetesExport extends Export {
     protected String imageBuilder;
 
     @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
     protected String clusterType;
 
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
@@ -241,8 +237,8 @@ public class KubernetesExport extends Export {
                 .filter(parts -> parts.length == 2)
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
 
-        if (traitProfile != null) {
-            context.setProfile(TraitProfile.valueOf(traitProfile.toUpperCase()));
+        if (clusterType != null) {
+            context.setClusterType(ClusterType.valueOf(clusterType.toUpperCase()));
         }
 
         if (serviceAccount != null) {
@@ -357,7 +353,7 @@ public class KubernetesExport extends Export {
             printer().println("Building Kubernetes manifest ...");
         }
 
-        new TraitCatalog().apply(traitsSpec, context, traitProfile);
+        new TraitCatalog().apply(traitsSpec, context, clusterType);
 
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 

@@ -60,11 +60,12 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertFalse(hasService(rt));
-        Assertions.assertTrue(hasKnativeService(rt));
+        Assertions.assertFalse(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertTrue(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        io.fabric8.knative.serving.v1.Service service = getResource(rt, io.fabric8.knative.serving.v1.Service.class)
-                .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
+        io.fabric8.knative.serving.v1.Service service
+                = getResource(rt, ClusterType.KUBERNETES, io.fabric8.knative.serving.v1.Service.class)
+                        .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
 
         Map<String, String> labelsA = service.getMetadata().getLabels();
         var labelsB = service.getSpec().getTemplate().getMetadata().getLabels();
@@ -96,10 +97,10 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        Trigger trigger = getResource(rt, Trigger.class)
+        Trigger trigger = getResource(rt, ClusterType.KUBERNETES, Trigger.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative trigger in Kubernetes manifest"));
 
         Assertions.assertEquals("my-broker-knative-event-source-camel-event", trigger.getMetadata().getName());
@@ -138,10 +139,10 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        Subscription subscription = getResource(rt, Subscription.class)
+        Subscription subscription = getResource(rt, ClusterType.KUBERNETES, Subscription.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative subscription in Kubernetes manifest"));
 
         Assertions.assertEquals("my-channel-knative-channel-source", subscription.getMetadata().getName());
@@ -177,10 +178,10 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(rt, ClusterType.KUBERNETES, SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-event-sink", sinkBinding.getMetadata().getName());
@@ -217,10 +218,10 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(rt, ClusterType.KUBERNETES, SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-channel-sink", sinkBinding.getMetadata().getName());
@@ -257,10 +258,10 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.doCall();
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        SinkBinding sinkBinding = getResource(rt, SinkBinding.class)
+        SinkBinding sinkBinding = getResource(rt, ClusterType.KUBERNETES, SinkBinding.class)
                 .orElseThrow(() -> new RuntimeCamelException("Missing Knative sinkBinding in Kubernetes manifest"));
 
         Assertions.assertEquals("knative-endpoint-sink", sinkBinding.getMetadata().getName());

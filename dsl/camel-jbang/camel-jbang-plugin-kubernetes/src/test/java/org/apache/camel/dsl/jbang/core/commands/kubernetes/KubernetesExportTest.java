@@ -51,6 +51,12 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
                 Arguments.of(RuntimeType.quarkus));
     }
 
+    private static Stream<Arguments> runtimeProviderOpenshift() {
+        return Stream.of(
+                Arguments.of(RuntimeType.main),
+                Arguments.of(RuntimeType.springBoot));
+    }
+
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProject(RuntimeType rt) throws Exception {
@@ -73,7 +79,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         var labels = deployment.getMetadata().getLabels();
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
@@ -84,8 +90,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
     }
 
     @ParameterizedTest
@@ -98,7 +104,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         var labels = deployment.getMetadata().getLabels();
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
@@ -109,8 +115,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
         Properties applicationProperties = getApplicationProperties(workingDir);
 
@@ -127,10 +133,10 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
@@ -139,7 +145,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Service service = getService(rt);
+        Service service = getService(rt, ClusterType.KUBERNETES);
         List<ServicePort> ports = service.getSpec().getPorts();
         Assertions.assertEquals("route", service.getMetadata().getName());
         Assertions.assertEquals("NodePort", service.getSpec().getType());
@@ -158,10 +164,10 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
@@ -170,7 +176,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Service service = getService(rt);
+        Service service = getService(rt, ClusterType.KUBERNETES);
         List<ServicePort> ports = service.getSpec().getPorts();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals("NodePort", service.getSpec().getType());
@@ -184,7 +190,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
     @MethodSource("runtimeProvider")
     public void shouldAddIngressSpec(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
-                "--trait-profile", "kubernetes",
+                "--cluster-type", "kubernetes",
                 "--trait", "ingress.enabled=true",
                 "--trait", "ingress.host=example.com",
                 "--trait", "ingress.path=/something(/|$)(.*)",
@@ -195,11 +201,11 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
-        Assertions.assertFalse(hasRoute(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.KUBERNETES));
+        Assertions.assertFalse(hasRoute(rt, ClusterType.KUBERNETES));
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
@@ -208,7 +214,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Ingress ingress = getIngress(rt);
+        Ingress ingress = getIngress(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route-service", ingress.getMetadata().getName());
         Assertions.assertEquals("example.com", ingress.getSpec().getRules().get(0).getHost());
         Assertions.assertEquals("/something(/|$)(.*)",
@@ -225,12 +231,12 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
     }
 
     @ParameterizedTest
-    @MethodSource("runtimeProvider")
+    @MethodSource("runtimeProviderOpenshift")
     public void shouldAddRouteSpec(RuntimeType rt) throws Exception {
         String certificate = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.pem"));
         String key = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.key"));
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
-                "--trait-profile", "openshift",
+                "--cluster-type", "openshift",
                 "--trait", "route.enabled=true",
                 "--trait", "route.host=example.com",
                 "--trait", "route.tls-termination=edge",
@@ -240,11 +246,11 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt));
-        Assertions.assertFalse(hasKnativeService(rt));
-        Assertions.assertFalse(hasIngress(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.OPENSHIFT));
+        Assertions.assertFalse(hasKnativeService(rt, ClusterType.OPENSHIFT));
+        Assertions.assertFalse(hasIngress(rt, ClusterType.OPENSHIFT));
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.OPENSHIFT);
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
@@ -253,7 +259,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
 
-        Route route = getRoute(rt);
+        Route route = getRoute(rt, ClusterType.OPENSHIFT);
         Assertions.assertEquals("route-service", route.getMetadata().getName());
         Assertions.assertEquals("example.com", route.getSpec().getHost());
         Assertions.assertEquals("edge", route.getSpec().getTls().getTermination());
@@ -280,9 +286,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(hasService(rt));
+        Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("camel-test/route-service:1.0.0",
@@ -307,7 +313,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getLimits().get("memory")
                         .toString());
 
-        Service service = getService(rt);
+        Service service = getService(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals(1, service.getSpec().getPorts().size());
         Assertions.assertEquals("custom-port", service.getSpec().getPorts().get(0).getName());
@@ -323,7 +329,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2,
@@ -353,7 +359,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
@@ -375,7 +381,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getMetadata().getAnnotations().size());
         Assertions.assertEquals("bar", deployment.getMetadata().getAnnotations().get("foo"));
@@ -389,7 +395,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         var labels = deployment.getMetadata().getLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(3, labels.size());
@@ -406,7 +412,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(2,
@@ -433,7 +439,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
@@ -455,7 +461,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals(1,
@@ -476,39 +482,39 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Deployment deployment = getDeployment(rt);
+        Deployment deployment = getDeployment(rt, ClusterType.KUBERNETES);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
         Assertions.assertEquals("quay.io/camel/demo-app:1.0",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
     }
 
-    private Deployment getDeployment(RuntimeType rt) throws IOException {
-        return getResource(rt, Deployment.class)
+    private Deployment getDeployment(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Deployment.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
     }
 
-    private Service getService(RuntimeType rt) throws IOException {
-        return getResource(rt, Service.class)
+    private Service getService(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Service.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find service for: %s".formatted(rt.runtime())));
     }
 
-    private Ingress getIngress(RuntimeType rt) throws IOException {
-        return getResource(rt, Ingress.class)
+    private Ingress getIngress(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Ingress.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find ingress for: %s".formatted(rt.runtime())));
     }
 
-    private boolean hasIngress(RuntimeType rt) throws IOException {
-        return getResource(rt, Ingress.class).isPresent();
+    private boolean hasIngress(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Ingress.class).isPresent();
     }
 
-    private Route getRoute(RuntimeType rt) throws IOException {
-        return getResource(rt, Route.class)
+    private Route getRoute(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Route.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find route for: %s".formatted(rt.runtime())));
     }
 
-    private boolean hasRoute(RuntimeType rt) throws IOException {
-        return getResource(rt, Route.class).isPresent();
+    private boolean hasRoute(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Route.class).isPresent();
     }
 
     private Model readMavenModel() throws Exception {

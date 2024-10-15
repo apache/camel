@@ -23,6 +23,7 @@ import io.fabric8.kubernetes.api.model.networking.v1.HTTPIngressPathBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressRule;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressRuleBuilder;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Ingress;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
@@ -100,7 +101,7 @@ public class IngressTrait extends BaseTrait {
     }
 
     @Override
-    public boolean accept(TraitProfile profile) {
-        return TraitProfile.KUBERNETES == profile;
+    public boolean accept(ClusterType clusterType) {
+        return ClusterType.OPENSHIFT != clusterType;
     }
 }

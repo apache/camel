@@ -68,19 +68,22 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
         return command;
     }
 
-    protected boolean hasService(RuntimeType rt) throws IOException {
-        return getResource(rt, Service.class).isPresent();
+    protected boolean hasService(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, Service.class).isPresent();
     }
 
-    protected boolean hasKnativeService(RuntimeType rt) throws IOException {
-        return getResource(rt, io.fabric8.knative.serving.v1.Service.class).isPresent();
+    protected boolean hasKnativeService(RuntimeType rt, ClusterType ct) throws IOException {
+        return getResource(rt, ct, io.fabric8.knative.serving.v1.Service.class).isPresent();
     }
 
-    protected <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
+    protected <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, ClusterType ct, Class<T> type)
+            throws IOException {
         if (rt == RuntimeType.quarkus) {
             try (FileInputStream fis
                     = new FileInputStream(
-                            KubernetesHelper.getKubernetesManifest(ClusterType.KUBERNETES.name(),
+                            KubernetesHelper.getKubernetesManifest(
+                                    ClusterType.OPENSHIFT.equals(ct)
+                                            ? ClusterType.OPENSHIFT.name() : ClusterType.KUBERNETES.name(),
                                     new File(workingDir, "/src/main/kubernetes")))) {
                 List<HasMetadata> resources = kubernetesClient.load(fis).items();
                 return resources.stream()

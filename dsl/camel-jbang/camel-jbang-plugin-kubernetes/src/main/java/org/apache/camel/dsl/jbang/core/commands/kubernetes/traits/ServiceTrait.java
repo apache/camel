@@ -85,8 +85,4 @@ public class ServiceTrait extends BaseTrait {
         context.add(service);
     }
 
-    @Override
-    public boolean accept(TraitProfile profile) {
-        return TraitProfile.KNATIVE != profile;
-    }
 }
