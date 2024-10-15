@@ -500,6 +500,23 @@ public interface JettyComponentBuilderFactory {
         }
     
         /**
+         * To use a custom SecureRequestCustomizer. The option is a
+         * org.eclipse.jetty.server.SecureRequestCustomizer type.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.jetty.server.SecureRequestCustomizer&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param secureRequestCustomizer the value to set
+         * @return the dsl builder
+         */
+        default JettyComponentBuilder secureRequestCustomizer(org.eclipse.jetty.server.SecureRequestCustomizer secureRequestCustomizer) {
+            doSetProperty("secureRequestCustomizer", secureRequestCustomizer);
+            return this;
+        }
+    
+        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -735,6 +752,7 @@ public interface JettyComponentBuilderFactory {
             case "httpConfiguration": ((JettyHttpComponent12) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
             case "mbContainer": ((JettyHttpComponent12) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
             case "requestLog": ((JettyHttpComponent12) component).setRequestLog((org.eclipse.jetty.server.RequestLog) value); return true;
+            case "secureRequestCustomizer": ((JettyHttpComponent12) component).setSecureRequestCustomizer((org.eclipse.jetty.server.SecureRequestCustomizer) value); return true;
             case "headerFilterStrategy": ((JettyHttpComponent12) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyHost": ((JettyHttpComponent12) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": ((JettyHttpComponent12) component).setProxyPort((java.lang.Integer) value); return true;
