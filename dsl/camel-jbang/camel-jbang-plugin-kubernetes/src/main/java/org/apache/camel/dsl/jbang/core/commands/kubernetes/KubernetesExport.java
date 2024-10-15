@@ -332,6 +332,11 @@ public class KubernetesExport extends Export {
 
         // SpringBoot Runtime specific
         if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "openshift-maven-plugin"));
+            } else {
+                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "kubernetes-maven-plugin"));
+            }
             File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
             var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
             buildProperties.add("%s.jkube.version=%s".formatted(propPrefix, jkubeVersion));
