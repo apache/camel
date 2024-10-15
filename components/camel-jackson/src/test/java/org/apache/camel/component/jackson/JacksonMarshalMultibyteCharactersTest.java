@@ -29,6 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class JacksonMarshalMultibyteCharactersTest extends CamelTestSupport {
 
+    /**
+     * Tests marshalling 4-byte characters by Jackson. Jackson, by default, marshals 4-byte characters as a pair of
+     * UTF-16 escapes - a high and low surrogate, escaped. Since Jackson 2.18, there is an option to combine the
+     * surrogates into one character.
+     * <p>
+     * This test verifies the latter behavior since it's expected that Camel users working with languages such as
+     * Japanese or Chinese would prefer having the characters combined.
+     */
     @Test
     public void testMarshal4ByteCharacter() throws Exception {
         Map<String, Object> in = new HashMap<>();
@@ -42,7 +50,7 @@ public class JacksonMarshalMultibyteCharactersTest extends CamelTestSupport {
         Object marshalled = template.requestBody("direct:in", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
 
-        // prior to fixing CAMEL-21199, this was the result returned by Jackson
+        // just for clarity we test that escaped surrogate pair is no longer returned
         assertNotEquals("{\"name\":\"\u30b7\u30b9\u30c6\u30e0\\uD867\\uDE3D\"}", marshalledAsString);
 
         assertEquals("{\"name\":\"\u30b7\u30b9\u30c6\u30e0\uD867\uDE3D\"}", marshalledAsString);
@@ -58,8 +66,7 @@ public class JacksonMarshalMultibyteCharactersTest extends CamelTestSupport {
             @Override
             public void configure() {
                 JacksonDataFormat format = new JacksonDataFormat();
-                format.setUseWriter(true);
-
+                format.setCombineUnicodeSurrogates(true);
                 from("direct:in").marshal(format).log("marshal: ${body}");
                 from("direct:back").unmarshal(format).log("unmarshal: ${body}").to("mock:reverse");
             }
