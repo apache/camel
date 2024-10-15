@@ -96,6 +96,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.SecureRandomParameters;
+import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
@@ -1716,7 +1717,12 @@ public abstract class BaseMainSupport extends BaseService {
             SSLConfigurationProperties sslConfig, KeyManagersParameters kmp) {
 
         TrustManagersParameters tmp = null;
-        if (sslConfig.getTrustStore() != null) {
+        if (sslConfig.isTrustAllCertificates()) {
+            tmp = new TrustManagersParameters();
+            tmp.setCamelContext(camelContext);
+            tmp.setTrustManager(TrustAllTrustManager.INSTANCE);
+            LOG.warn("Application is vulnerable: Trusting all certificates!");
+        } else if (sslConfig.getTrustStore() != null) {
             KeyStoreParameters tsp = new KeyStoreParameters();
             String store = sslConfig.getTrustStore();
             if (store != null && store.startsWith("#bean:")) {

@@ -39,6 +39,7 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("SecureRandomProvider", java.lang.String.class);
         map.put("SecureSocketProtocol", java.lang.String.class);
         map.put("SessionTimeout", int.class);
+        map.put("TrustAllCertificates", boolean.class);
         map.put("TrustStore", java.lang.String.class);
         map.put("TrustStorePassword", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -81,6 +82,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": target.setSecureSocketProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.setSessionTimeout(property(camelContext, int.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "truststore":
         case "trustStore": target.setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
         case "truststorepassword":
@@ -133,6 +136,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return int.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
         case "truststore":
         case "trustStore": return java.lang.String.class;
         case "truststorepassword":
@@ -177,6 +182,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return target.getSecureSocketProtocol();
         case "sessiontimeout":
         case "sessionTimeout": return target.getSessionTimeout();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.isTrustAllCertificates();
         case "truststore":
         case "trustStore": return target.getTrustStore();
         case "truststorepassword":
