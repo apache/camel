@@ -709,10 +709,17 @@ public class AWS2S3Producer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Head Bucket operation requires to specify a bucket name via Header");
         }
-        HeadBucketResponse headBucketResponse = s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
-
         Message message = getMessageForResponse(exchange);
-        message.setBody(headBucketResponse);
+        boolean exists = true;
+        try {
+            HeadBucketResponse headBucketResponse = s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
+            if (!getConfiguration().isIgnoreBody()) {
+                message.setBody(headBucketResponse);
+            }
+        } catch (NoSuchBucketException e) {
+            exists = false;
+        }
+        message.setHeader(AWS2S3Constants.BUCKET_EXISTS, exists);
     }
 
     private void headObject(S3Client s3Client, Exchange exchange) {
