@@ -84,7 +84,8 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
             ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
             ServerConnector result = new org.eclipse.jetty.server.ServerConnector(server);
             if (sslcf != null) {
-                httpConfig.addCustomizer(secureRequestCustomizer != null ? secureRequestCustomizer : new org.eclipse.jetty.server.SecureRequestCustomizer());
+                httpConfig.addCustomizer(secureRequestCustomizer != null
+                        ? secureRequestCustomizer : new org.eclipse.jetty.server.SecureRequestCustomizer());
                 SslConnectionFactory scf = new org.eclipse.jetty.server.SslConnectionFactory(
                         sslcf,
                         httpFactory.getProtocol());
