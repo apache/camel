@@ -21,18 +21,14 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 /**
- * This strategy is used for accepting all headers.
- * The intention is for use with development and troubleshooting where you want Camel to keep all headers
- * when sending and receiving using components that uses {@link HeaderFilterStrategy}.
+ * This strategy is used for accepting all headers. The intention is for use with development and troubleshooting where
+ * you want Camel to keep all headers when sending and receiving using components that uses
+ * {@link HeaderFilterStrategy}.
  */
 @Metadata(label = "bean",
-          description = "This strategy is used for accepting all headers.The intention is for use with development and troubleshooting where you want Camel to keep all headers\n" +
+          description = "This strategy is used for accepting all headers.The intention is for use with development and troubleshooting where you want Camel to keep all headers\n"
+                        +
                         " * when sending and receiving using components that uses HeaderFilterStrategy",
           annotations = { "interfaceName=org.apache.camel.spi.HeaderFilterStrategy" })
 @Configurer(metadataOnly = true)
