@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "AcceptAllHeaderFilterStrategy",
+    "javaType": "org.apache.camel.support.AcceptAllHeaderFilterStrategy",
+    "interfaceType": "org.apache.camel.spi.HeaderFilterStrategy",
+    "title": "Accept All Header Filter Strategy",
+    "description": "This strategy is used for accepting all headers.The intention is for use with development and troubleshooting where you want Camel to keep all headers\n * when sending and receiving using components that uses HeaderFilterStrategy",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.9.0-SNAPSHOT"
+  }
+}
+
