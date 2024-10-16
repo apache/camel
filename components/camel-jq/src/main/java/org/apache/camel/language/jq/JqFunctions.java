@@ -62,8 +62,6 @@ public final class JqFunctions {
                         Versions.JQ_1_6,
                         scope);
 
-        Map<String, Function> fromRegistry = camelContext.getRegistry().findByTypeWithName(Function.class);
-
         if (fromServiceLoader != null) {
             LOGGER.debug("Loading {} jq functions from ServiceLoader", fromServiceLoader.size());
             fromServiceLoader.forEach(scope::addFunction);
@@ -73,7 +71,10 @@ public final class JqFunctions {
             LOGGER.debug("Loading {} jq functions from Json JQ", fromJq.size());
             fromJq.forEach(scope::addFunction);
         }
+    }
 
+    public static void loadFromRegistry(CamelContext camelContext, Scope scope) {
+        Map<String, Function> fromRegistry = camelContext.getRegistry().findByTypeWithName(Function.class);
         if (fromRegistry != null) {
             LOGGER.debug("Loading {} jq functions from Registry", fromRegistry.size());
             fromRegistry.forEach(scope::addFunction);
