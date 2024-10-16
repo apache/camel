@@ -90,9 +90,10 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
         super();
     }
 
-    public GoogleSecretManagerPropertiesFunction(SecretManagerServiceClient client) {
+    public GoogleSecretManagerPropertiesFunction(SecretManagerServiceClient client, String projectId) {
         super();
         this.client = client;
+        this.projectId = projectId;
     }
 
     @Override
