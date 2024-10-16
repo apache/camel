@@ -275,7 +275,8 @@ public class KubernetesExport extends Export {
 
         Container container = traitsSpec.getContainer();
 
-        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, container.getImage()));
+        var resolvedImageName = TraitHelper.getResolvedImageName(resolvedImageGroup, projectName, getVersion());
+        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, resolvedImageName));
         buildProperties.add("%s.kubernetes.ports.%s.container-port=%d".formatted(propPrefix,
                 Optional.ofNullable(container.getPortName()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
                 Optional.ofNullable(container.getPort()).map(Long::intValue).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT)));
@@ -331,6 +332,11 @@ public class KubernetesExport extends Export {
 
         // SpringBoot Runtime specific
         if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "openshift-maven-plugin"));
+            } else {
+                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "kubernetes-maven-plugin"));
+            }
             File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
             var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
             buildProperties.add("%s.jkube.version=%s".formatted(propPrefix, jkubeVersion));
@@ -356,7 +362,7 @@ public class KubernetesExport extends Export {
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 
         // Quarkus: dump joined fragments to kubernetes.yml
-        if (runtime == RuntimeType.quarkus) {
+        if (runtime == RuntimeType.quarkus && !ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
             var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
             safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)),
                     KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes"));

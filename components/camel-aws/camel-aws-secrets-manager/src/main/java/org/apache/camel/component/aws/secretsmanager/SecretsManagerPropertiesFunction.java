@@ -106,6 +106,15 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
 
     private String profileName;
 
+    public SecretsManagerPropertiesFunction() {
+        super();
+    }
+
+    public SecretsManagerPropertiesFunction(SecretsManagerClient client) {
+        super();
+        this.client = client;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

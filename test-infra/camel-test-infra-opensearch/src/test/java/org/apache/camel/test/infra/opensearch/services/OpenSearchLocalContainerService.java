@@ -44,7 +44,7 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
     }
 
     private static String getPropertyKeyForContainerImage() {
-        if (SystemUtils.OS_ARCH == "ppc64le") {
+        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
             return OpenSearchProperties.OPEN_SEARCH_CONTAINER_PPC64LE;
         } else {
             return OpenSearchProperties.OPEN_SEARCH_CONTAINER;

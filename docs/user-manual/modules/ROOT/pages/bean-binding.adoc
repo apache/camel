@@ -33,8 +33,9 @@ can use the same mechanism to integrate Camel into any other
 messaging/remoting frameworks.
 * the type of the body is used to find a matching method; an
 error is thrown if a single method cannot be chosen unambiguously.
-* you can also use `Exchange` as the parameter itself, but then the return
-type must be void.
+* you can also use `Exchange` as the parameter itself
+* the return type cannot be `Exchange`. However, you can use `Exchange` as input parameter, and let
+the method be `void`, or return some other Object type (cannot be `Exchange`).
 * if the bean class is private (or package-private), interface methods
 will be preferred since Camel can't invoke class methods on such beans
 

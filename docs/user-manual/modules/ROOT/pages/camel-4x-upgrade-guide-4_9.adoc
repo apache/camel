@@ -85,6 +85,16 @@ to this
 
 You could find more details on CAMEL-21179 issue
 
+=== camel-aws
+
+The `camel-aws2-s3` when using `headBucket` operation will now store the result
+in a header named `CamelAwsS3BucketExists` whether the bucket exists or not.
+
+Previously an `software.amazon.awssdk.services.s3.model.NoSuchBucketException` was thrown,
+however this would require to use error handling to just check whether the bucket existed.
+Returning a boolean makes it easier in Camel routes to decide what to do.
+You may also set the option `ignoreBody=true` to not change the message body.
+
 === camel-test
 
 The `CamelTestSupport` class was modified so that the JUnit 5 extension code that was part of the class itself,
