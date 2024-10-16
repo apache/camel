@@ -115,6 +115,7 @@
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
+        <maven.javadoc.release>${jdk.version}</maven.javadoc.release>
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
@@ -634,7 +635,7 @@
                                     <goal>jar</goal>
                                 </goals>
                                 <configuration>
-                                    <source>11</source>
+                                    <release>${maven.javadoc.release}</release>
                                     <doclint>none</doclint>
                                 </configuration>
                             </execution>
@@ -708,7 +709,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <source>8</source>
+                            <release>${maven.javadoc.release}</release>
                             <additionalOptions>${javadoc.opts}</additionalOptions>
                             <!-- disable Javadoc linting for buildung the release with Java 11 -->
                             <doclint>none</doclint>
