@@ -24,7 +24,7 @@ import java.util.Objects;
 
 /**
  * Helper for working with reflection on classes.
- * <p/>
+ *
  * This code is a copy of org.apache.camel.util.ReflectionHelper to avoid cyclic dependencies between artifacts and
  * camel maven plugins. This code is based on org.apache.camel.spring.util.ReflectionUtils class.
  */
@@ -120,7 +120,7 @@ public final class ReflectionHelper {
     /**
      * Perform the given callback operation on all matching methods of the given class and superclasses (or given
      * interface and super-interfaces).
-     * <p/>
+     *
      * <b>Important:</b> This method does not take the {@link java.lang.reflect.Method#isBridge() bridge methods} into
      * account.
      *
