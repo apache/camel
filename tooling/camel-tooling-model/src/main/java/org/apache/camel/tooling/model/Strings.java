@@ -26,7 +26,7 @@ public final class Strings {
     }
 
     /**
-     * Returns true if the given text is null or empty string or has <tt>null</tt> as the value
+     * Returns true if the given text is null or empty string or has <var>null</var> as the value
      */
     public static boolean isNullOrEmpty(String text) {
         return text == null || text.isEmpty() || "null".equals(text);
