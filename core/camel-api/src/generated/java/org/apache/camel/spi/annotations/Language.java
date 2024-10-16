@@ -33,11 +33,11 @@ public @interface Language {
     /**
      * The class that contains all the name of functions that are supported by the language. The name of the functions
      * are defined as {@code String} constants in the functions class.
-     * <p/>
+     *
      * The class to provide can be any class but by convention, we would expect a class whose name is of type
      * <i>xxxConstants</i> where <i>xxx</i> is the name of the corresponding language like for example
      * <i>SimpleConstants</i> for the language <i>camel-simple</i>.
-     * <p/>
+     *
      * The metadata of a given functions are retrieved directly from the annotation {@code @Metadata} added to the
      * {@code String} constant representing its name and defined in the functions class.
      */
