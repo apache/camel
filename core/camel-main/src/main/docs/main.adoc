@@ -250,7 +250,7 @@ The camel.trace supports 14 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 19 options, which are listed below.
+The camel.ssl supports 20 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

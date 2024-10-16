@@ -36,19 +36,19 @@ public class TrustAllTrustManager implements X509TrustManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrustAllTrustManager.class);
 
-    public static TrustAllTrustManager INSTANCE = new TrustAllTrustManager();
+    public static final TrustAllTrustManager INSTANCE = new TrustAllTrustManager();
 
     private TrustAllTrustManager() {
     }
 
     @Override
     public void checkClientTrusted(X509Certificate[] certs, String authType) {
-        LOG.warn("Trusting client certificate: {}", certs);
+        LOG.debug("Trusting client certificate: {}", certs);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] certs, String authType) {
-        LOG.warn("Trusting server certificate: {}", certs);
+        LOG.debug("Trusting server certificate: {}", certs);
     }
 
     @Override
