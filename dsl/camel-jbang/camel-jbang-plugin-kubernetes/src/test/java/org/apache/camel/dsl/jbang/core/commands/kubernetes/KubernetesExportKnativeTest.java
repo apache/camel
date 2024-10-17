@@ -70,15 +70,13 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         var labelsB = service.getSpec().getTemplate().getMetadata().getLabels();
         Map<String, String> annotations = service.getSpec().getTemplate().getMetadata().getAnnotations();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
-        Assertions.assertEquals(4, labelsA.size());
-        Assertions.assertEquals("route-service", labelsA.get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals(3, labelsA.size());
         Assertions.assertEquals("route-service", labelsA.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("true", labelsA.get("bindings.knative.dev/include"));
         Assertions.assertEquals("cluster-local", labelsA.get("networking.knative.dev/visibility"));
         Assertions.assertEquals(1, service.getMetadata().getAnnotations().size());
         Assertions.assertEquals("60", service.getMetadata().getAnnotations().get("serving.knative.dev/rolloutDuration"));
-        Assertions.assertEquals(2, labelsB.size());
-        Assertions.assertEquals("route-service", labelsB.get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals(1, labelsB.size());
         Assertions.assertEquals("route-service", labelsB.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals(5, annotations.size());
         Assertions.assertEquals("cpu", annotations.get("autoscaling.knative.dev/metric"));

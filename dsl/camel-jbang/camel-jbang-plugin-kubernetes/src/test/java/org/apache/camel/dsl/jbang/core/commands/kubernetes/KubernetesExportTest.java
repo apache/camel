@@ -79,11 +79,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals(2, matchLabels.size());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
@@ -107,11 +104,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals(2, matchLabels.size());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
@@ -398,9 +392,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Deployment deployment = getDeployment(rt);
         var labels = deployment.getMetadata().getLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(4, labels.size());
+        Assertions.assertEquals(3, labels.size());
         Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
-        Assertions.assertEquals("route", labels.get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("bar", labels.get("foo"));
     }

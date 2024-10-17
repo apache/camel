@@ -24,10 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
@@ -68,11 +66,9 @@ class IntegrationExportTest extends CamelKBaseTest {
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("routes", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("routes", labels.get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("routes", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("routes", containers.get(0).getName());
-        Assertions.assertEquals(2, matchLabels.size());
-        Assertions.assertEquals("routes", matchLabels.get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals(1, matchLabels.size());
         Assertions.assertEquals("routes", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("camel-test/routes:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals(1, containers.get(0).getEnv().size());
@@ -91,11 +87,11 @@ class IntegrationExportTest extends CamelKBaseTest {
         Deployment deployment = getDeployment(RuntimeType.quarkus);
         Assertions.assertEquals("timer-to-log", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("timer-to-log", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("timer-to-log", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("timer-to-log", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
         Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
         Assertions.assertEquals("timer-to-log",
-                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
+                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("camel-test/timer-to-log:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());

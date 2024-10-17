@@ -56,11 +56,9 @@ class KubernetesCommandTest extends KubernetesBaseTest {
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
         Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(3, matchLabels.size());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals(2, matchLabels.size());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("docker.io/camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
