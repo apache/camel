@@ -149,6 +149,22 @@ The camel.main supports 122 options, which are listed below.
 |===
 
 
+=== Camel Startup Condition configurations
+The camel.startupcondition supports 7 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.startupcondition.custom{zwsp}ClassNames* | A list of custom class names (FQN). Multiple classes can be separated by comma. |  | String
+| *camel.startupcondition.enabled* | To enable using startup conditions | false | boolean
+| *camel.startupcondition.environment{zwsp}VariableExists* | Wait for an environment variable with the given name to exists before continuing |  | String
+| *camel.startupcondition.failOn{zwsp}Timeout* | Whether to fail if the check timed out. The default is to fail and throw an exception causing Camel to not be able to startup. | true | boolean
+| *camel.startupcondition.file{zwsp}Exists* | Wait for a file with the given name to exists before continuing |  | String
+| *camel.startupcondition.interval* | Interval in millis between checking conditions. | 100 | int
+| *camel.startupcondition.timeout* | Total timeout (in millis) for all startup conditions. | 10000 | int
+|===
+
+
 === Camel Route Controller configurations
 The camel.routecontroller supports 12 options, which are listed below.
 

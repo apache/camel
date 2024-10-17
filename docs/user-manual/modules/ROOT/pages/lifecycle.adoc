@@ -59,3 +59,9 @@ TIP: A service can optimally support suspend/resume by the
 Camel supports suspension. It's encouraged that consumers support
 suspension which allows suspending/resuming routes.
 
+== Startup Lifecycle
+
+When Camel startup there are various listeners that can be used to plugin custom code, that
+can listen and react during startup such as `LifecycleStrategy`, or `MainListener`.
+
+If you need Camel to check for _something_ before it can start up, then look at xref:startup-condition.adoc[Startup Condition]

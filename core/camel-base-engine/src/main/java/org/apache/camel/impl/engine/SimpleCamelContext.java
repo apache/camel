@@ -85,6 +85,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupConditionStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -730,6 +731,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected EndpointServiceRegistry createEndpointServiceRegistry() {
         return new DefaultEndpointServiceRegistry(getCamelContextReference());
+    }
+
+    @Override
+    protected StartupConditionStrategy createStartupConditionStrategy() {
+        return new DefaultStartupConditionStrategy();
     }
 
     @Override

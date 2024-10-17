@@ -1,0 +1,40 @@
+= Startup Condition
+
+*Available as of Camel 4.9*
+
+You can use `StartupCondition` to let Camel perform some checks on startup,
+before continuing. For example to check if a specific ENV exists, or wait
+for a specific file to be created etc.
+
+Camel provides a few out of the box
+
+- `EnvStartupCondition` - To check for a specific OS environment exists
+- `FileStartupCondition` - To check for a specific file exists
+
+You can implement custom conditions by implementing `org.apache.camel.spi.StartupCondition`,
+and add these to the `StartupConditionStrategy` or `Registry` such as:
+
+[source,java]
+----
+StartupConditionStrategy scs = context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
+scs.addStartupCondition(new MyCondition());
+----
+
+If you use Camel Main, Spring Boot, or Quarkus, you can configure startup conditions with configuration in `application.properties`.
+
+For example to check for a specific OS environment variable exists:
+
+[source,properties]
+----
+camel.startupcondition.enabled = true
+camel.startupcondition.environmentVariableExists = FOO_BAR
+----
+
+Or to use a custom condition by its class name:
+
+[source,properties]
+----
+camel.startupcondition.enabled = true
+camel.startupcondition.customClassNames = com.foo.MyStartupCondition
+----
+
