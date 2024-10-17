@@ -97,7 +97,6 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
         }
 
         Map<String, String> serviceLabels = new HashMap<>();
-        serviceLabels.put(BaseTrait.INTEGRATION_LABEL, context.getName());
         serviceLabels.put(BaseTrait.KUBERNETES_NAME_LABEL, context.getName());
 
         // Make sure the Eventing webhook will select the source resource, in order to inject the sink information.
@@ -119,7 +118,6 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
                 .withNewSpec()
                 .withNewTemplate()
                 .withNewMetadata()
-                .addToLabels(BaseTrait.INTEGRATION_LABEL, context.getName())
                 .addToLabels(BaseTrait.KUBERNETES_NAME_LABEL, context.getName())
                 .addToAnnotations(revisionAnnotations)
                 .endMetadata()

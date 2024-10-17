@@ -34,7 +34,6 @@ class KubernetesDeleteTest extends KubernetesBaseTest {
         kubernetesClient.apps().deployments().resource(new DeploymentBuilder()
                 .withNewMetadata()
                 .withName("route")
-                .addToLabels(BaseTrait.INTEGRATION_LABEL, "route")
                 .addToLabels(BaseTrait.KUBERNETES_NAME_LABEL, "route")
                 .endMetadata()
                 .withNewSpec()
