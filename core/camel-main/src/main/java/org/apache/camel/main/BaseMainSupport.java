@@ -81,6 +81,8 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.StartupCondition;
+import org.apache.camel.spi.StartupConditionStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.CamelContextHelper;
@@ -101,6 +103,8 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
+import org.apache.camel.support.startup.EnvStartupCondition;
+import org.apache.camel.support.startup.FileStartupCondition;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -537,6 +541,11 @@ public abstract class BaseMainSupport extends BaseService {
             recorder.endStep(step);
         }
 
+        // configure startup conditions
+        step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationStartupConditions", "Auto Configure");
+        autoConfigurationStartupConditions(camelContext, autoConfiguredProperties);
+        recorder.endStep(step);
+
         // configure from main configuration properties
         step = recorder.beginStep(BaseMainSupport.class, "doConfigureCamelContextFromMainConfiguration", "Auto Configure");
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
@@ -678,6 +687,92 @@ public abstract class BaseMainSupport extends BaseService {
                 Class<? extends MainListener> clazz
                         = camelContext.getClassResolver().resolveMandatoryClass(fqn, MainListener.class);
                 addMainListener(camelContext.getInjector().newInstance(clazz));
+            }
+        }
+    }
+
+    protected void autoConfigurationStartupConditions(
+            CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+        // load properties
+        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+
+        // load properties from ENV (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV
+                    = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.startupcondition." });
+            if (!propENV.isEmpty()) {
+                prop.putAll("ENV", propENV);
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { "camel.startupcondition." });
+            if (!propJVM.isEmpty()) {
+                prop.putAll("SYS", propJVM);
+            }
+        }
+
+        OrderedLocationProperties properties = new OrderedLocationProperties();
+
+        for (String key : prop.stringPropertyNames()) {
+            if (key.startsWith("camel.startupcondition.")) {
+                int dot = key.indexOf('.', 22);
+                String option = dot == -1 ? "" : key.substring(dot + 1);
+                String value = prop.getProperty(key, "");
+                validateOptionAndValue(key, option, value);
+                String loc = prop.getLocation(key);
+                properties.put(loc, optionKey(option), value);
+            }
+        }
+
+        boolean forceDisabled = "false".equals(properties.getProperty("camel.startupcondition.enabled"));
+        boolean configurations = !properties.isEmpty();
+
+        if (!properties.isEmpty()) {
+            LOG.debug("Auto-configuring startup condition from loaded properties: {}", properties.size());
+            setPropertiesOnTarget(camelContext, mainConfigurationProperties.startupCondition(), properties,
+                    "camel.startupcondition.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+        }
+
+        // log which options was not set
+        if (!properties.isEmpty()) {
+            properties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.startupcondition.{}={} on object: {}", k, v,
+                        mainConfigurationProperties.startupCondition());
+            });
+        }
+
+        if (configurations || mainConfigurationProperties.startupCondition().isEnabled()) {
+            StartupConditionStrategy scs
+                    = camelContext.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
+            // auto-enable if something is configured
+            if (forceDisabled) {
+                scs.setEnabled(false);
+            } else {
+                scs.setEnabled(true);
+            }
+            scs.setInterval(mainConfigurationProperties.startupCondition().getInterval());
+            scs.setTimeout(mainConfigurationProperties.startupCondition().getTimeout());
+            scs.setFailOnTimeout(mainConfigurationProperties.startupCondition().isFailOnTimeout());
+            String env = mainConfigurationProperties.startupCondition().getEnvironmentVariableExists();
+            if (env != null) {
+                scs.addStartupCondition(new EnvStartupCondition(env));
+            }
+            String file = mainConfigurationProperties.startupCondition().getFileExists();
+            if (file != null) {
+                scs.addStartupCondition(new FileStartupCondition(env));
+            }
+            String classes = mainConfigurationProperties.startupCondition().getCustomClassNames();
+            if (classes != null) {
+                for (String fqn : classes.split(",")) {
+                    fqn = fqn.trim();
+                    Class<? extends StartupCondition> clazz
+                            = camelContext.getClassResolver().resolveMandatoryClass(fqn, StartupCondition.class);
+                    scs.addStartupCondition(camelContext.getInjector().newInstance(clazz));
+                }
             }
         }
     }

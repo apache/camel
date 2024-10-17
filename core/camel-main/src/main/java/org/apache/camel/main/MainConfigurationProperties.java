@@ -57,6 +57,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
+    private StartupConditionConfigurationProperties startupConditionConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
     private MetricsConfigurationProperties metricsConfigurationProperties;
@@ -154,6 +155,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             healthConfigurationProperties = new HealthConfigurationProperties(this);
         }
         return healthConfigurationProperties;
+    }
+
+    /**
+     * To configure startup conditions
+     */
+    public StartupConditionConfigurationProperties startupCondition() {
+        if (startupConditionConfigurationProperties == null) {
+            startupConditionConfigurationProperties = new StartupConditionConfigurationProperties(this);
+        }
+        return startupConditionConfigurationProperties;
     }
 
     /**
