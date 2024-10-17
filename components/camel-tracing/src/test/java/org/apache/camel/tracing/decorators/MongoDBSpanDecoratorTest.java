@@ -19,7 +19,8 @@ package org.apache.camel.tracing.decorators;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.tracing.MockSpanAdapter;
+import org.apache.camel.support.tracing.decorators.AbstractSpanDecorator;
+import org.apache.camel.support.tracing.decorators.InMemorySpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,7 @@ public class MongoDBSpanDecoratorTest {
 
         SpanDecorator decorator = new MongoDBSpanDecorator();
 
-        MockSpanAdapter span = new MockSpanAdapter();
+        InMemorySpanAdapter span = new InMemorySpanAdapter();
 
         decorator.pre(span, null, endpoint);
 

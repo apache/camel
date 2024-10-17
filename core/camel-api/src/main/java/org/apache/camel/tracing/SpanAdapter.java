@@ -18,10 +18,23 @@ package org.apache.camel.tracing;
 
 import java.util.Map;
 
+/**
+ * An adapter to allow Camel to interact with different tracing technologies.
+ */
 public interface SpanAdapter {
 
+    /**
+     * Sets the operation name of the span.
+     *
+     * @param component the component name.
+     */
     void setComponent(String component);
 
+    /**
+     * Sets this span as an error span.
+     *
+     * @param error true if this span is an error span.
+     */
     void setError(boolean error);
 
     /**
@@ -40,10 +53,28 @@ public interface SpanAdapter {
         setTag(key.getAttribute(), value);
     }
 
+    /**
+     * Sets a tag on the span.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
     void setTag(String key, String value);
 
+    /**
+     * Sets a tag on the span.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
     void setTag(String key, Number value);
 
+    /**
+     * Sets a tag on the span.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
     void setTag(String key, Boolean value);
 
     /**
@@ -62,25 +93,66 @@ public interface SpanAdapter {
         setLowCardinalityTag(key.getAttribute(), value);
     }
 
+    /**
+     * @deprecated use {@link #setLowCardinalityTag(String, Boolean)} instead.
+     */
+    @Deprecated
+    default void setLowCardinalityTag(Tag key, Boolean value) {
+        setLowCardinalityTag(key.getAttribute(), value);
+    }
+
+    /**
+     * Sets a low cardinality tag on the span.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
     default void setLowCardinalityTag(String key, String value) {
         setTag(key, value);
     }
 
+    /**
+     * Sets a low cardinality tag on the span.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
     default void setLowCardinalityTag(String key, Number value) {
         setTag(key, value);
     }
 
+    /**
+     * Sets a low cardinality tag on the span.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
     default void setLowCardinalityTag(String key, Boolean value) {
         setTag(key, value);
     }
 
+    /**
+     * Add log messages to a span.
+     *
+     * @param log the log messages
+     */
     void log(Map<String, String> log);
 
+    /**
+     * Get the current trace id.
+     */
     String traceId();
 
+    /**
+     * Get the current span id.
+     */
     String spanId();
 
+    /**
+     * Makes the current span the active span.
+     */
     default AutoCloseable makeCurrent() {
-        return Tracer.NOOP_CLOSEABLE;
+        return () -> {
+        };
     }
 }

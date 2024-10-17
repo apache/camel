@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.tracing.decorators.AbstractSpanDecorator;
 
 /**
  * This interface represents a decorator specific to the component/endpoint being instrumented.
@@ -30,27 +29,15 @@ public interface SpanDecorator {
     /* Prefix for camel component tag */
     String CAMEL_COMPONENT = "camel-";
 
-    SpanDecorator DEFAULT = new AbstractSpanDecorator() {
-
-        @Override
-        public String getComponent() {
-            return null;
-        }
-
-        @Override
-        public String getComponentClassName() {
-            return null;
-        }
-
-    };
-
     /**
      * This method indicates whether the component associated with the SpanDecorator should result in a new span being
      * created.
      *
      * @return Whether a new span should be created
      */
-    boolean newSpan();
+    default boolean newSpan() {
+        return true;
+    }
 
     /**
      * The camel component name associated with the decorator.
@@ -100,14 +87,18 @@ public interface SpanDecorator {
      *
      * @return The kind
      */
-    SpanKind getInitiatorSpanKind();
+    default SpanKind getInitiatorSpanKind() {
+        return SpanKind.SPAN_KIND_CLIENT;
+    }
 
     /**
      * This method returns the 'span.kind' value for use when the component is receiving a communication.
      *
      * @return The kind
      */
-    SpanKind getReceiverSpanKind();
+    default SpanKind getReceiverSpanKind() {
+        return SpanKind.SPAN_KIND_SERVER;
+    }
 
     /**
      * This method returns the map to be used for header extraction when the component is receiving a communication.

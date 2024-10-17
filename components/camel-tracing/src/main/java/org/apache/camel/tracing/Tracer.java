@@ -42,6 +42,7 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.tracing.decorators.AbstractSpanDecorator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -49,9 +50,21 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Tracer extends ServiceSupport implements CamelTracingService, RoutePolicyFactory, StaticService {
     protected static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
-    static final AutoCloseable NOOP_CLOSEABLE = () -> {
-    };
     private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
+
+    private static final SpanDecorator DEFAULT_SPAN_DECORATOR = new AbstractSpanDecorator() {
+
+        @Override
+        public String getComponent() {
+            return null;
+        }
+
+        @Override
+        public String getComponentClassName() {
+            return null;
+        }
+
+    };
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> {
@@ -202,7 +215,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     .orElse(null);
         }
         if (sd == null) {
-            sd = SpanDecorator.DEFAULT;
+            sd = DEFAULT_SPAN_DECORATOR;
         }
 
         return sd;
@@ -282,8 +295,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         }
 
         private boolean shouldExclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
-            return !sd.newSpan()
-                    || isExcluded(exchange, endpoint);
+            return !sd.newSpan() || isExcluded(exchange, endpoint);
         }
     }
 

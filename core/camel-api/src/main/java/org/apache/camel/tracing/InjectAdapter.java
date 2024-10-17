@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing.decorators;
+package org.apache.camel.tracing;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
+/**
+ * An adapter to inject tracing attributes into a tracing span.
+ */
+public interface InjectAdapter {
 
-public abstract class AbstractInternalSpanDecorator extends AbstractSpanDecorator {
-
-    @Override
-    public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        // Internal communications use descriptive names, so suitable
-        // as an operation name, but need to strip the scheme and any options
-        return stripSchemeAndOptions(endpoint);
-    }
-
+    /**
+     * Inject a tag into the current tracing span, for context propagation.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     */
+    void put(String key, String value);
 }
