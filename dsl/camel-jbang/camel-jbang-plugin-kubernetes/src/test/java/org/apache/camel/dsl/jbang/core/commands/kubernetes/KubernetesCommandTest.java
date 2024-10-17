@@ -41,8 +41,8 @@ class KubernetesCommandTest extends KubernetesBaseTest {
 
     @Test
     public void shouldPrintKubernetesManifest() {
-        CamelJBangMain.run(createMain(), "kubernetes", "run", "classpath:route.yaml", "--image-group", "camel-test", "--output",
-                "yaml");
+        CamelJBangMain.run(createMain(), "kubernetes", "run", "classpath:route.yaml",
+                "--image-group", "camel-test", "--output", "yaml");
 
         List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
         Assertions.assertEquals(2, resources.size());
@@ -53,12 +53,13 @@ class KubernetesCommandTest extends KubernetesBaseTest {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
 
+        var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(3, deployment.getSpec().getSelector().getMatchLabels().size());
-        Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals(2, matchLabels.size());
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("docker.io/camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("Always",
