@@ -185,3 +185,21 @@ This approach will return the username field of the database secret with version
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
 
 include::spring-boot:partial$starter.adoc[]
+
+=== Using Hashicorp Vault Property Function in Spring Boot for Early resolving properties
+
+Hashicorp Vault Spring Boot component starter offers the ability to early resolve properties, so the end user could resolve properties directly in the application.properties before both Spring Boot runtime and Camel context will start.
+
+This could be accomplished in the following way. You should specified this property in your application.properties file:
+
+[source,bash]
+----
+camel.component.hashicorp-vault.early-resolve-properties=true
+----
+
+This will enable the feature so you'll be able to resolved properties, in your application.properties file, like:
+
+[source,bash]
+----
+foo = hashicorp:secret:database/password#string
+----
