@@ -32,6 +32,7 @@ import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.event.RouteRestartingEvent;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteRestartingFailureEvent;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.junit.jupiter.api.Test;
@@ -108,8 +109,22 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         assertEquals(6, events.size());
 
         // last should be exhausted
-        assertTrue(failure.get(8).isExhausted());
-        assertTrue(failure.get(9).isExhausted());
+        assertTrue(failure.get(8).isExhausted(),
+                "The 9th failure event must be exhausted. Current state of failure list: " + getFailureStatus(failure));
+        assertTrue(failure.get(9).isExhausted(),
+                "The 10th failure event must be exhausted. Current state of failure list: " + getFailureStatus(failure));
+    }
+
+    private String getFailureStatus(List<RouteRestartingFailureEvent> failure) {
+        StringBuilder sb = new StringBuilder();
+        for (RouteRestartingFailureEvent routeRestartingFailureEvent : failure) {
+            sb.append("\nAttempt: " + routeRestartingFailureEvent.getAttempt());
+            sb.append(", Is exhausted: " + routeRestartingFailureEvent.isExhausted());
+            sb.append(", Cause: " + routeRestartingFailureEvent.getCause() != null
+                    ? routeRestartingFailureEvent.getCause().getMessage() : "No exception");
+            sb.append(", timestamp: " + routeRestartingFailureEvent.getTimestamp());
+        }
+        return sb.toString();
     }
 
     @Test
