@@ -7561,7 +7561,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List"),
-                    @YamlProperty(name = "useWriter", type = "boolean", description = "Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese.", displayName = "Use Writer"),
                     @YamlProperty(name = "xmlMapper", type = "string", description = "Lookup and use the existing XmlMapper with the given id.", displayName = "Xml Mapper")
             }
     )
@@ -7658,11 +7657,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useList": {
                     String val = asText(node);
                     target.setUseList(val);
-                    break;
-                }
-                case "useWriter": {
-                    String val = asText(node);
-                    target.setUseWriter(val);
                     break;
                 }
                 case "xmlMapper": {
@@ -8222,6 +8216,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "autoDiscoverObjectMapper", type = "boolean", description = "If set to true then Jackson will look for an objectMapper to use from the registry", displayName = "Auto Discover Object Mapper"),
                     @YamlProperty(name = "autoDiscoverSchemaResolver", type = "boolean", description = "When not disabled, the SchemaResolver will be looked up into the registry", displayName = "Auto Discover Schema Resolver"),
                     @YamlProperty(name = "collectionType", type = "string", description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default.", displayName = "Collection Type"),
+                    @YamlProperty(name = "combineUnicodeSurrogates", type = "boolean", description = "Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte characters. This should be preferred when using 4-byte characters such as Japanese.", displayName = "Combine Unicode Surrogates"),
                     @YamlProperty(name = "contentTypeHeader", type = "boolean", description = "Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON", displayName = "Content Type Header"),
                     @YamlProperty(name = "dateFormatPattern", type = "string", description = "To configure the date format while marshall or unmarshall Date fields in JSON using Gson", displayName = "Date Format Pattern"),
                     @YamlProperty(name = "disableFeatures", type = "string", description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma", displayName = "Disable Features"),
@@ -8239,8 +8234,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson and fastjson.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useDefaultObjectMapper", type = "boolean", description = "Whether to lookup and use default Jackson ObjectMapper from the registry.", displayName = "Use Default Object Mapper"),
-                    @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List"),
-                    @YamlProperty(name = "useWriter", type = "boolean", description = "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese.", displayName = "Use Writer")
+                    @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List")
             }
     )
     public static class JsonDataFormatDeserializer extends YamlDeserializerBase<JsonDataFormat> {
@@ -8281,6 +8275,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "collectionType": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
+                    break;
+                }
+                case "combineUnicodeSurrogates": {
+                    String val = asText(node);
+                    target.setCombineUnicodeSurrogates(val);
                     break;
                 }
                 case "contentTypeHeader": {
@@ -8370,11 +8369,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useList": {
                     String val = asText(node);
                     target.setUseList(val);
-                    break;
-                }
-                case "useWriter": {
-                    String val = asText(node);
-                    target.setUseWriter(val);
                     break;
                 }
                 default: {

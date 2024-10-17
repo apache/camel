@@ -1881,7 +1881,6 @@ public class ModelParser extends BaseParser {
                 case "timezone": def.setTimezone(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useList": def.setUseList(val); yield true;
-                case "useWriter": def.setUseWriter(val); yield true;
                 case "xmlMapper": def.setXmlMapper(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
@@ -1925,6 +1924,7 @@ public class ModelParser extends BaseParser {
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); yield true;
                 case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); yield true;
                 case "collectionType": def.setCollectionTypeName(val); yield true;
+                case "combineUnicodeSurrogates": def.setCombineUnicodeSurrogates(val); yield true;
                 case "contentTypeHeader": def.setContentTypeHeader(val); yield true;
                 case "dateFormatPattern": def.setDateFormatPattern(val); yield true;
                 case "disableFeatures": def.setDisableFeatures(val); yield true;
@@ -1942,7 +1942,6 @@ public class ModelParser extends BaseParser {
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); yield true;
                 case "useList": def.setUseList(val); yield true;
-                case "useWriter": def.setUseWriter(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
