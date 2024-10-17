@@ -35,11 +35,13 @@ public class LabelTrait extends BaseTrait {
         context.doWithDeployments(
                 d -> d.editOrNewMetadata()
                         .addToLabels(INTEGRATION_LABEL, context.getName())
+                        .addToLabels(KUBERNETES_NAME_LABEL, context.getName())
                         .addToLabels(context.getLabels())
                         .endMetadata());
         context.doWithServices(
                 s -> s.editOrNewMetadata()
                         .addToLabels(INTEGRATION_LABEL, context.getName())
+                        .addToLabels(KUBERNETES_NAME_LABEL, context.getName())
                         .addToLabels(context.getLabels())
                         .endMetadata());
     }
