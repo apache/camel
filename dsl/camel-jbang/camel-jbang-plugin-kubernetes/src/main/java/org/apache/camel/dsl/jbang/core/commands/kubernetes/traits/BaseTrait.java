@@ -20,6 +20,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 public abstract class BaseTrait implements Trait {
 
     public static final String INTEGRATION_LABEL = "camel.apache.org/integration";
+    public static final String KUBERNETES_NAME_LABEL = "app.kubernetes.io/name";
 
     private final String id;
     private final int order;

@@ -24,8 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
@@ -61,20 +63,21 @@ class IntegrationExportTest extends CamelKBaseTest {
         Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(RuntimeType.quarkus);
+        var labels = deployment.getMetadata().getLabels();
+        var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("routes", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("routes", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("routes", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
-        Assertions.assertEquals("routes",
-                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("camel-test/routes:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().size());
-        Assertions.assertEquals("MY_ENV_VAR",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(0).getName());
-        Assertions.assertEquals("foo",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv().get(0).getValue());
+        Assertions.assertEquals(1, containers.size());
+        Assertions.assertEquals("routes", labels.get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("routes", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("routes", containers.get(0).getName());
+        Assertions.assertEquals(2, matchLabels.size());
+        Assertions.assertEquals("routes", matchLabels.get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("routes", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("camel-test/routes:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals(1, containers.get(0).getEnv().size());
+        Assertions.assertEquals("MY_ENV_VAR", containers.get(0).getEnv().get(0).getName());
+        Assertions.assertEquals("foo", containers.get(0).getEnv().get(0).getValue());
     }
 
     @Test
