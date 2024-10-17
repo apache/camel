@@ -425,3 +425,21 @@ from("direct:purgeDeletedSecret")
 --------------------------------------------------------------------------------
 
 include::spring-boot:partial$starter.adoc[]
+
+=== Using Azure Key Vault Property Function in Spring Boot for Early resolving properties
+
+Azure Key Vault Spring Boot component starter offers the ability to early resolve properties, so the end user could resolve properties directly in the application.properties before both Spring Boot runtime and Camel context will start.
+
+This could be accomplished in the following way. You should specified this property in your application.properties file:
+
+[source,bash]
+----
+camel.component.azure-key-vault.early-resolve-properties=true=true
+----
+
+This will enable the feature so you'll be able to resolved properties, in your application.properties file, like:
+
+[source,bash]
+----
+foo = azure:databaseprod#password
+----
