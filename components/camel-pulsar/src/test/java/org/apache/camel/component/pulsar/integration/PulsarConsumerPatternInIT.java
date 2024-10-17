@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.internal.PulsarAdminBuilderImpl;
 import org.apache.pulsar.client.api.Producer;
@@ -59,8 +60,10 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
     private MockEndpoint to;
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     @Override

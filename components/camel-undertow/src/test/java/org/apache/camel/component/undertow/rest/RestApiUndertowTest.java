@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RestApiUndertowTest extends BaseUndertowTest {
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     @Test

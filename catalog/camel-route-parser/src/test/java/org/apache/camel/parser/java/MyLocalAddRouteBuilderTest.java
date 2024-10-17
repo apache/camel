@@ -19,6 +19,7 @@ package org.apache.camel.parser.java;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,10 @@ public class MyLocalAddRouteBuilderTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(MyLocalAddRouteBuilderTest.class);
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     @Test

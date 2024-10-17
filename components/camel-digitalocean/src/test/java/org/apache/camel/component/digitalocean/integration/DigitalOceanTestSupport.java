@@ -18,6 +18,7 @@ package org.apache.camel.component.digitalocean.integration;
 
 import java.util.Properties;
 
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
@@ -32,6 +33,13 @@ public class DigitalOceanTestSupport extends CamelTestSupport {
         properties = loadProperties();
     }
 
+    @Override
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(properties);
+    }
+
     // This is used by JUnit to automatically determine whether or not to run the integration tests
     @SuppressWarnings("unused")
     private static boolean hasCredentials() {
@@ -43,10 +51,4 @@ public class DigitalOceanTestSupport extends CamelTestSupport {
     private static Properties loadProperties() {
         return TestSupport.loadExternalPropertiesQuietly(DigitalOceanTestSupport.class, "/test-options.properties");
     }
-
-    @Override
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        return properties;
-    }
-
 }

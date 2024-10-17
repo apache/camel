@@ -28,7 +28,7 @@ public class CamelTestSupportTest extends CamelTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
-        replaceRouteFromWith("routeId", "direct:start");
+        camelContextConfiguration.replaceRouteFromWith("routeId", "direct:start");
     }
 
     @Test

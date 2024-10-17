@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -51,8 +52,10 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
     }
 
     @Override
-    public boolean isUseAdviceWith() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(false);
     }
 
     @Test

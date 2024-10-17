@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.support;
 import org.apache.camel.component.reactive.streams.BaseReactiveTest;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ReactiveStreamsTestSupport extends BaseReactiveTest {
@@ -31,8 +32,10 @@ public class ReactiveStreamsTestSupport extends BaseReactiveTest {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
 }

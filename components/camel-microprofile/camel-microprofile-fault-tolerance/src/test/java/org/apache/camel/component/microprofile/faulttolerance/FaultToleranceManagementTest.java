@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,8 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FaultToleranceManagementTest extends CamelTestSupport {
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     protected MBeanServer getMBeanServer() {
