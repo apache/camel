@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +39,10 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
@@ -58,8 +63,8 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
 
-        List<CamelEvent.RouteRestartingFailureEvent> failures = new ArrayList<>();
-        List<CamelEvent.RouteRestartingEvent> events = new ArrayList<>();
+        List<CamelEvent.RouteRestartingFailureEvent> failures = Collections.synchronizedList(new ArrayList<>());
+        List<CamelEvent.RouteRestartingEvent> events = Collections.synchronizedList(new ArrayList<>());
 
         context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
             @Override
@@ -94,8 +99,10 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         // cake was not able to start
         assertEquals("Stopped", context.getRouteController().getRouteStatus("cake").toString());
 
+        await("Await all exceptions and retries finished")
+                .atMost(Duration.ofMillis(src.getInitialDelay() + src.getBackOffDelay() * (src.getBackOffMaxAttempts() + 1)))
+                .untilAsserted(() -> assertNotNull(src.getRestartException("cake")));
         Throwable e = src.getRestartException("cake");
-        assertNotNull(e);
         assertEquals("Cannot start", e.getMessage());
         boolean b = e instanceof IllegalArgumentException;
         assertTrue(b);
@@ -105,6 +112,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
         assertEquals(10, failures.size(),
                 "There should have 2 x 1 initial + 2 x 3 restart failure + 2 x 1 exhausted failures.");
+
         assertEquals(6, events.size(), "There should have been 2 x 3 restart attempts.");
 
         assertEquals(2, failures.stream().filter(failure -> failure.isExhausted()).count(),
@@ -135,8 +143,8 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
 
-        List<CamelEvent.RouteRestartingFailureEvent> failure = new ArrayList<>();
-        List<CamelEvent.RouteRestartingEvent> events = new ArrayList<>();
+        List<CamelEvent.RouteRestartingFailureEvent> failure = Collections.synchronizedList(new ArrayList<>());
+        List<CamelEvent.RouteRestartingEvent> events = Collections.synchronizedList(new ArrayList<>());
 
         context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
             @Override
