@@ -68,6 +68,7 @@ import org.apache.camel.spi.annotations.ConstantProvider;
 public interface Exchange extends VariableAware {
 
     String ACTIVE_SPAN = "OpenTracing.activeSpan";
+    String CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
     @Deprecated(since = "2.20.0")
