@@ -16,9 +16,16 @@
  */
 package org.apache.camel.component.whatsapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
 
     private String id;
+
+    @JsonProperty("message_status")
+    private String messageStatus;
 
     public Message() {
     }
@@ -29,5 +36,13 @@ public class Message {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getMessageStatus() {
+        return messageStatus;
+    }
+
+    public void setMessageStatus(String messageStatus) {
+        this.messageStatus = messageStatus;
     }
 }
