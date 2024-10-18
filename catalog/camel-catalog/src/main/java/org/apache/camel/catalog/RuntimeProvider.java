@@ -17,7 +17,6 @@
 package org.apache.camel.catalog;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * A pluggable strategy for chosen runtime to run Camel such as default, karaf, spring-boot, etc. This allows third
@@ -120,10 +119,5 @@ public interface RuntimeProvider {
      * Find all the pojo beans names from the Camel catalog supported by the provider
      */
     List<String> findBeansNames();
-
-    /**
-     * Find all the capabilities from the Camel catalog supported by the provider
-     */
-    Map<String, String> findCapabilities();
 
 }
