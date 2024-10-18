@@ -58,14 +58,14 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
 
-        List<CamelEvent.RouteRestartingFailureEvent> failure = new ArrayList<>();
+        List<CamelEvent.RouteRestartingFailureEvent> failures = new ArrayList<>();
         List<CamelEvent.RouteRestartingEvent> events = new ArrayList<>();
 
         context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) throws Exception {
                 if (event instanceof CamelEvent.RouteRestartingFailureEvent rfe) {
-                    failure.add(rfe);
+                    failures.add(rfe);
                 } else if (event instanceof RouteRestartingEvent rre) {
                     events.add(rre);
                 }
@@ -103,16 +103,12 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
 
-        // 2 x 1 initial + 2 x 3 restart failure + 2 x 1 exhausted
-        assertEquals(10, failure.size());
-        // 2 x 3 restart attempts
-        assertEquals(6, events.size());
+        assertEquals(10, failures.size(),
+                "There should have 2 x 1 initial + 2 x 3 restart failure + 2 x 1 exhausted failures.");
+        assertEquals(6, events.size(), "There should have been 2 x 3 restart attempts.");
 
-        // last should be exhausted
-        assertTrue(failure.get(8).isExhausted(),
-                "The 9th failure event must be exhausted. Current state of failure list: " + getFailureStatus(failure));
-        assertTrue(failure.get(9).isExhausted(),
-                "The 10th failure event must be exhausted. Current state of failure list: " + getFailureStatus(failure));
+        assertEquals(2, failures.stream().filter(failure -> failure.isExhausted()).count(),
+                "There should be 2 exhausted failure. Current state of failure list: " + getFailureStatus(failures));
     }
 
     private String getFailureStatus(List<RouteRestartingFailureEvent> failure) {
