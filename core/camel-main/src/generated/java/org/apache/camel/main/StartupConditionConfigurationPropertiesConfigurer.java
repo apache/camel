@@ -25,9 +25,9 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
         map.put("CustomClassNames", java.lang.String.class);
         map.put("Enabled", boolean.class);
         map.put("EnvironmentVariableExists", java.lang.String.class);
-        map.put("FailOnTimeout", boolean.class);
         map.put("FileExists", java.lang.String.class);
         map.put("Interval", int.class);
+        map.put("OnTimeout", java.lang.String.class);
         map.put("Timeout", int.class);
         ALL_OPTIONS = map;
         ConfigurerStrategy.addBootstrapConfigurerClearer(StartupConditionConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
@@ -42,11 +42,11 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "environmentvariableexists":
         case "environmentVariableExists": target.setEnvironmentVariableExists(property(camelContext, java.lang.String.class, value)); return true;
-        case "failontimeout":
-        case "failOnTimeout": target.setFailOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "fileexists":
         case "fileExists": target.setFileExists(property(camelContext, java.lang.String.class, value)); return true;
         case "interval": target.setInterval(property(camelContext, int.class, value)); return true;
+        case "ontimeout":
+        case "onTimeout": target.setOnTimeout(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
@@ -69,11 +69,11 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
         case "enabled": return boolean.class;
         case "environmentvariableexists":
         case "environmentVariableExists": return java.lang.String.class;
-        case "failontimeout":
-        case "failOnTimeout": return boolean.class;
         case "fileexists":
         case "fileExists": return java.lang.String.class;
         case "interval": return int.class;
+        case "ontimeout":
+        case "onTimeout": return java.lang.String.class;
         case "timeout": return int.class;
         default: return null;
         }
@@ -88,11 +88,11 @@ public class StartupConditionConfigurationPropertiesConfigurer extends org.apach
         case "enabled": return target.isEnabled();
         case "environmentvariableexists":
         case "environmentVariableExists": return target.getEnvironmentVariableExists();
-        case "failontimeout":
-        case "failOnTimeout": return target.isFailOnTimeout();
         case "fileexists":
         case "fileExists": return target.getFileExists();
         case "interval": return target.getInterval();
+        case "ontimeout":
+        case "onTimeout": return target.getOnTimeout();
         case "timeout": return target.getTimeout();
         default: return null;
         }

@@ -74,6 +74,11 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     }
 
     @Override
+    public void init() {
+        // noop
+    }
+
+    @Override
     public void await() throws InterruptedException {
         LOG.debug("Await shutdown to complete");
         latch.await();

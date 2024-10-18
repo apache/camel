@@ -20,12 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.StartupCondition;
 import org.apache.camel.spi.StartupConditionStrategy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
-public class StartupConditionTest extends ContextTestSupport {
+public class StartupConditionRegistryIgnoreTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -34,27 +32,27 @@ public class StartupConditionTest extends ContextTestSupport {
 
     @Test
     public void testVetoCamelContextStart() {
-        try {
-            context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertEquals("Startup condition: MyCondition cannot continue due to: forced error from unit test",
-                    e.getCause().getMessage());
-        }
+        context.start();
+        // should ignore and startup
+        Assertions.assertTrue(context.getStatus().isStarted());
+        context.stop();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+
         StartupConditionStrategy scs = context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
         scs.setEnabled(true);
         scs.setTimeout(250);
-        scs.setOnTimeout("fail");
-        scs.addStartupCondition(new MyCondition());
+        scs.setOnTimeout("ignore");
+
+        context.getRegistry().bind("myCondition", new MyOtherCondition());
+
         return context;
     }
 
-    private static class MyCondition implements StartupCondition {
+    private static class MyOtherCondition implements StartupCondition {
 
         @Override
         public String getFailureMessage() {

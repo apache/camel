@@ -42,8 +42,8 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
     private final List<StartupCondition> conditions = new ArrayList<>();
     private boolean enabled;
     private int interval = 500;
-    private int timeout = 10000;
-    private boolean failOnTimeout = true;
+    private int timeout = 20000;
+    private String onTimeout = "stop";
     private volatile boolean checkDone;
 
     @Override
@@ -85,14 +85,12 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
         this.timeout = timeout;
     }
 
-    @Override
-    public boolean isFailOnTimeout() {
-        return failOnTimeout;
+    public String getOnTimeout() {
+        return onTimeout;
     }
 
-    @Override
-    public void setFailOnTimeout(boolean failOnTimeout) {
-        this.failOnTimeout = failOnTimeout;
+    public void setOnTimeout(String onTimeout) {
+        this.onTimeout = onTimeout;
     }
 
     @Override
@@ -124,9 +122,16 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
         boolean first = true;
         int tick = 1;
         int counter = 1;
+
         while (watch.taken() < timeout) {
             boolean ok = true;
             for (StartupCondition startup : conditions) {
+
+                // break out if Camel are shutting down
+                if (isCamelStopping()) {
+                    return;
+                }
+
                 if (first) {
                     String msg = startup.getWaitMessage();
                     if (msg != null) {
@@ -145,17 +150,20 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
                     }
                 }
             }
+            first = false;
             if (ok) {
                 return;
             }
 
-            first = false;
             // wait a bit before next loop
             try {
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sleep interrupted, are we stopping? {}", isCamelStopping());
+                }
                 Thread.currentThread().interrupt();
-                return;
+                throw new VetoCamelContextStartException("Sleep interrupted", e, camelContext, false);
             }
             // log waiting but only once per second
             long seconds = watch.taken() / 1000;
@@ -177,11 +185,18 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
                 error = "Startup condition: " + startup.getName() + " cannot continue due to: " + msg;
             }
         }
-        if (isFailOnTimeout()) {
-            throw new VetoCamelContextStartException(error, camelContext);
+        if ("fail".equalsIgnoreCase(onTimeout)) {
+            throw new VetoCamelContextStartException(error, camelContext, true);
+        } else if ("stop".equalsIgnoreCase(onTimeout)) {
+            throw new VetoCamelContextStartException(error, camelContext, false);
         } else {
             LOG.warn(error);
+            LOG.warn("Camel will continue to startup");
         }
+    }
+
+    private boolean isCamelStopping() {
+        return camelContext.isStopping();
     }
 
 }

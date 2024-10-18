@@ -727,9 +727,6 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
-        boolean forceDisabled = "false".equals(properties.getProperty("camel.startupcondition.enabled"));
-        boolean configurations = !properties.isEmpty();
-
         if (!properties.isEmpty()) {
             LOG.debug("Auto-configuring startup condition from loaded properties: {}", properties.size());
             setPropertiesOnTarget(camelContext, mainConfigurationProperties.startupCondition(), properties,
@@ -745,34 +742,27 @@ public abstract class BaseMainSupport extends BaseService {
             });
         }
 
-        if (configurations || mainConfigurationProperties.startupCondition().isEnabled()) {
-            StartupConditionStrategy scs
-                    = camelContext.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
-            // auto-enable if something is configured
-            if (forceDisabled) {
-                scs.setEnabled(false);
-            } else {
-                scs.setEnabled(true);
-            }
-            scs.setInterval(mainConfigurationProperties.startupCondition().getInterval());
-            scs.setTimeout(mainConfigurationProperties.startupCondition().getTimeout());
-            scs.setFailOnTimeout(mainConfigurationProperties.startupCondition().isFailOnTimeout());
-            String env = mainConfigurationProperties.startupCondition().getEnvironmentVariableExists();
-            if (env != null) {
-                scs.addStartupCondition(new EnvStartupCondition(env));
-            }
-            String file = mainConfigurationProperties.startupCondition().getFileExists();
-            if (file != null) {
-                scs.addStartupCondition(new FileStartupCondition(env));
-            }
-            String classes = mainConfigurationProperties.startupCondition().getCustomClassNames();
-            if (classes != null) {
-                for (String fqn : classes.split(",")) {
-                    fqn = fqn.trim();
-                    Class<? extends StartupCondition> clazz
-                            = camelContext.getClassResolver().resolveMandatoryClass(fqn, StartupCondition.class);
-                    scs.addStartupCondition(camelContext.getInjector().newInstance(clazz));
-                }
+        StartupConditionStrategy scs
+                = camelContext.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
+        scs.setEnabled(mainConfigurationProperties.startupCondition().isEnabled());
+        scs.setInterval(mainConfigurationProperties.startupCondition().getInterval());
+        scs.setTimeout(mainConfigurationProperties.startupCondition().getTimeout());
+        scs.setOnTimeout(mainConfigurationProperties.startupCondition().getOnTimeout());
+        String env = mainConfigurationProperties.startupCondition().getEnvironmentVariableExists();
+        if (env != null) {
+            scs.addStartupCondition(new EnvStartupCondition(env));
+        }
+        String file = mainConfigurationProperties.startupCondition().getFileExists();
+        if (file != null) {
+            scs.addStartupCondition(new FileStartupCondition(env));
+        }
+        String classes = mainConfigurationProperties.startupCondition().getCustomClassNames();
+        if (classes != null) {
+            for (String fqn : classes.split(",")) {
+                fqn = fqn.trim();
+                Class<? extends StartupCondition> clazz
+                        = camelContext.getClassResolver().resolveMandatoryClass(fqn, StartupCondition.class);
+                scs.addStartupCondition(camelContext.getInjector().newInstance(clazz));
             }
         }
     }

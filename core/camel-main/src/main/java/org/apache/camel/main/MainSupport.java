@@ -70,6 +70,7 @@ public abstract class MainSupport extends BaseMainSupport {
         // we want this logging to be as early as possible
         LOG.info("{} {} is starting", appName, helper.getVersion());
         clock = new ResetableClock();
+        this.shutdownStrategy.init();
         super.doInit();
     }
 

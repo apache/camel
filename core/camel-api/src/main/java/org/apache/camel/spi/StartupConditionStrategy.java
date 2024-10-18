@@ -59,16 +59,20 @@ public interface StartupConditionStrategy extends StaticService {
     int getTimeout();
 
     /**
-     * Whether to fail if the check timed out. The default is to fail and throw an exception causing Camel to not be
-     * able to startup.
+     * What action, to do on timeout.
+     *
+     * fail = do not startup, and throw an exception causing camel to fail stop = do not startup, and stop camel ignore
+     * = log a WARN and continue to startup
      */
-    boolean isFailOnTimeout();
+    String getOnTimeout();
 
     /**
-     * Whether to fail if the check timed out. The default is to fail and throw an exception causing Camel to not be
-     * able to startup.
+     * What action, to do on timeout.
+     *
+     * fail = do not startup, and throw an exception causing camel to fail stop = do not startup, and stop camel ignore
+     * = log a WARN and continue to startup
      */
-    void setFailOnTimeout(boolean failOnTimeout);
+    void setOnTimeout(String onTimeout);
 
     /**
      * Adds a custom {@link StartupCondition} check to be performed.

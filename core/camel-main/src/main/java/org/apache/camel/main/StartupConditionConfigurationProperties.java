@@ -30,12 +30,12 @@ public class StartupConditionConfigurationProperties implements BootstrapCloseab
 
     @Metadata(defaultValue = "false")
     private boolean enabled;
-    @Metadata(defaultValue = "100")
-    private int interval = 100;
-    @Metadata(defaultValue = "10000")
-    private int timeout = 10000;
-    @Metadata(defaultValue = "true")
-    private boolean failOnTimeout = true;
+    @Metadata(defaultValue = "500")
+    private int interval = 500;
+    @Metadata(defaultValue = "20000")
+    private int timeout = 20000;
+    @Metadata(defaultValue = "stop", enums = "fail,stop,ignore")
+    private String onTimeout = "stop";
     @Metadata
     private String environmentVariableExists;
     @Metadata
@@ -89,16 +89,18 @@ public class StartupConditionConfigurationProperties implements BootstrapCloseab
         this.timeout = timeout;
     }
 
-    public boolean isFailOnTimeout() {
-        return failOnTimeout;
+    public String getOnTimeout() {
+        return onTimeout;
     }
 
     /**
-     * Whether to fail if the check timed out. The default is to fail and throw an exception causing Camel to not be
-     * able to startup.
+     * What action, to do on timeout.
+     *
+     * fail = do not startup, and throw an exception causing camel to fail stop = do not startup, and stop camel ignore
+     * = log a WARN and continue to startup
      */
-    public void setFailOnTimeout(boolean failOnTimeout) {
-        this.failOnTimeout = failOnTimeout;
+    public void setOnTimeout(String onTimeout) {
+        this.onTimeout = onTimeout;
     }
 
     public String getEnvironmentVariableExists() {
@@ -159,11 +161,13 @@ public class StartupConditionConfigurationProperties implements BootstrapCloseab
     }
 
     /**
-     * Whether to fail if the check timed out. The default is to fail and throw an exception causing Camel to not be
-     * able to startup.
+     * What action, to do on timeout.
+     *
+     * fail = do not startup, and throw an exception causing camel to fail stop = do not startup, and stop camel ignore
+     * = log a WARN and continue to startup
      */
-    public StartupConditionConfigurationProperties withFailOnTimeout(boolean failOnTimeout) {
-        this.failOnTimeout = failOnTimeout;
+    public StartupConditionConfigurationProperties withOnTimeout(String onTimeout) {
+        this.onTimeout = onTimeout;
         return this;
     }
 

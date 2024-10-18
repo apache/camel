@@ -50,6 +50,7 @@ public class StartupConditionRegistryTest extends ContextTestSupport {
         StartupConditionStrategy scs = context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
         scs.setEnabled(true);
         scs.setTimeout(250);
+        scs.setOnTimeout("fail");
 
         context.getRegistry().bind("myCondition", new MyOtherCondition());
 

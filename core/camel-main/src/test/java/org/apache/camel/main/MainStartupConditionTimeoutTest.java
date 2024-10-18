@@ -31,6 +31,7 @@ public class MainStartupConditionTimeoutTest {
         Main main = new Main();
         try {
             main.configure().startupCondition().withEnabled(true)
+                    .withOnTimeout("fail")
                     .withTimeout(250)
                     .withCustomClassNames("org.apache.camel.main.MainStartupConditionTimeoutTest$MyEnvCondition");
             main.start();

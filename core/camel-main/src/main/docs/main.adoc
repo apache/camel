@@ -158,10 +158,10 @@ The camel.startupcondition supports 7 options, which are listed below.
 | *camel.startupcondition.custom{zwsp}ClassNames* | A list of custom class names (FQN). Multiple classes can be separated by comma. |  | String
 | *camel.startupcondition.enabled* | To enable using startup conditions | false | boolean
 | *camel.startupcondition.environment{zwsp}VariableExists* | Wait for an environment variable with the given name to exists before continuing |  | String
-| *camel.startupcondition.failOn{zwsp}Timeout* | Whether to fail if the check timed out. The default is to fail and throw an exception causing Camel to not be able to startup. | true | boolean
 | *camel.startupcondition.file{zwsp}Exists* | Wait for a file with the given name to exists before continuing |  | String
-| *camel.startupcondition.interval* | Interval in millis between checking conditions. | 100 | int
-| *camel.startupcondition.timeout* | Total timeout (in millis) for all startup conditions. | 10000 | int
+| *camel.startupcondition.interval* | Interval in millis between checking conditions. | 500 | int
+| *camel.startupcondition.on{zwsp}Timeout* | What action, to do on timeout. fail = do not startup, and throw an exception causing camel to fail stop = do not startup, and stop camel ignore = log a WARN and continue to startup | stop | String
+| *camel.startupcondition.timeout* | Total timeout (in millis) for all startup conditions. | 20000 | int
 |===
 
 
