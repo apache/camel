@@ -59,6 +59,8 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.Exchange.ACTIVE_SPAN;
+
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF JAXRS client, it will turn the normal Object
  * invocation to a RESTful request according to resource annotation. Any response will be bound to Camel exchange.
