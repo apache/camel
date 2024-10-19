@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.k;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
 
@@ -41,7 +40,6 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.tooling.model.BaseModel;
-import org.apache.camel.tooling.model.EntityRef;
 import org.apache.camel.tooling.model.Kind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,10 +126,6 @@ public class Agent extends CamelCommand {
                 .produces(MIME_TYPE_JSON)
                 .blockingHandler(this::handleCatalogModel);
 
-        router.route(HttpMethod.GET, "/catalog/capability/:name")
-                .produces(MIME_TYPE_JSON)
-                .blockingHandler(this::handleCatalogCapability);
-
         router.route(HttpMethod.POST, "/inspect/:location")
                 .produces(MIME_TYPE_JSON)
                 .blockingHandler(this::handleInspect);
@@ -149,27 +143,6 @@ public class Agent extends CamelCommand {
                                 ? ctx.failure().getCause().getMessage()
                                 : ctx.failure().getMessage())
                 .end();
-    }
-
-    private void handleCatalogCapability(RoutingContext ctx) {
-        try {
-            final CamelCatalog catalog = CatalogHelper.loadCatalog(runtimeType, runtimeVersion, repos, quarkusGroupId);
-            final String name = ctx.pathParam("name");
-            final Optional<EntityRef> ref = catalog.findCapabilityRef(name);
-
-            if (ref.isPresent()) {
-                ctx.response()
-                        .putHeader(CONTENT_TYPE_HEADER, MIME_TYPE_JSON)
-                        .end(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(ref.get()));
-            } else {
-                ctx.response()
-                        .setStatusCode(204)
-                        .putHeader(CONTENT_TYPE_HEADER, MIME_TYPE_JSON)
-                        .end(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(Map.of()));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void handleCatalogModel(RoutingContext ctx) {
