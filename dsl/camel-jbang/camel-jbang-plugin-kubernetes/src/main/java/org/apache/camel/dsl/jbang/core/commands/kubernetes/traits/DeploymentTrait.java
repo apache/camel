@@ -17,7 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import java.util.Collections;
+import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.LabelSelectorBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
@@ -42,8 +42,7 @@ public class DeploymentTrait extends BaseTrait {
                 .endMetadata()
                 .withNewSpec()
                 .withSelector(new LabelSelectorBuilder()
-                        .withMatchLabels(
-                                Collections.singletonMap(INTEGRATION_LABEL, context.getName()))
+                        .withMatchLabels(Map.of(KUBERNETES_NAME_LABEL, context.getName()))
                         .build())
                 .endSpec();
 

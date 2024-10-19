@@ -88,8 +88,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
         int exit = command.doCall();
-
         Assertions.assertEquals(0, exit);
+
         Model model = readMavenModel();
         Assertions.assertEquals("examples", model.getGroupId());
         Assertions.assertEquals("route", model.getArtifactId());
@@ -102,18 +102,18 @@ class KubernetesExportTest extends KubernetesBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--runtime=" + rt.runtime());
         int exit = command.doCall();
-
         Assertions.assertEquals(0, exit);
+
         Deployment deployment = getDeployment(rt);
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
+        var labels = deployment.getMetadata().getLabels();
+        var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
-        Assertions.assertEquals("route",
-                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals(1, containers.size());
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", containers.get(0).getName());
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -127,18 +127,18 @@ class KubernetesExportTest extends KubernetesBaseTest {
         command.traits = new String[] {
                 "camel.properties=[foo=bar, bar=baz]" };
         int exit = command.doCall();
-
         Assertions.assertEquals(0, exit);
+
         Deployment deployment = getDeployment(rt);
+        var labels = deployment.getMetadata().getLabels();
+        var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
-        Assertions.assertEquals(1, deployment.getSpec().getSelector().getMatchLabels().size());
-        Assertions.assertEquals("route",
-                deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals(1, containers.size());
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", containers.get(0).getName());
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -155,7 +155,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--trait", "service.type=NodePort",
                 "--runtime=" + rt.runtime());
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -185,7 +186,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
                 "--trait", "service.type=NodePort",
                 "--runtime=" + rt.runtime());
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -221,7 +223,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/$2",
                 "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true",
                 "--runtime=" + rt.runtime());
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -265,7 +268,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "--trait", "route.tls-certificate=" + certificate,
                 "--trait", "route.tls-key=" + key,
                 "--runtime=" + rt.runtime());
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -304,7 +308,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 "container.request-memory=100Mi",
                 "container.limit-cpu=0.5",
                 "container.limit-memory=512Mi" };
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(hasService(rt));
 
@@ -366,14 +371,14 @@ class KubernetesExportTest extends KubernetesBaseTest {
 
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals(3, service.getMetadata().getLabels().size());
-        Assertions.assertEquals("route-service", service.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+        Assertions.assertEquals("route-service", service.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("true", service.getMetadata().getLabels().get("bindings.knative.dev/include"));
         Assertions.assertEquals("cluster-local", service.getMetadata().getLabels().get("networking.knative.dev/visibility"));
         Assertions.assertEquals(1, service.getMetadata().getAnnotations().size());
         Assertions.assertEquals("60", service.getMetadata().getAnnotations().get("serving.knative.dev/rolloutDuration"));
         Assertions.assertEquals(1, service.getSpec().getTemplate().getMetadata().getLabels().size());
         Assertions.assertEquals("route-service",
-                service.getSpec().getTemplate().getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
+                service.getSpec().getTemplate().getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals(5, service.getSpec().getTemplate().getMetadata().getAnnotations().size());
         Assertions.assertEquals("cpu",
                 service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/metric"));
@@ -592,7 +597,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddVolumes(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.volumes = new String[] { "pvc-foo:/container/path/foo", "pvc-bar:/container/path/bar" };
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -621,7 +627,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddEnvVars(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.envVars = new String[] { "CAMEL_FOO=bar", "MY_ENV=foo" };
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -642,7 +649,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddAnnotations(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.annotations = new String[] { "foo=bar" };
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -655,14 +663,15 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddLabels(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--label=foo=bar", "--runtime=" + rt.runtime());
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
-        Map<String, String> labels = deployment.getMetadata().getLabels();
+        var labels = deployment.getMetadata().getLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(3, labels.size());
         Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
-        Assertions.assertEquals("route", labels.get("camel.apache.org/integration"));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
         Assertions.assertEquals("bar", labels.get("foo"));
     }
 
@@ -671,7 +680,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddConfigs(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.configs = new String[] { "secret:foo", "configmap:bar" };
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -697,7 +707,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldAddResources(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.resources = new String[] { "configmap:foo/file.txt" };
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -718,7 +729,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--runtime=" + rt.runtime(),
                 "--open-api=configmap:openapi/spec.yaml");
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
@@ -738,7 +750,8 @@ class KubernetesExportTest extends KubernetesBaseTest {
     public void shouldUseImage(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" }, "--runtime=" + rt.runtime());
         command.image = "quay.io/camel/demo-app:1.0";
-        command.doCall();
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
