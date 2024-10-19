@@ -80,6 +80,12 @@ public interface StartupConditionStrategy extends StaticService {
     void addStartupCondition(StartupCondition startupCondition);
 
     /**
+     * A list of custom class names (FQN) for {@link StartupCondition} classes. Multiple classes can be separated by
+     * comma.
+     */
+    void addStartupConditions(String classNames);
+
+    /**
      * Lists all the {@link StartupCondition}.
      */
     List<StartupCondition> getStartupConditions();

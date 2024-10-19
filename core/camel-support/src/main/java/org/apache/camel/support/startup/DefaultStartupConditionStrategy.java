@@ -14,16 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.startup;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StartupStep;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.StartupCondition;
 import org.apache.camel.spi.StartupConditionStrategy;
+import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
@@ -40,6 +43,7 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
 
     private CamelContext camelContext;
     private final List<StartupCondition> conditions = new ArrayList<>();
+    private String classNames;
     private boolean enabled;
     private int interval = 500;
     private int timeout = 20000;
@@ -99,6 +103,11 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
     }
 
     @Override
+    public void addStartupConditions(String classNames) {
+        this.classNames = classNames;
+    }
+
+    @Override
     public List<StartupCondition> getStartupConditions() {
         return conditions;
     }
@@ -109,8 +118,26 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
             try {
                 var list = new ArrayList<>(conditions);
                 list.addAll(camelContext.getRegistry().findByType(StartupCondition.class));
+                if (classNames != null) {
+                    for (String fqn : classNames.split(",")) {
+                        fqn = fqn.trim();
+                        Class<? extends StartupCondition> clazz
+                                = camelContext.getClassResolver().resolveMandatoryClass(fqn, StartupCondition.class);
+                        list.add(camelContext.getInjector().newInstance(clazz));
+                    }
+                }
                 list.sort(OrderedComparator.get());
-                doCheckConditions(list);
+
+                if (!list.isEmpty()) {
+                    StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
+                    StartupStep step = recorder.beginStep(CamelContext.class, camelContext.getCamelContextExtension().getName(),
+                            "Check Startup Conditions");
+                    doCheckConditions(list);
+                    recorder.endStep(step);
+                }
+
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
                 checkDone = true;
             }

@@ -754,7 +754,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         String file = mainConfigurationProperties.startupCondition().getFileExists();
         if (file != null) {
-            scs.addStartupCondition(new FileStartupCondition(env));
+            scs.addStartupCondition(new FileStartupCondition(file));
         }
         String classes = mainConfigurationProperties.startupCondition().getCustomClassNames();
         if (classes != null) {

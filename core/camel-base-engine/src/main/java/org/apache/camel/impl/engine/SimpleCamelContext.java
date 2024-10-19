@@ -99,6 +99,7 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.support.startup.DefaultStartupConditionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
