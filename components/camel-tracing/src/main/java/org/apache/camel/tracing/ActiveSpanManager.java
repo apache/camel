@@ -56,6 +56,13 @@ public final class ActiveSpanManager {
      * @param span     The span
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
+        if (exchange.getProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE, Boolean.FALSE, Boolean.class)) {
+            //Check if we need to close the CLIENT scope created by
+            //DirectProducer in async mode before we create a new INTERNAL scope
+            //for the next DirectConsumer
+            endScope(exchange);
+            exchange.setProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE, Boolean.FALSE);
+        }
         exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN,
                 new Holder(exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class), span));
         if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
