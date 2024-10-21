@@ -40,7 +40,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
     private volatile boolean initOptionsDone;
 
     @SafeVarargs
-    public MainCommandLineSupport(Class<CamelConfiguration>... configurationClasses) {
+    public MainCommandLineSupport(Class<? extends CamelConfiguration>... configurationClasses) {
         super(configurationClasses);
     }
 
