@@ -17,6 +17,8 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
+
 public abstract class BaseTrait implements Trait {
 
     public static final String KUBERNETES_NAME_LABEL = "app.kubernetes.io/name";
@@ -43,7 +45,7 @@ public abstract class BaseTrait implements Trait {
     }
 
     @Override
-    public boolean accept(TraitProfile profile) {
+    public boolean accept(ClusterType clusterType) {
         return true;
     }
 }

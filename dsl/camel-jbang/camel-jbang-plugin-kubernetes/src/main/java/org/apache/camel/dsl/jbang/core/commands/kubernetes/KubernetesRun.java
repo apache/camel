@@ -51,9 +51,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                             arity = "0..9", paramLabel = "<files>")
     String[] filePaths;
 
-    @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
-    String traitProfile;
-
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     String serviceAccount;
 
@@ -363,7 +360,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageGroup = imageGroup;
         export.imageBuilder = imageBuilder;
         export.clusterType = clusterType;
-        export.traitProfile = traitProfile;
         export.serviceAccount = serviceAccount;
         export.properties = properties;
         export.configs = configs;
