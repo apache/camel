@@ -30,8 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NettyHttpProducerProxyModeTest extends CamelTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(org.apache.camel.test.junit5.TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     private static final int port = AvailablePortFinder.getNextAvailable();

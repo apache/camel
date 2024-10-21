@@ -23,6 +23,7 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.util.ObjectHelper;
 
 class ReactorStreamsServiceTestSupport extends CamelTestSupport {
@@ -48,9 +49,10 @@ class ReactorStreamsServiceTestSupport extends CamelTestSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        // You need to start the context if "use route builder" is set to false
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     protected ReactiveStreamsComponent getReactiveStreamsComponent() {

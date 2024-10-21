@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
@@ -33,8 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SalesforceComponentVerifierExtensionManualIT extends CamelTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     // *********************************

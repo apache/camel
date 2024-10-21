@@ -18,12 +18,15 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 
 public abstract class BaseQuartzTest extends CamelTestSupport {
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     @Override
@@ -31,7 +34,7 @@ public abstract class BaseQuartzTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
-        quartz.setEnableJmx(useJmx());
+        quartz.setEnableJmx(testConfigurationBuilder.isJmxEnabled());
 
         return context;
     }

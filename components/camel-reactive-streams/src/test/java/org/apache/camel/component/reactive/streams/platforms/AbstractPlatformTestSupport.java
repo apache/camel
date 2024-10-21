@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.BaseReactiveTest;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -113,8 +114,10 @@ public abstract class AbstractPlatformTestSupport extends BaseReactiveTest {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
     }
 
     protected abstract void changeSign(Publisher<Integer> data, Consumer<Integer> consume);

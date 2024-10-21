@@ -25,8 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RouteFilterPatternExcludeTest extends CamelTestSupport {
 
     @Override
-    public String getRouteFilterExcludePattern() {
-        return "bar*";
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        camelContextConfiguration.withRouteFilterExcludePattern("bar*");
     }
 
     @Test

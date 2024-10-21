@@ -36,8 +36,10 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
             = new ActiveMQConnectionFactory(service.serviceAddress());
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(org.apache.camel.test.junit5.TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     @Test

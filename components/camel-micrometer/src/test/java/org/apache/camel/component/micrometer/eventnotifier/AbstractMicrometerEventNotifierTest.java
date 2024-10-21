@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 
 abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
 
@@ -33,8 +34,10 @@ abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
     protected CompositeMeterRegistry meterRegistry;
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     public void addRegistry() {

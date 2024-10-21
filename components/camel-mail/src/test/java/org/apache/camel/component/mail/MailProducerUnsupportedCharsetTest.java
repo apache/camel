@@ -35,8 +35,10 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public void configureTest(org.apache.camel.test.junit5.TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     @Test

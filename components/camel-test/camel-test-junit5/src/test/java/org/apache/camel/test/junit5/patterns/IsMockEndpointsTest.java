@@ -18,6 +18,7 @@ package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelContextConfiguration;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class IsMockEndpointsTest extends CamelTestSupport {
 
     @Override
-    public String isMockEndpoints() {
-        return "*";
+    public void configureContext(CamelContextConfiguration camelContextConfiguration) {
+        super.configureContext(camelContextConfiguration);
+
+        camelContextConfiguration.withMockEndpoints("*");
     }
 
     @Test

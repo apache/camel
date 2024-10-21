@@ -29,6 +29,7 @@ import org.apache.camel.component.mail.MailTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -109,11 +110,10 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         }
     }
 
-    /**
-     * Stop Camel startup.
-     */
     @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseAdviceWith(true);
     }
 }

@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ShortUuidGenerator;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -39,8 +40,10 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
     private final String uuid = new ShortUuidGenerator().generateUuid();
 
     @Override
-    protected boolean useJmx() {
-        return true;
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withJMX(true);
     }
 
     protected MBeanServer getMBeanServer() {

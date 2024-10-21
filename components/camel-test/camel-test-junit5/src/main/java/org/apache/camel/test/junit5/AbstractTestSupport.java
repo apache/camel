@@ -17,16 +17,12 @@
 
 package org.apache.camel.test.junit5;
 
-import java.util.Properties;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.support.EndpointHelper;
 
 /**
  * Base test class, mostly made of legacy setup methods. This is intended for internal use.
@@ -64,166 +60,6 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
      */
     protected void cleanupResources() throws Exception {
         // noop
-    }
-
-    /**
-     * Use the RouteBuilder or not
-     *
-     * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return     <tt>true</tt> then {@link CamelContext} will be auto started, <tt>false</tt> then
-     *             {@link CamelContext} will <b>not</b> be auto started (you will have to start it manually)
-     */
-    @Deprecated(since = "4.7.0")
-    public boolean isUseRouteBuilder() {
-        return testConfigurationBuilder.useRouteBuilder();
-    }
-
-    @Deprecated(since = "4.7.0")
-    public void setUseRouteBuilder(boolean useRouteBuilder) {
-        testConfigurationBuilder.withUseRouteBuilder(useRouteBuilder);
-    }
-
-    /**
-     * Whether to dump route coverage stats at the end of the test.
-     * <p/>
-     * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
-     * have been in use and which have not. Similar concepts as a code coverage report.
-     * <p/>
-     * You can also turn on route coverage globally via setting JVM system property
-     * <tt>CamelTestRouteCoverage=true</tt>.
-     *
-     * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return     <tt>true</tt> to write route coverage status in an xml file in the
-     *             <tt>target/camel-route-coverage</tt> directory after the test has finished.
-     */
-    @Deprecated(since = "4.7.0")
-    public boolean isDumpRouteCoverage() {
-        return testConfigurationBuilder.isDumpRouteCoverage();
-    }
-
-    /**
-     * Override when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>.
-     * This helps to know advice with is to be used, and {@link CamelContext} will not be started before the advice with
-     * takes place. This helps by ensuring the advice with has been property setup before the {@link CamelContext} is
-     * started
-     * <p/>
-     * <b>Important:</b> It's important to start {@link CamelContext} manually from the unit test after you are done
-     * doing all the advice with.
-     *
-     * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return     <tt>true</tt> if you use advice with in your unit tests.
-     */
-    @Deprecated(since = "4.7.0")
-    public boolean isUseAdviceWith() {
-        return testConfigurationBuilder.isUseAdviceWith();
-    }
-
-    /**
-     * Tells whether {@link CamelContext} should be setup per test or per class. DO NOT USE.
-     * <p/>
-     * By default it will be setup/teardown per test method. This method returns <code>true</code> when the camel test
-     * class is annotated with @TestInstance(TestInstance.Lifecycle.PER_CLASS).
-     * <p/>
-     * <b>Important:</b> Use this with care as the {@link CamelContext} will carry over state from previous tests, such
-     * as endpoints, components etc. So you cannot use this in all your tests.
-     * <p/>
-     *
-     * @deprecated Use the accessors from {@link #testConfiguration()} method
-     * @return     <tt>true</tt> per class, <tt>false</tt> per test.
-     */
-    @Deprecated(since = "4.7.0")
-    protected final boolean isCreateCamelContextPerClass() {
-        return testConfigurationBuilder.isCreateCamelContextPerClass();
-    }
-
-    /**
-     * Override to enable auto mocking endpoints based on the pattern.
-     * <p/>
-     * Return <tt>*</tt> to mock all endpoints.
-     *
-     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
-     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
-     */
-    @Deprecated(since = "4.7.0")
-    public String isMockEndpoints() {
-        return camelContextConfiguration().mockEndpoints();
-    }
-
-    /**
-     * Override to enable auto mocking endpoints based on the pattern, and <b>skip</b> sending to original endpoint.
-     * <p/>
-     * Return <tt>*</tt> to mock all endpoints.
-     *
-     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
-     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
-     */
-    @Deprecated(since = "4.7.0")
-    public String isMockEndpointsAndSkip() {
-        return camelContextConfiguration().mockEndpointsAndSkip();
-    }
-
-    /**
-     * To replace from routes
-     *
-     * @param      routeId
-     * @param      fromEndpoint
-     * @deprecated              Use the accessors from {@link #camelContextConfiguration()} method
-     */
-    @Deprecated(since = "4.7.0")
-    public void replaceRouteFromWith(String routeId, String fromEndpoint) {
-        camelContextConfiguration.replaceRouteFromWith(routeId, fromEndpoint);
-    }
-
-    /**
-     * Used for filtering routes matching the given pattern, which follows the following rules:
-     * <p>
-     * - Match by route id - Match by route input endpoint uri
-     * <p>
-     * The matching is using exact match, by wildcard and regular expression.
-     * <p>
-     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to
-     * exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
-     * <p>
-     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use:
-     * exclude=foo&#42;,bar&#42;
-     * <p>
-     * Exclude takes precedence over include.
-     */
-    @Deprecated(since = "4.7.0")
-    public String getRouteFilterIncludePattern() {
-        return camelContextConfiguration.routeFilterIncludePattern();
-    }
-
-    /**
-     * Used for filtering routes matching the given pattern, which follows the following rules:
-     * <p>
-     * - Match by route id - Match by route input endpoint uri
-     * <p>
-     * The matching is using exact match, by wildcard and regular expression.
-     * <p>
-     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to
-     * exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
-     * <p>
-     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use:
-     * exclude=foo&#42;,bar&#42;
-     * <p>
-     * Exclude takes precedence over include.
-     */
-    @Deprecated(since = "4.7.0")
-    public String getRouteFilterExcludePattern() {
-        return camelContextConfiguration.routeFilterExcludePattern();
-    }
-
-    /**
-     * Override to enable debugger
-     * <p/>
-     * Is default <tt>false</tt>
-     *
-     * @deprecated Use the accessors from {@link #testConfiguration()} method
-     */
-    @Deprecated(since = "4.7.0")
-    public boolean isUseDebugger() {
-        return camelContextConfiguration.useDebugger();
     }
 
     @Deprecated(since = "4.7.0")
@@ -277,41 +113,6 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     }
 
     /**
-     * Whether JMX should be used during testing.
-     *
-     * @deprecated Use the methods {@link #testConfiguration()} to enable, disable or check JMX state.
-     * @return     <tt>false</tt> by default.
-     */
-    @Deprecated(since = "4.7.0")
-    protected boolean useJmx() {
-        return testConfigurationBuilder.isJmxEnabled();
-    }
-
-    /**
-     * Override this method to include and override properties with the Camel {@link PropertiesComponent}.
-     *
-     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
-     * @return     additional properties to add/override.
-     */
-    @Deprecated(since = "4.7.0")
-    protected Properties useOverridePropertiesWithPropertiesComponent() {
-        return camelContextConfiguration.useOverridePropertiesWithPropertiesComponent();
-    }
-
-    /**
-     * Whether to ignore missing locations with the {@link PropertiesComponent}. For example when unit testing you may
-     * want to ignore locations that are not available in the environment used for testing.
-     *
-     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
-     * @return     <tt>true</tt> to ignore, <tt>false</tt> to not ignore, and <tt>null</tt> to leave as configured on
-     *             the {@link PropertiesComponent}
-     */
-    @Deprecated(since = "4.7.0")
-    protected Boolean ignoreMissingLocationWithPropertiesComponent() {
-        return camelContextConfiguration.ignoreMissingLocationWithPropertiesComponent();
-    }
-
-    /**
      * Gets the {@link CamelContextConfiguration} for the test
      *
      * @return the camel context configuration
@@ -329,36 +130,5 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     @Override
     public final TestExecutionConfiguration testConfiguration() {
         return testConfigurationBuilder;
-    }
-
-    /**
-     * Disables the JMX agent. Must be called before the setup method.
-     *
-     * @deprecated Use the methods {@link #testConfiguration()} to enable, disable or check JMX state.
-     */
-    @Deprecated(since = "4.7.0")
-    protected void disableJMX() {
-        testConfigurationBuilder.withDisableJMX();
-    }
-
-    /**
-     * Enables the JMX agent. Must be called before the setup method.
-     *
-     * @deprecated Use the methods {@link #testConfiguration()} to enable, disable or check JMX state.
-     */
-    @Deprecated(since = "4.7.0")
-    protected void enableJMX() {
-        testConfigurationBuilder.withEnableJMX();
-    }
-
-    /**
-     * Whether route coverage is enabled
-     *
-     * @deprecated Use the methods {@link #testConfiguration()} to enable or disable the route converage dumper
-     * @return     true if enabled or false otherwise
-     */
-    @Deprecated(since = "4.7.0")
-    protected boolean isRouteCoverageEnabled() {
-        return testConfigurationBuilder.isRouteCoverageEnabled();
     }
 }
