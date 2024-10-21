@@ -110,6 +110,10 @@ public final class AWSServiceFactory {
         return createService(AWSDynamodbLocalContainerService::new);
     }
 
+    public static AWSService createSecretsManagerService() {
+        return createService(AWSSecretsManagerLocalContainerService::new);
+    }
+
     public static AWSService createSingletonDynamoDBService() {
         return SingletonServiceHolder.getInstance(new AWSDynamodbLocalContainerService(), "dynamoDB");
     }

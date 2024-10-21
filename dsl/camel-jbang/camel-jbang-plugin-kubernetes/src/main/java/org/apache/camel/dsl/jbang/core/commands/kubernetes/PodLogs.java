@@ -79,8 +79,7 @@ public class PodLogs extends KubernetesBaseCommand {
             } else {
                 projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
             }
-
-            label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            label = "%s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
         }
 
         String[] parts = label.split("=", 2);

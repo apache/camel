@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Meta data for EIPs, components, data formats and other Camel concepts
- * <p/>
+ *
  * For example to associate labels to Camel components
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -34,14 +34,14 @@ public @interface Metadata {
 
     /**
      * A human display name of the parameter.
-     * <p/>
+     *
      * This is used for documentation and tooling only.
      */
     String displayName() default "";
 
     /**
      * To define one or more labels.
-     * <p/>
+     *
      * Multiple labels can be defined as a comma separated value.
      */
     String label() default "";
@@ -63,17 +63,17 @@ public @interface Metadata {
 
     /**
      * Returns a description of this entity.
-     * <p/>
+     *
      * This is used for documentation and tooling only.
      */
     String description() default "";
 
     /**
      * Allows to define enums this options accepts.
-     * <p/>
+     *
      * If the type is already an enum, then this option should not be used; instead you can use this option when the
      * type is a String that only accept certain values.
-     * <p/>
+     *
      * Multiple values is separated by comma.
      */
     String enums() default "";
@@ -85,18 +85,18 @@ public @interface Metadata {
 
     /**
      * Whether to parameter can be configured as autowired
-     * <p/>
+     *
      * This is used for automatic autowiring the option via its Java type, by looking up in the registry to find if
      * there is a single instance of matching type, which then gets configured. This can be used for automatic
      * configuring JDBC data sources, JMS connection factories, AWS Clients, etc.
-     * <p/>
+     *
      * This is only supported on components, data formats, languages, etc; not on endpoints.
      */
     boolean autowired() default false;
 
     /**
      * To re-associate the preferred Java type of this parameter.
-     * <p/>
+     *
      * This is used for parameters which are of a specialized type but can be configured by another Java type, such as
      * from a String.
      */
@@ -119,7 +119,7 @@ public @interface Metadata {
 
     /**
      * To exclude one or more properties.
-     * <p/>
+     *
      * This is for example used when a Camel component extend another component, and then may need to not use some of
      * the properties from the parent component. Multiple properties can be separated by comma.
      */
@@ -136,7 +136,7 @@ public @interface Metadata {
     /**
      * Indicates the list of schemes for which this metadata is applicable. This is used to filter out message headers
      * that are shared with several endpoints but only applicable for some of them.
-     * <p/>
+     *
      * In the next example, the header {@code SOME_HEADER} is only applicable for endpoints whose scheme is "foo" or
      * "bar".
      *

@@ -17,7 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.util.Collections;
+import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
@@ -36,7 +36,7 @@ class PodLogsTest extends KubernetesBaseTest {
         command.doCall();
 
         Assertions.assertTrue(
-                printer.getOutput().contains("Pod for label camel.apache.org/integration=mickey-mouse not available"));
+                printer.getOutput().contains("Pod for label app.kubernetes.io/name=mickey-mouse not available"));
     }
 
     @Test
@@ -44,7 +44,7 @@ class PodLogsTest extends KubernetesBaseTest {
         Pod pod = new PodBuilder()
                 .withNewMetadata()
                 .withName("pod")
-                .withLabels(Collections.singletonMap(BaseTrait.INTEGRATION_LABEL, "routes"))
+                .withLabels(Map.of(BaseTrait.KUBERNETES_NAME_LABEL, "routes"))
                 .endMetadata()
                 .withNewStatus()
                 .withPhase("Running")

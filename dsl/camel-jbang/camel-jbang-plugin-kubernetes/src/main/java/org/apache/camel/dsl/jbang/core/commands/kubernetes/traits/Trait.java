@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 public interface Trait extends Comparable<Trait> {
@@ -27,7 +28,7 @@ public interface Trait extends Comparable<Trait> {
 
     int order();
 
-    boolean accept(TraitProfile profile);
+    boolean accept(ClusterType clusterType);
 
     @Override
     default int compareTo(Trait o) {

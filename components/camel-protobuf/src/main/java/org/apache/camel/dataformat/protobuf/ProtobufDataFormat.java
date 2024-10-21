@@ -44,7 +44,7 @@ import org.apache.commons.io.IOUtils;
 
 @Dataformat("protobuf")
 @Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
-                              "collectionTypeName,collectionType,useList,useWriter,moduleClassNames,moduleRefs,enableFeatures,"
+                              "collectionTypeName,collectionType,useList,combineUnicodeSurrogates,moduleClassNames,moduleRefs,enableFeatures,"
                               +
                               "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
                               "schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")

@@ -17,7 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.IntOrString;
@@ -68,7 +68,7 @@ public class ServiceTrait extends BaseTrait {
                 .endMetadata()
                 .withNewSpec()
                 .withType(serviceType)
-                .withSelector(Collections.singletonMap(BaseTrait.INTEGRATION_LABEL, context.getName()))
+                .withSelector(Map.of(BaseTrait.KUBERNETES_NAME_LABEL, context.getName()))
                 .addToPorts(new ServicePortBuilder()
                         .withName(Optional.ofNullable(containerTrait.getServicePortName())
                                 .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME))
@@ -85,8 +85,4 @@ public class ServiceTrait extends BaseTrait {
         context.add(service);
     }
 
-    @Override
-    public boolean accept(TraitProfile profile) {
-        return TraitProfile.KNATIVE != profile;
-    }
 }

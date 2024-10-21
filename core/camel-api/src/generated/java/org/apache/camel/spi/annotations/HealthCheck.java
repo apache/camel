@@ -34,8 +34,8 @@ public @interface HealthCheck {
     /**
      * The ID of the health check.
      *
-     * Use <tt>-check</tt> as prefix for health checks, and use <tt>-repository</tt> as prefix for health-check
-     * repository. For example to use myfoo as the ID for a health-check, then set this value as <tt>myfoo-check</tt>.
+     * Use <var>-check</var> as prefix for health checks, and use <var>-repository</var> as prefix for health-check
+     * repository. For example to use myfoo as the ID for a health-check, then set this value as <var>myfoo-check</var>.
      */
     String value();
 

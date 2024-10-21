@@ -57,6 +57,11 @@ public interface MainShutdownStrategy {
     boolean shutdown();
 
     /**
+     * Initializes this strategy.
+     */
+    void init();
+
+    /**
      * Waiting for Camel Main to complete.
      */
     void await() throws InterruptedException;

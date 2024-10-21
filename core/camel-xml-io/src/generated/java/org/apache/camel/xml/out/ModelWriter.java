@@ -2584,7 +2584,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("moduleClassNames", def.getModuleClassNames());
         doWriteAttribute("collectionType", def.getCollectionTypeName());
         doWriteAttribute("allowJmsType", def.getAllowJmsType());
-        doWriteAttribute("useWriter", def.getUseWriter());
         doWriteAttribute("jsonView", def.getJsonViewTypeName());
         doWriteAttribute("enableFeatures", def.getEnableFeatures());
         doWriteAttribute("useList", def.getUseList());
@@ -2644,11 +2643,11 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("prettyPrint", def.getPrettyPrint());
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
         doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver());
-        doWriteAttribute("useWriter", def.getUseWriter());
         doWriteAttribute("useList", def.getUseList());
         doWriteAttribute("disableFeatures", def.getDisableFeatures());
         doWriteAttribute("moduleRefs", def.getModuleRefs());
         doWriteAttribute("schemaResolver", def.getSchemaResolver());
+        doWriteAttribute("combineUnicodeSurrogates", def.getCombineUnicodeSurrogates());
         doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper());
         doWriteAttribute("objectMapper", def.getObjectMapper());
         doWriteAttribute("namingStrategy", def.getNamingStrategy());

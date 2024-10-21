@@ -51,9 +51,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                             arity = "0..9", paramLabel = "<files>")
     String[] filePaths;
 
-    @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
-    String traitProfile;
-
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     String serviceAccount;
 
@@ -363,7 +360,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageGroup = imageGroup;
         export.imageBuilder = imageBuilder;
         export.clusterType = clusterType;
-        export.traitProfile = traitProfile;
         export.serviceAccount = serviceAccount;
         export.properties = properties;
         export.configs = configs;
@@ -435,7 +431,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         try {
             var podLogs = new PodLogs(getMain());
             podLogs.withClient(client());
-            podLogs.label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            podLogs.label = "%s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
             if (!ObjectHelper.isEmpty(namespace)) {
                 podLogs.namespace = namespace;
             }
@@ -449,13 +445,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void waitForRunningPod(String projectName) {
         if (!quiet) {
             String kubectlCmd = "kubectl get pod";
-            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
             if (!ObjectHelper.isEmpty(namespace)) {
                 kubectlCmd += " -n %s".formatted(namespace);
             }
             printer().println("Run: " + kubectlCmd);
         }
-        client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
+        client(Pod.class).withLabel(BaseTrait.KUBERNETES_NAME_LABEL, projectName)
                 .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
     }
 

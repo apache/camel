@@ -11079,11 +11079,6 @@
             "title" : "Use List",
             "description" : "To unmarshal to a List of Map or a List of Pojo."
           },
-          "useWriter" : {
-            "type" : "boolean",
-            "title" : "Use Writer",
-            "description" : "Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese."
-          },
           "xmlMapper" : {
             "type" : "string",
             "title" : "Xml Mapper",
@@ -11262,6 +11257,11 @@
             "title" : "Collection Type",
             "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default."
           },
+          "combineUnicodeSurrogates" : {
+            "type" : "boolean",
+            "title" : "Combine Unicode Surrogates",
+            "description" : "Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte characters. This should be preferred when using 4-byte characters such as Japanese."
+          },
           "contentTypeHeader" : {
             "type" : "boolean",
             "title" : "Content Type Header",
@@ -11353,11 +11353,6 @@
             "type" : "boolean",
             "title" : "Use List",
             "description" : "To unmarshal to a List of Map or a List of Pojo."
-          },
-          "useWriter" : {
-            "type" : "boolean",
-            "title" : "Use Writer",
-            "description" : "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese."
           }
         }
       },

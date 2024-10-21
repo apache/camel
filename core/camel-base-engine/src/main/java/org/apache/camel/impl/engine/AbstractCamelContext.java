@@ -160,6 +160,7 @@ import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupConditionStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -340,6 +341,7 @@ public abstract class AbstractCamelContext extends BaseService
      * Called during object construction to initialize context plugins
      */
     protected void initPlugins() {
+        camelContextExtension.addContextPlugin(StartupConditionStrategy.class, createStartupConditionStrategy());
         camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
         camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
                 createDependencyInjectionAnnotationFactory());
@@ -2093,7 +2095,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // was the initialization vetoed?
         if (vetoed != null) {
-            LOG.info("CamelContext ({}) vetoed to not initialize due to: {}", camelContextExtension.getName(),
+            LOG.warn("CamelContext ({}) vetoed to not initialize due to: {}", camelContextExtension.getName(),
                     vetoed.getMessage());
             failOnStartup(vetoed);
         }
@@ -2110,7 +2112,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // did the start veto?
         if (vetoed != null) {
-            LOG.info("CamelContext ({}) vetoed to not start due to: {}", camelContextExtension.getName(), vetoed.getMessage());
+            LOG.warn("CamelContext ({}) vetoed to not start due to: {}", camelContextExtension.getName(), vetoed.getMessage());
             failOnStartup(vetoed);
             stop();
             return;
@@ -2360,6 +2362,11 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         addService(getManagementStrategy(), false);
+
+        // check startup conditions before we can continue
+        StartupConditionStrategy scs = getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
+        scs.checkStartupConditions();
+
         lifecycleStrategies.sort(OrderedComparator.get());
         ServiceHelper.initService(lifecycleStrategies);
         for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -4264,6 +4271,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract VariableRepositoryFactory createVariableRepositoryFactory();
 
     protected abstract EndpointServiceRegistry createEndpointServiceRegistry();
+
+    protected abstract StartupConditionStrategy createStartupConditionStrategy();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

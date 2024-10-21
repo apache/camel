@@ -37,7 +37,7 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
 
     @Test
     public void testVetoCamelContextStart() {
-        // context is veto'ed but appears as started
+        // context is veto'ed and appears as stopped
         assertFalse(context.getStatus().isStarted());
         assertTrue(context.getStatus().isStopped());
         assertEquals(0, context.getRoutes().size());

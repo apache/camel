@@ -21,6 +21,7 @@ import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader;
 import org.apache.camel.Expression;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,12 +34,15 @@ public class JqLanguage extends SingleInputTypedLanguageSupport implements Stati
     public void init() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
+        this.rootScope = CamelContextHelper.findSingleByType(getCamelContext(), Scope.class);
         if (this.rootScope == null) {
             this.rootScope = Scope.newEmptyScope();
             this.rootScope.setModuleLoader(BuiltinModuleLoader.getInstance());
             JqFunctions.load(getCamelContext(), rootScope);
-            JqFunctions.loadLocal(rootScope);
         }
+
+        JqFunctions.loadFromRegistry(getCamelContext(), rootScope);
+        JqFunctions.loadLocal(rootScope);
     }
 
     public Scope getRootScope() {

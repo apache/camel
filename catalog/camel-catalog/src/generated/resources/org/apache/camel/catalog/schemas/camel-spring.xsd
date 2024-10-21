@@ -8787,16 +8787,6 @@ To enable pretty printing output nicely formatted. Is by default false. Default 
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="useWriter" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be
-preferred when using 2-byte/4-byte characters such as Japanese. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="unmarshalType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -9194,12 +9184,12 @@ Which json library to use. Default value: Jackson
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="useWriter" type="xs:string">
+        <xs:attribute name="combineUnicodeSurrogates" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be
-preferred when using 2-byte/4-byte characters such as Japanese. Default value: false
+Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte characters. This should be
+preferred when using 4-byte characters such as Japanese. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
