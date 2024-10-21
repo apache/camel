@@ -58,7 +58,7 @@ public class Main extends MainCommandLineSupport {
      * @param configurationClasses additional camel configuration classes
      */
     @SafeVarargs
-    public Main(Class<?> mainClass, Class<CamelConfiguration>... configurationClasses) {
+    public Main(Class<?> mainClass, Class<? extends CamelConfiguration>... configurationClasses) {
         super(configurationClasses);
         this.mainClass = mainClass;
         configure().withBasePackageScan(mainClass.getPackageName());
