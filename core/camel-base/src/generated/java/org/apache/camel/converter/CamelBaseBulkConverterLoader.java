@@ -41,7 +41,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 129;
+        return 130;
     }
 
     @Override
@@ -165,6 +165,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.io.BufferedReader) {
                 return org.apache.camel.converter.IOConverter.toInputStream((java.io.BufferedReader) value, exchange);
+            }
+            if (value instanceof java.io.Reader) {
+                return org.apache.camel.converter.IOConverter.toInputStream((java.io.Reader) value, exchange);
             }
             if (value instanceof byte[]) {
                 return org.apache.camel.converter.IOConverter.toInputStream((byte[]) value);
@@ -559,6 +562,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuffer.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.StringBuilder.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.BufferedReader.class, java.io.InputStream.class), this);
+        registry.addConverter(new TypeConvertible<>(java.io.Reader.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(byte[].class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.ByteArrayOutputStream.class, java.io.InputStream.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.io.ObjectInput.class), this);
@@ -758,6 +762,9 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.io.BufferedReader.class) {
+                return this;
+            }
+            if (from == java.io.Reader.class) {
                 return this;
             }
             if (from == byte[].class) {
