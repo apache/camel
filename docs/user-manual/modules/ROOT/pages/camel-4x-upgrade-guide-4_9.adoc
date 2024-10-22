@@ -15,6 +15,11 @@ Added `setLazyBeanStrategy`/`getLazyBeanStrategy` methods to `org.apache.camel.s
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
 to an `Integer` value.
 
+=== camel-jackson
+
+The option `useWriter` on JSon data format and camel-jackson,
+has been replaced with `combineUnicodeSurrogates` as it is intended for 4-bytes characters such as Japanese.
+
 === camel-jms
 
 The camel-jms component has changed its default `HeaderFilterStrategy` to also remove any `Camel...` headers,
