@@ -391,7 +391,7 @@
         <opensearch-testcontainers-version>2.1.1</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
         <opentelemetry-version>1.43.0</opentelemetry-version>
-        <opentelemetry-log4j2-version>2.8.0-alpha</opentelemetry-log4j2-version>
+        <opentelemetry-log4j2-version>2.9.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
         <opentelemetry-alpha-version>1.27.0-alpha</opentelemetry-alpha-version>
         <optaplanner-version>9.44.0.Final</optaplanner-version>
