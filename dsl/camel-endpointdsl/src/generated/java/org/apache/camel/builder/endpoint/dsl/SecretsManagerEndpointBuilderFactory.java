@@ -749,6 +749,20 @@ public interface SecretsManagerEndpointBuilderFactory {
         public String awsSecretsManagerSecretReplicationRegions() {
             return "CamelAwsSecretsManagerSecretReplicationRegions";
         }
+        /**
+         * If this header is set to true, the deleted secret won't have any
+         * retention period.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsSecretsManagerSecretForceDeletion}.
+         */
+        public String awsSecretsManagerSecretForceDeletion() {
+            return "CamelAwsSecretsManagerSecretForceDeletion";
+        }
     }
     static SecretsManagerEndpointBuilder endpointBuilder(String componentName, String path) {
         class SecretsManagerEndpointBuilderImpl extends AbstractEndpointBuilder implements SecretsManagerEndpointBuilder, AdvancedSecretsManagerEndpointBuilder {
