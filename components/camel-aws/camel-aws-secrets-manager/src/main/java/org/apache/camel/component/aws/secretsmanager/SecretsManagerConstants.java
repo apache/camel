@@ -42,4 +42,7 @@ public interface SecretsManagerConstants {
     String SECRET_VERSION_IDS = "CamelAwsSecretsManagerSecretVersionIds";
     @Metadata(description = "A comma separated list of Regions in which to replicate the secret.", javaType = "String")
     String SECRET_REPLICATION_REGIONS = "CamelAwsSecretsManagerSecretReplicationRegions";
+    @Metadata(description = "If this header is set to true, the deleted secret won't have any retention period.",
+              javaType = "Boolean")
+    String SECRET_FORCE_DELETION = "CamelAwsSecretsManagerSecretForceDeletion";
 }

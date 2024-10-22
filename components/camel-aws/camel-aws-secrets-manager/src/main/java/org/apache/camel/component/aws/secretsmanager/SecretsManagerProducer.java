@@ -256,6 +256,13 @@ public class SecretsManagerProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Secret Id must be specified");
             }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION))) {
+                Boolean secretForceDeletion
+                        = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION, Boolean.class);
+                if (secretForceDeletion) {
+                    builder.forceDeleteWithoutRecovery(true);
+                }
+            }
             request = builder.build();
         }
         try {
