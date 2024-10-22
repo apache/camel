@@ -34,6 +34,11 @@ The `camel-opentelemetry` component has had significant bug fixes to handle span
 better when Camel route messages synchronously and asynchronously. This component should also work better
 on Spring Boot.
 
+=== camel-smooks
+
+Upgraded Smooks from 2.0.0-RC4 to 2.0.1 which has
+https://www.smooks.org/documentation/#migrating_from_smooks_1_7_to_2_0[API breaking changes] in Smooks.
+
 === camel-hashicorp-vault properties function
 
 The syntax for retrieving a single field of a secret has been changed.
@@ -133,9 +138,3 @@ The following modules has been removed:
 
 * camel-kotlin-dsl
 * camel-kotlin-api
-
-=== Deprecated Components
-
-The following components that were marked as deprecated:
-
-* 

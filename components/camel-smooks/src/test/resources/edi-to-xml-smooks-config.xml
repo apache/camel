@@ -29,7 +29,7 @@
                 compositeDataElementSeparator="^"/>
 
     <core:exports>
-        <core:result type="javax.xml.transform.dom.DOMResult"/>
+        <core:result type="org.smooks.io.sink.DOMSink"/>
     </core:exports>
 
 </smooks-resource-list>

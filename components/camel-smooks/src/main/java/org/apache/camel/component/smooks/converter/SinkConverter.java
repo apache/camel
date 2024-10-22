@@ -16,15 +16,10 @@
  */
 package org.apache.camel.component.smooks.converter;
 
-import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
 
@@ -32,55 +27,57 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.smooks.io.payload.JavaResult;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.DOMSink;
+import org.smooks.io.sink.JavaSink;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StringSource;
 
 /**
- * ResultConverter converts from different {@link Result} types.
+ * Converts from different {@link org.smooks.api.io.Sink} types.
  */
 @Converter(generateLoader = true)
-public class ResultConverter {
+public class SinkConverter {
 
     public static final String SMOOKS_RESULT_KEY = "SmooksResultKeys";
 
-    private ResultConverter() {
+    private SinkConverter() {
     }
 
     @Converter
-    public static Node toDocument(DOMResult domResult) {
-        return domResult.getNode();
+    public static Node toDocument(DOMSink domSink) {
+        return domSink.getNode();
     }
 
     @SuppressWarnings("rawtypes")
     @Converter
-    public static List toList(JavaResult.ResultMap javaResult, Exchange exchange) {
+    public static List toList(JavaSink.ResultMap javaResult, Exchange exchange) {
         String resultKey = (String) exchange.getProperty(SMOOKS_RESULT_KEY);
         if (resultKey != null) {
-            return (List) getResultsFromJavaResult(javaResult, resultKey);
+            return (List) getResultsFromJavaSink(javaResult, resultKey);
         } else {
-            return (List) getSingleObjectFromJavaResult(javaResult);
+            return (List) getSingleObjectFromJavaSink(javaResult);
         }
     }
 
     @SuppressWarnings("rawtypes")
     @Converter
-    public static Integer toInteger(JavaResult.ResultMap result) {
-        return (Integer) getSingleObjectFromJavaResult(result);
+    public static Integer toInteger(JavaSink.ResultMap result) {
+        return (Integer) getSingleObjectFromJavaSink(result);
     }
 
     @SuppressWarnings("rawtypes")
     @Converter
-    public static Double toDouble(JavaResult.ResultMap result) {
-        return (Double) getSingleObjectFromJavaResult(result);
+    public static Double toDouble(JavaSink.ResultMap result) {
+        return (Double) getSingleObjectFromJavaSink(result);
     }
 
     @Converter
-    public static String toString(StringResult result) {
+    public static String toString(StringSink result) {
         return result.getResult();
     }
 
     @SuppressWarnings("rawtypes")
-    public static Map toMap(JavaResult.ResultMap resultBeans, Exchange exchange) {
+    public static Map toMap(JavaSink.ResultMap resultBeans, Exchange exchange) {
         Message outMessage = exchange.getOut();
         outMessage.setBody(resultBeans);
 
@@ -93,11 +90,11 @@ public class ResultConverter {
     }
 
     @SuppressWarnings("rawtypes")
-    private static Object getResultsFromJavaResult(JavaResult.ResultMap resultMap, String resultKey) {
+    private static Object getResultsFromJavaSink(JavaSink.ResultMap resultMap, String resultKey) {
         return resultMap.get(resultKey);
     }
 
-    private static Object getSingleObjectFromJavaResult(@SuppressWarnings("rawtypes") JavaResult.ResultMap resultMap) {
+    private static Object getSingleObjectFromJavaSink(@SuppressWarnings("rawtypes") JavaSink.ResultMap resultMap) {
         if (resultMap.size() == 1) {
             return resultMap.values().iterator().next();
         }
@@ -105,20 +102,15 @@ public class ResultConverter {
     }
 
     @Converter
-    public static StreamSource toStreamSource(StringResult stringResult) {
+    public static StringSource toStringSource(StringSink stringResult) {
         String result = stringResult.getResult();
-        if (result != null) {
-            StringReader stringReader = new StringReader(result);
-            return new StreamSource(stringReader);
-        }
-
-        return null;
+        return new StringSource(result);
     }
 
     @SuppressWarnings("rawtypes")
     @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (value instanceof JavaResult.ResultMap) {
+        if (value instanceof JavaSink.ResultMap) {
             for (Object mapValue : ((Map) value).values()) {
                 if (type.isInstance(mapValue)) {
                     return type.cast(mapValue);
