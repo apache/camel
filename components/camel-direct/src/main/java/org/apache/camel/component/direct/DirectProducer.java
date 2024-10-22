@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 public class DirectProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
+    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
+    private static final String CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
 
     private volatile DirectConsumer consumer;
     private int stateCounter;
@@ -93,6 +95,11 @@ public class DirectProducer extends DefaultAsyncProducer {
                     callback.done(true);
                     return true;
                 } else {
+                    //Ensure we can close the CLIENT Scope created by this DirectProducer
+                    //in the same thread
+                    if (exchange.getProperty(ACTIVE_SPAN_PROPERTY) != null) {
+                        exchange.setProperty(CLOSE_CLIENT_SCOPE, Boolean.TRUE);
+                    }
                     return consumer.getAsyncProcessor().process(exchange, callback);
                 }
             }

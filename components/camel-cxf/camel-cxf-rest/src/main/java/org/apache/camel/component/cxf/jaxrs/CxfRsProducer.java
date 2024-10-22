@@ -67,8 +67,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 
-    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
-
     private boolean throwException;
 
     // using a cache of factory beans instead of setting the address of a single cfb
@@ -110,17 +108,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // if using camel-tracer then execute this synchronously due to CXF-9063
-        if (exchange.getProperty(ACTIVE_SPAN_PROPERTY) != null) {
-            try {
-                process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            callback.done(true);
-            return true;
-        }
-
         try {
             Message inMessage = exchange.getIn();
             Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
@@ -135,6 +122,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             }
             return false;
         } catch (Exception exception) {
+            LOG.error("Error invoking request", exception);
             exchange.setException(exception);
             callback.done(true);
             return true;
@@ -142,8 +130,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     }
 
     protected void invokeAsyncHttpClient(Exchange exchange, final AsyncCallback callback) throws Exception {
-        LOG.trace("Process exchange: {} (asynchronously)", exchange);
-
         Message inMessage = exchange.getIn();
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfRsEndpointUtils
                 .getEffectiveAddress(exchange, ((CxfRsEndpoint) getEndpoint()).getAddress()));
@@ -206,8 +192,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     }
 
     protected void invokeAsyncProxyClient(Exchange exchange, final AsyncCallback callback) throws Exception {
-        LOG.trace("Process exchange: {} (asynchronously)", exchange);
-
         Message inMessage = exchange.getIn();
         Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
@@ -283,6 +267,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     }
 
     protected void setupClientMatrix(WebClient client, Exchange exchange) throws Exception {
+
         org.apache.cxf.message.Message cxfMessage
                 = (org.apache.cxf.message.Message) exchange.getIn().getHeader(CxfConstants.CAMEL_CXF_MESSAGE);
         if (cxfMessage != null) {
@@ -313,8 +298,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     }
 
     protected void invokeHttpClient(Exchange exchange) throws Exception {
-        LOG.trace("Process exchange: {} (synchronously)", exchange);
-
         Message inMessage = exchange.getIn();
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfRsEndpointUtils
                 .getEffectiveAddress(exchange, ((CxfRsEndpoint) getEndpoint()).getAddress()));
@@ -446,8 +429,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     }
 
     protected void invokeProxyClient(Exchange exchange) throws Exception {
-        LOG.trace("Process exchange: {} (synchronously)", exchange);
-
         Message inMessage = exchange.getIn();
         Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);

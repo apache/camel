@@ -29,6 +29,7 @@ public final class ActiveSpanManager {
     public static final String MDC_TRACE_ID = "trace_id";
     public static final String MDC_SPAN_ID = "span_id";
     private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
+    private static final String CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
 
     private ActiveSpanManager() {
@@ -56,6 +57,13 @@ public final class ActiveSpanManager {
      * @param span     The span
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
+        if (exchange.getProperty(CLOSE_CLIENT_SCOPE, Boolean.FALSE, Boolean.class)) {
+            //Check if we need to close the CLIENT scope created by
+            //DirectProducer in async mode before we create a new INTERNAL scope
+            //for the next DirectConsumer
+            endScope(exchange);
+            exchange.removeProperty(CLOSE_CLIENT_SCOPE);
+        }
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
                 new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
         if (exchange.getContext().isUseMDCLogging()) {

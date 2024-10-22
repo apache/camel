@@ -59,8 +59,6 @@ public class CxfProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);
 
-    private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
-
     private Client client;
     private CxfEndpoint endpoint;
 
@@ -101,18 +99,8 @@ public class CxfProducer extends DefaultAsyncProducer {
     // so we don't delegate the sync process call to the async process
     @Override
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
-        // if using camel-tracer then execute this synchronously due to CXF-9063
-        if (camelExchange.getProperty(ACTIVE_SPAN_PROPERTY) != null) {
-            try {
-                process(camelExchange);
-            } catch (Exception e) {
-                camelExchange.setException(e);
-            }
-            callback.done(true);
-            return true;
-        }
+        LOG.trace("Process exchange: {} in an async way.", camelExchange);
 
-        LOG.trace("Process exchange: {} (asynchronously)", camelExchange);
         try {
             // create CXF exchange
             ExchangeImpl cxfExchange = new ExchangeImpl();
@@ -149,7 +137,7 @@ public class CxfProducer extends DefaultAsyncProducer {
      */
     @Override
     public void process(Exchange camelExchange) throws Exception {
-        LOG.trace("Process exchange: {} (synchronously)", camelExchange);
+        LOG.trace("Process exchange: {} in sync way.", camelExchange);
 
         // create CXF exchange
         ExchangeImpl cxfExchange = new ExchangeImpl();
