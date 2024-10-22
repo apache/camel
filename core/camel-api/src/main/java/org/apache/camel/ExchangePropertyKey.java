@@ -24,6 +24,7 @@ import org.apache.camel.spi.CircuitBreakerConstants;
 public enum ExchangePropertyKey {
 
     ACTIVE_SPAN(Exchange.ACTIVE_SPAN),
+    CLOSE_CLIENT_SCOPE(Exchange.CLOSE_CLIENT_SCOPE),
     AGGREGATED_COMPLETED_BY(Exchange.AGGREGATED_COMPLETED_BY),
     AGGREGATED_CORRELATION_KEY(Exchange.AGGREGATED_CORRELATION_KEY),
     AGGREGATED_SIZE(Exchange.AGGREGATED_SIZE),
