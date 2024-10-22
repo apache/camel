@@ -61,7 +61,7 @@ public final class ActiveSpanManager {
             //DirectProducer in async mode before we create a new INTERNAL scope
             //for the next DirectConsumer
             endScope(exchange);
-            exchange.setProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE, Boolean.FALSE);
+            exchange.removeProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE);
         }
         exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN,
                 new Holder(exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class), span));
