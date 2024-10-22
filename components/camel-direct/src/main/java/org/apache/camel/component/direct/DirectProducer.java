@@ -96,7 +96,9 @@ public class DirectProducer extends DefaultAsyncProducer {
                 } else {
                     //Ensure we can close the CLIENT Scope created by this DirectProducer
                     //in the same thread
-                    exchange.setProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE, Boolean.TRUE);
+                    if (exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN) != null) {
+                        exchange.setProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE, Boolean.TRUE);
+                    }
                     return consumer.getAsyncProcessor().process(exchange, callback);
                 }
             }
