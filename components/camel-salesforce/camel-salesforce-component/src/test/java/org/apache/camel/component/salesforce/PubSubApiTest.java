@@ -98,7 +98,7 @@ public class PubSubApiTest {
         client.subscribe(consumer, ReplayPreset.CUSTOM, "initial");
 
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
-        verify(client, times(2)).subscribe(consumer, ReplayPreset.CUSTOM, "initial");
+        verify(client, timeout(5000).times(2)).subscribe(consumer, ReplayPreset.CUSTOM, "initial");
     }
 
     @Test
@@ -126,8 +126,10 @@ public class PubSubApiTest {
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null);
 
+        Thread.sleep(1000);
+
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
-        verify(client, times(2)).subscribe(consumer, ReplayPreset.LATEST, null);
+        verify(client, timeout(5000).times(2)).subscribe(consumer, ReplayPreset.LATEST, null);
     }
 
     @Test
