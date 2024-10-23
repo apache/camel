@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The hashicorp-vault component that integrates https://www.vaultproject.io/[Hashicorp Vault]. 
+The hashicorp-vault component that integrates https://www.vaultproject.io/[Hashicorp Vault].
 
 
 == URI Format
@@ -70,6 +70,8 @@ camel.vault.hashicorp.host = host
 camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
+
+NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
 NOTE: `camel.vault.hashicorp` configuration only applies to the Hashicorp Vault properties function (E.g when resolving properties).
 When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) & `token` options.
