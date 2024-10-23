@@ -65,7 +65,7 @@ camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
 ----
 
 This is a good option when you have multiple options instances available in the Camel context.
-Read more about property binding configuration in chapter xref:manual::property-binding-support.adoc[Property binding support].
+Read more about property binding configuration in chapter xref:manual::property-binding.adoc[Property Binding].
 
 === Knative client SSL support
 
