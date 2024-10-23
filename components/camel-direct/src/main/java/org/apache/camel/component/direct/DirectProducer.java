@@ -18,6 +18,7 @@ package org.apache.camel.component.direct;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,13 +94,17 @@ public class DirectProducer extends DefaultAsyncProducer {
                     callback.done(true);
                     return true;
                 } else {
+                    //Ensure we can close the CLIENT Scope created by this DirectProducer
+                    //in the same thread
+                    if (exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN) != null) {
+                        exchange.setProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, Boolean.TRUE);
+                    }
                     return consumer.getAsyncProcessor().process(exchange, callback);
                 }
             }
         } catch (InterruptedException e) {
             LOG.info("Interrupted while processing the exchange");
             Thread.currentThread().interrupt();
-
             exchange.setException(e);
             callback.done(true);
             return true;

@@ -10,10 +10,18 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `setLazyBeanStrategy`/`getLazyBeanStrategy` methods to `org.apache.camel.spi.CamelBeanPostProcessor`.
 
+Renamed `Exchange.ACTIVE_SPAN` to `Exchange.OTEL_ACTIVE_SPAN`.
+Renamed `ExchangePropertyKey.ACTIVE_SPAN` to `ExchangePropertyKey.OTEL_ACTIVE_SPAN`.
+
 === camel-management
 
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
 to an `Integer` value.
+
+=== camel-jackson
+
+The option `useWriter` on JSon data format and camel-jackson,
+has been replaced with `combineUnicodeSurrogates` as it is intended for 4-bytes characters such as Japanese.
 
 === camel-jms
 
@@ -28,6 +36,11 @@ Added `int limit` as parameter to the `browse` method in `org.apache.camel.compo
 The `camel-opentelemetry` component has had significant bug fixes to handle span activation/deactivations
 better when Camel route messages synchronously and asynchronously. This component should also work better
 on Spring Boot.
+
+=== camel-smooks
+
+Upgraded Smooks from 2.0.0-RC4 to 2.0.1 which has
+https://www.smooks.org/documentation/#migrating_from_smooks_1_7_to_2_0[API breaking changes] in Smooks.
 
 === camel-hashicorp-vault properties function
 
@@ -128,9 +141,3 @@ The following modules has been removed:
 
 * camel-kotlin-dsl
 * camel-kotlin-api
-
-=== Deprecated Components
-
-The following components that were marked as deprecated:
-
-* 

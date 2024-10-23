@@ -44,16 +44,18 @@ public final class SourceConverterLoader implements TypeConverterLoader, CamelCo
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, javax.xml.transform.Source.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStreamSource((java.io.InputStream) value));
-        addTypeConverter(registry, javax.xml.transform.Source.class, org.apache.camel.WrappedFile.class, true,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStreamSource((org.apache.camel.WrappedFile) value, exchange));
-        addTypeConverter(registry, org.smooks.io.payload.JavaSource.class, java.lang.Object.class, false,
+        addTypeConverter(registry, org.smooks.api.io.Source.class, org.apache.camel.WrappedFile.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toURISource((org.apache.camel.WrappedFile) value));
+        addTypeConverter(registry, org.smooks.io.source.JavaSource.class, java.lang.Object.class, false,
             (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toJavaSource(value));
-        addTypeConverter(registry, org.smooks.io.payload.JavaSource.class, org.smooks.io.payload.JavaResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toJavaSource((org.smooks.io.payload.JavaResult) value));
-        addTypeConverter(registry, org.smooks.io.payload.JavaSourceWithoutEventStream.class, java.lang.Object.class, false,
+        addTypeConverter(registry, org.smooks.io.source.JavaSource.class, org.smooks.io.sink.JavaSink.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toJavaSource((org.smooks.io.sink.JavaSink) value));
+        addTypeConverter(registry, org.smooks.io.source.JavaSourceWithoutEventStream.class, java.lang.Object.class, false,
             (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toJavaSourceWithoutEventStream(value));
+        addTypeConverter(registry, org.smooks.io.source.StreamSource.class, java.io.InputStream.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStreamSource((java.io.InputStream) value));
+        addTypeConverter(registry, org.smooks.io.source.StringSource.class, java.lang.String.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SourceConverter.toStringSource((java.lang.String) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

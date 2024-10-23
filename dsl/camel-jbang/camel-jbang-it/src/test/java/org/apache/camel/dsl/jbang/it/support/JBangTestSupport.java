@@ -119,6 +119,10 @@ public abstract class JBangTestSupport {
         }
     }
 
+    protected String execInContainer(final String command) {
+        return containerService.executeGenericCommand(command);
+    }
+
     protected String execute(final String command) {
         return containerService.execute(command);
     }

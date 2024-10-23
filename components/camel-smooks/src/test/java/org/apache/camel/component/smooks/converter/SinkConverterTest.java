@@ -17,19 +17,17 @@
 package org.apache.camel.component.smooks.converter;
 
 import java.io.BufferedReader;
-import java.io.StringWriter;
-
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.ReaderSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ResultConverterTest {
+public class SinkConverterTest {
 
     private TypeConverter typeConverter;
 
@@ -41,19 +39,17 @@ public class ResultConverterTest {
 
     @Test
     public void convertStringResultToStreamSource() throws Exception {
-        StringResult stringResult = createStringResult("Bajja");
+        StringSink stringResult = createStringSink("Bajja");
 
-        StreamSource streamSource = typeConverter.convertTo(StreamSource.class, stringResult);
+        ReaderSource<?> streamSource = typeConverter.convertTo(ReaderSource.class, stringResult);
 
         BufferedReader reader = new BufferedReader(streamSource.getReader());
         assertEquals("Bajja", reader.readLine());
     }
 
-    private StringResult createStringResult(String string) {
-        StringWriter stringWriter = new StringWriter();
-        stringWriter.write(string);
-        StringResult stringResult = new StringResult();
-        stringResult.setWriter(stringWriter);
+    private StringSink createStringSink(String string) {
+        StringSink stringResult = new StringSink();
+        stringResult.getStringWriter().write(string);
         return stringResult;
     }
 

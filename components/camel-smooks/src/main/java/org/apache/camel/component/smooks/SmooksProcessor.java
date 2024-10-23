@@ -20,14 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
 
@@ -50,10 +48,16 @@ import org.smooks.api.ExecutionContext;
 import org.smooks.api.SmooksException;
 import org.smooks.api.TypedKey;
 import org.smooks.api.delivery.VisitorAppender;
+import org.smooks.api.io.Sink;
+import org.smooks.api.io.Source;
 import org.smooks.api.resource.visitor.Visitor;
 import org.smooks.engine.lookup.ExportsLookup;
 import org.smooks.engine.report.HtmlReportGenerator;
 import org.smooks.io.payload.Exports;
+import org.smooks.io.source.DOMSource;
+import org.smooks.io.source.ReaderSource;
+import org.smooks.io.source.StreamSource;
+import org.smooks.io.source.URLSource;
 
 /**
  * Smooks {@link Processor} for Camel.
@@ -109,20 +113,20 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
 
             final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
             if (exports.hasExports()) {
-                final Result[] results = exports.createResults();
-                smooks.filterSource(executionContext, getSource(exchange), results);
-                setResultOnBody(exports, results, exchange);
+                final Sink[] sinks = exports.createSinks();
+                smooks.filterSource(executionContext, getSource(exchange, executionContext), sinks);
+                setResultOnBody(exports, sinks, exchange);
             } else {
-                smooks.filterSource(executionContext, getSource(exchange));
+                smooks.filterSource(executionContext, getSource(exchange, executionContext));
             }
         } finally {
             executionContext.remove(EXCHANGE_TYPED_KEY);
         }
     }
 
-    protected void setResultOnBody(final Exports exports, final Result[] results, final Exchange exchange) {
+    protected void setResultOnBody(final Exports exports, final Sink[] sinks, final Exchange exchange) {
         final Message message = exchange.getMessage();
-        final List<Object> objects = Exports.extractResults(results, exports);
+        final List<Object> objects = Exports.extractSinks(sinks, exports);
         if (objects.size() == 1) {
             Object value = objects.get(0);
             message.setBody(value);
@@ -144,11 +148,11 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
     }
 
-    private Source getSource(final Exchange exchange) {
+    private Source getSource(final Exchange exchange, ExecutionContext executionContext) {
         Object payload = exchange.getIn().getBody();
 
         if (payload instanceof SAXSource) {
-            return new StreamSource((Reader) ((SAXSource) payload).getXMLReader());
+            return new ReaderSource<>((Reader) ((SAXSource) payload).getXMLReader());
         }
 
         if (payload instanceof Source) {
@@ -160,15 +164,22 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
 
         if (payload instanceof InputStream) {
-            return new StreamSource((InputStream) payload);
+            return new StreamSource<>((InputStream) payload);
         }
 
         if (payload instanceof Reader) {
-            return new StreamSource((Reader) payload);
+            return new ReaderSource<>((Reader) payload);
         }
 
         if (payload instanceof WrappedFile) {
-            return new StreamSource((File) exchange.getIn().getBody(WrappedFile.class).getFile());
+            String systemId
+                    = new javax.xml.transform.stream.StreamSource((File) exchange.getIn().getBody(WrappedFile.class).getFile())
+                            .getSystemId();
+            try {
+                return new URLSource(new URL(systemId));
+            } catch (MalformedURLException e) {
+                throw new SmooksException(e);
+            }
         }
 
         return exchange.getIn().getBody(Source.class);

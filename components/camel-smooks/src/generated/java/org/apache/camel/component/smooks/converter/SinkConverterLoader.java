@@ -21,11 +21,11 @@ import org.apache.camel.util.DoubleMap;
 @Generated("org.apache.camel.maven.packaging.TypeConverterLoaderGeneratorMojo")
 @SuppressWarnings("unchecked")
 @DeferredContextBinding
-public final class ResultConverterLoader implements TypeConverterLoader, CamelContextAware {
+public final class SinkConverterLoader implements TypeConverterLoader, CamelContextAware {
 
     private CamelContext camelContext;
 
-    public ResultConverterLoader() {
+    public SinkConverterLoader() {
     }
 
     @Override
@@ -45,18 +45,18 @@ public final class ResultConverterLoader implements TypeConverterLoader, CamelCo
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.lang.Double.class, org.smooks.io.payload.JavaResult.ResultMap.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.toDouble((org.smooks.io.payload.JavaResult.ResultMap) value));
-        addTypeConverter(registry, java.lang.Integer.class, org.smooks.io.payload.JavaResult.ResultMap.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.toInteger((org.smooks.io.payload.JavaResult.ResultMap) value));
-        addTypeConverter(registry, java.lang.String.class, org.smooks.io.payload.StringResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.toString((org.smooks.io.payload.StringResult) value));
-        addTypeConverter(registry, java.util.List.class, org.smooks.io.payload.JavaResult.ResultMap.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.toList((org.smooks.io.payload.JavaResult.ResultMap) value, exchange));
-        addTypeConverter(registry, javax.xml.transform.stream.StreamSource.class, org.smooks.io.payload.StringResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.toStreamSource((org.smooks.io.payload.StringResult) value));
-        addTypeConverter(registry, org.w3c.dom.Node.class, javax.xml.transform.dom.DOMResult.class, false,
-            (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.toDocument((javax.xml.transform.dom.DOMResult) value));
+        addTypeConverter(registry, java.lang.Double.class, org.smooks.io.sink.JavaSink.ResultMap.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toDouble((org.smooks.io.sink.JavaSink.ResultMap) value));
+        addTypeConverter(registry, java.lang.Integer.class, org.smooks.io.sink.JavaSink.ResultMap.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toInteger((org.smooks.io.sink.JavaSink.ResultMap) value));
+        addTypeConverter(registry, java.lang.String.class, org.smooks.io.sink.StringSink.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toString((org.smooks.io.sink.StringSink) value));
+        addTypeConverter(registry, java.util.List.class, org.smooks.io.sink.JavaSink.ResultMap.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toList((org.smooks.io.sink.JavaSink.ResultMap) value, exchange));
+        addTypeConverter(registry, org.smooks.io.source.StringSource.class, org.smooks.io.sink.StringSink.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toStringSource((org.smooks.io.sink.StringSink) value));
+        addTypeConverter(registry, org.w3c.dom.Node.class, org.smooks.io.sink.DOMSink.class, false,
+            (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.toDocument((org.smooks.io.sink.DOMSink) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
@@ -64,7 +64,7 @@ public final class ResultConverterLoader implements TypeConverterLoader, CamelCo
     }
 
     private void registerFallbackConverters(TypeConverterRegistry registry) {
-        addFallbackTypeConverter(registry, false, false, (type, exchange, value) -> org.apache.camel.component.smooks.converter.ResultConverter.convertTo(type, exchange, value, registry));
+        addFallbackTypeConverter(registry, false, false, (type, exchange, value) -> org.apache.camel.component.smooks.converter.SinkConverter.convertTo(type, exchange, value, registry));
     }
 
     private static void addFallbackTypeConverter(TypeConverterRegistry registry, boolean allowNull, boolean canPromote, SimpleTypeConverter.ConversionMethod method) {
