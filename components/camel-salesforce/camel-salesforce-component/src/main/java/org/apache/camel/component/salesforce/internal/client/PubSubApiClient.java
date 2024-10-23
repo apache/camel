@@ -83,6 +83,7 @@ public class PubSubApiClient extends ServiceSupport {
     private long reconnectDelay;
     private final String pubSubHost;
     private final int pubSubPort;
+    private final boolean allowUseProxyServer;
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final SalesforceLoginConfig loginConfig;
@@ -100,7 +101,7 @@ public class PubSubApiClient extends ServiceSupport {
     private String initialReplayId;
 
     public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
-                           int pubSubPort, long backoffIncrement, long maxBackoff) {
+                           int pubSubPort, long backoffIncrement, long maxBackoff, boolean allowUseProxyServer) {
         this.session = session;
         this.loginConfig = loginConfig;
         this.pubSubHost = pubSubHost;
@@ -108,6 +109,8 @@ public class PubSubApiClient extends ServiceSupport {
         this.maxBackoff = maxBackoff;
         this.backoffIncrement = backoffIncrement;
         this.reconnectDelay = backoffIncrement;
+        this.allowUseProxyServer = allowUseProxyServer;
+
     }
 
     public List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult> publishMessage(
@@ -203,6 +206,9 @@ public class PubSubApiClient extends ServiceSupport {
 
         final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder
                 .forAddress(pubSubHost, pubSubPort);
+        if (!allowUseProxyServer) {
+            channelBuilder.proxyDetector(socketAddress -> null);
+        }
         if (usePlainTextConnection) {
             channelBuilder.usePlaintext();
         }

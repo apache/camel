@@ -62,14 +62,14 @@ public class PubSubApiTest {
 
         PubSubApiClient client = Mockito.spy(new PubSubApiClient(
                 session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000));
+                port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null);
 
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
-        verify(client, times(1)).subscribe(consumer, ReplayPreset.LATEST, null);
-        verify(client, times(1)).subscribe(consumer, ReplayPreset.CUSTOM, "MTIz");
+        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.LATEST, null);
+        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.CUSTOM, "MTIz");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class PubSubApiTest {
 
         PubSubApiClient client = Mockito.spy(new PubSubApiClient(
                 session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000));
+                port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.CUSTOM, "initial");
@@ -121,7 +121,7 @@ public class PubSubApiTest {
 
         PubSubApiClient client = Mockito.spy(new PubSubApiClient(
                 session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000));
+                port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null);
@@ -152,7 +152,7 @@ public class PubSubApiTest {
 
         PubSubApiClient client = new PubSubApiClient(
                 session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000);
+                port, 1000, 10000, true);
         client.setUsePlainTextConnection(true);
         client.start();
         client.subscribe(consumer, ReplayPreset.LATEST, null);
