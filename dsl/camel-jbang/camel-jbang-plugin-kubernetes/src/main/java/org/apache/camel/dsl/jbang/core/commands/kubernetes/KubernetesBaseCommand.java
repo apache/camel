@@ -89,9 +89,9 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
         if (kubernetesClient == null) {
             if (kubeConfig != null) {
                 kubernetesClient = KubernetesHelper.getKubernetesClient(kubeConfig);
+            } else {
+                kubernetesClient = KubernetesHelper.getKubernetesClient();
             }
-
-            kubernetesClient = KubernetesHelper.getKubernetesClient();
         }
 
         return kubernetesClient;

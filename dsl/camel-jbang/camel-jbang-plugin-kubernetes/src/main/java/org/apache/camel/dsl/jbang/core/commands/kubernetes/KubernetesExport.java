@@ -362,10 +362,15 @@ public class KubernetesExport extends Export {
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 
         // Quarkus: dump joined fragments to kubernetes.yml
-        if (runtime == RuntimeType.quarkus && !ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+        if (runtime == RuntimeType.quarkus) {
             var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
-            safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)),
-                    KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes"));
+            File manifestFile = KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes");
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                // Quarkus maven plugin does not support manifest merging (correctly)
+                // We still export the wanted configuration for comparison with the quarkus generated manifest
+                manifestFile = new File(exportDir + "/src/main/kubernetes/_openshift.yml");
+            }
+            safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)), manifestFile);
         }
 
         // SpringBoot: dump each fragment to its respective kind
