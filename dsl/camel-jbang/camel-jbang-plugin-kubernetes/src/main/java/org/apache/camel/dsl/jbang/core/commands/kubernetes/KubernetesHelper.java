@@ -70,8 +70,6 @@ public final class KubernetesHelper {
 
     /**
      * Gets the default Kubernetes client.
-     *
-     * @return
      */
     public static KubernetesClient getKubernetesClient() {
         if (kubernetesClient == null) {
@@ -83,9 +81,6 @@ public final class KubernetesHelper {
 
     /**
      * Create or get Kubernetes client with given config.
-     *
-     * @param  config
-     * @return
      */
     public static KubernetesClient getKubernetesClient(String config) {
         if (clients.containsKey(config)) {
@@ -98,8 +93,6 @@ public final class KubernetesHelper {
     /**
      * Creates new Yaml instance. The implementation provided by Snakeyaml is not thread-safe. It is better to create a
      * fresh instance for every YAML stream.
-     *
-     * @return
      */
     public static Yaml yaml() {
         return YamlHelper.yaml();
@@ -109,8 +102,6 @@ public final class KubernetesHelper {
      * Creates new Yaml instance. The implementation provided by Snakeyaml is not thread-safe. It is better to create a
      * fresh instance for every YAML stream. Uses the given class loader as base constructor. This is mandatory when
      * additional classes have been downloaded via Maven for instance when loading a Camel JBang plugin.
-     *
-     * @return
      */
     public static Yaml yaml(ClassLoader classLoader) {
         return YamlHelper.yaml(classLoader);
