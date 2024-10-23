@@ -9,4 +9,157 @@
 
 *Since Camel {since}*
 
-HTTP transport for the camel-knative component.
+The `camel-knative-http` module represents the HTTP transport for the `camel-knative` component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-knative-http</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel version -->
+</dependency>
+------------------------------------------------------------
+
+== Knative Http producer factory
+
+The Knative Http producer factory creates the producer instances that connect to the Knative broker via Http transport.
+The factory provides some configuration options that you can set to customize the Http connections and the way the client sends requests to the broker.
+
+First of all the producer factory performs a lookup on the Vertx instance and the VertxOptions, so you can customize these resources and bind them to the Camel context prior to using the Kntive component.
+
+.Example
+[source,java]
+----
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+
+VertxOptions options = new VertxOptions();
+context.getRegistry().bind("vertxOptions", options);
+
+Vertx vertx = Vertx.vertx(options);
+context.getRegistry().bind("vertxInstance", vertx);
+----
+
+In the very same manner you may also bind the Vertx web client options to the Camel context.
+The producer factory will automatically perform the lookup of the options instance.
+
+.Example
+[source,java]
+----
+import io.vertx.ext.web.client.WebClientOptions;
+
+WebClientOptions clientOptions = new WebClientOptions().setConnectTimeout(120000);
+context.getRegistry().bind("myClientOptions", clientOptions);
+----
+
+You may also explicitly set the options instance via property configuration:
+
+.application.properties
+[source,properties]
+----
+camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
+----
+
+This is a good option when you have multiple options instances available in the Camel context.
+Read more about property binding configuration in chapter xref:manual::property-binding-support.adoc[Property binding support].
+
+=== Knative client SSL support
+
+The Knative broker may use secure connections using TLS authentication with CA certificates.
+The Apache Camel Knative component supports special web client options to easily enable SSL when connecting to the Knative broker.
+
+You can set the client options on the Knative Http producer factory as follows:
+
+.Example
+[source,java]
+----
+import org.apache.camel.component.knative.KnativeComponent;
+import org.apache.camel.component.knative.http.KnativeHttpClientOptions;
+import org.apache.camel.component.knative.http.KnativeHttpProducerFactory;
+
+KnativeHttpClientOptions sslClientOptions = new KnativeHttpClientOptions(context);
+sslClientOptions.setSslEnabled(true);
+sslClientOptions.setKeyPath("keystore/client.pem");
+sslClientOptions.setKeyCertPath("keystore/client.crt");
+sslClientOptions.setTrustCertPath("keystore/trust.crt");
+
+KnativeComponent component = context.getComponent("knative", KnativeComponent.class);
+if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+    httpProducerFactory.setClientOptions(sslClientOptions);
+}
+----
+
+You can also use property based component configuration to set the client options on the producer factory:
+
+.application.properties
+[source,properties]
+----
+camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
+----
+
+TIP: When there is no proper trust certificate available (e.g. on test environments) you can use a trust all strategy on the client options with the class `org.apache.camel.component.knative.http.TrustAllOptions`.
+
+.TrustAllOptions
+[source,java]
+----
+sslClientOptions.setTrustOptions(TrustAllOptions.INSTANCE);
+----
+
+==== Autoconfiguration SSL options via environment variables
+
+The Knative client options are able to perform autoconfiguration based on resolving properties from system property or environment variable settings.
+During the initialization phase the client options automatically look for environment settings that configure the options.
+
+All environment settings that configure the Knative client SSL options use a specific property key prefix
+
+* camel.knative.client.ssl.<property_name>
+* CAMEL_KNATIVE_CLIENT_SSL_<PROPERTY_NAME>
+
+You can use this kind of autoconfiguration to enable SSL on the Knative client with property based config only.
+
+.application.properties
+[source,properties]
+----
+camel.knative.client.ssl.enabled=true
+camel.knative.client.ssl.key.path=keystore/client.pem
+camel.knative.client.ssl.key.cert.path=keystore/client.crt
+
+camel.component.knative.producerFactory.clientOptions=#class:org.apache.camel.component.knative.http.KnativeHttpClientOptions
+----
+
+This will instantiate a new instance of `org.apache.camel.component.knative.http.KnativeHttpClientOptions` and perform the autoconfiguration via system property and environment variable settings on that instance.
+
+TIP: By default, the SSL client options will verify the hostname of the Knative broker as part of the SSL handshake.
+In test environments this often leads to SSL handshake errors. You can disable the hostname verification for the client options with `camel.knative.client.ssl.verify.hostname=false`
+
+The same autoconfiguration works with environment variables which is very useful when set on Kubernetes deployments.
+
+.Deployment
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-camel-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: my-camel-app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: my-camel-app
+    spec:
+      containers:
+      - name: timer-source
+        image: camel-examples/my-camel-app:1.0-SNAPSHOT
+        env:
+          - name: CAMEL_KNATIVE_CLIENT_SSL_ENABLED
+            value: "true"
+          - name: CAMEL_KNATIVE_CLIENT_SSL_KEY_CERT_PATH
+            value: /knative-certs/knative-eventing-bundle.pem
+----

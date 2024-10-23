@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import io.vertx.core.Vertx;
@@ -138,5 +139,21 @@ public final class KnativeHttpSupport {
         }
 
         return Vertx.vertx(options);
+    }
+
+    /**
+     * Retrieve client options from given CamelContext.
+     *
+     * @param  camelContext the current context.
+     * @return              client options or empty
+     */
+    public static Optional<KnativeHttpClientOptions> lookupClientOptions(CamelContext camelContext) {
+        KnativeHttpClientOptions clientOptions
+                = CamelContextHelper.findSingleByType(camelContext, KnativeHttpClientOptions.class);
+        if (clientOptions != null) {
+            return Optional.of(clientOptions);
+        }
+
+        return Optional.empty();
     }
 }
