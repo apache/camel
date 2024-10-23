@@ -897,6 +897,7 @@ public class Run extends CamelCommand {
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
+        eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
@@ -968,6 +969,7 @@ public class Run extends CamelCommand {
         eq.camelSpringBootVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
+        eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
