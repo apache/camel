@@ -367,13 +367,14 @@ The camel.rest supports 29 options, which are listed below.
 
 
 === Camel AWS Vault configurations
-The camel.vault.aws supports 11 options, which are listed below.
+The camel.vault.aws supports 13 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.aws.accessKey* | The AWS access key |  | String
 | *camel.vault.aws.default{zwsp}CredentialsProvider* | Define if we want to use the AWS Default Credentials Provider or not | false | boolean
+| *camel.vault.aws.override{zwsp}Endpoint* | Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride option | false | boolean
 | *camel.vault.aws.profile{zwsp}CredentialsProvider* | Define if we want to use the AWS Profile Credentials Provider or not | false | boolean
 | *camel.vault.aws.profileName* | Define the profile name to use if Profile Credentials Provider is selected |  | String
 | *camel.vault.aws.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in AWS. | false | boolean
@@ -382,6 +383,7 @@ The camel.vault.aws supports 11 options, which are listed below.
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
 | *camel.vault.aws.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.aws.sqsQueueUrl* | In case of usage of SQS notification this field will specified the Queue URL to use |  | String
+| *camel.vault.aws.uriEndpoint{zwsp}Override* | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *camel.vault.aws.useSqs{zwsp}Notification* | Whether to use AWS SQS for secrets updates notification, this will require setting up Eventbridge/Cloudtrail/SQS communication | false | boolean
 |===
 
