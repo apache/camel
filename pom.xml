@@ -272,6 +272,7 @@
                                     <exclude>**/*.p12</exclude>
                                     <exclude>**/*.params</exclude>
                                     <exclude>**/*.parquet</exclude>
+                                    <exclude>**/*.crt</exclude>
                                     <exclude>**/*.pem</exclude>
                                     <exclude>**/*.pfx</exclude>
                                     <exclude>**/*.pgp</exclude>

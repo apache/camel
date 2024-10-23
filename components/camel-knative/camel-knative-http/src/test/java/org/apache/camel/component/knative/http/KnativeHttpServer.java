@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -115,7 +116,7 @@ public class KnativeHttpServer extends ServiceSupport {
     protected void doStart() {
         this.executor = context.getExecutorServiceManager().newSingleThreadExecutor(this, "knative-http-server");
         this.vertx = Vertx.vertx();
-        this.server = vertx.createHttpServer();
+        this.server = vertx.createHttpServer(getServerOptions());
         this.router = Router.router(vertx);
         this.router.route(path)
                 .handler(event -> {
@@ -233,5 +234,9 @@ public class KnativeHttpServer extends ServiceSupport {
             context.getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
+    }
+
+    protected HttpServerOptions getServerOptions() {
+        return new HttpServerOptions();
     }
 }

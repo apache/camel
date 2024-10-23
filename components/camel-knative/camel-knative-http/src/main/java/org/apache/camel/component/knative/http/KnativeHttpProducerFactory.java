@@ -78,6 +78,11 @@ public class KnativeHttpProducerFactory extends ServiceSupport implements CamelC
         if (vertx == null) {
             vertx = KnativeHttpSupport.lookupVertxInstance(camelContext);
         }
+
+        if (vertxHttpClientOptions == null) {
+            KnativeHttpSupport.lookupClientOptions(camelContext)
+                    .ifPresent(options -> vertxHttpClientOptions = options);
+        }
     }
 
     @Override

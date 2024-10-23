@@ -25,7 +25,7 @@ for this component.
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-knative</artifactId>
     <version>x.x.x</version>
-    <!-- use the same version as your Camel K version -->
+    <!-- use the same version as your Camel version -->
 </dependency>
 ------------------------------------------------------------
 
@@ -137,13 +137,21 @@ RouteBuilder.addRoutes(context, b -> {
 <1> set the location of the `Knative Environment` file
 <2> expose knative service
 
-=== Using custom Knative Transport
+You can also use property based component configuration to set the `Knative Environment` configuration file.
 
-As today the component only support `http` as transport as it is the only supported protocol on Knative side but the transport is pluggable by implementing the following interface:
+.application.properties
+[source,properties]
+----
+camel.component.knative.environmentPath=classpath:knative.json
+----
+
+=== Using custom Knative transports
+
+As today the Knative component only supports `http` as transport as this is the only supported protocol on Knative side.
+The transport implementation is pluggable though by implementing the following interface:
 
 [source,java]
 ----
-
 public interface KnativeTransport extends Service {
     /**
      * Create a camel {@link org.apache.camel.Producer} in place of the original endpoint for a specific protocol.
@@ -171,6 +179,132 @@ public interface KnativeTransport extends Service {
 }
 ----
 
+== Knative eventing
+
+With https://knative.dev/docs/eventing/[Knative eventing] you have the opportunity to produce/consume events on the Knative broker.
+
+=== Producing events
+
+The Apache Camel route is able to produce events by sending requests to the Knative broker.
+In the Camel route you need to use the `event` resource for this kind of interaction with the Knative eventing broker.
+Configure the Knative component with following `Knative Environment` configuration.
+
+.knative.json
+[source,json]
+----
+{
+  "resources": [
+    {
+      "name": "default",
+      "type": "event",
+      "endpointKind": "sink",
+      "url": "http://default-broker.some-namespace.svc.cluster.local",
+      "objectApiVersion": "eventing.knative.dev/v1",
+      "objectKind": "Broker",
+      "objectName": "default"
+    }
+  ]
+}
+----
+
+The `Knative Environment` configuration is set on the Knative component and specifies the Knative broker URL.
+You can then use the `event`  resource type in your Camel route to send data to the Knative broker.
+
+.Example
+[source,java]
+----
+CamelContext context = new DefaultCamelContext();
+
+KnativeComponent component = context.getComponent("knative", KnativeComponent.class);
+component.getConfiguration().setEnvironmentPath("classpath:knative.json"); // <1>
+
+RouteBuilder.addRoutes(context, b -> {
+    b.from("timer:tick")
+        .setBody()
+            .simple("Hello Knative!")
+        .transform(new DataType("http:application-cloudevents")) // <2>
+        .to("knative:event/default?kind=Broker&name=default"); // <3>
+});
+----
+<1> configure the Knative component to use the `Knative Environment` file
+<2> transform data to proper Http CloudEvents format
+<3> push event to the broker that gets resolved via the `Knative Environment`
+
+The Knative eventing broker uses CloudEvents data format by default.
+This is why we transform the data with the given data type before sending the request to the broker.
+The data type will set proper CloudEvent attributes like event type, id, source, subject and so on.
+
+You can customize the CloudEvent attributes by setting specific message headers (e.g. `CamelCloudEventID=myEventId` or `CamelCloudEventType=myEventType`).
+
+Also, you may set the CloudEvent attributes via property based configuration on the Knative component.
+
+.application.properties
+[source,properties]
+----
+camel.component.knative.ceOverride[ce-type]=dev.knative.connector.event.timer
+camel.component.knative.ceOverride[ce-source]=dev.knative.eventing.timer-source
+camel.component.knative.ceOverride[ce-subject]=timer
+----
+
+=== SinkBinding
+
+As an alternative to specifying the Knative broker URL statically in the
+`Knative Environment` configuration you can leverage the concept of a `SinkBinding` resource that is able to inject the broker URL as an environment variable named `K_SINK`.
+
+The SinkBinding is a Kubernetes resource that makes Knative eventing automatically inject the resource URL into your Camel application on startup.
+The real Knative broker URL will be available in the form of the environment varoable `K_SINK`.
+
+You can use property binding support to resolve this environment variable in the Knative component configuration:
+
+.knative.json
+[source,json]
+----
+{
+  "resources": [
+    {
+      "name": "default",
+      "type": "event",
+      "endpointKind": "sink",
+      "url": "{{k.sink}}",
+      "objectApiVersion": "eventing.knative.dev/v1",
+      "objectKind": "Broker",
+      "objectName": "default"
+    }
+  ]
+}
+----
+
+As you can see the `Knative Environment` configuration now uses the expression `{{k.sink}}` as a broker URL.
+On startup the `SinkBinding` will inject this environment variable.
+
+The SinkBinding is created as a Kubernetes resource and looks like this:
+
+.Example SinkBinding
+[source,yaml]
+----
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: my-camel-app
+  name: my-camel-app-binding
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+  subject:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-camel-app
+----
+
+The binding resource specifies the reference to the Knative broker and a subject which usually is the Deployment resource that represents your Camel application running on Kubernetes.
+
+TIP: It may take some time for the SinkBinding to inject the `K_SINK` environment variable into the Deployment resource.
+The Camel application may run into errors because of the missing variable when starting the Camel context. As a result you may want to wait for the environment variable to be present before starting the Camel context. You can do this with a Camel startup condition, for instance by setting `CAMEL_STARTUPCONDITION_ENVIRONMENT_VARIABLE_EXISTS=K_SINK`.
+
 === Using ProducerTemplate
 
 When using Knative producer with a ProducerTemplate, it is necessary to specify a value for the CloudEvent source, simply by setting a value for the header 'CamelCloudEventSource'.
@@ -180,3 +314,73 @@ When using Knative producer with a ProducerTemplate, it is necessary to specify 
 ----
 producerTemplate.sendBodyAndHeader("knative:event/broker-test", body, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "my-source-name");
 ----
+
+=== Consuming events
+
+The Knative event consumption is based on starting a Http service as part of the Camel application.
+The Knative broker will invoke the service then with the event data.
+The concept uses a so called `Trigger` resource that connects the application with the Knative broker event stream.
+The trigger specifies which events should be sent to the Http service that is part of the Camel application.
+
+As sample trigger resource looks like this:
+
+.Trigger resource
+[source,yaml]
+----
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  labels:
+    app.kubernetes.io/name: my-camel-app
+    eventing.knative.dev/broker: default
+  name: my-camel-app-trigger
+spec:
+  broker: default
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: my-camel-app
+----
+
+The trigger resource references a Knative broker by its name (`default`) and specifies the subscriber which is an arbitrary Kubernetes Service.
+The trigger will invoke the service subscriber for each event on the broker.
+The trigger may specify filters on event attributes to select the events that should be sent to the subscriber.
+
+The Service resource is part of the Camel application running on the Kubernetes cluster and points to an exposed Http service and port.
+The Knative Camel component will automatically configure this Http service when consuming events in a Camel route.
+
+Just use the `event` resource type in your Camel route like this:
+
+.Example
+[source,java]
+----
+RouteBuilder.addRoutes(context, b -> {
+    b.from("knative:event/default?kind=Broker&name=default")
+        .to("log:info");
+});
+----
+
+The according `Knative Environment` configuration that specifies the Http service looks like this:
+
+.knative.json
+[source,json]
+----
+{
+  "resources": [
+    {
+      "name": "default",
+      "type": "event",
+      "endpointKind": "source",
+      "path": "/",
+      "objectApiVersion": "eventing.knative.dev/v1",
+      "objectKind": "Broker",
+      "objectName": "default",
+      "reply": false
+    }
+  ]
+}
+----
+
+This will create a proper Http service with the right resource path routing so that all incoming event requests will be consumed by the Camel route.
+Once again the Knative broker will use CloudEvent data format by default, so you can access the CloudEvent attributes such as event type, id, source, subject in the Camel route.
