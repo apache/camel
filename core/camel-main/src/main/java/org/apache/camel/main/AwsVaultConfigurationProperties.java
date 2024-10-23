@@ -138,4 +138,21 @@ public class AwsVaultConfigurationProperties extends AwsVaultConfiguration imple
         return this;
     }
 
+    /**
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
+     */
+    public AwsVaultConfigurationProperties isOverrideEndpoint(boolean overrideEndpoint) {
+        setOverrideEndpoint(overrideEndpoint);
+        return this;
+    }
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     */
+    public AwsVaultConfigurationProperties withUriEndpointOverride(String uriEndpointOverride) {
+        setUriEndpointOverride(uriEndpointOverride);
+        return this;
+    }
+
 }

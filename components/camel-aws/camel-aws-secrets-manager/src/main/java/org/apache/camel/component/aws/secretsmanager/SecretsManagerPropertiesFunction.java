@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
+import java.net.URI;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
@@ -94,6 +95,11 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private static final String CAMEL_AWS_VAULT_PROFILE_NAME_ENV
             = "CAMEL_AWS_VAULT_PROFILE_NAME";
 
+    private static final String CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT
+            = "CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT";
+
+    private static final String CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE = "CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE";
+
     private CamelContext camelContext;
     private SecretsManagerClient client;
 
@@ -105,6 +111,10 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private boolean profleCredentialsProvider;
 
     private String profileName;
+
+    private boolean isOverrideEndpoint;
+
+    private String uriEndpointOverride;
 
     public SecretsManagerPropertiesFunction() {
         super();
@@ -127,6 +137,8 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         boolean useProfileCredentialsProvider
                 = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV));
         String profileName = System.getenv(CAMEL_AWS_VAULT_PROFILE_NAME_ENV);
+        boolean isOverrideEndpoint = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT));
+        String uriEndpointOverride = System.getenv(CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
             if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
@@ -136,6 +148,8 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
                 useDefaultCredentialsProvider = awsVaultConfiguration.isDefaultCredentialsProvider();
                 useProfileCredentialsProvider = awsVaultConfiguration.isProfileCredentialsProvider();
                 profileName = awsVaultConfiguration.getProfileName();
+                isOverrideEndpoint = awsVaultConfiguration.isOverrideEndpoint();
+                uriEndpointOverride = awsVaultConfiguration.getUriEndpointOverride();
             }
         }
         this.region = region;
@@ -144,11 +158,21 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
             clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             clientBuilder.region(Region.of(region));
+            if (isOverrideEndpoint) {
+                if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
+                    clientBuilder.endpointOverride(URI.create(uriEndpointOverride));
+                }
+            }
             client = clientBuilder.build();
         } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
             this.defaultCredentialsProvider = true;
             SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
             clientBuilder.region(Region.of(region));
+            if (isOverrideEndpoint) {
+                if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
+                    clientBuilder.endpointOverride(URI.create(uriEndpointOverride));
+                }
+            }
             client = clientBuilder.build();
         } else if (useProfileCredentialsProvider && ObjectHelper.isNotEmpty(profileName)) {
             this.profleCredentialsProvider = true;
@@ -156,6 +180,11 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
             clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(profileName));
             clientBuilder.region(Region.of(region));
+            if (isOverrideEndpoint) {
+                if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
+                    clientBuilder.endpointOverride(URI.create(uriEndpointOverride));
+                }
+            }
             client = clientBuilder.build();
         } else {
             throw new RuntimeCamelException(

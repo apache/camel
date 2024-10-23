@@ -51,6 +51,34 @@ public class MainVaultTest {
     }
 
     @Test
+    public void testMainOverrideEndpointAws() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.aws.accessKey", "myKey");
+        main.addInitialProperty("camel.vault.aws.secretKey", "mySecret");
+        main.addInitialProperty("camel.vault.aws.region", "myRegion");
+        main.addInitialProperty("camel.vault.aws.defaultCredentialsProvider", "false");
+        main.addInitialProperty("camel.vault.aws.overrideEndpoint", "true");
+        main.addInitialProperty("camel.vault.aws.uriEndpointOverride", "http://localhost:8080");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        AwsVaultConfiguration cfg = context.getVaultConfiguration().aws();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("myKey", cfg.getAccessKey());
+        Assertions.assertEquals("mySecret", cfg.getSecretKey());
+        Assertions.assertEquals("myRegion", cfg.getRegion());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
+        Assertions.assertTrue(cfg.isOverrideEndpoint());
+        Assertions.assertEquals("http://localhost:8080", cfg.getUriEndpointOverride());
+        main.stop();
+    }
+
+    @Test
     public void testMainProfileAws() {
         final Main main = getMain();
 
@@ -104,6 +132,36 @@ public class MainVaultTest {
         Assertions.assertEquals("jack", cfg.getProfileName());
         Assertions.assertEquals("http://sqs-2", cfg.getSqsQueueUrl());
         Assertions.assertTrue(cfg.isUseSqsNotification());
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainOverrideEndpointAwsFluent() {
+        Main main = new Main();
+        main.configure().vault().aws()
+                .withAccessKey("myKey")
+                .withSecretKey("mySecret")
+                .withRegion("myRegion")
+                .isOverrideEndpoint(true)
+                .withUriEndpointOverride("http://localhost:8080")
+                .withDefaultCredentialsProvider(false)
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        AwsVaultConfiguration cfg = context.getVaultConfiguration().aws();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("myKey", cfg.getAccessKey());
+        Assertions.assertEquals("mySecret", cfg.getSecretKey());
+        Assertions.assertEquals("myRegion", cfg.getRegion());
+        Assertions.assertFalse(cfg.isDefaultCredentialsProvider());
+        Assertions.assertTrue(cfg.isOverrideEndpoint());
+        Assertions.assertEquals("http://localhost:8080", cfg.getUriEndpointOverride());
 
         main.stop();
     }
