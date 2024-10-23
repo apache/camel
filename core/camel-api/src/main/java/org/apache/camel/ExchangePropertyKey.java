@@ -23,8 +23,6 @@ import org.apache.camel.spi.CircuitBreakerConstants;
  */
 public enum ExchangePropertyKey {
 
-    ACTIVE_SPAN(Exchange.ACTIVE_SPAN),
-    CLOSE_CLIENT_SCOPE(Exchange.CLOSE_CLIENT_SCOPE),
     AGGREGATED_COMPLETED_BY(Exchange.AGGREGATED_COMPLETED_BY),
     AGGREGATED_CORRELATION_KEY(Exchange.AGGREGATED_CORRELATION_KEY),
     AGGREGATED_SIZE(Exchange.AGGREGATED_SIZE),
@@ -76,7 +74,10 @@ public enum ExchangePropertyKey {
     STREAM_CACHE_UNIT_OF_WORK(Exchange.STREAM_CACHE_UNIT_OF_WORK),
     TO_ENDPOINT(Exchange.TO_ENDPOINT),
     TRY_ROUTE_BLOCK(Exchange.TRY_ROUTE_BLOCK),
-    UNIT_OF_WORK_EXHAUSTED(Exchange.UNIT_OF_WORK_EXHAUSTED);
+    UNIT_OF_WORK_EXHAUSTED(Exchange.UNIT_OF_WORK_EXHAUSTED),
+    // special for camel-tracing/open-telemetry
+    OTEL_ACTIVE_SPAN(Exchange.OTEL_ACTIVE_SPAN),
+    OTEL_CLOSE_CLIENT_SCOPE(Exchange.OTEL_CLOSE_CLIENT_SCOPE);
 
     private final String name;
 
@@ -90,8 +91,6 @@ public enum ExchangePropertyKey {
 
     public static ExchangePropertyKey asExchangePropertyKey(String name) {
         switch (name) {
-            case Exchange.ACTIVE_SPAN:
-                return ACTIVE_SPAN;
             case Exchange.AGGREGATED_COMPLETED_BY:
                 return AGGREGATED_COMPLETED_BY;
             case Exchange.AGGREGATED_CORRELATION_KEY:
@@ -194,6 +193,10 @@ public enum ExchangePropertyKey {
                 return TRY_ROUTE_BLOCK;
             case Exchange.UNIT_OF_WORK_EXHAUSTED:
                 return UNIT_OF_WORK_EXHAUSTED;
+            case Exchange.OTEL_ACTIVE_SPAN:
+                return OTEL_ACTIVE_SPAN;
+            case Exchange.OTEL_CLOSE_CLIENT_SCOPE:
+                return OTEL_CLOSE_CLIENT_SCOPE;
             default:
                 return null;
         }

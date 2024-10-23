@@ -15,7 +15,6 @@ public class ExchangeConstantProvider {
     static {
         Map<String, String> map = new HashMap<>(160);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
-        map.put("ACTIVE_SPAN", "OpenTracing.activeSpan");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
         map.put("AGGREGATED_CORRELATION_KEY", "CamelAggregatedCorrelationKey");
@@ -37,7 +36,6 @@ public class ExchangeConstantProvider {
         map.put("CHARSET_NAME", "CamelCharsetName");
         map.put("CIRCUIT_BREAKER_STATE", "CamelCircuitBreakerState");
         map.put("CLAIM_CHECK_REPOSITORY", "CamelClaimCheckRepository");
-        map.put("CLOSE_CLIENT_SCOPE", "OpenTracing.closeClientScope");
         map.put("COMPILE_SCRIPT", "CamelCompileScript");
         map.put("CONTENT_ENCODING", "Content-Encoding");
         map.put("CONTENT_LENGTH", "Content-Length");
@@ -125,6 +123,8 @@ public class ExchangeConstantProvider {
         map.put("OFFSET", "CamelOffset");
         map.put("ON_COMPLETION", "CamelOnCompletion");
         map.put("ON_COMPLETION_ROUTE_IDS", "CamelOnCompletionRouteIds");
+        map.put("OTEL_ACTIVE_SPAN", "OpenTracing.activeSpan");
+        map.put("OTEL_CLOSE_CLIENT_SCOPE", "OpenTracing.closeClientScope");
         map.put("OVERRULE_FILE_NAME", "CamelOverruleFileName");
         map.put("PARENT_UNIT_OF_WORK", "CamelParentUnitOfWork");
         map.put("RECEIVED_TIMESTAMP", "CamelReceivedTimestamp");

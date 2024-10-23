@@ -67,8 +67,6 @@ import org.apache.camel.spi.annotations.ConstantProvider;
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange extends VariableAware {
 
-    String ACTIVE_SPAN = "OpenTracing.activeSpan";
-    String CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
     @Deprecated(since = "2.20.0")
@@ -332,6 +330,10 @@ public interface Exchange extends VariableAware {
     String XSLT_ERROR = "CamelXsltError";
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING = "CamelXsltWarning";
+
+    // special for camel-tracing/open-telemetry
+    String OTEL_ACTIVE_SPAN = "OpenTracing.activeSpan";
+    String OTEL_CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

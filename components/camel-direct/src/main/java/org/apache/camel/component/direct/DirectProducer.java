@@ -96,8 +96,8 @@ public class DirectProducer extends DefaultAsyncProducer {
                 } else {
                     //Ensure we can close the CLIENT Scope created by this DirectProducer
                     //in the same thread
-                    if (exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN) != null) {
-                        exchange.setProperty(ExchangePropertyKey.CLOSE_CLIENT_SCOPE, Boolean.TRUE);
+                    if (exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN) != null) {
+                        exchange.setProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, Boolean.TRUE);
                     }
                     return consumer.getAsyncProcessor().process(exchange, callback);
                 }
@@ -105,7 +105,6 @@ public class DirectProducer extends DefaultAsyncProducer {
         } catch (InterruptedException e) {
             LOG.info("Interrupted while processing the exchange");
             Thread.currentThread().interrupt();
-
             exchange.setException(e);
             callback.done(true);
             return true;

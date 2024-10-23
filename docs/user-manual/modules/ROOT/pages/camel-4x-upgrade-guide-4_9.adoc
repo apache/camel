@@ -10,6 +10,9 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `setLazyBeanStrategy`/`getLazyBeanStrategy` methods to `org.apache.camel.spi.CamelBeanPostProcessor`.
 
+Renamed `Exchange.ACTIVE_SPAN` to `Exchange.OTEL_ACTIVE_SPAN`.
+Renamed `ExchangePropertyKey.ACTIVE_SPAN` to `ExchangePropertyKey.OTEL_ACTIVE_SPAN`.
+
 === camel-management
 
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value

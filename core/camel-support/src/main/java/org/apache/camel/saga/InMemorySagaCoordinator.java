@@ -233,9 +233,9 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         answer.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());
 
         // preserve span from parent, so we can link this new exchange to the parent span for distributed tracing
-        Object span = parent != null ? parent.getProperty(ExchangePropertyKey.ACTIVE_SPAN) : null;
+        Object span = parent != null ? parent.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN) : null;
         if (span != null) {
-            answer.setProperty(ExchangePropertyKey.ACTIVE_SPAN, span);
+            answer.setProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, span);
         }
 
         Map<String, Object> values = optionValues.get(step);
