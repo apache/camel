@@ -94,3 +94,54 @@ Once Camel related steps have been performed, there are still typical JUnit 5 mi
 * Built-in `assertThat` from third-party assertion libraries should be used. For instance, use `org.hamcrest.MatcherAssert.assertThat` from `java-hamcrest`
 
 Please check the https://junit.org/junit5/docs/current/user-guide/[JUnit 5 User Guide] for additional insights about writing tests using JUnit 5.
+
+=== Migration From Deprecated Configuration Methods
+
+Camel 4.9 introduced two new interfaces to `CamelTestSupport` that will help users adjust their code and will help us
+with future maintenance of the test support code.
+These interfaces provide a stable APIs for code needing to configure the test behavior and the context configuration. The new
+interfaces are:
+
+* `ConfigurableTest`: that indicates that the test is configurable. This interface defines the methods `configureTest` and `testConfiguration`.
+* `ConfigurableContext`: that indicates that the context used in the test is configurable. This interface defines the methods `configureContext` and `camelContextConfiguration`.
+
+During test setup, our code calls these methods at the most appropriate time. As such, user code doesn't necessarily need to worry about when to call them.
+
+Users willing to future-proof their code can leverage the two configuration methods provided by each of these interfaces and adjust their code so that the
+configuration is done inside them.
+
+Consider, for instance, a test enabling JMX. Previously, that test would be written like this:
+
+[source,java]
+----
+public class MyTestClass extends CamelTestSupport {
+    // Other code here ...
+
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
+    // More code here ...
+}
+----
+
+This test can be migrated to the new API like this:
+
+[source,java]
+----
+public class MyTestClass extends CamelTestSupport {
+    // Other code here ...
+
+    @Override
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        testExecutionConfiguration.withEnableJMX();
+    }
+
+    // More code here ...
+}
+----
+
+The same approach can be used for test code that configures the `CamelContext`. However, in this case, the `configureContext`
+method, which receives an instance of `CamelContextConfiguration`, can be used.
+
