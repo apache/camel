@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure Key Vault]. 
+The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure Key Vault].
 
 Prerequisites
 
@@ -79,6 +79,8 @@ camel.vault.azure.clientId = clientId
 camel.vault.azure.clientSecret = clientSecret
 camel.vault.azure.vaultName = vaultName
 ----
+
+NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
 Or you can enable the usage of Azure Identity in the following way:
 
