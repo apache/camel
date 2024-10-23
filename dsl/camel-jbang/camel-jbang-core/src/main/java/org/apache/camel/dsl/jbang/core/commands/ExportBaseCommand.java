@@ -532,7 +532,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
-            String files = prop.getProperty(k);
+            String files;
+            if ("kamelet".equals(k)) {
+                // special for kamelet as there can be multiple entries
+                files = RuntimeUtil.loadPropertiesLines(settings).stream()
+                        .filter(l -> l.startsWith("kamelet="))
+                        .map(l -> StringHelper.after(l, "="))
+                        .collect(Collectors.joining(","));
+            } else {
+                files = prop.getProperty(k);
+            }
             if (files != null && !files.isEmpty()) {
                 for (String f : files.split(",")) {
                     String scheme = getScheme(f);
