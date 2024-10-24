@@ -26,9 +26,20 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
 
     @BeforeAll
     public static void setup() {
+        // Base secret
         CreateSecretRequest.Builder builder = CreateSecretRequest.builder();
         builder.name("test");
         builder.secretString("hello");
+        getSecretManagerClient().createSecret(builder.build());
+
+        // Json multifield Secret
+        builder = CreateSecretRequest.builder();
+        builder.name("testJson");
+        builder.secretString("{\n" +
+                             "  \"username\": \"admin\",\n" +
+                             "  \"password\": \"password\",\n" +
+                             "  \"host\": \"myhost.com\"\n" +
+                             "}");
         getSecretManagerClient().createSecret(builder.build());
     }
 
@@ -42,15 +53,40 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{aws:test}}")).to("mock:bar");
+                from("direct:start").setBody(simple("{{aws:test}}")).to("mock:result");
             }
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
+        getMockEndpoint("mock:result").expectedBodiesReceived("hello");
 
         template.sendBody("direct:start", "Hello World");
 
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testFunctionJson() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(getAccessKey());
+        context.getVaultConfiguration().aws().setSecretKey(getSecretKey());
+        context.getVaultConfiguration().aws().setRegion(getRegion());
+        context.getVaultConfiguration().aws().setOverrideEndpoint(true);
+        context.getVaultConfiguration().aws().setUriEndpointOverride(getUrlOverride());
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:username").setBody(simple("{{aws:testJson#username}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{aws:testJson#password}}")).to("mock:bar");
+                from("direct:host").setBody(simple("{{aws:testJson#host}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "password", "myhost.com");
+
+        template.sendBody("direct:username", "Hello World");
+        template.sendBody("direct:password", "Hello World");
+        template.sendBody("direct:host", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
 }
