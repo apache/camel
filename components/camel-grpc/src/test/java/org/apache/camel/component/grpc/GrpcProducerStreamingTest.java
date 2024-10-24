@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
@@ -78,7 +80,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
         context().stop();
 
         assertNotNull(pingPongServer.getLastStreamRequests());
-        assertListSize(pingPongServer.getLastStreamRequests(), 1);
+        await().untilAsserted(() -> assertListSize(pingPongServer.getLastStreamRequests(), 1));
         assertListSize(pingPongServer.getLastStreamRequests().get(0), messageCount);
     }
 
@@ -110,7 +112,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
         context().stop();
 
         assertNotNull(pingPongServer.getLastStreamRequests());
-        assertListSize(pingPongServer.getLastStreamRequests(), 2);
+        await().untilAsserted(() -> assertListSize(pingPongServer.getLastStreamRequests(), 2));
         assertListSize(pingPongServer.getLastStreamRequests().get(0), messageGroupCount + 1);
         assertListSize(pingPongServer.getLastStreamRequests().get(1), messageGroupCount);
     }
@@ -139,9 +141,9 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
         @Override
         public StreamObserver<PingRequest> pingAsyncAsync(StreamObserver<PongResponse> responseObserver) {
-            StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
+            return new StreamObserver<PingRequest>() {
 
-                private List<PingRequest> streamRequests = new LinkedList<>();
+                private List<PingRequest> streamRequests = Collections.synchronizedList(new LinkedList<>());
 
                 @Override
                 public void onNext(PingRequest request) {
@@ -167,7 +169,6 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
                     responseObserver.onCompleted();
                 }
             };
-            return requestObserver;
         }
 
         public List<List<PingRequest>> getLastStreamRequests() {
