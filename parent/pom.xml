@@ -3546,12 +3546,12 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <attach>true</attach>
-                        <source>${jdk.version}</source>
+                        <release>${maven.javadoc.release}</release>
                         <quiet>true</quiet>
                         <bottom>Apache Camel</bottom>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <javadocVersion>1.8.0</javadocVersion>
                         <encoding>UTF-8</encoding>
+                        <doclint>none</doclint>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -3717,14 +3717,15 @@
                 <version>${maven-javadoc-plugin-version}</version>
                 <configuration>
                     <links>
-                        <link>http://docs.oracle.com/javase/8/docs/api/</link>
-                        <link>http://docs.oracle.com/javaee/7/api/</link>
-                        <link>http://docs.spring.io/spring/docs/${spring-version}/javadoc-api/</link>
+                        <link>https://docs.oracle.com/javase/17/docs/api/</link>
+                        <link>https://docs.oracle.com/javaee/7/api/</link>
+                        <link>https://docs.spring.io/spring/docs/${spring-version}/javadoc-api/</link>
                     </links>
                     <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
                     <linksource>true</linksource>
                     <maxmemory>500m</maxmemory>
-                    <source>${jdk.version}</source>
+                    <release>${maven.javadoc.release}</release>
+                    <doclint>none</doclint>
                 </configuration>
             </plugin>
             <plugin>
