@@ -1326,3 +1326,16 @@ camel kubernetes delete --name=route
 
 Use the `--name` option to select a previously exported project (either via `run` or `export` command).
 The delete operation will remove all resources defined in the Kubernetes manifest.
+
+== Minikube deployment tips and troubleshooting
+
+To run a local Kubernetes cluster with Minikube for development purposes.
+Here are some tips from users that have been using this.
+
+The following steps has been known to be working (Camel 4.9):
+
+1. `minikube start --addons registry --driver=docker`
+2. `eval $(minikube -p minikube docker-env)`
+3. `camel kubernetes run 'demo.camel.yaml' --cluster-type=minikube --build-property=quarkus.kubernetes.image-pull-policy=Never`
+
+Most important `--build-property=quarkus.kubernetes.image-pull-policy=Never` without that it is not working, which is not clear from the current Minikube docs.
