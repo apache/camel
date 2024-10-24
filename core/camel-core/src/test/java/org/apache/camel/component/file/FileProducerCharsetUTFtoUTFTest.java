@@ -22,9 +22,9 @@ import java.nio.file.Files;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
@@ -46,7 +46,8 @@ class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
         assertFileExists(testFile(OUTPUT_FILE));
         byte[] target = Files.readAllBytes(testFile(OUTPUT_FILE));
 
-        assertTrue(ObjectHelper.equalByteArray(source, target));
+        assertArrayEquals(source, target, "The byte arrays should be equals but they are not.\n Source:\n" + new String(source)
+                                          + "\nTarget:\n" + new String(target));
     }
 
     @Override
