@@ -21,8 +21,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueRequest;
+import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueResponse;
 
 public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsManagerBaseTest {
+
+    private static String secretVersion;
 
     @BeforeAll
     public static void setup() {
@@ -41,6 +45,27 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
                              "  \"host\": \"myhost.com\"\n" +
                              "}");
         getSecretManagerClient().createSecret(builder.build());
+
+        // Json multifield Secret
+        builder = CreateSecretRequest.builder();
+        builder.name("testJsonVersioned");
+        builder.secretString("{\n" +
+                             "  \"username\": \"admin\",\n" +
+                             "  \"password\": \"password\",\n" +
+                             "  \"host\": \"myhost.com\"\n" +
+                             "}");
+        getSecretManagerClient().createSecret(builder.build());
+
+        // Json versioned multifield Secret
+        PutSecretValueRequest.Builder builderPutSecValue = PutSecretValueRequest.builder();
+        builderPutSecValue.secretId("testJsonVersioned");
+        builderPutSecValue.secretString("{\n" +
+                                        "  \"username\": \"admin\",\n" +
+                                        "  \"password\": \"admin123\",\n" +
+                                        "  \"host\": \"myhost.com\"\n" +
+                                        "}");
+        PutSecretValueResponse resp = getSecretManagerClient().putSecretValue(builderPutSecValue.build());
+        secretVersion = resp.versionId();
     }
 
     @Test
@@ -87,6 +112,34 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
         template.sendBody("direct:host", "Hello World");
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testFunctionJsonWithVersion() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(getAccessKey());
+        context.getVaultConfiguration().aws().setSecretKey(getSecretKey());
+        context.getVaultConfiguration().aws().setRegion(getRegion());
+        context.getVaultConfiguration().aws().setOverrideEndpoint(true);
+        context.getVaultConfiguration().aws().setUriEndpointOverride(getUrlOverride());
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:usernameVersioned").setBody(simple("{{aws:testJsonVersioned#username@" + secretVersion + "}}"))
+                        .to("mock:put");
+                from("direct:passwordVersioned").setBody(simple("{{aws:testJsonVersioned#password@" + secretVersion + "}}"))
+                        .to("mock:put");
+                from("direct:hostVersioned").setBody(simple("{{aws:testJsonVersioned#host@" + secretVersion + "}}"))
+                        .to("mock:put");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:put").expectedBodiesReceived("admin", "admin123", "myhost.com");
+
+        template.sendBody("direct:usernameVersioned", "Hello World");
+        template.sendBody("direct:passwordVersioned", "Hello World");
+        template.sendBody("direct:hostVersioned", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
     }
 }
