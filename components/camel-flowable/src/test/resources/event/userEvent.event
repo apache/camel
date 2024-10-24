@@ -1,0 +1,14 @@
+{
+    "key": "userEvent",
+    "name": "User Event",
+    "payload": [
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "age",
+            "type": "integer"
+        }
+    ]
+}

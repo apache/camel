@@ -1,0 +1,8 @@
+{
+    "name": "Camel outbound user channel",
+    "key": "userOutboundChannel",
+    "channelType": "outbound",
+    "type": "camel",
+    "destination": "mock:testQueue",
+    "serializerType": "json"
+}

@@ -1,0 +1,24 @@
+{
+    "key": "userHeaderEvent",
+    "name": "User Header Event",
+    "payload": [
+        {
+            "name": "headerProperty1",
+            "type": "string",
+            "header": true
+        },
+        {
+            "name": "headerProperty2",
+            "type": "integer",
+            "header": true
+        },
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "age",
+            "type": "integer"
+        }
+    ]
+}

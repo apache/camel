@@ -253,8 +253,10 @@
                                     <exclude>**/*.bin</exclude>
                                     <exclude>**/*.cat</exclude>
                                     <exclude>**/*.cer</exclude>
+                                    <exclude>**/*.channel</exclude>
                                     <exclude>**/*.chtml</exclude>
                                     <exclude>**/*.csv</exclude>
+                                    <exclude>**/*.event</exclude>
                                     <exclude>**/*.gif</exclude>
                                     <exclude>**/*.gpg</exclude>
                                     <exclude>**/*.graphql*</exclude>
