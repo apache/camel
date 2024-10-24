@@ -642,6 +642,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     String source = LoggerHelper.getLineNumberLoggerName(routeDefinition);
                     final long created = exchange.getClock().getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
+                            camelContext,
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
                             rest, template, data);
                     if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
@@ -654,6 +655,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 }
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
+                        camelContext,
                         false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, exchangeId,
                         rest, template, data);
                 backlogTracer.traceEvent(event);
@@ -679,6 +681,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                             true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                             backlogTracer.getBodyMaxChars());
                     DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
+                            camelContext,
                             false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null,
                             exchangeId, rest, template, data);
                     backlogTracer.traceEvent(pseudoLast);
