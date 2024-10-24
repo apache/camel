@@ -18,11 +18,22 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.FileUtil;
 
 public final class CommandHelper {
 
+    private static ThreadLocal<Printer> printerAssociation = new ThreadLocal<>();
+
     private CommandHelper() {
+    }
+
+    public static Printer GetPrinter() {
+        return printerAssociation.get();
+    }
+
+    public static void SetPrinter(Printer out) {
+        printerAssociation.set(out);
     }
 
     public static void cleanExportDir(String dir) {

@@ -31,8 +31,10 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -74,6 +76,7 @@ public final class KubernetesHelper {
     public static KubernetesClient getKubernetesClient() {
         if (kubernetesClient == null) {
             kubernetesClient = new KubernetesClientBuilder().build();
+            printVersionInfo(kubernetesClient);
         }
 
         return kubernetesClient;
@@ -87,7 +90,18 @@ public final class KubernetesHelper {
             return clients.get(config);
         }
 
-        return clients.put(config, new KubernetesClientBuilder().withConfig(config).build());
+        var client = new KubernetesClientBuilder().withConfig(config).build();
+        printVersionInfo(client);
+        return clients.put(config, client);
+    }
+
+    private static void printVersionInfo(KubernetesClient client) {
+        var printer = CommandHelper.GetPrinter();
+        if (printer != null) {
+            var serverUrl = client.getConfiguration().getMasterUrl();
+            var info = client.getKubernetesVersion();
+            printer.println(String.format("Kubernetes v%s.%s %s", info.getMajor(), info.getMinor(), serverUrl));
+        }
     }
 
     /**
@@ -176,6 +190,10 @@ public final class KubernetesHelper {
         throw new FileNotFoundException(
                 "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
                         .formatted(extension, workingDir.toPath().toString()));
+    }
+
+    public static String getPodPhase(Pod it) {
+        return it != null ? it.getStatus().getPhase() : "Unknown";
     }
 
     public static File getKubernetesManifest(String clusterType, String workingDir) {
