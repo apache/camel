@@ -35,7 +35,7 @@ jobs:
       matrix:
         java: [ '17' ]
     steps:
-      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
           submodules: recursive
@@ -56,7 +56,7 @@ jobs:
               exit 1
           fi
           echo "pr_sha=$head_sha" >> $GITHUB_OUTPUT
-      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ env.pr_sha }}
           submodules: recursive
