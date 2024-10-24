@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class KubernetesClientTest {
+class KubernetesClientIntegrationTest {
 
-    private static final Logger log = LoggerFactory.getLogger(KubernetesClientTest.class);
+    private static final Logger log = LoggerFactory.getLogger(KubernetesClientIntegrationTest.class);
 
     @Test
     public void shouldHaveOpenshiftClient() {
