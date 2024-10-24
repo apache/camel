@@ -201,6 +201,7 @@
 ** xref:kafka-component.adoc[Kafka]
 ** xref:kamelet-component.adoc[Kamelet]
 ** xref:knative-component.adoc[Knative]
+** xref:knative-http-component.adoc[Knative Http]
 ** xref:kubernetes-summary.adoc[Kubernetes]
 *** xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap]
 *** xref:kubernetes-cronjob-component.adoc[Kubernetes Cronjob]

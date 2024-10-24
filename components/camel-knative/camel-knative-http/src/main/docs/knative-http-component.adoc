@@ -4,10 +4,15 @@
 :artifactid: camel-knative-http
 :description: Camel Knative HTTP
 :since: 3.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: knative-http
 
 *Since Camel {since}*
+
+*{component-header}*
 
 The `camel-knative-http` module represents the HTTP transport for the `camel-knative` component.
 
@@ -65,7 +70,7 @@ camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
 ----
 
 This is a good option when you have multiple options instances available in the Camel context.
-Read more about property binding configuration in chapter xref:manual::property-binding.adoc[Property Binding].
+Read more about property binding configuration in the chapter xref:manual::property-binding.adoc[Property Binding].
 
 === Knative client SSL support
 

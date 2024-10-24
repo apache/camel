@@ -23,7 +23,6 @@
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[JFR]
 ** xref:jta.adoc[JTA]
-** xref:knative-http.adoc[Knative Http]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:lra.adoc[LRA]
 ** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
