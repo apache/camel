@@ -42,6 +42,7 @@
         <module>camel-dataformat</module>
         <module>camel-dataset</module>
         <module>camel-direct</module>
+        <module>camel-dirigible</module>
         <module>camel-file</module>
         <module>camel-language</module>
         <module>camel-log</module>
