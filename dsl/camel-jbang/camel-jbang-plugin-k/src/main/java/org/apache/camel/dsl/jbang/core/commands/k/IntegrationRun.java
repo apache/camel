@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
@@ -319,7 +320,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
                             = KubernetesHelper.yaml(this.getClass().getClassLoader())
                                     .loadAs(KubernetesHelper.dumpYaml(traits),
                                             org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits.class);
-                    new TraitCatalog().apply(kubernetesTraits, context, traitProfile);
+                    new TraitCatalog().apply(kubernetesTraits, context, traitProfile, RuntimeType.quarkus);
 
                     printer().println(
                             context.buildItems().stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---")));

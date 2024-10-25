@@ -19,16 +19,50 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 
 public interface Trait extends Comparable<Trait> {
 
+    /**
+     * Evaluate if Trait configuration is ready to be applyed
+     *
+     * @param  traitConfig trait configuration
+     * @param  context     command traits context
+     * @return             true if the trait configuration can be applied to context
+     */
     boolean configure(Traits traitConfig, TraitContext context);
 
+    /**
+     * Apply trait configuration to context
+     *
+     * @param traitConfig trait configuration
+     * @param context     command traits context
+     */
     void apply(Traits traitConfig, TraitContext context);
 
+    /**
+     * Priority order for trait application.
+     *
+     * @return order
+     */
     int order();
 
+    /**
+     * Evaluate if trait can be applied to cluster type
+     *
+     * @param  clusterType cluster type
+     * @return             true if applicable
+     */
     boolean accept(ClusterType clusterType);
+
+    /**
+     * Add runtime properties to command trait context to be added to generated project properties
+     *
+     * @param traitConfig trait configuration
+     * @param context     command traits context
+     * @param runtimeType
+     */
+    void applyRuntimeSpecificProperties(Traits traitConfig, TraitContext context, RuntimeType runtimeType);
 
     @Override
     default int compareTo(Trait o) {

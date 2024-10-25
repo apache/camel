@@ -51,12 +51,6 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
                 Arguments.of(RuntimeType.quarkus));
     }
 
-    private static Stream<Arguments> runtimeProviderOpenshift() {
-        return Stream.of(
-                Arguments.of(RuntimeType.main),
-                Arguments.of(RuntimeType.springBoot));
-    }
-
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProject(RuntimeType rt) throws Exception {
@@ -228,10 +222,11 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("/$2",
                 ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/rewrite-target"));
         Assertions.assertEquals("true", ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/use-regex"));
+
     }
 
     @ParameterizedTest
-    @MethodSource("runtimeProviderOpenshift")
+    @MethodSource("runtimeProvider")
     public void shouldAddRouteSpec(RuntimeType rt) throws Exception {
         String certificate = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.pem"));
         String key = IOHelper.loadText(new FileInputStream("src/test/resources/route/tls.key"));
@@ -266,6 +261,20 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route-service", route.getSpec().getTo().getName());
         Assertions.assertTrue(certificate.startsWith(route.getSpec().getTls().getCertificate()));
         Assertions.assertTrue(key.startsWith(route.getSpec().getTls().getKey()));
+
+        if (RuntimeType.quarkus.equals(rt)) {
+            Properties applicationProperties = getApplicationProperties(workingDir);
+            Assertions.assertEquals("true", applicationProperties.get("quarkus.openshift.route.expose"));
+            Assertions.assertEquals("example.com",
+                    applicationProperties.get("quarkus.openshift.route.host"));
+            Assertions.assertEquals("http",
+                    applicationProperties.get("quarkus.openshift.route.target-port"));
+            Assertions.assertEquals("edge",
+                    applicationProperties.get("quarkus.openshift.route.tls.termination"));
+            Assertions.assertTrue(certificate.startsWith(
+                    applicationProperties.get("quarkus.openshift.route.tls.certificate").toString()));
+            Assertions.assertTrue(key.startsWith(applicationProperties.get("quarkus.openshift.route.tls.key").toString()));
+        }
     }
 
     @ParameterizedTest
