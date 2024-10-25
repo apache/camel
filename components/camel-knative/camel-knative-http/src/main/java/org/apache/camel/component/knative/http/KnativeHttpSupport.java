@@ -147,9 +147,9 @@ public final class KnativeHttpSupport {
      * @param  camelContext the current context.
      * @return              client options or empty
      */
-    public static Optional<KnativeHttpClientOptions> lookupClientOptions(CamelContext camelContext) {
-        KnativeHttpClientOptions clientOptions
-                = CamelContextHelper.findSingleByType(camelContext, KnativeHttpClientOptions.class);
+    public static Optional<KnativeSslClientOptions> lookupClientOptions(CamelContext camelContext) {
+        KnativeSslClientOptions clientOptions
+                = CamelContextHelper.findSingleByType(camelContext, KnativeSslClientOptions.class);
         if (clientOptions != null) {
             return Optional.of(clientOptions);
         }
