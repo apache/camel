@@ -83,10 +83,10 @@ You can set the client options on the Knative Http producer factory as follows:
 [source,java]
 ----
 import org.apache.camel.component.knative.KnativeComponent;
-import org.apache.camel.component.knative.http.KnativeHttpClientOptions;
+import org.apache.camel.component.knative.http.KnativeSslClientOptions;
 import org.apache.camel.component.knative.http.KnativeHttpProducerFactory;
 
-KnativeHttpClientOptions sslClientOptions = new KnativeHttpClientOptions(context);
+KnativeSslClientOptions sslClientOptions = new KnativeSslClientOptions(context);
 sslClientOptions.setSslEnabled(true);
 sslClientOptions.setKeyPath("keystore/client.pem");
 sslClientOptions.setKeyCertPath("keystore/client.crt");
@@ -114,7 +114,7 @@ TIP: When there is no proper trust certificate available (e.g. on test environme
 sslClientOptions.setTrustOptions(TrustAllOptions.INSTANCE);
 ----
 
-==== Autoconfiguration SSL options via environment variables
+==== Autoconfigure SSL options via environment variables
 
 The Knative client options are able to perform autoconfiguration based on resolving properties from system property or environment variable settings.
 During the initialization phase the client options automatically look for environment settings that configure the options.
@@ -133,10 +133,10 @@ camel.knative.client.ssl.enabled=true
 camel.knative.client.ssl.key.path=keystore/client.pem
 camel.knative.client.ssl.key.cert.path=keystore/client.crt
 
-camel.component.knative.producerFactory.clientOptions=#class:org.apache.camel.component.knative.http.KnativeHttpClientOptions
+camel.component.knative.producerFactory.clientOptions=#class:org.apache.camel.component.knative.http.KnativeSslClientOptions
 ----
 
-This will instantiate a new instance of `org.apache.camel.component.knative.http.KnativeHttpClientOptions` and perform the autoconfiguration via system property and environment variable settings on that instance.
+This will instantiate a new instance of `org.apache.camel.component.knative.http.KnativeSslClientOptions` and perform the autoconfiguration via system property and environment variable settings on that instance.
 
 TIP: By default, the SSL client options will verify the hostname of the Knative broker as part of the SSL handshake.
 In test environments this often leads to SSL handshake errors. You can disable the hostname verification for the client options with `camel.knative.client.ssl.verify.hostname=false`
@@ -167,4 +167,77 @@ spec:
             value: "true"
           - name: CAMEL_KNATIVE_CLIENT_SSL_KEY_CERT_PATH
             value: /knative-certs/knative-eventing-bundle.pem
+----
+
+=== OpenID Connect support
+
+OpenID Connect (OIDC) is an identity authentication protocol that works with OAuth 2.0 to standardize the process for authenticating and authorizing users.
+
+Knative eventing supports OIDC access tokens that get injected as part of a `SinkBinding` resource. The injection is done in the form of a volume mount on the sink binding subject (usually the app deployment).
+
+This means the OIDC access token is mounted as a file into the application container so Camel client may read the token and set proper `Authorization` Http headers on each request.
+
+You need to enable OIDC support on the Knative Http client in the options like this:
+
+.Example
+[source,java]
+----
+import org.apache.camel.component.knative.KnativeComponent;
+import org.apache.camel.component.knative.http.KnativeOidcClientOptions;
+import org.apache.camel.component.knative.http.KnativeHttpProducerFactory;
+
+KnativeOidcClientOptions oidcClientOptions = new KnativeOidcClientOptions(context);
+oidcClientOptions.setOidcEnabled(true);
+oidcClientOptions.setOidcTokenPath("oidc/token");
+
+KnativeComponent component = context.getComponent("knative", KnativeComponent.class);
+if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+    httpProducerFactory.setClientOptions(oidcClientOptions);
+}
+----
+
+As a result each request of the Knative client will have an `Authorization` Http header with the access token.
+
+==== Autoconfigure OIDC options via environment variables
+
+The Knative client options are able to perform autoconfiguration based on resolving properties from system property or environment variable settings.
+During the initialization phase the client automatically looks for environment settings that configure the options.
+
+All environment settings that configure the Knative client OIDC options use a specific property key prefix
+
+* camel.knative.client.oidc.<property_name>
+* CAMEL_KNATIVE_CLIENT_OIDC_<PROPERTY_NAME>
+
+You can use this kind of autoconfiguration to enable OIDC on the Knative client with property based config only.
+
+.application.properties
+[source,properties]
+----
+camel.knative.client.oidc.enabled=true
+camel.knative.client.oidc.token.path=oidc/token
+
+camel.component.knative.producerFactory.clientOptions=#class:org.apache.camel.component.knative.http.KnativeOidcClientOptions
+----
+
+This will instantiate a new instance of `org.apache.camel.component.knative.http.KnativeOidcClientOptions` and perform the autoconfiguration via system property and environment variable settings on that instance.
+
+=== OIDC token renewal
+
+The OIDC tokens may expire and get renewed by Knative eventing. The renewal means that the volume mount is updated with the new token automatically.
+
+In order to refresh the token the Camel Knative client must read the token again.
+The Knative client options supports the token renewal on a `401 forbidden` response from the Knative broker.
+
+Once the client has received the forbidden answer it automatically reloads the token from the volume mount to perform the renewal.
+
+As an alternative to that you may disable the token cache on the client so the token is always read from the volume mount for each request.
+
+.application.properties
+[source,properties]
+----
+camel.knative.client.oidc.enabled=true
+camel.knative.client.oidc.token.path=oidc/token
+
+camel.knative.client.oidc.renew.tokens.on.forbidden=false
+camel.knative.client.oidc.cache.tokens=false
 ----

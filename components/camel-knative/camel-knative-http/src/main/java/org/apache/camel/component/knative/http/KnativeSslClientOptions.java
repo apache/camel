@@ -35,7 +35,7 @@ import org.apache.camel.spi.PropertiesComponent;
  * initialized via system property or environment variable settings. System property and environment variable settings
  * use a specific property name prefix. The properties get resolved via the given Camel context property component.
  */
-public class KnativeHttpClientOptions extends WebClientOptions implements CamelContextAware {
+public class KnativeSslClientOptions extends WebClientOptions implements CamelContextAware {
 
     private static final String PROPERTY_PREFIX = "camel.knative.client.ssl.";
 
@@ -54,10 +54,10 @@ public class KnativeHttpClientOptions extends WebClientOptions implements CamelC
     private KeyCertOptions keyCertOptions;
     private TrustOptions trustOptions;
 
-    public KnativeHttpClientOptions() {
+    public KnativeSslClientOptions() {
     }
 
-    public KnativeHttpClientOptions(CamelContext camelContext) {
+    public KnativeSslClientOptions(CamelContext camelContext) {
         this.camelContext = camelContext;
         configureOptions(camelContext);
     }
