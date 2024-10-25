@@ -35,6 +35,9 @@ public class SmooksEndpoint extends ProcessorEndpoint {
     @Metadata(required = true, supportFileReference = true)
     private String smooksConfig;
 
+    @UriPath(description = "File path to place the generated HTML execution report. Do not set in production since this is a major performance drain")
+    private String reportPath;
+
     private final SmooksProcessor smooksProcessor;
 
     public SmooksEndpoint(String endpointUri, Component component, SmooksProcessor processor) {

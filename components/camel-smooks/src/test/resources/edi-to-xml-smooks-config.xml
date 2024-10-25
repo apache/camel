@@ -28,8 +28,4 @@
     <edi:parser schemaUri="/edi-mapping-model.dfdl.xsd" segmentTerminator="%NL;" dataElementSeparator="*"
                 compositeDataElementSeparator="^"/>
 
-    <core:exports>
-        <core:result type="org.smooks.io.sink.DOMSink"/>
-    </core:exports>
-
 </smooks-resource-list>

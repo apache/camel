@@ -22,11 +22,16 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.RuntimeCamelException;
 import org.w3c.dom.Node;
 
 import org.xml.sax.SAXException;
@@ -38,6 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -54,6 +60,7 @@ import org.smooks.api.resource.visitor.Visitor;
 import org.smooks.engine.lookup.ExportsLookup;
 import org.smooks.engine.report.HtmlReportGenerator;
 import org.smooks.io.payload.Exports;
+import org.smooks.io.sink.StreamSink;
 import org.smooks.io.source.DOMSource;
 import org.smooks.io.source.ReaderSource;
 import org.smooks.io.source.StreamSource;
@@ -114,11 +121,16 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
             if (exports.hasExports()) {
                 final Sink[] sinks = exports.createSinks();
-                smooks.filterSource(executionContext, getSource(exchange, executionContext), sinks);
+                smooks.filterSource(executionContext, getSource(exchange), sinks);
                 setResultOnBody(exports, sinks, exchange);
             } else {
-                smooks.filterSource(executionContext, getSource(exchange, executionContext));
+                final OutputStreamBuilder outputStreamBuilder = OutputStreamBuilder.withExchange(exchange);
+                smooks.filterSource(executionContext, getSource(exchange),
+                        new StreamSink<>(outputStreamBuilder));
+                exchange.getMessage().setBody(outputStreamBuilder.build());
             }
+        } catch (IOException e) {
+            throw new RuntimeCamelException(e);
         } finally {
             executionContext.remove(EXCHANGE_TYPED_KEY);
         }
@@ -148,7 +160,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
     }
 
-    private Source getSource(final Exchange exchange, ExecutionContext executionContext) {
+    private Source getSource(final Exchange exchange) {
         Object payload = exchange.getIn().getBody();
 
         if (payload instanceof SAXSource) {
