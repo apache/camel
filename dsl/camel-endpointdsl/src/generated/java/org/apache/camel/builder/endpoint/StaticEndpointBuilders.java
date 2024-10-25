@@ -3834,6 +3834,46 @@ public class StaticEndpointBuilders {
         return DirectEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Dirigible JavaScript (camel-dirigible)
+     * Invoke JavaScript code.
+     * 
+     * Category: core,script
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-dirigible
+     * 
+     * Syntax: <code>dirigible-java-script:javaScriptPath</code>
+     * 
+     * Path parameter: javaScriptPath (required)
+     * Sets the path of the JavaScript file.
+     * 
+     * @param path javaScriptPath
+     * @return the dsl builder
+     */
+    public static DirigibleJavaScriptEndpointBuilderFactory.DirigibleJavaScriptEndpointBuilder dirigibleJavaScript(String path) {
+        return dirigibleJavaScript("dirigible-java-script", path);
+    }
+    /**
+     * Dirigible JavaScript (camel-dirigible)
+     * Invoke JavaScript code.
+     * 
+     * Category: core,script
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-dirigible
+     * 
+     * Syntax: <code>dirigible-java-script:javaScriptPath</code>
+     * 
+     * Path parameter: javaScriptPath (required)
+     * Sets the path of the JavaScript file.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path javaScriptPath
+     * @return the dsl builder
+     */
+    public static DirigibleJavaScriptEndpointBuilderFactory.DirigibleJavaScriptEndpointBuilder dirigibleJavaScript(String componentName, String path) {
+        return DirigibleJavaScriptEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
      * 

@@ -88,6 +88,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.DirigibleJavaScriptEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory,

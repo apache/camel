@@ -1199,6 +1199,19 @@ public interface ComponentsBuilderFactory {
         return DirectComponentBuilderFactory.direct();
     }
     /**
+     * Dirigible JavaScript (camel-dirigible)
+     * Invoke JavaScript code.
+     * 
+     * Category: core,script
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-dirigible
+     * 
+     * @return the dsl builder
+     */
+    static DirigibleJavaScriptComponentBuilderFactory.DirigibleJavaScriptComponentBuilder dirigibleJavaScript() {
+        return DirigibleJavaScriptComponentBuilderFactory.dirigibleJavaScript();
+    }
+    /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
      * 
