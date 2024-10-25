@@ -32,7 +32,7 @@ class PodLogsTest extends KubernetesBaseTest {
     public void shouldHandlePodNotFound() throws Exception {
         PodLogs command = createCommand();
         command.name = "mickey-mouse";
-        command.maxWaitAttempts = 2; // total timeout of 4 seconds
+        command.maxRetryAttempts = 2; // total timeout of 4 seconds
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -55,7 +55,7 @@ class PodLogsTest extends KubernetesBaseTest {
         kubernetesClient.pods().resource(pod).create();
 
         var podLog = createCommand();
-        podLog.maxLogMessages = 10;
+        podLog.maxMessageCount = 10;
         podLog.name = "routes";
         int exit = podLog.doCall();
         Assertions.assertEquals(0, exit);

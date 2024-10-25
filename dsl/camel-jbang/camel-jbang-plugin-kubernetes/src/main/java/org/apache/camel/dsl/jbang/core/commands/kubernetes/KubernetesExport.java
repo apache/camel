@@ -121,7 +121,6 @@ public class KubernetesExport extends Export {
 
     public KubernetesExport(CamelJBangMain main, String[] files) {
         super(main);
-
         this.files = Arrays.asList(files);
     }
 
