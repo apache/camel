@@ -76,7 +76,7 @@ public final class KubernetesHelper {
     public static KubernetesClient getKubernetesClient() {
         if (kubernetesClient == null) {
             kubernetesClient = new KubernetesClientBuilder().build();
-            printVersionInfo(kubernetesClient);
+            printClientInfo(kubernetesClient);
         }
 
         return kubernetesClient;
@@ -91,11 +91,11 @@ public final class KubernetesHelper {
         }
 
         var client = new KubernetesClientBuilder().withConfig(config).build();
-        printVersionInfo(client);
+        printClientInfo(client);
         return clients.put(config, client);
     }
 
-    private static void printVersionInfo(KubernetesClient client) {
+    private static void printClientInfo(KubernetesClient client) {
         var printer = CommandHelper.GetPrinter();
         if (printer != null) {
             var serverUrl = client.getConfiguration().getMasterUrl();
@@ -160,29 +160,23 @@ public final class KubernetesHelper {
         return json().convertValue(model, Map.class);
     }
 
-    public static File resolveKubernetesManifest(String workingDir) throws FileNotFoundException {
-        return resolveKubernetesManifest(new File(workingDir));
+    public static File resolveKubernetesManifest(String clusterType, String workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifest(clusterType, new File(workingDir));
     }
 
-    public static File resolveKubernetesManifest(String workingDir, String extension) throws FileNotFoundException {
-        return resolveKubernetesManifest(new File(workingDir), extension);
+    public static File resolveKubernetesManifest(String clusterType, String workingDir, String extension)
+            throws FileNotFoundException {
+        return resolveKubernetesManifest(clusterType, new File(workingDir), extension);
     }
 
-    public static File resolveKubernetesManifest(File workingDir) throws FileNotFoundException {
-        return resolveKubernetesManifest(workingDir, "yml");
+    public static File resolveKubernetesManifest(String clusterType, File workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifest(clusterType, workingDir, "yml");
     }
 
-    public static File resolveKubernetesManifest(File workingDir, String extension) throws FileNotFoundException {
+    public static File resolveKubernetesManifest(String clusterType, File workingDir, String extension)
+            throws FileNotFoundException {
 
-        // Try explicit Kubernetes manifest first
-        String clusterType = ClusterType.KUBERNETES.name();
-        File manifest = getKubernetesManifest(clusterType, workingDir, extension);
-        if (manifest.exists()) {
-            return manifest;
-        }
-
-        // Try arbitrary Kubernetes manifest first
-        manifest = getKubernetesManifest(clusterType, workingDir);
+        var manifest = getKubernetesManifest(clusterType, workingDir);
         if (manifest.exists()) {
             return manifest;
         }
@@ -192,8 +186,8 @@ public final class KubernetesHelper {
                         .formatted(extension, workingDir.toPath().toString()));
     }
 
-    public static String getPodPhase(Pod it) {
-        return it != null ? it.getStatus().getPhase() : "Unknown";
+    public static String getPodPhase(Pod pod) {
+        return Optional.ofNullable(pod).map(p -> p.getStatus().getPhase()).orElse("Unknown");
     }
 
     public static File getKubernetesManifest(String clusterType, String workingDir) {
@@ -211,7 +205,6 @@ public final class KubernetesHelper {
         } else {
             manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
         }
-
         return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
     }
 }

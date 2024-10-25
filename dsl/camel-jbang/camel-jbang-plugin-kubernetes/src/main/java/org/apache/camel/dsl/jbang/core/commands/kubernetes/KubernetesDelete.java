@@ -44,6 +44,10 @@ public class KubernetesDelete extends KubernetesBaseCommand {
                         description = "The working directory where to find exported project sources.")
     String workingDir;
 
+    @CommandLine.Option(names = { "--cluster-type" },
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
+    protected String clusterType;
+
     public KubernetesDelete(CamelJBangMain main) {
         super(main);
     }
@@ -71,7 +75,8 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             return 1;
         }
 
-        File manifest = KubernetesHelper.resolveKubernetesManifest(new File(resolvedWorkingDir, "target/kubernetes"));
+        File resolvedManifestDir = new File(resolvedWorkingDir, "target/kubernetes");
+        File manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, resolvedManifestDir);
         try (FileInputStream fis = new FileInputStream(manifest)) {
             List<StatusDetails> status;
             if (!ObjectHelper.isEmpty(namespace)) {
