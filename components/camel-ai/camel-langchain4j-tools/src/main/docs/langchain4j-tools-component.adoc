@@ -185,3 +185,10 @@ Use the model in the Camel LangChain4j Chat Producer
 ====
 To switch to another Large Language Model and its corresponding dependency, replace the `langchain4j-open-ai` dependency with the appropriate dependency for the desired model. Update the initialization parameters accordingly in the code snippet provided above.
 ====
+
+
+==== Handling no Tools Called
+
+In some circumstances, the LLM may decide not to call a tool.
+This is a valid scenario that needs to be handled by application developers.
+To do so, developers can get the `LangChain4jTools.NO_TOOLS_CALLED_HEADER` from the exchange.
