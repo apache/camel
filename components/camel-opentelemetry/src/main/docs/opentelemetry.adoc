@@ -72,12 +72,44 @@ NOTE: You would still need OpenTelemetry to instrument your code, which can be d
 
 == Spring Boot
 
-If you are using Spring Boot, then you can add
-the `camel-opentelemetry-starter` dependency, and turn on OpenTelemetry by annotating
-the main class with `@CamelOpenTelemetry`.
+If you are using Spring Boot, just add
+the `camel-opentelemetry-starter` dependency to get started.
 
-The `OpenTelemetryTracer` will be implicitly obtained from the camel context's `Registry`, unless
-a `OpenTelemetryTracer` bean has been defined by the application.
+OpenTelemetry's `Tracer` will be
+https://docs.spring.io/spring-boot/reference/actuator/tracing.html[configured] through `spring-boot-starter-actuator` unless a `Tracer` is already defined.
+
+*Noteworthy*: by default, Spring Boot samples only 10% of requests to prevent overwhelming the trace backend.
+Set the property `management.tracing.sampling.probability` to `1.0` if you want to see all traces.
+
+==== SpanExporters
+
+You'll probably want to configure at least one https://opentelemetry.io/docs/languages/java/sdk/#spanexporter[SpanExporter]
+as they allow you to export your traces to various backends (e.g Zipkin and Jaeger) or log them. For example, to export your traces to Jaeger using OTLP via gRPC,
+add `io.opentelemetry:opentelemetry-exporter-otlp` as a dependency to your project. To configure it, you can
+use the `management.otlp.tracing` properties or register a new `SpanExporter` bean yourself:
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+@Bean
+public SpanExporter OtlpGrpcSpanExporter(@Value("${tracing.url}") String url) {
+    return OtlpGrpcSpanExporter.builder().setEndpoint(url).build();
+}
+--------------------------------------------------------------------------------------------------
+
+Spring Boot's Actuator will take care of the wiring for you.
+
+Alternatively if you just want to log your traces in OTLP JSON format,
+add `io.opentelemetry:opentelemetry-exporter-logging-otlp` as a dependency to your project and also register a new `SpanExporter` bean:
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+@Bean
+public SpanExporter logTraces() {
+    return OtlpJsonLoggingSpanExporter.create();
+}
+--------------------------------------------------------------------------------------------------
+
+Multiple `SpanExporters` can be used at the same time.
 
 [[OpenTelemetry-JavaAgent]]
 == Java Agent
