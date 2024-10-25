@@ -1,0 +1,128 @@
+= Dirigible JavaScript Component
+:doctitle: Dirigible JavaScript
+:shortname: dirigible-java-script
+:artifactid: camel-dirigible
+:description: Invoke JavaScript code.
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Dirigible JavaScript component invokes JavaScript file in https://github.com/eclipse/dirigible[Eclipse Dirigible] environment. https://camel.apache.org/components/next/eips/message.html[The Camel message] is passed to the file, available for any further use.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dirigible</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+----
+dirigible-java-script:javaScriptPath
+----
+
+Where `javaScriptPath` should be a valid path to the JavaScript file which will be executed.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Examples
+
+A `dirigible-java-script` endpoint cannot be defined as the input to the route; i.e., you cannot consume from it, you can only route from some inbound message Endpoint to the `dirigible-java-script` endpoint as output, such as the `direct` endpoint as input.
+
+Suppose you have the following JavaScript file called `handler.mjs` in project `sample-project` which simply converts the string message body to upper case:
+
+[source,java]
+----
+export function onMessage(message) {
+    const body = message.getBody();
+
+    const newBody = body.toUpperCase();
+    message.setBody(newBody);
+
+    return message;
+}
+----
+
+Then the JavaScript file can be called in a Camel route by its path:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:callDirigibleScript")
+    .setBody().simple("A test body")
+    .to("dirigible-java-script:sample-project/handler.mjs")
+----
+
+XML::
++
+[source,xml]
+----------------------------
+<route>
+    <from uri="direct:callDirigibleScript"/>
+    <setBody>
+        <simple>A test body</simple>
+    </setBody>
+    <to uri="dirigible-java-script:sample-project/handler.mjs"/>
+</route>
+----------------------------
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: route-bb7e
+    nodePrefixId: route-f05
+    from:
+      id: from-8213
+      uri: direct
+      parameters:
+        name: callDirigibleScript
+      steps:
+        - setBody:
+            id: setBody-dbef
+            expression:
+              simple:
+                id: simple-c2c3
+                expression: A test body
+        - to:
+            id: to-3d30
+            uri: dirigible-java-script
+            parameters:
+              javaScriptPath: sample-project/handler.mjs
+
+----
+====
+
+As result of this route execution, its body will contain the passed body `A test body` in upper case  `A TEST BODY`.
