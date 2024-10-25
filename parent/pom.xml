@@ -482,7 +482,7 @@
         <testcontainers-version>1.20.3</testcontainers-version>
         <thymeleaf-version>3.1.2.RELEASE</thymeleaf-version>
         <tika-version>2.9.2</tika-version>
-        <twilio-version>10.6.1</twilio-version>
+        <twilio-version>10.6.2</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-version>2.3.18.Final</undertow-version>
         <univocity-parsers-version>2.10.1</univocity-parsers-version>
