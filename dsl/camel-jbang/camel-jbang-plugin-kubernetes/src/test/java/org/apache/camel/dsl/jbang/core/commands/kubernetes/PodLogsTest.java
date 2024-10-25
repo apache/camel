@@ -33,7 +33,8 @@ class PodLogsTest extends KubernetesBaseTest {
         PodLogs command = createCommand();
         command.name = "mickey-mouse";
         command.maxWaitAttempts = 2; // total timeout of 4 seconds
-        command.doCall();
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
 
         Assertions.assertTrue(
                 printer.getOutput().contains("Pod for label app.kubernetes.io/name=mickey-mouse not available"));
