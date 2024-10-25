@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-parent</artifactId>
-        <version>4.8.1-SNAPSHOT</version>
+        <version>4.8.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-calendar</artifactId>
