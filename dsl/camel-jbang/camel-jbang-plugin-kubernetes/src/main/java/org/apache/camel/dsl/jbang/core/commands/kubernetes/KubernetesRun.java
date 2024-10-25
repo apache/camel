@@ -44,6 +44,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
+
 @CommandLine.Command(name = "run", description = "Run Camel application on Kubernetes", sortOptions = false)
 public class KubernetesRun extends KubernetesBaseCommand {
 
@@ -434,11 +436,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void startPodLogging(String projectName) throws Exception {
         try {
             var podLogs = new PodLogs(getMain());
-            podLogs.withClient(client());
-            podLogs.label = "%s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
             if (!ObjectHelper.isEmpty(namespace)) {
                 podLogs.namespace = namespace;
             }
+            podLogs.name = projectName;
             podLogs.doCall();
         } catch (Exception e) {
             printer().println("Failed to read pod logs - " + e);
@@ -455,8 +456,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
             }
             printer().println("Run: " + kubectlCmd);
         }
-        client(Pod.class).withLabel(BaseTrait.KUBERNETES_NAME_LABEL, projectName)
-                .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
+        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_NAME_LABEL, projectName)
+                .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
+        if (!quiet) {
+            printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
+        }
     }
 
     private void installShutdownInterceptor(String projectName, String workingDir) {
@@ -493,17 +497,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("--file");
         args.add(workingDir);
 
-        if (runtime == RuntimeType.quarkus) {
-
-            if (ClusterType.KUBERNETES.isEqualTo(clusterType)) {
-                if (!ObjectHelper.isEmpty(namespace)) {
-                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
-                }
-            }
-
-        } else {
-
-            if (!ObjectHelper.isEmpty(namespace)) {
+        if (!ObjectHelper.isEmpty(namespace)) {
+            if (runtime == RuntimeType.quarkus && ClusterType.KUBERNETES.isEqualTo(clusterType)) {
+                args.add("-Dquarkus.kubernetes.namespace=" + namespace);
+            } else {
                 args.add("-Djkube.namespace=%s".formatted(namespace));
             }
         }
@@ -547,6 +544,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("--file");
         args.add(workingDir);
 
+        boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
+
         if (runtime == RuntimeType.quarkus) {
 
             if (imagePlatforms != null) {
@@ -556,7 +555,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Dquarkus.container-image.build=" + imageBuild);
             args.add("-Dquarkus.container-image.push=" + imagePush);
 
-            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            if (isOpenshift) {
                 args.add("-Dquarkus.openshift.deploy=true");
             } else {
                 args.add("-Dquarkus.kubernetes.deploy=true");
@@ -581,11 +580,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 args.add("-Djkube.namespace=%s".formatted(namespace));
             }
 
-            args.add("package");
+            var pluginPrefix = isOpenshift ? "oc" : "k8s";
             if (reload) {
-                args.add("k8s:undeploy");
+                args.add(pluginPrefix + ":undeploy");
             }
-            args.add("k8s:deploy");
+            args.add(pluginPrefix + ":deploy");
         }
 
         if (!quiet) {

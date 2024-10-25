@@ -19,16 +19,14 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -67,6 +65,7 @@ public class PodLogs extends KubernetesBaseCommand {
     }
 
     public Integer doCall() throws Exception {
+
         if (name == null && label == null && filePath == null) {
             printer().println("Name or label selector must be set");
             return 1;
@@ -87,57 +86,22 @@ public class PodLogs extends KubernetesBaseCommand {
             printer().println("--label selector must be in syntax: key=value");
         }
 
-        boolean shouldResume = true;
-        AtomicInteger resumeCount = new AtomicInteger();
-        while (shouldResume) {
-            shouldResume = watchLogs(parts[0], parts[1], container, resumeCount);
-            printer().printf("PodLogs: [resume=%b, count=%d]%n", shouldResume, resumeCount.get());
-            resumeCount.incrementAndGet();
-            sleepWell();
+        PodResource podRes = pods().withLabel(label).resources().findFirst().orElse(null);
+        if (podRes == null) {
+            printer().printf("Pod for label %s not available".formatted(label));
+            return 0;
         }
-
-        return 0;
-    }
-
-    public boolean watchLogs(String label, String labelValue, String container, AtomicInteger resumeCount) {
-        PodList pods = pods().withLabel(label, labelValue).list();
-
-        Pod pod = pods.getItems().stream()
-                .filter(p -> p.getStatus().getPhase() != null && !"Terminated".equals(p.getStatus().getPhase()))
-                .findFirst()
-                .orElse(null);
-
-        if (pod == null) {
-            if (resumeCount.get() == 0) {
-                printer().printf("Pod for label %s=%s not available - Waiting ...%n".formatted(label, labelValue));
-            }
-
-            // use 2-sec delay in waiting for pod logs mode
-            sleepWell();
-            return resumeCount.get() < maxWaitAttempts;
-        }
-
-        String containerName = null;
-        if (pod.getSpec() != null && pod.getSpec().getContainers() != null) {
-            if (container != null && pod.getSpec().getContainers().stream().anyMatch(c -> container.equals(c.getName()))) {
-                containerName = container;
-            } else if (!pod.getSpec().getContainers().isEmpty()) {
-                containerName = pod.getSpec().getContainers().get(0).getName();
-            }
-        }
-
-        PodResource podRes = pods().withName(pod.getMetadata().getName());
 
         LogWatch logs;
         if (tail < 0) {
-            if (containerName != null) {
-                logs = podRes.inContainer(containerName).watchLog();
+            if (!ObjectHelper.isEmpty(container)) {
+                logs = podRes.inContainer(container).watchLog();
             } else {
                 logs = podRes.watchLog();
             }
         } else {
-            if (containerName != null) {
-                logs = podRes.inContainer(containerName).tailingLines(tail).watchLog();
+            if (!ObjectHelper.isEmpty(container)) {
+                logs = podRes.inContainer(container).tailingLines(tail).watchLog();
             } else {
                 logs = podRes.tailingLines(tail).watchLog();
             }
@@ -147,23 +111,11 @@ public class PodLogs extends KubernetesBaseCommand {
             String line;
             while ((line = reader.readLine()) != null) {
                 printer().println(line);
-                if (messageCount++ > maxLogMessages && maxLogMessages > 0) {
-                    return false;
-                }
-                resumeCount.set(0);
             }
         } catch (IOException e) {
             printer().println("Failed to read pod logs - " + e.getMessage());
         }
 
-        return resumeCount.get() < maxWaitAttempts;
-    }
-
-    private void sleepWell() {
-        try {
-            Thread.sleep(2000L);
-        } catch (InterruptedException e) {
-            printer().printf("Interrupted while waiting for pod - %s%n", e.getMessage());
-        }
+        return 0;
     }
 }
