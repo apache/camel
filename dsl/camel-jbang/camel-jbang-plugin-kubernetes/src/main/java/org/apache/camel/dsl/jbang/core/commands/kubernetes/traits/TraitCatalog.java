@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeServiceTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 
 /**
  * Catalog of traits that get applied to a trait context in order to generate a set of Kubernetes resources as a
@@ -70,21 +71,25 @@ public class TraitCatalog {
      * @param traitsSpec  the trait configuration spec.
      * @param context     the trait context.
      * @param clusterType the optional trait profile to select traits.
+     * @param runtimeType the runtime.
      */
-    public void apply(Traits traitsSpec, TraitContext context, String clusterType) {
+    public void apply(Traits traitsSpec, TraitContext context, String clusterType, RuntimeType runtimeType) {
         if (clusterType != null) {
             new TraitCatalog().traitsForProfile(ClusterType.valueOf(clusterType.toUpperCase(Locale.US)))
                     .forEach(t -> {
                         if (t.configure(traitsSpec, context)) {
                             t.apply(traitsSpec, context);
+                            t.applyRuntimeSpecificProperties(traitsSpec, context, runtimeType);
                         }
                     });
         } else {
             new TraitCatalog().allTraits().forEach(t -> {
                 if (t.configure(traitsSpec, context)) {
                     t.apply(traitsSpec, context);
+                    t.applyRuntimeSpecificProperties(traitsSpec, context, runtimeType);
                 }
             });
         }
     }
+
 }

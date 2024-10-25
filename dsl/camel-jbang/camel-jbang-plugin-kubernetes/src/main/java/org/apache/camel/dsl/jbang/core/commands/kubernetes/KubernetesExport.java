@@ -352,7 +352,7 @@ public class KubernetesExport extends Export {
             printer().println("Building Kubernetes manifest ...");
         }
 
-        new TraitCatalog().apply(traitsSpec, context, clusterType);
+        new TraitCatalog().apply(traitsSpec, context, clusterType, runtime);
 
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 

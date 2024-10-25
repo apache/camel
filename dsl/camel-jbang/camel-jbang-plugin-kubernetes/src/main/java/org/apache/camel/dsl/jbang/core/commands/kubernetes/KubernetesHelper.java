@@ -199,12 +199,13 @@ public final class KubernetesHelper {
     }
 
     public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
-        String manifestFile;
-        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
-            manifestFile = "kubernetes";
-        } else {
-            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
-        }
+        ClusterType cs = ClusterType
+                .valueOf(Optional.ofNullable(clusterType).map(String::toUpperCase).orElse(ClusterType.KUBERNETES.name()));
+        String manifestFile = switch (cs) {
+            case KIND, MINIKUBE -> "kubernetes";
+            case OPENSHIFT -> "_openshift";
+            default -> cs.name().toLowerCase();
+        };
         return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
     }
 }
