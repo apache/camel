@@ -101,26 +101,23 @@ YAML::
 +
 [source,yaml]
 ----
-- route:
-    id: route-bb7e
-    nodePrefixId: route-f05
-    from:
-      id: from-8213
-      uri: direct
-      parameters:
-        name: callDirigibleScript
-      steps:
-        - setBody:
-            id: setBody-dbef
-            expression:
-              simple:
-                id: simple-c2c3
-                expression: A test body
-        - to:
-            id: to-3d30
-            uri: dirigible-java-script
-            parameters:
-              javaScriptPath: sample-project/handler.mjs
+from:
+  id: from-8213
+  uri: direct
+  parameters:
+    name: callDirigibleScript
+  steps:
+    - setBody:
+        id: setBody-dbef
+        expression:
+          simple:
+            id: simple-c2c3
+            expression: A test body
+    - to:
+        id: to-3d30
+        uri: dirigible-java-script
+        parameters:
+          javaScriptPath: sample-project/handler.mjs
 
 ----
 ====
