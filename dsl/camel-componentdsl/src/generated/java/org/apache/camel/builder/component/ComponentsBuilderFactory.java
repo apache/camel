@@ -1454,6 +1454,19 @@ public interface ComponentsBuilderFactory {
         return FlinkComponentBuilderFactory.flink();
     }
     /**
+     * Flowable (camel-flowable)
+     * Send and receive messages from the Flowable BPMN and CMMN engines.
+     * 
+     * Category: workflow
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-flowable
+     * 
+     * @return the dsl builder
+     */
+    static FlowableComponentBuilderFactory.FlowableComponentBuilder flowable() {
+        return FlowableComponentBuilderFactory.flowable();
+    }
+    /**
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
      * FOP.

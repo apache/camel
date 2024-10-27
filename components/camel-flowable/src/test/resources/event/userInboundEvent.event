@@ -1,0 +1,15 @@
+{
+    "key": "userInboundEvent",
+    "name": "User Inbound Event",
+    "payload": [
+        {
+            "name": "name",
+            "correlationParameter":true,
+            "type": "string"
+        },
+        {
+            "name": "city",
+            "type": "string"
+        }
+    ]
+}

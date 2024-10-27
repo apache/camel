@@ -110,7 +110,6 @@ public class PubSubApiClient extends ServiceSupport {
         this.backoffIncrement = backoffIncrement;
         this.reconnectDelay = backoffIncrement;
         this.allowUseProxyServer = allowUseProxyServer;
-
     }
 
     public List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult> publishMessage(

@@ -4678,6 +4678,46 @@ public class StaticEndpointBuilders {
         return FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Flowable (camel-flowable)
+     * Send and receive messages from the Flowable BPMN and CMMN engines.
+     * 
+     * Category: workflow
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-flowable
+     * 
+     * Syntax: <code>flowable:channelKey</code>
+     * 
+     * Path parameter: channelKey (required)
+     * The channel key
+     * 
+     * @param path channelKey
+     * @return the dsl builder
+     */
+    public static FlowableEndpointBuilderFactory.FlowableEndpointBuilder flowable(String path) {
+        return flowable("flowable", path);
+    }
+    /**
+     * Flowable (camel-flowable)
+     * Send and receive messages from the Flowable BPMN and CMMN engines.
+     * 
+     * Category: workflow
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-flowable
+     * 
+     * Syntax: <code>flowable:channelKey</code>
+     * 
+     * Path parameter: channelKey (required)
+     * The channel key
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path channelKey
+     * @return the dsl builder
+     */
+    public static FlowableEndpointBuilderFactory.FlowableEndpointBuilder flowable(String componentName, String path) {
+        return FlowableEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
      * FOP.
