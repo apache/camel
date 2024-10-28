@@ -37,7 +37,7 @@ import org.apache.kafka.connect.source.SourceConnector;
 
 public final class ConnectorConfigGenerator {
 
-    private static final String PACKAGE_NAME = "org.apache.camel.component.debezium.configuration";
+    private static final String DEFAULT_PACKAGE_NAME = "org.apache.camel.component.debezium.configuration";
     private static final String PARENT_TYPE = "EmbeddedDebeziumConfiguration";
     private static final String CONNECTOR_SUFFIX = "ConnectorConfig";
 
@@ -45,36 +45,70 @@ public final class ConnectorConfigGenerator {
     private final Map<String, ConnectorConfigField> dbzConfigFields;
     private final String connectorName;
     private final String className;
+    private final String packageName;
 
     private final JavaClass javaClass = new JavaClass(getClass().getClassLoader());
 
     private ConnectorConfigGenerator(final SourceConnector connector, final Map<String, ConnectorConfigField> dbzConfigFields,
-                                     final String connectorName) {
+                                     final String connectorName, final String packageName) {
         this.connector = connector;
         this.dbzConfigFields = dbzConfigFields;
         this.connectorName = connectorName;
         this.className = connectorName + "Connector" + PARENT_TYPE;
+        this.packageName = packageName == null ? DEFAULT_PACKAGE_NAME : packageName;
         // generate our java class
         generateJavaClass();
     }
 
-    public static ConnectorConfigGenerator create(final SourceConnector connector, final Class<?> dbzConfigClass) {
-        return create(connector, dbzConfigClass, Collections.emptySet(), Collections.emptyMap());
+    /**
+     * @deprecated use {@link #create(SourceConnector, Class, String)} instead
+     */
+    @Deprecated(since = "3.9.0", forRemoval = true)
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass) {
+        return create(connector, dbzConfigClass, null, Collections.emptySet(), Collections.emptyMap());
     }
 
     public static ConnectorConfigGenerator create(
-            final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields) {
-        return create(connector, dbzConfigClass, requiredFields, Collections.emptyMap());
+            final SourceConnector connector, final Class<?> dbzConfigClass, final String targetPackageName) {
+        return create(connector, dbzConfigClass, targetPackageName, Collections.emptySet(), Collections.emptyMap());
+    }
+
+    /**
+     * @deprecated use {@link #create(SourceConnector, Class, String, Set)} instead
+     */
+    @Deprecated(since = "3.9.0", forRemoval = true)
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass,
+            final Set<String> requiredFields) {
+        return create(connector, dbzConfigClass, null, requiredFields, Collections.emptyMap());
     }
 
     public static ConnectorConfigGenerator create(
-            final SourceConnector connector, final Class<?> dbzConfigClass, final Map<String, Object> overriddenDefaultValues) {
-        return create(connector, dbzConfigClass, Collections.emptySet(), overriddenDefaultValues);
+            final SourceConnector connector, final Class<?> dbzConfigClass, final String targetPackageName,
+            final Set<String> requiredFields) {
+        return create(connector, dbzConfigClass, targetPackageName, requiredFields, Collections.emptyMap());
     }
 
+    /**
+     * @deprecated use {@link #create(SourceConnector, Class, String, Map)} instead
+     */
+    @Deprecated(since = "3.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
-            final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields,
+            final SourceConnector connector, final Class<?> dbzConfigClass,
             final Map<String, Object> overriddenDefaultValues) {
+        return create(connector, dbzConfigClass, null, Collections.emptySet(), overriddenDefaultValues);
+    }
+
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass, final String targetPackageName,
+            final Map<String, Object> overriddenDefaultValues) {
+        return create(connector, dbzConfigClass, targetPackageName, Collections.emptySet(), overriddenDefaultValues);
+    }
+
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass, final String targetPackageName,
+            final Set<String> requiredFields, final Map<String, Object> overriddenDefaultValues) {
         ObjectHelper.notNull(connector, "connector");
         ObjectHelper.notNull(dbzConfigClass, "dbzConfigClass");
         ObjectHelper.notNull(requiredFields, "requiredFields");
@@ -95,7 +129,7 @@ public final class ConnectorConfigGenerator {
         return new ConnectorConfigGenerator(
                 connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields,
                         overriddenDefaultValues),
-                connectorName);
+                connectorName, targetPackageName);
     }
 
     public String getConnectorName() {
@@ -107,7 +141,7 @@ public final class ConnectorConfigGenerator {
     }
 
     public String getPackageName() {
-        return PACKAGE_NAME;
+        return packageName;
     }
 
     public String printClassAsString() {
@@ -144,7 +178,7 @@ public final class ConnectorConfigGenerator {
     }
 
     private void setPackage() {
-        javaClass.setPackage(PACKAGE_NAME);
+        javaClass.setPackage(packageName);
     }
 
     private void setImports() {
@@ -153,6 +187,7 @@ public final class ConnectorConfigGenerator {
         javaClass.addImport(Metadata.class);
         javaClass.addImport(UriParam.class);
         javaClass.addImport(UriParams.class);
+        javaClass.addImport("%s.%s".formatted(DEFAULT_PACKAGE_NAME, PARENT_TYPE));
     }
 
     private void setClassNameAndType() {

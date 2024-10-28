@@ -78,6 +78,7 @@
                 <configuration>
                     <connectorClassName>io.debezium.connector.postgresql.PostgresConnector</connectorClassName>
                     <connectorConfigClassName>io.debezium.connector.postgresql.PostgresConnectorConfig</connectorConfigClassName>
+                    <packageName>org.apache.camel.component.debezium.postgres.configuration</packageName>
                     <fields>
                         <tombstones.on.delete>false</tombstones.on.delete>
                     </fields>
