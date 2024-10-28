@@ -27,15 +27,13 @@ import java.util.Map;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -84,7 +82,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         assertIsSatisfied();
 
         Exchange exchange = result.assertExchangeReceived(0);
-        assertIsInstanceOf(Document.class, exchange.getIn().getBody());
+        assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
         assertFalse(DiffBuilder.compare(getExpectedOrderXml()).withTest(exchange.getIn().getBody(String.class)).ignoreComments()
                 .ignoreWhitespace().build().hasDifferences());
     }
@@ -278,7 +276,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
                 SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
                 processor.setReportPath("target/smooks-report.html");
 
-                from("direct:input").process(processor).convertBodyTo(Node.class).to("mock:result");
+                from("direct:input").process(processor).to("mock:result");
             }
         };
     }

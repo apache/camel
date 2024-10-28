@@ -20,12 +20,13 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * EDI, XML, CSV, etc. based data transformation using Smooks.
+ * Use Smooks to transform, route, and bind both XML and non-XML data, including EDI, CSV, JSON, and YAML.
  */
 @UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks:smooksConfig",
              category = { Category.TRANSFORMATION })
@@ -35,19 +36,14 @@ public class SmooksEndpoint extends ProcessorEndpoint {
     @Metadata(required = true, supportFileReference = true)
     private String smooksConfig;
 
+    @UriParam(description = "File path to place the generated HTML execution report. The report is a useful tool in the developer’s arsenal for diagnosing issues or comprehending a transformation. Do not set in production since this is a major performance drain")
+    private String reportPath;
+
     private final SmooksProcessor smooksProcessor;
 
     public SmooksEndpoint(String endpointUri, Component component, SmooksProcessor processor) {
         super(endpointUri, component, processor);
         this.smooksProcessor = processor;
-    }
-
-    public String getSmooksConfig() {
-        return smooksConfig;
-    }
-
-    public void setSmooksConfig(String smooksConfig) {
-        this.smooksConfig = smooksConfig;
     }
 
     @Override
@@ -62,4 +58,19 @@ public class SmooksEndpoint extends ProcessorEndpoint {
         ServiceHelper.stopService(smooksProcessor);
     }
 
+    public String getSmooksConfig() {
+        return smooksConfig;
+    }
+
+    public void setSmooksConfig(String smooksConfig) {
+        this.smooksConfig = smooksConfig;
+    }
+
+    public String getReportPath() {
+        return reportPath;
+    }
+
+    public void setReportPath(String reportPath) {
+        this.reportPath = reportPath;
+    }
 }
