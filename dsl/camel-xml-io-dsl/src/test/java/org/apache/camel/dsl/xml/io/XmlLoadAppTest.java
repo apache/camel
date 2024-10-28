@@ -29,6 +29,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.PluginHelper;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -358,6 +359,28 @@ public class XmlLoadAppTest {
             MockEndpoint bar = context.getEndpoint("mock:afterException", MockEndpoint.class);
             bar.expectedBodiesReceived("Hi World");
             context.createProducerTemplate().sendBody("direct:throwException", "Hi World");
+            bar.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadAppWithDataFormat() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            // camel-app13 has a route configuration and a route using the configuration
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app14.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:result", MockEndpoint.class);
+
+            Base64 codec = new Base64(40, new byte[] { '\r', '\n' }, true);
+            byte[] encoded = codec.encode("Hi World".getBytes());
+            bar.expectedBodiesReceived(encoded);
+            context.createProducerTemplate().sendBody("direct:start", "Hi World");
             bar.assertIsSatisfied();
         }
     }

@@ -359,6 +359,10 @@ public class BaseParser {
     }
 
     protected boolean ignoreUnexpectedElement(String namespace, String name) throws XmlPullParserException {
+        // special for dataFormats (wrapper)
+        if ("dataFormats".equals(name)) {
+            return true;
+        }
         return false;
     }
 
