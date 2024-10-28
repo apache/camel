@@ -1,1 +1,0 @@
-../../../../../dsl/camel-js-dsl/src/main/docs/js-dsl.adoc

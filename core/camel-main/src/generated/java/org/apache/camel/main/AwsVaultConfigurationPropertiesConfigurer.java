@@ -17,7 +17,32 @@ import org.apache.camel.main.AwsVaultConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessKey", java.lang.String.class);
+        map.put("AwsVaultConfiguration", org.apache.camel.vault.AwsVaultConfiguration.class);
+        map.put("AzureVaultConfiguration", org.apache.camel.vault.AzureVaultConfiguration.class);
+        map.put("DefaultCredentialsProvider", boolean.class);
+        map.put("GcpVaultConfiguration", org.apache.camel.vault.GcpVaultConfiguration.class);
+        map.put("HashicorpVaultConfiguration", org.apache.camel.vault.HashicorpVaultConfiguration.class);
+        map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
+        map.put("OverrideEndpoint", boolean.class);
+        map.put("ProfileCredentialsProvider", boolean.class);
+        map.put("ProfileName", java.lang.String.class);
+        map.put("RefreshEnabled", boolean.class);
+        map.put("RefreshPeriod", long.class);
+        map.put("Region", java.lang.String.class);
+        map.put("SecretKey", java.lang.String.class);
+        map.put("Secrets", java.lang.String.class);
+        map.put("SqsQueueUrl", java.lang.String.class);
+        map.put("UriEndpointOverride", java.lang.String.class);
+        map.put("UseSqsNotification", boolean.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(AwsVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -37,6 +62,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "hashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "profilecredentialsprovider":
         case "profileCredentialsProvider": target.setProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "profilename":
@@ -51,10 +78,21 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "sqsqueueurl":
         case "sqsQueueUrl": target.setSqsQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usesqsnotification":
         case "useSqsNotification": target.setUseSqsNotification(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override
@@ -74,6 +112,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "hashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "profilecredentialsprovider":
         case "profileCredentialsProvider": return boolean.class;
         case "profilename":
@@ -88,6 +128,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secrets": return java.lang.String.class;
         case "sqsqueueurl":
         case "sqsQueueUrl": return java.lang.String.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usesqsnotification":
         case "useSqsNotification": return boolean.class;
         default: return null;
@@ -112,6 +154,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "hashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.isOverrideEndpoint();
         case "profilecredentialsprovider":
         case "profileCredentialsProvider": return target.isProfileCredentialsProvider();
         case "profilename":
@@ -126,6 +170,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secrets": return target.getSecrets();
         case "sqsqueueurl":
         case "sqsQueueUrl": return target.getSqsQueueUrl();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getUriEndpointOverride();
         case "usesqsnotification":
         case "useSqsNotification": return target.isUseSqsNotification();
         default: return null;

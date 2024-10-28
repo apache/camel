@@ -35,7 +35,7 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface OpenshiftBuildsEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint for the Openshift Builds component.
+     * Builder for endpoint for the OpenShift Builds component.
      */
     public interface OpenshiftBuildsEndpointBuilder
             extends
@@ -345,7 +345,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Openshift Builds component.
+     * Advanced builder for endpoint for the OpenShift Builds component.
      */
     public interface AdvancedOpenshiftBuildsEndpointBuilder
             extends
@@ -435,7 +435,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
 
     public interface OpenshiftBuildsBuilders {
         /**
-         * Openshift Builds (camel-kubernetes)
+         * OpenShift Builds (camel-kubernetes)
          * Perform operations on OpenShift Builds.
          * 
          * Category: container,cloud
@@ -448,7 +448,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
             return OpenshiftBuildsHeaderNameBuilder.INSTANCE;
         }
         /**
-         * Openshift Builds (camel-kubernetes)
+         * OpenShift Builds (camel-kubernetes)
          * Perform operations on OpenShift Builds.
          * 
          * Category: container,cloud
@@ -473,7 +473,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
             return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder("openshift-builds", path);
         }
         /**
-         * Openshift Builds (camel-kubernetes)
+         * OpenShift Builds (camel-kubernetes)
          * Perform operations on OpenShift Builds.
          * 
          * Category: container,cloud
@@ -502,7 +502,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
 
     }
     /**
-     * The builder of headers' name for the Openshift Builds component.
+     * The builder of headers' name for the OpenShift Builds component.
      */
     public static class OpenshiftBuildsHeaderNameBuilder {
         /**
@@ -536,7 +536,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
             return "CamelKubernetesNamespaceName";
         }
         /**
-         * The Openshift build labels.
+         * The OpenShift build labels.
          * 
          * The option is a: {@code Map<String, String>} type.
          * 
@@ -548,7 +548,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
             return "CamelKubernetesBuildsLabels";
         }
         /**
-         * The Openshift build name.
+         * The OpenShift build name.
          * 
          * The option is a: {@code String} type.
          * 

@@ -22,12 +22,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.restassured.RestAssured;
 import io.restassured.mapper.ObjectMapperType;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.ProducerTemplate;
@@ -41,10 +44,12 @@ import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,12 +58,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static io.restassured.RestAssured.config;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.EncoderConfig.encoderConfig;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.channel;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.endpoint;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.event;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.sourceChannel;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.sourceEndpoint;
-import static org.apache.camel.component.knative.KnativeEnvironmentSupport.sourceEvent;
+import static org.apache.camel.component.knative.KnativeEnvironmentSupport.*;
 import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.configureKnativeComponent;
 import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.configurePlatformHttpComponent;
 import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.httpAttribute;
@@ -1930,6 +1930,548 @@ public class KnativeHttpTest {
                     .post()
                     .then()
                     .statusCode(200);
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testSecureClientPemCertOptions(CloudEvent ce) throws Exception {
+        final KnativeHttpsServer server = new KnativeHttpsServer(context);
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("https://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeSslClientOptions clientOptions = new KnativeSslClientOptions(context);
+        clientOptions.setSslEnabled(true);
+        clientOptions.setKeyPath("keystore/client.pem");
+        clientOptions.setKeyCertPath("keystore/client.crt");
+        clientOptions.setVerifyHostName(false);
+        clientOptions.setTrustOptions(TrustAllOptions.INSTANCE);
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "test");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testSecureClientPfxCertOptions(CloudEvent ce) throws Exception {
+        final KnativeHttpsServer server = new KnativeHttpsServer(context);
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("https://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeSslClientOptions clientOptions = new KnativeSslClientOptions(context);
+        clientOptions.setSslEnabled(true);
+        clientOptions.setKeyPath("keystore/client.p12");
+        clientOptions.setVerifyHostName(false);
+        clientOptions.setTrustOptions(TrustAllOptions.INSTANCE);
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "test");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testSecureClientJksCertOptions(CloudEvent ce) throws Exception {
+        final KnativeHttpsServer server = new KnativeHttpsServer(context);
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("https://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeSslClientOptions clientOptions = new KnativeSslClientOptions(context);
+        clientOptions.setSslEnabled(true);
+        clientOptions.setKeystorePath("keystore/client.jks");
+        clientOptions.setKeystorePassword("secr3t");
+        clientOptions.setVerifyHostName(false);
+        clientOptions.setTruststorePath("keystore/truststore.jks");
+        clientOptions.setTruststorePassword("secr3t");
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "test");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testSecureClientOptionsLookup(CloudEvent ce) throws Exception {
+        final KnativeHttpsServer server = new KnativeHttpsServer(context);
+
+        configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("https://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeSslClientOptions sslClientOptions = new KnativeSslClientOptions(context);
+        sslClientOptions.setSslEnabled(true);
+        sslClientOptions.setKeyPath("keystore/client.pem");
+        sslClientOptions.setKeyCertPath("keystore/client.crt");
+        sslClientOptions.setVerifyHostName(false);
+        sslClientOptions.setTrustOptions(TrustAllOptions.INSTANCE);
+
+        context.getRegistry().bind("sslClientOptions", sslClientOptions);
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "test");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testSecureClientOptionsPropertyConf(CloudEvent ce) throws Exception {
+        final KnativeHttpsServer server = new KnativeHttpsServer(context);
+
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.enabled", "true");
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.verify.hostname", "false");
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.path", "keystore/client.pem");
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.cert.path", "keystore/client.crt");
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("https://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        PropertyBindingSupport.build().bind(context, component,
+                "camel.component.knative.producerFactory.clientOptions", "#class:" + KnativeSslClientOptions.class.getName());
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "test");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcClientOptions(CloudEvent ce) throws Exception {
+        final KnativeHttpServer server = new KnativeHttpServer(context);
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("http://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeOidcClientOptions clientOptions = new KnativeOidcClientOptions(context);
+        clientOptions.setOidcEnabled(true);
+        clientOptions.setOidcTokenPath("classpath:oidc/token.txt");
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcClientOptionsRenewTokenOnForbidden(CloudEvent ce) throws Exception {
+        KnativeOidcClientOptions clientOptions = new KnativeOidcClientOptions(context);
+        clientOptions.setOidcEnabled(true);
+        clientOptions.setOidcTokenPath("classpath:oidc/token.txt");
+
+        AtomicBoolean forbidden = new AtomicBoolean(true);
+        AtomicBoolean ok = new AtomicBoolean(false);
+        final KnativeHttpServer server = new KnativeHttpServer(context, event -> {
+            // respond with 401 FORBIDDEN only the 1st request to trigger token renewal
+            if (forbidden.getAndSet(false)) {
+                event.response().setStatusCode(401);
+                clientOptions.setOidcTokenPath("classpath:oidc/renewed_token.txt");
+            } else {
+                event.response().setStatusCode(200);
+                ok.set(true);
+            }
+            event.response().end();
+        });
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("http://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "");
+
+            // verify 1st request was handled with FORBIDDEN
+            assertThat(forbidden.get()).isFalse();
+
+            // 1st request that has been forbidden
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+
+            // assert one more request
+            assertThat(server.getNumberOfRequestsRemaining()).isEqualTo(1);
+
+            // 2nd request handled with success
+            assertThat(ok.get()).isTrue();
+
+            // 2nd request after token renewal
+            request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer the_renewed_token");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcClientOptionsCacheTokensDisabled(CloudEvent ce) throws Exception {
+        KnativeOidcClientOptions clientOptions = new KnativeOidcClientOptions(context);
+        clientOptions.setOidcEnabled(true);
+        clientOptions.setRenewTokenOnForbidden(false);
+        clientOptions.setCacheTokens(false);
+        clientOptions.setOidcTokenPath("classpath:oidc/token.txt");
+
+        AtomicBoolean refresh = new AtomicBoolean(true);
+        final KnativeHttpServer server = new KnativeHttpServer(context, event -> {
+            // respond with 401 FORBIDDEN only the 1st request to trigger token renewal
+            if (refresh.getAndSet(false)) {
+                clientOptions.setOidcTokenPath("classpath:oidc/renewed_token.txt");
+            }
+
+            event.response().setStatusCode(200);
+            event.response().end();
+        });
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("http://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "1st");
+
+            // 1st request
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+
+            template.sendBody("direct:start", "2nd");
+
+            // assert one more request
+            assertThat(server.getNumberOfRequestsRemaining()).isEqualTo(1);
+
+            // 2nd request with new token
+            request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer the_renewed_token");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcClientOptionsRenewTokenOnForbiddenButSameValue(CloudEvent ce) throws Exception {
+        AtomicBoolean forbidden = new AtomicBoolean(true);
+        final KnativeHttpServer server = new KnativeHttpServer(context, event -> {
+            // respond with 401 FORBIDDEN only the 1st request to trigger token renewal
+            if (forbidden.getAndSet(false)) {
+                event.response().setStatusCode(401);
+            } else {
+                event.response().setStatusCode(200);
+            }
+            event.response().end();
+        });
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("http://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        KnativeOidcClientOptions clientOptions = new KnativeOidcClientOptions(context);
+        clientOptions.setOidcEnabled(true);
+        clientOptions.setOidcTokenPath("classpath:oidc/token.txt");
+
+        if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+            httpProducerFactory.setClientOptions(clientOptions);
+        }
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            Assertions.assertThatExceptionOfType(CamelExecutionException.class)
+                    .isThrownBy(() -> template.sendBody("direct:start", ""))
+                    .withCause(new CamelException(
+                            "HTTP operation failed invoking http://%s:%d with statusCode: 401, statusMessage: Unauthorized"
+                                    .formatted(server.getHost(), server.getPort())));
+
+            // verify 1st request was handled with FORBIDDEN
+            assertThat(forbidden.get()).isFalse();
+
+            // 1st request that has been forbidden
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+
+            // assert no more requests
+            assertThat(server.getNumberOfRequestsRemaining()).isEqualTo(0);
+        } finally {
+            server.stop();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testOidcClientOptionsPropertyConf(CloudEvent ce) throws Exception {
+        final KnativeHttpServer server = new KnativeHttpServer(context);
+
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.oidc.enabled", "true");
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.oidc.token.path", "classpath:oidc/token.txt");
+
+        KnativeComponent component = configureKnativeComponent(
+                context,
+                ce,
+                event(
+                        Knative.EndpointKind.sink,
+                        "default",
+                        String.format("http://%s:%d", server.getHost(), server.getPort()),
+                        Map.of(
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        PropertyBindingSupport.build().bind(context, component,
+                "camel.component.knative.producerFactory.clientOptions", "#class:" + KnativeOidcClientOptions.class.getName());
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .to("knative:event");
+        });
+
+        context.start();
+        try {
+            server.start();
+            template.sendBody("direct:start", "");
+
+            HttpServerRequest request = server.poll(30, TimeUnit.SECONDS);
+            assertThat(request.getHeader(HttpHeaders.AUTHORIZATION.toString())).isEqualTo("Bearer whatever_the_token_is");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_VERSION))).isEqualTo(ce.version());
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_TYPE)))
+                    .isEqualTo("org.apache.camel.event");
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_ID))).isNotNull();
+            assertThat(request.getHeader(httpAttribute(ce, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE))).isNotNull();
+            assertThat(request.getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
         } finally {
             server.stop();
         }

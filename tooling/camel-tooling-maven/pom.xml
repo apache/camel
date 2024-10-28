@@ -110,6 +110,10 @@
             <artifactId>maven-resolver-util</artifactId>
             <version>${maven-resolver-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-xml</artifactId>
+        </dependency>
 
         <!-- testing -->
         <dependency>

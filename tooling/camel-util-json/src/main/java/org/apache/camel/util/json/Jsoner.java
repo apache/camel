@@ -887,8 +887,8 @@ public final class Jsoner {
      * A convenience method that assumes a StringWriter.
      *
      * @param  jsonSerializable         represents the object that should be serialized as a string in JSON format.
-     * @return                          a string, in JSON format, that represents the object provided, or <tt>null</tt>
-     *                                  if not possible to serialize.
+     * @return                          a string, in JSON format, that represents the object provided, or
+     *                                  <var>null</var> if not possible to serialize.
      * @throws IllegalArgumentException if the jsonSerializable isn't serializable in JSON.
      * @see                             Jsoner#serialize(Object, Writer)
      * @see                             StringWriter

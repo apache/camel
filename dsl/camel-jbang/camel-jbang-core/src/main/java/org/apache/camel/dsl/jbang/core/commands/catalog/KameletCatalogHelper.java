@@ -141,27 +141,37 @@ public final class KameletCatalogHelper {
     }
 
     public static Map<String, Object> loadKamelets(String version) throws Exception {
-        ClassLoader cl = createClassLoader();
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setClassLoader(cl);
-        downloader.start();
-        downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
+        var tccLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            ClassLoader cl = createClassLoader();
+            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+            downloader.setClassLoader(cl);
+            downloader.start();
+            downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
 
-        Thread.currentThread().setContextClassLoader(cl);
-        Class<?> clazz = cl.loadClass("org.apache.camel.kamelets.catalog.KameletsCatalog");
-        Object catalog = clazz.getDeclaredConstructor().newInstance();
-        Method m = clazz.getMethod("getKamelets");
-        return (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
+            Thread.currentThread().setContextClassLoader(cl);
+            Class<?> clazz = cl.loadClass("org.apache.camel.kamelets.catalog.KameletsCatalog");
+            Object catalog = clazz.getDeclaredConstructor().newInstance();
+            Method m = clazz.getMethod("getKamelets");
+            return (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccLoader);
+        }
     }
 
     public static InputStream loadKameletYamlSchema(String name, String version) throws Exception {
-        ClassLoader cl = createClassLoader();
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setClassLoader(cl);
-        downloader.start();
-        downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
-        Thread.currentThread().setContextClassLoader(cl);
-        return cl.getResourceAsStream("kamelets/" + name + ".kamelet.yaml");
+        var tccLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            ClassLoader cl = createClassLoader();
+            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+            downloader.setClassLoader(cl);
+            downloader.start();
+            downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
+            Thread.currentThread().setContextClassLoader(cl);
+            return cl.getResourceAsStream("kamelets/" + name + ".kamelet.yaml");
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccLoader);
+        }
     }
 
     public static KameletModel loadKameletModel(String name, String version) throws Exception {

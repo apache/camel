@@ -1,0 +1,243 @@
+= Knative Http Component
+:doctitle: Knative Http
+:shortname: knative-http
+:artifactid: camel-knative-http
+:description: Camel Knative HTTP
+:since: 3.15
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: knative-http
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The `camel-knative-http` module represents the HTTP transport for the `camel-knative` component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-knative-http</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel version -->
+</dependency>
+------------------------------------------------------------
+
+== Knative Http producer factory
+
+The Knative Http producer factory creates the producer instances that connect to the Knative broker via Http transport.
+The factory provides some configuration options that you can set to customize the Http connections and the way the client sends requests to the broker.
+
+First of all the producer factory performs a lookup on the Vertx instance and the VertxOptions, so you can customize these resources and bind them to the Camel context prior to using the Kntive component.
+
+.Example
+[source,java]
+----
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+
+VertxOptions options = new VertxOptions();
+context.getRegistry().bind("vertxOptions", options);
+
+Vertx vertx = Vertx.vertx(options);
+context.getRegistry().bind("vertxInstance", vertx);
+----
+
+In the very same manner you may also bind the Vertx web client options to the Camel context.
+The producer factory will automatically perform the lookup of the options instance.
+
+.Example
+[source,java]
+----
+import io.vertx.ext.web.client.WebClientOptions;
+
+WebClientOptions clientOptions = new WebClientOptions().setConnectTimeout(120000);
+context.getRegistry().bind("myClientOptions", clientOptions);
+----
+
+You may also explicitly set the options instance via property configuration:
+
+.application.properties
+[source,properties]
+----
+camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
+----
+
+This is a good option when you have multiple options instances available in the Camel context.
+Read more about property binding configuration in the chapter xref:manual::property-binding.adoc[Property Binding].
+
+=== Knative client SSL support
+
+The Knative broker may use secure connections using TLS authentication with CA certificates.
+The Apache Camel Knative component supports special web client options to easily enable SSL when connecting to the Knative broker.
+
+You can set the client options on the Knative Http producer factory as follows:
+
+.Example
+[source,java]
+----
+import org.apache.camel.component.knative.KnativeComponent;
+import org.apache.camel.component.knative.http.KnativeSslClientOptions;
+import org.apache.camel.component.knative.http.KnativeHttpProducerFactory;
+
+KnativeSslClientOptions sslClientOptions = new KnativeSslClientOptions(context);
+sslClientOptions.setSslEnabled(true);
+sslClientOptions.setKeyPath("keystore/client.pem");
+sslClientOptions.setKeyCertPath("keystore/client.crt");
+sslClientOptions.setTrustCertPath("keystore/trust.crt");
+
+KnativeComponent component = context.getComponent("knative", KnativeComponent.class);
+if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+    httpProducerFactory.setClientOptions(sslClientOptions);
+}
+----
+
+You can also use property based component configuration to set the client options on the producer factory:
+
+.application.properties
+[source,properties]
+----
+camel.component.knative.producerFactory.clientOptions=#bean:myClientOptions
+----
+
+TIP: When there is no proper trust certificate available (e.g. on test environments) you can use a trust all strategy on the client options with the class `org.apache.camel.component.knative.http.TrustAllOptions`.
+
+.TrustAllOptions
+[source,java]
+----
+sslClientOptions.setTrustOptions(TrustAllOptions.INSTANCE);
+----
+
+==== Autoconfigure SSL options via environment variables
+
+The Knative client options are able to perform autoconfiguration based on resolving properties from system property or environment variable settings.
+During the initialization phase the client options automatically look for environment settings that configure the options.
+
+All environment settings that configure the Knative client SSL options use a specific property key prefix
+
+* camel.knative.client.ssl.<property_name>
+* CAMEL_KNATIVE_CLIENT_SSL_<PROPERTY_NAME>
+
+You can use this kind of autoconfiguration to enable SSL on the Knative client with property based config only.
+
+.application.properties
+[source,properties]
+----
+camel.knative.client.ssl.enabled=true
+camel.knative.client.ssl.key.path=keystore/client.pem
+camel.knative.client.ssl.key.cert.path=keystore/client.crt
+
+camel.component.knative.producerFactory.clientOptions=#class:org.apache.camel.component.knative.http.KnativeSslClientOptions
+----
+
+This will instantiate a new instance of `org.apache.camel.component.knative.http.KnativeSslClientOptions` and perform the autoconfiguration via system property and environment variable settings on that instance.
+
+TIP: By default, the SSL client options will verify the hostname of the Knative broker as part of the SSL handshake.
+In test environments this often leads to SSL handshake errors. You can disable the hostname verification for the client options with `camel.knative.client.ssl.verify.hostname=false`
+
+The same autoconfiguration works with environment variables which is very useful when set on Kubernetes deployments.
+
+.Deployment
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-camel-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: my-camel-app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: my-camel-app
+    spec:
+      containers:
+      - name: timer-source
+        image: camel-examples/my-camel-app:1.0-SNAPSHOT
+        env:
+          - name: CAMEL_KNATIVE_CLIENT_SSL_ENABLED
+            value: "true"
+          - name: CAMEL_KNATIVE_CLIENT_SSL_KEY_CERT_PATH
+            value: /knative-certs/knative-eventing-bundle.pem
+----
+
+=== OpenID Connect support
+
+OpenID Connect (OIDC) is an identity authentication protocol that works with OAuth 2.0 to standardize the process for authenticating and authorizing users.
+
+Knative eventing supports OIDC access tokens that get injected as part of a `SinkBinding` resource. The injection is done in the form of a volume mount on the sink binding subject (usually the app deployment).
+
+This means the OIDC access token is mounted as a file into the application container so Camel client may read the token and set proper `Authorization` Http headers on each request.
+
+You need to enable OIDC support on the Knative Http client in the options like this:
+
+.Example
+[source,java]
+----
+import org.apache.camel.component.knative.KnativeComponent;
+import org.apache.camel.component.knative.http.KnativeOidcClientOptions;
+import org.apache.camel.component.knative.http.KnativeHttpProducerFactory;
+
+KnativeOidcClientOptions oidcClientOptions = new KnativeOidcClientOptions(context);
+oidcClientOptions.setOidcEnabled(true);
+oidcClientOptions.setOidcTokenPath("oidc/token");
+
+KnativeComponent component = context.getComponent("knative", KnativeComponent.class);
+if (component.getProducerFactory() instanceof KnativeHttpProducerFactory httpProducerFactory) {
+    httpProducerFactory.setClientOptions(oidcClientOptions);
+}
+----
+
+As a result each request of the Knative client will have an `Authorization` Http header with the access token.
+
+==== Autoconfigure OIDC options via environment variables
+
+The Knative client options are able to perform autoconfiguration based on resolving properties from system property or environment variable settings.
+During the initialization phase the client automatically looks for environment settings that configure the options.
+
+All environment settings that configure the Knative client OIDC options use a specific property key prefix
+
+* camel.knative.client.oidc.<property_name>
+* CAMEL_KNATIVE_CLIENT_OIDC_<PROPERTY_NAME>
+
+You can use this kind of autoconfiguration to enable OIDC on the Knative client with property based config only.
+
+.application.properties
+[source,properties]
+----
+camel.knative.client.oidc.enabled=true
+camel.knative.client.oidc.token.path=oidc/token
+
+camel.component.knative.producerFactory.clientOptions=#class:org.apache.camel.component.knative.http.KnativeOidcClientOptions
+----
+
+This will instantiate a new instance of `org.apache.camel.component.knative.http.KnativeOidcClientOptions` and perform the autoconfiguration via system property and environment variable settings on that instance.
+
+=== OIDC token renewal
+
+The OIDC tokens may expire and get renewed by Knative eventing. The renewal means that the volume mount is updated with the new token automatically.
+
+In order to refresh the token the Camel Knative client must read the token again.
+The Knative client options supports the token renewal on a `401 forbidden` response from the Knative broker.
+
+Once the client has received the forbidden answer it automatically reloads the token from the volume mount to perform the renewal.
+
+As an alternative to that you may disable the token cache on the client so the token is always read from the volume mount for each request.
+
+.application.properties
+[source,properties]
+----
+camel.knative.client.oidc.enabled=true
+camel.knative.client.oidc.token.path=oidc/token
+
+camel.knative.client.oidc.renew.tokens.on.forbidden=false
+camel.knative.client.oidc.cache.tokens=false
+----

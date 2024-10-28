@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>openapi-generator</artifactId>
-            <version>${openapi-generator}</version>
+            <version>${openapi-generator-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

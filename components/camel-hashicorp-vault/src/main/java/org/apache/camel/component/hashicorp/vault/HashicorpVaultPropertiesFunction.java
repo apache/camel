@@ -81,6 +81,15 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
     private String engine;
 
+    public HashicorpVaultPropertiesFunction() {
+        super();
+    }
+
+    public HashicorpVaultPropertiesFunction(VaultTemplate client) {
+        super();
+        this.client = client;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

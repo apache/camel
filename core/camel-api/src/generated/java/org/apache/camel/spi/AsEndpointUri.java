@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that the Camel string/expression should be used as an endpoint uri.
- * <p/>
+ *
  * For example the EIPs which accepts uris as string/expression parameters.
  */
 @Retention(RetentionPolicy.RUNTIME)

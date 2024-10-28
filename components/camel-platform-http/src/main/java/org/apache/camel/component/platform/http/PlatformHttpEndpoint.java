@@ -42,9 +42,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path",
              category = { Category.HTTP }, consumerOnly = true)
-@Metadata(annotations = {
-        "protocol=http",
-})
+@Metadata(annotations = { "protocol=http" })
 public class PlatformHttpEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
@@ -119,10 +117,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
               description = "Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval"
                             + " (currently only supported by camel-platform-http-vertx)")
     private boolean useCookieHandler;
-
     @UriParam(label = "advanced,consumer", defaultValue = "false",
               description = "Whether to include HTTP request headers (Accept, User-Agent, etc.) into HTTP response produced by this endpoint.")
-    private boolean returnHttpRequestHeaders = false;
+    private boolean returnHttpRequestHeaders;
+    @UriParam(label = "advanced,consumer", defaultValue = "false",
+              description = "When Camel is complete processing the message, and the HTTP server is writing response. This option controls whether Camel"
+                            + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
+                            + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
+    private boolean handleWriteResponseError;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -298,5 +300,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setReturnHttpRequestHeaders(boolean returnHttpRequestHeaders) {
         this.returnHttpRequestHeaders = returnHttpRequestHeaders;
+    }
+
+    public boolean isHandleWriteResponseError() {
+        return handleWriteResponseError;
+    }
+
+    public void setHandleWriteResponseError(boolean handleWriteResponseError) {
+        this.handleWriteResponseError = handleWriteResponseError;
     }
 }

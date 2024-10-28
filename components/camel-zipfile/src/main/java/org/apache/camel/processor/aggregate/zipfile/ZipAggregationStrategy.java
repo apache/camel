@@ -132,8 +132,6 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the prefix used when creating the ZIP file name.
-     *
-     * @return the prefix
      */
     public String getFilePrefix() {
         return filePrefix;
@@ -141,8 +139,6 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the prefix that will be used when creating the ZIP filename.
-     *
-     * @param filePrefix prefix to use on ZIP file.
      */
     public void setFilePrefix(String filePrefix) {
         this.filePrefix = filePrefix;
@@ -150,8 +146,6 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the suffix used when creating the ZIP file name.
-     *
-     * @return the suffix
      */
     public String getFileSuffix() {
         return fileSuffix;
@@ -159,8 +153,6 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the suffix that will be used when creating the ZIP filename.
-     *
-     * @param fileSuffix suffix to use on ZIP file.
      */
     public void setFileSuffix(String fileSuffix) {
         this.fileSuffix = fileSuffix;
@@ -235,7 +227,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             zipFile = oldExchange.getIn().getBody(File.class);
         }
         Object body = newExchange.getIn().getBody();
-        if (body instanceof WrappedFile wrappedFile) {
+        if (body instanceof WrappedFile<?> wrappedFile) {
             body = wrappedFile.getFile();
         }
 
@@ -298,7 +290,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     @Override
     public void onCompletion(Exchange exchange, Exchange inputExchange) {
         // this aggregation strategy added onCompletion which we should handover when we are complete
-        if (inputExchange != null) {
+        if (exchange != null && inputExchange != null) {
             exchange.getExchangeExtension().handoverCompletions(inputExchange);
         }
     }
@@ -325,8 +317,6 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             if (parent != null) {
                 Files.createDirectories(parent);
                 Files.copy(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
-            } else {
-                // TODO do some logging
             }
         }
     }
@@ -342,8 +332,6 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             if (parent != null) {
                 Files.createDirectories(parent);
                 Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            } else {
-                // TODO do some logging
             }
         }
     }

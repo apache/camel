@@ -34,6 +34,9 @@ public interface AWS2S3Constants {
     @Metadata(label = "producer", description = "The bucket Destination Name which will be used for the current operation",
               javaType = "String")
     String BUCKET_DESTINATION_NAME = "CamelAwsS3BucketDestinationName";
+    @Metadata(description = "Whether the bucket exists when using the headBucket operation",
+              javaType = "boolean")
+    String BUCKET_EXISTS = "CamelAwsS3BucketExists";
     @Metadata(description = "The *optional* Cache-Control HTTP header which allows the user to\n" +
                             "specify caching behavior along the HTTP request/reply chain.",
               javaType = "String")

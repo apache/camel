@@ -28,14 +28,11 @@ public class JsonValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.setObjectMapper(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultobjectmapper":
+        case "useDefaultObjectMapper": target.setUseDefaultObjectMapper(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
-    }
-
-    @Override
-    public String[] getAutowiredNames() {
-        return new String[]{"objectMapper"};
     }
 
     @Override
@@ -46,7 +43,9 @@ public class JsonValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return java.lang.String.class;
+        case "usedefaultobjectmapper":
+        case "useDefaultObjectMapper": return boolean.class;
         default: return null;
         }
     }
@@ -61,6 +60,8 @@ public class JsonValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "objectmapper":
         case "objectMapper": return target.getObjectMapper();
+        case "usedefaultobjectmapper":
+        case "useDefaultObjectMapper": return target.isUseDefaultObjectMapper();
         default: return null;
         }
     }

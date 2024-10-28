@@ -38,7 +38,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -54,9 +53,6 @@ import picocli.CommandLine.Command;
 @Command(name = "export", description = "Export as Maven/Gradle project that contains a Kubernetes deployment manifest",
          sortOptions = false)
 public class KubernetesExport extends Export {
-
-    @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
-    protected String traitProfile;
 
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     protected String serviceAccount;
@@ -114,7 +110,7 @@ public class KubernetesExport extends Export {
     protected String imageBuilder;
 
     @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
     protected String clusterType;
 
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
@@ -125,7 +121,6 @@ public class KubernetesExport extends Export {
 
     public KubernetesExport(CamelJBangMain main, String[] files) {
         super(main);
-
         this.files = Arrays.asList(files);
     }
 
@@ -241,8 +236,8 @@ public class KubernetesExport extends Export {
                 .filter(parts -> parts.length == 2)
                 .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
 
-        if (traitProfile != null) {
-            context.setProfile(TraitProfile.valueOf(traitProfile.toUpperCase()));
+        if (clusterType != null) {
+            context.setClusterType(ClusterType.valueOf(clusterType.toUpperCase()));
         }
 
         if (serviceAccount != null) {
@@ -275,7 +270,8 @@ public class KubernetesExport extends Export {
 
         Container container = traitsSpec.getContainer();
 
-        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, container.getImage()));
+        var resolvedImageName = TraitHelper.getResolvedImageName(resolvedImageGroup, projectName, getVersion());
+        buildProperties.add("%s.kubernetes.image-name=%s".formatted(propPrefix, resolvedImageName));
         buildProperties.add("%s.kubernetes.ports.%s.container-port=%d".formatted(propPrefix,
                 Optional.ofNullable(container.getPortName()).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME),
                 Optional.ofNullable(container.getPort()).map(Long::intValue).orElse(ContainerTrait.DEFAULT_CONTAINER_PORT)));
@@ -331,6 +327,11 @@ public class KubernetesExport extends Export {
 
         // SpringBoot Runtime specific
         if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "openshift-maven-plugin"));
+            } else {
+                buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "kubernetes-maven-plugin"));
+            }
             File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
             var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
             buildProperties.add("%s.jkube.version=%s".formatted(propPrefix, jkubeVersion));
@@ -351,15 +352,20 @@ public class KubernetesExport extends Export {
             printer().println("Building Kubernetes manifest ...");
         }
 
-        new TraitCatalog().apply(traitsSpec, context, traitProfile);
+        new TraitCatalog().apply(traitsSpec, context, clusterType);
 
         var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
 
         // Quarkus: dump joined fragments to kubernetes.yml
         if (runtime == RuntimeType.quarkus) {
             var kubeManifest = kubeFragments.stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---\n"));
-            safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)),
-                    KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes"));
+            File manifestFile = KubernetesHelper.getKubernetesManifest(clusterType, exportDir + "/src/main/kubernetes");
+            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+                // Quarkus maven plugin does not support manifest merging (correctly)
+                // We still export the wanted configuration for comparison with the quarkus generated manifest
+                manifestFile = new File(exportDir + "/src/main/kubernetes/_openshift.yml");
+            }
+            safeCopy(new ByteArrayInputStream(kubeManifest.getBytes(StandardCharsets.UTF_8)), manifestFile);
         }
 
         // SpringBoot: dump each fragment to its respective kind

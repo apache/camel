@@ -41,7 +41,7 @@ public final class ActiveSpanManager {
      * @return          The current active span, or null if none exists
      */
     public static SpanAdapter getSpan(Exchange exchange) {
-        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             return holder.getSpan();
         }
@@ -56,8 +56,15 @@ public final class ActiveSpanManager {
      * @param span     The span
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
-        exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN,
-                new Holder(exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class), span));
+        if (exchange.getProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, Boolean.FALSE, Boolean.class)) {
+            //Check if we need to close the CLIENT scope created by
+            //DirectProducer in async mode before we create a new INTERNAL scope
+            //for the next DirectConsumer
+            endScope(exchange);
+            exchange.removeProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE);
+        }
+        exchange.setProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN,
+                new Holder(exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, Holder.class), span));
         if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
             MDC.put(MDC_TRACE_ID, span.traceId());
             MDC.put(MDC_SPAN_ID, span.spanId());
@@ -72,10 +79,10 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      */
     public static void deactivate(Exchange exchange) {
-        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             Holder parent = holder.getParent();
-            exchange.setProperty(ExchangePropertyKey.ACTIVE_SPAN, parent);
+            exchange.setProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, parent);
 
             holder.closeScope();
             if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
@@ -99,7 +106,7 @@ public final class ActiveSpanManager {
      * @param exchange The exchange
      */
     public static void endScope(Exchange exchange) {
-        Holder holder = exchange.getProperty(ExchangePropertyKey.ACTIVE_SPAN, Holder.class);
+        Holder holder = exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, Holder.class);
         if (holder != null) {
             holder.closeScope();
         }

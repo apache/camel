@@ -22,9 +22,11 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import io.vertx.core.net.TCPSSLOptions;
+import io.vertx.core.net.TrustOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public final class VertxHelper {
@@ -64,6 +66,12 @@ public final class VertxHelper {
 
         TrustManagerFactory trustManagerFactory = createTrustManagerFactory(camelContext, sslContextParameters);
         tcpsslOptions.setTrustOptions(new TrustManagerFactoryOptions(trustManagerFactory));
+
+        if (sslContextParameters.getTrustManagers() != null &&
+                sslContextParameters.getTrustManagers().getTrustManager() == TrustAllTrustManager.INSTANCE) {
+            tcpsslOptions.setTrustOptions(TrustOptions.wrap(TrustAllTrustManager.INSTANCE));
+        }
+
     }
 
     private static KeyManagerFactory createKeyManagerFactory(

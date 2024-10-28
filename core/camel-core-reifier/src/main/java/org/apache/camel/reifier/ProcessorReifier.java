@@ -104,6 +104,7 @@ import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.TokenizerDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
@@ -113,12 +114,11 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
-import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
-import org.apache.camel.reifier.tokenizer.LangChain4JTokenizerReifier;
+import org.apache.camel.reifier.tokenizer.TokenizerReifier;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
@@ -352,8 +352,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new ResumableReifier(route, definition);
         } else if (definition instanceof PausableDefinition) {
             return new PausableReifier(route, definition);
-        } else if (definition instanceof LangChain4jTokenizerDefinition) {
-            return new LangChain4JTokenizerReifier(route, definition);
+        } else if (definition instanceof TokenizerDefinition td) {
+            return new TokenizerReifier<>(route, td);
         }
         return null;
     }

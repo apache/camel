@@ -79,6 +79,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StartupConditionStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
@@ -354,6 +355,10 @@ public final class DefaultConfigurationConfigurer {
                     config.getRouteFilterIncludePattern(),
                     config.getRouteFilterExcludePattern());
         }
+
+        // check startup conditions before we can continue
+        StartupConditionStrategy scs = ecc.getContextPlugin(StartupConditionStrategy.class);
+        scs.checkStartupConditions();
     }
 
     /**

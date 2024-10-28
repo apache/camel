@@ -44,15 +44,14 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
+
 @CommandLine.Command(name = "run", description = "Run Camel application on Kubernetes", sortOptions = false)
 public class KubernetesRun extends KubernetesBaseCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run.",
                             arity = "0..9", paramLabel = "<files>")
     String[] filePaths;
-
-    @CommandLine.Option(names = { "--trait-profile" }, description = "The trait profile to use for the deployment.")
-    String traitProfile;
 
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     String serviceAccount;
@@ -239,8 +238,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
-    CamelContext reloadContext;
-    int reloadCount;
+    // DevMode/Reload state
+    private CamelContext devModeContext;
+    private Thread devModeShutdownTask;
+    private int devModeReloadCount;
+
+    private PodLogs reusablePodLogs;
 
     public KubernetesRun(CamelJBangMain main) {
         super(main);
@@ -273,9 +276,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
             File manifest;
             switch (output) {
                 case "yaml" ->
-                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes");
+                    manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes");
                 case "json" ->
-                    manifest = KubernetesHelper.resolveKubernetesManifest(workingDir + "/target/kubernetes", "json");
+                    manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes",
+                            "json");
                 default -> {
                     printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
                     return 1;
@@ -305,7 +309,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         if (dev || logs) {
             startPodLogging(projectName);
-            printer().println("Stopped pod logging!");
         }
 
         return 0;
@@ -313,8 +316,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private String getIndexedWorkingDir(String projectName) {
         var workingDir = RUN_PLATFORM_DIR + "/" + projectName;
-        if (reloadCount > 0) {
-            workingDir += "-%03d".formatted(reloadCount);
+        if (devModeReloadCount > 0) {
+            workingDir += "-%03d".formatted(devModeReloadCount);
         }
         return workingDir;
     }
@@ -363,7 +366,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageGroup = imageGroup;
         export.imageBuilder = imageBuilder;
         export.clusterType = clusterType;
-        export.traitProfile = traitProfile;
         export.serviceAccount = serviceAccount;
         export.properties = properties;
         export.configs = configs;
@@ -395,51 +397,79 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         FileWatcherResourceReloadStrategy reloadStrategy = new FileWatcherResourceReloadStrategy(watchDir);
         reloadStrategy.setResourceReload((name, resource) -> {
-            reloadCount += 1;
-            reloadContext.close();
-            printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
-            String reloadWorkingDir = getIndexedWorkingDir(projectName);
-            KubernetesExport export = configureExport(reloadWorkingDir);
-            int exit = export.export();
-            if (exit != 0) {
-                printer().printf("Project reexport failed for: %s%n", reloadWorkingDir);
-                return;
-            }
-            exit = deployProject(reloadWorkingDir, true);
-            if (exit != 0) {
-                printer().printf("Project redeploy failed for: %s%n", reloadWorkingDir);
-                return;
-            }
-            if (dev || wait || logs) {
-                waitForRunningPod(projectName);
-            }
-            if (dev) {
+            synchronized (this) {
+
+                printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
+
+                String currentWorkingDir = getIndexedWorkingDir(projectName);
+                devModeReloadCount += 1;
+
+                String reloadWorkingDir = getIndexedWorkingDir(projectName);
+                devModeContext.close();
+
+                // Re-export updated project
+                //
+                KubernetesExport export = configureExport(reloadWorkingDir);
+                int exit = export.export();
+                if (exit != 0) {
+                    printer().printf("Project reexport failed for: %s%n", reloadWorkingDir);
+                    return;
+                }
+
+                reusablePodLogs.retryForReload = true;
+                try {
+
+                    // Undeploy/Delete current project
+                    //
+                    KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
+                    deleteCommand.workingDir = currentWorkingDir;
+                    deleteCommand.clusterType = clusterType;
+                    deleteCommand.name = projectName;
+                    deleteCommand.doCall();
+
+                    // Re-deploy updated project
+                    //
+                    exit = deployProject(reloadWorkingDir, true);
+                    if (exit != 0) {
+                        printer().printf("Project redeploy failed for: %s%n", reloadWorkingDir);
+                        return;
+                    }
+
+                    waitForRunningPod(projectName);
+
+                } finally {
+                    reusablePodLogs.retryForReload = false;
+                }
+
+                // Recursively setup --dev mode for updated project
+                //
+                Runtime.getRuntime().removeShutdownHook(devModeShutdownTask);
                 setupDevMode(projectName, reloadWorkingDir);
+
+                printer().printf("Project reloaded: %s%n", reloadWorkingDir);
             }
-            printer().printf("Project reloaded: %s%n", reloadWorkingDir);
         });
         if (filter != null) {
             reloadStrategy.setFileFilter(filter);
         }
 
-        reloadContext = new DefaultCamelContext(false);
-        reloadContext.addService(reloadStrategy);
-        reloadContext.start();
+        devModeContext = new DefaultCamelContext(false);
+        devModeContext.addService(reloadStrategy);
+        devModeContext.start();
 
         if (cleanup) {
-            installShutdownInterceptor(projectName, workingDir);
+            installShutdownHook(projectName, workingDir);
         }
     }
 
     private void startPodLogging(String projectName) throws Exception {
         try {
-            var podLogs = new PodLogs(getMain());
-            podLogs.withClient(client());
-            podLogs.label = "%s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            reusablePodLogs = new PodLogs(getMain());
             if (!ObjectHelper.isEmpty(namespace)) {
-                podLogs.namespace = namespace;
+                reusablePodLogs.namespace = namespace;
             }
-            podLogs.doCall();
+            reusablePodLogs.name = projectName;
+            reusablePodLogs.doCall();
         } catch (Exception e) {
             printer().println("Failed to read pod logs - " + e);
             throw e;
@@ -449,30 +479,34 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void waitForRunningPod(String projectName) {
         if (!quiet) {
             String kubectlCmd = "kubectl get pod";
-            kubectlCmd += " -l %s=%s".formatted(BaseTrait.INTEGRATION_LABEL, projectName);
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
             if (!ObjectHelper.isEmpty(namespace)) {
                 kubectlCmd += " -n %s".formatted(namespace);
             }
             printer().println("Run: " + kubectlCmd);
         }
-        client(Pod.class).withLabel(BaseTrait.INTEGRATION_LABEL, projectName)
-                .waitUntilCondition(it -> "Running".equals(it.getStatus().getPhase()), 10, TimeUnit.MINUTES);
+        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_NAME_LABEL, projectName)
+                .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
+        if (!quiet) {
+            printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
+        }
     }
 
-    private void installShutdownInterceptor(String projectName, String workingDir) {
+    private void installShutdownHook(String projectName, String workingDir) {
         KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
-        deleteCommand.name = projectName;
+        deleteCommand.clusterType = clusterType;
         deleteCommand.workingDir = workingDir;
+        deleteCommand.name = projectName;
 
-        Thread task = new Thread(() -> {
+        devModeShutdownTask = new Thread(() -> {
             try {
                 deleteCommand.doCall();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
-        task.setName(ThreadHelper.resolveThreadName(null, "CamelShutdownInterceptor"));
-        Runtime.getRuntime().addShutdownHook(task);
+        devModeShutdownTask.setName(ThreadHelper.resolveThreadName(null, "CamelShutdownInterceptor"));
+        Runtime.getRuntime().addShutdownHook(devModeShutdownTask);
     }
 
     private Integer buildProject(String workingDir) throws IOException, InterruptedException {
@@ -493,17 +527,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("--file");
         args.add(workingDir);
 
-        if (runtime == RuntimeType.quarkus) {
-
-            if (ClusterType.KUBERNETES.isEqualTo(clusterType)) {
-                if (!ObjectHelper.isEmpty(namespace)) {
-                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
-                }
-            }
-
-        } else {
-
-            if (!ObjectHelper.isEmpty(namespace)) {
+        if (!ObjectHelper.isEmpty(namespace)) {
+            if (runtime == RuntimeType.quarkus && ClusterType.KUBERNETES.isEqualTo(clusterType)) {
+                args.add("-Dquarkus.kubernetes.namespace=" + namespace);
+            } else {
                 args.add("-Djkube.namespace=%s".formatted(namespace));
             }
         }
@@ -547,6 +574,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("--file");
         args.add(workingDir);
 
+        boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
+
         if (runtime == RuntimeType.quarkus) {
 
             if (imagePlatforms != null) {
@@ -556,7 +585,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Dquarkus.container-image.build=" + imageBuild);
             args.add("-Dquarkus.container-image.push=" + imagePush);
 
-            if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            if (isOpenshift) {
                 args.add("-Dquarkus.openshift.deploy=true");
             } else {
                 args.add("-Dquarkus.kubernetes.deploy=true");
@@ -581,11 +610,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 args.add("-Djkube.namespace=%s".formatted(namespace));
             }
 
-            args.add("package");
-            if (reload) {
-                args.add("k8s:undeploy");
-            }
-            args.add("k8s:deploy");
+            var prefix = isOpenshift ? "oc" : "k8s";
+            args.add(prefix + ":deploy");
         }
 
         if (!quiet) {

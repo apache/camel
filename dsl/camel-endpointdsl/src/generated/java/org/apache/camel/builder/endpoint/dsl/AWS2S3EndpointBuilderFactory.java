@@ -3627,6 +3627,18 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3BucketDestinationName";
         }
         /**
+         * Whether the bucket exists when using the headBucket operation.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3BucketExists}.
+         */
+        public String awsS3BucketExists() {
+            return "CamelAwsS3BucketExists";
+        }
+        /**
          * The optional Cache-Control HTTP header which allows the user to
          * specify caching behavior along the HTTP request/reply chain.
          * 

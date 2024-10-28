@@ -1,0 +1,72 @@
+= Flowable Component
+:doctitle: Flowable
+:shortname: flowable
+:artifactid: camel-flowable
+:description: Send and receive messages from the Flowable BPMN and CMMN engines.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: flowable
+
+*Since Camel {since}*
+
+*{component-header}*
+
+Communicate with the Flowable Event Registry for sending and receiving messages from the Flowable BPMN and CMMN engines.
+
+== URI format
+
+------------------------------
+flowable-event://[channelKey]?[options]
+------------------------------
+
+Where *channelKey* is the unique key value of the channel model deployed in the Flowable Event Registry.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Usage
+
+=== Body content
+
+The body content is defined by the event model that is deployed to the Flowable Event Registry.
+The event message can then be mapped to process or case variables in the process BPMN or case CMMN model.
+
+== Examples
+
+The following example sends an event to the Flowable event registry for further processing:
+
+[source,java]
+----------------------------------------------------------------------
+from("direct:start").to("flowable:exampleChannel");
+----------------------------------------------------------------------
+
+== Dependencies
+
+To use Flowable in your Camel routes, you need to add a dependency on
+*camel-flowable*, which implements the component.
+
+If you use Maven, you can add the following to your pom.xml,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-flowable</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------

@@ -70,7 +70,7 @@ public class ManagedRouteAutoStartupTest extends ManagementTestSupport {
             public void configure() {
                 from("direct:bar").routeId("bar").to("mock:bar");
 
-                from("direct:foo").routeId("foo").noAutoStartup().transform(constant("Bye World"));
+                from("direct:foo").routeId("foo").autoStartup(false).transform(constant("Bye World"));
             }
         };
     }

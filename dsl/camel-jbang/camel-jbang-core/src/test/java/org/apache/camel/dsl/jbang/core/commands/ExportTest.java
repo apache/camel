@@ -225,6 +225,78 @@ class ExportTest {
         Assertions.assertTrue(f.exists());
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportSecret(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/k8s-secret.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kubernetes", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kubernetes-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kubernetes", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportPipeOfficialAndCustomKamelet(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/mypipe.yaml", "src/test/resources/mytimer.kamelet.yaml" },
+                "--gav=examples:pipe:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("pipe", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions
+                    .assertTrue(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-timer", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions
+                    .assertTrue(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-timer-starter", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions
+                    .assertTrue(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-timer", null));
+        }
+
+        File f = workingDir.toPath().resolve("src/main/resources/kamelets/mytimer.kamelet.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+        f = workingDir.toPath().resolve("src/main/resources/camel/mypipe.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+    }
+
     private Model readMavenModel() throws Exception {
         File f = workingDir.toPath().resolve("pom.xml").toFile();
         Assertions.assertTrue(f.isFile(), "Not a pom.xml file: " + f);
@@ -316,6 +388,34 @@ class ExportTest {
         Assertions.assertTrue(new File(workingDir + "/src/main/docker", "Dockerfile").exists(), "Missing Dockerfile");
         // Readme
         Assertions.assertTrue(new File(workingDir, "readme.md").exists(), "Missing readme.md");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportActiveMQ(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "src/test/resources/ActiveMQRoute.java" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-activemq", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.messaginghub", "pooled-jms", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-activemq-starter", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.messaginghub", "pooled-jms", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-activemq", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "io.quarkiverse.messaginghub", "quarkus-pooled-jms", null));
+        }
     }
 
     // Each runtime may have a different logic

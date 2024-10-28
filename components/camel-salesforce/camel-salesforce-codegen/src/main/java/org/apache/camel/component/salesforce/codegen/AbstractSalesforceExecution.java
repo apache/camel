@@ -217,7 +217,7 @@ public abstract class AbstractSalesforceExecution {
         if (pubSubApiClient != null) {
             return pubSubApiClient;
         }
-        pubSubApiClient = new PubSubApiClient(session, new SalesforceLoginConfig(), pubSubHost, pubSubPort, 0, 0);
+        pubSubApiClient = new PubSubApiClient(session, new SalesforceLoginConfig(), pubSubHost, pubSubPort, 0, 0, true);
         pubSubApiClient.start();
         return pubSubApiClient;
     }

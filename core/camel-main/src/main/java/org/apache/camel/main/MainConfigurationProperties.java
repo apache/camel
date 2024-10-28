@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Camel Main to configure context name, stream caching and other global configurations.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
         implements BootstrapCloseable {
 
@@ -57,6 +57,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     // extended configuration
     private HealthConfigurationProperties healthConfigurationProperties;
+    private StartupConditionConfigurationProperties startupConditionConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
     private MetricsConfigurationProperties metricsConfigurationProperties;
@@ -154,6 +155,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             healthConfigurationProperties = new HealthConfigurationProperties(this);
         }
         return healthConfigurationProperties;
+    }
+
+    /**
+     * To configure startup conditions
+     */
+    public StartupConditionConfigurationProperties startupCondition() {
+        if (startupConditionConfigurationProperties == null) {
+            startupConditionConfigurationProperties = new StartupConditionConfigurationProperties(this);
+        }
+        return startupConditionConfigurationProperties;
     }
 
     /**

@@ -49,7 +49,7 @@ public class SimpleShutdownGracefulNoAtuoStartedTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo").noAutoStartup().to("mock:foo").delay(3000).process(new Processor() {
+                from("seda:foo").routeId("foo").autoStartup(false).to("mock:foo").delay(3000).process(new Processor() {
                     public void process(Exchange exchange) {
                         foo = foo + exchange.getIn().getBody(String.class);
                     }

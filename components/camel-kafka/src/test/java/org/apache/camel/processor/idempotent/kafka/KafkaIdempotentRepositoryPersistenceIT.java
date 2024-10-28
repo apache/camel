@@ -16,7 +16,8 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -25,9 +26,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -55,16 +58,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KafkaIdempotentRepositoryPersistenceIT extends BaseKafkaTestSupport implements ConfigurableContext {
 
+    private static String REPOSITORY_TOPIC = "TEST_PERSISTENCE_" + UUID.randomUUID();
     private KafkaIdempotentRepository kafkaIdempotentRepository;
 
+    @BeforeAll
+    public static void createRepositoryTopic() {
+        KafkaTestUtil.createTopic(service, REPOSITORY_TOPIC, 1);
+    }
+
     void clearTopics() {
-        kafkaAdminClient.deleteTopics(Arrays.asList("TEST_PERSISTENCE")).all();
+        kafkaAdminClient.deleteTopics(Collections.singleton(REPOSITORY_TOPIC)).all();
     }
 
     @Override
     @ContextFixture
     public void configureContext(CamelContext context) {
-        kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
+        kafkaIdempotentRepository = new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
         context.getRegistry().bind("kafkaIdempotentRepositoryPersistence", kafkaIdempotentRepository);
     }
 

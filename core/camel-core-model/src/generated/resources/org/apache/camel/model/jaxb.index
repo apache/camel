@@ -104,6 +104,8 @@ ThrottlingMode
 ThrowExceptionDefinition
 ToDefinition
 ToDynamicDefinition
+TokenizerDefinition
+TokenizerImplementationDefinition
 TransactedDefinition
 TransformDefinition
 TryDefinition

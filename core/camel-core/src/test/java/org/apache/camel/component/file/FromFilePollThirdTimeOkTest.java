@@ -52,7 +52,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?delete=true&initialDelay=0&delay=10")).noAutoStartup()
+                from(fileUri("?delete=true&initialDelay=0&delay=10")).autoStartup(false)
                         .routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
                             public void process(Exchange exchange) {
                                 counter++;

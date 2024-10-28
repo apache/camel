@@ -14,7 +14,7 @@ Adding it to your test code is as simple as adding the following lines of code t
 protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 ----
 
-Then, via the extension, you can access the context (i.e.: ```contextExtension.getContext()`) to manipulate it as needed in the tests.
+Then, via the extension, you can access the context (i.e.: `contextExtension.getContext()`) to manipulate it as needed in the tests.
 
 The extension comes with a few utilities to simplify configuring the context, and adding routes at the appropriate time.
 

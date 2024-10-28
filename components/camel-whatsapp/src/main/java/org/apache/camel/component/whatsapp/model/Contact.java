@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.whatsapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contact {
 
     private String input;

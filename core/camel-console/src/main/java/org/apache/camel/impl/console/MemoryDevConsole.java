@@ -28,7 +28,7 @@ import org.apache.camel.util.json.JsonObject;
 import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
 
 @DevConsole(name = "memory", displayName = "JVM Memory", description = "Displays JVM memory information")
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class MemoryDevConsole extends AbstractDevConsole {
 
     public MemoryDevConsole() {

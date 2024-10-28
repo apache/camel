@@ -125,7 +125,7 @@
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
-                <artifactId>kubernetes-maven-plugin</artifactId>
+                <artifactId>${camel.main.jkube.maven.plugin}</artifactId>
                 <version>${camel.main.jkube.version}</version>
                 <configuration>
                     <imagePullPolicy>${camel.main.kubernetes.image-pull-policy}</imagePullPolicy>

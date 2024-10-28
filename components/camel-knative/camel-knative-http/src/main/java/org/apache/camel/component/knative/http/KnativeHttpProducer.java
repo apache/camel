@@ -27,6 +27,7 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import io.vertx.ext.web.client.impl.WebClientBase;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
@@ -147,6 +148,14 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
                             exceptionMessage += " with statusCode: " + response.result().statusCode();
                         }
 
+                        if (response.cause() != null) {
+                            exceptionMessage += " caused by: " + response.cause().getMessage();
+
+                            if (response.cause().getCause() != null) {
+                                exceptionMessage += ", " + response.cause().getCause().getMessage();
+                            }
+                        }
+
                         exchange.setException(new CamelException(exceptionMessage));
                     }
 
@@ -162,6 +171,10 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
         this.uri = getUrl(serviceDefinition);
         this.host = getHost(serviceDefinition);
         this.client = WebClient.create(vertx, clientOptions);
+
+        if (clientOptions instanceof KnativeOidcClientOptions oidcClientOptions) {
+            ((WebClientBase) this.client).addInterceptor(new KnativeOidcInterceptor(oidcClientOptions));
+        }
     }
 
     @Override

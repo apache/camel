@@ -1567,6 +1567,29 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * Controls which transaction isolation level is used. The default is
+         * 'serializable', which means that serializable isolation level is
+         * used. When 'repeatable_read' is specified, connector runs the initial
+         * snapshot in REPEATABLE READ isolation level. When 'read_committed' is
+         * specified, connector runs the initial snapshot in READ COMMITTED
+         * isolation level. In 'read_uncommitted' is specified, connector runs
+         * the initial snapshot in READ UNCOMMITTED isolation level.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: serializable
+         * Group: postgres
+         * 
+         * @param snapshotIsolationMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder snapshotIsolationMode(java.lang.String snapshotIsolationMode) {
+            doSetProperty("snapshotIsolationMode", snapshotIsolationMode);
+            return this;
+        }
+    
+        
+        /**
          * Controls how the connector holds locks on tables while performing the
          * schema snapshot. The 'shared' which means the connector will hold a
          * table lock that prevents exclusive table access for just the initial
@@ -2229,6 +2252,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotFetchSize((int) value); return true;
             case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
+            case "snapshotIsolationMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotIsolationMode((java.lang.String) value); return true;
             case "snapshotLockingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;
             case "snapshotLockingModeCustomName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotLockingModeCustomName((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSnapshotLockTimeoutMs((long) value); return true;

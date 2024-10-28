@@ -69,9 +69,9 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?size=100").routeId("foo").noAutoStartup().to("mock:foo");
+                from("seda:foo?size=100").routeId("foo").autoStartup(false).to("mock:foo");
 
-                from("seda:bar").routeId("bar").noAutoStartup().to("mock:bar");
+                from("seda:bar").routeId("bar").autoStartup(false).to("mock:bar");
             }
         };
     }

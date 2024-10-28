@@ -342,9 +342,9 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot force FileChannel: {}. Reason: {}", name, e.getMessage(), e);
+                log.debug("Cannot force FileChannel: {}. Reason: {}", name, e.getMessage(), e);
             } else {
-                log.warn("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
+                log.debug("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
             }
         }
     }
@@ -368,9 +368,9 @@ public final class IOHelper {
                 log = LOG;
             }
             if (name != null) {
-                log.warn("Cannot sync FileDescriptor: {}. Reason: {}", name, e.getMessage(), e);
+                log.debug("Cannot sync FileDescriptor: {}. Reason: {}", name, e.getMessage(), e);
             } else {
-                log.warn("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
+                log.debug("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
             }
         }
     }
@@ -397,9 +397,9 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot flush Writer: {}. Reason: {}", name, e.getMessage(), e);
+                    log.debug("Cannot flush Writer: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
-                    log.warn("Cannot flush Writer. Reason: {}", e.getMessage(), e);
+                    log.debug("Cannot flush Writer. Reason: {}", e.getMessage(), e);
                 }
             }
             force(os, name, log);
@@ -425,9 +425,9 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot close: {}. Reason: {}", name, e.getMessage(), e);
+                    log.debug("Cannot close: {}. Reason: {}", name, e.getMessage(), e);
                 } else {
-                    log.warn("Cannot close. Reason: {}", e.getMessage(), e);
+                    log.debug("Cannot close. Reason: {}", e.getMessage(), e);
                 }
             }
         }
@@ -436,8 +436,7 @@ public final class IOHelper {
     /**
      * Closes the given resource if it is available and don't catch the exception
      *
-     * @param  closeable   the object to close
-     * @throws IOException
+     * @param closeable the object to close
      */
     public static void closeWithException(Closeable closeable) throws IOException {
         if (closeable != null) {
@@ -675,7 +674,7 @@ public final class IOHelper {
      * For example given an ENV variable in either format: - CAMEL_KAMELET_AWS_S3_SOURCE_BUCKETNAMEORARN=myArn -
      * CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn
      *
-     * Then the following keys can lookup both ENV formats above: - camel.kamelet.awsS3Source.bucketNameOrArn -
+     * Then the following keys can look up both ENV formats above: - camel.kamelet.awsS3Source.bucketNameOrArn -
      * camel.kamelet.aws-s3-source.bucketNameOrArn - camel.kamelet.aws-s3-source.bucket-name-or-arn
      */
     public static String lookupEnvironmentVariable(String key) {
@@ -684,29 +683,28 @@ public final class IOHelper {
         String value = System.getenv(upperKey);
 
         if (value == null) {
-            // some OS do not support dashes in keys, so replace with underscore
-            String normalizedKey = upperKey.replace('-', '_');
-
-            // and replace dots with underscores so keys like my.key are
-            // translated to MY_KEY
-            normalizedKey = normalizedKey.replace('.', '_');
-
-            value = System.getenv(normalizedKey);
+            value = System.getenv(normalizeEnvironmentVariable(upperKey));
         }
         if (value == null) {
             // camelCase keys should use underscore as separator
             String caseKey = StringHelper.camelCaseToDash(key);
-            caseKey = caseKey.toUpperCase();
-            // some OS do not support dashes in keys, so replace with underscore
-            String normalizedKey = caseKey.replace('-', '_');
-
-            // and replace dots with underscores so keys like my.key are
-            // translated to MY_KEY
-            normalizedKey = normalizedKey.replace('.', '_');
-
-            value = System.getenv(normalizedKey);
+            value = System.getenv(normalizeEnvironmentVariable(caseKey));
         }
         return value;
+    }
+
+    /**
+     * Convert given key into an OS environment variable. Uses uppercase keys and converts dashes and dots to
+     * underscores.
+     */
+    public static String normalizeEnvironmentVariable(String key) {
+        String upperKey = key.toUpperCase();
+        // some OS do not support dashes in keys, so replace with underscore
+        String normalizedKey = upperKey.replace('-', '_');
+
+        // and replace dots with underscores so keys like my.key are
+        // translated to MY_KEY
+        return normalizedKey.replace('.', '_');
     }
 
     /**

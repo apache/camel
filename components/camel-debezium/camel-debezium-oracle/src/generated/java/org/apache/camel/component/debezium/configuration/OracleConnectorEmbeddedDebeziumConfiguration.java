@@ -64,12 +64,14 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotData = false;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningBufferEhcacheSchemachangesConfig;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "redo_log_catalog")
-    private String logMiningStrategy = "redo_log_catalog";
+    @UriParam(label = LABEL_NAME, defaultValue = "online_catalog")
+    private String logMiningStrategy = "online_catalog";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
@@ -118,12 +120,16 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private long logMiningBatchSizeDefault = 20000;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningBufferEhcacheProcessedtransactionsConfig;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long streamingDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "10m", javaType = "java.time.Duration")
     private int databaseQueryTimeoutMs = 600000;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
     private int queryFetchSize = 10000;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningBufferEhcacheGlobalConfig;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long logMiningSleepTimeMinMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
@@ -164,6 +170,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningUsernameExcludeList;
     @UriParam(label = LABEL_NAME)
     private String columnPropagateSourceType;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningBufferEhcacheTransactionsConfig;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferInfinispanCacheProcessedTransactions;
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
@@ -206,6 +214,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String sourceinfoStructMaker = "io.debezium.connector.oracle.OracleSourceInfoStructMaker";
     @UriParam(label = LABEL_NAME)
     private int openlogreplicatorPort;
+    @UriParam(label = LABEL_NAME)
+    private String logMiningBufferEhcacheEventsConfig;
     @UriParam(label = LABEL_NAME, defaultValue = "100000")
     private long logMiningBatchSizeMax = 100000;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
@@ -608,6 +618,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specifies the inner body the Ehcache <cache/> tag for the schema changes
+     * cache, but should not include the <key-type/> nor the <value-type/>
+     * attributes as these are managed by Debezium.
+     */
+    public void setLogMiningBufferEhcacheSchemachangesConfig(
+            String logMiningBufferEhcacheSchemachangesConfig) {
+        this.logMiningBufferEhcacheSchemachangesConfig = logMiningBufferEhcacheSchemachangesConfig;
+    }
+
+    public String getLogMiningBufferEhcacheSchemachangesConfig() {
+        return logMiningBufferEhcacheSchemachangesConfig;
+    }
+
+    /**
      * Time to wait before restarting connector after retriable exception
      * occurs. Defaults to 10000ms.
      */
@@ -827,6 +851,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
      * 
      * infinispan_remote - This option uses a remote Infinispan cluster to
      * buffer transaction data and persist it to disk.
+     * 
+     * ehcache - Use ehcache in embedded mode to buffer transaction data and
+     * persist it to disk.
      */
     public void setLogMiningBufferType(String logMiningBufferType) {
         this.logMiningBufferType = logMiningBufferType;
@@ -974,6 +1001,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specifies the inner body the Ehcache <cache/> tag for the processed
+     * transaction cache, but should not include the <key-type/> nor the
+     * <value-type/> attributes as these are managed by Debezium.
+     */
+    public void setLogMiningBufferEhcacheProcessedtransactionsConfig(
+            String logMiningBufferEhcacheProcessedtransactionsConfig) {
+        this.logMiningBufferEhcacheProcessedtransactionsConfig = logMiningBufferEhcacheProcessedtransactionsConfig;
+    }
+
+    public String getLogMiningBufferEhcacheProcessedtransactionsConfig() {
+        return logMiningBufferEhcacheProcessedtransactionsConfig;
+    }
+
+    /**
      * A delay period after the snapshot is completed and the streaming begins,
      * given in milliseconds. Defaults to 0 ms.
      */
@@ -1008,6 +1049,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public int getQueryFetchSize() {
         return queryFetchSize;
+    }
+
+    /**
+     * Specifies any Ehcache global configurations such as services or
+     * persistence. This cannot include <cache/> nor <default-serializers/> tags
+     * as these are managed by Debezium.
+     */
+    public void setLogMiningBufferEhcacheGlobalConfig(
+            String logMiningBufferEhcacheGlobalConfig) {
+        this.logMiningBufferEhcacheGlobalConfig = logMiningBufferEhcacheGlobalConfig;
+    }
+
+    public String getLogMiningBufferEhcacheGlobalConfig() {
+        return logMiningBufferEhcacheGlobalConfig;
     }
 
     /**
@@ -1270,6 +1325,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getColumnPropagateSourceType() {
         return columnPropagateSourceType;
+    }
+
+    /**
+     * Specifies the inner body the Ehcache <cache/> tag for the transaction
+     * cache, but should not include the <key-type/> nor the <value-type/>
+     * attributes as these are managed by Debezium.
+     */
+    public void setLogMiningBufferEhcacheTransactionsConfig(
+            String logMiningBufferEhcacheTransactionsConfig) {
+        this.logMiningBufferEhcacheTransactionsConfig = logMiningBufferEhcacheTransactionsConfig;
+    }
+
+    public String getLogMiningBufferEhcacheTransactionsConfig() {
+        return logMiningBufferEhcacheTransactionsConfig;
     }
 
     /**
@@ -1536,6 +1605,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specifies the inner body the Ehcache <cache/> tag for the events cache,
+     * but should not include the <key-type/> nor the <value-type/> attributes
+     * as these are managed by Debezium.
+     */
+    public void setLogMiningBufferEhcacheEventsConfig(
+            String logMiningBufferEhcacheEventsConfig) {
+        this.logMiningBufferEhcacheEventsConfig = logMiningBufferEhcacheEventsConfig;
+    }
+
+    public String getLogMiningBufferEhcacheEventsConfig() {
+        return logMiningBufferEhcacheEventsConfig;
+    }
+
+    /**
      * The maximum SCN interval size that this connector will use when reading
      * from redo/archive logs.
      */
@@ -1732,6 +1815,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.schemachanges.config", logMiningBufferEhcacheSchemachangesConfig);
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "log.mining.strategy", logMiningStrategy);
@@ -1759,9 +1843,11 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.default", logMiningBatchSizeDefault);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.processedtransactions.config", logMiningBufferEhcacheProcessedtransactionsConfig);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.global.config", logMiningBufferEhcacheGlobalConfig);
         addPropertyIfNotNull(configBuilder, "log.mining.sleep.time.min.ms", logMiningSleepTimeMinMs);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
@@ -1782,6 +1868,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "log.mining.username.exclude.list", logMiningUsernameExcludeList);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.transactions.config", logMiningBufferEhcacheTransactionsConfig);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.processed_transactions", logMiningBufferInfinispanCacheProcessedTransactions);
         addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
@@ -1802,6 +1889,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
         addPropertyIfNotNull(configBuilder, "openlogreplicator.port", openlogreplicatorPort);
+        addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.events.config", logMiningBufferEhcacheEventsConfig);
         addPropertyIfNotNull(configBuilder, "log.mining.batch.size.max", logMiningBatchSizeMax);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "database.url", databaseUrl);

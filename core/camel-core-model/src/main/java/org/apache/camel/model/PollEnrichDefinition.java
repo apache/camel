@@ -148,11 +148,11 @@ public class PollEnrichDefinition extends ExpressionNode
     }
 
     /**
-     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
-     * the received message body via variables.
+     * To use a variable to store the received message body (only body, not headers). This makes it handy to use
+     * variables for user data and to easily control what data to use for sending and receiving.
      *
-     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
-     * the current {@link org.apache.camel.Message}.
+     * Important: When using receive variable then the received body is stored only in this variable and not on the
+     * current message.
      */
     public PollEnrichDefinition variableReceive(String variableReceive) {
         this.variableReceive = variableReceive;

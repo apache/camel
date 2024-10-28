@@ -54,7 +54,7 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?purgeWhenStopping=true").routeId("myRoute").noAutoStartup().process(new Processor() {
+                from("seda:foo?purgeWhenStopping=true").routeId("myRoute").autoStartup(false).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         latch.countDown();

@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
@@ -733,6 +734,9 @@ public class DefaultRoute extends ServiceSupport implements Route {
         List<Processor> list = nav.next();
         if (list != null) {
             for (Processor proc : list) {
+                if (proc instanceof Channel channel) {
+                    proc = channel.getNextProcessor();
+                }
                 String id = null;
                 if (proc instanceof IdAware idAware) {
                     id = idAware.getId();

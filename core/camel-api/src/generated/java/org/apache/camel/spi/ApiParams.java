@@ -41,21 +41,21 @@ public @interface ApiParams {
 
     /**
      * Returns a description of the API.
-     * <p/>
+     *
      * This is used for documentation and tooling only.
      */
     String description() default "";
 
     /**
      * Whether this API can only be used as a producer.
-     * <p/>
+     *
      * By default its assumed the API can be used as both consumer and producer.
      */
     boolean producerOnly() default false;
 
     /**
      * Whether this API can only be used as a consumer.
-     * <p/>
+     *
      * By default its assumed the API can be used as both consumer and producer.
      */
     boolean consumerOnly() default false;
@@ -68,7 +68,7 @@ public @interface ApiParams {
     /**
      * Returns the method alias(s) of this api method. The syntax for an alias is pattern=name where pattern is a
      * regular expression.
-     * <p/>
+     *
      * This is used for documentation and tooling only.
      */
     String[] aliases() default "";

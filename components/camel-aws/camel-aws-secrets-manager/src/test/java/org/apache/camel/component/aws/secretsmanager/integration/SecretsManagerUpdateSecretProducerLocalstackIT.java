@@ -39,9 +39,10 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
     private MockEndpoint mock;
 
     @Test
-    public void createSecretTest() {
+    public void createSecretTest() throws InterruptedException {
 
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Test Body");
         Exchange exchange = template.request("direct:createSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -57,7 +58,7 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(SecretsManagerConstants.SECRET_ID, resultGet.arn());
-                exchange.getIn().setBody("Binary Body");
+                exchange.getIn().setBody("Test Body");
             }
         });
         Assertions.assertNotNull(exchange);
@@ -74,8 +75,7 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
         });
         Assertions.assertNotNull(exchange);
 
-        String secret = exchange.getIn().getBody(String.class);
-        assertEquals("Binary Body", secret);
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -87,10 +87,10 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
                         .to("aws-secrets-manager://test?operation=createSecret");
 
                 from("direct:updateSecret")
-                        .to("aws-secrets-manager://test?operation=updateSecret&binaryPayload=true");
+                        .to("aws-secrets-manager://test?operation=updateSecret");
 
                 from("direct:getSecret")
-                        .to("aws-secrets-manager://test?operation=getSecret&binaryPayload=true")
+                        .to("aws-secrets-manager://test?operation=getSecret")
                         .to("mock:result");
             }
         };

@@ -212,11 +212,11 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     // -------------------------------------------------------------------------
 
     /**
-     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
-     * the received message body via variables.
+     * To use a variable to store the received message body (only body, not headers). This makes it handy to use
+     * variables for user data and to easily control what data to use for sending and receiving.
      *
-     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
-     * the current {@link org.apache.camel.Message}.
+     * Important: When using receive variable then the received body is stored only in this variable and not on the
+     * current message.
      */
     public UnmarshalDefinition variableReceive(String variableReceive) {
         setVariableReceive(variableReceive);
@@ -224,11 +224,12 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     }
 
     /**
-     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
-     * the received message body via variables.
+     * To use a variable as the source for the message body to send. This makes it handy to use variables for user data
+     * and to easily control what data to use for sending and receiving.
      *
-     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
-     * the current {@link org.apache.camel.Message}.
+     * Important: When using send variable then the message body is taken from this variable instead of the current
+     * message, however the headers from the message will still be used as well. In other words, the variable is used
+     * instead of the message body, but everything else is as usual.
      */
     public UnmarshalDefinition variableSend(String variableSend) {
         setVariableSend(variableSend);

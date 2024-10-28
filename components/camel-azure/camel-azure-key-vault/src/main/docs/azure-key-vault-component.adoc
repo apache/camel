@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure Key Vault]. 
+The azure-key-vault component that integrates https://azure.microsoft.com/en-us/services/key-vault/[Azure Key Vault].
 
 Prerequisites
 
@@ -79,6 +79,8 @@ camel.vault.azure.clientId = clientId
 camel.vault.azure.clientSecret = clientSecret
 camel.vault.azure.vaultName = vaultName
 ----
+
+NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
 Or you can enable the usage of Azure Identity in the following way:
 
@@ -425,3 +427,21 @@ from("direct:purgeDeletedSecret")
 --------------------------------------------------------------------------------
 
 include::spring-boot:partial$starter.adoc[]
+
+=== Using Azure Key Vault Property Function in Spring Boot for Early resolving properties
+
+Azure Key Vault Spring Boot component starter offers the ability to early resolve properties, so the end user could resolve properties directly in the application.properties before both Spring Boot runtime and Camel context will start.
+
+This could be accomplished in the following way. You should specified this property in your application.properties file:
+
+[source,bash]
+----
+camel.component.azure-key-vault.early-resolve-properties=true=true
+----
+
+This will enable the feature so you'll be able to resolved properties, in your application.properties file, like:
+
+[source,bash]
+----
+foo = azure:databaseprod#password
+----

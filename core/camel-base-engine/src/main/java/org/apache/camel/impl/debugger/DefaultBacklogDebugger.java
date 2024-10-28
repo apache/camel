@@ -830,6 +830,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         suspendedBreakpointMessages.computeIfPresent(
                 nodeId,
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
+                        camelContext,
                         false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
                         message.getToNode(),
                         message.getExchangeId(),
@@ -876,6 +877,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
+                            camelContext,
                             first, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
             suspendedBreakpointMessages.put(nodeId, msg);
 
@@ -948,6 +950,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
+                            camelContext,
                             false, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
             suspendedBreakpointMessages.put(toNode, msg);
 
@@ -1037,6 +1040,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
+                            camelContext,
                             false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
             // we want to capture if there was an exception
             if (cause != null) {

@@ -17,7 +17,37 @@ import org.apache.camel.main.HttpServerConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class HttpServerConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class HttpServerConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AuthenticationEnabled", boolean.class);
+        map.put("AuthenticationPath", java.lang.String.class);
+        map.put("BasicPropertiesFile", java.lang.String.class);
+        map.put("DevConsoleEnabled", boolean.class);
+        map.put("DownloadEnabled", boolean.class);
+        map.put("Enabled", boolean.class);
+        map.put("HealthCheckEnabled", boolean.class);
+        map.put("Host", java.lang.String.class);
+        map.put("InfoEnabled", boolean.class);
+        map.put("JolokiaEnabled", boolean.class);
+        map.put("JwtKeystorePassword", java.lang.String.class);
+        map.put("JwtKeystorePath", java.lang.String.class);
+        map.put("JwtKeystoreType", java.lang.String.class);
+        map.put("MaxBodySize", java.lang.Long.class);
+        map.put("MetricsEnabled", boolean.class);
+        map.put("Path", java.lang.String.class);
+        map.put("Port", int.class);
+        map.put("SendEnabled", boolean.class);
+        map.put("StaticContextPath", java.lang.String.class);
+        map.put("StaticEnabled", boolean.class);
+        map.put("UploadEnabled", boolean.class);
+        map.put("UploadSourceDir", java.lang.String.class);
+        map.put("UseGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(HttpServerConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -67,6 +97,15 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

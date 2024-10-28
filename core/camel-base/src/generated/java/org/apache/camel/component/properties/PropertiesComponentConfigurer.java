@@ -17,7 +17,30 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class PropertiesComponentConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class PropertiesComponentConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AutoDiscoverPropertiesSources", boolean.class);
+        map.put("CamelContext", org.apache.camel.CamelContext.class);
+        map.put("DefaultFallbackEnabled", boolean.class);
+        map.put("Encoding", java.lang.String.class);
+        map.put("EnvironmentVariableMode", int.class);
+        map.put("IgnoreMissingLocation", boolean.class);
+        map.put("IgnoreMissingProperty", boolean.class);
+        map.put("InitialProperties", java.util.Properties.class);
+        map.put("LocalProperties", java.util.Properties.class);
+        map.put("Location", java.lang.String.class);
+        map.put("Locations", java.util.List.class);
+        map.put("NestedPlaceholder", boolean.class);
+        map.put("OverrideProperties", java.util.Properties.class);
+        map.put("PropertiesFunctionResolver", org.apache.camel.component.properties.PropertiesFunctionResolver.class);
+        map.put("PropertiesParser", org.apache.camel.component.properties.PropertiesParser.class);
+        map.put("SystemPropertiesMode", int.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(PropertiesComponentConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -54,6 +77,15 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "systemPropertiesMode": target.setSystemPropertiesMode(property(camelContext, int.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

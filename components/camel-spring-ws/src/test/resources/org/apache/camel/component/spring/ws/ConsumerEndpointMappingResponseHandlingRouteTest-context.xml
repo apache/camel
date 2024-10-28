@@ -30,35 +30,35 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
         <route>
             <from uri="spring-ws:soapaction:http://www.webserviceX.NET/GetQuote?endpointMapping=#endpointMapping"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
         <route>
             <from uri="spring-ws:uri:http://localhost/stockquote2?endpointMapping=#endpointMapping"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
         <route>
             <from uri="spring-ws:uripath:/stockquote3/service?endpointMapping=#endpointMapping"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
         <route>
             <from uri="spring-ws:uripath:/stockquote4/service*?endpointMapping=#endpointMapping"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
         <route>
             <from uri="spring-ws:xpathresult:GRABME?expression=//GetQuote&amp;endpointMapping=#endpointMapping"/>
-            <to uri="bean:responseProcessor"/>
+            <process ref="responseProcessor"/>
         </route>
         <route>
             <from uri="spring-ws:action:http://www.webserviceX.NET/GetQuote?endpointMapping=#wsaEndpointMapping"/>
-            <to uri="bean:wsaResponseProcessor"/>
+            <process ref="wsaResponseProcessor"/>
         </route>
         <route>
 		    <from uri="spring-ws:to:http://url.to?endpointMapping=#wsaEndpointMapping"/>
-            <to uri="bean:wsaResponseProcessor"/>
+            <process ref="wsaResponseProcessor"/>
         </route>
     </camelContext>
 

@@ -47,7 +47,7 @@ public class TimerRepeatCountTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://hello?delay=0&repeatCount=3&period=10&includeMetadata=true").noAutoStartup().to("mock:result");
+                from("timer://hello?delay=0&repeatCount=3&period=10&includeMetadata=true").autoStartup(false).to("mock:result");
             }
         };
     }

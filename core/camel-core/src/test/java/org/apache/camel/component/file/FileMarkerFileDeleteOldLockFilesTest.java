@@ -46,7 +46,7 @@ public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

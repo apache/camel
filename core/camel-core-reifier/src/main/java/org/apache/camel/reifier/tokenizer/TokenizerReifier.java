@@ -23,6 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.TokenizerDefinition;
+import org.apache.camel.model.TokenizerImplementationDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.processor.TokenizerProcessor;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.FactoryFinder;
@@ -30,7 +32,7 @@ import org.apache.camel.spi.Tokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorReifier<T> {
+public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorReifier<T> {
     private static final Logger LOG = LoggerFactory.getLogger(TokenizerReifier.class);
     private static final String TOKENIZER_PATH = FactoryFinder.DEFAULT_PATH + "tokenizer/";
 
@@ -59,5 +61,19 @@ public abstract class TokenizerReifier<T extends TokenizerDefinition> extends Pr
         return new TokenizerProcessor(childProcessor, tokenizer);
     }
 
-    protected abstract void configure(Tokenizer tokenizer);
+    protected void configure(Tokenizer tokenizer) {
+        final TokenizerImplementationDefinition tokenizerImplementation = definition.getTokenizerImplementation();
+        Tokenizer.Configuration configuration = tokenizerImplementation.configuration();
+        if (configuration == null) {
+            configuration = tokenizer.newConfiguration();
+
+            if (tokenizerImplementation instanceof LangChain4jTokenizerDefinition ltd) {
+                configuration.setMaxOverlap(Integer.valueOf(ltd.getMaxOverlap()));
+                configuration.setMaxTokens(Integer.valueOf(ltd.getMaxTokens()));
+                configuration.setType(ltd.getTokenizerType());
+            }
+        }
+
+        tokenizer.configure(configuration);
+    }
 }

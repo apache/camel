@@ -56,15 +56,12 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
     @UriParam(label = "advanced")
     private JsonUriSchemaLoader uriSchemaLoader = new DefaultJsonUriSchemaLoader();
-
     @UriParam(label = "advanced",
               description = "Comma-separated list of Jackson DeserializationFeature enum values which will be enabled for parsing exchange body")
     private String enabledDeserializationFeatures;
-
     @UriParam(label = "advanced",
               description = "Comma-separated list of Jackson DeserializationFeature enum values which will be disabled for parsing exchange body")
     private String disabledDeserializationFeatures;
-
     @UriParam(label = "advanced", description = "The used Jackson object mapper")
     private ObjectMapper objectMapper;
 

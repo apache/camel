@@ -97,6 +97,8 @@ import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.TokenizerDefinition;
+import org.apache.camel.model.TokenizerImplementationDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
@@ -240,7 +242,12 @@ import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.apache.camel.model.rest.RestSecuritiesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
+import org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
@@ -5273,8 +5280,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignoreInvalidEndpoint", type = "boolean", description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint", displayName = "Ignore Invalid Endpoint"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "shareUnitOfWork", type = "boolean", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.", displayName = "Share Unit Of Work"),
-                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
-                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message.", displayName = "Variable Send")
             }
     )
     public static class EnrichDefinitionDeserializer extends YamlDeserializerBase<EnrichDefinition> {
@@ -7554,7 +7561,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List"),
-                    @YamlProperty(name = "useWriter", type = "boolean", description = "Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese.", displayName = "Use Writer"),
                     @YamlProperty(name = "xmlMapper", type = "string", description = "Lookup and use the existing XmlMapper with the given id.", displayName = "Xml Mapper")
             }
     )
@@ -7651,11 +7657,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useList": {
                     String val = asText(node);
                     target.setUseList(val);
-                    break;
-                }
-                case "useWriter": {
-                    String val = asText(node);
-                    target.setUseWriter(val);
                     break;
                 }
                 case "xmlMapper": {
@@ -8215,6 +8216,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "autoDiscoverObjectMapper", type = "boolean", description = "If set to true then Jackson will look for an objectMapper to use from the registry", displayName = "Auto Discover Object Mapper"),
                     @YamlProperty(name = "autoDiscoverSchemaResolver", type = "boolean", description = "When not disabled, the SchemaResolver will be looked up into the registry", displayName = "Auto Discover Schema Resolver"),
                     @YamlProperty(name = "collectionType", type = "string", description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default.", displayName = "Collection Type"),
+                    @YamlProperty(name = "combineUnicodeSurrogates", type = "boolean", description = "Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte characters. This should be preferred when using 4-byte characters such as Japanese.", displayName = "Combine Unicode Surrogates"),
                     @YamlProperty(name = "contentTypeHeader", type = "boolean", description = "Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON", displayName = "Content Type Header"),
                     @YamlProperty(name = "dateFormatPattern", type = "string", description = "To configure the date format while marshall or unmarshall Date fields in JSON using Gson", displayName = "Date Format Pattern"),
                     @YamlProperty(name = "disableFeatures", type = "string", description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma", displayName = "Disable Features"),
@@ -8232,8 +8234,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson and fastjson.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useDefaultObjectMapper", type = "boolean", description = "Whether to lookup and use default Jackson ObjectMapper from the registry.", displayName = "Use Default Object Mapper"),
-                    @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List"),
-                    @YamlProperty(name = "useWriter", type = "boolean", description = "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese.", displayName = "Use Writer")
+                    @YamlProperty(name = "useList", type = "boolean", description = "To unmarshal to a List of Map or a List of Pojo.", displayName = "Use List")
             }
     )
     public static class JsonDataFormatDeserializer extends YamlDeserializerBase<JsonDataFormat> {
@@ -8274,6 +8275,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "collectionType": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
+                    break;
+                }
+                case "combineUnicodeSurrogates": {
+                    String val = asText(node);
+                    target.setCombineUnicodeSurrogates(val);
                     break;
                 }
                 case "contentTypeHeader": {
@@ -8363,11 +8369,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "useList": {
                     String val = asText(node);
                     target.setUseList(val);
-                    break;
-                }
-                case "useWriter": {
-                    String val = asText(node);
-                    target.setUseWriter(val);
                     break;
                 }
                 default: {
@@ -8826,47 +8827,38 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = {
-                    "lang-chain4j",
-                    "langChain4j"
+                    "lang-chain4j-character-tokenizer",
+                    "langChain4jCharacterTokenizer"
             },
-            types = org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition.class,
+            types = org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "LangChain4J Tokenizer",
-            description = "Tokenizer that uses LangChain4j for tokenization.",
+            displayName = "LangChain4J Tokenizer with character splitter",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
-                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
                     @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
                     @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
             }
     )
-    public static class LangChain4jTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jTokenizerDefinition> {
-        public LangChain4jTokenizerDefinitionDeserializer() {
-            super(LangChain4jTokenizerDefinition.class);
+    public static class LangChain4jCharacterTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jCharacterTokenizerDefinition> {
+        public LangChain4jCharacterTokenizerDefinitionDeserializer() {
+            super(LangChain4jCharacterTokenizerDefinition.class);
         }
 
         @Override
-        protected LangChain4jTokenizerDefinition newInstance() {
-            return new LangChain4jTokenizerDefinition();
+        protected LangChain4jCharacterTokenizerDefinition newInstance() {
+            return new LangChain4jCharacterTokenizerDefinition();
         }
 
         @Override
-        protected boolean setProperty(LangChain4jTokenizerDefinition target, String propertyKey,
-                String propertyName, Node node) {
+        protected boolean setProperty(LangChain4jCharacterTokenizerDefinition target,
+                String propertyKey, String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
-                case "disabled": {
+                case "id": {
                     String val = asText(node);
-                    target.setDisabled(val);
-                    break;
-                }
-                case "inheritErrorHandler": {
-                    String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    target.setId(val);
                     break;
                 }
                 case "maxOverlap": {
@@ -8884,14 +8876,293 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTokenizerType(val);
                     break;
                 }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "lang-chain4j-line-tokenizer",
+                    "langChain4jLineTokenizer"
+            },
+            types = org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "LangChain4J Tokenizer with line splitter",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+            }
+    )
+    public static class LangChain4jLineTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jLineTokenizerDefinition> {
+        public LangChain4jLineTokenizerDefinitionDeserializer() {
+            super(LangChain4jLineTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jLineTokenizerDefinition newInstance() {
+            return new LangChain4jLineTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jLineTokenizerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
                     break;
                 }
-                case "description": {
+                case "maxOverlap": {
                     String val = asText(node);
-                    target.setDescription(val);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "lang-chain4j-paragraph-tokenizer",
+                    "langChain4jParagraphTokenizer"
+            },
+            types = org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "LangChain4J Tokenizer with paragraph splitter",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+            }
+    )
+    public static class LangChain4jParagraphTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jParagraphTokenizerDefinition> {
+        public LangChain4jParagraphTokenizerDefinitionDeserializer() {
+            super(LangChain4jParagraphTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jParagraphTokenizerDefinition newInstance() {
+            return new LangChain4jParagraphTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jParagraphTokenizerDefinition target,
+                String propertyKey, String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "maxOverlap": {
+                    String val = asText(node);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "lang-chain4j-sentence-tokenizer",
+                    "langChain4jSentenceTokenizer"
+            },
+            types = org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "LangChain4J Tokenizer with sentence splitter",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+            }
+    )
+    public static class LangChain4jSentenceTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jSentenceTokenizerDefinition> {
+        public LangChain4jSentenceTokenizerDefinitionDeserializer() {
+            super(LangChain4jSentenceTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jSentenceTokenizerDefinition newInstance() {
+            return new LangChain4jSentenceTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jSentenceTokenizerDefinition target,
+                String propertyKey, String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "maxOverlap": {
+                    String val = asText(node);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN")
+            }
+    )
+    public static class LangChain4jTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jTokenizerDefinition> {
+        public LangChain4jTokenizerDefinitionDeserializer() {
+            super(LangChain4jTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jTokenizerDefinition newInstance() {
+            return new LangChain4jTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jTokenizerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "maxOverlap": {
+                    String val = asText(node);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "lang-chain4j-word-tokenizer",
+                    "langChain4jWordTokenizer"
+            },
+            types = org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "LangChain4J Tokenizer with word splitter",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxOverlap", type = "number", required = true, description = "Sets the maximum number of tokens that can overlap in each segment", displayName = "Max Overlap"),
+                    @YamlProperty(name = "maxTokens", type = "number", required = true, description = "Sets the maximum number of tokens on each segment", displayName = "Max Tokens"),
+                    @YamlProperty(name = "tokenizerType", type = "enum:OPEN_AI,AZURE,QWEN", description = "Sets the tokenizer type", displayName = "Tokenizer Type")
+            }
+    )
+    public static class LangChain4jWordTokenizerDefinitionDeserializer extends YamlDeserializerBase<LangChain4jWordTokenizerDefinition> {
+        public LangChain4jWordTokenizerDefinitionDeserializer() {
+            super(LangChain4jWordTokenizerDefinition.class);
+        }
+
+        @Override
+        protected LangChain4jWordTokenizerDefinition newInstance() {
+            return new LangChain4jWordTokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(LangChain4jWordTokenizerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "maxOverlap": {
+                    String val = asText(node);
+                    target.setMaxOverlap(val);
+                    break;
+                }
+                case "maxTokens": {
+                    String val = asText(node);
+                    target.setMaxTokens(val);
+                    break;
+                }
+                case "tokenizerType": {
+                    String val = asText(node);
+                    target.setTokenizerType(val);
                     break;
                 }
                 default: {
@@ -9383,8 +9654,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
-                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message.", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", oneOf = "dataFormatType"),
@@ -11713,7 +11984,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "timeout", type = "string", defaultValue = "20000", description = "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is 20000 (20 seconds).", displayName = "Timeout"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "Sets the uri of the endpoint to poll from.", displayName = "Uri"),
-                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current Message .", displayName = "Variable Receive")
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message.", displayName = "Variable Receive")
             }
     )
     public static class PollDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<PollDefinition> {
@@ -11810,7 +12081,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignoreInvalidEndpoint", type = "boolean", description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint", displayName = "Ignore Invalid Endpoint"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "timeout", type = "string", defaultValue = "-1", description = "Timeout in millis when polling from the external service. The timeout has influence about the poll enrich behavior. It basically operations in three different modes: negative value - Waits until a message is available and then returns it. Warning that this method could block indefinitely if no messages are available. 0 - Attempts to receive a message exchange immediately without waiting and returning null if a message exchange is not available yet. positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a message is not yet available. Returns null if timed out The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a timeout value", displayName = "Timeout"),
-                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive")
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message.", displayName = "Variable Receive")
             }
     )
     public static class PollEnrichDefinitionDeserializer extends YamlDeserializerBase<PollEnrichDefinition> {
@@ -18602,8 +18873,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "parameters", type = "object"),
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "Sets the uri of the endpoint to send to.", displayName = "Uri"),
-                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
-                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send")
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message.", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send")
             }
     )
     public static class ToDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<ToDefinition> {
@@ -18704,7 +18975,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri"),
                     @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Receive"),
-                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send")
             }
     )
     public static class ToDynamicDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<ToDynamicDefinition> {
@@ -18781,6 +19052,98 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "variableSend": {
                     String val = asText(node);
                     target.setVariableSend(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "tokenizer",
+            types = org.apache.camel.model.TokenizerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Specialized tokenizer for AI applications",
+            description = "Represents a Camel tokenizer for AI.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "langChain4jCharacterTokenizer", type = "object:org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition", oneOf = "tokenizerImplementation"),
+                    @YamlProperty(name = "langChain4jLineTokenizer", type = "object:org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition", oneOf = "tokenizerImplementation"),
+                    @YamlProperty(name = "langChain4jParagraphTokenizer", type = "object:org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition", oneOf = "tokenizerImplementation"),
+                    @YamlProperty(name = "langChain4jSentenceTokenizer", type = "object:org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition", oneOf = "tokenizerImplementation"),
+                    @YamlProperty(name = "langChain4jWordTokenizer", type = "object:org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition", oneOf = "tokenizerImplementation")
+            }
+    )
+    public static class TokenizerDefinitionDeserializer extends YamlDeserializerBase<TokenizerDefinition> {
+        public TokenizerDefinitionDeserializer() {
+            super(TokenizerDefinition.class);
+        }
+
+        @Override
+        protected TokenizerDefinition newInstance() {
+            return new TokenizerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(TokenizerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "inheritErrorHandler": {
+                    String val = asText(node);
+                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "tokenizerImplementation": {
+                    MappingNode val = asMappingNode(node);
+                    setProperties(target, val);
+                    break;
+                }
+                case "langChain4jCharacterTokenizer": {
+                    org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition val = asType(node, org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition.class);
+                    target.setTokenizerImplementation(val);
+                    break;
+                }
+                case "langChain4jLineTokenizer": {
+                    org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition val = asType(node, org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition.class);
+                    target.setTokenizerImplementation(val);
+                    break;
+                }
+                case "langChain4jParagraphTokenizer": {
+                    org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition val = asType(node, org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition.class);
+                    target.setTokenizerImplementation(val);
+                    break;
+                }
+                case "langChain4jSentenceTokenizer": {
+                    org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition val = asType(node, org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition.class);
+                    target.setTokenizerImplementation(val);
+                    break;
+                }
+                case "langChain4jWordTokenizer": {
+                    org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition val = asType(node, org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition.class);
+                    target.setTokenizerImplementation(val);
                     break;
                 }
                 case "id": {
@@ -18921,6 +19284,39 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            types = org.apache.camel.model.TokenizerImplementationDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = @YamlProperty(name = "id", type = "string")
+    )
+    public static class TokenizerImplementationDefinitionDeserializer extends YamlDeserializerBase<TokenizerImplementationDefinition> {
+        public TokenizerImplementationDefinitionDeserializer() {
+            super(TokenizerImplementationDefinition.class);
+        }
+
+        @Override
+        protected TokenizerImplementationDefinition newInstance() {
+            return new TokenizerImplementationDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(TokenizerImplementationDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                default: {
+                    return false;
                 }
             }
             return true;
@@ -19803,8 +20199,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Receive"),
-                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send"),
+                    @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message.", displayName = "Variable Receive"),
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send"),
                     @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", oneOf = "dataFormatType"),
@@ -20662,7 +21058,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri"),
                     @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Receive"),
-                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message .", displayName = "Variable Send")
+                    @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send")
             }
     )
     public static class WireTapDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<WireTapDefinition> {

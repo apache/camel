@@ -84,7 +84,7 @@ class PooledExchangeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:foo?period=1&delay=1&repeatCount=3").noAutoStartup()
+                from("timer:foo?period=1&delay=1&repeatCount=3").autoStartup(false)
                         .setProperty("myprop", counter::incrementAndGet)
                         .setHeader("myheader", counter::incrementAndGet)
                         .process(new Processor() {

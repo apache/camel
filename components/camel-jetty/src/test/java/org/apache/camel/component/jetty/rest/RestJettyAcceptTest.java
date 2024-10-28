@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.jetty.rest;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
@@ -62,7 +67,18 @@ public class RestJettyAcceptTest extends BaseJettyTest {
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(406, cause.getStatusCode());
         assertEquals("", cause.getResponseBody());
+    }
 
+    @Test
+    public void testGetContentTypeHeaderOk() throws Exception {
+        // use JDK client as camel-http will drop "Content-Type" header for GET
+        HttpRequest request = HttpRequest.newBuilder().header("Content-Type", "application/json")
+                .uri(URI.create("http://localhost:" + getPort() + "/hello/scott"))
+                .GET().build();
+
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
     }
 
     @Override
@@ -79,6 +95,10 @@ public class RestJettyAcceptTest extends BaseJettyTest {
                 rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").to("direct:update");
                 from("direct:update")
                         .setBody(constant("{ \"status\": \"ok\" }"));
+
+                rest("/hello/").get("{id}").consumes("application/json").produces("application/json").to("direct:hello");
+                from("direct:hello")
+                        .setBody(simple("{ \"hello\": \"${header.id}\" }"));
             }
         };
     }

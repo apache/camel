@@ -21,7 +21,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
@@ -35,8 +35,6 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
                     KafkaProperties.KAFKA_CONTAINER,
                     ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
                     .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
-
-            withEmbeddedZookeeper();
 
             final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);
             LOG.debug("Using mountable file at: {}", mountableFile.getFilesystemPath());

@@ -23,7 +23,7 @@ import org.apache.camel.vault.AwsVaultConfiguration;
 /**
  * Configuration for access to AWS Secret.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class AwsVaultConfigurationProperties extends AwsVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
@@ -135,6 +135,23 @@ public class AwsVaultConfigurationProperties extends AwsVaultConfiguration imple
      */
     public AwsVaultConfigurationProperties withSqsQueueName(String sqsQueueUrl) {
         setSqsQueueUrl(sqsQueueUrl);
+        return this;
+    }
+
+    /**
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
+     */
+    public AwsVaultConfigurationProperties isOverrideEndpoint(boolean overrideEndpoint) {
+        setOverrideEndpoint(overrideEndpoint);
+        return this;
+    }
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     */
+    public AwsVaultConfigurationProperties withUriEndpointOverride(String uriEndpointOverride) {
+        setUriEndpointOverride(uriEndpointOverride);
         return this;
     }
 

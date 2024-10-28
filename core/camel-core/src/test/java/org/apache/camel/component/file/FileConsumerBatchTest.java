@@ -31,7 +31,7 @@ public class FileConsumerBatchTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).noAutoStartup().convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10")).autoStartup(false).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

@@ -36,29 +36,8 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.model.BatchGetSecretValueRequest;
-import software.amazon.awssdk.services.secretsmanager.model.BatchGetSecretValueResponse;
-import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.DescribeSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
-import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
-import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
+import software.amazon.awssdk.services.secretsmanager.model.*;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest.Builder;
-import software.amazon.awssdk.services.secretsmanager.model.ListSecretsResponse;
-import software.amazon.awssdk.services.secretsmanager.model.ReplicaRegionType;
-import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsRequest;
-import software.amazon.awssdk.services.secretsmanager.model.ReplicateSecretToRegionsResponse;
-import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.RotateSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
-import software.amazon.awssdk.services.secretsmanager.model.SecretValueEntry;
-import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretRequest;
-import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
 
 /**
  * A Producer which sends messages to the Amazon Secrets Manager Service SDK v2
@@ -108,6 +87,9 @@ public class SecretsManagerProducer extends DefaultProducer {
                 break;
             case restoreSecret:
                 restoreSecret(getEndpoint().getSecretsManagerClient(), exchange);
+                break;
+            case putSecretValue:
+                putSecretValue(getEndpoint().getSecretsManagerClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -273,6 +255,13 @@ public class SecretsManagerProducer extends DefaultProducer {
                 builder.secretId(secretId);
             } else {
                 throw new IllegalArgumentException("Secret Id must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION))) {
+                Boolean secretForceDeletion
+                        = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_FORCE_DELETION, Boolean.class);
+                if (secretForceDeletion) {
+                    builder.forceDeleteWithoutRecovery(true);
+                }
             }
             request = builder.build();
         }
@@ -467,6 +456,38 @@ public class SecretsManagerProducer extends DefaultProducer {
             }
         }
         exchange.getMessage().setHeader(SecretsManagerConstants.SECRET_VERSION_IDS, versionIds);
+    }
+
+    private void putSecretValue(SecretsManagerClient secretsManagerClient, Exchange exchange)
+            throws InvalidPayloadException {
+        PutSecretValueRequest request = null;
+        PutSecretValueResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(PutSecretValueRequest.class);
+        } else {
+            PutSecretValueRequest.Builder builder = PutSecretValueRequest.builder();
+            String payload = exchange.getIn().getMandatoryBody(String.class);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID))) {
+                String secretId = exchange.getIn().getHeader(SecretsManagerConstants.SECRET_ID, String.class);
+                builder.secretId(secretId);
+            } else {
+                throw new IllegalArgumentException("Secret Id must be specified");
+            }
+            if (getConfiguration().isBinaryPayload()) {
+                builder.secretBinary(SdkBytes.fromUtf8String(Base64.getEncoder().encodeToString(payload.getBytes())));
+            } else {
+                builder.secretString(payload);
+            }
+            request = builder.build();
+        }
+        try {
+            result = secretsManagerClient.putSecretValue(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("Put Secret Value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

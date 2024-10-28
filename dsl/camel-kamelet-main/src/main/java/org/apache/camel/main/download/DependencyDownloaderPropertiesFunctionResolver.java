@@ -25,18 +25,17 @@ import org.apache.camel.spi.PropertiesFunction;
  */
 public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPropertiesFunctionResolver {
 
-    private final DependencyDownloader downloader;
     private final boolean export;
 
     public DependencyDownloaderPropertiesFunctionResolver(CamelContext camelContext, boolean export) {
         super();
         setCamelContext(camelContext);
         this.export = export;
-        this.downloader = getCamelContext().hasService(DependencyDownloader.class);
     }
 
     @Override
     public PropertiesFunction resolvePropertiesFunction(String name) {
+        DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
         if ("base64".equals(name)) {
             if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-base64",
                     getCamelContext().getVersion())) {
@@ -123,6 +122,6 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
         public boolean optional(String remainder) {
             return true;
         }
-
     }
+
 }

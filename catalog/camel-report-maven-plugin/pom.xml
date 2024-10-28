@@ -33,18 +33,6 @@
     <name>Camel :: Catalog :: Camel Report Maven Plugin</name>
     <description>Maven plugin with tools to generate reports on your Camel projects</description>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>tooling-parent</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>

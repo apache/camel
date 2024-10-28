@@ -32,6 +32,8 @@ matching by the following rules in the given order:
 
 == Remove all properties
 
+For example to remove all properties use * as follows:
+
 [tabs]
 ====
 Java::
@@ -53,9 +55,22 @@ XML::
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeProperties:
+          pattern: "*"
+      - to:
+          uri: mock:result
+----
 ====
 
-NOTE: Be careful to remove all exchange properties as Camel uses internally exchange properties
+IMPORTANT: Be careful to remove all exchange properties as Camel uses internally exchange properties
 to keep state on the `Exchange` during routing. So use this with care. You should generally only remove
 custom exchange properties that are under your own control.
 
@@ -83,6 +98,19 @@ XML::
   <removeProperties pattern="Foo*"/>
   <to uri="mock:result"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeProperties:
+          pattern: "Foo*"
+      - to:
+          uri: mock:result
 ----
 ====
 

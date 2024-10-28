@@ -19,7 +19,6 @@ package org.apache.camel.component.jackson;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,12 +31,14 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.FormatSchema;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -66,7 +67,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
     private boolean useDefaultObjectMapper = true;
-    private boolean useWriter;
+    private boolean combineUnicodeSurrogates;
     private String collectionTypeName;
     private Class<? extends Collection> collectionType;
     private List<Module> modules;
@@ -159,13 +160,11 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (this.schemaResolver != null) {
             schema = this.schemaResolver.resolve(exchange);
         }
-        if (useWriter) {
-            try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
-                this.objectMapper.writerWithView(jsonView).with(schema).writeValue(writer, graph);
-            }
-        } else {
-            this.objectMapper.writerWithView(jsonView).with(schema).writeValue(stream, graph);
+        ObjectWriter objectWriter = this.objectMapper.writerWithView(jsonView);
+        if (combineUnicodeSurrogates) {
+            objectWriter = objectWriter.with(JsonWriteFeature.COMBINE_UNICODE_SURROGATES_IN_UTF8);
         }
+        objectWriter.with(schema).writeValue(stream, graph);
 
         if (contentTypeHeader) {
             exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, getDefaultContentType());
@@ -263,12 +262,12 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         this.unmarshalTypeName = unmarshalTypeName;
     }
 
-    public boolean isUseWriter() {
-        return useWriter;
+    public boolean isCombineUnicodeSurrogates() {
+        return combineUnicodeSurrogates;
     }
 
-    public void setUseWriter(boolean useWriter) {
-        this.useWriter = useWriter;
+    public void setCombineUnicodeSurrogates(boolean combineUnicodeSurrogates) {
+        this.combineUnicodeSurrogates = combineUnicodeSurrogates;
     }
 
     public Class<? extends Collection> getCollectionType() {

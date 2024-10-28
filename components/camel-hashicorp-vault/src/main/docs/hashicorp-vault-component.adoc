@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The hashicorp-vault component that integrates https://www.vaultproject.io/[Hashicorp Vault]. 
+The hashicorp-vault component that integrates https://www.vaultproject.io/[Hashicorp Vault].
 
 
 == URI Format
@@ -70,6 +70,8 @@ camel.vault.hashicorp.host = host
 camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
+
+NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
 NOTE: `camel.vault.hashicorp` configuration only applies to the Hashicorp Vault properties function (E.g when resolving properties).
 When using the `operation` option to create, get, list secrets etc., you should provide the `host`, `port`, `scheme` (if required) & `token` options.
@@ -185,3 +187,21 @@ This approach will return the username field of the database secret with version
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
 
 include::spring-boot:partial$starter.adoc[]
+
+=== Using Hashicorp Vault Property Function in Spring Boot for Early resolving properties
+
+Hashicorp Vault Spring Boot component starter offers the ability to early resolve properties, so the end user could resolve properties directly in the application.properties before both Spring Boot runtime and Camel context will start.
+
+This could be accomplished in the following way. You should specified this property in your application.properties file:
+
+[source,bash]
+----
+camel.component.hashicorp-vault.early-resolve-properties=true
+----
+
+This will enable the feature so you'll be able to resolved properties, in your application.properties file, like:
+
+[source,bash]
+----
+foo = hashicorp:secret:database/password#string
+----

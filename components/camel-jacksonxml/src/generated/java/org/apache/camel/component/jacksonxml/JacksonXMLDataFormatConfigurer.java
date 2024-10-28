@@ -22,8 +22,6 @@ public class JacksonXMLDataFormatConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "xmlmapper":
         case "xmlMapper": dataformat.setXmlMapper(property(camelContext, com.fasterxml.jackson.dataformat.xml.XmlMapper.class, value)); return true;
-        case "usewriter":
-        case "useWriter": dataformat.setUseWriter(property(camelContext, boolean.class, value)); return true;
         case "collectiontype":
         case "collectionType": dataformat.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
         case "moduleclassnames":

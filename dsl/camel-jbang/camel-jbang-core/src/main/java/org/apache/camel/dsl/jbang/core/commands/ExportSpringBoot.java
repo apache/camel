@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
@@ -184,11 +185,8 @@ class ExportSpringBoot extends Export {
         context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        if (camelSpringBootVersion != null) {
-            context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelSpringBootVersion);
-        } else {
-            context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
-        }
+        context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}",
+                Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
         context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
 
         context = replaceBuildProperties(context);
@@ -352,7 +350,7 @@ class ExportSpringBoot extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
 
         boolean http = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
-        if (openapi != null && !http) {
+        if (hasOpenapi(answer) && !http) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");
         }

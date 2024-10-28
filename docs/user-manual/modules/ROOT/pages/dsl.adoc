@@ -11,7 +11,6 @@ languages (DSL) as listed below:
 * xref:components:others:yaml-dsl.adoc[YAML DSL]: for creating routes using YAML format.
 * xref:rest-dsl.adoc[Rest DSL]: a DSL to define REST services using REST verbs.
 ** xref:rest-dsl-openapi.adoc[Rest DSL contract first]: rest DSL using _contract-first_ when OpenAPI specs.
-* xref:components:others:groovy-dsl.adoc[Groovy DSL]: a Groovy-based DSL to create routes leveraging closures and a specific Groovy extension module.
 * xref:bean-integration.adoc[Annotation DSL]: Use annotations in Java beans.
 
 == See Also

@@ -54,7 +54,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?readLock=rename&initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
+                from(fileUri("?readLock=rename&initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {

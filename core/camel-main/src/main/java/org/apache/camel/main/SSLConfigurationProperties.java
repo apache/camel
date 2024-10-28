@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for SSL.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class SSLConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
@@ -56,6 +56,8 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     private String trustStore;
     @Metadata
     private String trustStorePassword;
+    @Metadata
+    private boolean trustAllCertificates;
     @Metadata(label = "advanced")
     private String keyManagerAlgorithm;
     @Metadata(label = "advanced")
@@ -266,6 +268,19 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
         this.trustStorePassword = trustStorePassword;
     }
 
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * Allows to trust all SSL certificates without performing certificate validation. This can be used in development
+     * environment but may expose the system to security risks. Notice that if the trustAllCertificates option is set to
+     * true then the trustStore/trustStorePassword options are not in use..
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
+    }
+
     public String getKeyManagerAlgorithm() {
         return keyManagerAlgorithm;
     }
@@ -472,6 +487,16 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
+        return this;
+    }
+
+    /**
+     * Allows to trust all SSL certificates without performing certificate validation. This can be used in development
+     * environment but may expose the system to security risks. Notice that if the trustAllCertificates option is set to
+     * true then the trustStore/trustStorePassword options are not in use.
+     */
+    public SSLConfigurationProperties withTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
         return this;
     }
 

@@ -184,6 +184,9 @@
           "toD" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.ToDynamicDefinition"
           },
+          "tokenizer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.TokenizerDefinition"
+          },
           "transacted" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TransactedDefinition"
           },
@@ -210,9 +213,6 @@
           },
           "serviceCall" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ServiceCallDefinition"
-          },
-          "langChain4j" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition"
           }
         }
       },
@@ -1427,12 +1427,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
           },
           "constant" : { },
           "csimple" : { },
@@ -3241,12 +3241,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
           },
           "asn1" : { },
           "avro" : { },
@@ -3854,7 +3854,7 @@
             "variableReceive" : {
               "type" : "string",
               "title" : "Variable Receive",
-              "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current Message ."
+              "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
             }
           }
         } ],
@@ -3998,7 +3998,7 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
           },
           "constant" : { },
           "csimple" : { },
@@ -7184,12 +7184,12 @@
             "variableReceive" : {
               "type" : "string",
               "title" : "Variable Receive",
-              "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+              "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
             },
             "variableSend" : {
               "type" : "string",
               "title" : "Variable Send",
-              "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
+              "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
             }
           }
         } ],
@@ -7261,11 +7261,105 @@
             "variableSend" : {
               "type" : "string",
               "title" : "Variable Send",
-              "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+              "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
             }
           }
         } ],
         "required" : [ "uri" ]
+      },
+      "org.apache.camel.model.TokenizerDefinition" : {
+        "title" : "Specialized tokenizer for AI applications",
+        "description" : "Represents a Camel tokenizer for AI.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "langChain4jCharacterTokenizer" : { },
+          "langChain4jLineTokenizer" : { },
+          "langChain4jParagraphTokenizer" : { },
+          "langChain4jSentenceTokenizer" : { },
+          "langChain4jWordTokenizer" : { }
+        },
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "type" : "object",
+            "required" : [ "langChain4jCharacterTokenizer" ],
+            "properties" : {
+              "langChain4jCharacterTokenizer" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition"
+              }
+            }
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "langChain4jCharacterTokenizer" ]
+              }, {
+                "required" : [ "langChain4jLineTokenizer" ]
+              }, {
+                "required" : [ "langChain4jParagraphTokenizer" ]
+              }, {
+                "required" : [ "langChain4jSentenceTokenizer" ]
+              }, {
+                "required" : [ "langChain4jWordTokenizer" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "langChain4jLineTokenizer" ],
+            "properties" : {
+              "langChain4jLineTokenizer" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "langChain4jParagraphTokenizer" ],
+            "properties" : {
+              "langChain4jParagraphTokenizer" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "langChain4jSentenceTokenizer" ],
+            "properties" : {
+              "langChain4jSentenceTokenizer" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "langChain4jWordTokenizer" ],
+            "properties" : {
+              "langChain4jWordTokenizer" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition"
+              }
+            }
+          } ]
+        } ]
+      },
+      "org.apache.camel.model.TokenizerImplementationDefinition" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
       },
       "org.apache.camel.model.TransactedDefinition" : {
         "title" : "Transacted",
@@ -7501,12 +7595,12 @@
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using receive variable then the received body is stored only in this variable and not on the current message."
           },
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
           },
           "asn1" : { },
           "avro" : { },
@@ -8454,7 +8548,7 @@
           "variableSend" : {
             "type" : "string",
             "title" : "Variable Send",
-            "description" : "To use a variable to store the received message body (only body, not headers). This is handy for easy access to the received message body via variables. Important: When using receive variable then the received body is stored only in this variable and not on the current org.apache.camel.Message ."
+            "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual."
           }
         },
         "required" : [ "uri" ]
@@ -10985,11 +11079,6 @@
             "title" : "Use List",
             "description" : "To unmarshal to a List of Map or a List of Pojo."
           },
-          "useWriter" : {
-            "type" : "boolean",
-            "title" : "Use Writer",
-            "description" : "Force using generator that outputs XML content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese."
-          },
           "xmlMapper" : {
             "type" : "string",
             "title" : "Xml Mapper",
@@ -11168,6 +11257,11 @@
             "title" : "Collection Type",
             "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows using different collection types than java.util.Collection based as default."
           },
+          "combineUnicodeSurrogates" : {
+            "type" : "boolean",
+            "title" : "Combine Unicode Surrogates",
+            "description" : "Force generator that outputs JSON content to combine surrogate pairs (if any) into 4-byte characters. This should be preferred when using 4-byte characters such as Japanese."
+          },
           "contentTypeHeader" : {
             "type" : "boolean",
             "title" : "Content Type Header",
@@ -11259,11 +11353,6 @@
             "type" : "boolean",
             "title" : "Use List",
             "description" : "To unmarshal to a List of Map or a List of Pojo."
-          },
-          "useWriter" : {
-            "type" : "boolean",
-            "title" : "Use Writer",
-            "description" : "Force using generator that outputs JSON content using a java.io.Writer which handles character encoding. This should be preferred when using 2-byte/4-byte characters such as Japanese."
           }
         }
       },
@@ -15756,26 +15845,151 @@
         },
         "required" : [ "key" ]
       },
-      "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition" : {
-        "title" : "LangChain4J Tokenizer",
-        "description" : "Tokenizer that uses LangChain4j for tokenization.",
+      "org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with character splitter",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
-          "description" : {
-            "type" : "string",
-            "title" : "Description",
-            "description" : "Sets the description of this node"
-          },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
-          },
           "id" : {
             "type" : "string",
             "title" : "Id",
-            "description" : "Sets the id of this node"
+            "description" : "The id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with line splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with paragraph splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with sentence splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "maxOverlap" : {
+            "type" : "number",
+            "title" : "Max Overlap",
+            "description" : "Sets the maximum number of tokens that can overlap in each segment"
+          },
+          "maxTokens" : {
+            "type" : "number",
+            "title" : "Max Tokens",
+            "description" : "Sets the maximum number of tokens on each segment"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "title" : "Tokenizer Type",
+            "description" : "Sets the tokenizer type",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "maxOverlap" : {
+            "type" : "number"
+          },
+          "maxTokens" : {
+            "type" : "number"
+          },
+          "tokenizerType" : {
+            "type" : "string",
+            "enum" : [ "OPEN_AI", "AZURE", "QWEN" ]
+          }
+        },
+        "required" : [ "maxOverlap", "maxTokens" ]
+      },
+      "org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition" : {
+        "title" : "LangChain4J Tokenizer with word splitter",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
           },
           "maxOverlap" : {
             "type" : "number",

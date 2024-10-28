@@ -120,19 +120,19 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2024-07-13T06:32:37Z</project.build.outputTimestamp>
 
-        <cyclonedx-maven-plugin-version>2.8.1</cyclonedx-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.9.0</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
-        <license-maven-plugin-version>4.5</license-maven-plugin-version>
+        <license-maven-plugin-version>4.6</license-maven-plugin-version>
         <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.13.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.8.0</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.5.0</maven-enforcer-plugin-version>
-        <maven-invoker-plugin-version>3.8.0</maven-invoker-plugin-version>
-        <maven-javadoc-plugin-version>3.10.0</maven-javadoc-plugin-version>
+        <maven-invoker-plugin-version>3.8.1</maven-invoker-plugin-version>
+        <maven-javadoc-plugin-version>3.10.1</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.2.0</maven-remote-resources-plugin-version>
-        <maven-surefire-plugin-version>3.5.0</maven-surefire-plugin-version>
+        <maven-surefire-plugin-version>3.5.1</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.17.1</versions-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
@@ -253,8 +253,10 @@
                                     <exclude>**/*.bin</exclude>
                                     <exclude>**/*.cat</exclude>
                                     <exclude>**/*.cer</exclude>
+                                    <exclude>**/*.channel</exclude>
                                     <exclude>**/*.chtml</exclude>
                                     <exclude>**/*.csv</exclude>
+                                    <exclude>**/*.event</exclude>
                                     <exclude>**/*.gif</exclude>
                                     <exclude>**/*.gpg</exclude>
                                     <exclude>**/*.graphql*</exclude>
@@ -265,12 +267,14 @@
                                     <exclude>**/*.jslt</exclude>
                                     <exclude>**/*.key</exclude>
                                     <exclude>**/*.keystore</exclude>
+                                    <exclude>**/*.mar</exclude>
                                     <exclude>**/*.model</exclude>
                                     <exclude>**/*.mp3</exclude>
                                     <exclude>**/*.mp4</exclude>
                                     <exclude>**/*.p12</exclude>
                                     <exclude>**/*.params</exclude>
                                     <exclude>**/*.parquet</exclude>
+                                    <exclude>**/*.crt</exclude>
                                     <exclude>**/*.pem</exclude>
                                     <exclude>**/*.pfx</exclude>
                                     <exclude>**/*.pgp</exclude>

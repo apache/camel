@@ -39,7 +39,7 @@ public final class PackageHelper {
 
     /**
      * Loads the entire stream into memory as a String and returns it.
-     * <p/>
+     *
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {

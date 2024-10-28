@@ -32,7 +32,7 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "event", displayName = "Camel Events", description = "The most recent Camel events")
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class EventConsole extends AbstractDevConsole {
 
     @Metadata(defaultValue = "25",

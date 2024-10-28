@@ -27,7 +27,7 @@ import org.apache.camel.util.json.JsonObject;
 
 public final class ProcessHelper {
 
-    private static final String[] DSL_EXT = new String[] { "groovy", "java", "js", "jsh", "xml", "yaml" };
+    private static final String[] DSL_EXT = new String[] { "groovy", "java", "js", "xml", "yaml" };
     private static final Pattern PATTERN = Pattern.compile("([\\w|\\-.])+");
 
     private ProcessHelper() {

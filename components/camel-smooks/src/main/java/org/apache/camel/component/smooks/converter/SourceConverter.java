@@ -18,16 +18,19 @@ package org.apache.camel.component.smooks.converter;
 
 import java.io.File;
 import java.io.InputStream;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
-import org.smooks.io.payload.JavaResult;
-import org.smooks.io.payload.JavaSource;
-import org.smooks.io.payload.JavaSourceWithoutEventStream;
+import org.smooks.api.SmooksException;
+import org.smooks.api.io.Source;
+import org.smooks.io.sink.JavaSink;
+import org.smooks.io.source.JavaSource;
+import org.smooks.io.source.JavaSourceWithoutEventStream;
+import org.smooks.io.source.StreamSource;
+import org.smooks.io.source.StringSource;
+import org.smooks.io.source.URLSource;
 
 /**
  * SourceConverter is a Camel {@link Converter} that converts from different formats to {@link Source} instances.
@@ -35,6 +38,7 @@ import org.smooks.io.payload.JavaSourceWithoutEventStream;
  */
 @Converter(generateLoader = true)
 public class SourceConverter {
+
     private SourceConverter() {
     }
 
@@ -49,24 +53,27 @@ public class SourceConverter {
     }
 
     @Converter
-    public static Source toStreamSource(InputStream in) {
-        return new StreamSource(in);
+    public static StreamSource toStreamSource(InputStream in) {
+        return new StreamSource<>(in);
     }
 
     @Converter
-    public static JavaSource toJavaSource(JavaResult result) {
+    public static JavaSource toJavaSource(JavaSink result) {
         return new JavaSource(result.getResultMap().values());
     }
 
-    @Converter(allowNull = true)
-    public static Source toStreamSource(WrappedFile<?> file, Exchange exchange) throws Exception {
-        Object obj = file.getFile();
-        if (obj instanceof File f) {
-            return new StreamSource(f);
-        } else {
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, file.getBody());
-            return new StreamSource(is);
-        }
+    @Converter
+    public static StringSource toStringSource(String string) {
+        return new StringSource(string);
     }
 
+    @Converter
+    public static Source toURISource(WrappedFile<File> genericFile) {
+        String systemId = new javax.xml.transform.stream.StreamSource((File) genericFile.getBody()).getSystemId();
+        try {
+            return new URLSource(new URL(systemId));
+        } catch (MalformedURLException e) {
+            throw new SmooksException(e);
+        }
+    }
 }

@@ -42,7 +42,7 @@ public class FileConsumerDirectoryMustExistBridgeErrorHandlerTest extends Contex
                 from(fileUri(testDirectory("new", false), "?initialDelay=1&delay=1"
                                                           + "&autoCreate=false&directoryMustExist=true&bridgeErrorHandler=true"))
                         .routeId("foo")
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .to("mock:result");
             }
         };

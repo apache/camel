@@ -112,6 +112,16 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBatchSizeMin": getOrCreateConfiguration(target).setLogMiningBatchSizeMin(property(camelContext, long.class, value)); return true;
         case "logminingbufferdroponstop":
         case "logMiningBufferDropOnStop": getOrCreateConfiguration(target).setLogMiningBufferDropOnStop(property(camelContext, boolean.class, value)); return true;
+        case "logminingbufferehcacheeventsconfig":
+        case "logMiningBufferEhcacheEventsConfig": getOrCreateConfiguration(target).setLogMiningBufferEhcacheEventsConfig(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbufferehcacheglobalconfig":
+        case "logMiningBufferEhcacheGlobalConfig": getOrCreateConfiguration(target).setLogMiningBufferEhcacheGlobalConfig(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbufferehcacheprocessedtransactionsconfig":
+        case "logMiningBufferEhcacheProcessedtransactionsConfig": getOrCreateConfiguration(target).setLogMiningBufferEhcacheProcessedtransactionsConfig(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbufferehcacheschemachangesconfig":
+        case "logMiningBufferEhcacheSchemachangesConfig": getOrCreateConfiguration(target).setLogMiningBufferEhcacheSchemachangesConfig(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbufferehcachetransactionsconfig":
+        case "logMiningBufferEhcacheTransactionsConfig": getOrCreateConfiguration(target).setLogMiningBufferEhcacheTransactionsConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancacheevents":
         case "logMiningBufferInfinispanCacheEvents": getOrCreateConfiguration(target).setLogMiningBufferInfinispanCacheEvents(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancacheglobal":
@@ -363,6 +373,16 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBatchSizeMin": return long.class;
         case "logminingbufferdroponstop":
         case "logMiningBufferDropOnStop": return boolean.class;
+        case "logminingbufferehcacheeventsconfig":
+        case "logMiningBufferEhcacheEventsConfig": return java.lang.String.class;
+        case "logminingbufferehcacheglobalconfig":
+        case "logMiningBufferEhcacheGlobalConfig": return java.lang.String.class;
+        case "logminingbufferehcacheprocessedtransactionsconfig":
+        case "logMiningBufferEhcacheProcessedtransactionsConfig": return java.lang.String.class;
+        case "logminingbufferehcacheschemachangesconfig":
+        case "logMiningBufferEhcacheSchemachangesConfig": return java.lang.String.class;
+        case "logminingbufferehcachetransactionsconfig":
+        case "logMiningBufferEhcacheTransactionsConfig": return java.lang.String.class;
         case "logminingbufferinfinispancacheevents":
         case "logMiningBufferInfinispanCacheEvents": return java.lang.String.class;
         case "logminingbufferinfinispancacheglobal":
@@ -615,6 +635,16 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningBatchSizeMin": return getOrCreateConfiguration(target).getLogMiningBatchSizeMin();
         case "logminingbufferdroponstop":
         case "logMiningBufferDropOnStop": return getOrCreateConfiguration(target).isLogMiningBufferDropOnStop();
+        case "logminingbufferehcacheeventsconfig":
+        case "logMiningBufferEhcacheEventsConfig": return getOrCreateConfiguration(target).getLogMiningBufferEhcacheEventsConfig();
+        case "logminingbufferehcacheglobalconfig":
+        case "logMiningBufferEhcacheGlobalConfig": return getOrCreateConfiguration(target).getLogMiningBufferEhcacheGlobalConfig();
+        case "logminingbufferehcacheprocessedtransactionsconfig":
+        case "logMiningBufferEhcacheProcessedtransactionsConfig": return getOrCreateConfiguration(target).getLogMiningBufferEhcacheProcessedtransactionsConfig();
+        case "logminingbufferehcacheschemachangesconfig":
+        case "logMiningBufferEhcacheSchemachangesConfig": return getOrCreateConfiguration(target).getLogMiningBufferEhcacheSchemachangesConfig();
+        case "logminingbufferehcachetransactionsconfig":
+        case "logMiningBufferEhcacheTransactionsConfig": return getOrCreateConfiguration(target).getLogMiningBufferEhcacheTransactionsConfig();
         case "logminingbufferinfinispancacheevents":
         case "logMiningBufferInfinispanCacheEvents": return getOrCreateConfiguration(target).getLogMiningBufferInfinispanCacheEvents();
         case "logminingbufferinfinispancacheglobal":

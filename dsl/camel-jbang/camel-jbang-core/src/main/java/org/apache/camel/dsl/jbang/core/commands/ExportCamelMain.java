@@ -349,7 +349,7 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-health"));
 
         boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));
-        if (openapi != null && !main) {
+        if (hasOpenapi(answer) && !main) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http-main");
         }
@@ -364,16 +364,6 @@ class ExportCamelMain extends Export {
         }
 
         return answer;
-    }
-
-    @Override
-    protected void prepareApplicationProperties(Properties properties) {
-        if (openapi != null) {
-            // enable http server if not explicit configured
-            if (properties.getProperty("camel.server.enabled") == null) {
-                properties.setProperty("camel.server.enabled", "true");
-            }
-        }
     }
 
     private void createMainClassSource(File srcJavaDir, String packageName, String mainClassname) throws Exception {

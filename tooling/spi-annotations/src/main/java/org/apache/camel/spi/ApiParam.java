@@ -45,7 +45,7 @@ public @interface ApiParam {
 
     /**
      * Returns a description of this parameter.
-     * <p/>
+     *
      * This is used for documentation and tooling only.
      */
     String description() default "";

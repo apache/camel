@@ -109,6 +109,17 @@ public interface RouteTemplateContext extends HasCamelContext {
     Object getProperty(String name);
 
     /**
+     * Gets the environment variable parameter that matches the given property name. The match is performed by
+     * normalizing the given property name as an OS environment variable name. The environment variable name may use
+     * pure uppercase or camelCase converted to underscore property names. As an example bucketNameOrArn property
+     * matches BUCKETNAMEORARN and BUCKET_NAME_OR_ARN environment variables.
+     *
+     * @param  name name of property
+     * @return      the property value or <tt>null</tt> if no property exists
+     */
+    Object getEnvironmentVariable(String name);
+
+    /**
      * Gets the property with the given name
      *
      * @param  name                    name of property
@@ -138,6 +149,17 @@ public interface RouteTemplateContext extends HasCamelContext {
      * @return      true if exists
      */
     boolean hasParameter(String name);
+
+    /**
+     * Whether the route template has an environment variable parameter that matches the given parameter name. The match
+     * is performed by normalizing the given name as an OS environment variable name. The environment variable name may
+     * use pure uppercase or camelCase converted to underscore property names. As an example bucketNameOrArn property
+     * matches BUCKETNAMEORARN and BUCKET_NAME_OR_ARN environment variables.
+     *
+     * @param  name the parameter name
+     * @return      true if exists
+     */
+    boolean hasEnvironmentVariable(String name);
 
     /**
      * Gets the local bean repository for the route template when creating the new route

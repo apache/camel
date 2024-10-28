@@ -49,29 +49,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.BucketCannedACL;
-import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResponse;
-import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
-import software.amazon.awssdk.services.s3.model.CompletedPart;
-import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
-import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
-import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
-import software.amazon.awssdk.services.s3.model.DeleteBucketResponse;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
-import software.amazon.awssdk.services.s3.model.UploadPartRequest;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -122,6 +100,12 @@ public class AWS2S3Producer extends DefaultProducer {
                     break;
                 case createDownloadLink:
                     createDownloadLink(exchange);
+                    break;
+                case headBucket:
+                    headBucket(getEndpoint().getS3Client(), exchange);
+                    break;
+                case headObject:
+                    headObject(getEndpoint().getS3Client(), exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -717,6 +701,38 @@ public class AWS2S3Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
             presigner.close();
         }
+    }
+
+    private void headBucket(S3Client s3Client, Exchange exchange) {
+        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            throw new IllegalArgumentException(
+                    "Head Bucket operation requires to specify a bucket name via Header");
+        }
+        Message message = getMessageForResponse(exchange);
+        boolean exists = true;
+        try {
+            HeadBucketResponse headBucketResponse = s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
+            if (!getConfiguration().isIgnoreBody()) {
+                message.setBody(headBucketResponse);
+            }
+        } catch (NoSuchBucketException e) {
+            exists = false;
+        }
+        message.setHeader(AWS2S3Constants.BUCKET_EXISTS, exists);
+    }
+
+    private void headObject(S3Client s3Client, Exchange exchange) {
+        String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
+        if (ObjectHelper.isEmpty(key)) {
+            throw new IllegalArgumentException(
+                    "Head Object operation requires to specify a bucket name via Header");
+        }
+        HeadObjectResponse headObjectResponse = s3Client.headObject(HeadObjectRequest.builder()
+                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration())).key(key).build());
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(headObjectResponse);
     }
 
     private AWS2S3Operations determineOperation(Exchange exchange) {

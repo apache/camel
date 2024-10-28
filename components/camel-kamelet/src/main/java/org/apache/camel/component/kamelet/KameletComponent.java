@@ -219,6 +219,15 @@ public class KameletComponent extends DefaultComponent {
             }
 
             //
+            // Look for OS environment variables that match the Kamelet properties
+            // Environment variables are loaded in the following order:
+            //
+            //   CAMEL_KAMELET_" + templateId
+            //   CAMEL_KAMELET_" + templateId + "_" routeId
+            //
+            Kamelet.extractKameletEnvironmentVariables(kameletProperties, templateId, routeId);
+
+            //
             // Uri params have the highest precedence
             //
             kameletProperties.putAll(parameters);

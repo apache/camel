@@ -80,8 +80,10 @@ public class PubSubApiClient extends ServiceSupport {
 
     private final long backoffIncrement;
     private final long maxBackoff;
+    private long reconnectDelay;
     private final String pubSubHost;
     private final int pubSubPort;
+    private final boolean allowUseProxyServer;
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final SalesforceLoginConfig loginConfig;
@@ -99,13 +101,15 @@ public class PubSubApiClient extends ServiceSupport {
     private String initialReplayId;
 
     public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
-                           int pubSubPort, long backoffIncrement, long maxBackoff) {
+                           int pubSubPort, long backoffIncrement, long maxBackoff, boolean allowUseProxyServer) {
         this.session = session;
         this.loginConfig = loginConfig;
         this.pubSubHost = pubSubHost;
         this.pubSubPort = pubSubPort;
         this.maxBackoff = maxBackoff;
         this.backoffIncrement = backoffIncrement;
+        this.reconnectDelay = backoffIncrement;
+        this.allowUseProxyServer = allowUseProxyServer;
     }
 
     public List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult> publishMessage(
@@ -201,6 +205,9 @@ public class PubSubApiClient extends ServiceSupport {
 
         final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder
                 .forAddress(pubSubHost, pubSubPort);
+        if (!allowUseProxyServer) {
+            channelBuilder.proxyDetector(socketAddress -> null);
+        }
         if (usePlainTextConnection) {
             channelBuilder.usePlaintext();
         }
@@ -289,6 +296,9 @@ public class PubSubApiClient extends ServiceSupport {
 
         @Override
         public void onNext(FetchResponse fetchResponse) {
+            // reset reconnect delay in case we previously had errors
+            reconnectDelay = backoffIncrement;
+
             String topic = consumer.getTopic();
 
             LOG.debug("Received {} events on topic: {}", fetchResponse.getEventsList().size(), topic);
@@ -339,11 +349,17 @@ public class PubSubApiClient extends ServiceSupport {
             } else {
                 LOG.error("An unexpected error occurred.", throwable);
             }
-            LOG.debug("Attempting subscribe after error");
             resubscribeOnError();
         }
 
         private void resubscribeOnError() {
+            try {
+                LOG.debug("Will attempt resubscribe in {} ms", reconnectDelay);
+                Thread.sleep(reconnectDelay);
+                reconnectDelay = reconnectDelay + backoffIncrement;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             if (replayId != null) {
                 subscribe(consumer, ReplayPreset.CUSTOM, replayId);
             } else {

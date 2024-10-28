@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import org.apache.camel.RuntimeCamelException;
@@ -91,14 +90,16 @@ class KubernetesRunTest extends KubernetesBaseTest {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
 
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
+        var labels = deployment.getMetadata().getLabels();
+        var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
-        Assertions.assertEquals("route", container.getName());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", container.getImage());
-        Assertions.assertEquals("IfNotPresent", container.getImagePullPolicy());
+        Assertions.assertEquals(1, containers.size());
+        Assertions.assertEquals("route", containers.get(0).getName());
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals("IfNotPresent", containers.get(0).getImagePullPolicy());
     }
 
     @ParameterizedTest
@@ -132,14 +133,16 @@ class KubernetesRunTest extends KubernetesBaseTest {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
 
+        var labels = deployment.getMetadata().getLabels();
+        var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals("custom", deployment.getMetadata().getNamespace());
-        Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
-        Assertions.assertEquals("route", container.getName());
-        Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("route", deployment.getSpec().getSelector().getMatchLabels().get(BaseTrait.INTEGRATION_LABEL));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertEquals(1, containers.size());
+        Assertions.assertEquals("route", containers.get(0).getName());
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
     }
 
     private KubernetesRun createCommand(String[] files, String... args) {

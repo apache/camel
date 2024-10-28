@@ -58,7 +58,7 @@ public class Main extends MainCommandLineSupport {
      * @param configurationClasses additional camel configuration classes
      */
     @SafeVarargs
-    public Main(Class<?> mainClass, Class<CamelConfiguration>... configurationClasses) {
+    public Main(Class<?> mainClass, Class<? extends CamelConfiguration>... configurationClasses) {
         super(configurationClasses);
         this.mainClass = mainClass;
         configure().withBasePackageScan(mainClass.getPackageName());
@@ -170,6 +170,7 @@ public class Main extends MainCommandLineSupport {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
         answer.getCamelContextExtension().setRegistry(registry);
+
         if (mainClass != null) {
             answer.getGlobalOptions().put("CamelMainClass", mainClass.getName());
         } else {

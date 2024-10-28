@@ -22,6 +22,7 @@ import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -117,6 +118,41 @@ public class MainSSLTest {
         assertNotNull(scsp);
 
         Assertions.assertEquals(ClientAuthentication.REQUIRE.name(), scsp.getClientAuthentication());
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLTrustAll() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.trustAllCertificates", "true");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        TrustManagersParameters tmp = sslParams.getTrustManagers();
+        Assertions.assertEquals(tmp.getTrustManager(), TrustAllTrustManager.INSTANCE);
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLTrustAllFluent() {
+        Main main = new Main();
+
+        main.configure().sslConfig()
+                .withEnabled(true)
+                .withTrustAllCertificates(true);
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        TrustManagersParameters tmp = sslParams.getTrustManagers();
+        Assertions.assertEquals(tmp.getTrustManager(), TrustAllTrustManager.INSTANCE);
 
         main.stop();
     }

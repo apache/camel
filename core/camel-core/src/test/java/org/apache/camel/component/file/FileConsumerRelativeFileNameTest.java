@@ -54,7 +54,7 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name"))
-                        .noAutoStartup().to("mock:result");
+                        .autoStartup(false).to("mock:result");
             }
         };
     }

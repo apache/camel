@@ -60,7 +60,7 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&sortBy=file:name")).routeId("foo").noAutoStartup()
+                from(fileUri("?initialDelay=0&delay=10&sortBy=file:name")).routeId("foo").autoStartup(false)
                         .aggregate(new MyListOfNumbersStrategy()).constant(true)
                         .completionFromBatchConsumer().to("mock:result");
             }

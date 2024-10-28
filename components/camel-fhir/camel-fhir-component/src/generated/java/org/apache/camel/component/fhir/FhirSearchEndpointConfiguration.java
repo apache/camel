@@ -15,13 +15,22 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "search", 
            description = "API to search for resources matching a given set of criteria",
-           apiMethods = {@ApiMethod(methodName = "searchByUrl", description="Perform a search directly by URL", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle searchByUrl(String url, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "searchByResource", description="Perform a search by resource name", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle searchByResource(String resourceName, java.util.Map<String, java.util.List<String>> searchParameters, ca.uhn.fhir.rest.api.SearchStyleEnum searchStyle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "searchByUrl", description="Perform a search directly by URL", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle searchByUrl(String url, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class FhirSearchEndpointConfiguration extends FhirConfiguration {
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "searchByUrl", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "searchByResource", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "searchByUrl", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters;
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchByResource", description="The resource to search for")})
+    private String resourceName;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "searchByResource", description="A set of search parameters to the query")})
+    private java.util.Map<String, java.util.List<String>> searchParameters;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "searchByResource", description="Forces the query to perform the search using the given method (allowable methods are described in the FHIR Search Specification). The default search style is HTTP POST.")})
+    private ca.uhn.fhir.rest.api.SearchStyleEnum searchStyle;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchByUrl", description="The URL to search for. Note that this URL may be complete (e.g. http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used.")})
     private String url;
@@ -32,6 +41,30 @@ public final class FhirSearchEndpointConfiguration extends FhirConfiguration {
 
     public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters) {
         this.extraParameters = extraParameters;
+    }
+
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
+
+    public java.util.Map<String, java.util.List<String>> getSearchParameters() {
+        return searchParameters;
+    }
+
+    public void setSearchParameters(java.util.Map<String, java.util.List<String>> searchParameters) {
+        this.searchParameters = searchParameters;
+    }
+
+    public ca.uhn.fhir.rest.api.SearchStyleEnum getSearchStyle() {
+        return searchStyle;
+    }
+
+    public void setSearchStyle(ca.uhn.fhir.rest.api.SearchStyleEnum searchStyle) {
+        this.searchStyle = searchStyle;
     }
 
     public String getUrl() {

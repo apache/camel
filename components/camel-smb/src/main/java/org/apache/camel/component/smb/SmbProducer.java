@@ -166,6 +166,10 @@ public class SmbProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) {
         String fileName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        if (fileName == null || fileName.isEmpty()) {
+            //without filename, the file can not be written
+            throw new RuntimeCamelException("Header " + Exchange.FILE_NAME + " is missing, cannot create");
+        }
 
         SmbConfiguration configuration = getEndpoint().getConfiguration();
         String path = (configuration.getPath() == null) ? "" : configuration.getPath();
@@ -214,6 +218,16 @@ public class SmbProducer extends DefaultProducer {
                     throw new UnsupportedOperationException("Move is not implemented for this producer at the moment");
                 case TryRename:
                     throw new UnsupportedOperationException("TryRename is not implemented for this producer at the moment");
+            }
+
+            if (shareFile == null) {
+                //open for writing
+                shareFile = share.openFile(file.getPath(),
+                        FILE_WRITE_DATA_ACCESSMASK,
+                        FILE_ATTRIBUTES_NORMAL,
+                        SMB2ShareAccess.ALL,
+                        SMB2CreateDisposition.FILE_CREATE,
+                        FILE_DIRECTORY_CREATE_OPTIONS);
             }
 
             InputStream is = (exchange.getMessage(InputStream.class) == null)

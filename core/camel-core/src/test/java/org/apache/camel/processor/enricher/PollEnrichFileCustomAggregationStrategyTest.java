@@ -27,7 +27,6 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
     @Test
     public void testPollEnrichCustomAggregationStrategyBody() throws Exception {
-
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -37,6 +36,8 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
         template.sendBodyAndHeader(fileUri("enrich"), "Start",
                 Exchange.FILE_NAME, "AAA.fin");
+
+        context.getRouteController().startAllRoutes();
 
         log.info("Sleeping for 0.5 sec before writing enrichdata file");
         Thread.sleep(500);
@@ -54,7 +55,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
+                from(fileUri("enrich?initialDelay=0&delay=10&move=.done")).autoStartup(false)
                         .to("mock:start")
                         .pollEnrich(
                                 fileUri("enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done"),

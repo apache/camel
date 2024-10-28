@@ -43,7 +43,7 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").noAutoStartup()
+                from("direct:start").autoStartup(false)
                         .to("mock:result");
             }
         };

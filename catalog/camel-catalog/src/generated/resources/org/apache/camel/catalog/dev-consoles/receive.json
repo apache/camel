@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "receive",
+    "title": "Camel Receive",
+    "description": "Consume messages from endpoints",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ReceiveDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.9.0-SNAPSHOT"
+  }
+}
+

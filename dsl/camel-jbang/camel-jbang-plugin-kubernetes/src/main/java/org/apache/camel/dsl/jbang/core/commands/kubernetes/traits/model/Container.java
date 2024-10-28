@@ -114,7 +114,7 @@ public class Container {
                 nulls = Nulls.SKIP)
     private Boolean runAsNonRoot;
     @JsonProperty("runAsUser")
-    @JsonPropertyDescription("Security Context RunAsUser configuration (default none): this value is automatically retrieved in Openshift clusters when not explicitly set.")
+    @JsonPropertyDescription("Security Context RunAsUser configuration (default none): this value is automatically retrieved in OpenShift clusters when not explicitly set.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private Long runAsUser;

@@ -75,7 +75,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
                 // but its not enforced
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage());
 
-                from("direct:start").routeId("foo").noAutoStartup().process(new Processor() {
+                from("direct:start").routeId("foo").autoStartup(false).process(new Processor() {
                     public void process(Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);
                         if ("illegal".equals(body)) {

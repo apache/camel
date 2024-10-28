@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.smooks;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +26,6 @@ import org.smooks.support.StreamUtils;
 import org.xmlunit.builder.DiffBuilder;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SmooksComponentTest extends CamelTestSupport {
@@ -44,7 +40,6 @@ public class SmooksComponentTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.assertExchangeReceived(0);
 
-        assertIsInstanceOf(Document.class, exchange.getIn().getBody());
         assertFalse(DiffBuilder
                 .compare(StreamUtils.readStreamAsString(getClass().getResourceAsStream("/xml/expected-order.xml"), "UTF-8"))
                 .withTest(exchange.getIn().getBody(String.class)).ignoreComments().ignoreWhitespace().build().hasDifferences());
@@ -56,7 +51,7 @@ public class SmooksComponentTest extends CamelTestSupport {
             public void configure() {
                 from("file://src/test/resources/data?noop=true")
                         .to("smooks://edi-to-xml-smooks-config.xml")
-                        .convertBodyTo(Node.class).to("mock:result");
+                        .to("mock:result");
             }
         };
     }

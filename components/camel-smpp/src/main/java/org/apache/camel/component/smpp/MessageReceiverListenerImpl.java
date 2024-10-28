@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -45,6 +48,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     private SmppEndpoint endpoint;
     private Processor processor;
     private ExceptionHandler exceptionHandler;
+    private final CountDownLatch initialized = new CountDownLatch(1);
 
     public MessageReceiverListenerImpl(SmppConsumer consumer, SmppEndpoint endpoint, Processor processor,
                                        ExceptionHandler exceptionHandler) {
@@ -52,6 +56,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         this.endpoint = endpoint;
         this.processor = processor;
         this.exceptionHandler = exceptionHandler;
+        this.initialized.countDown();
     }
 
     public MessageReceiverListenerImpl(SmppEndpoint endpoint, String messageReceiverRouteId) throws Exception {
@@ -65,11 +70,18 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             this.consumer = route.getConsumer();
             this.processor = this.consumer.getProcessor();
             this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), this.getClass());
+            this.initialized.countDown();
         });
     }
 
     @Override
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
+        try {
+            // wait for initialization in case consumer is active before startup listener above has been executed
+            initialized.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // ignore
+        }
         LOG.debug("Received an alertNotification {}", alertNotification);
 
         Exchange exchange = createOnAcceptAlertNotificationExchange(alertNotification);
@@ -88,6 +100,12 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
     @Override
     public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
+        try {
+            // wait for initialization in case consumer is active before startup listener above has been executed
+            initialized.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // ignore
+        }
         LOG.debug("Received a deliverSm {}", deliverSm);
 
         Exchange exchange;
@@ -115,6 +133,12 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
 
     @Override
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session session) throws ProcessRequestException {
+        try {
+            // wait for initialization in case consumer is active before startup listener above has been executed
+            initialized.await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // ignore
+        }
         LOG.debug("Received a dataSm {}", dataSm);
 
         MessageId newMessageId = messageIDGenerator.newMessageId();

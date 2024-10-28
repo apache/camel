@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "openshift-build-configs",
-    "title": "Openshift Build Config",
+    "title": "OpenShift Build Config",
     "description": "Perform operations on OpenShift Build Configs.",
     "deprecated": false,
     "firstVersion": "2.17.0",
@@ -31,7 +31,7 @@
   "headers": {
     "CamelKubernetesOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Producer operation", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_OPERATION" },
     "CamelKubernetesNamespaceName": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The namespace name", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_NAMESPACE_NAME" },
-    "CamelKubernetesBuildConfigsLabels": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Openshift Config Build labels", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILD_CONFIGS_LABELS" },
+    "CamelKubernetesBuildConfigsLabels": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Map<String, String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The OpenShift Config Build labels", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILD_CONFIGS_LABELS" },
     "CamelKubernetesBuildConfigName": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Openshift Config Build name", "constantName": "org.apache.camel.component.kubernetes.KubernetesConstants#KUBERNETES_BUILD_CONFIG_NAME" }
   },
   "properties": {

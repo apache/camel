@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "auto", "channelSinks", "channelSources", "config", "enabled", "endpointSinks", "endpointSources",
+        "auto", "channelSinks", "channelSources", "configuration", "enabled", "endpointSinks", "endpointSources",
         "eventSinks", "eventSources", "filterEventType", "filterSourceChannels", "filters", "namespaceLabel", "sinkBinding" })
 public class Knative {
     @JsonProperty("auto")
@@ -50,7 +50,7 @@ public class Knative {
     @JsonPropertyDescription("Can be used to inject a Knative complete configuration in JSON format.")
     @JsonSetter(
                 nulls = Nulls.SKIP)
-    private String config;
+    private String configuration;
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait. All traits share this common property.")
     @JsonSetter(
@@ -129,12 +129,12 @@ public class Knative {
         this.channelSources = channelSources;
     }
 
-    public String getConfig() {
-        return this.config;
+    public String getConfiguration() {
+        return this.configuration;
     }
 
-    public void setConfig(String config) {
-        this.config = config;
+    public void setConfiguration(String configuration) {
+        this.configuration = configuration;
     }
 
     public Boolean getEnabled() {

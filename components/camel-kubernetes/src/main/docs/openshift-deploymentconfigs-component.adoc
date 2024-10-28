@@ -1,8 +1,8 @@
-= Openshift Deployment Configs Component
-:doctitle: Openshift Deployment Configs
+= OpenShift Deployment Configs Component
+:doctitle: OpenShift Deployment Configs
 :shortname: openshift-deploymentconfigs
 :artifactid: camel-kubernetes
-:description: Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.
+:description: Perform operations on OpenShift Deployment Configs and get notified on Deployment Config changes.
 :since: 3.18
 :supportlevel: Stable
 :tabs-sync-option:

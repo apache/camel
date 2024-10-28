@@ -29,7 +29,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "thread", description = "Displays JVM Threads information")
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class ThreadDevConsole extends AbstractDevConsole {
 
     public ThreadDevConsole() {

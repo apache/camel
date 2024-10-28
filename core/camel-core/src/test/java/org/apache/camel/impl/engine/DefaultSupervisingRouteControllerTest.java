@@ -16,6 +16,10 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -28,10 +32,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.impl.event.RouteRestartingEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteRestartingFailureEvent;
 import org.apache.camel.spi.SupervisingRouteController;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
@@ -51,6 +62,20 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setBackOffMaxAttempts(3);
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
+
+        List<CamelEvent.RouteRestartingFailureEvent> failures = Collections.synchronizedList(new ArrayList<>());
+        List<CamelEvent.RouteRestartingEvent> events = Collections.synchronizedList(new ArrayList<>());
+
+        context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (event instanceof CamelEvent.RouteRestartingFailureEvent rfe) {
+                    failures.add(rfe);
+                } else if (event instanceof RouteRestartingEvent rre) {
+                    events.add(rre);
+                }
+            }
+        });
 
         context.start();
 
@@ -74,14 +99,36 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         // cake was not able to start
         assertEquals("Stopped", context.getRouteController().getRouteStatus("cake").toString());
 
+        await("Await all exceptions and retries finished")
+                .atMost(Duration.ofMillis(src.getInitialDelay() + src.getBackOffDelay() * (src.getBackOffMaxAttempts() + 1)))
+                .untilAsserted(() -> assertNotNull(src.getRestartException("cake")));
         Throwable e = src.getRestartException("cake");
-        assertNotNull(e);
         assertEquals("Cannot start", e.getMessage());
         boolean b = e instanceof IllegalArgumentException;
         assertTrue(b);
 
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+
+        assertEquals(10, failures.size(),
+                "There should have 2 x 1 initial + 2 x 3 restart failure + 2 x 1 exhausted failures.");
+
+        assertEquals(6, events.size(), "There should have been 2 x 3 restart attempts.");
+
+        assertEquals(2, failures.stream().filter(failure -> failure.isExhausted()).count(),
+                "There should be 2 exhausted failure. Current state of failure list: " + getFailureStatus(failures));
+    }
+
+    private String getFailureStatus(List<RouteRestartingFailureEvent> failure) {
+        StringBuilder sb = new StringBuilder();
+        for (RouteRestartingFailureEvent routeRestartingFailureEvent : failure) {
+            sb.append("\nAttempt: " + routeRestartingFailureEvent.getAttempt());
+            sb.append(", Is exhausted: " + routeRestartingFailureEvent.isExhausted());
+            sb.append(", Cause: " + routeRestartingFailureEvent.getCause() != null
+                    ? routeRestartingFailureEvent.getCause().getMessage() : "No exception");
+            sb.append(", timestamp: " + routeRestartingFailureEvent.getTimestamp());
+        }
+        return sb.toString();
     }
 
     @Test
@@ -95,6 +142,20 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         src.setBackOffMaxAttempts(10);
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
+
+        List<CamelEvent.RouteRestartingFailureEvent> failure = Collections.synchronizedList(new ArrayList<>());
+        List<CamelEvent.RouteRestartingEvent> events = Collections.synchronizedList(new ArrayList<>());
+
+        context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) throws Exception {
+                if (event instanceof CamelEvent.RouteRestartingFailureEvent rfe) {
+                    failure.add(rfe);
+                } else if (event instanceof RouteRestartingEvent rre) {
+                    events.add(rre);
+                }
+            }
+        });
 
         context.start();
 
@@ -118,6 +179,11 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("cake").toString());
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+
+        // 2 x 1 initial + 2 x 4 restart failure attempts
+        assertEquals(10, failure.size());
+        // 2 x 5 restart attempts
+        assertEquals(10, events.size());
     }
 
     private static class MyRoute extends RouteBuilder {
@@ -131,7 +197,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
             from("jms:cake").to("mock:cake").routeId("cake");
 
-            from("seda:bar").routeId("bar").noAutoStartup().to("mock:bar");
+            from("seda:bar").routeId("bar").autoStartup(false).to("mock:bar");
         }
     }
 

@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
+import org.testcontainers.utility.DockerImageName;
 
 public class OpenSearchLocalContainerService implements OpenSearchService, ContainerService<OpensearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerService.class);
@@ -38,7 +40,15 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
 
     public OpenSearchLocalContainerService() {
         this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerService.class,
-                OpenSearchProperties.OPEN_SEARCH_CONTAINER));
+                getPropertyKeyForContainerImage()));
+    }
+
+    private static String getPropertyKeyForContainerImage() {
+        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+            return OpenSearchProperties.OPEN_SEARCH_CONTAINER_PPC64LE;
+        } else {
+            return OpenSearchProperties.OPEN_SEARCH_CONTAINER;
+        }
     }
 
     public OpenSearchLocalContainerService(String imageName) {
@@ -50,7 +60,9 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
     }
 
     protected OpensearchContainer initContainer(String imageName) {
-        OpensearchContainer opensearchContainer = new OpensearchContainer(imageName);
+        DockerImageName customImage = DockerImageName.parse(imageName)
+                .asCompatibleSubstituteFor("opensearchproject/opensearch");
+        OpensearchContainer opensearchContainer = new OpensearchContainer(customImage);
         // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
         // on the build pipeline
         opensearchContainer.setWaitStrategy(

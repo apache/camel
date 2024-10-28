@@ -17,16 +17,20 @@
 package org.apache.camel.component.smb;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.hierynomus.smbj.SmbConfig;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.smb.services.SmbService;
 import org.apache.camel.test.infra.smb.services.SmbServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -49,14 +53,59 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testSendReceive() throws Exception {
+
+        MockEndpoint mock = getMockEndpoint("mock:received_send");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("seda:send", "Hello World", Exchange.FILE_NAME, "file_send.doc");
+
+        mock.assertIsSatisfied();
+        SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
+
+        Assert.assertEquals("Hello World", new String(file.getInputStream().readAllBytes(), "UTF-8"));
+    }
+
+    @Test
+    public void testDefaultIgnore() throws Exception {
+
+        MockEndpoint mock = getMockEndpoint("mock:received_ignore");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("seda:send", "Hello World", Exchange.FILE_NAME, "file_ignore.doc");
+        template.sendBodyAndHeader("seda:send", "Good Bye", Exchange.FILE_NAME, "file_ignore.doc");
+
+        mock.assertIsSatisfied();
+        SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
+        Assert.assertEquals("Hello World", new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void testOverride() throws Exception {
+
+        MockEndpoint mock = getMockEndpoint("mock:received_override");
+        mock.expectedMessageCount(1);
+        template.sendBodyAndHeader("seda:send", "Hello World22", Exchange.FILE_NAME, "file_override.doc");
+        template.sendBodyAndHeaders("seda:send", "Good Bye", Map.of(Exchange.FILE_NAME, "file_override.doc",
+                SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Override.name()));
+
+        mock.assertIsSatisfied();
+        SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
+        Assert.assertEquals("Good Bye", new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             private void process(Exchange exchange) throws IOException {
-                final byte[] data = exchange.getMessage().getBody(byte[].class);
+                final SmbFile data = exchange.getMessage().getBody(SmbFile.class);
                 final String filePath = exchange.getMessage().getHeader(SmbConstants.SMB_FILE_PATH, String.class);
                 final String uncPath = exchange.getMessage().getHeader(SmbConstants.SMB_UNC_PATH, String.class);
-                LOG.debug("Read exchange {} ({}) with contents: {}", filePath, uncPath, new String(data));
+                final String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
+
+                LOG.debug("Read exchange name {} at {} ({}) with contents: {} (bytes {})", name, filePath, uncPath,
+                        new String(data.getInputStream().readAllBytes(), StandardCharsets.UTF_8), data.getSize());
             }
 
             public void configure() {
@@ -73,6 +122,23 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                 from("seda:intermediate?concurrentConsumers=4")
                         .process(this::process)
                         .to("mock:result");
+
+                from("seda:send")
+                        .toF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(),
+                                service.userName(), service.password());
+
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc&path=/", service.address(),
+                        service.shareName(),
+                        service.userName(), service.password())
+                        .to("mock:received_override");
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc&path=/", service.address(),
+                        service.shareName(),
+                        service.userName(), service.password())
+                        .to("mock:received_ignore");
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc&path=/", service.address(),
+                        service.shareName(),
+                        service.userName(), service.password())
+                        .to("mock:received_send");
             }
         };
     }

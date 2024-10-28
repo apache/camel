@@ -10,10 +10,18 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `setLazyBeanStrategy`/`getLazyBeanStrategy` methods to `org.apache.camel.spi.CamelBeanPostProcessor`.
 
+Renamed `Exchange.ACTIVE_SPAN` to `Exchange.OTEL_ACTIVE_SPAN`.
+Renamed `ExchangePropertyKey.ACTIVE_SPAN` to `ExchangePropertyKey.OTEL_ACTIVE_SPAN`.
+
 === camel-management
 
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
 to an `Integer` value.
+
+=== camel-jackson
+
+The option `useWriter` on JSon data format and camel-jackson,
+has been replaced with `combineUnicodeSurrogates` as it is intended for 4-bytes characters such as Japanese.
 
 === camel-jms
 
@@ -22,6 +30,17 @@ to act similar to other Camel components. If the old classic behavior is needed 
 as header filter strategy which is the old implementation.
 
 Added `int limit` as parameter to the `browse` method in `org.apache.camel.component.jms.QueueBrowseStrategy`.
+
+=== camel-opentelemetry
+
+The `camel-opentelemetry` component has had significant bug fixes to handle span activation/deactivations
+better when Camel route messages synchronously and asynchronously. This component should also work better
+on Spring Boot.
+
+=== camel-smooks
+
+Upgraded Smooks from 2.0.0-RC4 to 2.0.1 which has
+https://www.smooks.org/documentation/#migrating_from_smooks_1_7_to_2_0[API breaking changes] in Smooks.
 
 === camel-hashicorp-vault properties function
 
@@ -79,6 +98,16 @@ to this
 
 You could find more details on CAMEL-21179 issue
 
+=== camel-aws
+
+The `camel-aws2-s3` when using `headBucket` operation will now store the result
+in a header named `CamelAwsS3BucketExists` whether the bucket exists or not.
+
+Previously an `software.amazon.awssdk.services.s3.model.NoSuchBucketException` was thrown,
+however this would require to use error handling to just check whether the bucket existed.
+Returning a boolean makes it easier in Camel routes to decide what to do.
+You may also set the option `ignoreBody=true` to not change the message body.
+
 === camel-test
 
 The `CamelTestSupport` class was modified so that the JUnit 5 extension code that was part of the class itself,
@@ -92,6 +121,16 @@ via `@TestInstance(TestInstance.Lifecycle.PER_CLASS)`), as this is considered a 
 future.
 The logs will print a warning message if this behavior is detected.
 
+=== Removed deprecated components
+
+The following experimental DSL has been removed:
+
+- `camel-groovy-dsl`
+- `camel-js-dsl`
+- `camel-jsh-dsl`
+
+The Camel team is only focusing on Java, XML and YAML DSL.
+
 === Removed API
 
 ==== Kotlin DSL
@@ -102,9 +141,3 @@ The following modules has been removed:
 
 * camel-kotlin-dsl
 * camel-kotlin-api
-
-=== Deprecated Components
-
-The following components that were marked as deprecated:
-
-* 

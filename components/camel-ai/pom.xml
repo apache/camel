@@ -36,15 +36,16 @@
     <modules>
         <module>camel-chatscript</module>
         <module>camel-djl</module>
-        <module>camel-langchain4j-core</module>
         <module>camel-langchain4j-chat</module>
+        <module>camel-langchain4j-core</module>
         <module>camel-langchain4j-embeddings</module>
+        <module>camel-langchain4j-tokenizer</module>
+        <module>camel-langchain4j-tools</module>
         <module>camel-langchain4j-web-search</module>
         <module>camel-milvus</module>
         <module>camel-pinecone</module>
         <module>camel-qdrant</module>
-        <module>camel-langchain4j-tokenizer</module>
-        <module>camel-langchain4j-tools</module>
+        <module>camel-torchserve</module>
     </modules>
 
 </project>

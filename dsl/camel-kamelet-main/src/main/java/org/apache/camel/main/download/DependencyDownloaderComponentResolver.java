@@ -87,6 +87,14 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
                 downloadLoader(oa.getGroupId(), oa.getArtifactId(), oa.getVersion());
             }
         }
+        if ("activemq".equals(name) || "activemq6".equals(name)) {
+            // need to include JMS connection-pool (trigger class loader to download correct JAR)
+            try {
+                camelContext.getClassResolver().resolveClass("org.messaginghub.pooled.jms.JmsPoolConnectionFactory");
+            } catch (Exception e) {
+                // ignore
+            }
+        }
         if (answer == null) {
             List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
             if (suggestion != null && !suggestion.isEmpty()) {

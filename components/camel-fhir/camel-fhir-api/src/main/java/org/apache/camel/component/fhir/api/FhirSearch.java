@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.fhir.api;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import ca.uhn.fhir.rest.api.SearchStyleEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
@@ -51,4 +54,25 @@ public class FhirSearch {
         return query.execute();
     }
 
+    /**
+     * Perform a search by resource name.
+     *
+     * @param  resourceName     The resource to search for.
+     * @param  searchParameters A set of search parameters to the query.
+     * @param  searchStyle      Forces the query to perform the search using the given method (allowable methods are
+     *                          described in the <a href="http://www.hl7.org/fhir/search.html">FHIR Search
+     *                          Specification</a>). The default search style is HTTP POST.
+     * @param  extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be
+     *                          NULL
+     * @return                  the {@link IBaseBundle}
+     */
+    public IBaseBundle searchByResource(
+            String resourceName, Map<String, List<String>> searchParameters, SearchStyleEnum searchStyle,
+            Map<ExtraParameters, Object> extraParameters) {
+        IQuery<IBaseBundle> query = client.search().forResource(resourceName);
+        query.whereMap(Objects.requireNonNullElse(searchParameters, Map.of()));
+        query.usingStyle(Objects.requireNonNullElse(searchStyle, SearchStyleEnum.POST));
+        ExtraParameters.process(extraParameters, query);
+        return query.execute();
+    }
 }

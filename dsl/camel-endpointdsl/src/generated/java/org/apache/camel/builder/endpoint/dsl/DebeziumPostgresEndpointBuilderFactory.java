@@ -1828,6 +1828,27 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls which transaction isolation level is used. The default is
+         * 'serializable', which means that serializable isolation level is
+         * used. When 'repeatable_read' is specified, connector runs the initial
+         * snapshot in REPEATABLE READ isolation level. When 'read_committed' is
+         * specified, connector runs the initial snapshot in READ COMMITTED
+         * isolation level. In 'read_uncommitted' is specified, connector runs
+         * the initial snapshot in READ UNCOMMITTED isolation level.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: serializable
+         * Group: postgres
+         * 
+         * @param snapshotIsolationMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder snapshotIsolationMode(String snapshotIsolationMode) {
+            doSetProperty("snapshotIsolationMode", snapshotIsolationMode);
+            return this;
+        }
+        /**
          * Controls how the connector holds locks on tables while performing the
          * schema snapshot. The 'shared' which means the connector will hold a
          * table lock that prevents exclusive table access for just the initial

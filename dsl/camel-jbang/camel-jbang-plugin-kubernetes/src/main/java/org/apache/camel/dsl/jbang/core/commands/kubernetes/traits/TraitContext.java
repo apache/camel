@@ -40,6 +40,7 @@ import io.fabric8.openshift.api.model.RouteBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.CatalogHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -49,7 +50,7 @@ import org.apache.camel.dsl.jbang.core.common.Source;
 public class TraitContext {
 
     private final List<VisitableBuilder<?, ?>> resourceRegistry = new ArrayList<>();
-    private TraitProfile profile = TraitProfile.KUBERNETES;
+    private ClusterType clusterType = ClusterType.KUBERNETES;
 
     private final Map<String, String> configurationResources = new HashMap<>();
 
@@ -98,12 +99,12 @@ public class TraitContext {
         resourceRegistry.add(resource);
     }
 
-    public TraitProfile getProfile() {
-        return profile;
+    public ClusterType getClusterType() {
+        return this.clusterType;
     }
 
-    public void setProfile(TraitProfile profile) {
-        this.profile = profile;
+    public void setClusterType(ClusterType clusterType) {
+        this.clusterType = clusterType;
     }
 
     public void doWithServices(Visitor<ServiceBuilder> visitor) {

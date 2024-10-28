@@ -32,7 +32,7 @@ public final class CamelVersionHelper {
      *
      * @param  base  the base version
      * @param  other the other version
-     * @return       <tt>true</tt> if GE, <tt>false</tt> otherwise
+     * @return       <var>true</var> if GE, <var>false</var> otherwise
      */
     public static boolean isGE(String base, String other) {
         return isGE(base, other, false);

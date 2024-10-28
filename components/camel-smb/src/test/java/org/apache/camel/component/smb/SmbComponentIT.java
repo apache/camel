@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import com.hierynomus.smbj.SmbConfig;
-import com.hierynomus.smbj.share.File;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,7 +61,7 @@ public class SmbComponentIT extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             private void process(Exchange exchange) throws IOException {
-                final File file = exchange.getMessage().getBody(File.class);
+                final SmbFile file = exchange.getMessage().getBody(SmbFile.class);
                 try (InputStream inputStream = file.getInputStream()) {
 
                     LOG.debug("Read exchange: {}, with contents: {}", file.getPath(),

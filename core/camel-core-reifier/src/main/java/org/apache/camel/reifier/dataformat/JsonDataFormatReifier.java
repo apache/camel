@@ -50,7 +50,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         properties.put("allowJmsType", definition.getAllowJmsType());
         properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
         properties.put("useList", definition.getUseList());
-        properties.put("useWriter", definition.getUseWriter());
+        properties.put("combineUnicodeSurrogates", definition.getCombineUnicodeSurrogates());
         properties.put("moduleClassNames", definition.getModuleClassNames());
         properties.put("moduleRefs", definition.getModuleRefs());
         properties.put("enableFeatures", definition.getEnableFeatures());

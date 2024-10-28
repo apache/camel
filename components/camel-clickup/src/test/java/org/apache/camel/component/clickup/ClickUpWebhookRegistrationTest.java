@@ -33,6 +33,7 @@ import org.apache.camel.component.clickup.model.WebhookCreationCommand;
 import org.apache.camel.component.clickup.util.ClickUpMockRoutes;
 import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +48,13 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     public static final String WEBHOOK_CREATED_JSON = "messages/webhook-created.json";
+
+    @Override
+    public void configureTest(TestExecutionConfiguration testExecutionConfiguration) {
+        super.configureTest(testExecutionConfiguration);
+
+        testExecutionConfiguration.withUseRouteBuilder(false);
+    }
 
     @Test
     public void testAutomaticRegistration() throws Exception {
@@ -174,10 +182,5 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
                 () -> "{}");
 
         return clickUpMockRoutes;
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
     }
 }

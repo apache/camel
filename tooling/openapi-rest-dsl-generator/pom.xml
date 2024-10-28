@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxb</artifactId>
+            <artifactId>camel-xml-io</artifactId>
         </dependency>
         <dependency>
             <groupId>com.squareup</groupId>

@@ -88,6 +88,15 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
     private SecretClient client;
     private final Set<String> secrets = new HashSet<>();
 
+    public KeyVaultPropertiesFunction() {
+        super();
+    }
+
+    public KeyVaultPropertiesFunction(SecretClient client) {
+        super();
+        this.client = client;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

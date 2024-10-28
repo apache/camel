@@ -1,4 +1,4 @@
 = Building Camel from Source
 
-This content was moved to the link:/camel-core/contributing[Getting Started].
+This content was moved to link:/camel-core/contributing[Contributing To Apache Camel Core].
 

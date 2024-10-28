@@ -23,7 +23,7 @@ import org.apache.camel.vault.KubernetesVaultConfiguration;
 /**
  * Configuration for access to AWS Secret.
  */
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class KubernetesVaultConfigurationProperties extends KubernetesVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

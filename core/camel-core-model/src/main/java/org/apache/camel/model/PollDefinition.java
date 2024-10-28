@@ -23,7 +23,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Message;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.URISupport;
@@ -95,11 +94,11 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
     }
 
     /**
-     * To use a variable to store the received message body (only body, not headers). This is handy for easy access to
-     * the received message body via variables.
+     * To use a variable to store the received message body (only body, not headers). This makes it handy to use
+     * variables for user data and to easily control what data to use for sending and receiving.
      *
-     * Important: When using receive variable then the received body is stored only in this variable and <b>not</b> on
-     * the current {@link Message}.
+     * Important: When using receive variable then the received body is stored only in this variable and not on the
+     * current message.
      */
     public void setVariableReceive(String variableReceive) {
         this.variableReceive = variableReceive;

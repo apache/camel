@@ -17,7 +17,28 @@ import org.apache.camel.main.TracerConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.GenerateConfigurerMojo")
 @SuppressWarnings("unchecked")
-public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, ExtendedPropertyConfigurerGetter {
+
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("BacklogSize", int.class);
+        map.put("BodyIncludeFiles", boolean.class);
+        map.put("BodyIncludeStreams", boolean.class);
+        map.put("BodyMaxChars", int.class);
+        map.put("Enabled", boolean.class);
+        map.put("IncludeException", boolean.class);
+        map.put("IncludeExchangeProperties", boolean.class);
+        map.put("IncludeExchangeVariables", boolean.class);
+        map.put("RemoveOnDump", boolean.class);
+        map.put("Standby", boolean.class);
+        map.put("TraceFilter", java.lang.String.class);
+        map.put("TracePattern", java.lang.String.class);
+        map.put("TraceRests", boolean.class);
+        map.put("TraceTemplates", boolean.class);
+        ALL_OPTIONS = map;
+        ConfigurerStrategy.addBootstrapConfigurerClearer(TracerConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
+    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -51,6 +72,15 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "traceTemplates": target.setTraceTemplates(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public Map<String, Object> getAllOptions(Object target) {
+        return ALL_OPTIONS;
+    }
+
+    public static void clearBootstrapConfigurers() {
+        ALL_OPTIONS.clear();
     }
 
     @Override

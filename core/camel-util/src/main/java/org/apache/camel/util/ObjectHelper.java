@@ -1104,6 +1104,25 @@ public final class ObjectHelper {
     }
 
     /**
+     * Gets the annotation from the given instance (searching super classes also).
+     *
+     * @param  instance the instance
+     * @param  type     the annotation
+     * @return          the annotation, or <tt>null</tt> if the instance does not have the given annotation
+     */
+    public static <A extends java.lang.annotation.Annotation> A getAnnotationDeep(Object instance, Class<A> type) {
+        Class<?> clazz = instance.getClass();
+        while (clazz != Object.class) {
+            A ann = clazz.getAnnotation(type);
+            if (ann != null) {
+                return ann;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return null;
+    }
+
+    /**
      * Converts the given value to the required type or throw a meaningful exception
      */
     @SuppressWarnings("unchecked")

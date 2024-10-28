@@ -27,17 +27,13 @@ import java.util.Map;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 
-import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -45,9 +41,10 @@ import org.smooks.Smooks;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cartridges.javabean.Value;
 import org.smooks.io.payload.Exports;
-import org.smooks.io.payload.JavaResult;
-import org.smooks.io.payload.StringResult;
-import org.smooks.io.payload.StringSource;
+import org.smooks.io.sink.JavaSink;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StreamSource;
+import org.smooks.io.source.StringSource;
 import org.smooks.support.StreamUtils;
 import org.xmlunit.builder.DiffBuilder;
 
@@ -85,7 +82,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         assertIsSatisfied();
 
         Exchange exchange = result.assertExchangeReceived(0);
-        assertIsInstanceOf(Document.class, exchange.getIn().getBody());
+        assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
         assertFalse(DiffBuilder.compare(getExpectedOrderXml()).withTest(exchange.getIn().getBody(String.class)).ignoreComments()
                 .ignoreWhitespace().build().hasDifferences());
     }
@@ -134,7 +131,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                Smooks smooks = new Smooks().setExports(new Exports(JavaResult.class));
+                Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
                 from("direct:a")
                         .process(new SmooksProcessor(smooks, context)
                                 .addVisitor(new Value(
@@ -161,7 +158,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("file://target/smooks")
-                        .process(new SmooksProcessor(new Smooks().setExports(new Exports(StringResult.class)), context))
+                        .process(new SmooksProcessor(new Smooks().setExports(new Exports(StringSink.class)), context))
                         .to("mock:a");
             }
         });
@@ -178,7 +175,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
     @Test
     public void testProcessWhenSmooksExportIsJavaResultAndBodyIsVisitedByJavaBeanValue() throws Exception {
-        Smooks smooks = new Smooks().setExports(new Exports(JavaResult.class));
+        Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -197,7 +194,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
     @Test
     public void testProcessWhenSmooksExportIsJavaResultAndBodyIsVisitedByMultipleJavaBeanValues() throws Exception {
-        Smooks smooks = new Smooks().setExports(new Exports(JavaResult.class));
+        Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -218,7 +215,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
     @Test
     public void testProcessWhenSmooksExportIsJavaResultAndBodyIsVisitedByBean() throws Exception {
-        Smooks smooks = new Smooks().setExports(new Exports(JavaResult.class));
+        Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -242,7 +239,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                        .process(new SmooksProcessor(new Smooks().setExports(new Exports(StringResult.class)), context))
+                        .process(new SmooksProcessor(new Smooks().setExports(new Exports(StringSink.class)), context))
                         .to("direct:b");
 
                 from("direct:b").convertBodyTo(String.class).process(new DirectBProcessor());
@@ -279,7 +276,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
                 SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
                 processor.setReportPath("target/smooks-report.html");
 
-                from("direct:input").process(processor).convertBodyTo(Node.class).to("mock:result");
+                from("direct:input").process(processor).to("mock:result");
             }
         };
     }

@@ -30,7 +30,7 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_B
 /**
  * Perform operations on OpenShift Builds.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILDS, title = "Openshift Builds",
+@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILDS, title = "OpenShift Builds",
              syntax = "openshift-builds:masterUrl", producerOnly = true,
              category = { Category.CONTAINER, Category.CLOUD },
              headersClass = KubernetesConstants.class)

@@ -186,6 +186,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": target.getConfiguration().setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": target.getConfiguration().setSnapshotIsolationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotlockingmode":
@@ -412,6 +414,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "snapshotFetchSize": return int.class;
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return java.lang.String.class;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return long.class;
         case "snapshotlockingmode":
@@ -639,6 +643,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
         case "snapshotincludecollectionlist":
         case "snapshotIncludeCollectionList": return target.getConfiguration().getSnapshotIncludeCollectionList();
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return target.getConfiguration().getSnapshotIsolationMode();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return target.getConfiguration().getSnapshotLockTimeoutMs();
         case "snapshotlockingmode":

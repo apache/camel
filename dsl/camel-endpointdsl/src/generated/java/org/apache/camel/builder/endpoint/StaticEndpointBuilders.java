@@ -4678,6 +4678,46 @@ public class StaticEndpointBuilders {
         return FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Flowable (camel-flowable)
+     * Send and receive messages from the Flowable BPMN and CMMN engines.
+     * 
+     * Category: workflow
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-flowable
+     * 
+     * Syntax: <code>flowable:channelKey</code>
+     * 
+     * Path parameter: channelKey (required)
+     * The channel key
+     * 
+     * @param path channelKey
+     * @return the dsl builder
+     */
+    public static FlowableEndpointBuilderFactory.FlowableEndpointBuilder flowable(String path) {
+        return flowable("flowable", path);
+    }
+    /**
+     * Flowable (camel-flowable)
+     * Send and receive messages from the Flowable BPMN and CMMN engines.
+     * 
+     * Category: workflow
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-flowable
+     * 
+     * Syntax: <code>flowable:channelKey</code>
+     * 
+     * Path parameter: channelKey (required)
+     * The channel key
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path channelKey
+     * @return the dsl builder
+     */
+    public static FlowableEndpointBuilderFactory.FlowableEndpointBuilder flowable(String componentName, String path) {
+        return FlowableEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
      * FOP.
@@ -10931,7 +10971,7 @@ public class StaticEndpointBuilders {
         return OpensearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Openshift Build Config (camel-kubernetes)
+     * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
      * Category: container,cloud
@@ -10955,7 +10995,7 @@ public class StaticEndpointBuilders {
         return openshiftBuildConfigs("openshift-build-configs", path);
     }
     /**
-     * Openshift Build Config (camel-kubernetes)
+     * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
      * 
      * Category: container,cloud
@@ -10981,7 +11021,7 @@ public class StaticEndpointBuilders {
         return OpenshiftBuildConfigsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Openshift Builds (camel-kubernetes)
+     * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
      * 
      * Category: container,cloud
@@ -11005,7 +11045,7 @@ public class StaticEndpointBuilders {
         return openshiftBuilds("openshift-builds", path);
     }
     /**
-     * Openshift Builds (camel-kubernetes)
+     * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
      * 
      * Category: container,cloud
@@ -11031,8 +11071,8 @@ public class StaticEndpointBuilders {
         return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Openshift Deployment Configs (camel-kubernetes)
-     * Perform operations on Openshift Deployment Configs and get notified on
+     * OpenShift Deployment Configs (camel-kubernetes)
+     * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
      * 
      * Category: container,cloud
@@ -11056,8 +11096,8 @@ public class StaticEndpointBuilders {
         return openshiftDeploymentconfigs("openshift-deploymentconfigs", path);
     }
     /**
-     * Openshift Deployment Configs (camel-kubernetes)
-     * Perform operations on Openshift Deployment Configs and get notified on
+     * OpenShift Deployment Configs (camel-kubernetes)
+     * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
      * 
      * Category: container,cloud
@@ -13162,7 +13202,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Smooks (camel-smooks)
-     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * Use Smooks to transform, route, and bind both XML and non-XML data,
+     * including EDI, CSV, JSON, and YAML.
      * 
      * Category: transformation
      * Since: 4.7
@@ -13183,7 +13224,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Smooks (camel-smooks)
-     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * Use Smooks to transform, route, and bind both XML and non-XML data,
+     * including EDI, CSV, JSON, and YAML.
      * 
      * Category: transformation
      * Since: 4.7

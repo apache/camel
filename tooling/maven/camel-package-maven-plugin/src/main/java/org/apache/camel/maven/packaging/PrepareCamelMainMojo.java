@@ -209,9 +209,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.kubernetes.";
                 } else if (file.getName().contains("HashicorpVault")) {
                     prefix = "camel.vault.hashicorp.";
-                    // TODO: add more vault providers here
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
+                } else if (file.getName().contains("StartupCondition")) {
+                    prefix = "camel.startupcondition.";
                 } else if (file.getName().contains("Lra")) {
                     prefix = "camel.lra.";
                 } else if (file.getName().contains("Otel")) {
@@ -319,6 +320,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getOptions().addAll(data);
             model.getGroups().add(new MainGroupModel(
                     "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.startupcondition", "Camel Startup Condition configurations",
+                    "org.apache.camel.main.StartupConditionConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
                             "camel.routecontroller", "Camel Route Controller configurations",
@@ -369,7 +373,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     new MainGroupModel(
                             "camel.vault.hashicorp", "Camel Hashicorp Vault configurations",
                             "org.apache.camel.vault.HashicorpVaultConfiguration"));
-            // TODO: add more vault providers here
             model.getGroups().add(new MainGroupModel(
                     "camel.opentelemetry", "Camel OpenTelemetry configurations",
                     "org.apache.camel.main.OtelConfigurationProperties"));

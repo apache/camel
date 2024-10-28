@@ -27,11 +27,13 @@ import java.util.concurrent.TimeUnit;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.test.AvailablePortFinder;
@@ -115,7 +117,7 @@ public class KnativeHttpServer extends ServiceSupport {
     protected void doStart() {
         this.executor = context.getExecutorServiceManager().newSingleThreadExecutor(this, "knative-http-server");
         this.vertx = Vertx.vertx();
-        this.server = vertx.createHttpServer();
+        this.server = vertx.createHttpServer(getServerOptions());
         this.router = Router.router(vertx);
         this.router.route(path)
                 .handler(event -> {
@@ -123,8 +125,12 @@ public class KnativeHttpServer extends ServiceSupport {
                     BodyHandler.create().handle(event);
                 })
                 .handler(event -> {
-                    this.requests.offer(event.request());
-                    event.next();
+                    boolean success = this.requests.offer(event.request());
+                    if (success) {
+                        event.next();
+                    } else {
+                        event.fail(new RuntimeCamelException("Failed to save request to in-memory storage"));
+                    }
                 })
                 .handler(handler);
 
@@ -233,5 +239,13 @@ public class KnativeHttpServer extends ServiceSupport {
             context.getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
+    }
+
+    protected HttpServerOptions getServerOptions() {
+        return new HttpServerOptions();
+    }
+
+    public int getNumberOfRequestsRemaining() {
+        return requests.size();
     }
 }

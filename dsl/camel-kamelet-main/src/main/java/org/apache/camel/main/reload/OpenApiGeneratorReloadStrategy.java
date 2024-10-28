@@ -17,14 +17,15 @@
 package org.apache.camel.main.reload;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.OpenAPIV3Parser;
-import org.apache.camel.generator.openapi.RestDslGenerator;
+import org.apache.camel.CamelContext;
+import org.apache.camel.main.download.DependencyDownloader;
 import org.apache.camel.support.FileWatcherResourceReloadStrategy;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ public class OpenApiGeneratorReloadStrategy extends FileWatcherResourceReloadStr
     private static final String OPENAPI_GENERATED_FILE = ".camel-jbang/generated-openapi.yaml";
 
     private final File openapi;
+    private Method method;
 
     public OpenApiGeneratorReloadStrategy(File openapi) {
         String parent = openapi.getParent();
@@ -58,9 +60,7 @@ public class OpenApiGeneratorReloadStrategy extends FileWatcherResourceReloadStr
 
             LOG.info("Generating open-api rest-dsl from: {}", openapi);
             try {
-                OpenAPIV3Parser parser = new OpenAPIV3Parser();
-                OpenAPI document = parser.read(openapi.getAbsolutePath());
-                String out = RestDslGenerator.toYaml(document).generate(getCamelContext(), false);
+                String out = (String) ObjectHelper.invokeMethodSafe(method, null, getCamelContext(), openapi);
                 Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
             } catch (Exception e) {
                 LOG.warn("Error generating open-api rest-dsl due: {}", e.getMessage(), e);
@@ -68,4 +68,18 @@ public class OpenApiGeneratorReloadStrategy extends FileWatcherResourceReloadStr
         });
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
+        // these are extra dependencies used in special use-case so download as hidden
+        downloader.downloadHiddenDependency("org.apache.camel", "camel-openapi-rest-dsl-generator",
+                getCamelContext().getVersion());
+
+        // the generator is invoked via reflection
+        Class<?> clazz = getCamelContext().getClassResolver()
+                .resolveMandatoryClass("org.apache.camel.generator.openapi.RestDslGenerator");
+        method = clazz.getDeclaredMethod("generateToYaml", CamelContext.class, File.class);
+    }
 }

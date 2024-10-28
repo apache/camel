@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "event", visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "event")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TaskTimeTrackedUpdatedEvent.class, name = Events.TASK_TIME_TRACKED_UPDATED)
 })

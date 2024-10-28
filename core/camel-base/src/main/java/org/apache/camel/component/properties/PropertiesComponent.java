@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed PropertiesComponent")
 @JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class PropertiesComponent extends ServiceSupport
         implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 

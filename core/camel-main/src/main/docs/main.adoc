@@ -149,6 +149,22 @@ The camel.main supports 122 options, which are listed below.
 |===
 
 
+=== Camel Startup Condition configurations
+The camel.startupcondition supports 7 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.startupcondition.custom{zwsp}ClassNames* | A list of custom class names (FQN). Multiple classes can be separated by comma. |  | String
+| *camel.startupcondition.enabled* | To enable using startup conditions | false | boolean
+| *camel.startupcondition.environment{zwsp}VariableExists* | Wait for an environment variable with the given name to exists before continuing |  | String
+| *camel.startupcondition.file{zwsp}Exists* | Wait for a file with the given name to exists before continuing |  | String
+| *camel.startupcondition.interval* | Interval in millis between checking conditions. | 500 | int
+| *camel.startupcondition.on{zwsp}Timeout* | What action, to do on timeout. fail = do not startup, and throw an exception causing camel to fail stop = do not startup, and stop camel ignore = log a WARN and continue to startup | stop | String
+| *camel.startupcondition.timeout* | Total timeout (in millis) for all startup conditions. | 20000 | int
+|===
+
+
 === Camel Route Controller configurations
 The camel.routecontroller supports 12 options, which are listed below.
 
@@ -250,7 +266,7 @@ The camel.trace supports 14 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 19 options, which are listed below.
+The camel.ssl supports 20 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -272,6 +288,7 @@ The camel.ssl supports 19 options, which are listed below.
 | *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
 | *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
+| *camel.ssl.trustAllCertificates* | Allows to trust all SSL certificates without performing certificate validation. This can be used in development environment but may expose the system to security risks. Notice that if the trustAllCertificates option is set to true then the trustStore/trustStorePassword options are not in use.. | false | boolean
 | *camel.ssl.trustStore* | The trust store to load. The trust store is by default loaded from classpath. If you must load from file system, then use file: as prefix. file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for example for testing and development). |  | String
 | *camel.ssl.trustStorePassword* | Sets the SSL Truststore password. |  | String
 |===
@@ -350,13 +367,14 @@ The camel.rest supports 29 options, which are listed below.
 
 
 === Camel AWS Vault configurations
-The camel.vault.aws supports 11 options, which are listed below.
+The camel.vault.aws supports 13 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.aws.accessKey* | The AWS access key |  | String
 | *camel.vault.aws.default{zwsp}CredentialsProvider* | Define if we want to use the AWS Default Credentials Provider or not | false | boolean
+| *camel.vault.aws.override{zwsp}Endpoint* | Set the need for overriding the endpoint. This option needs to be used in combination with the uriEndpointOverride option | false | boolean
 | *camel.vault.aws.profile{zwsp}CredentialsProvider* | Define if we want to use the AWS Profile Credentials Provider or not | false | boolean
 | *camel.vault.aws.profileName* | Define the profile name to use if Profile Credentials Provider is selected |  | String
 | *camel.vault.aws.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in AWS. | false | boolean
@@ -365,6 +383,7 @@ The camel.vault.aws supports 11 options, which are listed below.
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
 | *camel.vault.aws.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.aws.sqsQueueUrl* | In case of usage of SQS notification this field will specified the Queue URL to use |  | String
+| *camel.vault.aws.uriEndpoint{zwsp}Override* | Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option |  | String
 | *camel.vault.aws.useSqs{zwsp}Notification* | Whether to use AWS SQS for secrets updates notification, this will require setting up Eventbridge/Cloudtrail/SQS communication | false | boolean
 |===
 

@@ -122,6 +122,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(main)))
+                        .addSubcommand("receive", new CommandLine(new CamelReceiveAction(main)))
                         .addSubcommand("browse", new CommandLine(new CamelBrowseAction(main)))
                         .addSubcommand("stub", new CommandLine(new CamelStubAction(main)))
                         .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))

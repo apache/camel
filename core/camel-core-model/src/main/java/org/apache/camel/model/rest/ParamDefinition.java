@@ -104,7 +104,7 @@ public class ParamDefinition {
     }
 
     public String getDescription() {
-        return description != null ? description : "";
+        return description;
     }
 
     /**
@@ -118,7 +118,7 @@ public class ParamDefinition {
      * Sets the parameter default value.
      */
     public String getDefaultValue() {
-        return defaultValue != null ? defaultValue : "";
+        return defaultValue;
     }
 
     public void setDefaultValue(String defaultValue) {
@@ -159,7 +159,7 @@ public class ParamDefinition {
     }
 
     public String getDataType() {
-        return dataType != null ? dataType : "string";
+        return dataType;
     }
 
     /**

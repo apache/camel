@@ -30,6 +30,10 @@
     <name>Camel :: Solr</name>
     <description>Camel Solr Support</description>
 
+    <properties>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

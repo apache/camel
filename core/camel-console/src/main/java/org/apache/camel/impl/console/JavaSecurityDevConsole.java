@@ -28,7 +28,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "java-security", description = "Displays Java Security (JSSE) information")
-@Configurer(bootstrap = true)
+@Configurer(bootstrap = true, extended = true)
 public class JavaSecurityDevConsole extends AbstractDevConsole {
 
     public JavaSecurityDevConsole() {

@@ -142,6 +142,13 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
         Assertions.assertThat(response.getMessages().get(0).getId()).isNotNull();
     }
 
+    private void assertTemplateResponse(MessageResponse response) {
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getMessages()).isNotNull();
+        Assertions.assertThat(response.getMessages().get(0).getId()).isNotNull();
+        Assertions.assertThat(response.getMessages().get(0).getMessageStatus()).isNotNull();
+    }
+
     @Test
     public void testMediaStickerMessage() {
         MediaMessage mediaMessage = new MediaMessage();
@@ -216,7 +223,7 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
 
         MessageResponse response = (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, request);
 
-        assertResponse(response);
+        assertTemplateResponse(response);
     }
 
     @Test

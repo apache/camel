@@ -17,12 +17,12 @@
 
 package org.apache.camel.builder;
 
-import org.apache.camel.model.TokenizerDefinition;
+import org.apache.camel.model.TokenizerImplementationDefinition;
 
 /**
  * {@code TokenizerBuilder} defines the contract of tokenizer builder.
  */
-public interface TokenizerBuilder<T extends TokenizerDefinition> {
+public interface TokenizerBuilder<T extends TokenizerImplementationDefinition> {
 
     /**
      * Ends the build of the tokenizer

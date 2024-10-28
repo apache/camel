@@ -49,12 +49,6 @@ include::partial$dataformat-options.adoc[]
 
 == Usage
 
-=== 2 and 4 bytes characters
-
-Jackson will default work with UTF-8 using an optimized generator that only supports UTF-8.
-For users that need 2-bytes or 4-bytes (such as Japanese) would need to turn on `useWriter=true`
-in the Camel dataformat, to use another generator that lets `java.io.Writer` handle character encodings.
-
 === Using Jackson XML in Spring DSL
 
 When using Data Format in Spring DSL, you need to

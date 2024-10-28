@@ -51,7 +51,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10")).routeId("foo").noAutoStartup()
+                from(fileUri("?pollStrategy=#myPoll&initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

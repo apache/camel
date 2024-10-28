@@ -51,7 +51,7 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri(FILE_QUERY)).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY)).routeId("foo").autoStartup(false).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -51,7 +51,7 @@ public class ControlBusStartRouteAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo").noAutoStartup().to("mock:foo");
+                from("seda:foo").routeId("foo").autoStartup(false).to("mock:foo");
             }
         };
     }

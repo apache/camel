@@ -127,6 +127,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     private Long maxFileSize = -1L;
     private Long maxRequestSize = -1L;
     private Integer fileSizeThreshold = 0;
+    protected SecureRequestCustomizer secureRequestCustomizer;
 
     protected JettyHttpComponent() {
     }
@@ -503,6 +504,19 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public SecureRequestCustomizer getSecureRequestCustomizer() {
+        return secureRequestCustomizer;
+    }
+
+    /**
+     * To use a custom SecureRequestCustomizer. The option is a org.eclipse.jetty.server.SecureRequestCustomizer type.
+     */
+    @Metadata(description = "To use a custom SecureRequestCustomizer. The option is a org.eclipse.jetty.server.SecureRequestCustomizer type.",
+              label = "advanced")
+    public void setSecureRequestCustomizer(SecureRequestCustomizer secureRequestCustomizer) {
+        this.secureRequestCustomizer = secureRequestCustomizer;
+    }
 
     public String getSslKeyPassword() {
         return sslKeyPassword;

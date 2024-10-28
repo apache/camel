@@ -83,5 +83,6 @@
         <module>camel-test-infra-milvus</module>
         <module>camel-test-infra-hazelcast</module>
         <module>camel-test-infra-hivemq</module>
+        <module>camel-test-infra-torchserve</module>
     </modules>
 </project>

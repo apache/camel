@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
@@ -26,9 +27,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 public class ExportPropertiesParser extends DefaultPropertiesParser {
 
+    private final CamelContext camelContext;
+
+    public ExportPropertiesParser(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     @Override
     public String parseProperty(String key, String value, PropertiesLookup properties) {
         if (value == null) {
+            // the key may refer to a properties function so make sure we include this during export
+            if (key != null) {
+                try {
+                    camelContext.getPropertiesComponent().getPropertiesFunction(key);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
             return PropertyConfigurerSupport.MAGIC_VALUE;
         }
         return value;

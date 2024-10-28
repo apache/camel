@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -73,7 +74,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "camel.component.kamelet.location",
             "camel.jbang.classpathFiles",
             "camel.jbang.localKameletDir",
-            "camel.jbang.jkubeFiles"
+            "camel.jbang.jkubeFiles",
+            "kamelet"
     };
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
@@ -370,11 +372,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
-        // are we using any of the official ASF Kamelets
-        boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
-        // are we using custom kamelets
-        boolean customKamelets
-                = lines.stream().anyMatch(l -> (l.startsWith("camel.main.routesIncludePattern=") && l.contains(".kamelet.yaml"))
+
+        // check if we use custom and/or official ASF kamelets
+        List<String> officialKamelets = KameletCatalogHelper.findKameletNames(kameletsVersion);
+        boolean kamelets = false;
+        boolean asfKamelets = false;
+        for (String line : lines) {
+            if (line.startsWith("kamelet=")) {
+                kamelets = true;
+                String name = StringHelper.after(line, "kamelet=");
+                if (officialKamelets.contains(name)) {
+                    asfKamelets = true;
+                    break;
+                }
+            }
+        }
+        // any other custom kamelets that are loaded via routes
+        kamelets |= lines.stream()
+                .anyMatch(l -> (l.startsWith("camel.main.routesIncludePattern=") && l.contains(".kamelet.yaml"))
                         || l.startsWith("camel.component.kamelet.location=") && l.contains(".kamelet.yaml"));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -384,14 +399,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
                         || v.contains("org.apache.camel:camel-java-joor-dsl")
                         || v.contains("camel-endpointdsl")
-                        || !(kamelets && !customKamelets) && v.contains("org.apache.camel:camel-kamelet");
+                        || !(kamelets) && v.contains("org.apache.camel:camel-kamelet");
                 if (!skip) {
                     answer.add(v);
                 }
-                if ((kamelets || customKamelets) && v != null && v.contains("org.apache.camel:camel-kamelet")) {
+                if (kamelets && v != null && v.contains("org.apache.camel:camel-kamelet")) {
                     // kamelets need yaml-dsl
                     answer.add("camel:yaml-dsl");
-                    if (kamelets) {
+                    if (asfKamelets) {
                         // include JARs for official ASF kamelets
                         answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                         answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
@@ -402,10 +417,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 if (!deps.isEmpty()) {
                     for (String d : deps.split(",")) {
                         answer.add(d.trim());
-                        if ((kamelets || customKamelets) && d.contains("org.apache.camel:camel-kamelet")) {
+                        if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
                             // kamelets need yaml-dsl
                             answer.add("camel:yaml-dsl");
-                            if (kamelets) {
+                            if (asfKamelets) {
                                 // include JARs for official ASF kamelets
                                 answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                                 answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
@@ -431,13 +446,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         if (ext != null) {
                             // java is moved into src/main/java and compiled during build
                             // for the other DSLs we need to add dependencies
-                            if ("groovy".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-groovy-dsl");
-                            } else if ("js".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-js-dsl");
-                            } else if ("jsh".equals(ext)) {
-                                answer.add("mvn:org.apache.camel:camel-jsh-dsl");
-                            } else if ("xml".equals(ext)) {
+                            if ("xml".equals(ext)) {
                                 answer.add("mvn:org.apache.camel:camel-xml-io-dsl");
                             } else if ("yaml".equals(ext)) {
                                 answer.add("mvn:org.apache.camel:camel-yaml-dsl");
@@ -445,19 +454,21 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                 ext = FileUtil.onlyExt(r, false);
                                 if ("kamelet.yaml".equals(ext)) {
                                     answer.add("camel:kamelet");
-                                    if (kamelets) {
+                                    if (asfKamelets) {
+                                        // include JARs for official ASF kamelets
                                         answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                                        answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
                                     }
                                 }
                             }
                         }
                     }
                 }
-            } else if ((kamelets || customKamelets) && line.startsWith("camel.component.kamelet.location=")) {
+            } else if (kamelets && line.startsWith("camel.component.kamelet.location=")) {
                 // kamelets need yaml-dsl
                 answer.add("camel:kamelet");
                 answer.add("camel:yaml-dsl");
-                if (kamelets) {
+                if (asfKamelets) {
                     // include JARs for official ASF kamelets
                     answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                     answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
@@ -514,8 +525,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
 
+        String localKameletDir = prop.getProperty("camel.jbang.localKameletDir");
+        if (localKameletDir != null) {
+            String scheme = getScheme(localKameletDir);
+            if (scheme != null) {
+                localKameletDir = localKameletDir.substring(scheme.length() + 1);
+            }
+        }
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
-            String files = prop.getProperty(k);
+            String files;
+            if ("kamelet".equals(k)) {
+                // special for kamelet as there can be multiple entries
+                files = RuntimeUtil.loadPropertiesLines(settings).stream()
+                        .filter(l -> l.startsWith("kamelet="))
+                        .map(l -> StringHelper.after(l, "="))
+                        .collect(Collectors.joining(","));
+            } else {
+                files = prop.getProperty(k);
+            }
             if (files != null && !files.isEmpty()) {
                 for (String f : files.split(",")) {
                     String scheme = getScheme(f);
@@ -531,11 +558,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     String ext2 = FileUtil.onlyExt(f, false);
-                    if (ext == null) {
+                    if (!"kamelet".equals(k) && ext == null) {
                         continue;
                     }
                     boolean java = "java".equals(ext);
-                    boolean kamelet = "camel.component.kamelet.location".equals(k)
+                    boolean kamelet = "kamelet".equals(k) || "camel.component.kamelet.location".equals(k)
                             || "camel.jbang.localKameletDir".equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
                     boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
                     boolean jkube = "camel.jbang.jkubeFiles".equals(k);
@@ -544,7 +571,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     File srcWeb = new File(srcResourcesDir, "META-INF/resources");
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
                             : web ? srcWeb : srcResourcesDir;
-                    File source = new File(f);
+
+                    File source;
+                    if ("kamelet".equals(k) && localKameletDir != null) {
+                        // source is a local kamelet
+                        source = new File(localKameletDir, f + ".kamelet.yaml");
+                    } else {
+                        source = new File(f);
+                    }
                     File out;
                     if (source.isDirectory()) {
                         out = target;
@@ -697,6 +731,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected void prepareApplicationProperties(Properties properties) {
         // noop
+    }
+
+    // Returns true if it has either an openapi spec or it uses contract-first DSL
+    protected boolean hasOpenapi(Set<String> dependencies) {
+        return openapi != null || dependencies.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-rest-openapi"));
     }
 
     protected Properties mapBuildProperties() {

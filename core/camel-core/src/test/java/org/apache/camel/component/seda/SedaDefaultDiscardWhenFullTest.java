@@ -58,7 +58,7 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
                 seda.setDefaultDiscardWhenFull(true);
                 seda.setQueueSize(2);
 
-                from("seda:foo").routeId("foo").noAutoStartup()
+                from("seda:foo").routeId("foo").autoStartup(false)
                         .to("mock:result");
             }
         };

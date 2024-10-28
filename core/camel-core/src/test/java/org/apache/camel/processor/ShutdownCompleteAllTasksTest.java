@@ -81,7 +81,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() {
-                from(fileUri(FILE_URI_QUERY)).routeId("foo").noAutoStartup()
+                from(fileUri(FILE_URI_QUERY)).routeId("foo").autoStartup(false)
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
             }

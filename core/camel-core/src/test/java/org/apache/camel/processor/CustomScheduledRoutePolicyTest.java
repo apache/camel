@@ -65,7 +65,7 @@ public class CustomScheduledRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").noAutoStartup().routePolicy(policy).to("mock:result");
+                from("seda:foo").autoStartup(false).routePolicy(policy).to("mock:result");
             }
         };
     }

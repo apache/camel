@@ -2,7 +2,7 @@
 :doctitle: Smooks
 :shortname: smooks
 :artifactid: camel-smooks
-:description: EDI, XML, CSV, etc. based data transformation using Smooks.
+:description: Use Smooks to transform, route, and bind both XML and non-XML data, including EDI, CSV, JSON, and YAML.
 :since: 4.7
 :supportlevel: Stable
 :tabs-sync-option:
@@ -16,9 +16,10 @@ The Camel Smooks component uses https://www.smooks.org/[Smooks] to break up the 
 
 Common applications of Smooks include:
 
-* transformation (e.g., EDI to CSV, POJO to EDI, POJO to XML)
-* routing (e.g., split, transform, and route fragments to destinations such as JMS queues, file systems, and databases)
-* enrichment (e.g., enriching a fragment with data from a database).
+* transformation: EDI to CSV, POJO to EDI, POJO to XML, and so on.
+* scalable processing: process huge payloads while keeping a small memory footprint. Split, transform, and route fragments to destinations such as JMS queues, file systems, and databases.
+* enrichment: enrich fragments with data from a database or other data sources.
+* Java binding: populate POJOs from a source such as CSV, EDI, XML, and other POJOs.
 
 Maven users will need to add the following dependency to their `pom.xml`.
 
@@ -50,3 +51,51 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+== Usage
+
+Using the Smooks component lets you leverage all the features of Smooks, such as transformation and fragment-driven routing, from within Camel. You can take an existing Smooks configuration and use this in your Camel routes as shown below:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:inputDir?noop=true")
+    .to("smooks:smooks-config.xml")
+    .to("jms:queue:order");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: file:inputDir?noop=true
+    steps:
+      - to: smooks:smooks-config.xml
+      - to: jms:queue:order
+----
+====
+
+The Smooks component is configured with a mandatory configuration file, which is `smooks-config.xml` in the example above. It is not clear what type of output the component is producing from looking at the above route. By default, the message body output is a stream but the type of output can be changed by configuring `{https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd}exports` in `smooks-config.xml` as shown in this Smooks configuration:
+
+.smooks-config.xml
+[source,xml]
+----
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+        xmlns:edi="https://www.smooks.org/xsd/smooks/edi-2.0.xsd"
+        xmlns:core="https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd">
+
+    <core:exports>
+        <core:result type="org.smooks.io.sink.StringSink"/>
+    </core:exports>
+
+    <edi:parser schemaUri="/edi-mapping-model.dfdl.xsd" segmentTerminator="%NL;" dataElementSeparator="*"
+                compositeDataElementSeparator="^"/>
+
+</smooks-resource-list>
+----
+
+The example `<core:exports>` configures Smooks to export the execution result to Camel as a string. Keep in mind that exporting the result as string means that the whole result will be kept in-memory which could cause unexpected performance issues for large payloads.

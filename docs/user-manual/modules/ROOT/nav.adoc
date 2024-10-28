@@ -84,6 +84,7 @@
 ** xref:route-reload.adoc[RouteReload]
 ** xref:route-template.adoc[RouteTemplate]
 ** xref:routes.adoc[Routes]
+** xref:startup-condition.adoc[Startup Condition]
 ** xref:stream-caching.adoc[Stream caching]
 ** xref:transformer.adoc[Transformer]
 ** xref:threading-model.adoc[Threading Model]

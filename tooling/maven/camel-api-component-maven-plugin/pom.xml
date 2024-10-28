@@ -32,17 +32,6 @@
     <name>Camel :: Maven Plugins :: Camel API Component Plugin</name>
     <description>Maven plugin to generate code for Camel Components based on third party APIs</description>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>tooling-parent</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
 
         <dependency>

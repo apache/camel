@@ -35,7 +35,7 @@ public class KubernetesTestSupport extends CamelTestSupport {
     /*
      * NOTE: The Camel-Kubernetes tests were originally meant to be run along with the vagrant fabric8-image
      * https://github.com/fabric8io/fabric8-installer/tree/master/vagrant/openshift which would provide an
-     * environment with Openshift/Kubernetes installed.
+     * environment with OpenShift/Kubernetes installed.
      *
      * However, since that image is deprecated, you can also run the tests with kind. See the README.md file
      * on the root of the component directory for details.

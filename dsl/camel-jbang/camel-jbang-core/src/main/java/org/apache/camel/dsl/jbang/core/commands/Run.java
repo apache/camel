@@ -137,6 +137,14 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
+    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+                        defaultValue = "io.quarkus.platform")
+    String quarkusGroupId = "io.quarkus.platform";
+
+    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+                        defaultValue = "quarkus-bom")
+    String quarkusArtifactId = "quarkus-bom";
+
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
             defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion = RuntimeType.QUARKUS_VERSION;
@@ -558,6 +566,8 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
         writeSetting(main, profileProperties, "camel.jbang.springBootVersion", springBootVersion);
         writeSetting(main, profileProperties, "camel.jbang.quarkusVersion", quarkusVersion);
+        writeSetting(main, profileProperties, "camel.jbang.quarkusGroupId", quarkusGroupId);
+        writeSetting(main, profileProperties, "camel.jbang.quarkusArtifactId", quarkusArtifactId);
 
         // command line arguments
         if (property != null) {
@@ -882,9 +892,12 @@ public class Run extends CamelCommand {
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
         eq.quarkusVersion = this.quarkusVersion;
+        eq.quarkusGroupId = this.quarkusGroupId;
+        eq.quarkusArtifactId = this.quarkusArtifactId;
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
+        eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
@@ -956,6 +969,7 @@ public class Run extends CamelCommand {
         eq.camelSpringBootVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
+        eq.localKameletDir = this.localKameletDir;
         eq.excludes = this.excludes;
         eq.filePaths = this.filePaths;
         eq.files = this.files;
@@ -1123,6 +1137,8 @@ public class Run extends CamelCommand {
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
             springBootVersion = answer.getProperty("camel.jbang.springBootVersion", springBootVersion);
+            quarkusGroupId = answer.getProperty("camel.jbang.quarkusGroupId", quarkusGroupId);
+            quarkusArtifactId = answer.getProperty("camel.jbang.quarkusArtifactId", quarkusArtifactId);
             quarkusVersion = answer.getProperty("camel.jbang.quarkusVersion", quarkusVersion);
             gav = answer.getProperty("camel.jbang.gav", gav);
             stub = answer.getProperty("camel.jbang.stub", stub);
@@ -1271,17 +1287,17 @@ public class Run extends CamelCommand {
         sb.append(String.format("//DEPS org.apache.camel:camel-main:%s%n", camelVersion));
         sb.append(String.format("//DEPS org.apache.camel:camel-java-joor-dsl:%s%n", camelVersion));
         sb.append(String.format("//DEPS org.apache.camel:camel-kamelet:%s%n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s%n", camelVersion));
+        if (VersionHelper.isGE(camelVersion, "3.19.0")) {
+            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", camelVersion));
+        }
         content = content.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        // use apache distribution of camel-jbang
+        // use apache distribution of camel-jbang/github-resolver
         String v = camelVersion.substring(0, camelVersion.lastIndexOf('.'));
         sb = new StringBuilder();
         sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s%n", v));
-        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s%n", v));
         sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s%n", v));
-        if (VersionHelper.isGE(v, "3.19.0")) {
-            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", v));
-        }
         content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
 
         sb = new StringBuilder();
@@ -1291,7 +1307,13 @@ public class Run extends CamelCommand {
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
         Files.writeString(Paths.get(fn), content);
 
-        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds;
+        if (spec != null) {
+            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        } else {
+            cmds = new ArrayList<>();
+            cmds.add("run");
+        }
 
         if (background) {
             cmds.remove("--background=true");

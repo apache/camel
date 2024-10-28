@@ -279,7 +279,7 @@ type: Opaque
 
 You can mount it in your Pod container, for instance, under `/etc/camel/conf.d/_secrets/my-secret`. Now, just make your Camel application be aware where to scan your configuration via `camel.main.cloud-properties-location = /etc/camel/conf.d/_secrets/my-secret` application properties. It's a comma separated value, so, you can add as many Secrets/Configmaps you need.
 
-At runtime, you will be able to read the configuration transparently as `\{{ my-property \}}` as you're doing with the rest of properties.
+At runtime, you will be able to read the configuration transparently as ```{{ my-property }}``` as you're doing with the rest of properties.
 
 NOTE: the same configuration works with Configmap.
 

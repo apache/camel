@@ -87,7 +87,7 @@ public class DefaultRestClientRequestValidator implements RestClientRequestValid
         // if content-type is json then lets validate the message body can be parsed to json
         if (body != null && contentType != null && isValidOrAcceptedContentType("application/json", contentType)) {
             String json = MessageHelper.extractBodyAsString(exchange.getIn());
-            if (json != null) {
+            if (!ObjectHelper.isEmpty(json)) {
                 try {
                     Jsoner.deserialize(json);
                 } catch (DeserializationException e) {

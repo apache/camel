@@ -1399,10 +1399,73 @@ For example to poll a message from a ActiveMQ queue named cheese you can do:
 
 [source,bash]
 ----
-$ camel cmd send --poll --endpoint=activemq:cheese
+$ camel cmd send --poll --endpoint='activemq:cheese'
 ----
 
 When you poll then you do not send any payload (body or headers).
+
+=== Receiving messages via Camel
+
+*Available since Camel 4.9*
+
+When building a prototype integration with Camel JBang, you may route messages to external systems.
+To know whether messages are being routed correctly, you may use system consoles to look inside these systems
+which messages have arrived, such as SQL prompts, web consoles, CLI tools etc.
+
+The Camel JBang now comes with a new command to receive messages from remote endpoints.
+This can be used to quickly look or tail in terminal the messages that an external systems has received.
+Camel does this by consuming the messages (if the component has support for consumer) and then let Camel JBang dump the messages from the CLI.
+
+For example to start dumping all messages from ActiveMQ in one command, you can do:
+
+[source,bash]
+----
+$ camel cmd receive --endpoint='activemq:cheese'
+----
+
+You can also use pattern syntax for the endpoint, so suppose you have the following route:
+
+[source,java]
+----
+from("ftp:myserver:1234/foo")
+  .to("log:order")
+  .to("activemq:orders");
+----
+
+Then you can tell Camel to automatic start receiving messages with:
+
+[source,bash]
+----
+$ camel cmd receive --action=start
+----
+
+TIP: You can enable and disable this mode with `--action=start` and `--action-stop`.
+
+Then Camel will automatically discover from the running integration, all the _producers_ and
+find the first _producer_ that is remote and also has consumer support. In the example above,
+that is the `activemq` component, and thus Camel will start receive from `activemq:orders`.
+
+You can see the status via:
+
+[source,bash]
+----
+$ camel cmd receive
+ PID   NAME   AGE   STATUS    TOTAL  SINCE  ENDPOINT
+  4364  foo   1m33s  Enabled     18     2s  activemq://orders
+----
+
+You can then dump all the received messages with:
+
+[source,bash]
+----
+$ camel cmd receive --action=dump
+----
+
+This will dump all the messages, and continue to dump new incoming messages. Use (ctrl + c) to break and exit.
+You can turn follow off with `--follow=false`.
+
+TIP: Use `camel cmd receive --help` to see all the various options for this command.
+
 
 === Controlling local Camel integrations
 
@@ -2113,6 +2176,10 @@ camel run --local-kamelet-dir=https://github.com/apache/camel-kamelets-examples/
 NOTE: If a kamelet is loaded from GitHub, then they cannot be live reloaded.
 
 === Using the platform-http component
+
+NOTE: Camel JBang is only intended for working with `platform-http` as HTTP server component for rest-dsl,
+and for HTTP serer in general. It is not intended to work with `camel-servlet` or `camel-jetty`. If you find a need for using Jetty,
+then Camel JBang will not support seamless rest-dsl support and exporting.
 
 When a route is started from `platform-http` then Camel JBang will automatically include a VertX HTTP server
 running on port 8080. For example, the following route in a file named `server.yaml`:

@@ -37,7 +37,7 @@ public class FaultToleranceTimerService extends ServiceSupport implements CamelC
     protected void doInit() throws Exception {
         threadTimerExecutorService
                 = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "CircuitBreakerThreadTimer");
-        timer = ThreadTimer.create(threadTimerExecutorService);
+        timer = new ThreadTimer(threadTimerExecutorService);
     }
 
     @Override

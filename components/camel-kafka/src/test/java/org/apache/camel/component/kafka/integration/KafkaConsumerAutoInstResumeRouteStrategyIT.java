@@ -53,6 +53,7 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseKafkaTestSup
     @BeforeEach
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
+        KafkaTestUtil.createTopic(service, TOPIC, 1);
         KafkaProducer<Object, Object> producer = new KafkaProducer<>(props);
 
         for (int i = 0; i < 10; i++) {

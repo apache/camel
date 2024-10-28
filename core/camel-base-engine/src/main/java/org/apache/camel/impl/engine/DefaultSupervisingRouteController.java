@@ -50,6 +50,7 @@ import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.SupervisingRouteController;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
@@ -470,6 +471,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 consumer.accept(route);
             } catch (Exception e) {
                 if (checker) {
+                    // first attempt is (starting and not restarting)
+                    EventHelper.notifyRouteRestartingFailure(getCamelContext(), route.get(), 0, e, false);
                     // if start fails the route is moved to controller supervision
                     // so its get (eventually) restarted
                     routeManager.start(route);
@@ -672,6 +675,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
                             try {
                                 logger.info("Restarting route: {} attempt: {}", r.getId(), attempt);
+                                EventHelper.notifyRouteRestarting(getCamelContext(), r.get(), attempt);
                                 doStartRoute(r, false, rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
                                 logger.info("Route: {} started after {} attempts", r.getId(), attempt);
                                 return false;
@@ -681,6 +685,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                 logger.info("Failed restarting route: {} attempt: {} due: {} (stacktrace in debug log level)",
                                         r.getId(), attempt, cause);
                                 logger.debug("    Error restarting route caused by: {}", e.getMessage(), e);
+                                EventHelper.notifyRouteRestartingFailure(getCamelContext(), r.get(), attempt, e, false);
                                 return true;
                             }
                         });
@@ -698,17 +703,21 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
                                     if (backOffTask != null && backOffTask.getStatus() == BackOffTimer.Task.Status.Exhausted
                                             && stopped) {
+                                        long attempts = backOffTask.getCurrentAttempts() - 1;
                                         LOG.warn(
                                                 "Restarting route: {} is exhausted after {} attempts. No more attempts will be made"
                                                  + " and the route is no longer supervised by this route controller and remains as stopped.",
-                                                route.getId(), backOffTask.getCurrentAttempts() - 1);
+                                                route.getId(), attempts);
                                         r.get().setRouteController(null);
                                         // remember exhausted routes
                                         routeManager.exhausted.put(r, task);
 
+                                        // store as last error on route as it was exhausted
+                                        Throwable t = getRestartException(route.getId());
+                                        EventHelper.notifyRouteRestartingFailure(getCamelContext(), r.get(), attempts, t, true);
+
                                         if (unhealthyOnExhausted) {
                                             // store as last error on route as it was exhausted
-                                            Throwable t = getRestartException(route.getId());
                                             if (t != null) {
                                                 DefaultRouteError.set(getCamelContext(), r.getId(), RouteError.Phase.START, t,
                                                         true);

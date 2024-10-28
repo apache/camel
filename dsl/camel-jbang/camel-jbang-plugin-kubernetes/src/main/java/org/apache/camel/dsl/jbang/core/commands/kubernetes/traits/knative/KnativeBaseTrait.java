@@ -18,7 +18,6 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative;
 
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 
 abstract class KnativeBaseTrait extends BaseTrait {
 
@@ -26,8 +25,4 @@ abstract class KnativeBaseTrait extends BaseTrait {
         super(id, order);
     }
 
-    @Override
-    public boolean accept(TraitProfile profile) {
-        return TraitProfile.KNATIVE == profile;
-    }
 }

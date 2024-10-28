@@ -19,6 +19,14 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirSearchApiMethod implements ApiMethod {
 
+    SEARCH_BY_RESOURCE(
+        org.hl7.fhir.instance.model.api.IBaseBundle.class,
+        "searchByResource",
+        arg("resourceName", String.class),
+        arg("searchParameters", java.util.Map.class),
+        arg("searchStyle", ca.uhn.fhir.rest.api.SearchStyleEnum.class),
+        arg("extraParameters", java.util.Map.class)),
+
     SEARCH_BY_URL(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "searchByUrl",

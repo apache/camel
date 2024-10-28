@@ -212,16 +212,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
         return 0;
     }
 
-    private static long getLongValueFromCollection(JsonArray arr, String key) {
-        for (Object o : arr) {
-            JsonObject jo = (JsonObject) o;
-            if (key.equalsIgnoreCase(jo.getString("key"))) {
-                return jo.getLong("value");
-            }
-        }
-        return 0;
-    }
-
     protected void dumpMessages(List<Row> rows, boolean onlyBody) {
         MessageTableHelper tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);

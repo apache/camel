@@ -32,17 +32,6 @@
     <name>Camel :: Maven Plugins :: Camel Maven Component</name>
     <description>Maven plugin to help package 3rd party component developers to generate all needed metadata files needed for Camel</description>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>tooling-parent</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>

@@ -51,7 +51,7 @@ public class FileMarkerFileRecursiveDeleteOldLockFilesTest extends ContextTestSu
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name")).routeId("foo")
-                        .noAutoStartup().convertBodyTo(String.class)
+                        .autoStartup(false).convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

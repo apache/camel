@@ -24,8 +24,8 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "objectMapper": dataformat.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "usedefaultobjectmapper":
         case "useDefaultObjectMapper": dataformat.setUseDefaultObjectMapper(property(camelContext, boolean.class, value)); return true;
-        case "usewriter":
-        case "useWriter": dataformat.setUseWriter(property(camelContext, boolean.class, value)); return true;
+        case "combineunicodesurrogates":
+        case "combineUnicodeSurrogates": dataformat.setCombineUnicodeSurrogates(property(camelContext, boolean.class, value)); return true;
         case "collectiontype":
         case "collectionType": dataformat.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
         case "moduleclassnames":

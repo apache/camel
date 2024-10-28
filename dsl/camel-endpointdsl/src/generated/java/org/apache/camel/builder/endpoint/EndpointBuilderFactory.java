@@ -116,6 +116,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.FilesEndpointBuilderFactory.FilesBuilders,
             org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.FlatpackBuilders,
             org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkBuilders,
+            org.apache.camel.builder.endpoint.dsl.FlowableEndpointBuilderFactory.FlowableBuilders,
             org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.FopBuilders,
             org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.FreemarkerBuilders,
             org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.FtpBuilders,

@@ -86,7 +86,7 @@ public final class FhirApiCollection extends ApiCollection<FhirApiName, FhirConf
         apiMethods.put(FhirReadApiMethod.class, FhirApiName.READ);
 
         aliases.clear();
-        nullableArgs = Arrays.asList("extraParameters");
+        nullableArgs = Arrays.asList("searchParameters", "searchStyle", "extraParameters");
         apiHelpers.put(FhirApiName.SEARCH, new ApiMethodHelper<>(FhirSearchApiMethod.class, aliases, nullableArgs));
         apiMethods.put(FhirSearchApiMethod.class, FhirApiName.SEARCH);
 

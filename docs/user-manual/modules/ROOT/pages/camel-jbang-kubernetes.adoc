@@ -514,7 +514,64 @@ Apache Camel also provides a Knative component that makes you easily interact wi
 
 The Knative component enables you to exchange data with the Knative eventing broker and other Knative services deployed on Kubernetes.
 The Camel JBang Kubernetes plugin provides some autoconfiguration options when connecting with the Knative component.
-The export command assists you in configuring both the Knative component and the Kubernetes manifest for connecting to Knative resources on the Kubenretes cluster.
+The export command assists you in configuring both the Knative component and the Kubernetes manifest for connecting to Knative resources on the Kubernetes cluster.
+
+You can configure the Knative component with the Knative trait.
+
+The trait offers following options for customization:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| knative.enabled
+| bool
+| Can be used to enable or disable a trait. (default: true)
+
+| knative.configuration
+| string
+| Can be used to inject a Knative complete configuration in JSON format
+
+| knative.channel-sinks
+| []string
+| List of channels used as destination of camel routes. Can contain simple channel names or full Camel URIs.
+
+Refer to the Knative documentation for more information.
+
+| knative.channel-sources
+| []string
+| List of channels used as source of camel routes. Can contain simple channel names or full Camel URIs.
+
+| knative.endpoint-sinks
+| []string
+| List of endpoints used as destination of camel routes. Can contain simple endpoint names or full Camel URIs.
+
+| knative.endpoint-sources
+| []string
+| List of endpoints used as sources of camel routes. Can contain simple endpoint names or full Camel URIs.
+
+| knative.event-sinks
+| []string
+| List of endpoints used as destination of integration routes. Can contain simple endpoint names or full Camel URIs.
+
+| knative.event-sources
+| []string
+| List of event types that the integration will be subscribed to. Can contain simple event types or full Camel URIs (to use a specific broker different from "default").
+
+| knative.sink-binding
+| bool
+| Allows binding the integration to a sink via a Knative SinkBinding resource. This can be used when the integration targets a single sink. It’s enabled by default when the integration targets a single sink (except when the integration is owned by a Knative source).
+
+| knative.filters
+| []string
+| Sets filter attributes on the event stream (such as event type, source, subject and so on). A list of key-value pairs that represent filter attributes and its values. The syntax is KEY=VALUE, e.g., source="my.source". Filter attributes get set on the Knative trigger that is being created as part of this integration.
+
+| knative.filter-event-type
+| bool
+| Enables the default filtering for the Knative trigger using the event type If this is true, the created Knative trigger uses the event type as a filter on the event stream when no other filter criteria is given. (default: true)
+
+|===
+
 
 === Knative trigger
 
@@ -928,8 +985,6 @@ The trait volume mounts follow some best practices in specifying the mount paths
 
 The ingress trait enhance the Kubernetes manifest with an Ingress resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
 
-The Camel JBang plugin automatically creates an Ingress Resource if the Service Resource is generated for the Camel route's service trait application.
-
 The ingress trait provides the following configuration options:
 
 [cols="2m,1m,5a"]
@@ -938,7 +993,7 @@ The ingress trait provides the following configuration options:
 
 | ingress.enabled
 | bool
-| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+| Can be used to enable or disable a trait. All traits share this common property (default `false`).
 
 | ingress.annotations
 | map[string]string
@@ -973,7 +1028,7 @@ You may specify these options with the export command to customize the Ingress R
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait ingress.host=example.com --trait ingress.path=/sample(/|$)(.*) --trait ingress.pathType=ImplementationSpecific --trait ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/\$2 --trait ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true
+camel kubernetes export Sample.java --trait ingress.enabled=true --trait ingress.host=example.com --trait ingress.path=/sample(/|$)(.*) --trait ingress.pathType=ImplementationSpecific --trait ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/\$2 --trait ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true
 ----
 
 
@@ -1013,11 +1068,9 @@ spec:
 
 === Route trait options
 
-The Route trait enhance the Kubenetes manifest with a Route resource to expose the application to the outside world. This requires the presence in the Kubenetes manifest of a Service Resource.
+The Route trait enhance the Kubernetes manifest with a Route resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
 
-NOTE: You need to enable the Openshift profile trait with `--trait-profile=openshift` option.
-
-The Camel JBang plugin automatically creates an Route Resource if the Service Resource is generated for the Camel route's service trait application.
+NOTE: You need to enable the OpenShift profile trait with `--trait-profile=openshift` option.
 
 The Route trait provides the following configuration options:
 
@@ -1027,7 +1080,7 @@ The Route trait provides the following configuration options:
 
 | route.enabled
 | bool
-| Can be used to enable or disable a trait. All traits share this common property (default `true`).
+| Can be used to enable or disable a trait. All traits share this common property (default `false`).
 
 | route.annotations
 | map[string]string
@@ -1075,7 +1128,7 @@ You may specify these options with the export command to customize the Route Res
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait-profile=openshift --trait ingress.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
+camel kubernetes export Sample.java --trait-profile=openshift -t route.enabled=true --trait route.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
 ----
 
 
@@ -1273,3 +1326,16 @@ camel kubernetes delete --name=route
 
 Use the `--name` option to select a previously exported project (either via `run` or `export` command).
 The delete operation will remove all resources defined in the Kubernetes manifest.
+
+== Minikube deployment tips and troubleshooting
+
+To run a local Kubernetes cluster with Minikube for development purposes.
+Here are some tips from users that have been using this.
+
+The following steps has been known to be working (Camel 4.9):
+
+1. `minikube start --addons registry --driver=docker`
+2. `eval $(minikube -p minikube docker-env)`
+3. `camel kubernetes run 'demo.camel.yaml' --cluster-type=minikube --build-property=quarkus.kubernetes.image-pull-policy=Never`
+
+Most important `--build-property=quarkus.kubernetes.image-pull-policy=Never` without that it is not working, which is not clear from the current Minikube docs.

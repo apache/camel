@@ -59,7 +59,7 @@ public class RouteNoAutoStartupTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").to("seda:foo");
 
-                from("seda:foo").noAutoStartup().id("myRoute").to("mock:result");
+                from("seda:foo").autoStartup(false).id("myRoute").to("mock:result");
             }
         };
     }

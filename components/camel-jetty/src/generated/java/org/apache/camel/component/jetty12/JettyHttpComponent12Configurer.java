@@ -72,6 +72,8 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "responseheadersize":
         case "responseHeaderSize": target.setResponseHeaderSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "securerequestcustomizer":
+        case "secureRequestCustomizer": target.setSecureRequestCustomizer(property(camelContext, org.eclipse.jetty.server.SecureRequestCustomizer.class, value)); return true;
         case "sendserverversion":
         case "sendServerVersion": target.setSendServerVersion(property(camelContext, boolean.class, value)); return true;
         case "socketconnectorproperties":
@@ -152,6 +154,8 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "responseBufferSize": return java.lang.Integer.class;
         case "responseheadersize":
         case "responseHeaderSize": return java.lang.Integer.class;
+        case "securerequestcustomizer":
+        case "secureRequestCustomizer": return org.eclipse.jetty.server.SecureRequestCustomizer.class;
         case "sendserverversion":
         case "sendServerVersion": return boolean.class;
         case "socketconnectorproperties":
@@ -233,6 +237,8 @@ public class JettyHttpComponent12Configurer extends PropertyConfigurerSupport im
         case "responseBufferSize": return target.getResponseBufferSize();
         case "responseheadersize":
         case "responseHeaderSize": return target.getResponseHeaderSize();
+        case "securerequestcustomizer":
+        case "secureRequestCustomizer": return target.getSecureRequestCustomizer();
         case "sendserverversion":
         case "sendServerVersion": return target.isSendServerVersion();
         case "socketconnectorproperties":
