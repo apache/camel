@@ -13162,7 +13162,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Smooks (camel-smooks)
-     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * Use Smooks to transform, route, and bind both XML and non-XML data,
+     * including EDI, CSV, JSON, and YAML.
      * 
      * Category: transformation
      * Since: 4.7
@@ -13183,7 +13184,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Smooks (camel-smooks)
-     * EDI, XML, CSV, etc. based data transformation using Smooks.
+     * Use Smooks to transform, route, and bind both XML and non-XML data,
+     * including EDI, CSV, JSON, and YAML.
      * 
      * Category: transformation
      * Since: 4.7

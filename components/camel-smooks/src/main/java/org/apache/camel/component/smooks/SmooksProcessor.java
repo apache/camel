@@ -31,7 +31,6 @@ import java.util.Set;
 
 import javax.xml.transform.sax.SAXSource;
 
-import org.apache.camel.RuntimeCamelException;
 import org.w3c.dom.Node;
 
 import org.xml.sax.SAXException;
@@ -41,6 +40,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.builder.OutputStreamBuilder;

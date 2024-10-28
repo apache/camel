@@ -45,6 +45,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "reportpath":
+        case "reportPath": target.setReportPath(property(camelContext, java.lang.String.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -89,6 +91,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "repeatcount":
         case "repeatCount": return long.class;
+        case "reportpath":
+        case "reportPath": return java.lang.String.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "scheduledexecutorservice":
@@ -134,6 +138,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
+        case "reportpath":
+        case "reportPath": return target.getReportPath();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":

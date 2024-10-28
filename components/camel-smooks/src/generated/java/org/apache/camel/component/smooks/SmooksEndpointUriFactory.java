@@ -66,7 +66,6 @@ public class SmooksEndpointUriFactory extends org.apache.camel.support.component
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "smooksConfig", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "reportPath", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
