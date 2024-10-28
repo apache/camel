@@ -20,9 +20,15 @@ public final class ArtemisProperties {
     public static final String SERVICE_ADDRESS = "artemis.service.address";
 
     public static final String ARTEMIS_EXTERNAL = "artemis.external";
+    public static final String ARTEMIS_AUTHENTICATION_ENABLED = "artemis.authentication.enabled";
     public static final String ARTEMIS_USERNAME = "artemis.username";
     public static final String ARTEMIS_PASSWORD = "artemis.password";
     public static final String ARTEMIS_CONTAINER = "artemis.container";
+    public static final String ARTEMIS_SSL_ENABLED = "artemis.ssl.enabled";
+    public static final String ARTEMIS_SSL_KEYSTORE_PATH = "artemis.ssl.keystore.path";
+    public static final String ARTEMIS_SSL_KEYSTORE_PASSWORD = "artemis.ssl.keystore.password";
+    public static final String ARTEMIS_SSL_TRUSTSTORE_PATH = "artemis.ssl.truststore.path";
+    public static final String ARTEMIS_SSL_TRUSTSTORE_PASSWORD = "artemis.ssl.truststore.password";
 
     private ArtemisProperties() {
 

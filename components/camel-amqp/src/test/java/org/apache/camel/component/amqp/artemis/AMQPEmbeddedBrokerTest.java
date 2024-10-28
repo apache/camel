@@ -28,6 +28,7 @@ import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,12 @@ public class AMQPEmbeddedBrokerTest {
     private MockEndpoint resultEndpoint;
 
     private final String expectedBody = "Hello there!";
+
+    @AfterAll
+    static void afterAll() {
+        // restore default
+        System.setProperty(AMQP_SET_TOPIC_PREFIX, "true");
+    }
 
     @BeforeEach
     void prepareTest() {

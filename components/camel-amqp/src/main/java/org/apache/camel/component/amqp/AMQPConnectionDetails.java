@@ -23,6 +23,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
 import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
 
+@Deprecated
 public class AMQPConnectionDetails {
 
     public static final String AMQP_HOST = "AMQP_SERVICE_HOST";
