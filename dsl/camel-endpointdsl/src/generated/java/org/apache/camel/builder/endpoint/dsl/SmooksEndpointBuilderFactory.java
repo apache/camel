@@ -45,8 +45,8 @@ public interface SmooksEndpointBuilderFactory {
             return (AdvancedSmooksEndpointConsumerBuilder) this;
         }
         /**
-         * File path to place the generated HTML execution report. The report a
-         * useful tool in the developers arsenal for diagnosing issues or
+         * File path to place the generated HTML execution report. The report is
+         * a useful tool in the developers arsenal for diagnosing issues or
          * comprehending a transformation. Do not set in production since this
          * is a major performance drain.
          * 
@@ -725,8 +725,8 @@ public interface SmooksEndpointBuilderFactory {
         }
 
         /**
-         * File path to place the generated HTML execution report. The report a
-         * useful tool in the developers arsenal for diagnosing issues or
+         * File path to place the generated HTML execution report. The report is
+         * a useful tool in the developers arsenal for diagnosing issues or
          * comprehending a transformation. Do not set in production since this
          * is a major performance drain.
          * 
@@ -811,8 +811,8 @@ public interface SmooksEndpointBuilderFactory {
         }
 
         /**
-         * File path to place the generated HTML execution report. The report a
-         * useful tool in the developers arsenal for diagnosing issues or
+         * File path to place the generated HTML execution report. The report is
+         * a useful tool in the developers arsenal for diagnosing issues or
          * comprehending a transformation. Do not set in production since this
          * is a major performance drain.
          * 
