@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
 import org.apache.hc.core5.http.HttpStatus;
@@ -69,6 +70,29 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
                                    + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint,
                         exchange1 -> {
                         });
+
+        assertExchange(exchange);
+
+    }
+
+    @Test
+    public void toDauthorizationHeaderIsPresent() throws Exception {
+        String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .setVariable("cid", constant(clientId))
+                        .setVariable("cs", constant(clientSecret))
+                        .toD("http://localhost:" + localServer.getLocalPort()
+                             + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
+                             + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint);
+            }
+        });
+
+        Exchange exchange = template.send("direct:start", e -> {
+        });
 
         assertExchange(exchange);
 
