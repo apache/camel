@@ -205,8 +205,9 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
     @Override
     public String dumpDataFormatsAsXml(CamelContext context, Map<String, Object> dataFormats) throws Exception {
         StringWriter buffer = new StringWriter();
-        DataFormatModelWriter writer = new DataFormatModelWriter(buffer);
+        buffer.write("\n");
 
+        DataFormatModelWriter writer = new DataFormatModelWriter(buffer);
         Map<String, DataFormatDefinition> map = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : dataFormats.entrySet()) {
             if (entry.getValue() instanceof DataFormatDefinition def) {
@@ -220,7 +221,6 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         } finally {
             writer.stop();
         }
-        buffer.write("\n");
 
         return buffer.toString();
     }
