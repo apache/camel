@@ -223,6 +223,13 @@
           "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
         }
       },
+      "org.apache.camel.dsl.yaml.deserializers.DataFormatsDefinitionDeserializer" : {
+        "type" : "array",
+        "additionalProperties" : false,
+        "items" : {
+          "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DataFormatsDefinition"
+        }
+      },
       "org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer" : {
         "type" : "object",
         "additionalProperties" : false,
@@ -16656,6 +16663,9 @@
     "properties" : {
       "beans" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.BeansDeserializer"
+      },
+      "dataFormats" : {
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.DataFormatsDefinitionDeserializer"
       },
       "errorHandler" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer"
