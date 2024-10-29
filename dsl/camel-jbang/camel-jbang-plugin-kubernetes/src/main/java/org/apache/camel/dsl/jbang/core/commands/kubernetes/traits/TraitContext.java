@@ -92,8 +92,6 @@ public class TraitContext {
 
     /**
      * Adds a resource that should be created as part of the Camel app.
-     *
-     * @param resource
      */
     public void add(VisitableBuilder<?, ?> resource) {
         resourceRegistry.add(resource);
@@ -235,9 +233,8 @@ public class TraitContext {
     /**
      * Performs source metadata inspection and uses local cache to not inspect the same source over and over again.
      *
-     * @param  source    the source to inspect and create the metadata from.
-     * @return           the metadata holding information such as components, endpoints, languages used with the source.
-     * @throws Exception
+     * @param  source the source to inspect and create the metadata from.
+     * @return        the metadata holding information such as components, endpoints, languages used with the source.
      */
     public SourceMetadata inspectMetaData(Source source) throws Exception {
         if (sourceMetadata.containsKey(source.name())) {
@@ -252,8 +249,6 @@ public class TraitContext {
     /**
      * Inspect all sources in this context and retrieve the source metadata. Uses internal cache for sources that have
      * already been inspected.
-     *
-     * @return
      */
     public List<SourceMetadata> getSourceMetadata() {
         List<SourceMetadata> answer = new ArrayList<>();

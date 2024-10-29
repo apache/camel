@@ -30,7 +30,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "allowPrivilegeEscalation", "auto", "capabilitiesAdd", "capabilitiesDrop", "enabled", "expose",
-        "image", "imagePullPolicy", "limitCPU", "limitMemory", "name", "port", "portName", "requestCPU", "requestMemory",
+        "image", "imagePullPolicy", "imagePullSecrets", "limitCPU", "limitMemory", "name", "port", "portName", "requestCPU",
+        "requestMemory",
         "runAsNonRoot", "runAsUser", "seccompProfileType", "servicePort", "servicePortName" })
 public class Container {
     @JsonProperty("allowPrivilegeEscalation")
@@ -73,6 +74,16 @@ public class Container {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private ImagePullPolicy imagePullPolicy;
+    @JsonProperty("imagePullSecrets")
+    @JsonPropertyDescription("The pull secrets for private registries")
+    @JsonSetter(
+                nulls = Nulls.SKIP)
+    private List<String> imagePullSecrets;
+    @JsonProperty("imagePush")
+    @JsonPropertyDescription("Enable image push to the registry")
+    @JsonSetter(
+                nulls = Nulls.SKIP)
+    private boolean imagePush;
     @JsonProperty("limitCPU")
     @JsonPropertyDescription("The maximum amount of CPU to be provided (default 500 millicores).")
     @JsonSetter(
@@ -199,6 +210,22 @@ public class Container {
 
     public void setImagePullPolicy(ImagePullPolicy imagePullPolicy) {
         this.imagePullPolicy = imagePullPolicy;
+    }
+
+    public List<String> getImagePullSecrets() {
+        return imagePullSecrets;
+    }
+
+    public void setImagePullSecrets(List<String> imagePullSecret) {
+        this.imagePullSecrets = imagePullSecret;
+    }
+
+    public boolean getImagePush() {
+        return imagePush;
+    }
+
+    public void setImagePush(boolean imagePush) {
+        this.imagePush = imagePush;
     }
 
     public String getLimitCPU() {
