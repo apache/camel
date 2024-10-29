@@ -48,6 +48,10 @@ public class XmlModelParser extends ModelParser {
         if (isWithinCamelContext(namespace, name) || isAriesBlueprint(namespace)) {
             return true;
         }
+        // support loading embedded <dataFormats> in <camel> XML files
+        if ("dataFormats".equals(name) && isCamelRoot("dataFormats")) {
+            return true;
+        }
         return super.handleUnexpectedElement(namespace, name);
     }
 
@@ -80,4 +84,17 @@ public class XmlModelParser extends ModelParser {
         }
         return false;
     }
+
+    private boolean isCamelRoot(String name) {
+        String[] stack = parser.getNames();
+        for (int i = 0; i < stack.length - 1; i++) {
+            String cur = stack[i];
+            String next = stack[i + 1];
+            if ("camel".equals(cur) && name.equals(next)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

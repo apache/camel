@@ -29,6 +29,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.PluginHelper;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -361,4 +362,47 @@ public class XmlLoadAppTest {
             bar.assertIsSatisfied();
         }
     }
+
+    @Test
+    public void testLoadAppWithDataFormatSpring() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app14.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:result", MockEndpoint.class);
+
+            Base64 codec = new Base64(40, new byte[] { '\r', '\n' }, true);
+            byte[] encoded = codec.encode("Hi World".getBytes());
+            bar.expectedBodiesReceived(encoded);
+            context.createProducerTemplate().sendBody("direct:start", "Hi World");
+            bar.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadAppWithDataFormat() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app15.xml");
+
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
+
+            // test that loaded route works
+            MockEndpoint bar = context.getEndpoint("mock:result", MockEndpoint.class);
+
+            Base64 codec = new Base64(60, new byte[] { '\r', '\n' }, true);
+            byte[] encoded = codec.encode("Hi World".getBytes());
+            bar.expectedBodiesReceived(encoded);
+            context.createProducerTemplate().sendBody("direct:start", "Hi World");
+            bar.assertIsSatisfied();
+        }
+    }
+
 }

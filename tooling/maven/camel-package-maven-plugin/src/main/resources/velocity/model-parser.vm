@@ -447,7 +447,7 @@ ${indent}        }##
         return Optional.empty();
     }
     #elseif( $name == "RoutesDefinition" || $name == "RouteTemplatesDefinition" || $name == "TemplatedRoutesDefinition"
-            || $name == "RestsDefinition" || $name == "RouteConfigurationsDefinition" )
+            || $name == "RestsDefinition" || $name == "RouteConfigurationsDefinition" || $name == "DataFormatsDefinition" )
         #set( $element = $clazz.xmlRootElement.name() )
         #set( $capitalElement = $mojo.uppercase($element) )
         #if( $element.endsWith("s") )

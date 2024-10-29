@@ -39,7 +39,9 @@ public class BaseWriter {
 
     public BaseWriter(Writer writer, String namespace) throws IOException {
         this.writer = new XMLWriter(writer);
-        this.namespacesStack.push(namespace);
+        if (namespace != null) {
+            this.namespacesStack.push(namespace);
+        }
     }
 
     protected void startElement(String name) throws IOException {

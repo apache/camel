@@ -14766,6 +14766,21 @@ List of bean.
       </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+      <xs:element minOccurs="0" name="dataFormats">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormat" type="tns:dataFormat">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">
+<![CDATA[
+Camel data formats.
+]]>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:restConfiguration"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>

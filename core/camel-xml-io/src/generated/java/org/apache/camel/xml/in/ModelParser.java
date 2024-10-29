@@ -1340,7 +1340,13 @@ public class ModelParser extends BaseParser {
                 case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates); break;
                 case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); break;
                 case "templatedRoute": doAdd(doParseTemplatedRouteDefinition(), def.getTemplatedRoutes(), def::setTemplatedRoutes); break;
-                default: return false;
+                default:
+                    DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
+                    if (v != null) {
+                        doAdd(v, def.getDataFormats(), def::setDataFormats);
+                        return true;
+                    }
+                    return false;
             }
             return true;
         };
@@ -1797,6 +1803,27 @@ public class ModelParser extends BaseParser {
                 }
                 return false;
             }, noValueHandler());
+    }
+    public Optional<DataFormatsDefinition> parseDataFormatsDefinition() throws IOException, XmlPullParserException {
+        String tag = getNextTag("dataFormats", "dataFormat");
+        if (tag != null) {
+            switch (tag) {
+                case "dataFormats" : return Optional.of(doParseDataFormatsDefinition());
+                case "dataFormat" : return parseSingleDataFormatsDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<DataFormatsDefinition> parseSingleDataFormatsDefinition() throws IOException, XmlPullParserException {
+        Optional<DataFormatDefinition> single = Optional.of(doParseDataFormatDefinition());
+        if (single.isPresent()) {
+            List<DataFormatDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            DataFormatsDefinition def = new DataFormatsDefinition();
+            def.setDataFormats(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
     }
     protected FhirJsonDataFormat doParseFhirJsonDataFormat() throws IOException, XmlPullParserException {
         return doParse(new FhirJsonDataFormat(), fhirDataformatAttributeHandler(), noElementHandler(), noValueHandler());
