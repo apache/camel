@@ -25,8 +25,8 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
 import jakarta.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;

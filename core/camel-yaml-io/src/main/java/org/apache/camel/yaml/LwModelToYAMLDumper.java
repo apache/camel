@@ -32,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
@@ -44,7 +43,6 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
-import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.ModelToYAMLDumper;
@@ -196,7 +194,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
      * @param  context     the CamelContext
      * @param  dataFormats list of data formats (DataFormatDefinition)
      * @return             the output in YAML (is formatted)
-     * @throws Exception is throw if error marshalling to YAML
+     * @throws Exception   is throw if error marshalling to YAML
      */
     @Override
     public String dumpDataFormatsAsYaml(CamelContext context, Map<String, Object> dataFormats) throws Exception {

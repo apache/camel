@@ -72,7 +72,7 @@ public interface ModelToXMLDumper {
      * @param  context     the CamelContext
      * @param  dataFormats list of data formats (DataFormatDefinition)
      * @return             the output in XML (is formatted)
-     * @throws Exception is throw if error marshalling to XML
+     * @throws Exception   is throw if error marshalling to XML
      */
     String dumpDataFormatsAsXml(CamelContext context, Map<String, Object> dataFormats) throws Exception;
 

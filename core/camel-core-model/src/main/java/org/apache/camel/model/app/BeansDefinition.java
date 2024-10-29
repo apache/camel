@@ -23,17 +23,14 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.DataFormatsDefinition;
-import org.apache.camel.spi.annotations.DslProperty;
 import org.w3c.dom.Element;
 
 import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
@@ -41,6 +38,7 @@ import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslProperty;
 import org.apache.camel.spi.annotations.ExternalSchemaElement;
 
 /**

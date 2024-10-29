@@ -211,7 +211,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder sbLocal = new StringBuilder();
-                    doDumpYamlDataFormats(camelContext, dfs, resource == dummy ? null : resource, dumper, "dataFormats", sbLocal, sbLog);
+                    doDumpYamlDataFormats(camelContext, dfs, resource == dummy ? null : resource, dumper, "dataFormats",
+                            sbLocal, sbLog);
                     // dump each resource into its own file
                     doDumpToDirectory(resource, sbLocal, "dataFormats", "yaml", files);
                 }
@@ -449,7 +450,8 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                     Resource resource = entry.getKey();
 
                     StringBuilder sbLocal = new StringBuilder();
-                    doDumpXmlDataFormats(camelContext, dfs, resource == dummy ? null : resource, dumper, "dataFormats", sbLocal, sbLog);
+                    doDumpXmlDataFormats(camelContext, dfs, resource == dummy ? null : resource, dumper, "dataFormats", sbLocal,
+                            sbLog);
                     // dump each resource into its own file
                     doDumpToDirectory(resource, sbLocal, "dataFormats", "xml", files);
                 }

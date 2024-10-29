@@ -74,7 +74,7 @@ public interface ModelToYAMLDumper {
      * @param  context     the CamelContext
      * @param  dataFormats list of data formats (DataFormatDefinition)
      * @return             the output in YAML (is formatted)
-     * @throws Exception is throw if error marshalling to YAML
+     * @throws Exception   is throw if error marshalling to YAML
      */
     String dumpDataFormatsAsYaml(CamelContext context, Map<String, Object> dataFormats) throws Exception;
 
