@@ -10,6 +10,6 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-threadpoolfactory-vertx",
-    "version": "4.8.1-SNAPSHOT"
+    "version": "4.8.2-SNAPSHOT"
   }
 }

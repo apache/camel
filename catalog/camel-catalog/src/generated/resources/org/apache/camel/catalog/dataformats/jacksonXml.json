@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jacksonxml",
-    "version": "4.8.1-SNAPSHOT",
+    "version": "4.8.2-SNAPSHOT",
     "modelName": "jacksonXml",
     "modelJavaType": "org.apache.camel.model.dataformat.JacksonXMLDataFormat"
   },

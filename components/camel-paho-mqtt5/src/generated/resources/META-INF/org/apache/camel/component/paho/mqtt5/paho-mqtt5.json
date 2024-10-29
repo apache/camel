@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-paho-mqtt5",
-    "version": "4.8.1-SNAPSHOT",
+    "version": "4.8.2-SNAPSHOT",
     "scheme": "paho-mqtt5",
     "extendsScheme": "",
     "syntax": "paho-mqtt5:topic",

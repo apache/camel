@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.cloudevents.transformer.CloudEventJsonDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cloudevents",
-    "version": "4.8.1-SNAPSHOT"
+    "version": "4.8.2-SNAPSHOT"
   }
 }
 

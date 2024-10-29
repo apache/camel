@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smooks",
-    "version": "4.8.1-SNAPSHOT",
+    "version": "4.8.2-SNAPSHOT",
     "scheme": "smooks",
     "extendsScheme": "",
     "syntax": "smooks:smooksConfig",

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jms",
-    "version": "4.8.1-SNAPSHOT",
+    "version": "4.8.2-SNAPSHOT",
     "scheme": "jms",
     "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",
