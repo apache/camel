@@ -33,6 +33,7 @@
 ** xref:protobuf-dataformat.adoc[Protobuf]
 ** xref:protobufJackson-dataformat.adoc[Protobuf Jackson]
 ** xref:rss-dataformat.adoc[RSS]
+** xref:smooks-dataformat.adoc[Smooks]
 ** xref:soap-dataformat.adoc[SOAP]
 ** xref:swiftMt-dataformat.adoc[SWIFT MT]
 ** xref:swiftMx-dataformat.adoc[SWIFT MX]

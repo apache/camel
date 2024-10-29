@@ -43,6 +43,7 @@ import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
+import org.apache.camel.model.dataformat.SmooksDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SwiftMtDataFormat;
 import org.apache.camel.model.dataformat.SwiftMxDataFormat;
@@ -250,6 +251,13 @@ public final class DataFormatBuilderFactory {
      */
     public RssDataFormat.Builder rss() {
         return new RssDataFormat.Builder();
+    }
+
+    /**
+     * Uses the Smooks data format
+     */
+    public SmooksDataFormat.Builder smooks() {
+        return new SmooksDataFormat.Builder();
     }
 
     /**

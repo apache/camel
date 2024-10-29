@@ -1,0 +1,80 @@
+= Smooks DataFormat
+:doctitle: Smooks
+:shortname: smooks
+:artifactid: camel-smooks
+:description: Transform and bind XML as well as non-XML data using Smooks.
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Smooks Data Format uses https://www.smooks.org/[Smooks] to transform from one data format to another and back again. A configuration for a Smooks Data Format should not allocate system resources because the data format does not close those resources. Use this data format when you are primarily interested in transformation and binding; not other Smooks features like routing. The latter should be accomplished with the xref:components::smooks-component.adoc[Smooks component].
+
+Maven users will need to add the following dependency to their `pom.xml` for this data format:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-smooks</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Usage
+
+Below is an example of using the Smooks Data Format to unmarshal a CSV into a `java.util.List` of `org.smooks.example.Customer` instances:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:unmarshal")
+    .unmarshal().smooks("csv-smooks-unmarshal-config.xml")
+    .log("Unmarshalled customers: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:unmarshal
+    steps:
+      - unmarshal:
+          smooks:
+            smooksConfig: csv-smooks-unmarshal-config.xml
+      - log: "Unmarshalled customers: ${body}"
+----
+====
+
+The Smooks configuration in `csv-smooks-unmarshal-config.xml` is as follows:
+
+[source,xml]
+----
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+	xmlns:core="https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd"
+	xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+
+    <core:exports>
+        <core:result type="org.smooks.io.sink.JavaSink" extract="result"/>
+    </core:exports>
+
+	<csv:reader fields="firstName,lastName,gender,age,country">
+		<csv:listBinding beanId="result" class="org.smooks.example.Customer"/>
+	</csv:reader>
+
+</smooks-resource-list>
+----
+
+== Smooks Data Format Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+include::spring-boot:partial$starter.adoc[]

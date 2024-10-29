@@ -485,6 +485,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.SetVariablesDefinition": return new ModelDeserializers.SetVariablesDefinitionDeserializer();
             case "simple": return new ModelDeserializers.SimpleExpressionDeserializer();
             case "org.apache.camel.model.language.SimpleExpression": return new ModelDeserializers.SimpleExpressionDeserializer();
+            case "smooks": return new ModelDeserializers.SmooksDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.SmooksDataFormat": return new ModelDeserializers.SmooksDataFormatDeserializer();
             case "soap": return new ModelDeserializers.SoapDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SoapDataFormat": return new ModelDeserializers.SoapDataFormatDeserializer();
             case "sort": return new ModelDeserializers.SortDefinitionDeserializer();

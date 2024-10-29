@@ -163,6 +163,7 @@ import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
+import org.apache.camel.model.dataformat.SmooksDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SwiftMtDataFormat;
 import org.apache.camel.model.dataformat.SwiftMxDataFormat;
@@ -3603,6 +3604,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "scheme", type = "string"),
+                    @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "swiftMt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "swiftMx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat", oneOf = "dataFormatType"),
@@ -3770,6 +3772,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "smooks": {
+                    org.apache.camel.model.dataformat.SmooksDataFormat val = asType(node, org.apache.camel.model.dataformat.SmooksDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "soap": {
                     org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
                     target.setDataFormatType(val);
@@ -3911,6 +3918,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
+                    @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
                     @YamlProperty(name = "swiftMt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat"),
                     @YamlProperty(name = "swiftMx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat"),
@@ -4209,6 +4217,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "rss": {
                     org.apache.camel.model.dataformat.RssDataFormat val = asType(node, org.apache.camel.model.dataformat.RssDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "smooks": {
+                    org.apache.camel.model.dataformat.SmooksDataFormat val = asType(node, org.apache.camel.model.dataformat.SmooksDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9644,6 +9662,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "swiftMt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "swiftMx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat", oneOf = "dataFormatType"),
@@ -9809,6 +9828,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "rss": {
                     org.apache.camel.model.dataformat.RssDataFormat val = asType(node, org.apache.camel.model.dataformat.RssDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "smooks": {
+                    org.apache.camel.model.dataformat.SmooksDataFormat val = asType(node, org.apache.camel.model.dataformat.SmooksDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -17258,6 +17282,51 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "smooks",
+            types = org.apache.camel.model.dataformat.SmooksDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Smooks",
+            description = "Transform and bind XML as well as non-XML data using Smooks.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "smooksConfig", type = "string", required = true, description = "Path to the Smooks configuration file.", displayName = "Smooks Config")
+            }
+    )
+    public static class SmooksDataFormatDeserializer extends YamlDeserializerBase<SmooksDataFormat> {
+        public SmooksDataFormatDeserializer() {
+            super(SmooksDataFormat.class);
+        }
+
+        @Override
+        protected SmooksDataFormat newInstance() {
+            return new SmooksDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(SmooksDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "smooksConfig": {
+                    String val = asText(node);
+                    target.setSmooksConfig(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "soap",
             inline = true,
             types = org.apache.camel.model.dataformat.SoapDataFormat.class,
@@ -20189,6 +20258,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "swiftMt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "swiftMx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat", oneOf = "dataFormatType"),
@@ -20359,6 +20429,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "rss": {
                     org.apache.camel.model.dataformat.RssDataFormat val = asType(node, org.apache.camel.model.dataformat.RssDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "smooks": {
+                    org.apache.camel.model.dataformat.SmooksDataFormat val = asType(node, org.apache.camel.model.dataformat.SmooksDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

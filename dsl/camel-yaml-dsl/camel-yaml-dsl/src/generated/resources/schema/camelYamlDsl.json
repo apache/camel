@@ -2871,6 +2871,8 @@
               }, {
                 "required" : [ "rss" ]
               }, {
+                "required" : [ "smooks" ]
+              }, {
                 "required" : [ "soap" ]
               }, {
                 "required" : [ "swiftMt" ]
@@ -3110,6 +3112,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "smooks" ],
+            "properties" : {
+              "smooks" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SmooksDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "soap" ],
             "properties" : {
               "soap" : {
@@ -3275,6 +3285,7 @@
           "pgp" : { },
           "protobuf" : { },
           "rss" : { },
+          "smooks" : { },
           "soap" : { },
           "swiftMt" : { },
           "swiftMx" : { },
@@ -7629,6 +7640,7 @@
           "pgp" : { },
           "protobuf" : { },
           "rss" : { },
+          "smooks" : { },
           "soap" : { },
           "swiftMt" : { },
           "swiftMx" : { },
@@ -7709,6 +7721,8 @@
                 "required" : [ "protobuf" ]
               }, {
                 "required" : [ "rss" ]
+              }, {
+                "required" : [ "smooks" ]
               }, {
                 "required" : [ "soap" ]
               }, {
@@ -7945,6 +7959,14 @@
             "properties" : {
               "rss" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "smooks" ],
+            "properties" : {
+              "smooks" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SmooksDataFormat"
               }
             }
           }, {
@@ -10602,6 +10624,9 @@
           "rss" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.RssDataFormat"
           },
+          "smooks" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SmooksDataFormat"
+          },
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
@@ -11668,6 +11693,25 @@
             "description" : "The id of this node"
           }
         }
+      },
+      "org.apache.camel.model.dataformat.SmooksDataFormat" : {
+        "title" : "Smooks",
+        "description" : "Transform and bind XML as well as non-XML data using Smooks.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "smooksConfig" : {
+            "type" : "string",
+            "title" : "Smooks Config",
+            "description" : "Path to the Smooks configuration file."
+          }
+        },
+        "required" : [ "smooksConfig" ]
       },
       "org.apache.camel.model.dataformat.SoapDataFormat" : {
         "title" : "SOAP",
@@ -16103,6 +16147,8 @@
               }, {
                 "required" : [ "rss" ]
               }, {
+                "required" : [ "smooks" ]
+              }, {
                 "required" : [ "soap" ]
               }, {
                 "required" : [ "swiftMt" ]
@@ -16342,6 +16388,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "smooks" ],
+            "properties" : {
+              "smooks" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SmooksDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "soap" ],
             "properties" : {
               "soap" : {
@@ -16494,6 +16548,7 @@
           "pgp" : { },
           "protobuf" : { },
           "rss" : { },
+          "smooks" : { },
           "soap" : { },
           "swiftMt" : { },
           "swiftMx" : { },

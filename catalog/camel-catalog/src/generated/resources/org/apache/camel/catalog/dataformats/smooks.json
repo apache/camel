@@ -1,0 +1,22 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "smooks",
+    "title": "Smooks",
+    "description": "Transform and bind XML as well as non-XML data using Smooks.",
+    "deprecated": false,
+    "firstVersion": "4.9.0",
+    "label": "dataformat,transformation,smooks",
+    "javaType": "org.apache.camel.dataformat.smooks.SmooksDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-smooks",
+    "version": "4.9.0-SNAPSHOT",
+    "modelName": "smooks",
+    "modelJavaType": "org.apache.camel.model.dataformat.SmooksDataFormat"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "smooksConfig": { "index": 1, "kind": "attribute", "displayName": "Smooks Config", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Path to the Smooks configuration file." }
+  }
+}

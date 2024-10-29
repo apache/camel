@@ -52,6 +52,7 @@ import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
+import org.apache.camel.model.dataformat.SmooksDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SwiftMtDataFormat;
 import org.apache.camel.model.dataformat.SwiftMxDataFormat;
@@ -809,6 +810,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T rss() {
         return dataFormat(new RssDataFormat());
+    }
+
+    /**
+     * Uses the Smooks data format
+     */
+    public T smooks(String smooksConfig) {
+        SmooksDataFormat smooksDataFormat = new SmooksDataFormat();
+        smooksDataFormat.setSmooksConfig(smooksConfig);
+        return dataFormat(smooksDataFormat);
     }
 
     /**

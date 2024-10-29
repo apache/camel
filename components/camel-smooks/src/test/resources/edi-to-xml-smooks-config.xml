@@ -19,8 +19,7 @@
 -->
 <smooks-resource-list
         xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
-        xmlns:edi="https://www.smooks.org/xsd/smooks/edi-2.0.xsd"
-        xmlns:core="https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd">
+        xmlns:edi="https://www.smooks.org/xsd/smooks/edi-2.0.xsd">
 
     <!--
     Configure the EDI Reader to process the message stream into a stream of SAX events.

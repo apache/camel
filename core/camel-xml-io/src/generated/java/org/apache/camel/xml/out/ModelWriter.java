@@ -520,6 +520,9 @@ public class ModelWriter extends BaseWriter {
     public void writeRssDataFormat(RssDataFormat def) throws IOException {
         doWriteRssDataFormat("rss", def);
     }
+    public void writeSmooksDataFormat(SmooksDataFormat def) throws IOException {
+        doWriteSmooksDataFormat("smooks", def);
+    }
     public void writeSoapDataFormat(SoapDataFormat def) throws IOException {
         doWriteSoapDataFormat("soap", def);
     }
@@ -1170,6 +1173,7 @@ public class ModelWriter extends BaseWriter {
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
@@ -1919,6 +1923,7 @@ public class ModelWriter extends BaseWriter {
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
@@ -2479,6 +2484,7 @@ public class ModelWriter extends BaseWriter {
                 case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
@@ -2725,6 +2731,12 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRssDataFormat(String name, RssDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteSmooksDataFormat(String name, SmooksDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("smooksConfig", def.getSmooksConfig());
         endElement(name);
     }
     protected void doWriteSoapDataFormat(String name, SoapDataFormat def) throws IOException {
@@ -3578,6 +3590,7 @@ public class ModelWriter extends BaseWriter {
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);

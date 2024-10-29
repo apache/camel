@@ -1853,6 +1853,15 @@ Evaluates a Camel simple expression.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="smooks" type="tns:smooksDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Transform and bind XML as well as non-XML data using Smooks.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="soap" type="tns:soapDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -7410,6 +7419,7 @@ down. Default value: false
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
+            <xs:element ref="tns:smooks"/>
             <xs:element ref="tns:soap"/>
             <xs:element ref="tns:swiftMt"/>
             <xs:element ref="tns:swiftMx"/>
@@ -9714,6 +9724,22 @@ value: true
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="smooksDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="smooksConfig" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Path to the Smooks configuration file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -14581,6 +14607,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
+            <xs:element ref="tns:smooks"/>
             <xs:element ref="tns:soap"/>
             <xs:element ref="tns:swiftMt"/>
             <xs:element ref="tns:swiftMx"/>
@@ -16770,6 +16797,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
+        <xs:element ref="tns:smooks"/>
         <xs:element ref="tns:soap"/>
         <xs:element ref="tns:swiftMt"/>
         <xs:element ref="tns:swiftMx"/>
@@ -17557,6 +17585,7 @@ Sets the component name that this definition will apply to.
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
+            <xs:element ref="tns:smooks"/>
             <xs:element ref="tns:soap"/>
             <xs:element ref="tns:swiftMt"/>
             <xs:element ref="tns:swiftMx"/>
