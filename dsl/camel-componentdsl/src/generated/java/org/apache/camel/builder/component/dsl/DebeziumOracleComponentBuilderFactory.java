@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.debezium.DebeziumOracleComponent;
+import org.apache.camel.component.debezium.oracle.DebeziumOracleComponent;
 
 /**
  * Capture changes from an Oracle database.
@@ -103,14 +103,14 @@ public interface DebeziumOracleComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleComponentBuilder configuration(org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumOracleComponentBuilder configuration(org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -2431,9 +2431,9 @@ public interface DebeziumOracleComponentBuilderFactory {
         protected DebeziumOracleComponent buildConcreteComponent() {
             return new DebeziumOracleComponent();
         }
-        private org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumOracleComponent component) {
+        private org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumOracleComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration());
+                component.setConfiguration(new org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration());
             }
             return component.getConfiguration();
         }
@@ -2445,7 +2445,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             switch (name) {
             case "additionalProperties": getOrCreateConfiguration((DebeziumOracleComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumOracleComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((DebeziumOracleComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.OracleConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "configuration": ((DebeziumOracleComponent) component).setConfiguration((org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "internalKeyConverter": getOrCreateConfiguration((DebeziumOracleComponent) component).setInternalKeyConverter((java.lang.String) value); return true;
             case "internalValueConverter": getOrCreateConfiguration((DebeziumOracleComponent) component).setInternalValueConverter((java.lang.String) value); return true;
             case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumOracleComponent) component).setOffsetCommitPolicy((java.lang.String) value); return true;

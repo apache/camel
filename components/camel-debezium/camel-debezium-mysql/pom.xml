@@ -91,6 +91,7 @@
                 <configuration>
                     <connectorClassName>io.debezium.connector.mysql.MySqlConnector</connectorClassName>
                     <connectorConfigClassName>io.debezium.connector.mysql.MySqlConnectorConfig</connectorConfigClassName>
+                    <packageName>org.apache.camel.component.debezium.mysql.configuration</packageName>
                     <fields>
                         <database.history>io.debezium.relational.history.FileDatabaseHistory</database.history>
                         <tombstones.on.delete>false</tombstones.on.delete>
