@@ -81,7 +81,7 @@ https://docs.spring.io/spring-boot/reference/actuator/tracing.html[configured] t
 *Noteworthy*: by default, Spring Boot samples only 10% of requests to prevent overwhelming the trace backend.
 Set the property `management.tracing.sampling.probability` to `1.0` if you want to see all traces.
 
-==== SpanExporters
+=== SpanExporters
 
 You'll probably want to configure at least one https://opentelemetry.io/docs/languages/java/sdk/#spanexporter[SpanExporter]
 as they allow you to export your traces to various backends (e.g Zipkin and Jaeger) or log them. For example, to export your traces to Jaeger using OTLP via gRPC,
