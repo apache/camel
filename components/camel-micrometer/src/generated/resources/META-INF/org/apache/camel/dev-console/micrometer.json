@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.component.micrometer.MicrometerConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-micrometer",
-    "version": "4.8.1-SNAPSHOT"
+    "version": "4.8.2-SNAPSHOT"
   }
 }
 
