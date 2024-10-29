@@ -572,6 +572,15 @@ Act as a message source as input to a route
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="fury" type="tns:furyDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Serialize and deserialize messages using Apache Fury
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="get" type="tns:getDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -16786,6 +16795,22 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="furyDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="unmarshalType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Class of the java type to use when unmarshalling.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>

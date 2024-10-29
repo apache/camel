@@ -149,6 +149,7 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.FuryDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -6260,6 +6261,51 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "textQualifier": {
                     String val = asText(node);
                     target.setTextQualifier(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "fury",
+            types = org.apache.camel.model.dataformat.FuryDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Fury",
+            description = "Serialize and deserialize messages using Apache Fury",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "unmarshalType", type = "string", description = "Class of the java type to use when unmarshalling", displayName = "Unmarshal Type")
+            }
+    )
+    public static class FuryDataFormatDeserializer extends YamlDeserializerBase<FuryDataFormat> {
+        public FuryDataFormatDeserializer() {
+            super(FuryDataFormat.class);
+        }
+
+        @Override
+        protected FuryDataFormat newInstance() {
+            return new FuryDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(FuryDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "unmarshalType": {
+                    String val = asText(node);
+                    target.setUnmarshalTypeName(val);
                     break;
                 }
                 default: {

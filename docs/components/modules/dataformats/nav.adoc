@@ -15,6 +15,7 @@
 ** xref:fhirJson-dataformat.adoc[FHIR JSon]
 ** xref:fhirXml-dataformat.adoc[FHIR XML]
 ** xref:flatpack-dataformat.adoc[Flatpack]
+** xref:fury-dataformat.adoc[Fury]
 ** xref:grok-dataformat.adoc[Grok]
 ** xref:gzipDeflater-dataformat.adoc[GZip Deflater]
 ** xref:hl7-dataformat.adoc[HL7]

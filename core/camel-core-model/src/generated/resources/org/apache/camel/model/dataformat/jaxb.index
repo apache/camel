@@ -15,6 +15,7 @@ DataFormatsDefinition
 FhirJsonDataFormat
 FhirXmlDataFormat
 FlatpackDataFormat
+FuryDataFormat
 GrokDataFormat
 GzipDeflaterDataFormat
 HL7DataFormat

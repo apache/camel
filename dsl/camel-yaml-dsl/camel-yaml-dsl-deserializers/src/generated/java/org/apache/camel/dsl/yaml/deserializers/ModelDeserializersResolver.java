@@ -164,6 +164,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.FinallyDefinition": return new ModelDeserializers.FinallyDefinitionDeserializer();
             case "flatpack": return new ModelDeserializers.FlatpackDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.FlatpackDataFormat": return new ModelDeserializers.FlatpackDataFormatDeserializer();
+            case "fury": return new ModelDeserializers.FuryDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.FuryDataFormat": return new ModelDeserializers.FuryDataFormatDeserializer();
             case "get": return new ModelDeserializers.GetDefinitionDeserializer();
             case "org.apache.camel.model.rest.GetDefinition": return new ModelDeserializers.GetDefinitionDeserializer();
             case "global-option": return new ModelDeserializers.GlobalOptionDefinitionDeserializer();

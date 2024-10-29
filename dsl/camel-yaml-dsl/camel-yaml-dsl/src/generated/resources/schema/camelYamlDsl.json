@@ -10910,6 +10910,24 @@
           }
         }
       },
+      "org.apache.camel.model.dataformat.FuryDataFormat" : {
+        "title" : "Fury",
+        "description" : "Serialize and deserialize messages using Apache Fury",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "unmarshalType" : {
+            "type" : "string",
+            "title" : "Unmarshal Type",
+            "description" : "Class of the java type to use when unmarshalling"
+          }
+        }
+      },
       "org.apache.camel.model.dataformat.GrokDataFormat" : {
         "title" : "Grok",
         "description" : "Unmarshal unstructured data to objects using Logstash based Grok patterns.",

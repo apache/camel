@@ -1,0 +1,22 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "fury",
+    "title": "Fury",
+    "description": "Serialize and deserialize messages using Apache Fury",
+    "deprecated": false,
+    "firstVersion": "4.9.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.component.fury.FuryDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-fury",
+    "version": "4.9.0-SNAPSHOT",
+    "modelName": "fury",
+    "modelJavaType": "org.apache.camel.model.dataformat.FuryDataFormat"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class of the java type to use when unmarshalling" }
+  }
+}
