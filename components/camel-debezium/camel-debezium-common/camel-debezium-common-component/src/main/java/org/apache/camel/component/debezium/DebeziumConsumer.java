@@ -26,8 +26,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.kafka.connect.source.SourceRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DebeziumConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DebeziumConsumer.class);
 
     private final DebeziumEndpoint endpoint;
     private final EmbeddedDebeziumConfiguration configuration;
@@ -52,7 +56,14 @@ public class DebeziumConsumer extends DefaultConsumer {
         dbzEngine = createDbzEngine();
 
         // submit task to the thread pool
-        executorService.submit(dbzEngine);
+        executorService.submit(
+                () -> {
+                    try {
+                        dbzEngine.run();
+                    } catch (Throwable e) {
+                        LOG.error("Debezium engine has failed: {}", e.getMessage(), e);
+                    }
+                });
     }
 
     @Override

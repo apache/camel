@@ -78,6 +78,7 @@
                 <configuration>
                     <connectorClassName>io.debezium.connector.oracle.OracleConnector</connectorClassName>
                     <connectorConfigClassName>io.debezium.connector.oracle.OracleConnectorConfig</connectorConfigClassName>
+                    <packageName>org.apache.camel.component.debezium.oracle.configuration</packageName>
                     <fields>
                         <tombstones.on.delete>false</tombstones.on.delete>
                     </fields>

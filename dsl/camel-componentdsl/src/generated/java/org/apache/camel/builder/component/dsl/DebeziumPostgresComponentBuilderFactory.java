@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.debezium.DebeziumPostgresComponent;
+import org.apache.camel.component.debezium.postgres.DebeziumPostgresComponent;
 
 /**
  * Capture changes from a PostgresSQL database.
@@ -103,14 +103,14 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
-        default DebeziumPostgresComponentBuilder configuration(org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
+        default DebeziumPostgresComponentBuilder configuration(org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -2158,9 +2158,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
         protected DebeziumPostgresComponent buildConcreteComponent() {
             return new DebeziumPostgresComponent();
         }
-        private org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumPostgresComponent component) {
+        private org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumPostgresComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration());
+                component.setConfiguration(new org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration());
             }
             return component.getConfiguration();
         }
@@ -2172,7 +2172,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             switch (name) {
             case "additionalProperties": getOrCreateConfiguration((DebeziumPostgresComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumPostgresComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "configuration": ((DebeziumPostgresComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "configuration": ((DebeziumPostgresComponent) component).setConfiguration((org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "internalKeyConverter": getOrCreateConfiguration((DebeziumPostgresComponent) component).setInternalKeyConverter((java.lang.String) value); return true;
             case "internalValueConverter": getOrCreateConfiguration((DebeziumPostgresComponent) component).setInternalValueConverter((java.lang.String) value); return true;
             case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumPostgresComponent) component).setOffsetCommitPolicy((java.lang.String) value); return true;
