@@ -60,6 +60,13 @@ The chat-with-tools feature was deprecated. Use the new `camel-langchain4j-tool`
 Continuing the multi-release tests cleanups, on this one, restricted methods from the `CamelTestSupport` class
 have been marked as final and cannot be extended.
 
+=== camel-debezium
+
+To avoid split package that can be a problem in environments like OSGI, each camel-debezium module has its own
+sub package corresponding to the database type. So for example, all the classes of the module `camel-debezium-postgres`
+have been moved to a dedicated package which is `org.apache.camel.component.debezium.postgres` instead of having
+everything under the root package `org.apache.camel.component.debezium`.
+
 === Preferred JAX-B implementation: `org.glassfish.jaxb:jaxb-runtime`
 
 We stopped relying on `com.sun.xml.bind:jaxb-impl` in favor of `org.glassfish.jaxb:jaxb-runtime`.
