@@ -129,12 +129,13 @@
                 <version>${camel.main.jkube.version}</version>
                 <configuration>
                     <imagePullPolicy>${camel.main.kubernetes.image-pull-policy}</imagePullPolicy>
-                    <buildStrategy>docker</buildStrategy>
+                    <buildStrategy>${jkube.build.strategy}</buildStrategy>
                     <images>
                         <image>
                             <name>${camel.main.kubernetes.image-name}</name>
                             <build>
                                 <from>eclipse-temurin:{{ .JavaVersion }}</from>
+                                <!-- Supported only when using the jib build strategy -->
                                 <createImageOptions>
                                     <platform>linux/amd64</platform>
                                     <platform>linux/arm64</platform>
@@ -158,6 +159,7 @@
                         <goals>
                             <goal>build</goal>
                             <goal>resource</goal>
+                            <goal>push</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>

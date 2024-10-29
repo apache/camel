@@ -109,7 +109,7 @@ public class KubernetesExport extends Export {
                         description = "The image registry group used to push images to.")
     protected String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" },
+    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
                         description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
     protected String imageBuilder;
 
@@ -191,6 +191,9 @@ public class KubernetesExport extends Export {
             propPrefix = runtime.runtime();
         }
 
+        boolean useQuarkusPlugin = runtime == RuntimeType.quarkus;
+        boolean useJKubePlugin = !useQuarkusPlugin;
+
         // Resolve image group and registry
         String resolvedImageGroup = resolveImageGroup();
         if (resolvedImageGroup != null) {
@@ -198,7 +201,7 @@ public class KubernetesExport extends Export {
         }
 
         String resolvedImageRegistry = resolveImageRegistry();
-        if (resolvedImageRegistry != null) {
+        if (useQuarkusPlugin && resolvedImageRegistry != null) {
             var allowInsecure = resolvedImageRegistry.startsWith("localhost");
             buildProperties.add("%s.container-image.registry=%s".formatted(propPrefix, resolvedImageRegistry));
             buildProperties.add("%s.container-image.insecure=%b".formatted(propPrefix, allowInsecure));
@@ -293,6 +296,17 @@ public class KubernetesExport extends Export {
             buildProperties.add("%s.kubernetes.image-pull-policy=%s".formatted(propPrefix, imagePullPolicy));
         }
 
+        if (useJKubePlugin) {
+            if ("docker".equals(imageBuilder) || "jib".equals(imageBuilder)) {
+                buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
+            }
+            if (resolvedImageRegistry != null) {
+                buildProperties.add("jkube.docker.push.registry=%s".formatted(resolvedImageRegistry));
+            }
+            var skipPush = !container.getImagePush();
+            buildProperties.add("jkube.skip.push=%b".formatted(skipPush));
+        }
+
         // Runtime specific for Main
         if (runtime == RuntimeType.main) {
             addDependencies("org.apache.camel:camel-health",
@@ -300,7 +314,7 @@ public class KubernetesExport extends Export {
         }
 
         // Runtime specific for Quarkus
-        if (runtime == RuntimeType.quarkus) {
+        if (useQuarkusPlugin) {
 
             // Quarkus specific dependencies
             if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
@@ -329,8 +343,8 @@ public class KubernetesExport extends Export {
             buildProperties.add("quarkus.container-image.build=true");
         }
 
-        // SpringBoot Runtime specific
-        if (runtime == RuntimeType.springBoot || runtime == RuntimeType.main) {
+        // SpringBoot/Main Runtime specific
+        if (useJKubePlugin) {
             if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
                 buildProperties.add("%s.jkube.maven.plugin=%s".formatted(propPrefix, "openshift-maven-plugin"));
             } else {

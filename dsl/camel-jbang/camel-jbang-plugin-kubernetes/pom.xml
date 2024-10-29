@@ -47,6 +47,18 @@
           <artifactId>camel-jbang-core</artifactId>
         </dependency>
 
+        <!-- Needed for TLS access to private registries -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncycastle-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bouncycastle-version}</version>
+        </dependency>
+
         <!-- Kubernetes -->
         <dependency>
             <groupId>io.fabric8</groupId>
