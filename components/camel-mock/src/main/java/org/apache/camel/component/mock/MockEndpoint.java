@@ -118,6 +118,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile Map<String, Object> expectedPropertyValues;
     private volatile Map<String, Object> expectedVariableValues;
 
+    private volatile List<ExpressionWithDescription> expectedExpressions;
+
     private final AtomicInteger counter = new AtomicInteger();
 
     @UriPath(description = "Name of mock endpoint")
@@ -635,6 +637,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             expects(new MockAssertionTask());
         }
         expectedHeaderValues.put(name, value);
+    }
+
+    public void expectedExpressionMatches(
+            Expression expression, String description, Object expectedValue, Class<?> expectedClass) {
+        if (expectedExpressions == null) {
+            expectedExpressions = new ArrayList<>();
+        }
+        expectedExpressions.add(new ExpressionWithDescription(expression, description, expectedValue, expectedClass));
+        expects(new MockEvaluateExpressionTask());
     }
 
     /**
@@ -1772,6 +1783,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             assertExpectedHeaderValues(in);
         }
 
+        /*if (expectedExpressions != null) {
+            assertExpectedExpressionsMatch(exchange);
+        }*/
+
         Object actualBody = in.getBody();
 
         if (expectedBodyValues != null) {
@@ -2045,6 +2060,44 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             fail("There is no exchange at index " + index);
 
             return null;
+        }
+    }
+
+    private class ExpressionWithDescription {
+        private Expression expression;
+        private String description;
+        private Object expectedValue;
+        private Class<?> expectedValueClass;
+
+        public ExpressionWithDescription(Expression expression, String description,
+                                         Object expectedValue, Class<?> expectedValueClass) {
+            this.expression = expression;
+            this.description = description;
+            this.expectedValue = expectedValue;
+            this.expectedValueClass = expectedValueClass;
+        }
+    }
+
+    private class MockEvaluateExpressionTask implements AssertionTask {
+        @Override
+        public void assertOnIndex(int i) {
+            final Exchange exchange = getReceivedExchange(i);
+            for (ExpressionWithDescription expressionWithDescription : expectedExpressions) {
+                Object result
+                        = expressionWithDescription.expression.evaluate(exchange, expressionWithDescription.expectedValueClass);
+                assertEquals(
+                        String.format("Expression '%s' isn't evaluated as expected value %s, was %s instead",
+                                expressionWithDescription.description,
+                                expressionWithDescription.expectedValue.toString(), result.toString()),
+                        expressionWithDescription.expectedValue, result);
+            }
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                assertOnIndex(i);
+            }
         }
     }
 

@@ -30,6 +30,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.regex.RegexExpression;
+import org.apache.camel.language.header.HeaderLanguage;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
@@ -227,6 +230,28 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(3);
 
         sendMessages(11, 12, 13);
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testExpectationOfExpression() throws InterruptedException {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.reset();
+
+        String simpleTest1 = "simpleTest1";
+        resultEndpoint.expectedExpressionMatches(new SimpleExpression(simpleTest1), "simple expression 1",
+                simpleTest1, String.class);
+        resultEndpoint.expectedExpressionMatches(new RegexExpression(
+                "simpleTest\\d",
+                new SimpleExpression("simpleTest1")), "test regex case1", true, Boolean.class);
+        resultEndpoint.expectedExpressionMatches(new RegexExpression(
+                "simpleTest\\d{2}",
+                new SimpleExpression("simpleTest1")), "test regex case1", false, Boolean.class);
+        sendHeader("header111", "value222_3333");
+        resultEndpoint.expectedExpressionMatches(new RegexExpression(
+                "value\\d{3}_\\d{5}",
+                HeaderLanguage.header("header111")), "test regex case2", true, Boolean.class);
 
         resultEndpoint.assertIsSatisfied();
     }
