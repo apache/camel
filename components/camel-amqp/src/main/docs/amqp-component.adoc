@@ -75,6 +75,7 @@ from(...).
 
 *Creating AMQP 1.0 component*
 
+AMQPComponents may be created using the provided factory methods, for example:
 [source,java]
 ----
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
@@ -82,11 +83,48 @@ AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
 AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:5672", "user", "password");
 ----
 
-You can also add an instance
-of `org.apache.camel.component.amqp.AMQPConnectionDetails` to the
-registry to automatically configure the AMQP component. For example, for Spring Boot, you have to define bean:
+Alternatively, configure the AMQP Component using the available options for SSL, authentication,
+and AMQP Broker host/port.
 
-*AMQP connection details auto-configuration*
+*SSL configuration*
+
+The component can be configured to connect to an AMQP broker using SSL, for example:
+
+[source,java]
+----
+AMQPComponent component = new AMQPComponent();
+component.setUseSsl(true);
+component.setTrustStoreLocation(
+        getClass().getClassLoader().getResource("server-ca-truststore.p12").getFile());
+component.setTrustStorePassword("securepass");
+component.setTrustStoreType("PKCS12");
+component.setKeyStoreLocation(
+        getClass().getClassLoader().getResource("server-keystore.p12").getFile());
+component.setKeyStorePassword("securepass");
+component.setKeyStoreType("PKCS12");
+----
+
+*Authentication configuration*
+
+A username and password may be provided for AMQP broker authentication:
+
+[source,java]
+----
+AMQPComponent component = new AMQPComponent();
+component.setUsername("camel");
+component.setPassword("rider");
+----
+
+*AMQP Broker host and port configuration*
+
+[source,java]
+----
+AMQPComponent amqpComponent = new AMQPComponent();
+amqpComponent.setHost("remoteHost");
+amqpComponent.setPort(5555);
+----
+
+*Spring AMQP connection details auto-configuration*
 
 [source,java]
 ----
@@ -164,10 +202,9 @@ component to use `topic://` as topic prefix, as shown below:
  </bean>
 ----
 
-Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
-`AMQPConnectionDetails` pre-configure the component with the topic
-prefix, so you don't have to configure it explicitly.
 
+Keep in mind that the factory methods `AMQPComponent#amqpComponent(String)` and `AMQPComponent#amqpComponent(String, String, String)` configure
+the Topic prefix as `topic://` by default, so you don't have to configure it explicitly.
 
 
 include::spring-boot:partial$starter.adoc[]
