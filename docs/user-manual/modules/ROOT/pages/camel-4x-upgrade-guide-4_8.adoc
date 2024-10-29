@@ -4,6 +4,15 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.8.1 to 4.8.2
+
+=== camel-debezium
+
+To avoid split package that can be a problem in environments like OSGI, each camel-debezium module has its own
+sub package corresponding to the database type. So for example, all the classes of the module `camel-debezium-postgres`
+have been moved to a dedicated package which is `org.apache.camel.component.debezium.postgres` instead of having
+everything under the root package `org.apache.camel.component.debezium`.
+
 == Upgrading from 4.8.0 to 4.8.1
 
 The `camel-opentelemetry` component has had significant bug fixes to handle span activation/deactivations
