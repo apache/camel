@@ -61,7 +61,6 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     private final DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
-    private boolean dataFormatsIsRoot;
     private final ArrayDeque<EipModel> models = new ArrayDeque<>();
     private String expression;
     private boolean uriAsParameters;
@@ -100,12 +99,9 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     }
 
     public void startElement(String name) throws IOException {
-        if ("routes".equals(name)) {
+        if ("routes".equals(name) || "dataFormats".equals(name)) {
+            // special for routes or dataFormats
             routesIsRoot = true;
-            return;
-        }
-        if ("dataFormats".equals(name)) {
-            dataFormatsIsRoot = true;
             return;
         }
 

@@ -450,24 +450,4 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        StringWriter sw = new StringWriter();
-        DataFormatModelWriter w = new DataFormatModelWriter(sw);
-
-        BeanioDataFormat d = new BeanioDataFormat();
-        d.setId("df1");
-        d.setEncoding("abc");
-        d.setIgnoreUnexpectedRecords("true");
-        d.setMapping("myMapping");
-
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-        w.setCamelContext(context);
-        w.start();
-        w.writeDataFormats(Map.of("myDF", d));
-        w.stop();
-
-        System.out.println(sw.toString());
-    }
-
 }
