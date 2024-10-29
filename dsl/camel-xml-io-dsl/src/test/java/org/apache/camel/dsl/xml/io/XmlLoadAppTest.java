@@ -368,7 +368,6 @@ public class XmlLoadAppTest {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();
 
-            // camel-app13 has a route configuration and a route using the configuration
             Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/camel-app14.xml");
 
