@@ -36,6 +36,9 @@ import jakarta.xml.bind.Marshaller;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -242,6 +245,29 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         return buffer.toString();
     }
 
+    @Override
+    public String dumpDataFormatsAsXml(CamelContext context, Map<String, Object> dataFormats) throws Exception {
+        StringWriter buffer = new StringWriter();
+        DataFormatModelWriter writer = new DataFormatModelWriter(buffer);
+
+        Map<String, DataFormatDefinition> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : dataFormats.entrySet()) {
+            if (entry.getValue() instanceof DataFormatDefinition def) {
+                map.put(entry.getKey(), def);
+            }
+        }
+        writer.setCamelContext(context);
+        writer.start();
+        try {
+            writer.writeDataFormats(map);
+        } finally {
+            writer.stop();
+        }
+        buffer.write("\n");
+
+        return buffer.toString();
+    }
+
     private static void sanitizeXml(Node node, boolean generatedIds) {
         // we want to remove all customId="false" attributes as they are noisy
         if (node.hasAttributes()) {
@@ -355,6 +381,64 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                 buffer.write(String.format("        </properties>%n"));
             }
             buffer.write(String.format("    </bean>%n"));
+        }
+    }
+
+    private static class DataFormatModelWriter implements CamelContextAware {
+
+        private final StringWriter buffer;
+        private CamelContext camelContext;
+
+        public DataFormatModelWriter(StringWriter buffer) {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public void start() {
+            // noop
+        }
+
+        public void stop() {
+            // noop
+        }
+
+        public void writeDataFormats(Map<String, DataFormatDefinition> dataFormats) throws Exception {
+            if (dataFormats.isEmpty()) {
+                return;
+            }
+
+            DataFormatsDefinition def = new DataFormatsDefinition();
+            def.setDataFormats(new ArrayList<>(dataFormats.values()));
+
+            final JAXBContext jaxbContext = getJAXBContext(camelContext);
+
+            StringWriter tmp = new StringWriter();
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.marshal(def, tmp);
+
+            // remove unwanted namespace
+            String xml = tmp.toString();
+            xml = xml.replace("<dataFormats xmlns=\"http://camel.apache.org/schema/spring\">", "<dataFormats>");
+            xml = StringHelper.after(xml, "<dataFormats>");
+
+            // output with 4 space indent
+            buffer.write("    <dataFormats>");
+            for (String line : xml.split("\n")) {
+                buffer.write("    ");
+                buffer.write(line);
+                buffer.write("\n");
+            }
         }
     }
 

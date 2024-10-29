@@ -384,6 +384,18 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         }
     }
 
+    protected void doDumpXmlDataFormats(
+            CamelContext camelContext, Map dataFormats, Resource resource,
+            ModelToXMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+        try {
+            String dump = dumper.dumpDataFormatsAsXml(camelContext, dataFormats);
+            sbLocal.append(dump);
+            appendLogDump(resource, dump, sbLog);
+        } catch (Exception e) {
+            LOG.warn("Error dumping {}} to XML due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
+    }
+
     protected void doDumpRoutesAsXml(CamelContext camelContext) {
         final ModelToXMLDumper dumper = PluginHelper.getModelToXMLDumper(camelContext);
         final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
@@ -414,6 +426,35 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 }
                 if (!sbLog.isEmpty() && log) {
                     LOG.info("Dumping {} beans as XML", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
+        if (include.contains("*") || include.contains("all") || include.contains("dataFormats")) {
+            int size = model.getDataFormats().size();
+            if (size > 0) {
+                Map<Resource, Map<String, DataFormatDefinition>> groups = new LinkedHashMap<>();
+                for (Map.Entry<String, DataFormatDefinition> entry : model.getDataFormats().entrySet()) {
+                    Resource res = entry.getValue().getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    Map<String, DataFormatDefinition> dfs = groups.computeIfAbsent(res, resource -> new LinkedHashMap<>());
+                    dfs.put(entry.getKey(), entry.getValue());
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, Map<String, DataFormatDefinition>> entry : groups.entrySet()) {
+                    Map<String, DataFormatDefinition> dfs = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpXmlDataFormats(camelContext, dfs, resource == dummy ? null : resource, dumper, "dataFormats", sbLocal, sbLog);
+                    // dump each resource into its own file
+                    doDumpToDirectory(resource, sbLocal, "dataFormats", "xml", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} data formats as XML", size);
                     LOG.info("{}", sbLog);
                 }
             }
