@@ -40,7 +40,7 @@ public interface DumpRoutesStrategy extends StaticService {
     /**
      * Controls what to include in output.
      *
-     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans. Multiple values can be separated
+     * Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans, dataFormats. Multiple values can be separated
      * by comma. Default is routes.
      */
     void setInclude(String include);

@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
@@ -192,6 +193,35 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
+        if (include.contains("*") || include.contains("all") || include.contains("dataFormats")) {
+            int size = model.getDataFormats().size();
+            if (size > 0) {
+                Map<Resource, Map<String, DataFormatDefinition>> groups = new LinkedHashMap<>();
+                for (Map.Entry<String, DataFormatDefinition> entry : model.getDataFormats().entrySet()) {
+                    Resource res = entry.getValue().getResource();
+                    if (res == null) {
+                        res = dummy;
+                    }
+                    Map<String, DataFormatDefinition> dfs = groups.computeIfAbsent(res, resource -> new LinkedHashMap<>());
+                    dfs.put(entry.getKey(), entry.getValue());
+                }
+                StringBuilder sbLog = new StringBuilder();
+                for (Map.Entry<Resource, Map<String, DataFormatDefinition>> entry : groups.entrySet()) {
+                    Map<String, DataFormatDefinition> dfs = entry.getValue();
+                    Resource resource = entry.getKey();
+
+                    StringBuilder sbLocal = new StringBuilder();
+                    doDumpYamlDataFormats(camelContext, dfs, resource == dummy ? null : resource, dumper, "dataFormats", sbLocal, sbLog);
+                    // dump each resource into its own file
+                    doDumpToDirectory(resource, sbLocal, "dataFormats", "yaml", files);
+                }
+                if (!sbLog.isEmpty() && log) {
+                    LOG.info("Dumping {} data formats as YAML", size);
+                    LOG.info("{}", sbLog);
+                }
+            }
+        }
+
         if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
@@ -335,6 +365,18 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             ModelToYAMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
             String dump = dumper.dumpBeansAsYaml(camelContext, beans);
+            sbLocal.append(dump);
+            appendLogDump(resource, dump, sbLog);
+        } catch (Exception e) {
+            LOG.warn("Error dumping {}} to YAML due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
+    }
+
+    protected void doDumpYamlDataFormats(
+            CamelContext camelContext, Map dataFormats, Resource resource,
+            ModelToYAMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+        try {
+            String dump = dumper.dumpDataFormatsAsYaml(camelContext, dataFormats);
             sbLocal.append(dump);
             appendLogDump(resource, dump, sbLog);
         } catch (Exception e) {

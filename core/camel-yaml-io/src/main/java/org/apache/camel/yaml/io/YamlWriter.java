@@ -61,6 +61,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     private final DefaultRuntimeCamelCatalog catalog;
     private final List<EipModel> roots = new ArrayList<>();
     private boolean routesIsRoot;
+    private boolean dataFormatsIsRoot;
     private final ArrayDeque<EipModel> models = new ArrayDeque<>();
     private String expression;
     private boolean uriAsParameters;
@@ -103,6 +104,10 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
             routesIsRoot = true;
             return;
         }
+        if ("dataFormats".equals(name)) {
+            dataFormatsIsRoot = true;
+            return;
+        }
 
         EipModel model = catalog.eipModel(name);
         if (model == null) {
@@ -130,7 +135,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     }
 
     public void endElement(String name) throws IOException {
-        if ("routes".equals(name)) {
+        if ("routes".equals(name) || "dataFormats".equals(name)) {
             // we are done
             writer.write(toYaml());
             return;
@@ -168,6 +173,14 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                 if ("from".equals(name) && parent.isInput()) {
                     // only set input once
                     parent.getMetadata().put("_input", last);
+                } else if ("dataFormats".equals(parent.getName())) {
+                    // special for dataFormats
+                    List<EipModel> list = (List<EipModel>) parent.getMetadata().get("_output");
+                    if (list == null) {
+                        list = new ArrayList<>();
+                        parent.getMetadata().put("_output", list);
+                    }
+                    list.add(last);
                 } else if ("choice".equals(parent.getName())) {
                     // special for choice/doCatch/doFinally
                     setMetadata(parent, name, last);
