@@ -1866,7 +1866,7 @@ Evaluates a Camel simple expression.
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Transform and bind XML as well as non-XML data using Smooks.
+Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.
 ]]>
       </xs:documentation>
     </xs:annotation>
