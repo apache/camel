@@ -23,34 +23,13 @@ public class SmooksEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("initialDelay");
+        Set<String> props = new HashSet<>(3);
         props.add("lazyStartProducer");
-        props.add("pollStrategy");
-        props.add("repeatCount");
         props.add("reportPath");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
         props.add("smooksConfig");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override

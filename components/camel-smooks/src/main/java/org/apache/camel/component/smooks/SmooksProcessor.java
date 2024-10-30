@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
@@ -110,10 +112,10 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         final ExecutionContext executionContext = smooks.createExecutionContext();
         try {
             executionContext.put(EXCHANGE_TYPED_KEY, exchange);
-            String charsetName = (String) exchange.getProperty(Exchange.CHARSET_NAME);
-            if (charsetName != null) {
+            Charset charset = ExchangeHelper.getCharset(exchange, false);
+            if (charset != null) {
                 // if provided use the came character encoding
-                executionContext.setContentEncoding(charsetName);
+                executionContext.setContentEncoding(charset.name());
             }
             exchange.getIn().setHeader(SMOOKS_EXECUTION_CONTEXT, executionContext);
             setupSmooksReporting(executionContext);

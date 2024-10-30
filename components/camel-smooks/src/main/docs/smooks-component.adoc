@@ -6,7 +6,7 @@
 :since: 4.7
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: smooks
 

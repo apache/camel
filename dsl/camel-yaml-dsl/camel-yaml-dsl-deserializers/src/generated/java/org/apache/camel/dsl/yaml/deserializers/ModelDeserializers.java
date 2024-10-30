@@ -17332,7 +17332,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.SmooksDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "Smooks",
-            description = "Transform and bind XML as well as non-XML data using Smooks.",
+            description = "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),

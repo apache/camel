@@ -2,7 +2,7 @@
 :doctitle: Smooks
 :shortname: smooks
 :artifactid: camel-smooks
-:description: Transform and bind XML as well as non-XML data using Smooks.
+:description: Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.
 :since: 4.9
 :supportlevel: Preview
 :tabs-sync-option:

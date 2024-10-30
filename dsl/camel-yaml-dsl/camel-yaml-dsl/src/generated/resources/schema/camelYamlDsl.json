@@ -11721,7 +11721,7 @@
       },
       "org.apache.camel.model.dataformat.SmooksDataFormat" : {
         "title" : "Smooks",
-        "description" : "Transform and bind XML as well as non-XML data using Smooks.",
+        "description" : "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
