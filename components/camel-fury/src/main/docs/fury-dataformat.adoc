@@ -14,6 +14,9 @@
 Fury is a Data Format that uses the
 https://fury.apache.org/[Fury Library]
 
+[NOTE]
+Apache Fury is not supporting architecture using Big Endian (s390x for instance).
+
 == Fury Options
 
 

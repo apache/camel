@@ -32,6 +32,7 @@
     <description>Camel Fury support</description>
 
     <properties>
+        <skipTests.s390x>true</skipTests.s390x>
     </properties>
 
     <dependencies>
