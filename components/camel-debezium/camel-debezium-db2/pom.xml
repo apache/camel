@@ -78,6 +78,7 @@
                 <configuration>
                     <connectorClassName>io.debezium.connector.db2.Db2Connector</connectorClassName>
                     <connectorConfigClassName>io.debezium.connector.db2.Db2ConnectorConfig</connectorConfigClassName>
+                    <packageName>org.apache.camel.component.debezium.db2.configuration</packageName>
                     <fields>
                         <tombstones.on.delete>false</tombstones.on.delete>
                     </fields>

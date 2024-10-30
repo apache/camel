@@ -68,6 +68,13 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
     @Parameter(property = "camel.debezium.required.fields")
     private List<String> requiredFields = Collections.emptyList();
 
+    /**
+     * Package where the generated classes will be placed. If not set,
+     * {@code org.apache.camel.component.debezium.configuration} will be used for backward compatibility reasons.
+     */
+    @Parameter(property = "camel.debezium.package.name")
+    private String packageName;
+
     @Override
     public void execute() throws MojoFailureException {
         final Set<String> requiredFields = getRequiredFields();
@@ -80,7 +87,7 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
 
         try {
             final ConnectorConfigGenerator connectorConfigGenerator
-                    = ConnectorConfigGenerator.create(getConnector(), configClazz, requiredFields, overrideFields);
+                    = ConnectorConfigGenerator.create(getConnector(), configClazz, packageName, requiredFields, overrideFields);
             final File parentPath = new File(generatedSrcDir, connectorConfigGenerator.getPackageName().replace(".", "/"));
             final File connectorConfigClassFile = new File(parentPath, connectorConfigGenerator.getClassName() + ".java");
             if (!connectorConfigClassFile.exists()) {
