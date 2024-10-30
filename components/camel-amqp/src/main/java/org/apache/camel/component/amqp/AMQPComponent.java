@@ -40,15 +40,14 @@ public class AMQPComponent extends JmsComponent {
     public static final String AMQP_DEFAULT_HOST = "localhost";
     public static final int AMQP_DEFAULT_PORT = 5672;
 
-    @Metadata(defaultValue = "localhost",
-              description = "The host name or IP address of the computer that hosts the AMQP Broker.")
-    private String host = AMQP_DEFAULT_HOST;
-    @Metadata(defaultValue = "5672", description = "The port number on which the AMPQ Broker listens.")
-    private int port = AMQP_DEFAULT_PORT;
-    @Metadata(defaultValue = "true", description = "Whether to configure topics with a `topic://` prefix.")
-    private boolean useTopicPrefix = true;
+    @Metadata(description = "The host name or IP address of the computer that hosts the AMQP Broker.")
+    private String host;
+    @Metadata(description = "The port number on which the AMPQ Broker listens.")
+    private Integer port;
+    @Metadata(description = "Whether to configure topics with a `topic://` prefix.")
+    private Boolean useTopicPrefix;
     @Metadata(description = "Whether to enable SSL when connecting to the AMQP Broker.")
-    private boolean useSsl;
+    private Boolean useSsl;
     @Metadata(description = "The SSL keystore location.")
     private String keyStoreLocation;
     @Metadata(defaultValue = "JKS", description = "The SSL keystore type.")
@@ -98,21 +97,22 @@ public class AMQPComponent extends JmsComponent {
 
     @Override
     protected void doInit() throws Exception {
-        if (useConfig()) {
+        if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
+                || useSsl != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(useSsl ? "amqps://" : "amqp://");
-            sb.append(host).append(":").append(port);
-            if (isUseSsl()) {
-                sb.append("?transport.trustStoreLocation=").append(trustStoreLocation);
+            sb.append(useSsl == Boolean.TRUE ? "amqps://" : "amqp://");
+            sb.append(host == null ? AMQP_DEFAULT_HOST : host).append(":").append(port == null ? AMQP_DEFAULT_PORT : port);
+            if (useSsl == Boolean.TRUE) {
+                sb.append("?transport.trustStoreLocation=").append(trustStoreLocation == null ? "" : trustStoreLocation);
                 sb.append("&transport.trustStoreType=").append(trustStoreType);
-                sb.append("&transport.trustStorePassword=").append(trustStorePassword);
-                sb.append("&transport.keyStoreLocation=").append(keyStoreLocation);
+                sb.append("&transport.trustStorePassword=").append(trustStorePassword == null ? "" : trustStorePassword);
+                sb.append("&transport.keyStoreLocation=").append(keyStoreLocation == null ? "" : keyStoreLocation);
                 sb.append("&transport.keyStoreType=").append(keyStoreType);
-                sb.append("&transport.keyStorePassword=").append(keyStorePassword);
+                sb.append("&transport.keyStorePassword=").append(keyStorePassword == null ? "" : keyStorePassword);
             }
             JmsConnectionFactory connectionFactory
                     = new JmsConnectionFactory(getUsername(), getPassword(), sb.toString());
-            if (useTopicPrefix) {
+            if (useTopicPrefix != Boolean.FALSE) {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
@@ -130,14 +130,6 @@ public class AMQPComponent extends JmsComponent {
             }
         }
         super.doInit();
-    }
-
-    private boolean useConfig() {
-        if (!host.equals(AMQP_DEFAULT_HOST) || port != AMQP_DEFAULT_PORT || getUsername() != null ||
-                getPassword() != null || !useTopicPrefix || useSsl) {
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -197,27 +189,27 @@ public class AMQPComponent extends JmsComponent {
         this.host = host;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
-    public boolean isUseTopicPrefix() {
+    public Boolean getUseTopicPrefix() {
         return useTopicPrefix;
     }
 
-    public void setUseTopicPrefix(boolean useTopicPrefix) {
+    public void setUseTopicPrefix(Boolean useTopicPrefix) {
         this.useTopicPrefix = useTopicPrefix;
     }
 
-    public boolean isUseSsl() {
+    public Boolean getUseSsl() {
         return useSsl;
     }
 
-    public void setUseSsl(boolean useSsl) {
+    public void setUseSsl(Boolean useSsl) {
         this.useSsl = useSsl;
     }
 
