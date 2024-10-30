@@ -205,7 +205,7 @@
         <gson-version>2.11.0</gson-version>
         <guava-version>33.3.1-jre</guava-version>
         <guice3-version>3.0</guice3-version>
-        <h2-version>2.2.224</h2-version>
+        <h2-version>2.3.232</h2-version>
         <hadoop3-version>3.4.1</hadoop3-version>
         <hamcrest-version>3.0</hamcrest-version>
         <hapi-version>2.5.1</hapi-version>
