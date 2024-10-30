@@ -143,6 +143,7 @@ class ExportTest {
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
 
+        System.out.println("shouldExportCustomKamelet: rt = " + rt + " dependencies = " + model.getDependencies());
         if (rt == RuntimeType.main) {
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
             Assertions
