@@ -32,7 +32,7 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         case "keyStorePassword": target.setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "keystoretype":
         case "keyStoreType": target.setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "port": target.setPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "truststorelocation":
         case "trustStoreLocation": target.setTrustStoreLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "truststorepassword":
@@ -40,9 +40,9 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         case "truststoretype":
         case "trustStoreType": target.setTrustStoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "usessl":
-        case "useSsl": target.setUseSsl(property(camelContext, boolean.class, value)); return true;
+        case "useSsl": target.setUseSsl(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usetopicprefix":
-        case "useTopicPrefix": target.setUseTopicPrefix(property(camelContext, boolean.class, value)); return true;
+        case "useTopicPrefix": target.setUseTopicPrefix(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }
@@ -59,7 +59,7 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         case "keyStorePassword": return java.lang.String.class;
         case "keystoretype":
         case "keyStoreType": return java.lang.String.class;
-        case "port": return int.class;
+        case "port": return java.lang.Integer.class;
         case "truststorelocation":
         case "trustStoreLocation": return java.lang.String.class;
         case "truststorepassword":
@@ -67,9 +67,9 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         case "truststoretype":
         case "trustStoreType": return java.lang.String.class;
         case "usessl":
-        case "useSsl": return boolean.class;
+        case "useSsl": return java.lang.Boolean.class;
         case "usetopicprefix":
-        case "useTopicPrefix": return boolean.class;
+        case "useTopicPrefix": return java.lang.Boolean.class;
         default: return super.getOptionType(name, ignoreCase);
         }
     }
@@ -95,9 +95,9 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         case "truststoretype":
         case "trustStoreType": return target.getTrustStoreType();
         case "usessl":
-        case "useSsl": return target.isUseSsl();
+        case "useSsl": return target.getUseSsl();
         case "usetopicprefix":
-        case "useTopicPrefix": return target.isUseTopicPrefix();
+        case "useTopicPrefix": return target.getUseTopicPrefix();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

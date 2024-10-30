@@ -83,12 +83,13 @@ AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
 AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:5672", "user", "password");
 ----
 
-Alternatively, configure the AMQP Component using the available options for SSL, authentication,
-and AMQP Broker host/port.
+Alternatively, the AMQP Component can be initialized by providing one or more of the available options for
+configuring SSL, authentication, and AMQP Broker host and port.
 
 *SSL configuration*
 
-The component can be configured to connect to an AMQP broker using SSL, for example:
+The component can be configured to connect to an AMQP broker using SSL by setting the
+`useSsl` option and providing keystore and truststore details, for example:
 
 [source,java]
 ----
@@ -123,6 +124,10 @@ AMQPComponent amqpComponent = new AMQPComponent();
 amqpComponent.setHost("remoteHost");
 amqpComponent.setPort(5555);
 ----
+
+If `host` or `port` options have not been provided and the component is initialized using one or more of the other available
+options the host on the AMQP JMSConnectionFactory URI is set to 'localhost' if not provided, and the port is set to '5672'
+if not provided.
 
 *Spring AMQP connection details auto-configuration*
 
