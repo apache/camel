@@ -21,6 +21,8 @@ Common applications of Smooks include:
 * enrichment: enrich fragments with data from a database or other data sources.
 * Java binding: populate POJOs from a source such as CSV, EDI, XML, and other POJOs.
 
+Use the xref:dataformats:smooks-dataformat.adoc[Smooks Data Format] instead of this component when you are primarily interested in transformation and binding; not other Smooks features like routing.
+
 Maven users will need to add the following dependency to their `pom.xml`.
 
 [source,xml]

@@ -2050,6 +2050,12 @@ public class ModelParser extends BaseParser {
     protected RssDataFormat doParseRssDataFormat() throws IOException, XmlPullParserException {
         return doParse(new RssDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
+    protected SmooksDataFormat doParseSmooksDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new SmooksDataFormat(), (def, key, val) -> switch (key) {
+                case "smooksConfig": def.setSmooksConfig(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapDataFormat(), (def, key, val) -> switch (key) {
                 case "contextPath": def.setContextPath(val); yield true;
@@ -2889,6 +2895,7 @@ public class ModelParser extends BaseParser {
             case "parquetAvro": return doParseParquetAvroDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
+            case "smooks": return doParseSmooksDataFormat();
             case "soap": return doParseSoapDataFormat();
             case "swiftMt": return doParseSwiftMtDataFormat();
             case "swiftMx": return doParseSwiftMxDataFormat();

@@ -47,7 +47,6 @@
     </dependencyManagement>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -56,7 +55,6 @@
             <groupId>org.smooks</groupId>
             <artifactId>smooks-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.smooks.cartridges.edi</groupId>
             <artifactId>smooks-edi-cartridge</artifactId>

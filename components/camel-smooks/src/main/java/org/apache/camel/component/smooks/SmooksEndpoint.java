@@ -32,7 +32,7 @@ import org.apache.camel.support.service.ServiceHelper;
              category = { Category.TRANSFORMATION })
 public class SmooksEndpoint extends ProcessorEndpoint {
 
-    @UriPath(description = "Smooks XML configuration file")
+    @UriPath(description = "Path to the Smooks configuration file")
     @Metadata(required = true, supportFileReference = true)
     private String smooksConfig;
 

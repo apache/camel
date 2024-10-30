@@ -53,6 +53,7 @@ import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
+import org.apache.camel.model.dataformat.SmooksDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
 import org.apache.camel.model.dataformat.SwiftMtDataFormat;
 import org.apache.camel.model.dataformat.SwiftMxDataFormat;
@@ -232,6 +233,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new ProtobufDataFormatReifier(camelContext, definition);
         } else if (definition instanceof RssDataFormat) {
             return new RssDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof SmooksDataFormat) {
+            return new SmooksDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SoapDataFormat) {
             return new SoapDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SyslogDataFormat) {
