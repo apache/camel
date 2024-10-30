@@ -98,6 +98,22 @@ public interface SmooksComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom factory for creating Smooks.
+         * 
+         * The option is a: &lt;code&gt;org.smooks.SmooksFactory&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param smooksFactory the value to set
+         * @return the dsl builder
+         */
+        default SmooksComponentBuilder smooksFactory(org.smooks.SmooksFactory smooksFactory) {
+            doSetProperty("smooksFactory", smooksFactory);
+            return this;
+        }
     }
 
     class SmooksComponentBuilderImpl
@@ -115,6 +131,7 @@ public interface SmooksComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((SmooksComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SmooksComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "smooksFactory": ((SmooksComponent) component).setSmooksFactory((org.smooks.SmooksFactory) value); return true;
             default: return false;
             }
         }

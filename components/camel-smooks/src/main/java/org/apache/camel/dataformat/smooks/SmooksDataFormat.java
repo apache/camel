@@ -31,6 +31,7 @@ import org.apache.camel.component.smooks.SmooksComponent;
 import org.apache.camel.component.smooks.SmooksProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.support.service.ServiceSupport;
@@ -58,6 +59,7 @@ import org.smooks.io.source.StreamSource;
  */
 @Dataformat("smooks")
 public class SmooksDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+
     private Smooks smooks;
     private CamelContext camelContext;
     private String smooksConfig;
@@ -123,8 +125,7 @@ public class SmooksDataFormat extends ServiceSupport implements DataFormat, Came
 
     @Override
     public void doStart() {
-        final SmooksFactory smooksFactory
-                = (SmooksFactory) camelContext.getRegistry().lookupByName(SmooksFactory.class.getName());
+        final SmooksFactory smooksFactory = CamelContextHelper.findSingleByType(camelContext, SmooksFactory.class);
         try {
             if (smooksFactory != null) {
                 smooks = smooksFactory.createInstance(smooksConfig);

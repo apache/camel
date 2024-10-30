@@ -19,11 +19,16 @@ package org.apache.camel.component.smooks;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.smooks.SmooksFactory;
 
 @Component("smooks")
 public class SmooksComponent extends DefaultComponent {
+
+    @Metadata(label = "advanced", autowired = true)
+    private SmooksFactory smooksFactory;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SmooksProcessor smooksProcessor = new SmooksProcessor(remaining, getCamelContext());
@@ -39,7 +44,19 @@ public class SmooksComponent extends DefaultComponent {
             SmooksProcessor smooksProcessor, String uri, String remaining,
             Map<String, Object> parameters)
             throws Exception {
+        smooksProcessor.setSmooksFactory(smooksFactory);
         setProperties(smooksProcessor, parameters);
+
     }
 
+    public SmooksFactory getSmooksFactory() {
+        return smooksFactory;
+    }
+
+    /**
+     * To use a custom factory for creating Smooks.
+     */
+    public void setSmooksFactory(SmooksFactory smooksFactory) {
+        this.smooksFactory = smooksFactory;
+    }
 }

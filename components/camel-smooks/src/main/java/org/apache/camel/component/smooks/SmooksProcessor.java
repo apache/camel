@@ -78,6 +78,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private static final TypedKey<Exchange> EXCHANGE_TYPED_KEY = TypedKey.of();
     private static final Logger LOG = LoggerFactory.getLogger(SmooksProcessor.class);
 
+    private SmooksFactory smooksFactory;
     private Smooks smooks;
     private String configUri;
     private String reportPath;
@@ -234,9 +235,15 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         this.reportPath = reportPath;
     }
 
+    public SmooksFactory getSmooksFactory() {
+        return smooksFactory;
+    }
+
+    public void setSmooksFactory(SmooksFactory smooksFactory) {
+        this.smooksFactory = smooksFactory;
+    }
+
     private Smooks createSmooks() {
-        final SmooksFactory smooksFactory
-                = (SmooksFactory) camelContext.getRegistry().lookupByName(SmooksFactory.class.getName());
         return smooksFactory != null ? smooksFactory.createInstance() : new Smooks();
     }
 
