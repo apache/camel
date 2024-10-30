@@ -235,7 +235,7 @@ public class MockEndpointTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExpectationOfExpression() throws InterruptedException {
+    public void testExpectationOfExpressionCase1() throws InterruptedException {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.reset();
 
@@ -247,13 +247,27 @@ public class MockEndpointTest extends ContextTestSupport {
                 new SimpleExpression("simpleTest1")), "test regex case1", true, Boolean.class);
         resultEndpoint.expectedExpressionMatches(new RegexExpression(
                 "simpleTest\\d{2}",
-                new SimpleExpression("simpleTest1")), "test regex case1", false, Boolean.class);
-        sendHeader("header111", "value222_3333");
+                new SimpleExpression("simpleTest1")), "test regex case2", false, Boolean.class);
+        resultEndpoint.reset();
+
+        // No regex, simple comparison with expression
+        resultEndpoint.expectedExpressionMatches(HeaderLanguage.header("header111"), "simple retrieving of header case1","value222_3333", String.class );
+        // Actual header value doesn't match the regex
         resultEndpoint.expectedExpressionMatches(new RegexExpression(
                 "value\\d{3}_\\d{5}",
-                HeaderLanguage.header("header111")), "test regex case2", true, Boolean.class);
+                HeaderLanguage.header("header111")), "test regex case3", false, Boolean.class);
+        // Actual header value matches the regex
+        resultEndpoint.expectedExpressionMatches(new RegexExpression(
+                "value\\d{3}_\\d{4}",
+                HeaderLanguage.header("header111")), "test regex case4", true, Boolean.class);
+        // Actual header value matches the regex - very strict regex
+        resultEndpoint.expectedExpressionMatches(new RegexExpression(
+                "value222_3333",
+                HeaderLanguage.header("header111")), "test regex case5", true, Boolean.class);
+        sendHeader("header111", "value222_3333");
 
         resultEndpoint.assertIsSatisfied();
+        resultEndpoint.reset();
     }
 
     @Test

@@ -2076,6 +2076,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             this.expectedValue = expectedValue;
             this.expectedValueClass = expectedValueClass;
         }
+
+        @Override
+        public String toString() {
+            return "ExpressionWithDescription{" +
+                    "description='" + description + '\'' +
+                    ", expectedValue=" + expectedValue +
+                    ", expectedValueClass=" + expectedValueClass +
+                    '}';
+        }
     }
 
     private class MockEvaluateExpressionTask implements AssertionTask {
@@ -2086,7 +2095,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 Object result
                         = expressionWithDescription.expression.evaluate(exchange, expressionWithDescription.expectedValueClass);
                 assertEquals(
-                        String.format("Expression '%s' isn't evaluated as expected value %s, was %s instead",
+                        String.format("Expression '%s' isn't evaluated as expected value [%s], was [%s]",
                                 expressionWithDescription.description,
                                 expressionWithDescription.expectedValue.toString(), result.toString()),
                         expressionWithDescription.expectedValue, result);
