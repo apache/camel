@@ -110,7 +110,9 @@ public class FileOperations implements GenericFileOperations<File> {
             return true;
         }
 
-        if (!stepwise && (permissions == null || permissions.isEmpty())) {
+        boolean hasPermissions = permissions != null && !permissions.isEmpty();
+        
+        if (!stepwise && !hasPermissions) {
             return dir.mkdirs();
         }
 
@@ -130,7 +132,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 File subDir = new File(base, part);
                 if (!subDir.exists()) {
                     if (subDir.mkdir()) {
-                        if (permissions != null) {
+                        if (hasPermissions) {
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Setting chmod: {} on directory: {}", PosixFilePermissions.toString(permissions),
                                         subDir);
