@@ -6,6 +6,8 @@
 :since: 4.9
 :supportlevel: Preview
 :tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: smooks
 
 *Since Camel {since}*
 
