@@ -62,7 +62,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
-                    branch 'camel-3.12.x'
+                    branch 'camel-3.22.x'
                 }
             }
             steps {
