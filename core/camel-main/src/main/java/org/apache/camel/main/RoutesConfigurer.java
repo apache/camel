@@ -37,7 +37,6 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -440,16 +439,16 @@ public class RoutesConfigurer {
             CamelContext camelContext, Resource resource,
             boolean optional)
             throws Exception {
+
+        RoutesBuilderLoader answer = null;
+
         // the loader to use is derived from the file extension
         final String extension = FileUtil.onlyExt(resource.getLocation(), false);
 
-        if (ObjectHelper.isEmpty(extension)) {
-            throw new IllegalArgumentException(
-                    "Unable to determine file extension for resource: " + resource.getLocation());
+        if (extension != null) {
+            RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
+            answer = loader.getRoutesLoader(extension);
         }
-
-        RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
-        RoutesBuilderLoader answer = loader.getRoutesLoader(extension);
         if (!optional && answer == null) {
             throw new IllegalArgumentException(
                     "Cannot find RoutesBuilderLoader in classpath supporting file extension: " + extension);
