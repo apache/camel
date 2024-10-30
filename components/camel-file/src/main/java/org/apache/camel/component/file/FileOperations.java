@@ -111,7 +111,7 @@ public class FileOperations implements GenericFileOperations<File> {
         }
 
         boolean hasPermissions = permissions != null && !permissions.isEmpty();
-        
+
         if (!stepwise && !hasPermissions) {
             return dir.mkdirs();
         }
