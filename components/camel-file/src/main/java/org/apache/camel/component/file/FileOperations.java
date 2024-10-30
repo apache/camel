@@ -33,13 +33,10 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -52,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
-import static org.apache.camel.util.FileUtil.isWindows;
 
 /**
  * File operations for {@link java.io.File}.
@@ -127,14 +123,7 @@ public class FileOperations implements GenericFileOperations<File> {
             File base;
             // reusing absolute flag to handle relative and absolute paths
             if (absolute) {
-                if (isWindows() && dir.getPath().startsWith(File.separator + File.separator)) {
-                    List<String> uncParts = Arrays.stream(parts).filter(s -> !s.isEmpty()).collect(Collectors.toList());
-                    base = new File(File.separator + File.separator + uncParts.get(0));
-                    uncParts.remove(0);
-                    parts = uncParts.toArray(new String[0]);
-                } else {
-                    base = new File("");
-                }
+                base = new File("");
             } else {
                 base = new File(".");
             }
