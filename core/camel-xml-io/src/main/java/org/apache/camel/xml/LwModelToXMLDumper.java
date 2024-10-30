@@ -32,6 +32,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -41,6 +42,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NamespaceAware;
@@ -191,6 +193,29 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         writer.start();
         try {
             writer.writeBeans(list);
+        } finally {
+            writer.stop();
+        }
+
+        return buffer.toString();
+    }
+
+    @Override
+    public String dumpDataFormatsAsXml(CamelContext context, Map<String, Object> dataFormats) throws Exception {
+        StringWriter buffer = new StringWriter();
+        buffer.write("\n");
+
+        DataFormatModelWriter writer = new DataFormatModelWriter(buffer);
+        Map<String, DataFormatDefinition> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : dataFormats.entrySet()) {
+            if (entry.getValue() instanceof DataFormatDefinition def) {
+                map.put(entry.getKey(), def);
+            }
+        }
+        writer.setCamelContext(context);
+        writer.start();
+        try {
+            writer.writeDataFormats(map);
         } finally {
             writer.stop();
         }
@@ -372,6 +397,54 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                 buffer.write(String.format("        </properties>%n"));
             }
             buffer.write(String.format("    </bean>%n"));
+        }
+    }
+
+    private static class DataFormatModelWriter implements CamelContextAware {
+
+        private final StringWriter buffer;
+        private CamelContext camelContext;
+
+        public DataFormatModelWriter(StringWriter buffer) {
+            this.buffer = buffer;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public void start() {
+            // noop
+        }
+
+        public void stop() {
+            // noop
+        }
+
+        public void writeDataFormats(Map<String, DataFormatDefinition> dataFormats) throws Exception {
+            if (dataFormats.isEmpty()) {
+                return;
+            }
+
+            DataFormatsDefinition def = new DataFormatsDefinition();
+            def.setDataFormats(new ArrayList<>(dataFormats.values()));
+
+            StringWriter tmp = new StringWriter();
+            ModelWriter writer = new ModelWriter(tmp, null);
+            writer.writeDataFormatsDefinition(def);
+
+            // output with 4 space indent
+            for (String line : tmp.toString().split("\n")) {
+                buffer.write("    ");
+                buffer.write(line);
+                buffer.write("\n");
+            }
         }
     }
 

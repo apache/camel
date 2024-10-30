@@ -1340,7 +1340,13 @@ public class ModelParser extends BaseParser {
                 case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates); break;
                 case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); break;
                 case "templatedRoute": doAdd(doParseTemplatedRouteDefinition(), def.getTemplatedRoutes(), def::setTemplatedRoutes); break;
-                default: return false;
+                default:
+                    DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
+                    if (v != null) {
+                        doAdd(v, def.getDataFormats(), def::setDataFormats);
+                        return true;
+                    }
+                    return false;
             }
             return true;
         };
@@ -1798,6 +1804,27 @@ public class ModelParser extends BaseParser {
                 return false;
             }, noValueHandler());
     }
+    public Optional<DataFormatsDefinition> parseDataFormatsDefinition() throws IOException, XmlPullParserException {
+        String tag = getNextTag("dataFormats", "dataFormat");
+        if (tag != null) {
+            switch (tag) {
+                case "dataFormats" : return Optional.of(doParseDataFormatsDefinition());
+                case "dataFormat" : return parseSingleDataFormatsDefinition();
+            }
+        }
+        return Optional.empty();
+    }
+    private Optional<DataFormatsDefinition> parseSingleDataFormatsDefinition() throws IOException, XmlPullParserException {
+        Optional<DataFormatDefinition> single = Optional.of(doParseDataFormatDefinition());
+        if (single.isPresent()) {
+            List<DataFormatDefinition> list = new ArrayList<>();
+            list.add(single.get());
+            DataFormatsDefinition def = new DataFormatsDefinition();
+            def.setDataFormats(list);
+            return Optional.of(def);
+        }
+        return Optional.empty();
+    }
     protected FhirJsonDataFormat doParseFhirJsonDataFormat() throws IOException, XmlPullParserException {
         return doParse(new FhirJsonDataFormat(), fhirDataformatAttributeHandler(), noElementHandler(), noValueHandler());
     }
@@ -1837,6 +1864,12 @@ public class ModelParser extends BaseParser {
                 case "ignoreFirstRecord": def.setIgnoreFirstRecord(val); yield true;
                 case "parserFactoryRef": def.setParserFactoryRef(val); yield true;
                 case "textQualifier": def.setTextQualifier(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
+    protected FuryDataFormat doParseFuryDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new FuryDataFormat(), (def, key, val) -> switch (key) {
+                case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
@@ -2016,6 +2049,12 @@ public class ModelParser extends BaseParser {
     }
     protected RssDataFormat doParseRssDataFormat() throws IOException, XmlPullParserException {
         return doParse(new RssDataFormat(), identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected SmooksDataFormat doParseSmooksDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new SmooksDataFormat(), (def, key, val) -> switch (key) {
+                case "smooksConfig": def.setSmooksConfig(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
     }
     protected SoapDataFormat doParseSoapDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapDataFormat(), (def, key, val) -> switch (key) {
@@ -2841,6 +2880,7 @@ public class ModelParser extends BaseParser {
             case "fhirJson": return doParseFhirJsonDataFormat();
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();
+            case "fury": return doParseFuryDataFormat();
             case "grok": return doParseGrokDataFormat();
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();
@@ -2855,6 +2895,7 @@ public class ModelParser extends BaseParser {
             case "parquetAvro": return doParseParquetAvroDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
+            case "smooks": return doParseSmooksDataFormat();
             case "soap": return doParseSoapDataFormat();
             case "swiftMt": return doParseSwiftMtDataFormat();
             case "swiftMx": return doParseSwiftMxDataFormat();

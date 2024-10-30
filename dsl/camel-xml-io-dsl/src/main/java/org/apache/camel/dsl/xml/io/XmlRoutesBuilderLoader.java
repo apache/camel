@@ -44,6 +44,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -128,6 +129,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                                         .ifPresent(this::configureCamel);
                             }
                         }
+                        case "dataFormats", "dataFormat" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                                .parseDataFormatsDefinition()
+                                .ifPresent(this::addDataFormats);
                         case "routeTemplate", "routeTemplates" ->
                             new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                     .parseRouteTemplatesDefinition()
@@ -208,6 +212,12 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     }
                 }
 
+                if (app.getDataFormats() != null) {
+                    DataFormatsDefinition list = new DataFormatsDefinition();
+                    list.setDataFormats(app.getDataFormats());
+                    addDataFormats(list);
+                }
+
                 app.getRests().forEach(r -> {
                     r.setResource(getResource());
                     List<RestDefinition> list = new ArrayList<>();
@@ -277,6 +287,12 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
                     getRouteConfigurationCollection().routeConfiguration(config);
                 }
+            }
+
+            private void addDataFormats(DataFormatsDefinition dataFormats) {
+                Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
+                dataFormats.getDataFormats().forEach(d -> d.setResource(getResource()));
+                model.setDataFormats(dataFormats.asMap());
             }
         };
     }

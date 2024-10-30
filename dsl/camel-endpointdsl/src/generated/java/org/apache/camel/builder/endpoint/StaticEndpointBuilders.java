@@ -13212,7 +13212,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>smooks:smooksConfig</code>
      * 
      * Path parameter: smooksConfig (required)
-     * Smooks XML configuration file
+     * Path to the Smooks configuration file
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 
@@ -13234,7 +13234,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>smooks:smooksConfig</code>
      * 
      * Path parameter: smooksConfig (required)
-     * Smooks XML configuration file
+     * Path to the Smooks configuration file
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
      * 

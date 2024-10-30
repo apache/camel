@@ -127,6 +127,24 @@ public interface AmqpComponentBuilderFactory {
     
         
         /**
+         * The host name or IP address of the computer that hosts the AMQP
+         * Broker.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: localhost
+         * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder host(java.lang.String host) {
+            doSetProperty("host", host);
+            return this;
+        }
+    
+        
+        /**
          * Whether to include AMQP annotations when mapping from AMQP to Camel
          * Message. Setting this to true maps AMQP message annotations that
          * contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations
@@ -166,6 +184,55 @@ public interface AmqpComponentBuilderFactory {
         }
     
         /**
+         * The SSL keystore location.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param keyStoreLocation the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder keyStoreLocation(java.lang.String keyStoreLocation) {
+            doSetProperty("keyStoreLocation", keyStoreLocation);
+            return this;
+        }
+    
+        
+        /**
+         * The SSL keystore type.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: JKS
+         * Group: common
+         * 
+         * @param keyStoreType the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder keyStoreType(java.lang.String keyStoreType) {
+            doSetProperty("keyStoreType", keyStoreType);
+            return this;
+        }
+    
+        
+        /**
+         * The port number on which the AMPQ Broker listens.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5672
+         * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+    
+        /**
          * Provides an explicit ReplyTo destination (overrides any incoming
          * value of Message.getJMSReplyTo() in consumer).
          * 
@@ -199,6 +266,72 @@ public interface AmqpComponentBuilderFactory {
          */
         default AmqpComponentBuilder testConnectionOnStartup(boolean testConnectionOnStartup) {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+    
+        /**
+         * The SSL truststore location.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param trustStoreLocation the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder trustStoreLocation(java.lang.String trustStoreLocation) {
+            doSetProperty("trustStoreLocation", trustStoreLocation);
+            return this;
+        }
+    
+        
+        /**
+         * The SSL truststore type.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: JKS
+         * Group: common
+         * 
+         * @param trustStoreType the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder trustStoreType(java.lang.String trustStoreType) {
+            doSetProperty("trustStoreType", trustStoreType);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to enable SSL when connecting to the AMQP Broker.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useSsl the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder useSsl(boolean useSsl) {
+            doSetProperty("useSsl", useSsl);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to configure topics with a topic:// prefix.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param useTopicPrefix the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder useTopicPrefix(boolean useTopicPrefix) {
+            doSetProperty("useTopicPrefix", useTopicPrefix);
             return this;
         }
     
@@ -2062,6 +2195,21 @@ public interface AmqpComponentBuilderFactory {
         }
     
         /**
+         * The SSL keystore password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param keyStorePassword the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder keyStorePassword(java.lang.String keyStorePassword) {
+            doSetProperty("keyStorePassword", keyStorePassword);
+            return this;
+        }
+    
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -2074,6 +2222,21 @@ public interface AmqpComponentBuilderFactory {
          */
         default AmqpComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
+            return this;
+        }
+    
+        /**
+         * The SSL truststore password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param trustStorePassword the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder trustStorePassword(java.lang.String trustStorePassword) {
+            doSetProperty("trustStorePassword", trustStorePassword);
             return this;
         }
     
@@ -2234,10 +2397,18 @@ public interface AmqpComponentBuilderFactory {
             case "connectionFactory": getOrCreateConfiguration((AMQPComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((AMQPComponent) component).setDisableReplyTo((boolean) value); return true;
             case "durableSubscriptionName": getOrCreateConfiguration((AMQPComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "host": ((AMQPComponent) component).setHost((java.lang.String) value); return true;
             case "includeAmqpAnnotations": ((AMQPComponent) component).setIncludeAmqpAnnotations((boolean) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((AMQPComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
+            case "keyStoreLocation": ((AMQPComponent) component).setKeyStoreLocation((java.lang.String) value); return true;
+            case "keyStoreType": ((AMQPComponent) component).setKeyStoreType((java.lang.String) value); return true;
+            case "port": ((AMQPComponent) component).setPort((int) value); return true;
             case "replyTo": getOrCreateConfiguration((AMQPComponent) component).setReplyTo((java.lang.String) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((AMQPComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "trustStoreLocation": ((AMQPComponent) component).setTrustStoreLocation((java.lang.String) value); return true;
+            case "trustStoreType": ((AMQPComponent) component).setTrustStoreType((java.lang.String) value); return true;
+            case "useSsl": ((AMQPComponent) component).setUseSsl((boolean) value); return true;
+            case "useTopicPrefix": ((AMQPComponent) component).setUseTopicPrefix((boolean) value); return true;
             case "acknowledgementModeName": getOrCreateConfiguration((AMQPComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
             case "artemisConsumerPriority": getOrCreateConfiguration((AMQPComponent) component).setArtemisConsumerPriority((int) value); return true;
             case "asyncConsumer": getOrCreateConfiguration((AMQPComponent) component).setAsyncConsumer((boolean) value); return true;
@@ -2329,7 +2500,9 @@ public interface AmqpComponentBuilderFactory {
             case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "keyStorePassword": ((AMQPComponent) component).setKeyStorePassword((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((AMQPComponent) component).setPassword((java.lang.String) value); return true;
+            case "trustStorePassword": ((AMQPComponent) component).setTrustStorePassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((AMQPComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": getOrCreateConfiguration((AMQPComponent) component).setTransacted((boolean) value); return true;
             case "transactedInOut": getOrCreateConfiguration((AMQPComponent) component).setTransactedInOut((boolean) value); return true;

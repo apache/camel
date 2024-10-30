@@ -25,11 +25,14 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.CopyableDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 
 /**
  * Configure data formats.
@@ -37,7 +40,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation", title = "Data formats")
 @XmlRootElement(name = "dataFormats")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefinition> {
+public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefinition>, ResourceAware {
 
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
@@ -68,6 +71,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "pgp", type = PGPDataFormat.class),
             @XmlElement(name = "protobuf", type = ProtobufDataFormat.class),
             @XmlElement(name = "rss", type = RssDataFormat.class),
+            @XmlElement(name = "smooks", type = SmooksDataFormat.class),
             @XmlElement(name = "soap", type = SoapDataFormat.class),
             @XmlElement(name = "swiftMt", type = SwiftMtDataFormat.class),
             @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
@@ -83,6 +87,8 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
     private List<DataFormatDefinition> dataFormats;
+    @XmlTransient
+    private Resource resource;
 
     public DataFormatsDefinition() {
     }
@@ -116,5 +122,15 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             dataFormatsAsMap.put(dataFormatType.getId(), dataFormatType);
         }
         return dataFormatsAsMap;
+    }
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 }

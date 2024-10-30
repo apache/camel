@@ -99,7 +99,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     }
 
     public void startElement(String name) throws IOException {
-        if ("routes".equals(name)) {
+        if ("routes".equals(name) || "dataFormats".equals(name)) {
+            // special for routes or dataFormats
             routesIsRoot = true;
             return;
         }
@@ -130,7 +131,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
     }
 
     public void endElement(String name) throws IOException {
-        if ("routes".equals(name)) {
+        if ("routes".equals(name) || "dataFormats".equals(name)) {
             // we are done
             writer.write(toYaml());
             return;
@@ -168,6 +169,14 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                 if ("from".equals(name) && parent.isInput()) {
                     // only set input once
                     parent.getMetadata().put("_input", last);
+                } else if ("dataFormats".equals(parent.getName())) {
+                    // special for dataFormats
+                    List<EipModel> list = (List<EipModel>) parent.getMetadata().get("_output");
+                    if (list == null) {
+                        list = new ArrayList<>();
+                        parent.getMetadata().put("_output", list);
+                    }
+                    list.add(last);
                 } else if ("choice".equals(parent.getName())) {
                     // special for choice/doCatch/doFinally
                     setMetadata(parent, name, last);

@@ -572,6 +572,15 @@ Act as a message source as input to a route
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="fury" type="tns:furyDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Serialize and deserialize messages using Apache Fury
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="get" type="tns:getDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -1849,6 +1858,15 @@ Allows setting multiple variables at the same time.
       <xs:documentation xml:lang="en">
 <![CDATA[
 Evaluates a Camel simple expression.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="smooks" type="tns:smooksDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Transform and bind XML as well as non-XML data using Smooks.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -7410,6 +7428,7 @@ down. Default value: false
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
+            <xs:element ref="tns:smooks"/>
             <xs:element ref="tns:soap"/>
             <xs:element ref="tns:swiftMt"/>
             <xs:element ref="tns:swiftMx"/>
@@ -9714,6 +9733,22 @@ value: true
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="smooksDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="smooksConfig" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Path to the Smooks configuration file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -14581,6 +14616,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
+            <xs:element ref="tns:smooks"/>
             <xs:element ref="tns:soap"/>
             <xs:element ref="tns:swiftMt"/>
             <xs:element ref="tns:swiftMx"/>
@@ -14757,6 +14793,21 @@ List of bean.
       </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+      <xs:element minOccurs="0" name="dataFormats">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormat" type="tns:dataFormat">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">
+<![CDATA[
+Camel data formats.
+]]>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:restConfiguration"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:rest"/>
       <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfiguration"/>
@@ -16770,6 +16821,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:pgp"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
+        <xs:element ref="tns:smooks"/>
         <xs:element ref="tns:soap"/>
         <xs:element ref="tns:swiftMt"/>
         <xs:element ref="tns:swiftMx"/>
@@ -16786,6 +16838,22 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="furyDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="unmarshalType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Class of the java type to use when unmarshalling.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
@@ -17557,6 +17625,7 @@ Sets the component name that this definition will apply to.
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
+            <xs:element ref="tns:smooks"/>
             <xs:element ref="tns:soap"/>
             <xs:element ref="tns:swiftMt"/>
             <xs:element ref="tns:swiftMx"/>

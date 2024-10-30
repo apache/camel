@@ -23,8 +23,26 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AMQPComponent target = (AMQPComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "includeamqpannotations":
         case "includeAmqpAnnotations": target.setIncludeAmqpAnnotations(property(camelContext, boolean.class, value)); return true;
+        case "keystorelocation":
+        case "keyStoreLocation": target.setKeyStoreLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoretype":
+        case "keyStoreType": target.setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "truststorelocation":
+        case "trustStoreLocation": target.setTrustStoreLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststorepassword":
+        case "trustStorePassword": target.setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststoretype":
+        case "trustStoreType": target.setTrustStoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "usessl":
+        case "useSsl": target.setUseSsl(property(camelContext, boolean.class, value)); return true;
+        case "usetopicprefix":
+        case "useTopicPrefix": target.setUseTopicPrefix(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }
@@ -32,8 +50,26 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "host": return java.lang.String.class;
         case "includeamqpannotations":
         case "includeAmqpAnnotations": return boolean.class;
+        case "keystorelocation":
+        case "keyStoreLocation": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
+        case "keystoretype":
+        case "keyStoreType": return java.lang.String.class;
+        case "port": return int.class;
+        case "truststorelocation":
+        case "trustStoreLocation": return java.lang.String.class;
+        case "truststorepassword":
+        case "trustStorePassword": return java.lang.String.class;
+        case "truststoretype":
+        case "trustStoreType": return java.lang.String.class;
+        case "usessl":
+        case "useSsl": return boolean.class;
+        case "usetopicprefix":
+        case "useTopicPrefix": return boolean.class;
         default: return super.getOptionType(name, ignoreCase);
         }
     }
@@ -42,8 +78,26 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AMQPComponent target = (AMQPComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "host": return target.getHost();
         case "includeamqpannotations":
         case "includeAmqpAnnotations": return target.isIncludeAmqpAnnotations();
+        case "keystorelocation":
+        case "keyStoreLocation": return target.getKeyStoreLocation();
+        case "keystorepassword":
+        case "keyStorePassword": return target.getKeyStorePassword();
+        case "keystoretype":
+        case "keyStoreType": return target.getKeyStoreType();
+        case "port": return target.getPort();
+        case "truststorelocation":
+        case "trustStoreLocation": return target.getTrustStoreLocation();
+        case "truststorepassword":
+        case "trustStorePassword": return target.getTrustStorePassword();
+        case "truststoretype":
+        case "trustStoreType": return target.getTrustStoreType();
+        case "usessl":
+        case "useSsl": return target.isUseSsl();
+        case "usetopicprefix":
+        case "useTopicPrefix": return target.isUseTopicPrefix();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

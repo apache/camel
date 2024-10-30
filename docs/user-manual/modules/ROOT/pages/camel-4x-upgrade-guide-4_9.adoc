@@ -121,6 +121,13 @@ via `@TestInstance(TestInstance.Lifecycle.PER_CLASS)`), as this is considered a 
 future.
 The logs will print a warning message if this behavior is detected.
 
+=== camel-debezium
+
+To avoid split package that can be a problem in environments like OSGI, each camel-debezium module has its own
+sub package corresponding to the database type. So for example, all the classes of the module `camel-debezium-postgres`
+have been moved to a dedicated package which is `org.apache.camel.component.debezium.postgres` instead of having
+everything under the root package `org.apache.camel.component.debezium`.
+
 === Removed deprecated components
 
 The following experimental DSL has been removed:

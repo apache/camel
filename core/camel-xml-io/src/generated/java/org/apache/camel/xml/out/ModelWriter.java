@@ -478,6 +478,9 @@ public class ModelWriter extends BaseWriter {
     public void writeFlatpackDataFormat(FlatpackDataFormat def) throws IOException {
         doWriteFlatpackDataFormat("flatpack", def);
     }
+    public void writeFuryDataFormat(FuryDataFormat def) throws IOException {
+        doWriteFuryDataFormat("fury", def);
+    }
     public void writeGrokDataFormat(GrokDataFormat def) throws IOException {
         doWriteGrokDataFormat("grok", def);
     }
@@ -519,6 +522,9 @@ public class ModelWriter extends BaseWriter {
     }
     public void writeRssDataFormat(RssDataFormat def) throws IOException {
         doWriteRssDataFormat("rss", def);
+    }
+    public void writeSmooksDataFormat(SmooksDataFormat def) throws IOException {
+        doWriteSmooksDataFormat("smooks", def);
     }
     public void writeSoapDataFormat(SoapDataFormat def) throws IOException {
         doWriteSoapDataFormat("soap", def);
@@ -1170,6 +1176,7 @@ public class ModelWriter extends BaseWriter {
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
@@ -1919,6 +1926,7 @@ public class ModelWriter extends BaseWriter {
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
@@ -1996,9 +2004,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBeansDefinitionElements(BeansDefinition def) throws IOException {
         doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
         domElements(def.getSpringBeans());
+        doWriteList("dataFormats", "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);
         domElements(def.getBlueprintBeans());
-        doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
         doWriteList(null, "routeConfiguration", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
@@ -2479,6 +2488,7 @@ public class ModelWriter extends BaseWriter {
                 case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
@@ -2544,6 +2554,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("parserFactoryRef", def.getParserFactoryRef());
         doWriteAttribute("textQualifier", def.getTextQualifier());
         doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns());
+        endElement(name);
+    }
+    protected void doWriteFuryDataFormat(String name, FuryDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName());
         endElement(name);
     }
     protected void doWriteGrokDataFormat(String name, GrokDataFormat def) throws IOException {
@@ -2725,6 +2741,12 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRssDataFormat(String name, RssDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        endElement(name);
+    }
+    protected void doWriteSmooksDataFormat(String name, SmooksDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("smooksConfig", def.getSmooksConfig());
         endElement(name);
     }
     protected void doWriteSoapDataFormat(String name, SoapDataFormat def) throws IOException {
@@ -3578,6 +3600,7 @@ public class ModelWriter extends BaseWriter {
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
+                case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
                 case "SoapDataFormat" -> doWriteSoapDataFormat("soap", (SoapDataFormat) v);
                 case "SwiftMtDataFormat" -> doWriteSwiftMtDataFormat("swiftMt", (SwiftMtDataFormat) v);
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);

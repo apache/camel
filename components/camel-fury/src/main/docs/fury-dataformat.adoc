@@ -1,0 +1,44 @@
+= Fury DataFormat
+:doctitle: Fury
+:shortname: fury
+:artifactid: camel-fury
+:description: Serialize and deserialize messages using Apache Fury
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: fury 
+
+*Since Camel {since}*
+
+Fury is a Data Format that uses the
+https://fury.apache.org/[Fury Library]
+
+== Fury Options
+
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+
+== Dependencies
+
+To use Fury in your camel routes, you need to add the dependency
+on *camel-fury* which implements this data format.
+
+If you use maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-fury</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]
