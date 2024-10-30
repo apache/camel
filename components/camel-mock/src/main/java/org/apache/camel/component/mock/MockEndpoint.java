@@ -1783,10 +1783,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             assertExpectedHeaderValues(in);
         }
 
-        /*if (expectedExpressions != null) {
-            assertExpectedExpressionsMatch(exchange);
-        }*/
-
         Object actualBody = in.getBody();
 
         if (expectedBodyValues != null) {
