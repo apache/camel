@@ -164,9 +164,16 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
      */
     @InvokeOnHeader(CONTROL_ACTION_UNSUBSCRIBE)
     public void performUnsubscribe(final Message message, AsyncCallback callback) {
-        Map<String, Object> headers = message.getHeaders();
-        String subscriptionId = (String) headers.getOrDefault(CONTROL_SUBSCRIPTION_ID, configuration.getSubscriptionId());
-        String subscribeChannel = (String) headers.getOrDefault(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel());
+        String subscriptionId;
+        String subscribeChannel;
+        if (message.getBody() instanceof DynamicRouterControlMessage) {
+            DynamicRouterControlMessage controlMessage = message.getBody(DynamicRouterControlMessage.class);
+            subscriptionId = controlMessage.getSubscriptionId();
+            subscribeChannel = controlMessage.getSubscribeChannel();
+        } else {
+            subscriptionId = message.getHeader(CONTROL_SUBSCRIPTION_ID, configuration.getSubscriptionId(), String.class);
+            subscribeChannel = message.getHeader(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel(), String.class);
+        }
         boolean result = dynamicRouterControlService.removeSubscription(subscribeChannel, subscriptionId);
         message.setBody(result, boolean.class);
         callback.done(false);
