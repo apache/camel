@@ -35,7 +35,7 @@ public class MockExpectedHeaderXPathTest extends ContextTestSupport {
         mock.expectedMessageCount(3);
 
         // xpath that takes input from a header
-        var xpath = expression().xpath().expression("/person[@name='James']").source("header:cheese").end();
+        var xpath = expression().xpath("/person[@name='James']").source("header:cheese").end();
 
         // validate that some of the headers match and others do not
         mock.message(0).predicate(not(xpath));
