@@ -200,7 +200,7 @@ public interface SmooksEndpointBuilderFactory {
          * 
          * The option is a: {@code org.smooks.api.ExecutionContext} type.
          * 
-         * Group: common (advanced)
+         * Group: advanced
          * 
          * @return the name of the header {@code SmooksExecutionContext}.
          */

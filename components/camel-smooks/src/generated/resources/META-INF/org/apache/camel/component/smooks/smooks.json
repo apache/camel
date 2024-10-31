@@ -29,7 +29,7 @@
     "smooksFactory": { "index": 2, "kind": "property", "displayName": "Smooks Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.smooks.SmooksFactory", "deprecated": false, "autowired": true, "secret": false, "description": "To use a custom factory for creating Smooks." }
   },
   "headers": {
-    "CamelSmooksExecutionContext": { "index": 0, "kind": "header", "displayName": "", "group": "common (advanced)", "label": "common (advanced)", "required": false, "javaType": "org.smooks.api.ExecutionContext", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Smooks execution context.", "constantName": "org.apache.camel.component.smooks.SmooksConstants#SMOOKS_EXECUTION_CONTEXT" }
+    "CamelSmooksExecutionContext": { "index": 0, "kind": "header", "displayName": "", "group": "advanced", "label": "advanced", "required": false, "javaType": "org.smooks.api.ExecutionContext", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Smooks execution context.", "constantName": "org.apache.camel.component.smooks.SmooksConstants#SMOOKS_EXECUTION_CONTEXT" }
   },
   "properties": {
     "smooksConfig": { "index": 0, "kind": "path", "displayName": "Smooks Config", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "Path to the Smooks configuration file" },
