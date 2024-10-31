@@ -75,7 +75,8 @@ public class CommitConsumer extends AbstractGitHubConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        synchronized (this) {
+        lock.lock();
+        try {
             super.doStart();
 
             // ensure we start from clean
@@ -97,24 +98,29 @@ public class CommitConsumer extends AbstractGitHubConsumer {
                 LOG.info("Starting from beginning");
             }
             started = true;
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        synchronized (this) {
+        lock.lock();
+        try {
             super.doStop();
 
             commitHashes.clear();
             lastSha = null;
             started = false;
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     protected int poll() throws Exception {
-        synchronized (this) {
-
+        lock.lock();
+        try {
             if (!started) {
                 return 0;
             }
@@ -169,6 +175,8 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             }
             LOG.debug("Last sha: {}", lastSha);
             return counter;
+        } finally {
+            lock.unlock();
         }
     }
 

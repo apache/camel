@@ -86,12 +86,17 @@ public class Jt400Component extends HealthCheckComponent {
      *
      * @return the default connection pool used by this component
      */
-    public synchronized AS400ConnectionPool getConnectionPool() {
-        if (connectionPool == null) {
-            LOG.info("Instantiating the default connection pool ...");
-            connectionPool = new AS400ConnectionPool();
+    public AS400ConnectionPool getConnectionPool() {
+        lock.lock();
+        try {
+            if (connectionPool == null) {
+                LOG.info("Instantiating the default connection pool ...");
+                connectionPool = new AS400ConnectionPool();
+            }
+            return connectionPool;
+        } finally {
+            lock.unlock();
         }
-        return connectionPool;
     }
 
     public void setConnectionPool(AS400ConnectionPool connectionPool) {

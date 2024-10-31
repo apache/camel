@@ -45,17 +45,22 @@ public class MyBatisComponent extends HealthCheckComponent {
         return answer;
     }
 
-    protected synchronized SqlSessionFactory createSqlSessionFactory() throws IOException {
-        if (sqlSessionFactory == null) {
-            ObjectHelper.notNull(configurationUri, "configurationUri", this);
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
-            try {
-                sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
-            } finally {
-                IOHelper.close(is);
+    protected SqlSessionFactory createSqlSessionFactory() throws IOException {
+        lock.lock();
+        try {
+            if (sqlSessionFactory == null) {
+                ObjectHelper.notNull(configurationUri, "configurationUri", this);
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationUri);
+                try {
+                    sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
+                } finally {
+                    IOHelper.close(is);
+                }
             }
+            return sqlSessionFactory;
+        } finally {
+            lock.unlock();
         }
-        return sqlSessionFactory;
     }
 
     public SqlSessionFactory getSqlSessionFactory() {

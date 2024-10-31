@@ -188,10 +188,13 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
      * @return The currently loaded schema
      */
     private JsonSchema getOrCreateSchema() throws Exception {
-        synchronized (this) {
+        getInternalLock().lock();
+        try {
             if (this.schema == null) {
                 this.schema = this.uriSchemaLoader.createSchema(getCamelContext(), getResourceUri());
             }
+        } finally {
+            getInternalLock().unlock();
         }
         return this.schema;
     }

@@ -121,13 +121,18 @@ public class JpaComponent extends HealthCheckComponent {
         return aliases;
     }
 
-    synchronized ExecutorService getOrCreatePollingConsumerExecutorService() {
-        if (pollingConsumerExecutorService == null) {
-            LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
-            pollingConsumerExecutorService
-                    = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
+    ExecutorService getOrCreatePollingConsumerExecutorService() {
+        lock.lock();
+        try {
+            if (pollingConsumerExecutorService == null) {
+                LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
+                pollingConsumerExecutorService
+                        = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
+            }
+            return pollingConsumerExecutorService;
+        } finally {
+            lock.unlock();
         }
-        return pollingConsumerExecutorService;
     }
 
     // Implementation methods

@@ -109,12 +109,15 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 Session session, String destinationName,
                 boolean pubSubDomain)
                 throws JMSException {
-            synchronized (QueueReplyManager.this) {
+            QueueReplyManager.this.lock.lock();
+            try {
                 // resolve the reply to destination
                 if (destination == null) {
                     destination = delegate.resolveDestinationName(session, destinationName, pubSubDomain);
                     setReplyTo(destination);
                 }
+            } finally {
+                QueueReplyManager.this.lock.unlock();
             }
             return destination;
         }

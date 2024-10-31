@@ -82,39 +82,44 @@ public class JoltEndpoint extends ResourceEndpoint {
         return "jolt:" + getResourceUri();
     }
 
-    private synchronized JoltTransform getTransform() throws Exception {
-        if (transform == null) {
-            if (log.isDebugEnabled()) {
-                String path = getResourceUri();
-                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
-                        getEndpointUri());
-            }
-
-            // Sortr does not require a spec
-            if (this.transformDsl == JoltTransformType.Sortr) {
-                this.transform = new Sortr();
-            } else {
-                // getResourceAsInputStream also considers the content cache
-                Object spec = JsonUtils.jsonToObject(getResourceAsInputStream());
-                switch (this.transformDsl) {
-                    case Shiftr:
-                        this.transform = new Shiftr(spec);
-                        break;
-                    case Defaultr:
-                        this.transform = new Defaultr(spec);
-                        break;
-                    case Removr:
-                        this.transform = new Removr(spec);
-                        break;
-                    case Chainr:
-                    default:
-                        this.transform = Chainr.fromSpec(spec);
-                        break;
+    private JoltTransform getTransform() throws Exception {
+        getInternalLock().lock();
+        try {
+            if (transform == null) {
+                if (log.isDebugEnabled()) {
+                    String path = getResourceUri();
+                    log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                            getEndpointUri());
                 }
-            }
 
+                // Sortr does not require a spec
+                if (this.transformDsl == JoltTransformType.Sortr) {
+                    this.transform = new Sortr();
+                } else {
+                    // getResourceAsInputStream also considers the content cache
+                    Object spec = JsonUtils.jsonToObject(getResourceAsInputStream());
+                    switch (this.transformDsl) {
+                        case Shiftr:
+                            this.transform = new Shiftr(spec);
+                            break;
+                        case Defaultr:
+                            this.transform = new Defaultr(spec);
+                            break;
+                        case Removr:
+                            this.transform = new Removr(spec);
+                            break;
+                        case Chainr:
+                        default:
+                            this.transform = Chainr.fromSpec(spec);
+                            break;
+                    }
+                }
+
+            }
+            return transform;
+        } finally {
+            getInternalLock().unlock();
         }
-        return transform;
     }
 
     /**

@@ -101,43 +101,48 @@ public class Jt400MsgQueueConsumer extends ScheduledPollConsumer {
         }
     }
 
-    private synchronized Exchange receive(MessageQueue queue, long timeout) throws Exception {
-        QueuedMessage entry;
-        int seconds = (timeout >= 0) ? (int) timeout / 1000 : -1;
-        LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(),
-                -1 == seconds ? "infinite" : seconds);
+    private Exchange receive(MessageQueue queue, long timeout) throws Exception {
+        lock.lock();
+        try {
+            QueuedMessage entry;
+            int seconds = (timeout >= 0) ? (int) timeout / 1000 : -1;
+            LOG.trace("Reading from message queue: {} with {} seconds timeout", queue.getPath(),
+                    -1 == seconds ? "infinite" : seconds);
 
-        Jt400Configuration.MessageAction messageAction = getEndpoint().getMessageAction();
-        entry = queue.receive(messageKey, //message key
-                seconds,    //timeout
-                messageAction.getJt400Value(),  // message action
-                null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages
+            Jt400Configuration.MessageAction messageAction = getEndpoint().getMessageAction();
+            entry = queue.receive(messageKey, //message key
+                    seconds,    //timeout
+                    messageAction.getJt400Value(),  // message action
+                    null == messageKey ? MessageQueue.ANY : MessageQueue.NEXT); // types of messages
 
-        if (null == entry) {
-            return null;
-        }
-        // Need to tuck away the message key if the message action is SAME, otherwise
-        // we'll just keep retrieving the same message over and over
-        if (Jt400Configuration.MessageAction.SAME == messageAction) {
-            this.messageKey = entry.getKey();
-        }
-
-        Exchange exchange = createExchange(true);
-        exchange.getIn().setHeader(Jt400Constants.SENDER_INFORMATION,
-                entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
-        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_ID, entry.getID());
-        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_FILE, entry.getFileName());
-        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_TYPE, entry.getType());
-        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_SEVERITY, entry.getSeverity());
-        setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE, entry);
-        if (AS400Message.INQUIRY == entry.getType()) {
-            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_DFT_RPY, entry.getDefaultReply());
-            if (getEndpoint().isSendingReply()) {
-                setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_REPLYTO_KEY, entry.getKey());
+            if (null == entry) {
+                return null;
             }
+            // Need to tuck away the message key if the message action is SAME, otherwise
+            // we'll just keep retrieving the same message over and over
+            if (Jt400Configuration.MessageAction.SAME == messageAction) {
+                this.messageKey = entry.getKey();
+            }
+
+            Exchange exchange = createExchange(true);
+            exchange.getIn().setHeader(Jt400Constants.SENDER_INFORMATION,
+                    entry.getFromJobNumber() + "/" + entry.getUser() + "/" + entry.getFromJobName());
+            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_ID, entry.getID());
+            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_FILE, entry.getFileName());
+            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_TYPE, entry.getType());
+            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_SEVERITY, entry.getSeverity());
+            setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE, entry);
+            if (AS400Message.INQUIRY == entry.getType()) {
+                setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_DFT_RPY, entry.getDefaultReply());
+                if (getEndpoint().isSendingReply()) {
+                    setHeaderIfValueNotNull(exchange.getIn(), Jt400Constants.MESSAGE_REPLYTO_KEY, entry.getKey());
+                }
+            }
+            exchange.getIn().setBody(entry.getText());
+            return exchange;
+        } finally {
+            lock.unlock();
         }
-        exchange.getIn().setBody(entry.getText());
-        return exchange;
     }
 
     private static void setHeaderIfValueNotNull(final Message message, final String header, final Object value) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jasypt;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,14 +45,12 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
             = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
     private static final Pattern PATTERN = Pattern.compile(JASYPT_REGEX);
 
+    private final Lock lock = new ReentrantLock();
     private StringEncryptor encryptor;
     private String password;
     private String algorithm;
     private String randomSaltGeneratorAlgorithm;
     private String randomIvGeneratorAlgorithm;
-
-    public JasyptPropertiesParser() {
-    }
 
     @Override
     public String parseProperty(String key, String value, PropertiesLookup properties) {
@@ -69,27 +69,32 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         return value;
     }
 
-    private synchronized void initEncryptor() {
-        if (encryptor == null) {
-            StringHelper.notEmpty("password", password);
-            StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
+    private void initEncryptor() {
+        lock.lock();
+        try {
+            if (encryptor == null) {
+                StringHelper.notEmpty("password", password);
+                StandardPBEStringEncryptor pbeStringEncryptor = new StandardPBEStringEncryptor();
 
-            pbeStringEncryptor.setPassword(password);
-            if (algorithm != null) {
-                pbeStringEncryptor.setAlgorithm(algorithm);
-                log.debug("Initialized encryptor using {} algorithm and provided password", algorithm);
-            } else {
-                log.debug("Initialized encryptor using default algorithm and provided password");
-            }
+                pbeStringEncryptor.setPassword(password);
+                if (algorithm != null) {
+                    pbeStringEncryptor.setAlgorithm(algorithm);
+                    log.debug("Initialized encryptor using {} algorithm and provided password", algorithm);
+                } else {
+                    log.debug("Initialized encryptor using default algorithm and provided password");
+                }
 
-            if (randomSaltGeneratorAlgorithm != null) {
-                pbeStringEncryptor.setSaltGenerator(new RandomSaltGenerator(randomSaltGeneratorAlgorithm));
-            }
-            if (randomIvGeneratorAlgorithm != null) {
-                pbeStringEncryptor.setIvGenerator(new RandomIvGenerator(randomIvGeneratorAlgorithm));
-            }
+                if (randomSaltGeneratorAlgorithm != null) {
+                    pbeStringEncryptor.setSaltGenerator(new RandomSaltGenerator(randomSaltGeneratorAlgorithm));
+                }
+                if (randomIvGeneratorAlgorithm != null) {
+                    pbeStringEncryptor.setIvGenerator(new RandomIvGenerator(randomIvGeneratorAlgorithm));
+                }
 
-            encryptor = pbeStringEncryptor;
+                encryptor = pbeStringEncryptor;
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
