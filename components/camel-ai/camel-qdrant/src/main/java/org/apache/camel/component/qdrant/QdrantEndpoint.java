@@ -55,8 +55,6 @@ public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLo
     @UriParam
     private QdrantConfiguration configuration;
 
-    private final Object lock;
-
     private volatile boolean closeClient;
     private volatile QdrantClient client;
 
@@ -70,8 +68,6 @@ public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
         this.collection = collection;
         this.configuration = configuration;
-
-        this.lock = new Object();
     }
 
     @Override
@@ -92,9 +88,10 @@ public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return collection;
     }
 
-    public synchronized QdrantClient getClient() {
+    public QdrantClient getClient() {
         if (this.client == null) {
-            synchronized (this.lock) {
+            lock.lock();
+            try {
                 if (this.client == null) {
                     this.client = this.configuration.getClient();
                     this.closeClient = false;
@@ -104,6 +101,8 @@ public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLo
                         this.closeClient = true;
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
 

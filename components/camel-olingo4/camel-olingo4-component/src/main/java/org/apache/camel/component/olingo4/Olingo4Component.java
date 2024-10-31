@@ -122,10 +122,13 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
     public Olingo4AppWrapper createApiProxy(Olingo4Configuration endpointConfiguration) {
         final Olingo4AppWrapper result;
         if (endpointConfiguration.equals(getConfiguration())) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (apiProxy == null) {
                     apiProxy = createOlingo4App(getConfiguration());
                 }
+            } finally {
+                lock.unlock();
             }
             result = apiProxy;
         } else {

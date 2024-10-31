@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
@@ -31,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SharedSingletonObjectPool.class);
+    private final Lock lock = new ReentrantLock();
     private final PooledObjectFactory<T> factory;
     private volatile PooledObject<T> t;
 
@@ -44,19 +48,24 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public synchronized T borrowObject() throws Exception {
-        if (t != null) {
-            // ensure the object is validated before we borrow it
-            if (!factory.validateObject(t)) {
-                invalidateObject(t.getObject());
-                LOG.info("Recreating new connection as current connection is invalid: {}", t);
-                t = null;
+    public T borrowObject() throws Exception {
+        lock.lock();
+        try {
+            if (t != null) {
+                // ensure the object is validated before we borrow it
+                if (!factory.validateObject(t)) {
+                    invalidateObject(t.getObject());
+                    LOG.info("Recreating new connection as current connection is invalid: {}", t);
+                    t = null;
+                }
             }
+            if (t == null) {
+                t = factory.makeObject();
+            }
+            return t.getObject();
+        } finally {
+            lock.unlock();
         }
-        if (t == null) {
-            t = factory.makeObject();
-        }
-        return t.getObject();
     }
 
     @Override

@@ -21,12 +21,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.attribute.DocAttributeSet;
 
 class PrintDocument implements Doc {
+    private final Lock lock = new ReentrantLock();
     private DocFlavor docFlavor;
     private InputStream stream;
     private Reader reader;
@@ -54,7 +57,8 @@ class PrintDocument implements Doc {
 
     @Override
     public Reader getReaderForText() throws IOException {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (reader != null) {
                 return reader;
             }
@@ -75,6 +79,8 @@ class PrintDocument implements Doc {
             }
 
             return reader;
+        } finally {
+            lock.unlock();
         }
     }
 

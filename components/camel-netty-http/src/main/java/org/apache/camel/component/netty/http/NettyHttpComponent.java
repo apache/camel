@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -64,8 +65,8 @@ public class NettyHttpComponent extends NettyComponent
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
-    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<>();
-    private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<>();
+    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new ConcurrentHashMap<>();
+    private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new ConcurrentHashMap<>();
     @Metadata(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
     @Metadata(label = "advanced")
@@ -329,7 +330,7 @@ public class NettyHttpComponent extends NettyComponent
         this.muteException = muteException;
     }
 
-    public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
+    public HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
         return multiplexChannelHandlers.computeIfAbsent(port, s -> newHttpServerConsumerChannelFactory(port));
     }
 
@@ -339,8 +340,14 @@ public class NettyHttpComponent extends NettyComponent
         return answer;
     }
 
-    protected synchronized HttpServerBootstrapFactory getOrCreateHttpNettyServerBootstrapFactory(NettyHttpConsumer consumer) {
-        String key = consumer.getConfiguration().getAddress();
+    protected HttpServerBootstrapFactory getOrCreateHttpNettyServerBootstrapFactory(NettyHttpConsumer consumer) {
+        String key;
+        lock.lock();
+        try {
+            key = consumer.getConfiguration().getAddress();
+        } finally {
+            lock.unlock();
+        }
         return bootstrapFactories.computeIfAbsent(key, s -> newHttpServerBootstrapFactory(consumer));
     }
 

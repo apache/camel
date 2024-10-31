@@ -83,7 +83,6 @@ class OpensearchProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpensearchProducer.class);
 
     protected final OpensearchConfiguration configuration;
-    private final Object mutex = new Object();
     private volatile RestClient client;
     private Sniffer sniffer;
 
@@ -452,7 +451,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
     private void startClient() {
         if (client == null) {
-            synchronized (mutex) {
+            lock.lock();
+            try {
                 if (client == null) {
                     LOG.info("Connecting to the OpenSearch cluster: {}", configuration.getClusterName());
                     if (ObjectHelper.isNotEmpty(configuration.getHostAddressesList())
@@ -462,6 +462,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
                         LOG.warn("Incorrect ip address and port parameters settings for OpenSearch cluster");
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
