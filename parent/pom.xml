@@ -190,7 +190,7 @@
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.36.0</google-oauth-client-version>
         <google-cloud-bom-version>26.49.0</google-cloud-bom-version>
-        <google-cloud-functions-bom-version>2.54.0</google-cloud-functions-bom-version>
+        <google-cloud-functions-bom-version>2.55.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.45.0</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.52.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.1.1</graaljs-version>
