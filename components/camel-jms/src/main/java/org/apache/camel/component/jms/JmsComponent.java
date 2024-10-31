@@ -1157,14 +1157,19 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         super.doShutdown();
     }
 
-    protected synchronized ExecutorService getAsyncStartStopExecutorService() {
-        if (asyncStartStopExecutorService == null) {
-            // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
-            // for each task, and the thread pool will shrink when no more tasks running
-            asyncStartStopExecutorService
-                    = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+    protected ExecutorService getAsyncStartStopExecutorService() {
+        lock.lock();
+        try {
+            if (asyncStartStopExecutorService == null) {
+                // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
+                // for each task, and the thread pool will shrink when no more tasks running
+                asyncStartStopExecutorService
+                        = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+            }
+            return asyncStartStopExecutorService;
+        } finally {
+            lock.unlock();
         }
-        return asyncStartStopExecutorService;
     }
 
     @Override

@@ -57,11 +57,16 @@ public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements Desti
     }
 
     @Override
-    public synchronized Destination getJmsDestination(Session session) throws JMSException {
-        if (jmsDestination == null) {
-            jmsDestination = createJmsDestination(session);
+    public Destination getJmsDestination(Session session) throws JMSException {
+        lock.lock();
+        try {
+            if (jmsDestination == null) {
+                jmsDestination = createJmsDestination(session);
+            }
+            return jmsDestination;
+        } finally {
+            lock.unlock();
         }
-        return jmsDestination;
     }
 
     protected Destination createJmsDestination(Session session) throws JMSException {

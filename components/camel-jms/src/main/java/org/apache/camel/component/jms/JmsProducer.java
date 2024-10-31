@@ -78,7 +78,8 @@ public class JmsProducer extends DefaultAsyncProducer {
 
     protected void initReplyManager() {
         if (!started.get()) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (started.get()) {
                     return;
                 }
@@ -119,6 +120,8 @@ public class JmsProducer extends DefaultAsyncProducer {
                     Thread.currentThread().setContextClassLoader(oldClassLoader);
                 }
                 started.set(true);
+            } finally {
+                lock.unlock();
             }
         }
     }

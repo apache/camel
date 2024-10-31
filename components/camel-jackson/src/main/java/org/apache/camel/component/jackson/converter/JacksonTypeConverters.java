@@ -25,6 +25,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,7 +59,7 @@ import org.slf4j.LoggerFactory;
 public final class JacksonTypeConverters {
     private static final Logger LOG = LoggerFactory.getLogger(JacksonTypeConverters.class);
 
-    private final Object lock;
+    private final Lock lock;
     private volatile ObjectMapper defaultMapper;
 
     private boolean init;
@@ -66,7 +68,7 @@ public final class JacksonTypeConverters {
     private String moduleClassNames;
 
     public JacksonTypeConverters() {
-        this.lock = new Object();
+        this.lock = new ReentrantLock();
     }
 
     @Converter
@@ -306,7 +308,8 @@ public final class JacksonTypeConverters {
         }
 
         if (defaultMapper == null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (defaultMapper == null) {
                     ObjectMapper mapper = new ObjectMapper();
                     if (moduleClassNames != null) {
@@ -322,6 +325,8 @@ public final class JacksonTypeConverters {
 
                     defaultMapper = mapper;
                 }
+            } finally {
+                lock.unlock();
             }
         }
 

@@ -651,7 +651,7 @@ public class KafkaFetchRecords implements Runnable {
         state = State.RESUME_REQUESTED;
     }
 
-    private synchronized void setLastError(Exception lastError) {
+    private void setLastError(Exception lastError) {
         this.lastError = lastError;
     }
 

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jmx;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javax.management.AttributeChangeNotification;
 import javax.management.AttributeChangeNotificationFilter;
 import javax.management.Notification;
@@ -26,6 +29,7 @@ import javax.management.Notification;
  */
 public class JMXConsumerNotificationFilter extends AttributeChangeNotificationFilter {
 
+    private final Lock lock = new ReentrantLock();
     private final String stringToCompare;
     private final boolean notifyMatch;
 
@@ -36,25 +40,30 @@ public class JMXConsumerNotificationFilter extends AttributeChangeNotificationFi
     }
 
     @Override
-    public synchronized boolean isNotificationEnabled(Notification notification) {
-        boolean enabled = super.isNotificationEnabled(notification);
-        if (!enabled) {
-            return false;
-        }
-
-        boolean match = false;
-        if (stringToCompare != null) {
-            AttributeChangeNotification acn = (AttributeChangeNotification) notification;
-            Object newValue = acn.getNewValue();
-            // special for null
-            if ("null".equals(stringToCompare) && newValue == null) {
-                match = true;
-            } else if (newValue != null) {
-                match = stringToCompare.equals(newValue.toString());
+    public boolean isNotificationEnabled(Notification notification) {
+        lock.lock();
+        try {
+            boolean enabled = super.isNotificationEnabled(notification);
+            if (!enabled) {
+                return false;
             }
-            return notifyMatch == match;
-        } else {
-            return true;
+
+            boolean match = false;
+            if (stringToCompare != null) {
+                AttributeChangeNotification acn = (AttributeChangeNotification) notification;
+                Object newValue = acn.getNewValue();
+                // special for null
+                if ("null".equals(stringToCompare) && newValue == null) {
+                    match = true;
+                } else if (newValue != null) {
+                    match = stringToCompare.equals(newValue.toString());
+                }
+                return notifyMatch == match;
+            } else {
+                return true;
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

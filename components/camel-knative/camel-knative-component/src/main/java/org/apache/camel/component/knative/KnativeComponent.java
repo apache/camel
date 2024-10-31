@@ -132,11 +132,16 @@ public class KnativeComponent extends HealthCheckComponent {
         return producerFactory;
     }
 
-    public synchronized KnativeProducerFactory getOrCreateProducerFactory() throws Exception {
-        if (producerFactory == null) {
-            producerFactory = setUpProducerFactory();
+    public KnativeProducerFactory getOrCreateProducerFactory() throws Exception {
+        lock.lock();
+        try {
+            if (producerFactory == null) {
+                producerFactory = setUpProducerFactory();
+            }
+            return producerFactory;
+        } finally {
+            lock.unlock();
         }
-        return producerFactory;
     }
 
     /**
@@ -150,11 +155,16 @@ public class KnativeComponent extends HealthCheckComponent {
         return consumerFactory;
     }
 
-    public synchronized KnativeConsumerFactory getOrCreateConsumerFactory() throws Exception {
-        if (consumerFactory == null) {
-            consumerFactory = setUpConsumerFactory();
+    public KnativeConsumerFactory getOrCreateConsumerFactory() throws Exception {
+        lock.lock();
+        try {
+            if (consumerFactory == null) {
+                consumerFactory = setUpConsumerFactory();
+            }
+            return consumerFactory;
+        } finally {
+            lock.unlock();
         }
-        return consumerFactory;
     }
 
     /**

@@ -56,8 +56,6 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
     @UriParam
     private MilvusConfiguration configuration;
 
-    private final Object lock;
-
     private volatile boolean closeClient;
     private volatile MilvusClient client;
 
@@ -71,8 +69,6 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
         this.collection = collection;
         this.configuration = configuration;
-
-        this.lock = new Object();
     }
 
     @Override
@@ -93,9 +89,10 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return collection;
     }
 
-    public synchronized MilvusClient getClient() {
+    public MilvusClient getClient() {
         if (this.client == null) {
-            synchronized (this.lock) {
+            lock.lock();
+            try {
                 if (this.client == null) {
                     this.client = this.configuration.getClient();
                     this.closeClient = false;
@@ -105,6 +102,8 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
                         this.closeClient = true;
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
 

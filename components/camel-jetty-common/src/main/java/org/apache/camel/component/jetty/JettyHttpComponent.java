@@ -28,6 +28,7 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.MultipartConfigElement;
@@ -90,7 +91,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         implements RestConsumerFactory, RestApiConsumerFactory, SSLContextParametersAware {
     public static final String TMP_DIR = "CamelJettyTempDir";
 
-    protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
+    protected static final Map<String, ConnectorRef> CONNECTORS = new ConcurrentHashMap<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
@@ -282,20 +283,18 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint) consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        synchronized (CONNECTORS) {
-            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
+        ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
 
-            // check if there are already another consumer on the same context-path and if so fail
-            if (connectorRef != null) {
-                for (Map.Entry<String, HttpConsumer> entry : connectorRef.servlet.getConsumers().entrySet()) {
-                    String path = entry.getValue().getPath();
-                    CamelContext camelContext = entry.getValue().getEndpoint().getCamelContext();
-                    if (consumer.getPath().equals(path)) {
-                        // its allowed if they are from the same camel context
-                        boolean sameContext = consumer.getEndpoint().getCamelContext() == camelContext;
-                        if (!sameContext) {
-                            return false;
-                        }
+        // check if there are already another consumer on the same context-path and if so fail
+        if (connectorRef != null) {
+            for (Map.Entry<String, HttpConsumer> entry : connectorRef.servlet.getConsumers().entrySet()) {
+                String path = entry.getValue().getPath();
+                CamelContext camelContext = entry.getValue().getEndpoint().getCamelContext();
+                if (consumer.getPath().equals(path)) {
+                    // its allowed if they are from the same camel context
+                    boolean sameContext = consumer.getEndpoint().getCamelContext() == camelContext;
+                    if (!sameContext) {
+                        return false;
                     }
                 }
             }
@@ -313,68 +312,77 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint) consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        synchronized (CONNECTORS) {
-            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
-            if (connectorRef == null) {
-                Server server = createServer();
-                Connector connector = getConnector(server, endpoint);
-                if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    LOG.warn("You use localhost interface! It means that no external connections will be available. "
-                             + "Don't you want to use 0.0.0.0 instead (all network interfaces)? {}",
-                            endpoint);
-                }
-                if (endpoint.isEnableJmx()) {
-                    enableJmx(server);
-                }
-                server.addConnector(connector);
-
-                connectorRef = new ConnectorRef(
-                        server, connector,
-                        createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
-                // must enable session before we start
-                if (endpoint.isSessionSupport()) {
-                    enableSessionSupport(connectorRef.server, connectorKey);
-                }
-                connectorRef.server.start();
-
-                LOG.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
-                CONNECTORS.put(connectorKey, connectorRef);
-
-            } else {
-                LOG.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
-
-                // check if there are any new handlers, and if so then we need to re-start the server
-                if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
-                    List<Handler> existingHandlers = new ArrayList<>();
-                    if (connectorRef.server.getHandlers() != null && !connectorRef.server.getHandlers().isEmpty()) {
-                        existingHandlers = connectorRef.server.getHandlers();
-                    }
-                    List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
-                    boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
-                    if (changed) {
-                        LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
-                        connectorRef.server.stop();
-                        addJettyHandlers(connectorRef.server, endpoint.getHandlers());
-                        connectorRef.server.start();
-                    }
-                }
-                // check the session support
-                if (endpoint.isSessionSupport()) {
-                    enableSessionSupport(connectorRef.server, connectorKey);
-                }
-                // ref track the connector
-                connectorRef.increment();
+        CONNECTORS.compute(connectorKey, (cKey, connectorRef) -> {
+            try {
+                return connect(consumer, endpoint, cKey, connectorRef);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
             }
+        });
+    }
 
-            if (endpoint.isEnableMultipartFilter()) {
-                enableMultipartFilter(endpoint, connectorRef.server);
+    private ConnectorRef connect(
+            HttpConsumer consumer, JettyHttpEndpoint endpoint, String connectorKey, ConnectorRef connectorRef)
+            throws Exception {
+        if (connectorRef == null) {
+            Server server = createServer();
+            Connector connector = getConnector(server, endpoint);
+            if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
+                LOG.warn("You use localhost interface! It means that no external connections will be available. "
+                         + "Don't you want to use 0.0.0.0 instead (all network interfaces)? {}",
+                        endpoint);
             }
+            if (endpoint.isEnableJmx()) {
+                enableJmx(server);
+            }
+            server.addConnector(connector);
 
-            if (endpoint.getFilters() != null && !endpoint.getFilters().isEmpty()) {
-                setFilters(endpoint, connectorRef.server);
+            connectorRef = new ConnectorRef(
+                    server, connector,
+                    createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
+            // must enable session before we start
+            if (endpoint.isSessionSupport()) {
+                enableSessionSupport(connectorRef.server, connectorKey);
             }
-            connectorRef.servlet.connect(consumer);
+            connectorRef.server.start();
+
+            LOG.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
+        } else {
+            LOG.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
+
+            // check if there are any new handlers, and if so then we need to re-start the server
+            if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
+                List<Handler> existingHandlers = new ArrayList<>();
+                if (connectorRef.server.getHandlers() != null && !connectorRef.server.getHandlers().isEmpty()) {
+                    existingHandlers = connectorRef.server.getHandlers();
+                }
+                List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
+                boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
+                if (changed) {
+                    LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
+                    connectorRef.server.stop();
+                    addJettyHandlers(connectorRef.server, endpoint.getHandlers());
+                    connectorRef.server.start();
+                }
+            }
+            // check the session support
+            if (endpoint.isSessionSupport()) {
+                enableSessionSupport(connectorRef.server, connectorKey);
+            }
+            // ref track the connector
+            connectorRef.increment();
         }
+
+        if (endpoint.isEnableMultipartFilter()) {
+            enableMultipartFilter(endpoint, connectorRef.server);
+        }
+
+        if (endpoint.getFilters() != null && !endpoint.getFilters().isEmpty()) {
+            setFilters(endpoint, connectorRef.server);
+        }
+        connectorRef.servlet.connect(consumer);
+
+        return connectorRef;
     }
 
     private void enableJmx(Server server) {
@@ -388,7 +396,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
     }
 
-    private void enableSessionSupport(Server server, String connectorKey) throws Exception {
+    private void enableSessionSupport(Server server, String connectorKey) {
         ServletContextHandler context = server.getDescendant(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
@@ -469,33 +477,39 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         HttpCommonEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        synchronized (CONNECTORS) {
-            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
-            if (connectorRef != null) {
-                connectorRef.servlet.disconnect(consumer);
-                if (connectorRef.decrement() == 0) {
-                    connectorRef.server.removeConnector(connectorRef.connector);
-                    connectorRef.connector.stop();
-                    connectorRef.server.stop();
-                    CONNECTORS.remove(connectorKey);
-                    // Camel controls the lifecycle of these entities so remove the
-                    // registered MBeans when Camel is done with the managed objects.
-                    if (mbContainer != null) {
-                        this.removeServerMBean(connectorRef.server);
-                        //mbContainer.removeBean(connectorRef.connector);
-                    }
-                    if (defaultQueuedThreadPool != null) {
-                        try {
-                            defaultQueuedThreadPool.stop();
-                        } catch (Exception t) {
-                            defaultQueuedThreadPool.destroy();
-                        } finally {
-                            defaultQueuedThreadPool = null;
-                        }
-                    }
+        CONNECTORS.computeIfPresent(connectorKey, (cKey, connectorRef) -> {
+            try {
+                return disconnect(consumer, connectorRef);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+        });
+    }
+
+    private ConnectorRef disconnect(HttpConsumer consumer, ConnectorRef connectorRef) throws Exception {
+        connectorRef.servlet.disconnect(consumer);
+        if (connectorRef.decrement() == 0) {
+            connectorRef.server.removeConnector(connectorRef.connector);
+            connectorRef.connector.stop();
+            connectorRef.server.stop();
+            // Camel controls the lifecycle of these entities so remove the
+            // registered MBeans when Camel is done with the managed objects.
+            if (mbContainer != null) {
+                this.removeServerMBean(connectorRef.server);
+                //mbContainer.removeBean(connectorRef.connector);
+            }
+            if (defaultQueuedThreadPool != null) {
+                try {
+                    defaultQueuedThreadPool.stop();
+                } catch (Exception t) {
+                    defaultQueuedThreadPool.destroy();
+                } finally {
+                    defaultQueuedThreadPool = null;
                 }
             }
+            return null;
         }
+        return connectorRef;
     }
 
     private String getConnectorKey(HttpCommonEndpoint endpoint) {
@@ -808,25 +822,30 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         throw new IllegalArgumentException("Jetty component does not use HttpConfiguration.");
     }
 
-    public synchronized MBeanContainer getMbContainer() {
-        // If null, provide the default implementation.
-        if (mbContainer == null) {
-            MBeanServer mbs = null;
+    public MBeanContainer getMbContainer() {
+        lock.lock();
+        try {
+            // If null, provide the default implementation.
+            if (mbContainer == null) {
+                MBeanServer mbs = null;
 
-            final ManagementStrategy mStrategy = this.getCamelContext().getManagementStrategy();
-            final ManagementAgent mAgent = mStrategy.getManagementAgent();
-            if (mAgent != null) {
-                mbs = mAgent.getMBeanServer();
+                final ManagementStrategy mStrategy = this.getCamelContext().getManagementStrategy();
+                final ManagementAgent mAgent = mStrategy.getManagementAgent();
+                if (mAgent != null) {
+                    mbs = mAgent.getMBeanServer();
+                }
+
+                if (mbs != null) {
+                    mbContainer = new MBeanContainer(mbs);
+                } else {
+                    LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
+                }
             }
 
-            if (mbs != null) {
-                mbContainer = new MBeanContainer(mbs);
-            } else {
-                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
-            }
+            return this.mbContainer;
+        } finally {
+            lock.unlock();
         }
-
-        return this.mbContainer;
     }
 
     /**
@@ -1344,19 +1363,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (!CONNECTORS.isEmpty()) {
-            for (Map.Entry<String, ConnectorRef> connectorEntry : CONNECTORS.entrySet()) {
-                ConnectorRef connectorRef = connectorEntry.getValue();
-                if (connectorRef != null && connectorRef.getRefCount() == 0) {
-                    connectorRef.server.removeConnector(connectorRef.connector);
-                    connectorRef.connector.stop();
-                    // Camel controls the lifecycle of these entities so remove the
-                    // registered MBeans when Camel is done with the managed objects.
-                    removeServerMBean(connectorRef.server);
-                    connectorRef.server.stop();
-                    //removeServerMBean(connectorRef.connector);
-                    CONNECTORS.remove(connectorEntry.getKey());
-                }
+        for (Map.Entry<String, ConnectorRef> connectorEntry : CONNECTORS.entrySet()) {
+            ConnectorRef connectorRef = connectorEntry.getValue();
+            if (connectorRef != null && connectorRef.getRefCount() == 0) {
+                connectorRef.server.removeConnector(connectorRef.connector);
+                connectorRef.connector.stop();
+                // Camel controls the lifecycle of these entities so remove the
+                // registered MBeans when Camel is done with the managed objects.
+                removeServerMBean(connectorRef.server);
+                connectorRef.server.stop();
+                //removeServerMBean(connectorRef.connector);
+                CONNECTORS.remove(connectorEntry.getKey());
             }
         }
         if (mbContainer != null) {

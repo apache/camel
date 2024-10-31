@@ -275,7 +275,7 @@ public class JsonStream extends FilterInputStream {
     }
 
     @Override
-    public synchronized void reset() throws IOException {
+    public void reset() throws IOException {
         throw new IOException("reset not supported");
     }
 

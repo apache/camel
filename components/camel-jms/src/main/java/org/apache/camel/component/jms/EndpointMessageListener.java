@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -45,6 +48,7 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements SessionAwareMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
+    private final Lock lock = new ReentrantLock();
     private final JmsConsumer consumer;
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
@@ -315,11 +319,16 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         this.eagerPoisonBody = eagerPoisonBody;
     }
 
-    public synchronized JmsOperations getTemplate() {
-        if (template == null) {
-            template = endpoint.createInOnlyTemplate();
+    public JmsOperations getTemplate() {
+        lock.lock();
+        try {
+            if (template == null) {
+                template = endpoint.createInOnlyTemplate();
+            }
+            return template;
+        } finally {
+            lock.unlock();
         }
-        return template;
     }
 
     public void setTemplate(JmsOperations template) {

@@ -17,6 +17,8 @@
 package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.TimeoutMap;
 import org.slf4j.Logger;
@@ -34,7 +36,7 @@ public class MessageSelectorCreator {
     protected final ConcurrentSkipListSet<String> correlationIds;
     protected volatile boolean dirty = true;
     protected StringBuilder expression;
-    private final Object lock = new Object();
+    private final Lock lock = new ReentrantLock();
 
     public MessageSelectorCreator(CorrelationTimeoutMap timeoutMap) {
         this.timeoutMap = timeoutMap;
@@ -46,7 +48,8 @@ public class MessageSelectorCreator {
     }
 
     public String get() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (!dirty) {
                 return expression.toString();
             }
@@ -74,18 +77,23 @@ public class MessageSelectorCreator {
 
             dirty = false;
             return answer;
+        } finally {
+            lock.unlock();
         }
     }
 
     // Changes to live correlation-ids invalidate existing message selector
     private void timeoutEvent(TimeoutMap.Listener.Type type, String cid) {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (type == Put) {
                 correlationIds.add(cid);
             } else if (type == Remove || type == Evict) {
                 correlationIds.remove(cid);
             }
             dirty = true;
+        } finally {
+            lock.unlock();
         }
     }
 

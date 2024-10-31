@@ -18,6 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.MessageEOFException;
@@ -25,6 +27,7 @@ import jakarta.jms.StreamMessage;
 
 public class StreamMessageInputStream extends InputStream {
 
+    private final Lock lock = new ReentrantLock();
     private final StreamMessage message;
     private volatile boolean eof;
 
@@ -74,11 +77,14 @@ public class StreamMessageInputStream extends InputStream {
     }
 
     @Override
-    public synchronized void reset() throws IOException {
+    public void reset() throws IOException {
+        lock.lock();
         try {
             message.reset();
         } catch (JMSException e) {
             throw new IOException(e);
+        } finally {
+            lock.unlock();
         }
     }
 

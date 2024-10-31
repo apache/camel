@@ -137,43 +137,53 @@ public class JiraEndpoint extends ScheduledPollEndpoint implements EndpointServi
         disconnect();
     }
 
-    public synchronized void connect() {
-        if (client == null) {
-            Registry registry = getCamelContext().getRegistry();
-            JiraRestClientFactory factory
-                    = registry.lookupByNameAndType(JIRA_REST_CLIENT_FACTORY, JiraRestClientFactory.class);
-            if (factory == null) {
-                factory = new OAuthAsynchronousJiraRestClientFactory();
+    public void connect() {
+        lock.lock();
+        try {
+            if (client == null) {
+                Registry registry = getCamelContext().getRegistry();
+                JiraRestClientFactory factory
+                        = registry.lookupByNameAndType(JIRA_REST_CLIENT_FACTORY, JiraRestClientFactory.class);
+                if (factory == null) {
+                    factory = new OAuthAsynchronousJiraRestClientFactory();
+                }
+                final URI jiraServerUri = URI.create(configuration.getJiraUrl());
+                if (configuration.getUsername() != null) {
+                    LOG.debug("Connecting to JIRA with Basic authentication with username/password");
+                    client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
+                            configuration.getPassword());
+                } else if (configuration.getAccessToken() != null
+                        && configuration.getVerificationCode() == null
+                        && configuration.getPrivateKey() == null
+                        && configuration.getConsumerKey() == null) {
+                    client = factory.create(jiraServerUri, builder -> {
+                        builder.setHeader("Authorization", "Bearer " + configuration.getAccessToken());
+                    });
+                } else {
+                    LOG.debug("Connecting to JIRA with OAuth authentication");
+                    JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
+                            configuration.getConsumerKey(),
+                            configuration.getVerificationCode(), configuration.getPrivateKey(),
+                            configuration.getAccessToken(),
+                            configuration.getJiraUrl());
+                    client = factory.create(jiraServerUri, oAuthHandler);
+                }
             }
-            final URI jiraServerUri = URI.create(configuration.getJiraUrl());
-            if (configuration.getUsername() != null) {
-                LOG.debug("Connecting to JIRA with Basic authentication with username/password");
-                client = factory.createWithBasicHttpAuthentication(jiraServerUri, configuration.getUsername(),
-                        configuration.getPassword());
-            } else if (configuration.getAccessToken() != null
-                    && configuration.getVerificationCode() == null
-                    && configuration.getPrivateKey() == null
-                    && configuration.getConsumerKey() == null) {
-                client = factory.create(jiraServerUri, builder -> {
-                    builder.setHeader("Authorization", "Bearer " + configuration.getAccessToken());
-                });
-            } else {
-                LOG.debug("Connecting to JIRA with OAuth authentication");
-                JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(
-                        configuration.getConsumerKey(),
-                        configuration.getVerificationCode(), configuration.getPrivateKey(),
-                        configuration.getAccessToken(),
-                        configuration.getJiraUrl());
-                client = factory.create(jiraServerUri, oAuthHandler);
-            }
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized void disconnect() throws Exception {
-        if (client != null) {
-            LOG.debug("Disconnecting from JIRA");
-            client.close();
-            client = null;
+    public void disconnect() throws Exception {
+        lock.lock();
+        try {
+            if (client != null) {
+                LOG.debug("Disconnecting from JIRA");
+                client.close();
+                client = null;
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
