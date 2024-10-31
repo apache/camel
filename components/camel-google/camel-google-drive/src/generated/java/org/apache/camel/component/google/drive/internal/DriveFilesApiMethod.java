@@ -19,6 +19,10 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum DriveFilesApiMethod implements ApiMethod {
 
+    ACCESSPROPOSALS(
+        com.google.api.services.drive.Drive.Files.Accessproposals.class,
+        "accessproposals"),
+
     COPY(
         com.google.api.services.drive.Drive.Files.Copy.class,
         "copy",
