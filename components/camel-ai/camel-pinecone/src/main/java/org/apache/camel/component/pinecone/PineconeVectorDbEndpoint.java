@@ -73,14 +73,19 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
         return collection;
     }
 
-    public synchronized Pinecone getClient() {
-        if (this.client == null) {
-            this.client = this.configuration.getClient();
+    public Pinecone getClient() {
+        lock.lock();
+        try {
             if (this.client == null) {
-                this.client = createClient();
+                this.client = this.configuration.getClient();
+                if (this.client == null) {
+                    this.client = createClient();
+                }
             }
+            return this.client;
+        } finally {
+            lock.unlock();
         }
-        return this.client;
     }
 
     @Override

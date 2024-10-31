@@ -41,7 +41,6 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
 
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
-    private final Object engineInstancesLock = new Object();
     private final Map<String, QuickfixjEngine> engines = new HashMap<>();
     private final Map<String, QuickfixjEngine> provisionalEngines = new HashMap<>();
     private final Map<String, QuickfixjEndpoint> endpoints = new HashMap<>();
@@ -70,7 +69,8 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // Look up the engine instance based on the settings file ("remaining")
         QuickfixjEngine engine;
-        synchronized (engineInstancesLock) {
+        lock.lock();
+        try {
             QuickfixjEndpoint endpoint = endpoints.get(uri);
 
             if (endpoint == null) {
@@ -114,16 +114,21 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
             }
 
             return endpoint;
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         // stop engines when stopping component
-        synchronized (engineInstancesLock) {
+        lock.lock();
+        try {
             for (QuickfixjEngine engine : engines.values()) {
                 engine.stop();
             }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -230,7 +235,8 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     @Override
     public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
         // only start quickfix engines when CamelContext have finished starting
-        synchronized (engineInstancesLock) {
+        lock.lock();
+        try {
             for (QuickfixjEngine engine : engines.values()) {
                 startQuickfixjEngine(engine);
             }
@@ -239,6 +245,8 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                 engines.put(entry.getKey(), entry.getValue());
             }
             provisionalEngines.clear();
+        } finally {
+            lock.unlock();
         }
     }
 

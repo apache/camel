@@ -65,7 +65,6 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
     private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
     private final List<PlatformHttpListener> listeners = new ArrayList<>();
     private volatile boolean localEngine;
-    private final Object lock = new Object();
 
     public PlatformHttpComponent() {
         this(null);
@@ -270,7 +269,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     PlatformHttpEngine getOrCreateEngine() {
         if (engine == null) {
-            synchronized (lock) {
+            lock.lock();
+            try {
                 if (engine == null) {
                     LOG.debug("Lookup platform http engine from registry");
 
@@ -290,6 +290,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                         localEngine = true;
                     }
                 }
+            } finally {
+                lock.unlock();
             }
         }
 

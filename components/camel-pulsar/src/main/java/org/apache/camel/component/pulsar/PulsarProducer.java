@@ -39,7 +39,6 @@ public class PulsarProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PulsarProducer.class);
 
-    private final Object mutex = new Object();
     private final PulsarEndpoint pulsarEndpoint;
     private volatile Producer<byte[]> producer;
 
@@ -120,7 +119,8 @@ public class PulsarProducer extends DefaultAsyncProducer {
     }
 
     private void createProducer() throws PulsarClientException {
-        synchronized (mutex) {
+        lock.lock();
+        try {
             if (producer == null) {
                 final String topicUri = pulsarEndpoint.getUri();
                 PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
@@ -147,6 +147,8 @@ public class PulsarProducer extends DefaultAsyncProducer {
                 }
                 producer = producerBuilder.create();
             }
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -18,6 +18,8 @@ package org.apache.camel.component.quickfixj;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -56,6 +58,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
 
     private final QuickfixjEngine engine;
+    private final Lock engineLock = new ReentrantLock();
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
     @UriPath
@@ -229,11 +232,14 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
      */
     public void ensureInitialized() throws Exception {
         if (!engine.isInitialized()) {
-            synchronized (engine) {
+            engineLock.lock();
+            try {
                 if (!engine.isInitialized()) {
                     engine.initializeEngine();
                     ServiceHelper.startService(engine);
                 }
+            } finally {
+                engineLock.unlock();
             }
         }
     }

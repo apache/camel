@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.olingo4.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.olingo4.Olingo4Configuration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class Olingo4PropertiesHelper extends ApiMethodPropertiesHelper<Olingo4Configuration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static Olingo4PropertiesHelper helper;
 
     private Olingo4PropertiesHelper(CamelContext context) {
         super(context, Olingo4Configuration.class, Olingo4Constants.PROPERTY_PREFIX);
     }
 
-    public static synchronized Olingo4PropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new Olingo4PropertiesHelper(context);
+    public static Olingo4PropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new Olingo4PropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }

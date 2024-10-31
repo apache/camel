@@ -195,8 +195,13 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
     }
 
     @Override
-    public synchronized Object getApiProxy(ApiMethod method, Map<String, Object> args) {
-        return apiProxy.getOlingo4App();
+    public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
+        lock.lock();
+        try {
+            return apiProxy.getOlingo4App();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
