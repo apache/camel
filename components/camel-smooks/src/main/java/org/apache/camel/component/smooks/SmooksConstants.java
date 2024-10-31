@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
  */
 public final class SmooksConstants {
 
-    @Metadata(label = "common (advanced)", description = "The Smooks execution context.",
+    @Metadata(label = "advanced", description = "The Smooks execution context.",
               javaType = "org.smooks.api.ExecutionContext")
     public static final String SMOOKS_EXECUTION_CONTEXT = "CamelSmooksExecutionContext";
 }
