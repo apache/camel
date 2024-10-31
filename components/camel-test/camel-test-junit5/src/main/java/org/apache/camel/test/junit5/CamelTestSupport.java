@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessorDefinition;
@@ -311,6 +312,19 @@ public abstract class CamelTestSupport extends AbstractTestSupport
      */
     protected void bindToRegistry(Registry registry) throws Exception {
         // noop
+    }
+
+    /**
+     * A utility method allowing to build any language using a fluent syntax as shown in the next example:
+     *
+     * <pre>
+     *  var exp = expression().tokenize().token("\n").end()
+     * </pre>
+     *
+     * @return an entry point to the builder of all supported languages.
+     */
+    protected LanguageBuilderFactory expression() {
+        return new LanguageBuilderFactory();
     }
 
     /**

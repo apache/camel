@@ -56,6 +56,16 @@ public class CamelTestSupportTest extends CamelTestSupport {
         assertNotNull(mock);
     }
 
+    @Test
+    public void testExpression() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.message(0).body().matches(expression().simple().expression("${body} contains ' foo '").trim(false).end());
+
+        template.sendBody("direct:start", "    foo    ");
+
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
