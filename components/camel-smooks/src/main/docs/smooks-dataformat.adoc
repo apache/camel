@@ -66,9 +66,9 @@ The Smooks configuration in `csv-smooks-unmarshal-config.xml` is as follows:
         <core:result type="org.smooks.io.sink.JavaSink" extract="result"/>
     </core:exports>
 
-	<csv:reader fields="firstName,lastName,gender,age,country">
-		<csv:listBinding beanId="result" class="org.smooks.example.Customer"/>
-	</csv:reader>
+    <csv:reader fields="firstName,lastName,gender,age,country">
+        <csv:listBinding beanId="result" class="org.smooks.example.Customer"/>
+    </csv:reader>
 
 </smooks-resource-list>
 ----

@@ -56,6 +56,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
 == Usage
 
 Using the Smooks component lets you leverage all the features of Smooks, such as transformation and fragment-driven routing, from within Camel. You can take an existing Smooks configuration and use this in your Camel routes as shown below:
