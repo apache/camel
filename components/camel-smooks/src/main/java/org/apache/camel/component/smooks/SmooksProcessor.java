@@ -73,8 +73,6 @@ import org.smooks.io.source.URLSource;
  */
 public class SmooksProcessor extends ServiceSupport implements Processor, CamelContextAware {
 
-    public static final String SMOOKS_EXECUTION_CONTEXT = "CamelSmooksExecutionContext";
-
     private static final TypedKey<Exchange> EXCHANGE_TYPED_KEY = TypedKey.of();
     private static final Logger LOG = LoggerFactory.getLogger(SmooksProcessor.class);
 
@@ -110,16 +108,20 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     public void process(final Exchange exchange) {
-        final ExecutionContext executionContext = smooks.createExecutionContext();
-        try {
-            executionContext.put(EXCHANGE_TYPED_KEY, exchange);
+        ExecutionContext executionContext
+                = exchange.getIn().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
+        if (executionContext == null) {
+            executionContext = smooks.createExecutionContext();
             Charset charset = ExchangeHelper.getCharset(exchange, false);
             if (charset != null) {
-                // if provided use the came character encoding
+                // if provided use the same character encoding
                 executionContext.setContentEncoding(charset.name());
             }
-            exchange.getIn().setHeader(SMOOKS_EXECUTION_CONTEXT, executionContext);
-            setupSmooksReporting(executionContext);
+        }
+        try {
+            executionContext.put(EXCHANGE_TYPED_KEY, exchange);
+            exchange.getIn().setHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, executionContext);
+            setUpSmooksReporting(executionContext);
 
             final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
             if (exports.hasExports()) {
@@ -150,15 +152,14 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
     }
 
-    private void setupSmooksReporting(final ExecutionContext executionContext) {
+    private void setUpSmooksReporting(final ExecutionContext executionContext) {
         if (reportPath != null) {
             try {
                 executionContext.getContentDeliveryRuntime().addExecutionEventListener(
                         new HtmlReportGenerator(reportPath, executionContext.getApplicationContext()));
             } catch (final IOException e) {
-                LOG.warn("Cannot generate Smooks Report. The reportPath specified was [" + reportPath
-                         + "]. This exception is ignored.",
-                        e);
+                LOG.warn("Cannot generate Smooks Report. The reportPath specified was [{}]. This exception is ignored.",
+                        reportPath, e);
             }
         }
     }
@@ -258,7 +259,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         try {
             if (smooks == null) {
                 smooks = createSmooks();
@@ -278,7 +279,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doStop() {
         if (smooks != null) {
             IOHelper.close(smooks);
             smooks = null;

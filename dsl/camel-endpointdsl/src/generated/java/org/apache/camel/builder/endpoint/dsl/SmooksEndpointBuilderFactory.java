@@ -132,6 +132,20 @@ public interface SmooksEndpointBuilderFactory {
          * Since: 4.7
          * Maven coordinates: org.apache.camel:camel-smooks
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SmooksHeaderNameBuilder smooks() {
+            return SmooksHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Smooks (camel-smooks)
+         * Use Smooks to transform, route, and bind both XML and non-XML data,
+         * including EDI, CSV, JSON, and YAML.
+         * 
+         * Category: transformation
+         * Since: 4.7
+         * Maven coordinates: org.apache.camel:camel-smooks
+         * 
          * Syntax: <code>smooks:smooksConfig</code>
          * 
          * Path parameter: smooksConfig (required)
@@ -170,6 +184,29 @@ public interface SmooksEndpointBuilderFactory {
             return SmooksEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Smooks component.
+     */
+    public static class SmooksHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SmooksHeaderNameBuilder INSTANCE = new SmooksHeaderNameBuilder();
+
+        /**
+         * The Smooks execution context.
+         * 
+         * The option is a: {@code org.smooks.api.ExecutionContext} type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @return the name of the header {@code SmooksExecutionContext}.
+         */
+        public String smooksExecutionContext() {
+            return "CamelSmooksExecutionContext";
+        }
     }
     static SmooksEndpointBuilder endpointBuilder(String componentName, String path) {
         class SmooksEndpointBuilderImpl extends AbstractEndpointBuilder implements SmooksEndpointBuilder, AdvancedSmooksEndpointBuilder {

@@ -33,7 +33,7 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 @UriEndpoint(firstVersion = "4.7.0", scheme = "smooks", title = "Smooks", syntax = "smooks:smooksConfig",
              producerOnly = true,
-             category = { Category.TRANSFORMATION })
+             category = { Category.TRANSFORMATION }, headersClass = SmooksConstants.class)
 public class SmooksEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Path to the Smooks configuration file")

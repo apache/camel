@@ -38,6 +38,8 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.smooks.Smooks;
+import org.smooks.SmooksFactory;
+import org.smooks.api.ExecutionContext;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cartridges.javabean.Value;
 import org.smooks.io.payload.Exports;
@@ -58,6 +60,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SmooksProcessorTest extends CamelTestSupport {
@@ -78,6 +81,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         assertIsSatisfied();
 
         Exchange exchange = result.assertExchangeReceived(0);
+        assertNotNull(exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class));
         assertIsInstanceOf(InputStreamCache.class, exchange.getIn().getBody());
         assertFalse(DiffBuilder.compare(getExpectedOrderXml()).withTest(exchange.getIn().getBody(String.class)).ignoreComments()
                 .ignoreWhitespace().build().hasDifferences());
@@ -88,6 +92,47 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.addRoutes(createEdiToXmlRouteBuilder());
         context.start();
         assertOneProcessedMessage();
+    }
+
+    @Test
+    public void testProcessUsesExistingExecutionContextWhenExecutionContextIsInHeader() throws Exception {
+        Smooks smooks = new Smooks();
+        SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
+        processor.setSmooksFactory(new SmooksFactory() {
+            @Override
+            public Smooks createInstance() {
+                return smooks;
+            }
+
+            @Override
+            public Smooks createInstance(InputStream config) {
+                return null;
+            }
+
+            @Override
+            public Smooks createInstance(String config) {
+                return null;
+            }
+        });
+
+        final ExecutionContext[] executionContext = new ExecutionContext[1];
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:input")
+                        .setHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, () -> {
+                            executionContext[0] = smooks.createExecutionContext();
+                            return executionContext[0];
+                        })
+                        .process(processor).to("mock:result");
+            }
+
+        });
+        context.start();
+        template.sendBody("direct://input", getOrderEdi());
+
+        Exchange exchange = result.assertExchangeReceived(0);
+        assertEquals(executionContext[0], exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT));
     }
 
     @Test
