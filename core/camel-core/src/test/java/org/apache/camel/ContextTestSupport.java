@@ -29,6 +29,7 @@ import javax.naming.Context;
 
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
@@ -286,6 +287,19 @@ public abstract class ContextTestSupport extends TestSupport
 
     public ConsumerTemplate consumer() {
         return consumer;
+    }
+
+    /**
+     * A utility method allowing to build any language using a fluent syntax as shown in the next example:
+     *
+     * <pre>
+     *  var exp = expression().tokenize().token("\n").end()
+     * </pre>
+     *
+     * @return an entry point to the builder of all supported languages.
+     */
+    public LanguageBuilderFactory expression() {
+        return new LanguageBuilderFactory();
     }
 
     /**
