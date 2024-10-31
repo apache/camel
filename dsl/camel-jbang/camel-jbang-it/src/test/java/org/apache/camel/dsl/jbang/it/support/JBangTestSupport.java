@@ -106,6 +106,7 @@ public abstract class JBangTestSupport {
         COMP_MAPPING_DATA("data.xml", "/jbang/it/data-mapping/components/data.xml"),
         COMP_MAPPING_TEMPLATE("transform.xml", "/jbang/it/data-mapping/components/transform.xml"),
         FORMATS_MAPPING_DATA("data.csv", "/jbang/it/data-mapping/data-formats/data.csv"),
+        STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
         USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml");
 
         private String name;
