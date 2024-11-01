@@ -17,6 +17,9 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.v1.integrationspec.Traits;
+
 public abstract class BaseTrait implements Trait {
 
     public static final String KUBERNETES_NAME_LABEL = "app.kubernetes.io/name";
@@ -45,5 +48,9 @@ public abstract class BaseTrait implements Trait {
     @Override
     public boolean accept(TraitProfile profile) {
         return true;
+    }
+
+    @Override
+    public void applyRuntimeSpecificProperties(Traits traitConfig, TraitContext context, RuntimeType runtimeType) {
     }
 }

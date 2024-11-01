@@ -290,6 +290,20 @@ class KubernetesExportTest extends KubernetesBaseTest {
         Assertions.assertEquals("route-service", route.getSpec().getTo().getName());
         Assertions.assertTrue(certificate.startsWith(route.getSpec().getTls().getCertificate()));
         Assertions.assertTrue(key.startsWith(route.getSpec().getTls().getKey()));
+
+        if (RuntimeType.quarkus.equals(rt)) {
+            Properties applicationProperties = getApplicationProperties(workingDir);
+            Assertions.assertEquals("true", applicationProperties.get("quarkus.openshift.route.expose"));
+            Assertions.assertEquals("example.com",
+                    applicationProperties.get("quarkus.openshift.route.host"));
+            Assertions.assertEquals("http",
+                    applicationProperties.get("quarkus.openshift.route.target-port"));
+            Assertions.assertEquals("edge",
+                    applicationProperties.get("quarkus.openshift.route.tls.termination"));
+            Assertions.assertTrue(certificate.startsWith(
+                    applicationProperties.get("quarkus.openshift.route.tls.certificate").toString()));
+            Assertions.assertTrue(key.startsWith(applicationProperties.get("quarkus.openshift.route.tls.key").toString()));
+        }
     }
 
     @ParameterizedTest

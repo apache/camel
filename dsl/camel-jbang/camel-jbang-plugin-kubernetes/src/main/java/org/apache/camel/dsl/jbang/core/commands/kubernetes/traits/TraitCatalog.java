@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeServiceTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative.KnativeTrait;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.v1.integrationspec.Traits;
 
 /**
@@ -69,18 +70,21 @@ public class TraitCatalog {
      * @param traitsSpec   the trait configuration spec.
      * @param context      the trait context.
      * @param traitProfile the optional trait profile to select traits.
+     * @param runtimeType  the runtime.
      */
-    public void apply(Traits traitsSpec, TraitContext context, String traitProfile) {
+    public void apply(Traits traitsSpec, TraitContext context, String traitProfile, RuntimeType runtimeType) {
         if (traitProfile != null) {
             new TraitCatalog().traitsForProfile(TraitProfile.valueOf(traitProfile.toUpperCase(Locale.US))).forEach(t -> {
                 if (t.configure(traitsSpec, context)) {
                     t.apply(traitsSpec, context);
+                    t.applyRuntimeSpecificProperties(traitsSpec, context, runtimeType);
                 }
             });
         } else {
             new TraitCatalog().allTraits().forEach(t -> {
                 if (t.configure(traitsSpec, context)) {
                     t.apply(traitsSpec, context);
+                    t.applyRuntimeSpecificProperties(traitsSpec, context, runtimeType);
                 }
             });
         }
