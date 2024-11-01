@@ -80,6 +80,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private Smooks smooks;
     private String configUri;
     private String reportPath;
+    private Boolean allowExecutionContextFromHeader = false;
 
     private final Set<VisitorAppender> visitorAppender = new HashSet<>();
     private final Map<String, Visitor> selectorVisitorMap = new HashMap<>();
@@ -107,9 +108,20 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         return camelContext;
     }
 
+    public Boolean getAllowExecutionContextFromHeader() {
+        return allowExecutionContextFromHeader;
+    }
+
+    public void setAllowExecutionContextFromHeader(Boolean allowExecutionContextFromHeader) {
+        this.allowExecutionContextFromHeader = allowExecutionContextFromHeader;
+    }
+
     public void process(final Exchange exchange) {
-        ExecutionContext executionContext
-                = exchange.getIn().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
+        ExecutionContext executionContext = null;
+        if (allowExecutionContextFromHeader) {
+            executionContext
+                    = exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
+        }
         if (executionContext == null) {
             executionContext = smooks.createExecutionContext();
             Charset charset = ExchangeHelper.getCharset(exchange, false);
@@ -118,6 +130,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
                 executionContext.setContentEncoding(charset.name());
             }
         }
+
         try {
             executionContext.put(EXCHANGE_TYPED_KEY, exchange);
             exchange.getIn().setHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, executionContext);

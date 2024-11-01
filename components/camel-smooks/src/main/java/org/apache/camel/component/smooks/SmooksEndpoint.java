@@ -41,6 +41,11 @@ public class SmooksEndpoint extends DefaultEndpoint {
     private String smooksConfig;
     @UriParam(description = "File path to place the generated HTML execution report. The report is a useful tool in the developer’s arsenal for diagnosing issues or comprehending a transformation. Do not set in production since this is a major performance drain")
     private String reportPath;
+    @UriParam(description = "Allow execution context to be set from the " + SmooksConstants.SMOOKS_EXECUTION_CONTEXT
+                            + " header",
+              label = "advanced",
+              defaultValue = "false")
+    private Boolean allowExecutionContextFromHeader = false;
 
     private final SmooksProcessor smooksProcessor;
 
@@ -50,12 +55,12 @@ public class SmooksEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new SmooksProducer(this, smooksProcessor);
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         throw new IllegalArgumentException("Consumer is not supported");
     }
 
@@ -85,5 +90,13 @@ public class SmooksEndpoint extends DefaultEndpoint {
 
     public void setReportPath(String reportPath) {
         this.reportPath = reportPath;
+    }
+
+    public Boolean getAllowExecutionContextFromHeader() {
+        return allowExecutionContextFromHeader;
+    }
+
+    public void setAllowExecutionContextFromHeader(Boolean allowExecutionContextFromHeader) {
+        this.allowExecutionContextFromHeader = allowExecutionContextFromHeader;
     }
 }
