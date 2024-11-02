@@ -39,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
@@ -317,7 +318,7 @@ public class IntegrationRun extends KubernetesBaseCommand {
                     TraitHelper.configureContainerImage(traitsSpec, image, "quay.io", null, integration.getMetadata().getName(),
                             "1.0-SNAPSHOT");
 
-                    new TraitCatalog().apply(traitsSpec, context, traitProfile);
+                    new TraitCatalog().apply(traitsSpec, context, traitProfile, RuntimeType.quarkus);
 
                     printer().println(
                             context.buildItems().stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---")));
