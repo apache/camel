@@ -209,6 +209,53 @@ There are some examples of the Mock endpoint in use in the
 https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel/processor[`camel-core`
 processor tests].
 
+==== Using any language for expectations
+
+When you want to check that a given message body or header is as expected, and the format is XML or JSon,
+then you can use the Camel languages to perform the validation.
+
+For example to check whether a header matches a XPath you can do as follows:
+
+[source,java]
+----
+// setup the xpath once
+var xpath = expression().xpath("/person[@name='James']").source("header:cheese").end();
+
+// message 0 should not match, message 1 should match, message 2 should not match
+mock.message(0).predicate(not(xpath));
+mock.message(1).predicate(xpath);
+mock.message(2).predicate(not(xpath));
+----
+
+Notice how we can create the expectation using the `expression()` fluent builder, that allows
+you to use any of the many Camel languages, and to configure every option you may desire.
+
+If you only need to use the expectation once, you can inline this directly in the mock as follows:
+
+[source,java]
+----
+mock.message(1).predicate(expression().xpath("/person[@name='James']").source("header:cheese").end());
+----
+
+Notice that the xpath language need to use `source` to refer to the value should be from the header with key cheese.
+By default, the source is the message body, and therefore is only needed when you refer to headers/variables etc.
+
+You can also use regular expressions as expectations, as follows:
+
+[source,java]
+----
+mock.message(1).header("cheese").regex("value[2,3]");
+mock.message(2).header("cheese").regex("value[2,3]");
+// should not match
+mock.message(0).header("cheese").not().regex("value[2,3]");
+mock.message(3).header("cheese").not().regex("value[2,3]");
+----
+
+Here we use the _built-in_ `regex` function from the mock component, that makes
+coding this easier. There are a limited set of functions out of the box.
+
+To use any of the Camel languages then do as shown previously with the XPath example.
+
 === Mocking existing endpoints
 
 Camel now allows you to automatically mock existing endpoints in your
