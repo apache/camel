@@ -120,6 +120,39 @@ public interface SmooksEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Allow execution context to be set from the
+         * CamelSmooksExecutionContext header.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param allowExecutionContextFromHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmooksEndpointBuilder allowExecutionContextFromHeader(Boolean allowExecutionContextFromHeader) {
+            doSetProperty("allowExecutionContextFromHeader", allowExecutionContextFromHeader);
+            return this;
+        }
+        /**
+         * Allow execution context to be set from the
+         * CamelSmooksExecutionContext header.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param allowExecutionContextFromHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmooksEndpointBuilder allowExecutionContextFromHeader(String allowExecutionContextFromHeader) {
+            doSetProperty("allowExecutionContextFromHeader", allowExecutionContextFromHeader);
+            return this;
+        }
     }
 
     public interface SmooksBuilders {

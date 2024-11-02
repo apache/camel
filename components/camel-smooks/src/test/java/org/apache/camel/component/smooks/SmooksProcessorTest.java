@@ -60,6 +60,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,7 +96,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessUsesExistingExecutionContextWhenExecutionContextIsInHeader() throws Exception {
+    public void testProcessUsesExistingExecutionContextWhenExecutionContextIsInHeaderAndAllowExecutionContextFromHeaderIsTrue()
+            throws Exception {
         Smooks smooks = new Smooks();
         SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
         processor.setSmooksFactory(new SmooksFactory() {
@@ -114,6 +116,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
                 return null;
             }
         });
+        processor.setAllowExecutionContextFromHeader(true);
 
         final ExecutionContext[] executionContext = new ExecutionContext[1];
         context.addRoutes(new RouteBuilder() {
@@ -124,7 +127,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
                             executionContext[0] = smooks.createExecutionContext();
                             return executionContext[0];
                         })
-                        .process(processor).to("mock:result");
+                        .process(processor)
+                        .to("mock:result");
             }
 
         });
@@ -133,6 +137,50 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
         Exchange exchange = result.assertExchangeReceived(0);
         assertEquals(executionContext[0], exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT));
+    }
+
+    @Test
+    public void testProcessDoesNotUseExistingExecutionContextWhenExecutionContextIsInHeaderAndAllowExecutionContextFromHeaderIsFalse()
+            throws Exception {
+        Smooks smooks = new Smooks();
+        SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
+        processor.setSmooksFactory(new SmooksFactory() {
+            @Override
+            public Smooks createInstance() {
+                return smooks;
+            }
+
+            @Override
+            public Smooks createInstance(InputStream config) {
+                return null;
+            }
+
+            @Override
+            public Smooks createInstance(String config) {
+                return null;
+            }
+        });
+        processor.setAllowExecutionContextFromHeader(false);
+
+        final ExecutionContext[] executionContext = new ExecutionContext[1];
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:input")
+                        .setHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, () -> {
+                            executionContext[0] = smooks.createExecutionContext();
+                            return executionContext[0];
+                        })
+                        .process(processor)
+                        .to("mock:result");
+            }
+
+        });
+        context.start();
+        template.sendBody("direct://input", getOrderEdi());
+
+        Exchange exchange = result.assertExchangeReceived(0);
+        assertNotEquals(executionContext[0], exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT));
     }
 
     @Test

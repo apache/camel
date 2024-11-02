@@ -23,6 +23,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmooksEndpoint target = (SmooksEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowexecutioncontextfromheader":
+        case "allowExecutionContextFromHeader": target.setAllowExecutionContextFromHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "reportpath":
@@ -34,6 +36,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowexecutioncontextfromheader":
+        case "allowExecutionContextFromHeader": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "reportpath":
@@ -46,6 +50,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmooksEndpoint target = (SmooksEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowexecutioncontextfromheader":
+        case "allowExecutionContextFromHeader": return target.getAllowExecutionContextFromHeader();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "reportpath":
