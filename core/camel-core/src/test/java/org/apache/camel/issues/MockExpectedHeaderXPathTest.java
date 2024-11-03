@@ -25,22 +25,57 @@ import static org.apache.camel.support.builder.PredicateBuilder.not;
 
 public class MockExpectedHeaderXPathTest extends ContextTestSupport {
 
+    protected String filter = "/person[@name='James']";
+    protected String name = "/person/@name";
     protected String matchingBody = "<person name='James' city='London'/>";
     protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
     protected String notMatchingBody2 = "<person name='Jack' city='Houston'/>";
 
     @Test
-    public void testHeaderXPath() throws Exception {
+    public void testHeaderXPathBuilderLanguageBuilder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
 
         // xpath that takes input from a header
-        var xpath = expression().xpath("/person[@name='James']").source("header:cheese").end();
+        var xpath = expression().xpath(filter).source("header:cheese").end();
 
         // validate that some of the headers match and others do not
         mock.message(0).predicate(not(xpath));
         mock.message(1).predicate(xpath);
         mock.message(2).predicate(not(xpath));
+
+        template.sendBodyAndHeader("direct:test", "message 1", "cheese", notMatchingBody);
+        template.sendBodyAndHeader("direct:test", "message 2", "cheese", matchingBody);
+        template.sendBodyAndHeader("direct:test", "message 3", "cheese", notMatchingBody2);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testHeaderXPathPredicate() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(3);
+
+        // validate that some of the headers match and others do not
+        mock.message(0).header("cheese").xpath(filter).isFalse();
+        mock.message(1).header("cheese").xpath(filter).isTrue();
+        mock.message(2).header("cheese").xpath(filter).isFalse();
+
+        template.sendBodyAndHeader("direct:test", "message 1", "cheese", notMatchingBody);
+        template.sendBodyAndHeader("direct:test", "message 2", "cheese", matchingBody);
+        template.sendBodyAndHeader("direct:test", "message 3", "cheese", notMatchingBody2);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testHeaderXPathExpressionAttribute() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(3);
+
+        mock.message(0).header("cheese").xpath(name).isEqualTo("Hiram");
+        mock.message(1).header("cheese").xpath(name).isEqualTo("James");
+        mock.message(2).header("cheese").xpath(name).isEqualTo("Jack");
 
         template.sendBodyAndHeader("direct:test", "message 1", "cheese", notMatchingBody);
         template.sendBodyAndHeader("direct:test", "message 2", "cheese", matchingBody);
