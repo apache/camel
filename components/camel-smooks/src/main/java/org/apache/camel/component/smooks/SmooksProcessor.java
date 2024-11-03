@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -63,6 +64,7 @@ import org.smooks.engine.lookup.ExportsLookup;
 import org.smooks.engine.report.HtmlReportGenerator;
 import org.smooks.io.payload.Exports;
 import org.smooks.io.sink.StreamSink;
+import org.smooks.io.source.ByteSource;
 import org.smooks.io.source.DOMSource;
 import org.smooks.io.source.ReaderSource;
 import org.smooks.io.source.StreamSource;
@@ -147,7 +149,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
                         new StreamSink<>(outputStreamBuilder));
                 exchange.getMessage().setBody(outputStreamBuilder.build());
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidPayloadException e) {
             throw new RuntimeCamelException(e);
         } finally {
             executionContext.remove(EXCHANGE_TYPED_KEY);
@@ -177,15 +179,15 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
     }
 
-    private Source getSource(final Exchange exchange) {
-        Object payload = exchange.getIn().getBody();
-
-        if (payload instanceof SAXSource) {
-            return new ReaderSource<>((Reader) ((SAXSource) payload).getXMLReader());
-        }
+    private Source getSource(final Exchange exchange) throws InvalidPayloadException {
+        final Object payload = exchange.getIn().getBody();
 
         if (payload instanceof Source) {
             return (Source) payload;
+        }
+
+        if (payload instanceof byte[]) {
+            return new ByteSource((byte[]) payload);
         }
 
         if (payload instanceof Node) {
@@ -201,7 +203,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
 
         if (payload instanceof WrappedFile) {
-            String systemId
+            final String systemId
                     = new javax.xml.transform.stream.StreamSource((File) exchange.getIn().getBody(WrappedFile.class).getFile())
                             .getSystemId();
             try {
@@ -211,7 +213,11 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             }
         }
 
-        return exchange.getIn().getBody(Source.class);
+        if (payload instanceof SAXSource) {
+            return new ReaderSource<>((Reader) ((SAXSource) payload).getXMLReader());
+        }
+
+        return exchange.getIn().getMandatoryBody(Source.class);
     }
 
     public String getSmooksConfig() {
