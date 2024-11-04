@@ -112,13 +112,9 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
     private static final int RECEIPT_SERVER_PORT2 = AvailablePortFinder.getNextAvailable();
-
     private static final int RECEIPT_SERVER_PORT3 = AvailablePortFinder.getNextAvailable();
     private static final int RECEIPT_SERVER_PORT4 = AvailablePortFinder.getNextAvailable();
 
-    //    private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + RECEIPT_SERVER_PORT + "/handle-receipts";
-    //    private static final String RECIPIENT_DELIVERY_ADDRESS2 = "http://localhost:" + RECEIPT_SERVER_PORT2 + "/handle-receipts";
-    //    private static final String MOCK_RECEIPT_ENDPOINT = "mock:as2RcvRcptMsgs";
     private static AS2ServerConnection serverConnection;
     private static RequestHandler requestHandler;
     private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
