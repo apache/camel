@@ -312,13 +312,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint) consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        CONNECTORS.compute(connectorKey, (cKey, connectorRef) -> {
-            try {
-                return connect(consumer, endpoint, cKey, connectorRef);
-            } catch (Exception e) {
-                throw new RuntimeCamelException(e);
-            }
-        });
+        try {
+            CONNECTORS.compute(connectorKey, (cKey, connectorRef) -> {
+                try {
+                    return connect(consumer, endpoint, cKey, connectorRef);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+            });
+        } catch (RuntimeCamelException e) {
+            throw (Exception) e.getCause();
+        }
     }
 
     private ConnectorRef connect(
@@ -477,13 +481,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         HttpCommonEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        CONNECTORS.computeIfPresent(connectorKey, (cKey, connectorRef) -> {
-            try {
-                return disconnect(consumer, connectorRef);
-            } catch (Exception e) {
-                throw new RuntimeCamelException(e);
-            }
-        });
+        try {
+            CONNECTORS.computeIfPresent(connectorKey, (cKey, connectorRef) -> {
+                try {
+                    return disconnect(consumer, connectorRef);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+            });
+        } catch (RuntimeCamelException e) {
+            throw (Exception) e.getCause();
+        }
     }
 
     private ConnectorRef disconnect(HttpConsumer consumer, ConnectorRef connectorRef) throws Exception {
