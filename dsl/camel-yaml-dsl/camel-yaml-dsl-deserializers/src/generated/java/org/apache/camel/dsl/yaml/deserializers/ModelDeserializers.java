@@ -3589,6 +3589,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fromType", type = "string"),
+                    @YamlProperty(name = "fury", type = "object:org.apache.camel.model.dataformat.FuryDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
@@ -3705,6 +3706,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "flatpack": {
                     org.apache.camel.model.dataformat.FlatpackDataFormat val = asType(node, org.apache.camel.model.dataformat.FlatpackDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "fury": {
+                    org.apache.camel.model.dataformat.FuryDataFormat val = asType(node, org.apache.camel.model.dataformat.FuryDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3905,6 +3911,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
+                    @YamlProperty(name = "fury", type = "object:org.apache.camel.model.dataformat.FuryDataFormat"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat"),
@@ -4078,6 +4085,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "flatpack": {
                     org.apache.camel.model.dataformat.FlatpackDataFormat val = asType(node, org.apache.camel.model.dataformat.FlatpackDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "fury": {
+                    org.apache.camel.model.dataformat.FuryDataFormat val = asType(node, org.apache.camel.model.dataformat.FuryDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -6297,7 +6314,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Serialize and deserialize messages using Apache Fury",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "allowAutoWiredFury", type = "boolean", description = "Whether to auto-discover Fury from the registry", displayName = "Allow Auto Wired Fury"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "requireClassRegistration", type = "boolean", description = "Whether to require register classes", displayName = "Require Class Registration"),
+                    @YamlProperty(name = "threadSafe", type = "boolean", description = "Whether to use the threadsafe fury", displayName = "Thread Safe"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class of the java type to use when unmarshalling", displayName = "Unmarshal Type")
             }
     )
@@ -6316,9 +6336,24 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowAutoWiredFury": {
+                    String val = asText(node);
+                    target.setAllowAutoWiredFury(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "requireClassRegistration": {
+                    String val = asText(node);
+                    target.setRequireClassRegistration(val);
+                    break;
+                }
+                case "threadSafe": {
+                    String val = asText(node);
+                    target.setThreadSafe(val);
                     break;
                 }
                 case "unmarshalType": {
@@ -9692,6 +9727,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "fury", type = "object:org.apache.camel.model.dataformat.FuryDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
@@ -9809,6 +9845,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "flatpack": {
                     org.apache.camel.model.dataformat.FlatpackDataFormat val = asType(node, org.apache.camel.model.dataformat.FlatpackDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "fury": {
+                    org.apache.camel.model.dataformat.FuryDataFormat val = asType(node, org.apache.camel.model.dataformat.FuryDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -20288,6 +20329,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "fury", type = "object:org.apache.camel.model.dataformat.FuryDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
@@ -20410,6 +20452,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "flatpack": {
                     org.apache.camel.model.dataformat.FlatpackDataFormat val = asType(node, org.apache.camel.model.dataformat.FlatpackDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "fury": {
+                    org.apache.camel.model.dataformat.FuryDataFormat val = asType(node, org.apache.camel.model.dataformat.FuryDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

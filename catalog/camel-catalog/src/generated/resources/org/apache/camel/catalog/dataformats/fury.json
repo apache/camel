@@ -17,6 +17,9 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class of the java type to use when unmarshalling" }
+    "unmarshalType": { "index": 1, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class of the java type to use when unmarshalling" },
+    "requireClassRegistration": { "index": 2, "kind": "attribute", "displayName": "Require Class Registration", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to require register classes" },
+    "threadSafe": { "index": 3, "kind": "attribute", "displayName": "Thread Safe", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to use the threadsafe fury" },
+    "allowAutoWiredFury": { "index": 4, "kind": "attribute", "displayName": "Allow Auto Wired Fury", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to auto-discover Fury from the registry" }
   }
 }

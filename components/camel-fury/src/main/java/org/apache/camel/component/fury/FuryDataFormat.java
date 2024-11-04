@@ -26,9 +26,13 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.fury.BaseFury;
 import org.apache.fury.Fury;
+import org.apache.fury.config.FuryBuilder;
 import org.apache.fury.config.Language;
 import org.apache.fury.io.FuryInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Serialize and deserialize messages using <a href="https://fury.apache.org">Apache Fury</a>
@@ -36,15 +40,16 @@ import org.apache.fury.io.FuryInputStream;
 @Dataformat("fury")
 @Metadata(firstVersion = "4.9.0", title = "Fury")
 public class FuryDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+    private static final Logger LOG = LoggerFactory.getLogger(FuryDataFormat.class);
 
     private CamelContext camelContext;
-    /**
-     * Class of the java type to use when unmarshalling
-     */
     private Class<?> unmarshalType;
     private String unmarshalTypeName;
+    private boolean requireClassRegistration = true;
+    private boolean threadSafe = true;
+    private boolean allowAutoWiredFury = true;
 
-    private Fury fury;
+    private BaseFury fury;
 
     public FuryDataFormat() {
         this(Object.class);
@@ -85,7 +90,16 @@ public class FuryDataFormat extends ServiceSupport implements DataFormat, DataFo
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
 
-        fury = Fury.builder().withLanguage(Language.JAVA).requireClassRegistration(true).build();
+        if (fury == null && isAllowAutoWiredFury()) {
+            fury = getCamelContext().getRegistry().findSingleByType(BaseFury.class);
+        }
+
+        if (fury == null) {
+            FuryBuilder builder = Fury.builder().withLanguage(Language.JAVA);
+            builder.requireClassRegistration(requireClassRegistration);
+            fury = threadSafe ? builder.buildThreadSafeFury() : builder.build();
+        }
+
         if (unmarshalType != null) {
             fury.register(unmarshalType);
         }
@@ -102,14 +116,18 @@ public class FuryDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     // Properties
     // -------------------------------------------------------------------------
-
-    public Class<?> getUnmarshalType() {
-        return this.unmarshalType;
+    public BaseFury getFury() {
+        return fury;
     }
 
-    /**
-     * Class of the java type to use when unmarshalling
-     */
+    public void setFury(BaseFury fury) {
+        this.fury = fury;
+    }
+
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
+    }
+
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -122,4 +140,27 @@ public class FuryDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.unmarshalTypeName = unmarshalTypeName;
     }
 
+    public boolean isRequireClassRegistration() {
+        return requireClassRegistration;
+    }
+
+    public void setRequireClassRegistration(boolean requireClassRegistration) {
+        this.requireClassRegistration = requireClassRegistration;
+    }
+
+    public boolean isThreadSafe() {
+        return threadSafe;
+    }
+
+    public void setThreadSafe(boolean threadSafe) {
+        this.threadSafe = threadSafe;
+    }
+
+    public boolean isAllowAutoWiredFury() {
+        return allowAutoWiredFury;
+    }
+
+    public void setAllowAutoWiredFury(boolean allowAutoWiredFury) {
+        this.allowAutoWiredFury = allowAutoWiredFury;
+    }
 }

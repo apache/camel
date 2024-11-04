@@ -22,6 +22,12 @@ public class FuryDataFormatConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "unmarshaltype":
         case "unmarshalType": dataformat.setUnmarshalType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "requireclassregistration":
+        case "requireClassRegistration": dataformat.setRequireClassRegistration(property(camelContext, boolean.class, value)); return true;
+        case "threadsafe":
+        case "threadSafe": dataformat.setThreadSafe(property(camelContext, boolean.class, value)); return true;
+        case "allowautowiredfury":
+        case "allowAutoWiredFury": dataformat.setAllowAutoWiredFury(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

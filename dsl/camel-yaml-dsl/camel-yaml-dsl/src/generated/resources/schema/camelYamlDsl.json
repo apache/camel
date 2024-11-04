@@ -2850,6 +2850,8 @@
               }, {
                 "required" : [ "flatpack" ]
               }, {
+                "required" : [ "fury" ]
+              }, {
                 "required" : [ "grok" ]
               }, {
                 "required" : [ "gzipDeflater" ]
@@ -3003,6 +3005,14 @@
             "properties" : {
               "flatpack" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "fury" ],
+            "properties" : {
+              "fury" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FuryDataFormat"
               }
             }
           }, {
@@ -3278,6 +3288,7 @@
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
+          "fury" : { },
           "grok" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -7633,6 +7644,7 @@
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
+          "fury" : { },
           "grok" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -7700,6 +7712,8 @@
                 "required" : [ "fhirXml" ]
               }, {
                 "required" : [ "flatpack" ]
+              }, {
+                "required" : [ "fury" ]
               }, {
                 "required" : [ "grok" ]
               }, {
@@ -7854,6 +7868,14 @@
             "properties" : {
               "flatpack" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "fury" ],
+            "properties" : {
+              "fury" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FuryDataFormat"
               }
             }
           }, {
@@ -10589,6 +10611,9 @@
           "flatpack" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
           },
+          "fury" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FuryDataFormat"
+          },
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
@@ -10948,10 +10973,25 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowAutoWiredFury" : {
+            "type" : "boolean",
+            "title" : "Allow Auto Wired Fury",
+            "description" : "Whether to auto-discover Fury from the registry"
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "requireClassRegistration" : {
+            "type" : "boolean",
+            "title" : "Require Class Registration",
+            "description" : "Whether to require register classes"
+          },
+          "threadSafe" : {
+            "type" : "boolean",
+            "title" : "Thread Safe",
+            "description" : "Whether to use the threadsafe fury"
           },
           "unmarshalType" : {
             "type" : "string",
@@ -16144,6 +16184,8 @@
               }, {
                 "required" : [ "flatpack" ]
               }, {
+                "required" : [ "fury" ]
+              }, {
                 "required" : [ "grok" ]
               }, {
                 "required" : [ "gzipDeflater" ]
@@ -16297,6 +16339,14 @@
             "properties" : {
               "flatpack" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FlatpackDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "fury" ],
+            "properties" : {
+              "fury" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FuryDataFormat"
               }
             }
           }, {
@@ -16559,6 +16609,7 @@
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
+          "fury" : { },
           "grok" : { },
           "gzipDeflater" : { },
           "hl7" : { },

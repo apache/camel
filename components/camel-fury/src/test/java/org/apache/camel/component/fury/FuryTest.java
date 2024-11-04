@@ -44,11 +44,8 @@ public class FuryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                FuryDataFormat format = new FuryDataFormat();
-                format.setUnmarshalType(TestPojo.class);
-
-                from("direct:in").marshal(format);
-                from("direct:back").unmarshal(format).to("mock:reverse");
+                from("direct:in").marshal().fury(TestPojo.class);
+                from("direct:back").unmarshal().fury(TestPojo.class).to("mock:reverse");
             }
         };
     }
