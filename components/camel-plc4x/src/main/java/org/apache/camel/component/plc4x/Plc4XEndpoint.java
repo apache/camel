@@ -123,7 +123,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     public void setupConnection() throws PlcConnectionException {
         try {
             connection = plcDriverManager.getConnection(this.uri);
-            if (!connection.isConnected()) {
+            if (!isConnected()) {
                 reconnectIfNeeded();
             }
         } catch (PlcConnectionException e) {
@@ -147,15 +147,15 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      * @throws PlcConnectionException If reconnect failed and auto-reconnect is turned on
      */
     public void reconnectIfNeeded() throws PlcConnectionException {
-        if (connection != null && connection.isConnected()) {
+        if (isConnected()) {
             LOGGER.trace("No reconnect needed, already connected");
         } else if (autoReconnect && connection == null) {
             connection = plcDriverManager.getConnection(uri);
             LOGGER.debug("Successfully reconnected");
-        } else if (autoReconnect && !connection.isConnected()) {
+        } else if (autoReconnect && !isConnected()) {
             connection.connect();
             // If reconnection fails without Exception, reset connection
-            if (!connection.isConnected()) {
+            if (!isConnected()) {
                 LOGGER.debug("No connection established after connect, resetting connection");
                 connection = plcDriverManager.getConnection(uri);
             }
@@ -171,6 +171,13 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
      */
     public boolean canWrite() {
         return connection.getMetadata().isWriteSupported();
+    }
+
+    /**
+     * @return true if connection is established and still connected
+     */
+    public boolean isConnected() {
+        return connection != null && connection.isConnected();
     }
 
     @Override
@@ -251,7 +258,7 @@ public class Plc4XEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     @Override
     public void doStop() throws Exception {
         //Shutting down the connection when leaving the Context
-        if (connection != null && connection.isConnected()) {
+        if (isConnected()) {
             connection.close();
             connection = null;
         }
