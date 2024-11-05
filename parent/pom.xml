@@ -340,7 +340,7 @@
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
-        <maven-javadoc-plugin-version>3.10.1</maven-javadoc-plugin-version>
+        <maven-javadoc-plugin-version>3.11.1</maven-javadoc-plugin-version>
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
         <maven-owasp-plugin-version>11.0.0</maven-owasp-plugin-version>
         <maven-plugin-plugin-version>3.15.0</maven-plugin-plugin-version>
