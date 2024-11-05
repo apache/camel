@@ -49,6 +49,9 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         super.doStart();
         try {
             plc4XEndpoint.setupConnection();
+            if (plc4XEndpoint.isConnected() && !plc4XEndpoint.canWrite()) {
+                throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
+            }
         } catch (PlcConnectionException e) {
             if (log.isTraceEnabled()) {
                 log.error("Connection setup failed, stopping producer", e);
@@ -57,15 +60,15 @@ public class Plc4XProducer extends DefaultAsyncProducer {
             }
             doStop();
         }
-        if (!plc4XEndpoint.canWrite()) {
-            throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
-        }
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         try {
             plc4XEndpoint.reconnectIfNeeded();
+            if (plc4XEndpoint.isConnected() && !plc4XEndpoint.canWrite()) {
+                throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
+            }
         } catch (PlcConnectionException e) {
             if (log.isTraceEnabled()) {
                 log.warn("Unable to reconnect, skipping request", e);
