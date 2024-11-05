@@ -299,7 +299,7 @@ is not changed at all. The received body is stored in the variable, and the rece
 headers as variables as well. The names of the variable is `header:variableName.headerName`. For example, if the variable is `myVar` and the header is `Content-Type`
 then the header is stored as a variable with the full name `header:myVar.Content-Type`.
 
-=== Example using VariableReceive
+=== Example using Variable Receive
 
 When the EIP is using *VariableReceive*, then the `Message` on the `Exchange` is not in use, but the body and headers will be from the variable.
 For example given the following `Message` containing:
