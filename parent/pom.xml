@@ -380,7 +380,7 @@
         <neoscada-version>0.4.0</neoscada-version>
         <netty-version>4.1.114.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-        <networknt-json-schema-validator-version>1.5.2</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>1.5.3</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.41.2</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
