@@ -141,6 +141,11 @@
             <version>${jansi-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-xml</artifactId>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
