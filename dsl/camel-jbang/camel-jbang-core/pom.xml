@@ -88,6 +88,11 @@
             <version>${picocli-version}</version>
         </dependency>
         <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-shell-jline3</artifactId>
+            <version>${picocli-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.freva</groupId>
             <artifactId>ascii-table</artifactId>
             <version>${ascii-table-version}</version>

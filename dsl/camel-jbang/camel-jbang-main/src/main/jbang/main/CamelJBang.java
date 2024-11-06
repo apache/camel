@@ -22,6 +22,7 @@
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:4.8.1}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:4.8.1}
 //DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:4.8.0}
+//DEPS org.jline:jline:${camel-jline.version:3.27.1}
 
 package main;
 
