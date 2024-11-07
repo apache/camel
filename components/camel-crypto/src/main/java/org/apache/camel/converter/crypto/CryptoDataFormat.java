@@ -110,10 +110,10 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         }
 
         if (mode == ENCRYPT_MODE || mode == DECRYPT_MODE) {
-            if (iv != null) {
-                cipher.init(mode, key, new IvParameterSpec(iv));
-            } else if (parameterSpec != null) {
+            if (parameterSpec != null) {
                 cipher.init(mode, key, parameterSpec);
+            } else if (iv != null) {
+                cipher.init(mode, key, new IvParameterSpec(iv));
             } else {
                 cipher.init(mode, key);
             }
