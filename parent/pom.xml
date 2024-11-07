@@ -3397,6 +3397,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-plugin-version}</version>
+                    <executions>
+                        <execution>
+                            <id>default-addPluginArtifactMetadata</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.sisu</groupId>
