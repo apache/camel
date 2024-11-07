@@ -16,6 +16,14 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -37,55 +45,143 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
     private final String clientSecret;
     private final String tokenEndpoint;
     private final String scope;
+    private final boolean cacheTokens;
+    private final Long cachedTokensDefaultExpirySeconds;
+    private final Long cachedTokensExpirationMarginSeconds;
+    private final static Map<OAuth2URIAndCredentials, TokenCache> tokenCache = new HashMap<>();
 
-    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String scope) {
+    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String scope, boolean cacheTokens,
+                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
         this.scope = scope;
+        this.cacheTokens = cacheTokens;
+        this.cachedTokensDefaultExpirySeconds = cachedTokensDefaultExpirySeconds;
+        this.cachedTokensExpirationMarginSeconds = cachedTokensExpirationMarginSeconds;
     }
 
     @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
         HttpClient httpClient = clientBuilder.build();
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
-
-            String url = tokenEndpoint;
-            if (scope != null) {
-                String sep = "?";
-                if (url.contains("?")) {
-                    sep = "&";
-                }
-                url = url + sep + "scope=" + scope;
-            }
-
-            final HttpPost httpPost = new HttpPost(url);
-
-            httpPost.addHeader(HttpHeaders.AUTHORIZATION,
-                    HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
-            httpPost.setEntity(new StringEntity("grant_type=client_credentials", ContentType.APPLICATION_FORM_URLENCODED));
-
-            httpClient.execute(httpPost, response -> {
-
-                try {
-                    String responseString = EntityUtils.toString(response.getEntity());
-
-                    if (response.getCode() == 200) {
-                        String accessToken = ((JsonObject) Jsoner.deserialize(responseString)).getString("access_token");
-                        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-                    } else {
-                        throw new HttpException(
-                                "Received error response from token request with Status Code: " + response.getCode());
+            URI requestUri = getUriFromRequest(request);
+            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
+            if (cacheTokens) {
+                if (tokenCache.containsKey(uriAndCredentials)
+                        && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
+                    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenCache.get(uriAndCredentials).getToken());
+                } else {
+                    JsonObject accessTokenResponse = getAccessTokenResponse(httpClient);
+                    String accessToken = accessTokenResponse.getString("access_token");
+                    String expiresIn = accessTokenResponse.getString("expires_in");
+                    if (expiresIn != null && !expiresIn.isEmpty()) {
+                        tokenCache.put(uriAndCredentials, new TokenCache(accessToken, expiresIn));
+                    } else if (cachedTokensDefaultExpirySeconds > 0) {
+                        tokenCache.put(uriAndCredentials, new TokenCache(accessToken, cachedTokensDefaultExpirySeconds));
                     }
-
-                } catch (DeserializationException e) {
-                    throw new HttpException("Something went wrong when reading token request response", e);
+                    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
                 }
-
-                return null;
-            });
-
+            } else {
+                JsonObject accessTokenResponse = getAccessTokenResponse(httpClient);
+                String accessToken = accessTokenResponse.getString("access_token");
+                request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+            }
         });
+    }
+
+    private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
+        String url = tokenEndpoint;
+        if (scope != null) {
+            String sep = "?";
+            if (url.contains("?")) {
+                sep = "&";
+            }
+            url = url + sep + "scope=" + scope;
+        }
+
+        final HttpPost httpPost = new HttpPost(url);
+
+        httpPost.addHeader(HttpHeaders.AUTHORIZATION,
+                HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
+        httpPost.setEntity(new StringEntity("grant_type=client_credentials", ContentType.APPLICATION_FORM_URLENCODED));
+
+        AtomicReference<JsonObject> result = new AtomicReference<>();
+        httpClient.execute(httpPost, response -> {
+            try {
+                String responseString = EntityUtils.toString(response.getEntity());
+
+                if (response.getCode() == 200) {
+                    result.set((JsonObject) Jsoner.deserialize(responseString));
+                } else {
+                    throw new HttpException(
+                            "Received error response from token request with Status Code: " + response.getCode());
+                }
+            } catch (DeserializationException e) {
+                throw new HttpException("Something went wrong when reading token request response", e);
+            }
+            return null;
+        });
+        return result.get();
+    }
+
+    private URI getUriFromRequest(HttpRequest request) {
+        URI result;
+        try {
+            result = request.getUri();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    private static class TokenCache {
+        private String token;
+        private Instant expirationTime;
+
+        public TokenCache() {
+        }
+
+        public TokenCache(String token, String expires_in) {
+            this.token = token;
+            setExpirationTimeSeconds(expires_in);
+        }
+
+        public TokenCache(String accessToken, Long seconds) {
+            this.token = accessToken;
+            this.expirationTime = Instant.now().plusSeconds(seconds);
+        }
+
+        public boolean isExpired() {
+            return Instant.now().isAfter(expirationTime);
+        }
+
+        public boolean isExpiredWithMargin(Long marginSeconds) {
+            return Instant.now().isAfter(expirationTime.minusSeconds(marginSeconds));
+        }
+
+        public void setExpirationTimeSeconds(String expires_in) {
+            this.expirationTime = Instant.now().plusSeconds(Long.parseLong(expires_in));
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public Instant getExpirationTime() {
+            return expirationTime;
+        }
+
+        public void setExpirationTime(Instant expirationTime) {
+            this.expirationTime = expirationTime;
+        }
+    }
+
+    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret) {
     }
 
 }

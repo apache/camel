@@ -27,6 +27,12 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": target.setOauth2CacheTokens(property(camelContext, boolean.class, value)); return true;
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": target.setOauth2CachedTokensDefaultExpirySeconds(property(camelContext, long.class, value)); return true;
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": target.setOauth2CachedTokensExpirationMarginSeconds(property(camelContext, long.class, value)); return true;
         case "sendtoall":
         case "sendToAll": target.setSendToAll(property(camelContext, boolean.class, value)); return true;
         case "usestreaming":
@@ -42,6 +48,12 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "bridgeEndpoint": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": return boolean.class;
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": return long.class;
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": return long.class;
         case "sendtoall":
         case "sendToAll": return boolean.class;
         case "usestreaming":
@@ -58,6 +70,12 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "oauth2cachetokens":
+        case "oauth2CacheTokens": return target.isOauth2CacheTokens();
+        case "oauth2cachedtokensdefaultexpiryseconds":
+        case "oauth2CachedTokensDefaultExpirySeconds": return target.getOauth2CachedTokensDefaultExpirySeconds();
+        case "oauth2cachedtokensexpirationmarginseconds":
+        case "oauth2CachedTokensExpirationMarginSeconds": return target.getOauth2CachedTokensExpirationMarginSeconds();
         case "sendtoall":
         case "sendToAll": return target.isSendToAll();
         case "usestreaming":

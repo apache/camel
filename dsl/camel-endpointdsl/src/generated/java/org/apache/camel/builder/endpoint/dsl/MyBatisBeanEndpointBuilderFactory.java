@@ -211,7 +211,8 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * type alias or a FQN class name.
          * 
          * Path parameter: methodName (required)
-         * Name of the method on the bean that has the SQL query to be executed.
+         * Name of the method on the bean that has the SQL query to be
+         * executed.
          * 
          * @param path beanName:methodName
          * @return the dsl builder
@@ -235,7 +236,8 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * type alias or a FQN class name.
          * 
          * Path parameter: methodName (required)
-         * Name of the method on the bean that has the SQL query to be executed.
+         * Name of the method on the bean that has the SQL query to be
+         * executed.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
