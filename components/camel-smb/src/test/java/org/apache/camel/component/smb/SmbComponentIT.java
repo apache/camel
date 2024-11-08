@@ -27,10 +27,13 @@ import org.apache.camel.test.infra.smb.services.SmbService;
 import org.apache.camel.test.infra.smb.services.SmbServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x")
 public class SmbComponentIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SmbComponentIT.class);
 
