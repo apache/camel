@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x")
 public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSupport {
 
     private static final String BODY_STRING = "message body";
