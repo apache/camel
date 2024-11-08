@@ -24,10 +24,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RouteError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x")
 public class ControlBusFailRouteTest extends ContextTestSupport {
 
     @Test
