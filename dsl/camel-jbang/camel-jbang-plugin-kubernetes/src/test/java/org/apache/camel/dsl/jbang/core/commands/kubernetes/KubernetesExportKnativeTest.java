@@ -29,10 +29,15 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Requires too much network resources")
+@EnabledIf("isDockerAvailable")
 public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
 
     private static Stream<Arguments> runtimeProvider() {
