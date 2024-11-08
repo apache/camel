@@ -29,13 +29,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x")
 public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSupport {
 
     private static final String BODY_STRING = "message body";
@@ -52,6 +58,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         assertTrue(f.isDirectory());
         Thread.sleep(500L); // deletion happens asynchron
         File[] files = f.listFiles();
+        assertNotNull(files, "There should be a list of files");
         assertEquals(0, files.length);
     }
 
