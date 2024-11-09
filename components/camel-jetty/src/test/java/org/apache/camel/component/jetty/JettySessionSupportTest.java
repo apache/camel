@@ -44,7 +44,7 @@ class JettySessionSupportTest extends BaseJettyTest {
         assertThrows(
                 IllegalStateException.class,
                 () -> context.addRoutes(routeBuilder),
-                "Server has already been started. Cannot enabled sessionSupport on http:localhost:%d".formatted(getPort())g);
+                "Server has already been started. Cannot enabled sessionSupport on http:localhost:%d".formatted(getPort()));
 
         if (context.isStarted()) {
             context.stop();
