@@ -87,18 +87,16 @@ public class MountTrait extends BaseTrait {
 
         // Deployment
         Optional<DeploymentBuilder> deployment = context.getDeployment();
-        deployment.ifPresent(d -> {
-            d.editOrNewSpec()
-                    .editOrNewTemplate()
-                    .editOrNewSpec()
-                    .addAllToVolumes(volumes)
-                    .editFirstContainer()
-                    .addAllToVolumeMounts(volumeMounts)
-                    .endContainer()
-                    .endSpec()
-                    .endTemplate()
-                    .endSpec();
-        });
+        deployment.ifPresent(d -> d.editOrNewSpec()
+                .editOrNewTemplate()
+                .editOrNewSpec()
+                .addAllToVolumes(volumes)
+                .editFirstContainer()
+                .addAllToVolumeMounts(volumeMounts)
+                .endContainer()
+                .endSpec()
+                .endTemplate()
+                .endSpec());
     }
 
     private void configureVolumesAndMounts(Mount mountTrait, List<Volume> volumes, List<VolumeMount> volumeMounts) {

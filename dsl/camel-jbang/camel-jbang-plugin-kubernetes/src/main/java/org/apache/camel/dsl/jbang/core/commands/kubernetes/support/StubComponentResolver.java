@@ -44,8 +44,7 @@ public final class StubComponentResolver extends DefaultComponentResolver {
         final boolean accept = accept(name);
         final Component answer = super.resolveComponent(accept ? name : "stub", context);
 
-        if ((silent || stubPattern != null) && answer instanceof StubComponent) {
-            StubComponent sc = (StubComponent) answer;
+        if ((silent || stubPattern != null) && answer instanceof StubComponent sc) {
             // enable shadow mode on stub component
             sc.setShadow(true);
             sc.setShadowPattern(stubPattern);

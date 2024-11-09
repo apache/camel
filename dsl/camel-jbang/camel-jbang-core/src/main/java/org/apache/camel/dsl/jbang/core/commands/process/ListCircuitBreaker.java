@@ -176,7 +176,7 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         if (r.failedCalls <= 0) {
             return "";
         } else if (r.failureRate > 0) {
-            return +r.failedCalls + " (" + String.format("%.0f", r.failureRate) + "%)";
+            return r.failedCalls + " (" + String.format("%.0f", r.failureRate) + "%)";
         } else {
             return Integer.toString(r.failedCalls);
         }

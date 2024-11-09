@@ -152,60 +152,13 @@ public class Debug extends Run {
         // read log input
         final AtomicBoolean quit = new AtomicBoolean();
         final Console c = System.console();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                do {
-                    InputStreamReader isr = new InputStreamReader(spawnOutput);
-                    try {
-                        BufferedReader reader = buffered(isr);
-                        while (true) {
-                            String line = reader.readLine();
-                            if (line != null) {
-                                while (logBuffer.size() >= 100) {
-                                    logBuffer.remove(0);
-                                }
-                                logBuffer.add(line);
-                                logUpdated.set(true);
-                            } else {
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                } while (!quit.get());
-            }
+        Thread t = new Thread(() -> {
+            doReadLog(quit);
         }, "ReadLog");
         t.start();
 
         // read CLI input from user
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                do {
-                    String line = c.readLine();
-                    if (line != null) {
-                        line = line.trim();
-                        if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
-                            quit.set(true);
-                        } else {
-                            // continue breakpoint
-                            if (suspendedRow != null) {
-                                // step to exit because it was the last
-                                if (suspendedRow.last) {
-                                    // we need to clear screen so fool by saying log is updated
-                                    logUpdated.set(true);
-                                }
-                            }
-                            sendDebugCommand(spawnPid, "step", null);
-                        }
-                        // user have pressed ENTER so continue
-                        waitForUser.set(false);
-                    }
-                } while (!quit.get());
-            }
-        }, "ReadCommand");
+        Thread t2 = new Thread(() -> doRead(c, quit), "ReadCommand");
         t2.start();
 
         do {
@@ -226,6 +179,53 @@ public class Debug extends Run {
         } while (exit == 0 && !quit.get());
 
         return 0;
+    }
+
+    private void doReadLog(AtomicBoolean quit) {
+        do {
+            InputStreamReader isr = new InputStreamReader(spawnOutput);
+            try {
+                BufferedReader reader = buffered(isr);
+                while (true) {
+                    String line = reader.readLine();
+                    if (line != null) {
+                        while (logBuffer.size() >= 100) {
+                            logBuffer.remove(0);
+                        }
+                        logBuffer.add(line);
+                        logUpdated.set(true);
+                    } else {
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        } while (!quit.get());
+    }
+
+    private void doRead(Console c, AtomicBoolean quit) {
+        do {
+            String line = c.readLine();
+            if (line != null) {
+                line = line.trim();
+                if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                    quit.set(true);
+                } else {
+                    // continue breakpoint
+                    if (suspendedRow != null) {
+                        // step to exit because it was the last
+                        if (suspendedRow.last) {
+                            // we need to clear screen so fool by saying log is updated
+                            logUpdated.set(true);
+                        }
+                    }
+                    sendDebugCommand(spawnPid, "step", null);
+                }
+                // user have pressed ENTER so continue
+                waitForUser.set(false);
+            }
+        } while (!quit.get());
     }
 
     @Override
@@ -266,13 +266,11 @@ public class Debug extends Run {
     }
 
     private void removeDebugOnlyOptions(List<String> cmds) {
-        ReflectionHelper.doWithFields(Debug.class, fc -> {
-            cmds.removeIf(c -> {
-                String n1 = "--" + fc.getName();
-                String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-                return c.startsWith(n1) || c.startsWith(n2);
-            });
-        });
+        ReflectionHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
+            String n1 = "--" + fc.getName();
+            String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
+            return c.startsWith(n1) || c.startsWith(n2);
+        }));
     }
 
     protected int doWatch() {

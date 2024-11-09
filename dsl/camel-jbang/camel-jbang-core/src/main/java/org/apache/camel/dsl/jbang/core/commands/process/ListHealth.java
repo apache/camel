@@ -230,9 +230,7 @@ public class ListHealth extends ProcessWatchCommand {
                     sb.append(String.format("\tSINCE: %s%n", row.sinceStartFailure));
                     if (row.customMeta != null) {
                         sb.append(String.format("\tMETADATA:%n"));
-                        row.customMeta.forEach((k, v) -> {
-                            sb.append(String.format("\t\t%s = %s%n", k, v));
-                        });
+                        row.customMeta.forEach((k, v) -> sb.append(String.format("\t\t%s = %s%n", k, v)));
                     }
                     sb.append(String.format("\tMESSAGE: %s%n", row.message));
                     for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
