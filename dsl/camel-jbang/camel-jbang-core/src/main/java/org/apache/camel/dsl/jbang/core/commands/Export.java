@@ -203,35 +203,47 @@ public class Export extends ExportBaseCommand {
 
             int rankGroupId(MavenGav o1) {
                 String g1 = o1.getGroupId();
-                if ("org.springframework.boot".equals(g1)) {
-                    return 30;
-                } else if ("io.quarkus".equals(g1)) {
-                    return 30;
-                } else if ("org.apache.camel.quarkus".equals(g1)) {
-                    String a1 = o1.getArtifactId();
-                    // main/core/engine first
-                    if ("camel-quarkus-core".equals(a1)) {
-                        return 21;
-                    }
-                    return 20;
-                } else if ("org.apache.camel.springboot".equals(g1)) {
-                    String a1 = o1.getArtifactId();
-                    // main/core/engine first
-                    if ("camel-spring-boot-engine-starter".equals(a1)) {
-                        return 21;
-                    }
-                    return 20;
-                } else if ("org.apache.camel".equals(g1)) {
-                    String a1 = o1.getArtifactId();
-                    // main/core/engine first
-                    if ("camel-main".equals(a1)) {
-                        return 11;
-                    }
-                    return 10;
-                } else if ("org.apache.camel.kamelets".equals(g1)) {
-                    return 5;
-                } else {
+                if (g1 == null) {
                     return 0;
+                }
+
+                switch (g1) {
+                    case "org.springframework.boot" -> {
+                        return 30;
+                    }
+                    case "io.quarkus" -> {
+                        return 30;
+                    }
+                    case "org.apache.camel.quarkus" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-quarkus-core".equals(a1)) {
+                            return 21;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel.springboot" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-spring-boot-engine-starter".equals(a1)) {
+                            return 21;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-main".equals(a1)) {
+                            return 11;
+                        }
+                        return 10;
+                    }
+                    case "org.apache.camel.kamelets" -> {
+                        return 5;
+                    }
+                    default -> {
+                        return 0;
+                    }
                 }
             }
         };

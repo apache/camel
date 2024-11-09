@@ -77,8 +77,7 @@ public abstract class CamelCommand implements Callable<Integer> {
                 var provider = spec.defaultValueProvider();
                 String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
                 if (defaultValue != null &&
-                        argSpec instanceof CommandLine.Model.OptionSpec) {
-                    CommandLine.Model.OptionSpec optionSpec = (CommandLine.Model.OptionSpec) argSpec;
+                        argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
                     for (String name : optionSpec.names()) {
                         String placeholder = "#" + StringHelper.after(name, "--");
                         Object v = argSpec.getValue();

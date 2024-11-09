@@ -40,7 +40,7 @@ public class CamelProcessorTop extends CamelProcessorStatus {
             long m1 = o1.mean != null ? Long.parseLong(o1.mean) : 0;
             long m2 = o2.mean != null ? Long.parseLong(o2.mean) : 0;
             if (m1 < m2) {
-                answer = 1 * negate;
+                answer = negate;
             } else if (m1 > m2) {
                 answer = -1 * negate;
             }
