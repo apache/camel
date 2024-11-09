@@ -110,6 +110,14 @@ public class MockValueBuilder implements Expression, Predicate {
         return answer;
     }
 
+    public Predicate isTrue() {
+        return onNewPredicate(PredicateBuilder.isTrue(expression));
+    }
+
+    public Predicate isFalse() {
+        return onNewPredicate(PredicateBuilder.isFalse(expression));
+    }
+
     public Predicate isNotEqualTo(Object value) {
         Expression right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isNotEqualTo(expression, right));
@@ -210,6 +218,12 @@ public class MockValueBuilder implements Expression, Predicate {
 
     // Expression builders
     // -------------------------------------------------------------------------
+
+    public MockValueBuilder xpath(String xpath) {
+        // work with string as result as xpath otherwise will use DOM types
+        Expression newExp = ExpressionBuilder.languageExpression(expression, "xpath", xpath, String.class);
+        return onNewValueBuilder(newExp);
+    }
 
     public MockValueBuilder tokenize() {
         return tokenize("\n");

@@ -25,6 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Language;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -176,6 +178,20 @@ public class PredicateBuilder {
      */
     public static Predicate in(List<Predicate> predicates) {
         return in(predicates.toArray(new Predicate[0]));
+    }
+
+    /**
+     * Is the predicate true
+     */
+    public static Predicate isTrue(final Expression left) {
+        return PredicateBuilder.toPredicate(left);
+    }
+
+    /**
+     * Is the predicate false
+     */
+    public static Predicate isFalse(final Expression left) {
+        return PredicateBuilder.not(PredicateBuilder.toPredicate(left));
     }
 
     public static Predicate isEqualTo(final Expression left, final Expression right) {
@@ -546,4 +562,47 @@ public class PredicateBuilder {
             }
         };
     }
+
+    /**
+     * Returns a predicate which is true if the expression matches the given language predicate
+     *
+     * @param  expression the expression to evaluate
+     * @param  language   the language such as xpath, jq, groovy, etc.
+     * @param  value      the value as expression for the language
+     * @return            a new predicate
+     */
+    public static Predicate language(final Expression expression, final String language, final Object value) {
+        notNull(expression, "expression");
+        notNull(language, "language");
+        notNull(value, "value");
+
+        return new Predicate() {
+
+            private Predicate pred;
+
+            public boolean matches(Exchange exchange) {
+                Object value = expression.evaluate(exchange, Object.class);
+                if (value != null) {
+                    Exchange dummy = ExchangeHelper.getDummy(exchange.getContext());
+                    dummy.getMessage().setBody(value);
+                    return pred.matches(dummy);
+                }
+                return false;
+            }
+
+            @Override
+            public void init(CamelContext camelContext) {
+                expression.init(camelContext);
+                Language lan = camelContext.resolveLanguage(language);
+                pred = lan.createPredicate(value.toString());
+                pred.init(camelContext);
+            }
+
+            @Override
+            public String toString() {
+                return language + "(" + expression + ")";
+            }
+        };
+    }
+
 }
