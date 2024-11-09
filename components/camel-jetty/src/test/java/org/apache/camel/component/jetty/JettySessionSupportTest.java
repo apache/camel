@@ -17,43 +17,42 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Disabled(value = "Broken test CAMEL-21417")
-public class JettySessionSupportTest extends BaseJettyTest {
+class JettySessionSupportTest extends BaseJettyTest {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    @BeforeEach
+    void setup() {
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
     @Test
-    public void testJettySessionSupportInvalid() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+    void testJettySessionSupportInvalid() {
+        RouteBuilder routeBuilder = new RouteBuilder() {
             @Override
             public void configure() {
                 from("jetty:http://localhost:{{port}}/hello").to("mock:foo");
 
                 from("jetty:http://localhost:{{port}}/bye?sessionSupport=true").to("mock:bar");
             }
-        });
-        try {
-            context.start();
-            fail("Should have thrown an exception");
-        } catch (IllegalStateException e) {
-            assertEquals("Server has already been started. Cannot enabled sessionSupport on http:localhost:" + getPort(),
-                    e.getMessage());
-        } finally {
+        };
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> context.addRoutes(routeBuilder),
+                "Server has already been started. Cannot enabled sessionSupport on http:localhost:%d".formatted(getPort()));
+
+        if (context.isStarted()) {
             context.stop();
         }
     }
 
     @Test
-    public void testJettySessionSupportOk() throws Exception {
+    void testJettySessionSupportOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
