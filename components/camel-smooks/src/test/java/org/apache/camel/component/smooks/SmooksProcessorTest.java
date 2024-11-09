@@ -29,6 +29,7 @@ import jakarta.activation.DataSource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SmooksProcessorTest extends CamelTestSupport {
@@ -79,6 +81,10 @@ public class SmooksProcessorTest extends CamelTestSupport {
         result.expectedMessageCount(1);
         template.sendBody("direct://input", getOrderEdi());
 
+        assertPostCondition();
+    }
+
+    private void assertPostCondition() throws InterruptedException, IOException {
         assertIsSatisfied();
 
         Exchange exchange = result.assertExchangeReceived(0);
@@ -242,7 +248,28 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessGivenFileWhenSmooksExportIsStringResult() throws Exception {
+    public void testProcessWhenBodyIsByteArray() throws Exception {
+        context.addRoutes(createEdiToXmlRouteBuilder());
+        context.start();
+
+        result.expectedMessageCount(1);
+        template.sendBody("direct://input", getOrderEdi().getBytes());
+
+        assertPostCondition();
+    }
+
+    @Test
+    public void testProcessWhenBodyIsNotSource() throws Exception {
+        context.addRoutes(createEdiToXmlRouteBuilder());
+        context.start();
+
+        RuntimeException runtimeException
+                = assertThrows(RuntimeException.class, () -> template.sendBody("direct://input", new Object()));
+        assertEquals(InvalidPayloadException.class, runtimeException.getCause().getCause().getClass());
+    }
+
+    @Test
+    public void testProcessWhenBodyIsFileAndSmooksExportIsStringSink() throws Exception {
         deleteDirectory("target/smooks");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -263,7 +290,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessWhenSmooksExportIsJavaResultAndBodyIsVisitedByJavaBeanValue() throws Exception {
+    public void testProcessWhenSmooksExportIsJavaSinkAndBodyIsVisitedByJavaBeanValue() throws Exception {
         Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -282,7 +309,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessWhenSmooksExportIsJavaResultAndBodyIsVisitedByMultipleJavaBeanValues() throws Exception {
+    public void testProcessWhenSmooksExportIsJavaSinkAndBodyIsVisitedByMultipleJavaBeanValues() throws Exception {
         Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -303,7 +330,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessWhenSmooksExportIsJavaResultAndBodyIsVisitedByBean() throws Exception {
+    public void testProcessWhenSmooksExportIsJavaSinkAndBodyIsVisitedByBean() throws Exception {
         Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -324,7 +351,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testProcessWhenSmooksExportIsStringResult() throws Exception {
+    public void testProcessWhenSmooksExportIsStringSink() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:a")
