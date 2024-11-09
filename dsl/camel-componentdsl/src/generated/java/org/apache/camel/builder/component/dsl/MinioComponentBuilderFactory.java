@@ -499,7 +499,8 @@ public interface MinioComponentBuilderFactory {
          * Move objects from bucket to a different bucket after they have been
          * retrieved. To accomplish the operation the destinationBucket option
          * must be set. The copy bucket operation is only performed if the
-         * Exchange is committed. If a rollback occurs, the object is not moved.
+         * Exchange is committed. If a rollback occurs, the object is not
+         * moved.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -713,7 +714,8 @@ public interface MinioComponentBuilderFactory {
         }
     
         /**
-         * The operation to do in case the user don't want to do only an upload.
+         * The operation to do in case the user don't want to do only an
+         * upload.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.minio.MinioOperations&lt;/code&gt; type.

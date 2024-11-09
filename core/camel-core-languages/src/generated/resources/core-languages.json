@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "core-languages",
+    "title": "Core Languages",
+    "description": "Camel Core Languages",
+    "deprecated": false,
+    "firstVersion": "3.2.0",
+    "label": "core,language",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-languages",
+    "version": "4.9.0-SNAPSHOT"
+  }
+}

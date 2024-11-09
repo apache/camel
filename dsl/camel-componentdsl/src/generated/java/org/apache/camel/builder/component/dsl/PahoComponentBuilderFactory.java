@@ -399,7 +399,8 @@ public interface PahoComponentBuilderFactory {
          * Sets the Last Will and Testament (LWT) for the connection. In the
          * event that this client unexpectedly loses its connection to the
          * server, the server will publish a message to itself using the
-         * supplied details. Sets whether or not the message should be retained.
+         * supplied details. Sets whether or not the message should be
+         * retained.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

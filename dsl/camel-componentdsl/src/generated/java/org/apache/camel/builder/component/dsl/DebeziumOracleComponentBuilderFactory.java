@@ -192,7 +192,8 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
-         * Interval at which to try committing offsets. The default is 1 minute.
+         * Interval at which to try committing offsets. The default is 1
+         * minute.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -243,7 +244,8 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         /**
          * The number of partitions used when creating the offset storage topic.
-         * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
+         * Required when offset.storage is set to the
+         * 'KafkaOffsetBackingStore'.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -600,7 +602,8 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
-         * Name of the database user to be used when connecting to the database.
+         * Name of the database user to be used when connecting to the
+         * database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1649,7 +1652,8 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
-         * Enables transaction metadata extraction together with event counting.
+         * Enables transaction metadata extraction together with event
+         * counting.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1961,7 +1965,8 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         /**
          * This setting must be set to specify a list of tables/collections
-         * whose snapshot must be taken on creating or restarting the connector.
+         * whose snapshot must be taken on creating or restarting the
+         * connector.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

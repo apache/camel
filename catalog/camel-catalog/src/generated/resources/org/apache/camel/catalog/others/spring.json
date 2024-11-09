@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "spring",
+    "title": "Spring",
+    "description": "Camel Spring",
+    "deprecated": false,
+    "firstVersion": "1.0",
+    "label": "spring",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spring",
+    "version": "4.9.0-SNAPSHOT"
+  }
+}

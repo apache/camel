@@ -53,7 +53,8 @@ public interface InfluxdbComponentBuilderFactory {
         /**
          * The shared Influx DB to use for all endpoints.
          * 
-         * The option is a: &lt;code&gt;org.influxdb.InfluxDB&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;org.influxdb.InfluxDB&lt;/code&gt;
+         * type.
          * 
          * Group: producer
          * 
