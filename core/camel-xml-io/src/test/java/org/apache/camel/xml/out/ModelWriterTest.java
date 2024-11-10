@@ -16,6 +16,8 @@
  */
 package org.apache.camel.xml.out;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,13 +46,20 @@ import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.xml.in.ModelParser;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.xmlunit.assertj3.XmlAssert;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.ElementSelectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.AssertionFailureBuilder.assertionFailure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -73,6 +82,36 @@ public class ModelWriterTest {
         }
     }
 
+    @Disabled("CAMEL-2140")
+    @ParameterizedTest
+    @MethodSource("routes")
+    @DisplayName("Test xml roundtrip for <routes>, then compare generated XML")
+    void testRoutesWithDiff(String xml, String ns) throws Exception {
+        String original;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            assertNotNull(is);
+            IOUtils.copy(is, baos);
+            original = baos.toString();
+        }
+
+        assertThat(original).isNotBlank();
+        RoutesDefinition expected
+                = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE).parseRoutesDefinition().get();
+        StringWriter sw = new StringWriter();
+        new ModelWriter(sw, ns).writeRoutesDefinition(expected);
+        String generatedXml = sw.toString();
+        assertThat(generatedXml).isNotBlank();
+
+        XmlAssert.assertThat(generatedXml)
+                .and(original)
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .ignoreWhitespace()
+                .ignoreElementContentWhitespace()
+                .ignoreComments()
+                .areSimilar();
+    }
+
     @ParameterizedTest
     @MethodSource("rests")
     @DisplayName("Test xml roundtrip for <rests>")
@@ -84,6 +123,35 @@ public class ModelWriterTest {
             RestsDefinition actual = new ModelParser(new StringReader(sw.toString()), ns).parseRestsDefinition().get();
             assertDeepEquals(expected, actual, sw.toString());
         }
+    }
+
+    @Disabled("CAMEL-2140")
+    @ParameterizedTest
+    @MethodSource("rests")
+    @DisplayName("Test xml roundtrip for <rests>, then compare generated XML")
+    void testRestsWithDiff(String xml, String ns) throws Exception {
+        String original;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            assertNotNull(is);
+            IOUtils.copy(is, baos);
+            original = baos.toString();
+        }
+
+        RestsDefinition expected
+                = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE).parseRestsDefinition().get();
+        StringWriter sw = new StringWriter();
+        new ModelWriter(sw, ns).writeRestsDefinition(expected);
+        String generatedXml = sw.toString();
+        assertThat(generatedXml).isNotBlank();
+
+        XmlAssert.assertThat(generatedXml)
+                .and(original)
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .ignoreWhitespace()
+                .ignoreElementContentWhitespace()
+                .ignoreComments()
+                .areSimilar();
     }
 
     @ParameterizedTest
@@ -100,6 +168,35 @@ public class ModelWriterTest {
         }
     }
 
+    @Disabled("CAMEL-2140")
+    @ParameterizedTest
+    @MethodSource("routeTemplates")
+    @DisplayName("Test xml roundtrip for <routeTemplates> then compare generated XML")
+    void testRouteTemplatesWithDiff(String xml, String ns) throws Exception {
+        String original;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            assertNotNull(is);
+            IOUtils.copy(is, baos);
+            original = baos.toString();
+        }
+
+        RouteTemplatesDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
+                .parseRouteTemplatesDefinition().get();
+        StringWriter sw = new StringWriter();
+        new ModelWriter(sw, ns).writeRouteTemplatesDefinition(expected);
+        String generatedXml = sw.toString();
+        assertThat(generatedXml).isNotBlank();
+
+        XmlAssert.assertThat(generatedXml)
+                .and(original)
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .ignoreWhitespace()
+                .ignoreElementContentWhitespace()
+                .ignoreComments()
+                .areSimilar();
+    }
+
     @ParameterizedTest
     @MethodSource("templatedRoutes")
     @DisplayName("Test xml roundtrip for <templatedRoutes>")
@@ -114,6 +211,34 @@ public class ModelWriterTest {
         }
     }
 
+    @Disabled("CAMEL-2140")
+    @ParameterizedTest
+    @MethodSource("templatedRoutes")
+    @DisplayName("Test xml roundtrip for <templatedRoutes> then compare generated XML")
+    void testTemplatedRoutesWithDiff(String xml, String ns) throws Exception {
+        String original;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            assertNotNull(is);
+            IOUtils.copy(is, baos);
+            original = baos.toString();
+        }
+        TemplatedRoutesDefinition expected = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE)
+                .parseTemplatedRoutesDefinition().get();
+        StringWriter sw = new StringWriter();
+        new ModelWriter(sw, ns).writeTemplatedRoutesDefinition(expected);
+        String generatedXml = sw.toString();
+        assertThat(generatedXml).isNotBlank();
+
+        XmlAssert.assertThat(generatedXml)
+                .and(original)
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .ignoreWhitespace()
+                .ignoreElementContentWhitespace()
+                .ignoreComments()
+                .areSimilar();
+    }
+
     @ParameterizedTest
     @MethodSource("beans")
     @DisplayName("Test xml roundtrip for <beans>")
@@ -126,6 +251,34 @@ public class ModelWriterTest {
                     = new ModelParser(new StringReader(sw.toString()), ns).parseBeansDefinition().get();
             assertDeepEquals(expected, actual, sw.toString());
         }
+    }
+
+    @Disabled("CAMEL-2140")
+    @ParameterizedTest
+    @MethodSource("beans")
+    @DisplayName("Test xml roundtrip for <beans> then compare generated XML")
+    void testBeansWithDiff(String xml, String ns) throws Exception {
+        String original;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(xml);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            assertNotNull(is);
+            IOUtils.copy(is, baos);
+            original = baos.toString();
+        }
+        BeansDefinition expected
+                = new ModelParser(new ByteArrayInputStream(original.getBytes()), NAMESPACE).parseBeansDefinition().get();
+        StringWriter sw = new StringWriter();
+        new ModelWriter(sw, ns).writeBeansDefinition(expected);
+        String generatedXml = sw.toString();
+        assertThat(generatedXml).isNotBlank();
+
+        XmlAssert.assertThat(generatedXml)
+                .and(original)
+                .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .ignoreWhitespace()
+                .ignoreElementContentWhitespace()
+                .ignoreComments()
+                .areSimilar();
     }
 
     private static Stream<Arguments> routes() {
@@ -190,8 +343,8 @@ public class ModelWriterTest {
         } else if (expected.getClass() != actual.getClass()) {
             fail("Not equals at " + path);
         } else if (expected instanceof Collection) {
-            Iterator<?> ie = ((Collection) expected).iterator();
-            Iterator<?> ia = ((Collection) actual).iterator();
+            Iterator<?> ie = ((Collection<?>) expected).iterator();
+            Iterator<?> ia = ((Collection<?>) actual).iterator();
             int i = 0;
             while (ie.hasNext() && ia.hasNext()) {
                 deepEquals(ie.next(), ia.next(), path + "[" + (i++) + "]");
@@ -200,7 +353,7 @@ public class ModelWriterTest {
         } else if (expected.getClass() == AtomicBoolean.class) {
             assertEquals(((AtomicBoolean) expected).get(), ((AtomicBoolean) actual).get(), path);
         } else if (expected.getClass().isEnum()) {
-            assertEquals(((Enum) expected).name(), ((Enum) actual).name(), path);
+            assertEquals(((Enum<?>) expected).name(), ((Enum<?>) actual).name(), path);
         } else if (expected.getClass().getName().startsWith("java.")) {
             assertEquals(expected, actual, path);
         } else if (Element.class.isAssignableFrom(expected.getClass())) {
