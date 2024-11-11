@@ -17,7 +17,6 @@
 package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.Operation;
-
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
