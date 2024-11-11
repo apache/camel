@@ -101,6 +101,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private String textFormatVersion = "0.0.4";
     @Metadata
     private String binders;
+    @Metadata(defaultValue = "/q/metrics")
+    private String path = "/q/metrics";
 
     @Override
     public CamelContext getCamelContext() {
@@ -208,6 +210,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
      */
     public void setTextFormatVersion(String textFormatVersion) {
         this.textFormatVersion = textFormatVersion;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * The path endpoint used to expose the metrics.
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getBinders() {
@@ -353,7 +366,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
         if (server != null && server.isMetricsEnabled() && router != null && platformHttpComponent != null) {
             setupHttpScraper();
-            LOG.info("MicrometerPrometheus enabled with HTTP scraping on /q/metrics");
+            LOG.info("MicrometerPrometheus enabled with HTTP scraping on {}", path);
         } else {
             LOG.info("MicrometerPrometheus enabled");
         }
@@ -387,7 +400,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     }
 
     protected void setupHttpScraper() {
-        Route metrics = router.route("/q/metrics");
+        Route metrics = router.route(path);
         metrics.method(HttpMethod.GET);
 
         final String format
@@ -413,7 +426,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         // use blocking handler as the task can take longer time to complete
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/metrics", "GET",
+        platformHttpComponent.addHttpEndpoint(path, "GET",
                 null, format, null);
     }
 }

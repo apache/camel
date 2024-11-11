@@ -38,6 +38,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "textformatversion":
@@ -64,6 +65,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRoutePolicy": return boolean.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
+        case "path": return java.lang.String.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
         case "textformatversion":
@@ -91,6 +93,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRoutePolicy": return target.isEnableRoutePolicy();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
+        case "path": return target.getPath();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
         case "textformatversion":

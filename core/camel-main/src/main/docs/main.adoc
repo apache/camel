@@ -206,7 +206,7 @@ The camel.server supports 23 options, which are listed below.
 | *camel.server.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.server.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
-| *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics | false | boolean
+| *camel.server.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default) | false | boolean
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.server.port* | Port to use for binding embedded HTTP server | 8080 | int
 | *camel.server.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean
@@ -464,7 +464,7 @@ The camel.opentelemetry supports 5 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 10 options, which are listed below.
+The camel.metrics supports 11 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -477,6 +477,7 @@ The camel.metrics supports 10 options, which are listed below.
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
 | *camel.metrics.namingStrategy* | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
+| *camel.metrics.path* | The path endpoint used to expose the metrics. | /q/metrics | String
 | *camel.metrics.routePolicyLevel* | Sets the level of information to capture. all = both context and routes. | all | String
 | *camel.metrics.textFormat{zwsp}Version* | The text-format version to use with Prometheus scraping. 0.0.4 = text/plain; version=0.0.4; charset=utf-8 1.0.0 = application/openmetrics-text; version=1.0.0; charset=utf-8 | 0.0.4 | String
 |===
