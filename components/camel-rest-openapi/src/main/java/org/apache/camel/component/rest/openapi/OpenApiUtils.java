@@ -92,11 +92,16 @@ public class OpenApiUtils {
     public String getProduces(Operation operation) {
         // the operation may have specific information what it can produce
         if (operation.getResponses() != null) {
+            HashSet<String> mediaTypes = new HashSet<>();
             for (var apiResponse : operation.getResponses().values()) {
                 Content content = apiResponse.getContent();
                 if (content != null) {
-                    return content.keySet().stream().sorted().collect(Collectors.joining(","));
+                    mediaTypes.addAll(content.keySet());
                 }
+            }
+
+            if (!mediaTypes.isEmpty()) {
+                return mediaTypes.stream().sorted().collect(Collectors.joining(","));
             }
         }
         return null;
