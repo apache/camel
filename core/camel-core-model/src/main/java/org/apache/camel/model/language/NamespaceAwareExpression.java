@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.language;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,6 +81,10 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     }
 
     public List<PropertyDefinition> getNamespace() {
+        if (namespace == null && namespaces != null && !namespaces.isEmpty()) {
+            namespace = new ArrayList<>();
+            namespaces.forEach((k, v) -> namespace.add(new PropertyDefinition(k, v)));
+        }
         return namespace;
     }
 

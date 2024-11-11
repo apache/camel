@@ -44,6 +44,7 @@ import java.util.List;
 import javax.annotation.processing.Generated;
 
 #set( $pkgs = $mojo.newTreeSet() )
+#set( $mojoClassName = $mojo.getClass().getName() )
 #foreach( $clazz in $model )
     #set( $foo = $pkgs.add($clazz.getPackageName()) )
 #end
@@ -51,7 +52,7 @@ import javax.annotation.processing.Generated;
 import ${pkg}.*;
 #end
 
-@Generated("org.apache.camel.maven.packaging.XmlModelWriterGeneratorMojo")
+@Generated("${mojoClassName}")
 public class ModelWriter extends BaseWriter {
 
     public ModelWriter(Writer writer, String namespace) throws IOException {
