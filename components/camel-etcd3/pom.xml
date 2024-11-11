@@ -37,9 +37,13 @@
         <label>database</label>
         <supportLevel>Preview</supportLevel>
 
-        <!-- Etcd3 container is not available on these platforms -->
+        <!-- Etcd3 container is not available or unstable on these platforms -->
         <skipTests.aarch64>true</skipTests.aarch64>
         <skipITs.aarch64>true</skipITs.aarch64>
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipTests.ppc64le>true</skipTests.ppc64le>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
     </properties>
 
     <dependencies>
