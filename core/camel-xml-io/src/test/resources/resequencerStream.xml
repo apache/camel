@@ -21,7 +21,7 @@
     <route>
     	<from uri="direct:start" />
     	<resequence>
-            <streamConfig timeout="2000"/> <!-- Use default capacity -->
+            <streamConfig capacity="1000" timeout="2000"/>
     		<simple>in.header.seqnum</simple>
     		<to uri="mock:result" />
     	</resequence>

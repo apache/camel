@@ -64,7 +64,7 @@ public abstract class ApplicationEntity extends MimeEntity {
                 canonicalOutstream.writeln(); // ensure empty line between headers and body; RFC2046 - 5.1.1
             }
 
-            transferEncodedStream.write(ediMessage.getBytes(getCharset()), 0, ediMessage.length());
+            transferEncodedStream.write(ediMessage.getBytes(getCharset()));
         } catch (Exception e) {
             throw new IOException("Failed to write to output stream", e);
         }

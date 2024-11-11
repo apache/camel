@@ -89,9 +89,8 @@ public class MetadataHelper {
         ProcessorReifier.registerReifier(CircuitBreakerDefinition.class, DisabledReifier::new);
 
         COMPONENT_CUSTOMIZERS = new HashMap<>();
-        COMPONENT_CUSTOMIZERS.put(Capability.PlatformHttp.getValue(), (catalog, meta) -> {
-            meta.capabilities.add(Capability.PlatformHttp);
-        });
+        COMPONENT_CUSTOMIZERS.put(Capability.PlatformHttp.getValue(),
+                (catalog, meta) -> meta.capabilities.add(Capability.PlatformHttp));
     }
 
     private MetadataHelper() {

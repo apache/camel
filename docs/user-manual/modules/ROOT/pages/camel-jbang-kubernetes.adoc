@@ -225,6 +225,14 @@ The container trait is able to customize the container specification with follow
 | PullPolicy
 | The pull policy: Always\|Never\|IfNotPresent
 
+| container.image-pull-secrets
+| string[]
+| The pull secrets for private registries
+
+| container.image-push
+| boolean
+| Enable image push to the registry
+
 | container.request-cpu
 | string
 | The minimum amount of CPU required.

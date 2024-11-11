@@ -33,11 +33,16 @@ import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Requires too much network resources")
+@EnabledIf("isDockerAvailable")
 class KubernetesRunTest extends KubernetesBaseTest {
 
     private StringPrinter printer;

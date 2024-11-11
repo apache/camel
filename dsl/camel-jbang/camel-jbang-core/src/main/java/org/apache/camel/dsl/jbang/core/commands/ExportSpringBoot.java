@@ -274,11 +274,8 @@ class ExportSpringBoot extends Export {
         context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        if (camelSpringBootVersion != null) {
-            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelSpringBootVersion);
-        } else {
-            context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}", camelVersion);
-        }
+        context = context.replaceFirst("\\{\\{ \\.CamelSpringBootVersion }}",
+                Objects.requireNonNullElse(camelSpringBootVersion, camelVersion));
 
         if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");

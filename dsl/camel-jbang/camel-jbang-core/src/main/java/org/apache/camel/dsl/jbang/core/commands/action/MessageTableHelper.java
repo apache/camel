@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -249,7 +250,7 @@ public class MessageTableHelper {
                         new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
                 // body value only (span)
                 if (bodyRow.value != null) {
-                    tab6 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
+                    tab6 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Collections.singletonList(
                             new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
                                     .with(b -> pretty ? bodyRow.valueAsStringPretty() : bodyRow.valueAsString())));
                 }
@@ -275,7 +276,7 @@ public class MessageTableHelper {
             if (value != null) {
                 value = Jsoner.unescape(value);
                 eRow = new TableRow("Stacktrace", null, null, value);
-                tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Collections.singletonList(
                         new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
                                 .with(TableRow::valueAsStringRed)));
             }

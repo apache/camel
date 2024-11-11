@@ -229,8 +229,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
                         printer().println(StringHelper.fillChars('-', 120));
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < stackTrace.size(); i++) {
-                            sb.append(String.format("\t%s%n", stackTrace.get(i)));
+                        for (String s : stackTrace) {
+                            sb.append(String.format("\t%s%n", s));
                         }
                         printer().println(String.valueOf(sb));
                     }

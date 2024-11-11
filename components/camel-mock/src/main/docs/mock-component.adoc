@@ -209,7 +209,53 @@ There are some examples of the Mock endpoint in use in the
 https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel/processor[`camel-core`
 processor tests].
 
-==== Using any language for expectations
+==== Using built-in language for expectations
+
+When you want to check that a given message body or header is as expected, and the format is XML or JSon,
+then you can use the Camel languages to perform the validation.
+
+This section covers the built-in support in the mock component for commonly used languages.
+See next section for how to use all the Camel languages using the language builder style.
+
+You can use regular expressions as expectations, as follows:
+
+[source,java]
+----
+mock.message(1).header("cheese").regex("value[2,3]");
+mock.message(2).header("cheese").regex("value[2,3]");
+// should not match
+mock.message(0).header("cheese").not().regex("value[2,3]");
+mock.message(3).header("cheese").not().regex("value[2,3]");
+----
+
+Here we use the _built-in_ `regex` function from the mock component, that makes
+coding this easier. There are a limited set of functions out of the box.
+
+You can also use XPath as follows:
+
+[source,java]
+----
+String filter = "/person[@name='James']";
+...
+mock.message(0).header("cheese").xpath(filter).isFalse();
+mock.message(1).header("cheese").xpath(filter).isTrue();
+mock.message(2).header("cheese").xpath(filter).isFalse();
+----
+
+You can also use xpath to check if it matches a given value such as:
+
+[source,java]
+----
+String name = "/person/@name";
+...
+mock.message(0).header("cheese").xpath(name).isEqualTo("Hiram");
+mock.message(1).header("cheese").xpath(name).isEqualTo("James");
+mock.message(2).header("cheese").xpath(name).isEqualTo("Jack");
+----
+
+There are a number of built-in languages you can use, see next section for using all the languages.
+
+==== Using all the language for expectations using language builder
 
 When you want to check that a given message body or header is as expected, and the format is XML or JSon,
 then you can use the Camel languages to perform the validation.
@@ -239,20 +285,6 @@ mock.message(1).predicate(expression().xpath("/person[@name='James']").source("h
 
 Notice that the xpath language need to use `source` to refer to the value should be from the header with key cheese.
 By default, the source is the message body, and therefore is only needed when you refer to headers/variables etc.
-
-You can also use regular expressions as expectations, as follows:
-
-[source,java]
-----
-mock.message(1).header("cheese").regex("value[2,3]");
-mock.message(2).header("cheese").regex("value[2,3]");
-// should not match
-mock.message(0).header("cheese").not().regex("value[2,3]");
-mock.message(3).header("cheese").not().regex("value[2,3]");
-----
-
-Here we use the _built-in_ `regex` function from the mock component, that makes
-coding this easier. There are a limited set of functions out of the box.
 
 To use any of the Camel languages then do as shown previously with the XPath example.
 

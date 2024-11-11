@@ -71,12 +71,12 @@
         <assertj-version>3.26.3</assertj-version>
         <asterisk-java-version>3.41.0</asterisk-java-version>
         <atlassian-fugue-version>6.1.0</atlassian-fugue-version>
-        <atmosphere-version>3.0.11</atmosphere-version>
+        <atmosphere-version>3.0.13</atmosphere-version>
         <avro-version>1.12.0</avro-version>
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.29.6</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.29.9</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.29</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.26</azure-storage-blob-changefeed-version>
@@ -91,7 +91,7 @@
         <californium-version>3.13.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camunda-version>7.22.0</camunda-version>
-        <camel-k-version>2.4.0</camel-k-version>
+        <camel-k-version>2.5.0</camel-k-version>
         <cassandra-driver-version>4.17.0</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
@@ -123,7 +123,7 @@
         <compress-lzf-version>1.1.2</compress-lzf-version>
         <consul-client-version>1.4.2</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-        <couchbase-client-version>3.7.4</couchbase-client-version>
+        <couchbase-client-version>3.7.5</couchbase-client-version>
         <curator-version>5.7.1</curator-version>
         <cxf-version>4.0.5</cxf-version>
         <cxf-codegen-plugin-version>4.0.5</cxf-codegen-plugin-version>
@@ -184,12 +184,12 @@
         <gmavenplus-plugin-version>4.0.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.29.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.7.0</google-api-client-version>
-        <google-api-services-drive-version>v3-rev20241014-2.0.0</google-api-services-drive-version>
+        <google-api-services-drive-version>v3-rev20241027-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240927-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20241008-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.36.0</google-oauth-client-version>
-        <google-cloud-bom-version>26.49.0</google-cloud-bom-version>
+        <google-cloud-bom-version>26.50.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.55.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.45.0</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.52.0</google-cloud-secretmanager-bom-version>
@@ -197,8 +197,8 @@
         <graphql-java-version>22.3</graphql-java-version>
         <greenmail-version>2.1.0</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <groovy-version>4.0.23</groovy-version>
-        <grpc-version>1.68.0</grpc-version>
+        <groovy-version>4.0.24</groovy-version>
+        <grpc-version>1.68.1</grpc-version>
         <grpc-google-auth-library-version>1.29.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.4.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
@@ -224,9 +224,9 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.9</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.120</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.121</huaweicloud-sdk-version>
         <ical4j-version>4.0.5</ical4j-version>
-        <icu4j-version>75.1</icu4j-version>
+        <icu4j-version>76.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
         <infinispan-version>15.0.9.Final</infinispan-version>
@@ -245,7 +245,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>2.18.0</java-util-version>
-        <jnats-version>2.20.2</jnats-version>
+        <jnats-version>2.20.4</jnats-version>
         <javacc-maven-plugin-version>3.1.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -274,7 +274,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
         <jetcd-version>0.8.3</jetcd-version>
-        <jetty-version>12.0.14</jetty-version>
+        <jetty-version>12.0.15</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -310,7 +310,7 @@
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.11.3</junit-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
-        <jxmpp-version>1.0.3</jxmpp-version>
+        <jxmpp-version>1.1.0</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <jython-standalone-version>2.7.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
@@ -322,27 +322,27 @@
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
-        <libphonenumber-version>8.13.48</libphonenumber-version>
+        <libphonenumber-version>8.13.49</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.21.1</log4j2-version>
         <logback-version>1.5.12</logback-version>
         <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <littleproxy-version>2.3.1</littleproxy-version>
+        <littleproxy-version>2.3.2</littleproxy-version>
         <mapstruct-version>1.6.2</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.9</maven-version>
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.3.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.3.1</maven-archetype-packaging-version>
-        <maven-archiver-version>3.6.2</maven-archiver-version>
+        <maven-archiver-version>3.6.3</maven-archiver-version>
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.11.1</maven-javadoc-plugin-version>
         <maven-maven-plugin-descriptor-version>2.2.1</maven-maven-plugin-descriptor-version>
-        <maven-owasp-plugin-version>11.0.0</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>11.1.0</maven-owasp-plugin-version>
         <maven-plugin-plugin-version>3.15.1</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.15.1</maven-plugin-annotations-version>
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -370,7 +370,7 @@
         <mockwebserver-version>6.13.4</mockwebserver-version>
         <mockito-version>5.14.2</mockito-version>
         <mojo-executor-version>2.4.0</mojo-executor-version>
-        <mongo-java-driver-version>5.2.0</mongo-java-driver-version>
+        <mongo-java-driver-version>5.2.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.17.2</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
@@ -381,7 +381,7 @@
         <netty-version>4.1.114.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.3</networknt-json-schema-validator-version>
-        <nimbus-jose-jwt>9.41.2</nimbus-jose-jwt>
+        <nimbus-jose-jwt>9.46</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
@@ -389,7 +389,7 @@
         <openapi-generator-version>7.9.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.18.0</opensearch-rest-client-version>
-        <opensearch-java-client-version>2.16.0</opensearch-java-client-version>
+        <opensearch-java-client-version>2.17.0</opensearch-java-client-version>
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.1.1</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
@@ -509,7 +509,7 @@
         <xml-apis-version>1.4.01</xml-apis-version>
         <xml-apis-ext-version>1.3.04</xml-apis-ext-version>
         <xml-resolver-version>1.2</xml-resolver-version>
-        <xmlsec-version>4.0.2</xmlsec-version>
+        <xmlsec-version>4.0.3</xmlsec-version>
         <xmlunit-version>2.10.0</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.4</yasson-version>
@@ -3397,6 +3397,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven-plugin-plugin-version}</version>
+                    <executions>
+                        <execution>
+                            <id>default-addPluginArtifactMetadata</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.sisu</groupId>

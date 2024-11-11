@@ -41,7 +41,7 @@ import org.apache.camel.model.tokenizer.*;
 import org.apache.camel.model.transformer.*;
 import org.apache.camel.model.validator.*;
 
-@Generated("org.apache.camel.maven.packaging.XmlModelWriterGeneratorMojo")
+@Generated("org.apache.camel.maven.packaging.YamlModelWriterGeneratorMojo")
 public class ModelWriter extends BaseWriter {
 
     public ModelWriter(Writer writer, String namespace) throws IOException {
