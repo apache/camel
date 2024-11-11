@@ -51,9 +51,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.w3c.dom.Node;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
+import org.xmlunit.util.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.AssertionFailureBuilder.assertionFailure;
@@ -104,6 +106,13 @@ public class ModelWriterTest {
         XmlAssert.assertThat(generatedXml)
                 .and(original)
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .withNodeFilter(node -> {
+                    // skip comparing namespace as original have namespaces scattered in other places than inside <xpath>
+                    if ("namespace".equals(node.getLocalName())) {
+                        return false;
+                    }
+                    return true;
+                })
                 .ignoreWhitespace()
                 .ignoreElementContentWhitespace()
                 .ignoreComments()
