@@ -145,6 +145,16 @@ public class ModelWriterTest {
         XmlAssert.assertThat(generatedXml)
                 .and(original)
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .withAttributeFilter(attr -> {
+                    // skip default values for rest-dsl header params
+                    if ("header".equals(attr.getOwnerElement().getTagName()) && "arrayType".equals(attr.getName())) {
+                        return false;
+                    }
+                    if ("header".equals(attr.getOwnerElement().getTagName()) && "collectionFormat".equals(attr.getName())) {
+                        return false;
+                    }
+                    return true;
+                })
                 .ignoreWhitespace()
                 .ignoreElementContentWhitespace()
                 .ignoreComments()
@@ -269,6 +279,13 @@ public class ModelWriterTest {
         XmlAssert.assertThat(generatedXml)
                 .and(original)
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                .withAttributeFilter(attr -> {
+                    // bean constructor index is optional
+                    if ("constructor".equals(attr.getOwnerElement().getTagName()) && "index".equals(attr.getName())) {
+                        return false;
+                    }
+                    return true;
+                })
                 .ignoreWhitespace()
                 .ignoreElementContentWhitespace()
                 .ignoreComments()
