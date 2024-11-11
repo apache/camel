@@ -81,7 +81,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     }
 
     public List<PropertyDefinition> getNamespace() {
-        if (namespace == null && namespaces != null && !namespaces.isEmpty())  {
+        if (namespace == null && namespaces != null && !namespaces.isEmpty()) {
             namespace = new ArrayList<>();
             namespaces.forEach((k, v) -> namespace.add(new PropertyDefinition(k, v)));
         }
