@@ -419,23 +419,7 @@ public class KameletMain extends MainCommandLineSupport {
 
         boolean export = "true".equals(getInitialProperties().get(getInstanceType() + ".export"));
         if (export) {
-            // when exporting we should ignore some errors and keep attempting to export as far as we can
-            addInitialProperty("camel.component.properties.ignore-missing-property", "true");
-            addInitialProperty("camel.component.properties.ignore-missing-location", "true");
-            PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
-            pc.setPropertiesParser(new ExportPropertiesParser(answer));
-            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, export));
-
-            // override default type converters with our export converter that is more flexible during exporting
-            ExportTypeConverter ec = new ExportTypeConverter();
-            answer.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
-            answer.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
-            answer.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
-            answer.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
-            answer.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
-            answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
-            answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
-            answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+            setupExport(answer, export);
         } else {
             PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
             pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, false));
@@ -451,26 +435,7 @@ public class KameletMain extends MainCommandLineSupport {
         PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
         PluginHelper.getPackageScanResourceResolver(answer).addClassLoader(dynamicCL);
 
-        KnownReposResolver knownRepos = new KnownReposResolver();
-        knownRepos.loadKnownDependencies();
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setDownload(download);
-        downloader.setKnownReposResolver(knownRepos);
-        downloader.setClassLoader(dynamicCL);
-        downloader.setCamelContext(answer);
-        downloader.setVerbose(verbose);
-        downloader.setRepositories(repositories);
-        downloader.setFresh(fresh);
-        downloader.setMavenSettings(mavenSettings);
-        downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
-        downloader.setMavenCentralEnabled(mavenCentralEnabled);
-        downloader.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
-        if (downloadListener != null) {
-            downloader.addDownloadListener(downloadListener);
-        }
-        downloader.addDownloadListener(new AutoConfigureDownloadListener());
-        downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
-        downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener());
+        final MavenDependencyDownloader downloader = createMavenDependencyDownloader(dynamicCL, answer);
 
         // register as extension
         try {
@@ -719,6 +684,52 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
+    }
+
+    private MavenDependencyDownloader createMavenDependencyDownloader(ClassLoader dynamicCL, DefaultCamelContext answer) {
+        KnownReposResolver knownRepos = new KnownReposResolver();
+        knownRepos.loadKnownDependencies();
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setDownload(download);
+        downloader.setKnownReposResolver(knownRepos);
+        downloader.setClassLoader(dynamicCL);
+        downloader.setCamelContext(answer);
+        downloader.setVerbose(verbose);
+        downloader.setRepositories(repositories);
+        downloader.setFresh(fresh);
+        downloader.setMavenSettings(mavenSettings);
+        downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
+        downloader.setMavenCentralEnabled(mavenCentralEnabled);
+        downloader.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
+
+        if (downloadListener != null) {
+            downloader.addDownloadListener(downloadListener);
+        }
+        downloader.addDownloadListener(new AutoConfigureDownloadListener());
+        downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
+        downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener());
+
+        return downloader;
+    }
+
+    private void setupExport(DefaultCamelContext answer, boolean export) {
+        // when exporting we should ignore some errors and keep attempting to export as far as we can
+        addInitialProperty("camel.component.properties.ignore-missing-property", "true");
+        addInitialProperty("camel.component.properties.ignore-missing-location", "true");
+        PropertiesComponent pc = (PropertiesComponent) answer.getPropertiesComponent();
+        pc.setPropertiesParser(new ExportPropertiesParser(answer));
+        pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer, export));
+
+        // override default type converters with our export converter that is more flexible during exporting
+        ExportTypeConverter ec = new ExportTypeConverter();
+        answer.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
+        answer.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
+        answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
+        answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
     }
 
     private String getInstanceType() {
