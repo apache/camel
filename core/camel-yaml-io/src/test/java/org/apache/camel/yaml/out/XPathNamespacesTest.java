@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class XPathNamespacesTest {
 
     @Test
-    void test() throws Exception {
+    void testNamespace() throws Exception {
         try (ByteArrayInputStream is = new ByteArrayInputStream(XML.getBytes(Charset.defaultCharset()))) {
             Optional<RoutesDefinition> routesDefinition = new ModelParser(is, XmlToYamlTest.NAMESPACE).parseRoutesDefinition();
             assertThat(routesDefinition).isPresent()
@@ -91,31 +91,28 @@ class XPathNamespacesTest {
                         xpath:
                           resultType: java.lang.String
                           saxon: "true"
+                          expression: /routes-ns-def:parent/routes-ns-def:child
                           namespace:
-                            xsi: http://www.w3.org/2001/XMLSchema-instance
                             routes-ns-def: http://www.example.com/schema
                             route-ns-def: http://www.example.com/schema
-                          expression: /routes-ns-def:parent/routes-ns-def:child
                     - setProperty:
                         name: child-expression-namespace-from-route
                         xpath:
                           resultType: java.lang.String
                           saxon: "true"
+                          expression: /route-ns-def:parent/route-ns-def:child
                           namespace:
-                            xsi: http://www.w3.org/2001/XMLSchema-instance
                             routes-ns-def: http://www.example.com/schema
                             route-ns-def: http://www.example.com/schema
-                          expression: /route-ns-def:parent/route-ns-def:child
                     - setProperty:
                         name: child-expression-namespace-from-xpath
                         xpath:
                           resultType: java.lang.String
                           saxon: "true"
+                          expression: /expression-ns-def:parent/expression-ns-def:child
                           namespace:
-                            xsi: http://www.w3.org/2001/XMLSchema-instance
                             routes-ns-def: http://www.example.com/schema
                             route-ns-def: http://www.example.com/schema
                             expression-ns-def: http://www.example.com/schema
-                          expression: /expression-ns-def:parent/expression-ns-def:child
             """;
 }
