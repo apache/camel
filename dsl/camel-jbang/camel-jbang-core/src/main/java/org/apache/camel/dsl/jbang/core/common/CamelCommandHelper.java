@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import org.apache.camel.util.json.Jsoner;
 
 public final class CamelCommandHelper {
+    public static final String CAMEL_INSTANCE_TYPE = "camel.jbang";
 
     private CamelCommandHelper() {
     }
