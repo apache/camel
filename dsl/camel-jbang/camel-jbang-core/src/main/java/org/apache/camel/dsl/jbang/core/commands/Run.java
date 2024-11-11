@@ -67,6 +67,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
@@ -1475,7 +1476,7 @@ public class Run extends CamelCommand {
     private KameletMain createMainInstance() {
         KameletMain main;
         if (localKameletDir == null || localKameletDir.isEmpty()) {
-            main = new KameletMain();
+            main = new KameletMain(CAMEL_INSTANCE_TYPE);
         } else {
             StringJoiner sj = new StringJoiner(",");
             String[] parts = localKameletDir.split(",");

@@ -52,6 +52,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
+
 @CommandLine.Command(name = "list", description = "Displays available Camel versions",
                      sortOptions = false)
 public class VersionList extends CamelCommand {
@@ -100,7 +102,7 @@ public class VersionList extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        KameletMain main = new KameletMain();
+        KameletMain main = new KameletMain(CAMEL_INSTANCE_TYPE);
 
         List<String[]> versions;
         try {
