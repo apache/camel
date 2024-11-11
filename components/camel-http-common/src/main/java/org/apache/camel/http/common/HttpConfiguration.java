@@ -19,6 +19,7 @@ package org.apache.camel.http.common;
 import java.io.Serializable;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
 
 public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -41,6 +42,19 @@ public class HttpConfiguration implements Serializable {
     private String oauth2TokenEndpoint;
     @Metadata(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
+    @UriParam(label = "producer,security", defaultValue = "false",
+              description = "Whether to cache OAuth2 client tokens.")
+    private boolean oauth2CacheTokens = false;
+    @UriParam(label = "producer,security", defaultValue = "3600",
+              description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
+    private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
+    @UriParam(label = "producer,security", defaultValue = "5",
+              description = "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
+                            +
+                            "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
+                            +
+                            "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
+    private long oauth2CachedTokensExpirationMarginSeconds = 5L;
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTML")
     private String authDomain;
     @Metadata(label = "producer,security", description = "Authentication host to use with NTML")
@@ -271,5 +285,43 @@ public class HttpConfiguration implements Serializable {
      */
     public void setOauth2Scope(String oauth2Scope) {
         this.oauth2Scope = oauth2Scope;
+    }
+
+    public boolean isOauth2CacheTokens() {
+        return oauth2CacheTokens;
+    }
+
+    /**
+     * Whether to cache OAuth2 client tokens.
+     */
+    public void setOauth2CacheTokens(boolean oauth2CacheTokens) {
+        this.oauth2CacheTokens = oauth2CacheTokens;
+    }
+
+    public long getOauth2CachedTokensDefaultExpirySeconds() {
+        return oauth2CachedTokensDefaultExpirySeconds;
+    }
+
+    /**
+     * Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain
+     * 'expires_in' field.
+     */
+    public void setOauth2CachedTokensDefaultExpirySeconds(long oauth2CachedTokensDefaultExpirySeconds) {
+        this.oauth2CachedTokensDefaultExpirySeconds = oauth2CachedTokensDefaultExpirySeconds;
+    }
+
+    public long getOauth2CachedTokensExpirationMarginSeconds() {
+        return oauth2CachedTokensExpirationMarginSeconds;
+    }
+
+    /**
+     * Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token
+     * Endpoint to send the token over http, in seconds. Set this parameter to high value if you OAuth2 Token Endpoint
+     * answers slowly or you tokens expire quickly. If you set this parameter to too small value, you can get 4xx http
+     * errors because camel will think that the received token is still valid, while in reality the token is expired for
+     * the Authentication server.
+     */
+    public void setOauth2CachedTokensExpirationMarginSeconds(long oauth2CachedTokensExpirationMarginSeconds) {
+        this.oauth2CachedTokensExpirationMarginSeconds = oauth2CachedTokensExpirationMarginSeconds;
     }
 }

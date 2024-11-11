@@ -33,6 +33,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -235,10 +236,33 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String clientSecret = getParameter(parameters, "oauth2ClientSecret", String.class);
         String tokenEndpoint = getParameter(parameters, "oauth2TokenEndpoint", String.class);
         String scope = getParameter(parameters, "oauth2Scope", String.class);
+        HttpConfiguration configDefaults = new HttpConfiguration();
+        boolean cacheTokens = getParameter(
+                parameters,
+                "oauth2CacheTokens",
+                boolean.class,
+                configDefaults.isOauth2CacheTokens());
+        long cachedTokensDefaultExpirySeconds = getParameter(
+                parameters,
+                "oauth2CachedTokensDefaultExpirySeconds",
+                long.class,
+                configDefaults.getOauth2CachedTokensDefaultExpirySeconds());
+        long cachedTokensExpirationMarginSeconds = getParameter(
+                parameters,
+                "oauth2CachedTokensExpirationMarginSeconds",
+                long.class,
+                configDefaults.getOauth2CachedTokensExpirationMarginSeconds());
 
         if (clientId != null && clientSecret != null && tokenEndpoint != null) {
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new OAuth2ClientConfigurer(clientId, clientSecret, tokenEndpoint, scope));
+                    new OAuth2ClientConfigurer(
+                            clientId,
+                            clientSecret,
+                            tokenEndpoint,
+                            scope,
+                            cacheTokens,
+                            cachedTokensDefaultExpirySeconds,
+                            cachedTokensExpirationMarginSeconds));
         }
         return configurer;
     }
