@@ -46,6 +46,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private String textFormatVersion = "0.0.4";
     @Metadata
     private String binders;
+    @Metadata(defaultValue = "/q/metrics")
+    private String path = "/q/metrics";
 
     public MetricsConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -178,6 +180,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setBinders(String binders) {
         this.binders = binders;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * The path endpoint used to expose the metrics.
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override

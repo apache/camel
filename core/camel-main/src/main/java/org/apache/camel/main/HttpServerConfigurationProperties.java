@@ -221,7 +221,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default)
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
@@ -447,7 +447,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics
+     * Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default)
      */
     public HttpServerConfigurationProperties withMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
