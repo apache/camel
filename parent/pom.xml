@@ -336,7 +336,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.3.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.3.1</maven-archetype-packaging-version>
-        <maven-archiver-version>3.6.2</maven-archiver-version>
+        <maven-archiver-version>3.6.3</maven-archiver-version>
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
