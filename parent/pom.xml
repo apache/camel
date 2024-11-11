@@ -389,7 +389,7 @@
         <openapi-generator-version>7.9.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.18.0</opensearch-rest-client-version>
-        <opensearch-java-client-version>2.16.0</opensearch-java-client-version>
+        <opensearch-java-client-version>2.17.0</opensearch-java-client-version>
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.1.1</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
