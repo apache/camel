@@ -370,18 +370,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             for (MavenGav mavenGav : gavs) {
                 String v = mavenGav.getVersion();
                 if ("camel-spring-boot".equals(artifactId)) {
-                    String sbv = null;
-                    if (VersionHelper.isGE(v, minimumVersion)) {
-                        sbv = resolveSpringBootVersionByCamelVersion(v, extraRepos);
-                    }
-                    answer.add(new String[] { v, sbv });
+                    resolveSpringBoot(minimumVersion, v, extraRepos, answer);
                 } else if ("camel-quarkus-catalog".equals(artifactId)) {
-                    if (VersionHelper.isGE(v, MINIMUM_QUARKUS_VERSION)) {
-                        String cv = resolveCamelVersionByQuarkusVersion(v, extraRepos);
-                        if (cv != null && VersionHelper.isGE(cv, minimumVersion)) {
-                            answer.add(new String[] { cv, v });
-                        }
-                    }
+                    resolveQuarkus(minimumVersion, v, extraRepos, answer);
                 } else {
                     answer.add(new String[] { v, null });
                 }
@@ -391,6 +382,25 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
 
         return answer;
+    }
+
+    private void resolveQuarkus(String minimumVersion, String v, Set<String> extraRepos, List<String[]> answer)
+            throws Exception {
+        if (VersionHelper.isGE(v, MINIMUM_QUARKUS_VERSION)) {
+            String cv = resolveCamelVersionByQuarkusVersion(v, extraRepos);
+            if (cv != null && VersionHelper.isGE(cv, minimumVersion)) {
+                answer.add(new String[] { cv, v });
+            }
+        }
+    }
+
+    private void resolveSpringBoot(String minimumVersion, String v, Set<String> extraRepos, List<String[]> answer)
+            throws Exception {
+        String sbv = null;
+        if (VersionHelper.isGE(v, minimumVersion)) {
+            sbv = resolveSpringBootVersionByCamelVersion(v, extraRepos);
+        }
+        answer.add(new String[] { v, sbv });
     }
 
     public boolean alreadyOnClasspath(String groupId, String artifactId, String version) {
