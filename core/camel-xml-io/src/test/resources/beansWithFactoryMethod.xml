@@ -22,6 +22,7 @@ xsi:schemaLocation="http://camel.apache.org/schema/spring file:/data/sources/git
 
 	<bean name="b1" type="org.apache.camel.xml.in.ModelParserTest.MyBean" factoryMethod="createMyBean">
 		<constructors>
+			<!-- index is optional -->
 			<constructor value="c1" />
 			<constructor value="c2" />
 		</constructors>

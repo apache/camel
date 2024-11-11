@@ -21,7 +21,9 @@ import java.util.Date;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled("Run this test manually")
 public class ManualTest {
 
     private Main main;

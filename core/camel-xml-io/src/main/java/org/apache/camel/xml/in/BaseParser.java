@@ -53,6 +53,8 @@ import org.apache.camel.xml.io.XmlPullParserLocationException;
 
 public class BaseParser {
 
+    public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/spring";
+
     protected final MXParser parser;
     protected String namespace;
     protected final Set<String> secondaryNamespaces = new HashSet<>();
@@ -80,14 +82,14 @@ public class BaseParser {
         this.parser = new MXParser();
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         this.parser.setInput(input, null);
-        this.namespace = namespace != null ? namespace : "";
+        this.namespace = namespace != null && !namespace.isEmpty() ? namespace : DEFAULT_NAMESPACE;
     }
 
     public BaseParser(Reader reader, String namespace) throws IOException, XmlPullParserException {
         this.parser = new MXParser();
         this.parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         this.parser.setInput(reader);
-        this.namespace = namespace != null ? namespace : "";
+        this.namespace = namespace != null && !namespace.isEmpty() ? namespace : DEFAULT_NAMESPACE;
     }
 
     public void addSecondaryNamespace(String namespace) {
@@ -528,9 +530,17 @@ public class BaseParser {
         if (Objects.equals(ns, namespace)) {
             return true;
         }
-        for (String second : secondaryNamespaces) {
-            if (Objects.equals(ns, second)) {
-                return true;
+        if (DEFAULT_NAMESPACE.equals(ns) && namespace.isEmpty()) {
+            return true;
+        }
+        if (DEFAULT_NAMESPACE.equals(namespace) && ns.isEmpty()) {
+            return true;
+        }
+        if (secondaryNamespaces != null) {
+            for (String second : secondaryNamespaces) {
+                if (Objects.equals(ns, second)) {
+                    return true;
+                }
             }
         }
         return false;

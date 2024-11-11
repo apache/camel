@@ -33,14 +33,19 @@ import org.apache.camel.xml.io.XMLWriter;
 
 public class BaseWriter {
 
+    public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/spring";
+
     protected final XMLWriter writer;
     protected final Deque<String> namespacesStack = new LinkedList<>();
     protected boolean namespaceWritten;
+    protected boolean skipCustomId = true;
 
     public BaseWriter(Writer writer, String namespace) throws IOException {
         this.writer = new XMLWriter(writer);
-        if (namespace != null) {
+        if (namespace != null && !namespace.isEmpty()) {
             this.namespacesStack.push(namespace);
+        } else {
+            this.namespacesStack.push(DEFAULT_NAMESPACE);
         }
     }
 
@@ -96,6 +101,9 @@ public class BaseWriter {
     }
 
     protected void attribute(String name, Object value) throws IOException {
+        if (skipCustomId && "customId".equals(name)) {
+            return;
+        }
         if (value != null) {
             writer.addAttribute(name, value.toString());
         }

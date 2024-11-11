@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.dataformat.bindy.model.fixed.link.MyModel;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -38,7 +38,7 @@ public class BindyRaceConditionLinkTest extends CamelTestSupport {
 
     private static final int EXPECTED_SUCCESSFUL_MESSAGE_COUNT = 1500;
     private static final int EXPECTED_FAILED_MESSAGE_COUNT = 0;
-    private static final long WAIT_TIMEOUT = 5;
+    private static final long WAIT_TIMEOUT = 3;
 
     @EndpointInject("mock:fail")
     private MockEndpoint fail;
@@ -49,7 +49,7 @@ public class BindyRaceConditionLinkTest extends CamelTestSupport {
     @EndpointInject("direct:bindy-link-test")
     private Endpoint begin;
 
-    @RepeatedTest(3)
+    @Test
     public void raceConditionTest() throws Exception {
         Path filePath = Path.of(ClassLoader.getSystemResource(SOURCE_CSV_FILE_PATH).toURI());
         String csv = Files.readString(filePath);

@@ -71,12 +71,12 @@
         <assertj-version>3.26.3</assertj-version>
         <asterisk-java-version>3.41.0</asterisk-java-version>
         <atlassian-fugue-version>6.1.0</atlassian-fugue-version>
-        <atmosphere-version>3.0.11</atmosphere-version>
+        <atmosphere-version>3.0.13</atmosphere-version>
         <avro-version>1.12.0</avro-version>
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.29.8</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.29.9</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.29</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.26</azure-storage-blob-changefeed-version>
@@ -192,7 +192,7 @@
         <google-cloud-bom-version>26.50.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.55.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.45.0</google-cloud-http-client-version>
-        <google-cloud-secretmanager-bom-version>2.52.0</google-cloud-secretmanager-bom-version>
+        <google-cloud-secretmanager-bom-version>2.53.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.1.1</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
         <greenmail-version>2.1.0</greenmail-version>
@@ -219,14 +219,14 @@
         <hsqldb-version>2.7.4</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore-version>5.3.1</httpcore-version>
-        <httpclient-version>5.4</httpclient-version>
+        <httpclient-version>5.4.1</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.9</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.121</huaweicloud-sdk-version>
         <ical4j-version>4.0.5</ical4j-version>
-        <icu4j-version>75.1</icu4j-version>
+        <icu4j-version>76.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
         <infinispan-version>15.0.9.Final</infinispan-version>
@@ -336,7 +336,7 @@
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.3.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.3.1</maven-archetype-packaging-version>
-        <maven-archiver-version>3.6.2</maven-archiver-version>
+        <maven-archiver-version>3.6.3</maven-archiver-version>
         <maven-artifact-transfer-version>0.13.1</maven-artifact-transfer-version>
         <maven-dependency-tree-version>3.3.0</maven-dependency-tree-version>
         <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
@@ -381,7 +381,7 @@
         <netty-version>4.1.114.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.3</networknt-json-schema-validator-version>
-        <nimbus-jose-jwt>9.45</nimbus-jose-jwt>
+        <nimbus-jose-jwt>9.46</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
@@ -389,7 +389,7 @@
         <openapi-generator-version>7.9.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.18.0</opensearch-rest-client-version>
-        <opensearch-java-client-version>2.16.0</opensearch-java-client-version>
+        <opensearch-java-client-version>2.17.0</opensearch-java-client-version>
         <opensearch-version>2.11.0</opensearch-version>
         <opensearch-testcontainers-version>2.1.1</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
@@ -451,7 +451,7 @@
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.10.0</smallrye-config-version>
         <smallrye-health-version>4.1.0</smallrye-health-version>
-        <smallrye-fault-tolerance-version>6.5.0</smallrye-fault-tolerance-version>
+        <smallrye-fault-tolerance-version>6.6.1</smallrye-fault-tolerance-version>
         <smbj-version>0.13.0</smbj-version>
         <smooks-version>2.0.1</smooks-version>
         <snakeyaml-version>2.3</snakeyaml-version>
@@ -509,7 +509,7 @@
         <xml-apis-version>1.4.01</xml-apis-version>
         <xml-apis-ext-version>1.3.04</xml-apis-ext-version>
         <xml-resolver-version>1.2</xml-resolver-version>
-        <xmlsec-version>4.0.2</xmlsec-version>
+        <xmlsec-version>4.0.3</xmlsec-version>
         <xmlunit-version>2.10.0</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.4</yasson-version>
