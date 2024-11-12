@@ -3,7 +3,7 @@
 :shortname: clickup
 :artifactid: camel-clickup
 :description: Receives events from ClickUp
-:since: 4.9.0-SNAPSHOT
+:since: 4.9
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only consumer is supported

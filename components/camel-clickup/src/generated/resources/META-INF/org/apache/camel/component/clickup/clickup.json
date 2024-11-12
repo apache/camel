@@ -5,7 +5,7 @@
     "title": "ClickUp",
     "description": "Receives events from ClickUp",
     "deprecated": false,
-    "firstVersion": "4.9.0-SNAPSHOT",
+    "firstVersion": "4.9.0",
     "label": "cloud",
     "javaType": "org.apache.camel.component.clickup.ClickUpComponent",
     "supportLevel": "Preview",

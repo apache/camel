@@ -2567,7 +2567,7 @@ public class StaticEndpointBuilders {
      * Receives events from ClickUp
      * 
      * Category: cloud
-     * Since: 4.9.0-SNAPSHOT
+     * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-clickup
      * 
      * Syntax: <code>clickup:workspaceId</code>
@@ -2586,7 +2586,7 @@ public class StaticEndpointBuilders {
      * Receives events from ClickUp
      * 
      * Category: cloud
-     * Since: 4.9.0-SNAPSHOT
+     * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-clickup
      * 
      * Syntax: <code>clickup:workspaceId</code>

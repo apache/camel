@@ -36,7 +36,7 @@ public interface ClickupComponentBuilderFactory {
      * Receives events from ClickUp
      * 
      * Category: cloud
-     * Since: 4.9.0-SNAPSHOT
+     * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-clickup
      * 
      * @return the dsl builder
