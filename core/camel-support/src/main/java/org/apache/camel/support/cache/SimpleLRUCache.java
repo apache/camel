@@ -68,6 +68,9 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
 
     public SimpleLRUCache(int initialCapacity, int maximumCacheSize, Consumer<V> evicted) {
         super(initialCapacity, DEFAULT_LOAD_FACTOR);
+        if (maximumCacheSize <= 0) {
+            throw new IllegalArgumentException("The maximum cache size must be greater than 0");
+        }
         this.maximumCacheSize = maximumCacheSize;
         this.evict = Objects.requireNonNull(evicted);
     }
