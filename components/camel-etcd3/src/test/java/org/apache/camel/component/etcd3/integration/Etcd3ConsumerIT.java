@@ -29,8 +29,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd3.Etcd3Constants;
 import org.apache.camel.component.etcd3.support.Etcd3TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Etcd3 is likely broken (see CAMEL-21439)")
 class Etcd3ConsumerIT extends Etcd3TestSupport {
 
     private static final int BATCH_SIZE_PART_1 = 2_345;
