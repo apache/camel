@@ -88,6 +88,16 @@
             <version>${picocli-version}</version>
         </dependency>
         <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-shell-jline3</artifactId>
+            <version>${picocli-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>${jline-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.freva</groupId>
             <artifactId>ascii-table</artifactId>
             <version>${ascii-table-version}</version>
@@ -134,6 +144,11 @@
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>${jansi-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-xml</artifactId>
         </dependency>
 
         <!-- test dependencies -->
