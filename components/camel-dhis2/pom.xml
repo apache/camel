@@ -34,7 +34,7 @@
     <description>Camel DHIS2 Component</description>
 
     <properties>
-        <dhis2-java-sdk.version>3.0.0</dhis2-java-sdk.version>
+        <dhis2-java-sdk.version>3.0.1</dhis2-java-sdk.version>
 
          <!-- DHIS2 container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
