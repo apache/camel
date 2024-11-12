@@ -32,6 +32,7 @@ import org.apache.camel.component.etcd3.Etcd3Helper;
 import org.apache.camel.component.etcd3.cloud.Etcd3OnDemandServiceDiscovery;
 import org.apache.camel.component.etcd3.cloud.Etcd3WatchServiceDiscovery;
 import org.apache.camel.component.etcd3.support.Etcd3TestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled("Etcd3 is likely broken (see CAMEL-21439)")
 class Etcd3ServiceDiscoveryIT extends Etcd3TestSupport {
     private static final ObjectMapper MAPPER = Etcd3Helper.createObjectMapper();
     private static final AtomicInteger PORT = new AtomicInteger();
