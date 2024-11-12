@@ -32,10 +32,15 @@ import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledOnOs(value = { OS.LINUX },
+              architectures = { "s390x" },
+              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class StreamResequencerTest extends ContextTestSupport {
 
     protected void sendBodyAndHeader(String endpointUri, final Object body, final String headerName, final Object headerValue) {
