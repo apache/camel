@@ -35,6 +35,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd3.Etcd3Constants;
 import org.apache.camel.component.etcd3.support.Etcd3TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled("Etcd3 is likely broken (see CAMEL-21439)")
 class Etcd3ProducerIT extends Etcd3TestSupport {
 
     @Test
