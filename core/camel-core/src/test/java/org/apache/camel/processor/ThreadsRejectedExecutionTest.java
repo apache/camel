@@ -27,10 +27,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(value = { OS.LINUX },
+              architectures = { "s390x" },
+              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ThreadsRejectedExecutionTest extends ContextTestSupport {
 
     @Override
