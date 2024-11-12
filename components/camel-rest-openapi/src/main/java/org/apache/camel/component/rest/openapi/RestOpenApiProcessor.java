@@ -226,11 +226,16 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         }
         // the operation may have specific information what it can produce
         if (o.getResponses() != null) {
+            HashSet<String> mediaTypes = new HashSet<>();
             for (var a : o.getResponses().values()) {
                 Content c = a.getContent();
                 if (c != null) {
-                    produces = c.keySet().stream().sorted().collect(Collectors.joining(","));
+                    mediaTypes.addAll(c.keySet());
                 }
+            }
+
+            if (!mediaTypes.isEmpty()) {
+                produces = mediaTypes.stream().sorted().collect(Collectors.joining(","));
             }
         }
         bc.setConsumes(consumes);
