@@ -27,6 +27,7 @@ import java.util.Map;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -41,6 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.smooks.Smooks;
 import org.smooks.SmooksFactory;
 import org.smooks.api.ExecutionContext;
+import org.smooks.api.NotAppContextScoped;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cartridges.javabean.Value;
 import org.smooks.io.payload.Exports;
@@ -61,6 +63,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -266,6 +269,25 @@ public class SmooksProcessorTest extends CamelTestSupport {
         RuntimeException runtimeException
                 = assertThrows(RuntimeException.class, () -> template.sendBody("direct://input", new Object()));
         assertEquals(InvalidPayloadException.class, runtimeException.getCause().getCause().getClass());
+    }
+
+    @Test
+    public void testRegisteredCamelContextIsNotAppContextScoped() throws Exception {
+        context.addRoutes(createEdiToXmlRouteBuilder());
+        context.start();
+
+        result.expectedMessageCount(1);
+        template.sendBody("direct://input", getOrderEdi());
+
+        Exchange exchange = result.assertExchangeReceived(0);
+        ExecutionContext executionContext
+                = exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
+        Object camelContextRef
+                = executionContext.getApplicationContext().getRegistry()
+                        .lookup(registryEntries -> registryEntries.entrySet().stream()
+                                .filter(e -> e.getKey().equals(CamelContext.class)).findFirst().get().getValue());
+        assertInstanceOf(NotAppContextScoped.Ref.class, camelContextRef);
+
     }
 
     @Test
