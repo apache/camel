@@ -39,8 +39,6 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.smooks.Smooks;
 import org.smooks.SmooksFactory;
 import org.smooks.api.ExecutionContext;
