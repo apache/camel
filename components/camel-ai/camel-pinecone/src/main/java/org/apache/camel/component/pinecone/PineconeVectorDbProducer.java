@@ -29,8 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
-import org.openapitools.client.model.CollectionModel;
-import org.openapitools.client.model.IndexModel;
+import org.openapitools.db_control.client.model.CollectionModel;
+import org.openapitools.db_control.client.model.DeletionProtection;
+import org.openapitools.db_control.client.model.IndexModel;
 
 public class PineconeVectorDbProducer extends DefaultProducer {
     private Pinecone client;
@@ -125,7 +126,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         String collectionCloudRegionName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD_REGION, String.class);
 
         IndexModel result = this.client.createServerlessIndex(indexName, collectionSimilarityMetricName, collectionDimension,
-                collectionCloudName, collectionCloudRegionName);
+                collectionCloudName, collectionCloudRegionName, DeletionProtection.DISABLED);
 
         populateIndexResponse(result, exchange);
 
