@@ -41,7 +41,7 @@ import org.apache.camel.util.StringHelper;
                               + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
                               + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,"
-                              + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope",
+                              + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,oauth2CachedTokensExpirationMarginSeconds",
           annotations = {
                   "protocol=http",
           })
