@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -185,7 +184,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
     private final int cacheSize;
-    private final ConcurrentMap<Processor, Processor> errorHandlers;
+    private final Map<Processor, Processor> errorHandlers;
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
@@ -196,7 +195,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                               AggregationStrategy aggregationStrategy) {
         this(camelContext, route, processors, aggregationStrategy, false, null,
              false, false, false, 0, null,
-             false, false, CamelContextHelper.getMaximumCachePoolSize(camelContext));
+             false, false, 0);
     }
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
@@ -225,9 +224,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.parallelAggregate = parallelAggregate;
         this.processorExchangeFactory = camelContext.getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
-        this.cacheSize = cacheSize;
-        if (cacheSize >= 0) {
-            this.errorHandlers = (ConcurrentMap) LRUCacheFactory.newLRUCache(cacheSize);
+        this.cacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
+        if (this.cacheSize > 0) {
+            this.errorHandlers = LRUCacheFactory.newLRUCache(this.cacheSize);
         } else {
             // no cache
             this.errorHandlers = null;
