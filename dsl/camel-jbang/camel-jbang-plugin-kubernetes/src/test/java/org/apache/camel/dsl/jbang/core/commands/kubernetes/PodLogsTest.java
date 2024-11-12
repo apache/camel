@@ -26,11 +26,9 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledIf;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-@EnabledIf("isDockerAvailable")
 class PodLogsTest extends KubernetesBaseTest {
 
     @Test
