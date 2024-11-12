@@ -330,6 +330,13 @@ class SimpleLRUCacheTest {
     }
 
     @ParameterizedTest
+    @ValueSource(ints = { 0, -1 })
+    void validateCacheSize(int maximumCacheSize) {
+        assertThrows(IllegalArgumentException.class, () -> new SimpleLRUCache<>(16, maximumCacheSize, x -> {
+        }));
+    }
+
+    @ParameterizedTest
     @ValueSource(ints = { 1, 2, 5, 10, 20, 50, 100, 1_000 })
     void concurrentPut(int maximumCacheSize) throws Exception {
         int threads = Runtime.getRuntime().availableProcessors() - 1;
