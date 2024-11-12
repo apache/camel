@@ -110,6 +110,15 @@ To make it permanent, run:
 echo 'source <(camel completion)' >> ~/.bashrc
 ----
 
+== REPL loop
+
+A simple read-eval-print loop is available, you can launch it with:
+
+[source, bash]
+----
+camel shell
+----
+
 == Creating and running Camel routes
 
 You can create a new basic routes with the `init` command.
