@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-storage-datalake",
-    "version": "4.4.4-SNAPSHOT",
+    "version": "4.4.5-SNAPSHOT",
     "scheme": "azure-storage-datalake",
     "extendsScheme": "",
     "syntax": "azure-storage-datalake:accountName\/fileSystemName",

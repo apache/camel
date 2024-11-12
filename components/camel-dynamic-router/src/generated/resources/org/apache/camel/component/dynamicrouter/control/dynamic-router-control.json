@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dynamic-router",
-    "version": "4.4.4-SNAPSHOT",
+    "version": "4.4.5-SNAPSHOT",
     "scheme": "dynamic-router-control",
     "extendsScheme": "",
     "syntax": "dynamic-router-control:controlAction",

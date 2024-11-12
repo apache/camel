@@ -10,6 +10,6 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-health",
-    "version": "4.4.4-SNAPSHOT"
+    "version": "4.4.5-SNAPSHOT"
   }
 }

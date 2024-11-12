@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dns",
-    "version": "4.4.4-SNAPSHOT",
+    "version": "4.4.5-SNAPSHOT",
     "scheme": "dns",
     "extendsScheme": "",
     "syntax": "dns:dnsType",
