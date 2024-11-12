@@ -39,6 +39,7 @@ import org.apache.camel.model.dataformat.FhirDataformat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.FuryDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -205,6 +206,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new FhirDataFormatReifier<>(camelContext, definition);
         } else if (definition instanceof FlatpackDataFormat) {
             return new FlatpackDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof FuryDataFormat) {
+            return new FuryDataFormatReifier(camelContext, definition);
         } else if (definition instanceof GrokDataFormat) {
             return new GrokDataFormatReifier(camelContext, definition);
         } else if (definition instanceof GzipDeflaterDataFormat) {

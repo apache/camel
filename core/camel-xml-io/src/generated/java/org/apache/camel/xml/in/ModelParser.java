@@ -1869,6 +1869,9 @@ public class ModelParser extends BaseParser {
     }
     protected FuryDataFormat doParseFuryDataFormat() throws IOException, XmlPullParserException {
         return doParse(new FuryDataFormat(), (def, key, val) -> switch (key) {
+                case "allowAutoWiredFury": def.setAllowAutoWiredFury(val); yield true;
+                case "requireClassRegistration": def.setRequireClassRegistration(val); yield true;
+                case "threadSafe": def.setThreadSafe(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());

@@ -40,6 +40,21 @@ public class FuryDataFormat extends DataFormatDefinition {
     @Metadata(description = "Class of the java type to use when unmarshalling")
     private String unmarshalTypeName;
 
+    @XmlAttribute
+    @Metadata(label = "advanced", description = "Whether to require register classes", defaultValue = "true",
+              javaType = "java.lang.Boolean")
+    private String requireClassRegistration;
+
+    @XmlAttribute
+    @Metadata(label = "advanced", description = "Whether to use the threadsafe fury", defaultValue = "true",
+              javaType = "java.lang.Boolean")
+    private String threadSafe;
+
+    @XmlAttribute
+    @Metadata(label = "advanced", description = "Whether to auto-discover Fury from the registry", defaultValue = "true",
+              javaType = "java.lang.Boolean")
+    private String allowAutoWiredFury;
+
     public FuryDataFormat() {
         super("fury");
     }
@@ -48,10 +63,17 @@ public class FuryDataFormat extends DataFormatDefinition {
         super(source);
         this.unmarshalType = source.unmarshalType;
         this.unmarshalTypeName = source.unmarshalTypeName;
+        this.requireClassRegistration = source.requireClassRegistration;
+        this.threadSafe = source.threadSafe;
+        this.allowAutoWiredFury = source.allowAutoWiredFury;
     }
 
     private FuryDataFormat(Builder builder) {
+        this.unmarshalType = builder.unmarshalType;
         this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.requireClassRegistration = builder.requireClassRegistration;
+        this.threadSafe = builder.threadSafe;
+        this.allowAutoWiredFury = builder.allowAutoWiredFury;
     }
 
     @Override
@@ -63,9 +85,6 @@ public class FuryDataFormat extends DataFormatDefinition {
         return unmarshalType;
     }
 
-    /**
-     * Class of the java type to use when unmarshalling
-     */
     public void setUnmarshalType(final Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
     }
@@ -78,18 +97,63 @@ public class FuryDataFormat extends DataFormatDefinition {
         this.unmarshalTypeName = unmarshalTypeName;
     }
 
+    public String getRequireClassRegistration() {
+        return requireClassRegistration;
+    }
+
+    public void setRequireClassRegistration(String requireClassRegistration) {
+        this.requireClassRegistration = requireClassRegistration;
+    }
+
+    public String getThreadSafe() {
+        return threadSafe;
+    }
+
+    public void setThreadSafe(String threadSafe) {
+        this.threadSafe = threadSafe;
+    }
+
+    public String getAllowAutoWiredFury() {
+        return allowAutoWiredFury;
+    }
+
+    public void setAllowAutoWiredFury(String allowAutoWiredFury) {
+        this.allowAutoWiredFury = allowAutoWiredFury;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link FuryDataFormat}.
      */
     @XmlTransient
     public static class Builder implements DataFormatBuilder<FuryDataFormat> {
+        private Class<?> unmarshalType;
         private String unmarshalTypeName;
+        private String requireClassRegistration;
+        private String threadSafe;
+        private String allowAutoWiredFury;
 
-        /**
-         * Class of the java type to use when unmarshalling
-         */
-        public Builder unmarshalType(String unmarshalTypeName) {
-            this.unmarshalTypeName = unmarshalTypeName;
+        public Builder unmarshalType(Class<?> value) {
+            this.unmarshalType = value;
+            return this;
+        }
+
+        public Builder unmarshalTypeName(String value) {
+            this.unmarshalTypeName = value;
+            return this;
+        }
+
+        public Builder requireClassRegistration(String value) {
+            this.requireClassRegistration = value;
+            return this;
+        }
+
+        public Builder threadSafe(String value) {
+            this.threadSafe = value;
+            return this;
+        }
+
+        public Builder allowAutoWiredFury(String value) {
+            this.allowAutoWiredFury = value;
             return this;
         }
 

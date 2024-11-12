@@ -7415,6 +7415,7 @@ down. Default value: false
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
+            <xs:element ref="tns:fury"/>
             <xs:element ref="tns:grok"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -8693,6 +8694,49 @@ If the text is qualified with a character. Uses quote character by default.
             <xs:documentation xml:lang="en">
 <![CDATA[
 References to a custom parser factory to lookup in the registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="furyDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="unmarshalType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Class of the java type to use when unmarshalling.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="requireClassRegistration" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to require register classes. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="threadSafe" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to use the threadsafe fury. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowAutoWiredFury" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to auto-discover Fury from the registry. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14603,6 +14647,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
+            <xs:element ref="tns:fury"/>
             <xs:element ref="tns:grok"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -16807,6 +16852,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
+        <xs:element ref="tns:fury"/>
         <xs:element ref="tns:grok"/>
         <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
@@ -16838,22 +16884,6 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="furyDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="unmarshalType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Class of the java type to use when unmarshalling.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
@@ -17612,6 +17642,7 @@ Sets the component name that this definition will apply to.
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
+            <xs:element ref="tns:fury"/>
             <xs:element ref="tns:grok"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>

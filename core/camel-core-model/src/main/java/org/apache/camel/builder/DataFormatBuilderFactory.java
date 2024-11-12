@@ -29,6 +29,7 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.FuryDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -153,6 +154,13 @@ public final class DataFormatBuilderFactory {
      */
     public FlatpackDataFormat.Builder flatpack() {
         return new FlatpackDataFormat.Builder();
+    }
+
+    /**
+     * Uses the Fury data format
+     */
+    public FuryDataFormat.Builder fury() {
+        return new FuryDataFormat.Builder();
     }
 
     /**

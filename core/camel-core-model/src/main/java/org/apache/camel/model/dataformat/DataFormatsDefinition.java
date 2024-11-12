@@ -57,6 +57,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "fhirJson", type = FhirJsonDataFormat.class),
             @XmlElement(name = "fhirXml", type = FhirXmlDataFormat.class),
             @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
+            @XmlElement(name = "fury", type = FuryDataFormat.class),
             @XmlElement(name = "grok", type = GrokDataFormat.class),
             @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(name = "hl7", type = HL7DataFormat.class),
