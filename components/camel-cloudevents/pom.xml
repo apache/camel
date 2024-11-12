@@ -34,7 +34,6 @@
 
     <properties>
         <firstVersion>3.15.0</firstVersion>
-        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>

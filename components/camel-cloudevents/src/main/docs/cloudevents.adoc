@@ -4,7 +4,7 @@
 :artifactid: camel-cloudevents
 :description: Camel support for the CloudEvents specification
 :since: 3.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: cloudevents
