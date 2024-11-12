@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository;
 import org.apache.camel.component.etcd3.support.Etcd3TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
  * of message 1,2 and 4 as they use the same correlation key.
  * <p/>
  */
+@Disabled("Manual test and also etcd3 is likely broken (see CAMEL-21439)")
 class AggregateEtcd3ManualTest extends Etcd3TestSupport {
 
     @Test
