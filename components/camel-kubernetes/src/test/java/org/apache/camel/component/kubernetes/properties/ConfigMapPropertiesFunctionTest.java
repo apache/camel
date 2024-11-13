@@ -69,6 +69,9 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
 
             out = cmf.apply("myconfig/bar.txt");
             Assertions.assertEquals("Moes Bar", out);
+
+            out = cmf.apply("myconfig/bar.txt:Boes Bar");
+            Assertions.assertEquals("Moes Bar", out);
         } finally {
             client.resource(cm).delete();
         }
