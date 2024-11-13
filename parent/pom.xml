@@ -182,7 +182,7 @@
         <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.0.1</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.29.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.30.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.7.0</google-api-client-version>
         <google-api-services-drive-version>v3-rev20241027-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20240927-2.0.0</google-api-services-calendar-version>
