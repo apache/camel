@@ -20,7 +20,7 @@ to an `Integer` value.
 
 === camel-jackson
 
-The option `useWriter` on JSon data format and camel-jackson,
+The option `useWriter` on JSON data format and camel-jackson,
 has been replaced with `combineUnicodeSurrogates` as it is intended for 4-bytes characters such as Japanese.
 
 === camel-jms
@@ -39,7 +39,7 @@ on Spring Boot.
 
 === camel-smooks
 
-Upgraded Smooks from 2.0.0-RC4 to 2.0.1 which has
+Upgraded Smooks from version 2.0.0-RC4 to version 2.0.1 which has
 https://www.smooks.org/documentation/#migrating_from_smooks_1_7_to_2_0[API breaking changes] in Smooks.
 
 === camel-hashicorp-vault properties function
@@ -103,8 +103,8 @@ You could find more details on CAMEL-21179 issue
 The `camel-aws2-s3` when using `headBucket` operation will now store the result
 in a header named `CamelAwsS3BucketExists` whether the bucket exists or not.
 
-Previously an `software.amazon.awssdk.services.s3.model.NoSuchBucketException` was thrown,
-however this would require to use error handling to just check whether the bucket existed.
+Previously an `software.amazon.awssdk.services.s3.model.NoSuchBucketException` was thrown.
+However, this would require using error handling to just check whether the bucket existed.
 Returning a boolean makes it easier in Camel routes to decide what to do.
 You may also set the option `ignoreBody=true` to not change the message body.
 
@@ -124,7 +124,7 @@ The logs will print a warning message if this behavior is detected.
 === camel-debezium
 
 To avoid split package that can be a problem in environments like OSGI, each camel-debezium module has its own
-sub package corresponding to the database type. So for example, all the classes of the module `camel-debezium-postgres`
+subpackage corresponding to the database type. So for example, all the classes of the module `camel-debezium-postgres`
 have been moved to a dedicated package which is `org.apache.camel.component.debezium.postgres` instead of having
 everything under the root package `org.apache.camel.component.debezium`.
 
@@ -142,9 +142,9 @@ The Camel team is only focusing on Java, XML and YAML DSL.
 
 ==== Kotlin DSL
 
-The Kotlin DSL which was deprecated in Camel 4.7.0 has now been removed. The routes must be migrated to another DSL such as Java, Yaml or xml.
+The Kotlin DSL, which was deprecated in Camel 4.7.0, has now been removed. The routes must be migrated to another DSL such as Java, YAML or XML.
 
-The following modules has been removed:
+The following modules have been removed:
 
-* camel-kotlin-dsl
-* camel-kotlin-api
+* `camel-kotlin-dsl`
+* `camel-kotlin-api`
