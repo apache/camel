@@ -4,7 +4,7 @@
     "name": "etcd3",
     "title": "Etcd v3",
     "description": "Get, set, delete or watch keys in etcd key-value store.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.19.0",
     "label": "clustering,database",
     "javaType": "org.apache.camel.component.etcd3.Etcd3Component",

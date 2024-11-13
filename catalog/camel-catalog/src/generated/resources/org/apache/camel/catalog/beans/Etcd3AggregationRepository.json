@@ -6,7 +6,7 @@
     "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Etcd3 Aggregation Repository",
     "description": "Aggregation repository that uses Etcd3 to store exchanges.",
-    "deprecated": false,
+    "deprecated": true,
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd3",
     "version": "4.9.0-SNAPSHOT",

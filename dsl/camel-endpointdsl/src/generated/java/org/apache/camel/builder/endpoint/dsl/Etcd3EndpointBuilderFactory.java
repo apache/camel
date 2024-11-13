@@ -1712,6 +1712,7 @@ public interface Etcd3EndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default Etcd3HeaderNameBuilder etcd3() {
             return Etcd3HeaderNameBuilder.INSTANCE;
         }
@@ -1731,6 +1732,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default Etcd3EndpointBuilder etcd3(String path) {
             return Etcd3EndpointBuilderFactory.endpointBuilder("etcd3", path);
         }
@@ -1752,6 +1754,7 @@ public interface Etcd3EndpointBuilderFactory {
          * @param path path
          * @return the dsl builder
          */
+        @Deprecated
         default Etcd3EndpointBuilder etcd3(String componentName, String path) {
             return Etcd3EndpointBuilderFactory.endpointBuilder(componentName, path);
         }

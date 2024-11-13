@@ -1,10 +1,11 @@
-= Etcd v3 Component
+= Etcd v3 Component (deprecated)
 :doctitle: Etcd v3
 :shortname: etcd3
 :artifactid: camel-etcd3
 :description: Get, set, delete or watch keys in etcd key-value store.
 :since: 3.19
-:supportlevel: Preview
+:supportlevel: Preview-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

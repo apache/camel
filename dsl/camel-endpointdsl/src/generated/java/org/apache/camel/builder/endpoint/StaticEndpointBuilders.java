@@ -4379,6 +4379,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static Etcd3EndpointBuilderFactory.Etcd3EndpointBuilder etcd3(String path) {
         return etcd3("etcd3", path);
     }
@@ -4400,6 +4401,7 @@ public class StaticEndpointBuilders {
      * @param path path
      * @return the dsl builder
      */
+    @Deprecated
     public static Etcd3EndpointBuilderFactory.Etcd3EndpointBuilder etcd3(String componentName, String path) {
         return Etcd3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
