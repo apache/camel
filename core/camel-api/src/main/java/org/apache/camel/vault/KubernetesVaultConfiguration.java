@@ -23,8 +23,8 @@ import org.apache.camel.spi.Metadata;
  */
 public class KubernetesVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(defaultValue = "true")
-    private boolean refreshEnabled = true;
+    @Metadata
+    private boolean refreshEnabled;
     @Metadata
     private String secrets;
 
