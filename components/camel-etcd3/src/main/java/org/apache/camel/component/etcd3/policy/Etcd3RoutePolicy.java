@@ -56,6 +56,7 @@ import static org.apache.camel.component.etcd3.Etcd3Constants.ETCD_DEFAULT_ENDPO
  * An implementation of a route policy based on etcd.
  */
 @ManagedResource(description = "Route policy using Etcd as clustered lock")
+@Deprecated(since = "4.9.0", forRemoval = true)
 public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     /**

@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
           description = "Aggregation repository that uses Etcd3 to store exchanges.",
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
+@Deprecated(since = "4.9.0", forRemoval = true)
 public class Etcd3AggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
     private static final Logger LOG = LoggerFactory.getLogger(Etcd3AggregationRepository.class);

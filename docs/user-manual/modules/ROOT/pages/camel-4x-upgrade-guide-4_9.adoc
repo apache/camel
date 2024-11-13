@@ -128,6 +128,12 @@ subpackage corresponding to the database type. So for example, all the classes o
 have been moved to a dedicated package which is `org.apache.camel.component.debezium.postgres` instead of having
 everything under the root package `org.apache.camel.component.debezium`.
 
+=== Deprecated components
+
+The following components were marked as deprecated:
+
+- `camel-etcd3`
+
 === Removed deprecated components
 
 The following experimental DSL has been removed:

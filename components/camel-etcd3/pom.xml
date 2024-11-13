@@ -29,7 +29,7 @@
 
     <artifactId>camel-etcd3</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Etcd3</name>
+    <name>Camel :: Etcd3 (deprecated)</name>
     <description>Camel EtcD v3 component based on jetcd</description>
 
     <properties>
