@@ -34,7 +34,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false)
+@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false, showDefaultValues = true)
 public class ListEndpoint extends ProcessWatchCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {

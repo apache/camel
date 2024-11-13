@@ -36,7 +36,8 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "send",
-                     description = "Send messages to endpoints via running Camel", sortOptions = false)
+                     description = "Send messages to endpoints via running Camel", sortOptions = false,
+                     showDefaultValues = true)
 public class CamelSendAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

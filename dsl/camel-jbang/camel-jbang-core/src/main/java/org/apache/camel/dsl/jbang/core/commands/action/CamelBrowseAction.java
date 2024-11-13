@@ -39,7 +39,7 @@ import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "browse",
-                     description = "Browse pending messages on endpoints", sortOptions = false)
+                     description = "Browse pending messages on endpoints", sortOptions = false, showDefaultValues = true)
 public class CamelBrowseAction extends ActionBaseCommand {
 
     public static class UriSizeCompletionCandidates implements Iterable<String> {

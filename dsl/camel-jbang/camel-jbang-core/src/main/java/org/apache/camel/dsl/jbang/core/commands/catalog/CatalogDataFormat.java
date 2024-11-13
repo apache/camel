@@ -24,7 +24,7 @@ import org.apache.camel.tooling.model.DataFormatModel;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "dataformat",
-                     description = "List data formats from the Camel Catalog", sortOptions = false)
+                     description = "List data formats from the Camel Catalog", sortOptions = false, showDefaultValues = true)
 public class CatalogDataFormat extends CatalogBaseCommand {
 
     public CatalogDataFormat(CamelJBangMain main) {

@@ -27,7 +27,8 @@ import org.apache.camel.util.IOHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "update",
-                     description = "Updates JBang style dependencies in source file")
+                     description = "Updates JBang style dependencies in source file", sortOptions = false,
+                     showDefaultValues = true)
 public class DependencyUpdate extends DependencyList {
 
     @CommandLine.Option(names = { "--source" },

@@ -42,7 +42,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "kafka",
-         description = "List Kafka consumers of Camel integrations", sortOptions = false)
+         description = "List Kafka consumers of Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListKafka extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

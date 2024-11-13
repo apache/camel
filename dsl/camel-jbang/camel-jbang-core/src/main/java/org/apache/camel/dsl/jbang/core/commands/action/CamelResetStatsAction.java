@@ -25,7 +25,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "reset-stats",
-                     description = "Reset performance statistics", sortOptions = false)
+                     description = "Reset performance statistics", sortOptions = false, showDefaultValues = true)
 public class CamelResetStatsAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")

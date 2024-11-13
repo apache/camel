@@ -23,7 +23,7 @@ import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "set",
-                     description = "Set user configuration value", sortOptions = false)
+                     description = "Set user configuration value", sortOptions = false, showDefaultValues = true)
 public class ConfigSet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")

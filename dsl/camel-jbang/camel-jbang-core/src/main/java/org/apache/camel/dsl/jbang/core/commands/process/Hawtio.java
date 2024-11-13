@@ -30,7 +30,7 @@ import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false)
+@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true)
 public class Hawtio extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

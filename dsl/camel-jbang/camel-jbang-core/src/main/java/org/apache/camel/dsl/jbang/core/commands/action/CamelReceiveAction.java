@@ -56,7 +56,8 @@ import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "receive",
-                     description = "Receive and dump messages from remote endpoints", sortOptions = false)
+                     description = "Receive and dump messages from remote endpoints", sortOptions = false,
+                     showDefaultValues = true)
 public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

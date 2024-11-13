@@ -30,7 +30,8 @@ import org.apache.camel.util.StopWatch;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false)
+@Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false,
+         showDefaultValues = true)
 public class TransformRoute extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",

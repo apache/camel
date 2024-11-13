@@ -25,7 +25,7 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false)
+@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false, showDefaultValues = true)
 public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")

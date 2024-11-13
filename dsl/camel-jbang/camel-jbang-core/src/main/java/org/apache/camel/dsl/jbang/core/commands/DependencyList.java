@@ -38,7 +38,8 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list",
-                     description = "Displays all Camel dependencies required to run")
+                     description = "Displays all Camel dependencies required to run", sortOptions = false,
+                     showDefaultValues = true)
 public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";

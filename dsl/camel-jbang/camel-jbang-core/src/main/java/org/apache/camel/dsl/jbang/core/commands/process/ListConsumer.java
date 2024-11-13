@@ -35,7 +35,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "consumer", description = "Get status of Camel consumers", sortOptions = false)
+@Command(name = "consumer", description = "Get status of Camel consumers", sortOptions = false, showDefaultValues = true)
 public class ListConsumer extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

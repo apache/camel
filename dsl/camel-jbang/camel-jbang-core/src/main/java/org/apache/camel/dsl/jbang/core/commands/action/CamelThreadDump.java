@@ -35,7 +35,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false)
+@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false,
+         showDefaultValues = true)
 public class CamelThreadDump extends ActionWatchCommand {
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {

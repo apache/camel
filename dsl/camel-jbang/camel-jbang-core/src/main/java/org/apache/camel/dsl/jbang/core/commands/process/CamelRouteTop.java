@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Top performing routes",
-         sortOptions = false)
+         sortOptions = false, showDefaultValues = true)
 public class CamelRouteTop extends CamelRouteStatus {
 
     public CamelRouteTop(CamelJBangMain main) {

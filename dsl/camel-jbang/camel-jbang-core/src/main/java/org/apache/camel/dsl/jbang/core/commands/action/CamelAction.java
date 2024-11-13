@@ -21,7 +21,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "cmd",
                      description = "Performs commands in the running Camel integrations, such as start/stop route, or change logging levels. (use cmd --help to see sub commands)",
-                     sortOptions = false)
+                     sortOptions = false, showDefaultValues = true)
 public class CamelAction extends ActionBaseCommand {
 
     public CamelAction(CamelJBangMain main) {

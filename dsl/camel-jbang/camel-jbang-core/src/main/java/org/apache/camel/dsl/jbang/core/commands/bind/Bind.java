@@ -37,7 +37,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "bind", description = "Bind source and sink Kamelets as a new Camel integration",
-         sortOptions = false)
+         sortOptions = false, showDefaultValues = true)
 public class Bind extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1",

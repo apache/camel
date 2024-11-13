@@ -29,7 +29,8 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "sbom",
-                     description = "Generate a CycloneDX or SPDX SBOM for a specific project")
+                     description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
+                     showDefaultValues = true)
 public class SBOMGenerator extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";

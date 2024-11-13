@@ -24,7 +24,8 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "set", description = "Set/change current Camel version")
+@CommandLine.Command(name = "set", description = "Set/change current Camel version", sortOptions = false,
+                     showDefaultValues = true)
 public class VersionSet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Camel version", arity = "0..1")

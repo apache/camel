@@ -34,7 +34,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "bean", description = "List beans in a running Camel integration", sortOptions = false)
+@Command(name = "bean", description = "List beans in a running Camel integration", sortOptions = false,
+         showDefaultValues = true)
 public class CamelBeanDump extends ActionBaseCommand {
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {

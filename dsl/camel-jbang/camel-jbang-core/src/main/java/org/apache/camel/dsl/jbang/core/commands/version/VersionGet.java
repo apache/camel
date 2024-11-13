@@ -24,7 +24,8 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays current Camel version")
+@CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
+                     showDefaultValues = true)
 public class VersionGet extends CamelCommand {
 
     public VersionGet(CamelJBangMain main) {

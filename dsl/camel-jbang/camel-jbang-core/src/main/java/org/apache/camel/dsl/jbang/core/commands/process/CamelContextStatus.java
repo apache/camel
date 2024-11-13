@@ -39,7 +39,7 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
 
 @Command(name = "context",
          description = "Get status of Camel integrations",
-         sortOptions = false)
+         sortOptions = false, showDefaultValues = true)
 public class CamelContextStatus extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

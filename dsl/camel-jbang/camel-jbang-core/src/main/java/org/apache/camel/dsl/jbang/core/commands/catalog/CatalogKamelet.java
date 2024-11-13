@@ -37,7 +37,7 @@ import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "kamelet",
-                     description = "List Kamelets from the Kamelet Catalog", sortOptions = false)
+                     description = "List Kamelets from the Kamelet Catalog", sortOptions = false, showDefaultValues = true)
 public class CatalogKamelet extends CamelCommand {
 
     @CommandLine.Option(names = { "--sort" },

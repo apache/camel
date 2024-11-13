@@ -24,7 +24,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Display user configuration value", sortOptions = false)
+                     description = "Display user configuration value", sortOptions = false, showDefaultValues = true)
 public class ConfigGet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration key", arity = "1")

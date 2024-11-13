@@ -21,7 +21,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "resume-route",
-                     description = "Resume Camel routes", sortOptions = false)
+                     description = "Resume Camel routes", sortOptions = false, showDefaultValues = true)
 public class CamelRouteResumeAction extends CamelRouteAction {
 
     public CamelRouteResumeAction(CamelJBangMain main) {

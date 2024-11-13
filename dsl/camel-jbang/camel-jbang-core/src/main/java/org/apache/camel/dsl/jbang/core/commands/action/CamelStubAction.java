@@ -40,7 +40,7 @@ import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false)
+@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false, showDefaultValues = true)
 public class CamelStubAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

@@ -35,7 +35,7 @@ import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-@Command(name = "ps", description = "List running Camel integrations", sortOptions = false)
+@Command(name = "ps", description = "List running Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListProcess extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,

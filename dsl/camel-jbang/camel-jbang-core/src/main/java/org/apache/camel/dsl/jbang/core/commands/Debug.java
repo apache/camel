@@ -53,7 +53,7 @@ import picocli.CommandLine.Command;
 
 import static org.apache.camel.util.IOHelper.buffered;
 
-@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false)
+@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true)
 public class Debug extends Run {
 
     @CommandLine.Option(names = { "--breakpoint" },

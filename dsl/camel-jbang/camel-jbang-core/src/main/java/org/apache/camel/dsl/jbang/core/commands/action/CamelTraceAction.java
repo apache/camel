@@ -57,7 +57,8 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "trace",
-                     description = "Tail message traces from running Camel integrations", sortOptions = false)
+                     description = "Tail message traces from running Camel integrations", sortOptions = false,
+                     showDefaultValues = true)
 public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

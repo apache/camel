@@ -55,7 +55,7 @@ import picocli.CommandLine;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 
 @CommandLine.Command(name = "list", description = "Displays available Camel versions",
-                     sortOptions = false)
+                     sortOptions = false, showDefaultValues = true)
 public class VersionList extends CamelCommand {
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";

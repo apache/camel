@@ -24,7 +24,8 @@ import org.apache.camel.tooling.model.OtherModel;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "other",
-                     description = "List miscellaneous components from the Camel Catalog", sortOptions = false)
+                     description = "List miscellaneous components from the Camel Catalog", sortOptions = false,
+                     showDefaultValues = true)
 public class CatalogOther extends CatalogBaseCommand {
 
     public CatalogOther(CamelJBangMain main) {

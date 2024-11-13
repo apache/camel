@@ -35,7 +35,8 @@ import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
-         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)")
+         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
+         showDefaultValues = true)
 public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {
