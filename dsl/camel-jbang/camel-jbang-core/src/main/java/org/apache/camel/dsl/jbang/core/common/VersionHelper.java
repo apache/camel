@@ -64,7 +64,7 @@ public final class VersionHelper {
     }
 
     public static int compare(String source, String target) {
-        if (source == null || target == null) {
+        if (source == null || target == null || source.isBlank() || target.isBlank()) {
             return 0;
         }
         String s1 = StringHelper.before(source, ".");
@@ -90,6 +90,19 @@ public final class VersionHelper {
             t2 = StringHelper.before(t2, ".");
         } else {
             t3 = "";
+        }
+        // avoid NPE
+        if (s1 == null) {
+            s1 = source;
+        }
+        if (s2 == null) {
+            s2 = "";
+        }
+        if (t1 == null) {
+            t1 = target;
+        }
+        if (t2 == null) {
+            t2 = "";
         }
         // convert to 2-digit numbers
         if (s1.length() < 2) {
