@@ -32,8 +32,6 @@
     <description>Camel JPA support</description>
 
     <properties>
-        <!-- Needs to be investigated: crashes on CI on s390x -->
-        <skipTests.s390x>true</skipTests.s390x>
         <camel.surefire.fork.additional-vmargs>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}.jar -Xmx3G</camel.surefire.fork.additional-vmargs>
         <camel.surefire.forkTimeout>240</camel.surefire.forkTimeout>
     </properties>
