@@ -264,7 +264,7 @@ public class Run extends CamelCommand {
             description = "Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
-    @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
+    @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port", defaultValue = "8080")
     int port;
 
     @Option(names = { "--console" }, description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
@@ -558,7 +558,9 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.jbang.gav", gav);
         }
         writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
-        writeSetting(main, profileProperties, "camel.jbang.repos", String.join(",", repositories));
+        if (repositories != null) {
+            writeSetting(main, profileProperties, "camel.jbang.repos", String.join(",", repositories));
+        }
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.metrics", metrics ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
@@ -616,7 +618,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
         writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
-                () -> port > 0 ? String.valueOf(port) : null);
+                () -> port > 0 && port != 8080 ? String.valueOf(port) : null);
         writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
