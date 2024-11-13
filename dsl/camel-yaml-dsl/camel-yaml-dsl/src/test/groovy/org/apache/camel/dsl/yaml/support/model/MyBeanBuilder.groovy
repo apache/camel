@@ -32,7 +32,7 @@ class MyBeanBuilder {
     }
 
     MyBeanBuilder nested(MyFooBar fooBar) {
-        this.nested = fooBar;
+        this.nested = fooBar
         return this
     }
 

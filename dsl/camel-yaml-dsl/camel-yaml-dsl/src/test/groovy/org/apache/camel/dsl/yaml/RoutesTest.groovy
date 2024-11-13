@@ -423,8 +423,8 @@ class RoutesTest extends YamlTestSupport {
         context.routeDefinitions.size() == 2
         context.start()
 
-        Assertions.assertEquals(2, context.getRoute("foo").filter("aaa*").size());
-        Assertions.assertEquals(2, context.getRoute("bar").filter("bbb*").size());
+        Assertions.assertEquals(2, context.getRoute("foo").filter("aaa*").size())
+        Assertions.assertEquals(2, context.getRoute("bar").filter("bbb*").size())
     }
 
     def "Error: kebab-case: stream-cache"() {

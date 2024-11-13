@@ -51,11 +51,11 @@ class KameletIntegrationLoaderTest extends YamlTestSupport {
 
             with (context.routeDefinitions[0]) {
                 input.endpointUri == 'kamelet:timer-source?message=Hello Camel K&period=1234'
-                input.lineNumber == 8;
+                input.lineNumber == 8
                 outputs.size() == 1
                 with (outputs[0], KameletDefinition) {
                     name == 'log-sink?showStreams=false&showHeaders=false'
-                    lineNumber == 11;
+                    lineNumber == 11
                 }
             }
     }

@@ -101,10 +101,10 @@ class MarshalTest extends YamlTestSupport {
             '''
         then:
         try {
-            loadRoutes(route);
+            loadRoutes(route)
             Assertions.fail("Should have thrown exception")
         } catch (IllegalArgumentException e) {
-            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage());
+            Assertions.assertTrue(e.getMessage().contains("2 are valid"), e.getMessage())
         }
     }
 
@@ -117,7 +117,7 @@ class MarshalTest extends YamlTestSupport {
                           - marshal: {}
                           - to: "mock:result"
             '''
-        loadRoutes(route);
+        loadRoutes(route)
         then:
         context.routeDefinitions.size() == 1
     }

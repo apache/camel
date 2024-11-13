@@ -19,7 +19,7 @@ package org.apache.camel.dsl.yaml.support.model
 class MyCtrBean {
     String field1
     String field2
-    int age;
+    int age
 
     MyCtrBean(String field1, String field2) {
         this.field1 = field1

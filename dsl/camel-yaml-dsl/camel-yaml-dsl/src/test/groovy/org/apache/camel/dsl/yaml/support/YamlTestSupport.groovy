@@ -75,7 +75,7 @@ class YamlTestSupport extends Specification implements HasCamelContext {
                 closure.delegate = routeTemplate(name)
                 closure.call()
             }
-        });
+        })
     }
 
     def loadRoutes(Resource... resources) {

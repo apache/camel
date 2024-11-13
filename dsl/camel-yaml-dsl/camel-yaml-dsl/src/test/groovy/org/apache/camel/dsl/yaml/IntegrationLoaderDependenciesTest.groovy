@@ -28,7 +28,7 @@ class IntegrationLoaderDependenciesTest extends YamlTestSupport {
         context.registry.bind("myDep", new DependencyStrategy() {
             @Override
             void onDependency(String dependency) {
-                deps.add(dependency);
+                deps.add(dependency)
             }
         })
 
@@ -70,7 +70,7 @@ class IntegrationLoaderDependenciesTest extends YamlTestSupport {
 
             with (context.routeDefinitions[0]) {
                 input.endpointUri == 'sql:SELECT * FROM table1?dataSource=#bean:myDatasource'
-                input.lineNumber == 11;
+                input.lineNumber == 11
                 outputs.size() == 2
             }
 

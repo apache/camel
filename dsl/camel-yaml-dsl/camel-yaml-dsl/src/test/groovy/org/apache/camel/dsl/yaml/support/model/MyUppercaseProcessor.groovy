@@ -22,6 +22,6 @@ import org.apache.camel.Processor
 class MyUppercaseProcessor implements Processor {
     @Override
     void process(Exchange exchange) throws Exception {
-        exchange.in.body = exchange.in.getBody(String.class).toUpperCase();
+        exchange.in.body = exchange.in.getBody(String.class).toUpperCase()
     }
 }

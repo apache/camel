@@ -115,13 +115,13 @@ class SplitTest extends YamlTestSupport {
     }
 
     protected String createBody() {
-        StringBuilder sb = new StringBuilder("<?xml version=\"1.0\"?>\n");
-        sb.append("<orders>\n");
-        sb.append("  <order>Camel in Action</order>\n");
-        sb.append("  <order>ActiveMQ in Action</order>\n");
-        sb.append("  <order>DSL in Action</order>\n");
-        sb.append("</orders>");
-        return sb.toString();
+        StringBuilder sb = new StringBuilder("<?xml version=\"1.0\"?>\n")
+        sb.append("<orders>\n")
+        sb.append("  <order>Camel in Action</order>\n")
+        sb.append("  <order>ActiveMQ in Action</order>\n")
+        sb.append("  <order>DSL in Action</order>\n")
+        sb.append("</orders>")
+        return sb.toString()
     }
 
 

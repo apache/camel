@@ -28,7 +28,7 @@ class KameletLoaderDependenciesTest extends YamlTestSupport {
         context.registry.bind("myDep", new DependencyStrategy() {
             @Override
             void onDependency(String dependency) {
-                deps.add(dependency);
+                deps.add(dependency)
             }
         })
 
