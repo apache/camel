@@ -624,7 +624,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     /**
      * Sets the cap on the number of objects that can be allocated by the pool (checked out to clients, or idle awaiting
-     * checkout) at a given time. Use a negative value for no limit.
+     * checkout) at a given time. Use a negative value for no limit. Be careful to not set this value too low (such as
+     * 1) as the pool must have space to create a producer such as when performing retries. Be mindful that the option
+     * producerPoolBlockWhenExhausted is default true, and the pool will then block when there is no space, which can
+     * lead to the application to hang.
      */
     public void setProducerPoolMaxTotal(int producerPoolMaxTotal) {
         this.producerPoolMaxTotal = producerPoolMaxTotal;
