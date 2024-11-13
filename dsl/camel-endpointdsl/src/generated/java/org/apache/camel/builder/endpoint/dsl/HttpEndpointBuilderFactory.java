@@ -597,6 +597,112 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Default expiration time for cached OAuth2 tokens, in seconds. Used if
+         * token response does not contain 'expires_in' field.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 3600
+         * Group: security
+         * 
+         * @param oauth2CachedTokensDefaultExpirySeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensDefaultExpirySeconds(long oauth2CachedTokensDefaultExpirySeconds) {
+            doSetProperty("oauth2CachedTokensDefaultExpirySeconds", oauth2CachedTokensDefaultExpirySeconds);
+            return this;
+        }
+        /**
+         * Default expiration time for cached OAuth2 tokens, in seconds. Used if
+         * token response does not contain 'expires_in' field.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 3600
+         * Group: security
+         * 
+         * @param oauth2CachedTokensDefaultExpirySeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensDefaultExpirySeconds(String oauth2CachedTokensDefaultExpirySeconds) {
+            doSetProperty("oauth2CachedTokensDefaultExpirySeconds", oauth2CachedTokensDefaultExpirySeconds);
+            return this;
+        }
+        /**
+         * Amount of time which is deducted from OAuth2 tokens expiry time to
+         * compensate for the time it takes OAuth2 Token Endpoint to send the
+         * token over http, in seconds. Set this parameter to high value if you
+         * OAuth2 Token Endpoint answers slowly or you tokens expire quickly. If
+         * you set this parameter to too small value, you can get 4xx http
+         * errors because camel will think that the received token is still
+         * valid, while in reality the token is expired for the Authentication
+         * server.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5
+         * Group: security
+         * 
+         * @param oauth2CachedTokensExpirationMarginSeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensExpirationMarginSeconds(long oauth2CachedTokensExpirationMarginSeconds) {
+            doSetProperty("oauth2CachedTokensExpirationMarginSeconds", oauth2CachedTokensExpirationMarginSeconds);
+            return this;
+        }
+        /**
+         * Amount of time which is deducted from OAuth2 tokens expiry time to
+         * compensate for the time it takes OAuth2 Token Endpoint to send the
+         * token over http, in seconds. Set this parameter to high value if you
+         * OAuth2 Token Endpoint answers slowly or you tokens expire quickly. If
+         * you set this parameter to too small value, you can get 4xx http
+         * errors because camel will think that the received token is still
+         * valid, while in reality the token is expired for the Authentication
+         * server.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 5
+         * Group: security
+         * 
+         * @param oauth2CachedTokensExpirationMarginSeconds the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CachedTokensExpirationMarginSeconds(String oauth2CachedTokensExpirationMarginSeconds) {
+            doSetProperty("oauth2CachedTokensExpirationMarginSeconds", oauth2CachedTokensExpirationMarginSeconds);
+            return this;
+        }
+        /**
+         * Whether to cache OAuth2 client tokens.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param oauth2CacheTokens the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CacheTokens(boolean oauth2CacheTokens) {
+            doSetProperty("oauth2CacheTokens", oauth2CacheTokens);
+            return this;
+        }
+        /**
+         * Whether to cache OAuth2 client tokens.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param oauth2CacheTokens the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2CacheTokens(String oauth2CacheTokens) {
+            doSetProperty("oauth2CacheTokens", oauth2CacheTokens);
+            return this;
+        }
+        /**
          * OAuth2 client id.
          * 
          * The option is a: <code>java.lang.String</code> type.
