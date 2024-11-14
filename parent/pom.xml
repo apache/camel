@@ -379,7 +379,7 @@
         <mybatis-version>3.5.16</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.114.Final</netty-version>
+        <netty-version>4.1.115.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.3</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.46</nimbus-jose-jwt>
