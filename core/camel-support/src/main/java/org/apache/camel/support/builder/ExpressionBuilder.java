@@ -2445,6 +2445,29 @@ public class ExpressionBuilder {
         };
     }
 
+    public static Expression beanExpression(final Class<?> bean, final String method) {
+        return new ExpressionAdapter() {
+            private Language language;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Expression exp = language.createExpression(null, new Object[] { null, null, method, bean });
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                this.language = context.resolveLanguage("bean");
+            }
+
+            public String toString() {
+                return "bean(" + bean + ", " + method + ")";
+            }
+        };
+    }
+
     public static Expression propertiesComponentExpression(final String key, final String defaultValue) {
         return new ExpressionAdapter() {
             private Expression exp;
@@ -2563,6 +2586,21 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "xtokenize(" + path + ")";
+            }
+        };
+    }
+
+    public static Expression customExpression(final Expression expression, final Function<Object, Object> function) {
+        return new ExpressionAdapter() {
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object input = expression.evaluate(exchange, Object.class);
+                return function.apply(input);
+            }
+
+            public String toString() {
+                return "custom(" + expression + ")";
             }
         };
     }
