@@ -384,6 +384,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                             "org.apache.camel.vault.KubernetesVaultConfiguration"));
             model.getGroups().add(
                     new MainGroupModel(
+                            "camel.vault.kubernetescm", "Camel Kubernetes Configmaps Vault configurations",
+                            "org.apache.camel.vault.KubernetesConfigMapVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
                             "camel.vault.hashicorp", "Camel Hashicorp Vault configurations",
                             "org.apache.camel.vault.HashicorpVaultConfiguration"));
             model.getGroups().add(new MainGroupModel(
