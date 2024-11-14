@@ -378,4 +378,45 @@ public class MainVaultTest {
         Assertions.assertEquals("xxxx", cfg.getSecrets());
         main.stop();
     }
+
+    @Test
+    public void testMainKubernetesConfigmaps() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.kubernetescm.refreshEnabled", "true");
+        main.addInitialProperty("camel.vault.kubernetescm.configmaps", "xxxx");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesConfigMapVaultConfiguration cfg = context.getVaultConfiguration().kubernetesConfigmaps();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getConfigmaps());
+        main.stop();
+    }
+
+    @Test
+    public void testMainKubernetesConfigmapsFluent() {
+        Main main = new Main();
+        main.configure().vault().kubernetesConfigmaps()
+                .withRefreshEnabled(true)
+                .withConfigmaps("xxxx")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        KubernetesConfigMapVaultConfiguration cfg = context.getVaultConfiguration().kubernetesConfigmaps();
+        assertNotNull(cfg);
+
+        Assertions.assertTrue(cfg.isRefreshEnabled());
+        Assertions.assertEquals("xxxx", cfg.getConfigmaps());
+        main.stop();
+    }
 }

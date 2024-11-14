@@ -371,6 +371,8 @@
     { "name": "camel.vault.hashicorp.scheme", "description": "Scheme to access hashicorp vault", "sourceType": "org.apache.camel.vault.HashicorpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.hashicorp.token", "description": "Token to access hashicorp vault", "sourceType": "org.apache.camel.vault.HashicorpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.kubernetes.refreshEnabled", "description": "Whether to automatically reload Camel upon secrets being updated in Kubernetes Cluster.", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
-    { "name": "camel.vault.kubernetes.secrets", "description": "Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration", "type": "string", "javaType": "java.lang.String" }
+    { "name": "camel.vault.kubernetes.secrets", "description": "Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.", "sourceType": "org.apache.camel.vault.KubernetesVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.kubernetescm.configmaps", "description": "Specify the configmap names (or pattern) to check for updates. Multiple configmaps can be separated by comma.", "sourceType": "org.apache.camel.vault.KubernetesConfigMapVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.kubernetescm.refreshEnabled", "description": "Whether to automatically reload Camel upon configmaps being updated in Kubernetes Cluster.", "sourceType": "org.apache.camel.vault.KubernetesConfigMapVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" }
   ]
 }
