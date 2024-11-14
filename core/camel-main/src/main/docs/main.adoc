@@ -438,6 +438,17 @@ The camel.vault.kubernetes supports 4 options, which are listed below.
 |===
 
 
+=== Camel Kubernetes Configmaps Vault configurations
+The camel.vault.kubernetescm supports 2 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.kubernetescm.configmaps* | Specify the configmap names (or pattern) to check for updates. Multiple configmaps can be separated by comma. |  | String
+| *camel.vault.kubernetescm.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon configmaps being updated in Kubernetes Cluster. | false | boolean
+|===
+
+
 === Camel Hashicorp Vault configurations
 The camel.vault.hashicorp supports 4 options, which are listed below.
 
