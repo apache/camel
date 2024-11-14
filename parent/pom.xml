@@ -275,7 +275,7 @@
         <jedis-client-version>5.2.0</jedis-client-version>
         <jetcd-version>0.8.3</jetcd-version>
         <jetty-version>12.0.15</jetty-version>
-        <jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
+        <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
@@ -1960,6 +1960,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-observability-services</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-observation</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2912,7 +2917,7 @@
             If we import the grpc-bom, we get a lot of duplicate dependencies
             and conflicts between BOMs.  The only way is to manually manage
             those dependencies.
-            
+
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-bom</artifactId>

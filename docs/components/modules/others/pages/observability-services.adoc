@@ -1,0 +1,1 @@
+../../../../../components/camel-observability-services/src/main/docs/observability-services.adoc

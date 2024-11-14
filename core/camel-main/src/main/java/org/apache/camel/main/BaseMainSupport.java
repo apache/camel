@@ -145,7 +145,9 @@ public abstract class BaseMainSupport extends BaseService {
     protected final OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected String propertyPlaceholderLocations;
-    protected String defaultPropertyPlaceholderLocation = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
+    protected String defaultPropertyPlaceholderLocation
+            = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION + ","
+              + MainConstants.DEFAULT_OBSERVABILITY_SERVICES_PROPERTY_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
     protected boolean standalone = true;
