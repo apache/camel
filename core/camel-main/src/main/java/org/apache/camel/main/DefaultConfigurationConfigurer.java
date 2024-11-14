@@ -623,6 +623,12 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setKubernetesVaultConfiguration(kubernetes);
         }
+        KubernetesConfigMapVaultConfiguration kubernetesConfigmaps
+                = getSingleBeanOfType(registry, KubernetesConfigMapVaultConfiguration.class);
+        if (kubernetesConfigmaps != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setKubernetesConfigMapVaultConfiguration(kubernetesConfigmaps);
+        }
         configureVault(camelContext);
 
         // apply custom configurations if any

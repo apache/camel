@@ -207,6 +207,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.azure.";
                 } else if (file.getName().contains("KubernetesVault")) {
                     prefix = "camel.vault.kubernetes.";
+                } else if (file.getName().contains("KubernetesConfigMapVault")) {
+                    prefix = "camel.vault.kubernetes.cm.";
                 } else if (file.getName().contains("HashicorpVault")) {
                     prefix = "camel.vault.hashicorp.";
                 } else if (file.getName().contains("Health")) {
@@ -292,6 +294,17 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             data.addAll(model);
         } catch (Exception e) {
             throw new MojoFailureException("Error parsing file " + kubernetesVaultConfig + " due " + e.getMessage(), e);
+        }
+
+        File kubernetesConfigmapsVaultConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/KubernetesConfigMapVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(kubernetesConfigmapsVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.kubernetescm." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException(
+                    "Error parsing file " + kubernetesConfigmapsVaultConfig + " due " + e.getMessage(), e);
         }
 
         File hashicorpVaultConfig

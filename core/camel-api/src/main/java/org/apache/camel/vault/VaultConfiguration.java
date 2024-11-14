@@ -26,6 +26,7 @@ public class VaultConfiguration {
     private AzureVaultConfiguration azure;
     private HashicorpVaultConfiguration hashicorp;
     private KubernetesVaultConfiguration kubernetes;
+    private KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
 
     /**
      * AWS Vault Configuration
@@ -77,6 +78,16 @@ public class VaultConfiguration {
         return kubernetes;
     }
 
+    /**
+     * Kubernetes Configmaps Vault Configuration
+     */
+    public KubernetesConfigMapVaultConfiguration kubernetesConfigmaps() {
+        if (kubernetesConfigmaps == null) {
+            kubernetesConfigmaps = new KubernetesConfigMapVaultConfiguration();
+        }
+        return kubernetesConfigmaps;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -115,5 +126,13 @@ public class VaultConfiguration {
 
     public void setKubernetesVaultConfiguration(KubernetesVaultConfiguration kubernetes) {
         this.kubernetes = kubernetes;
+    }
+
+    public KubernetesConfigMapVaultConfiguration getKubernetesConfigMapVaultConfiguration() {
+        return kubernetesConfigmaps;
+    }
+
+    public void setKubernetesConfigMapVaultConfiguration(KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
+        this.kubernetesConfigmaps = kubernetesConfigmaps;
     }
 }
