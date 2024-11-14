@@ -1,0 +1,39 @@
+= Observability Services Component
+:doctitle: Observability Services
+:shortname: observability-services
+:artifactid: camel-observability-services
+:description: Camel Observability Services for Camel Main
+:since: 4.9
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Camel Observability Services component is used to run Camel standalone (Camel Main) and provide a set of opinionated components and configuration which simplify operations such as observability on cloud environments. Although the component is mainly targeted for cloud, it can be used in any other environment, giving to the Camel application the capability to expose a set of observability features by default.
+
+== Usage
+
+=== Auto-detection from classpath
+
+All you need to do is to add the `camel-observability-services` dependency to the classpath. There's no need to add any further configuration. Each individual component will be configured using each own default settings except the endpoint which will be exposed in `/camel/<service>` by default.
+
+If you need to customize each of the different components provided within this service, then, you can specify in the `application.properties` each of the configuration as it would be done normally when you provide the individual component.
+
+WARNING: the customization of the configuration for this component is not available for Spring Boot runtime due to a https://github.com/spring-projects/spring-boot/issues/24688[known limitation]. You can use this component in Spring Boot runtime with the default settings only. If you need to provide any customization, you'll need to provide each component and configuration accordingly.
+
+== Components available
+
+The presence of this dependency will provide the following components:
+
+* camel-micrometer-prometheus
+
+=== List of known endpoints
+
+The presence of this dependency will expose the following endpoints:
+
+|====
+|Endpoint | Description
+
+| `/camel/metrics` | metrics exposed as in Micrometer Prometheus Registry
+
+|====

@@ -278,7 +278,7 @@
         <module>camel-snakeyaml</module>
         <module>camel-snmp</module>
         <module>camel-soap</module>
-        <module>camel-solr</module>        
+        <module>camel-solr</module>
         <module>camel-splunk</module>
         <module>camel-splunk-hec</module>
         <module>camel-spring-batch</module>
@@ -337,6 +337,8 @@
         <module>camel-rest-openapi</module>
         <!-- build jooq last as it cause component builds to be slower afterwards -->
         <module>camel-jooq</module>
+        <!-- observability-services requires the availability of other components -->
+        <module>camel-observability-services</module>
     </modules>
 
     <properties>
