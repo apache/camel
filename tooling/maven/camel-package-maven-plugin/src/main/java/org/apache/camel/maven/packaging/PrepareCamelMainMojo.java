@@ -208,7 +208,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 } else if (file.getName().contains("KubernetesVault")) {
                     prefix = "camel.vault.kubernetes.";
                 } else if (file.getName().contains("KubernetesConfigMapVault")) {
-                    prefix = "camel.vault.kubernetes.cm.";
+                    prefix = "camel.vault.kubernetescm.";
                 } else if (file.getName().contains("HashicorpVault")) {
                     prefix = "camel.vault.hashicorp.";
                 } else if (file.getName().contains("Health")) {

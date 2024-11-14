@@ -46,6 +46,6 @@ public class ExportPeriodTaskResolver extends DefaultPeriodTaskResolver {
     private boolean skip(String key) {
         // skip all vault refresh during export as they will attempt to connect to remote system
         return "aws-secret-refresh".equals(key) || "gcp-secret-refresh".equals(key) || "azure-secret-refresh".equals(key)
-                || "kubernetes-secret-refresh".equals(key);
+                || "kubernetes-secret-refresh".equals(key) || "kubernetes-configmaps-refresh".equals(key);
     }
 }
