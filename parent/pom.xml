@@ -307,7 +307,7 @@
         <json-unit-version>3.5.0</json-unit-version>
         <jsoup-version>1.18.1</jsoup-version>
         <jt400-version>20.0.7</jt400-version>
-        <jte-version>3.1.13</jte-version>
+        <jte-version>3.1.14</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.11.3</junit-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
