@@ -46,14 +46,12 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-@EnabledIf("isDockerAvailable")
 class KubernetesExportTest extends KubernetesExportBaseTest {
 
     private static Stream<Arguments> runtimeProvider() {
