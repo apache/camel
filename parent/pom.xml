@@ -97,7 +97,7 @@
         <cglib-version>3.3.0</cglib-version>
         <chicocy-version>0.0.12</chicocy-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <classgraph-version>4.8.177</classgraph-version>
+        <classgraph-version>4.8.179</classgraph-version>
         <cloudant-version>0.9.2</cloudant-version>
         <cometd-java-client-version>8.0.6</cometd-java-client-version>
         <cometd-java-server-version>8.0.6</cometd-java-server-version>
