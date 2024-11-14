@@ -288,6 +288,25 @@ By default, the source is the message body, and therefore is only needed when yo
 
 To use any of the Camel languages then do as shown previously with the XPath example.
 
+==== Using a custom inlined function
+
+You can also use a custom `java.util.Function` as part of mock expectations. This allows you full power
+to use Java programming to compute the returned value.
+
+For example, you can write a custom function that takes an int as input and return the double value.
+And then use this in mock as follows:
+
+[source,java]
+----
+mock.message(0).header("num").expression(o -> {
+    int num = (int) o;
+    return num * 2;
+}).isLessThan(10);
+----
+
+This example is a bit silly, and in a real use-case you would use custom functions
+in advanced testing where you need to do some special coding based on business logic and data.
+
 === Mocking existing endpoints
 
 Camel now allows you to automatically mock existing endpoints in your
