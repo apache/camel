@@ -81,31 +81,15 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
 
     protected <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, ClusterType ct, Class<T> type)
             throws IOException {
-        if (rt == RuntimeType.quarkus) {
-            try (FileInputStream fis
-                    = new FileInputStream(
-                            KubernetesHelper.getKubernetesManifest(
-                                    ClusterType.OPENSHIFT.equals(ct)
-                                            ? ClusterType.OPENSHIFT.name() : ClusterType.KUBERNETES.name(),
-                                    new File(workingDir, "/src/main/kubernetes")))) {
+        var kind = type.getSimpleName().toLowerCase();
+        File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
+        if (file.isFile()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
                 List<HasMetadata> resources = kubernetesClient.load(fis).items();
                 return resources.stream()
                         .filter(it -> type.isAssignableFrom(it.getClass()))
                         .map(type::cast)
                         .findFirst();
-            }
-        }
-        if (rt == RuntimeType.springBoot || rt == RuntimeType.main) {
-            var kind = type.getSimpleName().toLowerCase();
-            File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
-            if (file.isFile()) {
-                try (FileInputStream fis = new FileInputStream(file)) {
-                    List<HasMetadata> resources = kubernetesClient.load(fis).items();
-                    return resources.stream()
-                            .filter(it -> type.isAssignableFrom(it.getClass()))
-                            .map(type::cast)
-                            .findFirst();
-                }
             }
         }
         return Optional.empty();

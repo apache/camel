@@ -48,7 +48,7 @@ class PodLogsTest extends KubernetesBaseTest {
         Pod pod = new PodBuilder()
                 .withNewMetadata()
                 .withName("pod")
-                .withLabels(Map.of(BaseTrait.KUBERNETES_NAME_LABEL, "routes"))
+                .withLabels(Map.of(BaseTrait.KUBERNETES_LABEL_NAME, "routes"))
                 .endMetadata()
                 .withNewStatus()
                 .withPhase("Running")

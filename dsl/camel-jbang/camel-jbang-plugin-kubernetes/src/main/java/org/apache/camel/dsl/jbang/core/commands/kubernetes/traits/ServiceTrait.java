@@ -68,7 +68,7 @@ public class ServiceTrait extends BaseTrait {
                 .endMetadata()
                 .withNewSpec()
                 .withType(serviceType)
-                .withSelector(Map.of(BaseTrait.KUBERNETES_NAME_LABEL, context.getName()))
+                .withSelector(Map.of(BaseTrait.KUBERNETES_LABEL_NAME, context.getName()))
                 .addToPorts(new ServicePortBuilder()
                         .withName(Optional.ofNullable(containerTrait.getServicePortName())
                                 .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME))
