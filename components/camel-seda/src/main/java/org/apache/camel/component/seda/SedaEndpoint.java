@@ -183,30 +183,35 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         return answer;
     }
 
-    public synchronized BlockingQueue<Exchange> getQueue() {
-        if (queue == null) {
-            // prefer to lookup queue from component, so if this endpoint is re-created or re-started
-            // then the existing queue from the component can be used, so new producers and consumers
-            // can use the already existing queue referenced from the component
-            if (getComponent() != null) {
-                // use null to indicate default size (= use what the existing queue has been configured with)
-                Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
-                QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
-                queue = ref.getQueue();
-                String key = getComponent().getQueueKey(getEndpointUri());
-                LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
-                        ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
-                // and set the size we are using
-                if (ref.getSize() != null) {
-                    setSize(ref.getSize());
+    public BlockingQueue<Exchange> getQueue() {
+        lock.lock();
+        try {
+            if (queue == null) {
+                // prefer to lookup queue from component, so if this endpoint is re-created or re-started
+                // then the existing queue from the component can be used, so new producers and consumers
+                // can use the already existing queue referenced from the component
+                if (getComponent() != null) {
+                    // use null to indicate default size (= use what the existing queue has been configured with)
+                    Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
+                    QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+                    queue = ref.getQueue();
+                    String key = getComponent().getQueueKey(getEndpointUri());
+                    LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
+                            ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
+                    // and set the size we are using
+                    if (ref.getSize() != null) {
+                        setSize(ref.getSize());
+                    }
+                } else {
+                    // fallback and create queue (as this endpoint has no component)
+                    queue = createQueue();
+                    LOG.debug("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
                 }
-            } else {
-                // fallback and create queue (as this endpoint has no component)
-                queue = createQueue();
-                LOG.debug("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
             }
+            return queue;
+        } finally {
+            lock.unlock();
         }
-        return queue;
     }
 
     protected BlockingQueue<Exchange> createQueue() {
@@ -240,45 +245,55 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         return null;
     }
 
-    protected synchronized AsyncProcessor getConsumerMulticastProcessor() {
-        if (!multicastStarted && consumerMulticastProcessor != null) {
-            // only start it on-demand to avoid starting it during stopping
-            ServiceHelper.startService(consumerMulticastProcessor);
-            multicastStarted = true;
+    protected AsyncProcessor getConsumerMulticastProcessor() {
+        lock.lock();
+        try {
+            if (!multicastStarted && consumerMulticastProcessor != null) {
+                // only start it on-demand to avoid starting it during stopping
+                ServiceHelper.startService(consumerMulticastProcessor);
+                multicastStarted = true;
+            }
+            return consumerMulticastProcessor;
+        } finally {
+            lock.unlock();
         }
-        return consumerMulticastProcessor;
     }
 
-    protected synchronized void updateMulticastProcessor() throws Exception {
-        // only needed if we support multiple consumers
-        if (!isMultipleConsumersSupported()) {
-            return;
-        }
-
-        // stop old before we create a new
-        if (consumerMulticastProcessor != null) {
-            ServiceHelper.stopService(consumerMulticastProcessor);
-            consumerMulticastProcessor = null;
-        }
-
-        int size = getConsumers().size();
-        if (size >= 1) {
-            if (multicastExecutor == null) {
-                // create multicast executor as we need it when we have more than 1 processor
-                multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this,
-                        URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
+    protected void updateMulticastProcessor() throws Exception {
+        lock.lock();
+        try {
+            // only needed if we support multiple consumers
+            if (!isMultipleConsumersSupported()) {
+                return;
             }
-            // create list of consumers to multicast to
-            List<Processor> processors = new ArrayList<>(size);
-            for (SedaConsumer consumer : getConsumers()) {
-                processors.add(consumer.getProcessor());
-            }
-            // create multicast processor
-            multicastStarted = false;
 
-            consumerMulticastProcessor = (AsyncProcessor) PluginHelper.getProcessorFactory(getCamelContext())
-                    .createProcessor(getCamelContext(), "MulticastProcessor",
-                            new Object[] { processors, multicastExecutor, false });
+            // stop old before we create a new
+            if (consumerMulticastProcessor != null) {
+                ServiceHelper.stopService(consumerMulticastProcessor);
+                consumerMulticastProcessor = null;
+            }
+
+            int size = getConsumers().size();
+            if (size >= 1) {
+                if (multicastExecutor == null) {
+                    // create multicast executor as we need it when we have more than 1 processor
+                    multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this,
+                            URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
+                }
+                // create list of consumers to multicast to
+                List<Processor> processors = new ArrayList<>(size);
+                for (SedaConsumer consumer : getConsumers()) {
+                    processors.add(consumer.getProcessor());
+                }
+                // create multicast processor
+                multicastStarted = false;
+
+                consumerMulticastProcessor = (AsyncProcessor) PluginHelper.getProcessorFactory(getCamelContext())
+                        .createProcessor(getCamelContext(), "MulticastProcessor",
+                                new Object[] { processors, multicastExecutor, false });
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -17,6 +17,8 @@
 package org.apache.camel.component.sjms.reply;
 
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.TimeoutMap;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ public class MessageSelectorCreator {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
     protected final TimeoutMap<String, ?> timeoutMap;
     protected final ConcurrentSkipListSet<String> correlationIds;
+    private final Lock lock = new ReentrantLock();
     protected volatile boolean dirty = true;
     protected StringBuilder expression;
 
@@ -44,34 +47,39 @@ public class MessageSelectorCreator {
         this.correlationIds = new ConcurrentSkipListSet<>();
     }
 
-    public synchronized String get() {
-        if (!dirty) {
-            return expression.toString();
-        }
+    public String get() {
+        lock.lock();
+        try {
+            if (!dirty) {
+                return expression.toString();
+            }
 
-        expression = new StringBuilder(256);
+            expression = new StringBuilder(256);
 
-        expression.append("JMSCorrelationID='");
-        if (correlationIds.isEmpty()) {
-            // no id's so use a dummy to select nothing
-            expression.append("CamelDummyJmsMessageSelector'");
-        } else {
-            boolean first = true;
-            for (String value : correlationIds) {
-                if (!first) {
-                    expression.append(" OR JMSCorrelationID='");
-                }
-                expression.append(value).append("'");
-                if (first) {
-                    first = false;
+            expression.append("JMSCorrelationID='");
+            if (correlationIds.isEmpty()) {
+                // no id's so use a dummy to select nothing
+                expression.append("CamelDummyJmsMessageSelector'");
+            } else {
+                boolean first = true;
+                for (String value : correlationIds) {
+                    if (!first) {
+                        expression.append(" OR JMSCorrelationID='");
+                    }
+                    expression.append(value).append("'");
+                    if (first) {
+                        first = false;
+                    }
                 }
             }
+
+            String answer = expression.toString();
+
+            dirty = false;
+            return answer;
+        } finally {
+            lock.unlock();
         }
-
-        String answer = expression.toString();
-
-        dirty = false;
-        return answer;
     }
 
     // Changes to live correlation-ids invalidate existing message selector

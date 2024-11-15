@@ -130,14 +130,19 @@ public class SplunkEndpoint extends ScheduledPollEndpoint implements EndpointSer
         return configuration;
     }
 
-    public synchronized boolean reset(Exception e) {
-        boolean answer = false;
-        if (e instanceof RuntimeException && e.getCause() instanceof ConnectException
-                || e instanceof SocketException || e instanceof SSLException) {
-            LOG.warn("Got exception from Splunk. Service will be reset.");
-            this.service = null;
-            answer = true;
+    public boolean reset(Exception e) {
+        lock.lock();
+        try {
+            boolean answer = false;
+            if (e instanceof RuntimeException && e.getCause() instanceof ConnectException
+                    || e instanceof SocketException || e instanceof SSLException) {
+                LOG.warn("Got exception from Splunk. Service will be reset.");
+                this.service = null;
+                answer = true;
+            }
+            return answer;
+        } finally {
+            lock.unlock();
         }
-        return answer;
     }
 }

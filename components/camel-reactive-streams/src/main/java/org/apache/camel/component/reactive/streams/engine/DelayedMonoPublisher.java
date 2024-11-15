@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -126,6 +128,7 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
         private volatile boolean requested;
 
         private final Subscriber<? super T> subscriber;
+        private final Lock lock = new ReentrantLock();
 
         private MonoSubscription(Subscriber<? super T> subscriber) {
             this.subscriber = subscriber;
@@ -133,21 +136,30 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
 
         @Override
         public void request(long l) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (terminated) {
                     // just ignore the request
                     return;
                 }
+            } finally {
+                lock.unlock();
             }
 
             if (l <= 0) {
                 subscriber.onError(new IllegalArgumentException("3.9"));
-                synchronized (this) {
+                lock.lock();
+                try {
                     terminated = true;
+                } finally {
+                    lock.unlock();
                 }
             } else {
-                synchronized (this) {
+                lock.lock();
+                try {
                     requested = true;
+                } finally {
+                    lock.unlock();
                 }
             }
 
@@ -155,12 +167,15 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
         }
 
         public void flush() {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (!isReady()) {
                     return;
                 }
 
                 terminated = true;
+            } finally {
+                lock.unlock();
             }
 
             if (data != null) {
@@ -180,8 +195,13 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
         }
 
         @Override
-        public synchronized void cancel() {
-            terminated = true;
+        public void cancel() {
+            lock.lock();
+            try {
+                terminated = true;
+            } finally {
+                lock.unlock();
+            }
         }
     }
 }

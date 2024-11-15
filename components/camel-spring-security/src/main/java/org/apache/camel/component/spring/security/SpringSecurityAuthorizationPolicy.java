@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.spring.security;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javax.security.auth.Subject;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -48,10 +51,11 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
     private static final Logger LOG = LoggerFactory.getLogger(SpringSecurityAuthorizationPolicy.class);
     private AuthorizationManager<Exchange> authorizationManager;
     private AuthenticationManager authenticationManager;
-    private AuthenticationAdapter authenticationAdapter;
+    private volatile AuthenticationAdapter authenticationAdapter;
     private ApplicationEventPublisher eventPublisher;
     private boolean alwaysReauthenticate;
     private boolean useThreadSecurityContext = true;
+    private final Lock lock = new ReentrantLock();
 
     @Override
     public void beforeWrap(Route route, NamedNode definition) {
@@ -145,16 +149,20 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
     }
 
     public AuthenticationAdapter getAuthenticationAdapter() {
-        if (authenticationAdapter == null) {
-            synchronized (this) {
-                if (authenticationAdapter != null) {
-                    return authenticationAdapter;
-                } else {
-                    authenticationAdapter = new DefaultAuthenticationAdapter();
+        AuthenticationAdapter adapter = authenticationAdapter;
+        if (adapter == null) {
+            lock.lock();
+            try {
+                adapter = authenticationAdapter;
+                if (adapter == null) {
+                    adapter = new DefaultAuthenticationAdapter();
+                    authenticationAdapter = adapter;
                 }
+            } finally {
+                lock.unlock();
             }
         }
-        return authenticationAdapter;
+        return adapter;
     }
 
     public void setAuthenticationAdapter(AuthenticationAdapter adapter) {
