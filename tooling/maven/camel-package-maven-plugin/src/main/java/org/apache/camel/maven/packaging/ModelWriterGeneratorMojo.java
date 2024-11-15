@@ -516,7 +516,7 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             return an;
         }
 
-        public Object getDefaultValue() {
+        public String getDefaultValue() {
             String answer = null;
             Metadata m = getAnnotation(Metadata.class);
             if (m != null) {

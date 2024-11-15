@@ -4035,17 +4035,17 @@ public class ModelWriter extends BaseWriter {
 
     protected void doWriteAttribute(
             String attribute,
-            Object value)
+            String value)
             throws IOException {
         doWriteAttribute(attribute, value, null);
     }
     protected void doWriteAttribute(
             String attribute,
-            Object value,
-            Object defaultValue)
+            String value,
+            String defaultValue)
             throws IOException {
         if (value != null) {
-            if (defaultValue == null || "@@none@@".equals(defaultValue) || !org.apache.camel.util.ObjectHelper.equal(defaultValue, value)) {
+            if (defaultValue == null || !defaultValue.equals(value)) {
                 attribute(attribute, value);
             }
         }
