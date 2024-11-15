@@ -413,25 +413,30 @@ public class SubscriptionHelper extends ServiceSupport {
         return client;
     }
 
-    public synchronized void subscribe(StreamingApiConsumer consumer) {
-        // create subscription for consumer
-        final String channelName = getChannelName(consumer.getTopicName());
-        channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
-        channelsToSubscribe.add(channelName);
+    public void subscribe(StreamingApiConsumer consumer) {
+        lock.lock();
+        try {
+            // create subscription for consumer
+            final String channelName = getChannelName(consumer.getTopicName());
+            channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
+            channelsToSubscribe.add(channelName);
 
-        setReplayIdIfAbsent(consumer.getEndpoint());
+            setReplayIdIfAbsent(consumer.getEndpoint());
 
-        // channel message listener
-        LOG.info("Subscribing to channel {}...", channelName);
-        var messageListener = consumerToListener.computeIfAbsent(consumer, key -> (channel, message) -> {
-            LOG.debug("Received Message: {}", message);
-            // convert CometD message to Camel Message
-            consumer.processMessage(channel, message);
-        });
+            // channel message listener
+            LOG.info("Subscribing to channel {}...", channelName);
+            var messageListener = consumerToListener.computeIfAbsent(consumer, key -> (channel, message) -> {
+                LOG.debug("Received Message: {}", message);
+                // convert CometD message to Camel Message
+                consumer.processMessage(channel, message);
+            });
 
-        // subscribe asynchronously
-        final ClientSessionChannel clientChannel = client.getChannel(channelName);
-        clientChannel.subscribe(messageListener);
+            // subscribe asynchronously
+            final ClientSessionChannel clientChannel = client.getChannel(channelName);
+            clientChannel.subscribe(messageListener);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private static boolean isTemporaryError(Message message) {
@@ -506,26 +511,31 @@ public class SubscriptionHelper extends ServiceSupport {
         return channelName.toString();
     }
 
-    public synchronized void unsubscribe(StreamingApiConsumer consumer) {
-        // channel name
-        final String channelName = getChannelName(consumer.getTopicName());
+    public void unsubscribe(StreamingApiConsumer consumer) {
+        lock.lock();
+        try {
+            // channel name
+            final String channelName = getChannelName(consumer.getTopicName());
 
-        // unsubscribe from channel
-        var consumers = channelToConsumers.get(channelName);
-        if (consumers != null) {
-            consumers.remove(consumer);
-            if (consumers.isEmpty()) {
-                channelToConsumers.remove(channelName);
+            // unsubscribe from channel
+            var consumers = channelToConsumers.get(channelName);
+            if (consumers != null) {
+                consumers.remove(consumer);
+                if (consumers.isEmpty()) {
+                    channelToConsumers.remove(channelName);
+                }
             }
-        }
-        final ClientSessionChannel.MessageListener listener = consumerToListener.remove(consumer);
-        if (listener != null) {
-            LOG.debug("Unsubscribing from channel {}...", channelName);
-            final ClientSessionChannel clientChannel = client.getChannel(channelName);
-            // if there are other listeners on this channel, an unsubscribe message will not be sent,
-            // so we're not going to listen for and expect an unsub response. Just unsub and move on.
-            clientChannel.unsubscribe(listener);
-            clientChannel.release();
+            final ClientSessionChannel.MessageListener listener = consumerToListener.remove(consumer);
+            if (listener != null) {
+                LOG.debug("Unsubscribing from channel {}...", channelName);
+                final ClientSessionChannel clientChannel = client.getChannel(channelName);
+                // if there are other listeners on this channel, an unsubscribe message will not be sent,
+                // so we're not going to listen for and expect an unsub response. Just unsub and move on.
+                clientChannel.unsubscribe(listener);
+                clientChannel.release();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

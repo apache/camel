@@ -21,6 +21,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -213,6 +215,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         private final AbstractHttpWebServiceMessageSender delegate;
         private final SpringWebserviceConfiguration configuration;
         private final CamelContext camelContext;
+        private final Lock lock = new ReentrantLock();
 
         private SSLContext sslContext;
 
@@ -235,14 +238,15 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 }
 
                 if (configuration.getSslContextParameters() != null && connection instanceof HttpsURLConnection) {
+                    lock.lock();
                     try {
-                        synchronized (this) {
-                            if (sslContext == null) {
-                                sslContext = configuration.getSslContextParameters().createSSLContext(camelContext);
-                            }
+                        if (sslContext == null) {
+                            sslContext = configuration.getSslContextParameters().createSSLContext(camelContext);
                         }
                     } catch (GeneralSecurityException e) {
                         throw new RuntimeCamelException("Error creating SSLContext based on SSLContextParameters.", e);
+                    } finally {
+                        lock.unlock();
                     }
 
                     ((HttpsURLConnection) connection).setSSLSocketFactory(sslContext.getSocketFactory());

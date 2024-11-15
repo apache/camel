@@ -17,6 +17,8 @@
 package org.apache.camel.component.springrabbit;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.rabbitmq.client.Channel;
 import org.apache.camel.AsyncCallback;
@@ -47,6 +49,7 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
     private RabbitTemplate template;
     private boolean disableReplyTo;
     private boolean async;
+    private final Lock lock = new ReentrantLock();
 
     public EndpointMessageListener(SpringRabbitMQConsumer consumer, SpringRabbitMQEndpoint endpoint, Processor processor) {
         this.consumer = consumer;
@@ -76,11 +79,16 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         this.disableReplyTo = disableReplyTo;
     }
 
-    public synchronized RabbitTemplate getTemplate() {
-        if (template == null) {
-            template = endpoint.createInOnlyTemplate();
+    public RabbitTemplate getTemplate() {
+        lock.lock();
+        try {
+            if (template == null) {
+                template = endpoint.createInOnlyTemplate();
+            }
+            return template;
+        } finally {
+            lock.unlock();
         }
-        return template;
     }
 
     public void setTemplate(RabbitTemplate template) {

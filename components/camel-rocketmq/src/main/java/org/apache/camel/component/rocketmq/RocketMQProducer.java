@@ -136,7 +136,8 @@ public class RocketMQProducer extends DefaultAsyncProducer {
 
     protected void initReplyManager() {
         if (!started.get()) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (started.get()) {
                     return;
                 }
@@ -160,6 +161,8 @@ public class RocketMQProducer extends DefaultAsyncProducer {
                     }
                 }
                 started.set(true);
+            } finally {
+                lock.unlock();
             }
         }
     }

@@ -19,6 +19,8 @@ package org.apache.camel.component.sjms.consumer;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
@@ -54,10 +56,10 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private String destinationName;
     private DestinationCreationStrategy destinationCreationStrategy;
 
-    private final Object connectionLock = new Object();
+    private final Lock connectionLock = new ReentrantLock();
     private Connection connection;
     private volatile boolean connectionStarted;
-    private final Object consumerLock = new Object();
+    private final Lock consumerLock = new ReentrantLock();
     private Set<MessageConsumer> consumers;
     private Set<Session> sessions;
     private BackOffTimer.Task recoverTask;
@@ -181,9 +183,12 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             }
         }
 
-        synchronized (this.connectionLock) {
+        connectionLock.lock();
+        try {
             this.sessions = null;
             this.consumers = null;
+        } finally {
+            connectionLock.unlock();
         }
         scheduleConnectionRecovery();
     }
@@ -240,7 +245,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     protected void initConsumers() throws Exception {
-        synchronized (this.consumerLock) {
+        consumerLock.lock();
+        try {
             if (consumers == null) {
                 LOG.debug("Initializing {} concurrent consumers as JMS listener on destination: {}", concurrentConsumers,
                         destinationName);
@@ -254,6 +260,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                     consumers.add(consumer);
                 }
             }
+        } finally {
+            consumerLock.unlock();
         }
     }
 
@@ -266,7 +274,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     protected void stopConsumers() {
-        synchronized (this.consumerLock) {
+        consumerLock.lock();
+        try {
             if (consumers != null) {
                 LOG.debug("Stopping JMS MessageConsumers");
                 for (MessageConsumer consumer : this.consumers) {
@@ -279,11 +288,14 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                     }
                 }
             }
+        } finally {
+            consumerLock.unlock();
         }
     }
 
     protected void createConnection() throws Exception {
-        synchronized (this.connectionLock) {
+        connectionLock.lock();
+        try {
             if (this.connection == null) {
                 Connection con = null;
                 try {
@@ -300,22 +312,28 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 this.connection = con;
                 LOG.debug("Created JMS Connection");
             }
+        } finally {
+            connectionLock.unlock();
         }
     }
 
     protected final void refreshConnection() throws Exception {
-        synchronized (this.connectionLock) {
+        connectionLock.lock();
+        try {
             closeConnection(connection);
             this.connection = null;
             createConnection();
             if (this.connectionStarted) {
                 startConnection();
             }
+        } finally {
+            connectionLock.unlock();
         }
     }
 
     protected void startConnection() throws Exception {
-        synchronized (this.connectionLock) {
+        connectionLock.lock();
+        try {
             this.connectionStarted = true;
             if (this.connection != null) {
                 try {
@@ -324,11 +342,14 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                     // ignore as it may already be started
                 }
             }
+        } finally {
+            connectionLock.unlock();
         }
     }
 
     protected void stopConnection() {
-        synchronized (this.connectionLock) {
+        connectionLock.lock();
+        try {
             this.connectionStarted = false;
             if (this.connection != null) {
                 try {
@@ -337,6 +358,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                     LOG.debug("Error stopping connection. This exception is ignored.", e);
                 }
             }
+        } finally {
+            connectionLock.unlock();
         }
     }
 

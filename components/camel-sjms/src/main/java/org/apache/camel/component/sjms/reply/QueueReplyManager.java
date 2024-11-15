@@ -73,12 +73,15 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
         @Override
         public Destination createDestination(Session session, String destinationName, boolean topic) throws JMSException {
-            synchronized (QueueReplyManager.this) {
+            QueueReplyManager.this.lock.lock();
+            try {
                 // resolve the reply to destination
                 if (destination == null) {
                     destination = delegate.createDestination(session, destinationName, topic);
                     setReplyTo(destination);
                 }
+            } finally {
+                QueueReplyManager.this.lock.unlock();
             }
             return destination;
         }
