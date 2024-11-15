@@ -85,7 +85,6 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        System.err.println("Starting!");
 
         // auto-detect secrets in-use
         PropertiesComponent pc = camelContext.getPropertiesComponent();
@@ -119,7 +118,6 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
 
     @Override
     public void run() {
-        System.err.println("RUNNING!");
         startingTime = Instant.now();
         final CountDownLatch isWatchClosed = new CountDownLatch(1);
         Watch watch = kubernetesClient.configMaps().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
