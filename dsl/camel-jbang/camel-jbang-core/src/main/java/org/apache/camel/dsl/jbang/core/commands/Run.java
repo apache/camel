@@ -415,6 +415,20 @@ public class Run extends CamelCommand {
             return 1;
         }
 
+        // special if user type: camel run .
+        if (sourceDir == null && (files != null && files.size() == 1 && ".".equals(files.get(0)))) {
+            files.clear();
+            File[] fs = new File(".").listFiles();
+            if (fs != null && fs.length > 0) {
+                for (File f : fs) {
+                    // skip hidden files
+                    if (f.isFile() && !f.isHidden()) {
+                        files.add(f.getName());
+                    }
+                }
+            }
+        }
+
         if (RuntimeType.quarkus == runtime) {
             return runQuarkus();
         } else if (RuntimeType.springBoot == runtime) {
