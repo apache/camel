@@ -18,6 +18,10 @@ Renamed `ExchangePropertyKey.ACTIVE_SPAN` to `ExchangePropertyKey.OTEL_ACTIVE_SP
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
 to an `Integer` value.
 
+=== camel-xml-io
+
+The XML dumper no longer includes attributes which are using default values.
+
 === camel-jackson
 
 The option `useWriter` on JSON data format and camel-jackson,
