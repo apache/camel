@@ -27,8 +27,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "authKey": target.getConfiguration().setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cipherkey":
-        case "cipherKey": target.getConfiguration().setCipherKey(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -38,7 +36,7 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "publishkey":
         case "publishKey": target.getConfiguration().setPublishKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "pubnub": target.setPubnub(property(camelContext, com.pubnub.api.PubNub.class, value)); return true;
+        case "pubnub": target.setPubnub(property(camelContext, com.pubnub.api.java.PubNub.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
@@ -63,8 +61,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "authKey": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "cipherkey":
-        case "cipherKey": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -74,7 +70,7 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "operation": return java.lang.String.class;
         case "publishkey":
         case "publishKey": return java.lang.String.class;
-        case "pubnub": return com.pubnub.api.PubNub.class;
+        case "pubnub": return com.pubnub.api.java.PubNub.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "secure": return boolean.class;
@@ -95,8 +91,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "authKey": return target.getConfiguration().getAuthKey();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "cipherkey":
-        case "cipherKey": return target.getConfiguration().getCipherKey();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

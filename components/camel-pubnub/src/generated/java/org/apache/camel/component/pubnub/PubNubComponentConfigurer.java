@@ -36,8 +36,6 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cipherkey":
-        case "cipherKey": getOrCreateConfiguration(target).setCipherKey(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.pubnub.PubNubConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -65,8 +63,6 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "cipherkey":
-        case "cipherKey": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.pubnub.PubNubConfiguration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -95,8 +91,6 @@ public class PubNubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "cipherkey":
-        case "cipherKey": return getOrCreateConfiguration(target).getCipherKey();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

@@ -23,11 +23,10 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(14);
         props.add("authKey");
         props.add("bridgeErrorHandler");
         props.add("channel");
-        props.add("cipherKey");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("lazyStartProducer");
@@ -40,9 +39,8 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
         props.add("uuid");
         props.add("withPresence");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
+        Set<String> secretProps = new HashSet<>(4);
         secretProps.add("authKey");
-        secretProps.add("cipherKey");
         secretProps.add("publishKey");
         secretProps.add("secretKey");
         secretProps.add("subscribeKey");

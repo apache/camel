@@ -45,7 +45,6 @@ public final class SensitiveUtils {
                     "blobaccesskey",
                     "blobstoragesharedkeycredential",
                     "certresourcepassword",
-                    "cipherkey",
                     "clientid",
                     "clientsecret",
                     "clientsecretcredential",
@@ -125,7 +124,6 @@ public final class SensitiveUtils {
                                                     + "|\\Qblobaccesskey\\E"
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
                                                     + "|\\Qcertresourcepassword\\E"
-                                                    + "|\\Qcipherkey\\E"
                                                     + "|\\Qclientid\\E"
                                                     + "|\\Qclientsecret\\E"
                                                     + "|\\Qclientsecretcredential\\E"
@@ -182,7 +180,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
