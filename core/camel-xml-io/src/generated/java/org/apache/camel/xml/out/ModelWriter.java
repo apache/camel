@@ -792,28 +792,28 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteAggregateDefinition(String name, AggregateDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("aggregationRepository", def.getAggregationRepository(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("closeCorrelationKeyOnCompletion", def.getCloseCorrelationKeyOnCompletion(), "@@none@@");
-        doWriteAttribute("discardOnAggregationFailure", def.getDiscardOnAggregationFailure(), "@@none@@");
-        doWriteAttribute("eagerCheckCompletion", def.getEagerCheckCompletion(), "@@none@@");
-        doWriteAttribute("timeoutCheckerExecutorService", def.getTimeoutCheckerExecutorService(), "@@none@@");
-        doWriteAttribute("completionOnNewCorrelationGroup", def.getCompletionOnNewCorrelationGroup(), "@@none@@");
-        doWriteAttribute("completionInterval", def.getCompletionInterval(), "@@none@@");
-        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), "@@none@@");
-        doWriteAttribute("forceCompletionOnStop", def.getForceCompletionOnStop(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), "@@none@@");
-        doWriteAttribute("completionFromBatchConsumer", def.getCompletionFromBatchConsumer(), "@@none@@");
-        doWriteAttribute("completeAllOnStop", def.getCompleteAllOnStop(), "@@none@@");
-        doWriteAttribute("completionSize", def.getCompletionSize(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("aggregateController", def.getAggregateController(), "@@none@@");
-        doWriteAttribute("completionTimeout", def.getCompletionTimeout(), "@@none@@");
-        doWriteAttribute("ignoreInvalidCorrelationKeys", def.getIgnoreInvalidCorrelationKeys(), "@@none@@");
-        doWriteAttribute("discardOnCompletionTimeout", def.getDiscardOnCompletionTimeout(), "@@none@@");
-        doWriteAttribute("completionTimeoutCheckerInterval", def.getCompletionTimeoutCheckerInterval(), "@@none@@");
-        doWriteAttribute("optimisticLocking", def.getOptimisticLocking(), "@@none@@");
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("aggregationRepository", def.getAggregationRepository(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("closeCorrelationKeyOnCompletion", def.getCloseCorrelationKeyOnCompletion(), null);
+        doWriteAttribute("discardOnAggregationFailure", def.getDiscardOnAggregationFailure(), null);
+        doWriteAttribute("eagerCheckCompletion", def.getEagerCheckCompletion(), null);
+        doWriteAttribute("timeoutCheckerExecutorService", def.getTimeoutCheckerExecutorService(), null);
+        doWriteAttribute("completionOnNewCorrelationGroup", def.getCompletionOnNewCorrelationGroup(), null);
+        doWriteAttribute("completionInterval", def.getCompletionInterval(), null);
+        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
+        doWriteAttribute("forceCompletionOnStop", def.getForceCompletionOnStop(), null);
+        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), null);
+        doWriteAttribute("completionFromBatchConsumer", def.getCompletionFromBatchConsumer(), null);
+        doWriteAttribute("completeAllOnStop", def.getCompleteAllOnStop(), null);
+        doWriteAttribute("completionSize", def.getCompletionSize(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("aggregateController", def.getAggregateController(), null);
+        doWriteAttribute("completionTimeout", def.getCompletionTimeout(), null);
+        doWriteAttribute("ignoreInvalidCorrelationKeys", def.getIgnoreInvalidCorrelationKeys(), null);
+        doWriteAttribute("discardOnCompletionTimeout", def.getDiscardOnCompletionTimeout(), null);
+        doWriteAttribute("completionTimeoutCheckerInterval", def.getCompletionTimeoutCheckerInterval(), "1000");
+        doWriteAttribute("optimisticLocking", def.getOptimisticLocking(), null);
         doWriteElement("optimisticLockRetryPolicy", def.getOptimisticLockRetryPolicyDefinition(), this::doWriteOptimisticLockRetryPolicyDefinition);
         doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
         doWriteElement("completionPredicate", def.getCompletionPredicate(), this::doWriteExpressionSubElementDefinition);
@@ -825,23 +825,23 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBeanDefinition(String name, BeanDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("method", def.getMethod(), "@@none@@");
-        doWriteAttribute("scope", def.getScope(), "@@none@@");
-        doWriteAttribute("beanType", def.getBeanType(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("method", def.getMethod(), null);
+        doWriteAttribute("scope", def.getScope(), "Singleton");
+        doWriteAttribute("beanType", def.getBeanType(), null);
         endElement(name);
     }
     protected void doWriteBeanFactoryDefinition(String name, BeanFactoryDefinition<?> def) throws IOException {
         startElement(name);
-        doWriteAttribute("factoryMethod", def.getFactoryMethod(), "@@none@@");
-        doWriteAttribute("scriptLanguage", def.getScriptLanguage(), "@@none@@");
-        doWriteAttribute("builderClass", def.getBuilderClass(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("factoryBean", def.getFactoryBean(), "@@none@@");
-        doWriteAttribute("initMethod", def.getInitMethod(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("builderMethod", def.getBuilderMethod(), "@@none@@");
-        doWriteAttribute("destroyMethod", def.getDestroyMethod(), "@@none@@");
+        doWriteAttribute("factoryMethod", def.getFactoryMethod(), null);
+        doWriteAttribute("scriptLanguage", def.getScriptLanguage(), null);
+        doWriteAttribute("builderClass", def.getBuilderClass(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("factoryBean", def.getFactoryBean(), null);
+        doWriteAttribute("initMethod", def.getInitMethod(), null);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("builderMethod", def.getBuilderMethod(), "build");
+        doWriteAttribute("destroyMethod", def.getDestroyMethod(), null);
         doWriteElement("script", def.getScript(), this::doWriteString);
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
@@ -858,7 +858,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteChoiceDefinition(String name, ChoiceDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("precondition", def.getPrecondition(), "@@none@@");
+        doWriteAttribute("precondition", def.getPrecondition(), "false");
         doWriteList(null, null, def.getWhenClauses(), this::doWriteWhenDefinitionRef);
         doWriteElement("otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
         endElement(name);
@@ -866,7 +866,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCircuitBreakerDefinition(String name, CircuitBreakerDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("configuration", def.getConfiguration(), "@@none@@");
+        doWriteAttribute("configuration", def.getConfiguration(), null);
         doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteElement("onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -876,16 +876,16 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteClaimCheckDefinition(String name, ClaimCheckDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("filter", def.getFilter(), "@@none@@");
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("operation", def.getOperation(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("filter", def.getFilter(), null);
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("operation", def.getOperation(), null);
+        doWriteAttribute("key", def.getKey(), null);
         endElement(name);
     }
     protected void doWriteContextScanDefinition(String name, ContextScanDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("includeNonSingletons", def.getIncludeNonSingletons(), "@@none@@");
+        doWriteAttribute("includeNonSingletons", def.getIncludeNonSingletons(), null);
         doWriteList(null, "excludes", def.getExcludes(), this::doWriteString);
         doWriteList(null, "includes", def.getIncludes(), this::doWriteString);
         endElement(name);
@@ -893,29 +893,29 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteConvertBodyDefinition(String name, ConvertBodyDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("charset", def.getCharset(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("mandatory", def.getMandatory(), "@@none@@");
+        doWriteAttribute("charset", def.getCharset(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("mandatory", def.getMandatory(), "true");
         endElement(name);
     }
     protected void doWriteConvertHeaderDefinition(String name, ConvertHeaderDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("charset", def.getCharset(), "@@none@@");
-        doWriteAttribute("toName", def.getToName(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("mandatory", def.getMandatory(), "@@none@@");
+        doWriteAttribute("charset", def.getCharset(), null);
+        doWriteAttribute("toName", def.getToName(), null);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("mandatory", def.getMandatory(), "true");
         endElement(name);
     }
     protected void doWriteConvertVariableDefinition(String name, ConvertVariableDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("charset", def.getCharset(), "@@none@@");
-        doWriteAttribute("toName", def.getToName(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("mandatory", def.getMandatory(), "@@none@@");
+        doWriteAttribute("charset", def.getCharset(), null);
+        doWriteAttribute("toName", def.getToName(), null);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("mandatory", def.getMandatory(), "true");
         endElement(name);
     }
     protected void doWriteDataFormatDefinition(String name, DataFormatDefinition def) throws IOException {
@@ -926,35 +926,35 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteDelayDefinition(String name, DelayDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "@@none@@");
-        doWriteAttribute("asyncDelayed", def.getAsyncDelayed(), "@@none@@");
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "true");
+        doWriteAttribute("asyncDelayed", def.getAsyncDelayed(), "true");
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteDynamicRouterDefinition(String name, DynamicRouterDefinition<?> def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("uriDelimiter", def.getUriDelimiter(), "@@none@@");
-        doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), "@@none@@");
-        doWriteAttribute("cacheSize", def.getCacheSize(), "@@none@@");
+        doWriteAttribute("uriDelimiter", def.getUriDelimiter(), ",");
+        doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
+        doWriteAttribute("cacheSize", def.getCacheSize(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteEnrichDefinition(String name, EnrichDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("variableSend", def.getVariableSend(), "@@none@@");
-        doWriteAttribute("cacheSize", def.getCacheSize(), "@@none@@");
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), "@@none@@");
-        doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "@@none@@");
-        doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "@@none@@");
-        doWriteAttribute("aggregateOnException", def.getAggregateOnException(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("variableSend", def.getVariableSend(), null);
+        doWriteAttribute("cacheSize", def.getCacheSize(), null);
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
+        doWriteAttribute("aggregateOnException", def.getAggregateOnException(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -989,19 +989,19 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("failureRatio", def.getFailureRatio(), "@@none@@");
-        doWriteAttribute("timeoutScheduledExecutorService", def.getTimeoutScheduledExecutorService(), "@@none@@");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "@@none@@");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "@@none@@");
-        doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "@@none@@");
-        doWriteAttribute("successThreshold", def.getSuccessThreshold(), "@@none@@");
-        doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "@@none@@");
-        doWriteAttribute("bulkheadExecutorService", def.getBulkheadExecutorService(), "@@none@@");
-        doWriteAttribute("delay", def.getDelay(), "@@none@@");
-        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "@@none@@");
-        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), "@@none@@");
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "@@none@@");
-        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "@@none@@");
+        doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
+        doWriteAttribute("timeoutScheduledExecutorService", def.getTimeoutScheduledExecutorService(), null);
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
+        doWriteAttribute("successThreshold", def.getSuccessThreshold(), "1");
+        doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
+        doWriteAttribute("bulkheadExecutorService", def.getBulkheadExecutorService(), null);
+        doWriteAttribute("delay", def.getDelay(), "5000");
+        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
+        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
     }
     protected void doWriteFaultToleranceConfigurationCommon(String name, FaultToleranceConfigurationCommon def) throws IOException {
         startElement(name);
@@ -1016,7 +1016,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteFilterDefinition(String name, FilterDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("statusPropertyName", def.getStatusPropertyName(), "@@none@@");
+        doWriteAttribute("statusPropertyName", def.getStatusPropertyName(), null);
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
@@ -1029,14 +1029,14 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteFromDefinition(String name, FromDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("uri", def.getUri(), null);
         endElement(name);
     }
     protected void doWriteGlobalOptionDefinition(String name, GlobalOptionDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("value", def.getValue(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("value", def.getValue(), null);
+        doWriteAttribute("key", def.getKey(), null);
         endElement(name);
     }
     protected void doWriteGlobalOptionsDefinition(String name, GlobalOptionsDefinition def) throws IOException {
@@ -1047,16 +1047,16 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteIdempotentConsumerDefinition(String name, IdempotentConsumerDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("completionEager", def.getCompletionEager(), "@@none@@");
-        doWriteAttribute("skipDuplicate", def.getSkipDuplicate(), "@@none@@");
-        doWriteAttribute("eager", def.getEager(), "@@none@@");
-        doWriteAttribute("idempotentRepository", def.getIdempotentRepository(), "@@none@@");
-        doWriteAttribute("removeOnFailure", def.getRemoveOnFailure(), "@@none@@");
+        doWriteAttribute("completionEager", def.getCompletionEager(), "false");
+        doWriteAttribute("skipDuplicate", def.getSkipDuplicate(), "true");
+        doWriteAttribute("eager", def.getEager(), "true");
+        doWriteAttribute("idempotentRepository", def.getIdempotentRepository(), null);
+        doWriteAttribute("removeOnFailure", def.getRemoveOnFailure(), "true");
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteIdentifiedTypeAttributes(IdentifiedType def) throws IOException {
-        doWriteAttribute("id", def.getId(), "@@none@@");
+        doWriteAttribute("id", def.getId(), null);
     }
     protected void doWriteIdentifiedType(String name, IdentifiedType def) throws IOException {
         startElement(name);
@@ -1066,8 +1066,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteInputTypeDefinition(String name, InputTypeDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("urn", def.getUrn(), "@@none@@");
-        doWriteAttribute("validate", def.getValidate(), "@@none@@");
+        doWriteAttribute("urn", def.getUrn(), null);
+        doWriteAttribute("validate", def.getValidate(), "false");
         endElement(name);
     }
     protected void doWriteInterceptDefinitionElements(InterceptDefinition def) throws IOException {
@@ -1082,23 +1082,23 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteInterceptFromDefinition(String name, InterceptFromDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
+        doWriteAttribute("uri", def.getUri(), null);
         doWriteInterceptDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteInterceptSendToEndpointDefinition(String name, InterceptSendToEndpointDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("afterUri", def.getAfterUri(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
-        doWriteAttribute("skipSendToOriginalEndpoint", def.getSkipSendToOriginalEndpoint(), "@@none@@");
+        doWriteAttribute("afterUri", def.getAfterUri(), null);
+        doWriteAttribute("uri", def.getUri(), null);
+        doWriteAttribute("skipSendToOriginalEndpoint", def.getSkipSendToOriginalEndpoint(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWriteKameletDefinition(String name, KameletDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
@@ -1127,27 +1127,27 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteLogDefinition(String name, LogDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("logName", def.getLogName(), "@@none@@");
-        doWriteAttribute("marker", def.getMarker(), "@@none@@");
-        doWriteAttribute("logger", def.getLogger(), "@@none@@");
-        doWriteAttribute("message", def.getMessage(), "@@none@@");
-        doWriteAttribute("loggingLevel", def.getLoggingLevel(), "@@none@@");
+        doWriteAttribute("logName", def.getLogName(), null);
+        doWriteAttribute("marker", def.getMarker(), null);
+        doWriteAttribute("logger", def.getLogger(), null);
+        doWriteAttribute("message", def.getMessage(), null);
+        doWriteAttribute("loggingLevel", def.getLoggingLevel(), "INFO");
         endElement(name);
     }
     protected void doWriteLoopDefinition(String name, LoopDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("doWhile", def.getDoWhile(), "@@none@@");
-        doWriteAttribute("breakOnShutdown", def.getBreakOnShutdown(), "@@none@@");
-        doWriteAttribute("copy", def.getCopy(), "@@none@@");
+        doWriteAttribute("doWhile", def.getDoWhile(), null);
+        doWriteAttribute("breakOnShutdown", def.getBreakOnShutdown(), null);
+        doWriteAttribute("copy", def.getCopy(), null);
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteMarshalDefinition(String name, MarshalDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("variableSend", def.getVariableSend(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("variableSend", def.getVariableSend(), null);
         doWriteElement(null, def.getDataFormatType(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "ASN1DataFormat" -> doWriteASN1DataFormat("asn1", (ASN1DataFormat) v);
@@ -1200,30 +1200,30 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteMulticastDefinition(String name, MulticastDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("onPrepare", def.getOnPrepare(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("synchronous", def.getSynchronous(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
-        doWriteAttribute("streaming", def.getStreaming(), "@@none@@");
-        doWriteAttribute("stopOnException", def.getStopOnException(), "@@none@@");
-        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), "@@none@@");
-        doWriteAttribute("parallelAggregate", def.getParallelAggregate(), "@@none@@");
-        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), "@@none@@");
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("onPrepare", def.getOnPrepare(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("synchronous", def.getSynchronous(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("timeout", def.getTimeout(), "0");
+        doWriteAttribute("streaming", def.getStreaming(), null);
+        doWriteAttribute("stopOnException", def.getStopOnException(), null);
+        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
+        doWriteAttribute("parallelAggregate", def.getParallelAggregate(), null);
+        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWriteOnCompletionDefinition(String name, OnCompletionDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), "@@none@@");
-        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), "@@none@@");
-        doWriteAttribute("mode", def.getMode(), "@@none@@");
-        doWriteAttribute("onCompleteOnly", def.getOnCompleteOnly(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("onFailureOnly", def.getOnFailureOnly(), "@@none@@");
+        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
+        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), null);
+        doWriteAttribute("mode", def.getMode(), "AfterConsumer");
+        doWriteAttribute("onCompleteOnly", def.getOnCompleteOnly(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("onFailureOnly", def.getOnFailureOnly(), null);
         doWriteElement("onWhen", def.getOnWhen(), this::doWriteWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
@@ -1231,11 +1231,11 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOnExceptionDefinition(String name, OnExceptionDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), "@@none@@");
-        doWriteAttribute("onRedeliveryRef", def.getOnRedeliveryRef(), "@@none@@");
-        doWriteAttribute("useOriginalBody", def.getUseOriginalBody(), "@@none@@");
-        doWriteAttribute("onExceptionOccurredRef", def.getOnExceptionOccurredRef(), "@@none@@");
-        doWriteAttribute("redeliveryPolicyRef", def.getRedeliveryPolicyRef(), "@@none@@");
+        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), null);
+        doWriteAttribute("onRedeliveryRef", def.getOnRedeliveryRef(), null);
+        doWriteAttribute("useOriginalBody", def.getUseOriginalBody(), null);
+        doWriteAttribute("onExceptionOccurredRef", def.getOnExceptionOccurredRef(), null);
+        doWriteAttribute("redeliveryPolicyRef", def.getRedeliveryPolicyRef(), null);
         doWriteElement("continued", def.getContinued(), this::doWriteExpressionSubElementDefinition);
         doWriteList(null, "exception", def.getExceptions(), this::doWriteString);
         doWriteElement("retryWhile", def.getRetryWhile(), this::doWriteExpressionSubElementDefinition);
@@ -1248,23 +1248,23 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOnFallbackDefinition(String name, OnFallbackDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("fallbackViaNetwork", def.getFallbackViaNetwork(), "@@none@@");
+        doWriteAttribute("fallbackViaNetwork", def.getFallbackViaNetwork(), "false");
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWriteOptimisticLockRetryPolicyDefinition(String name, OptimisticLockRetryPolicyDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("retryDelay", def.getRetryDelay(), "@@none@@");
-        doWriteAttribute("randomBackOff", def.getRandomBackOff(), "@@none@@");
-        doWriteAttribute("maximumRetries", def.getMaximumRetries(), "@@none@@");
-        doWriteAttribute("exponentialBackOff", def.getExponentialBackOff(), "@@none@@");
-        doWriteAttribute("maximumRetryDelay", def.getMaximumRetryDelay(), "@@none@@");
+        doWriteAttribute("retryDelay", def.getRetryDelay(), "50");
+        doWriteAttribute("randomBackOff", def.getRandomBackOff(), null);
+        doWriteAttribute("maximumRetries", def.getMaximumRetries(), null);
+        doWriteAttribute("exponentialBackOff", def.getExponentialBackOff(), "true");
+        doWriteAttribute("maximumRetryDelay", def.getMaximumRetryDelay(), "1000");
         endElement(name);
     }
     protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def) throws IOException {
-        doWriteAttribute("description", def.getDescription(), "@@none@@");
-        doWriteAttribute("id", def.getId(), "@@none@@");
-        doWriteAttribute("customId", toString(def.getCustomId()), "@@none@@");
+        doWriteAttribute("description", def.getDescription(), null);
+        doWriteAttribute("id", def.getId(), null);
+        doWriteAttribute("customId", toString(def.getCustomId()), null);
     }
     protected void doWriteOptionalIdentifiedDefinition(String name, OptionalIdentifiedDefinition<?> def) throws IOException {
         startElement(name);
@@ -1290,8 +1290,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOutputTypeDefinition(String name, OutputTypeDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("urn", def.getUrn(), "@@none@@");
-        doWriteAttribute("validate", def.getValidate(), "@@none@@");
+        doWriteAttribute("urn", def.getUrn(), null);
+        doWriteAttribute("validate", def.getValidate(), "false");
         endElement(name);
     }
     protected void doWritePackageScanDefinition(String name, PackageScanDefinition def) throws IOException {
@@ -1304,8 +1304,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWritePausableDefinition(String name, PausableDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("untilCheck", def.getUntilCheck(), "@@none@@");
-        doWriteAttribute("consumerListener", def.getConsumerListener(), "@@none@@");
+        doWriteAttribute("untilCheck", def.getUntilCheck(), null);
+        doWriteAttribute("consumerListener", def.getConsumerListener(), null);
         endElement(name);
     }
     protected void doWritePipelineDefinition(String name, PipelineDefinition def) throws IOException {
@@ -1317,43 +1317,43 @@ public class ModelWriter extends BaseWriter {
     protected void doWritePolicyDefinition(String name, PolicyDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWritePollDefinition(String name, PollDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("uri", def.getUri(), null);
+        doWriteAttribute("timeout", def.getTimeout(), "20000");
         endElement(name);
     }
     protected void doWritePollEnrichDefinition(String name, PollEnrichDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("cacheSize", def.getCacheSize(), "@@none@@");
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), "@@none@@");
-        doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "@@none@@");
-        doWriteAttribute("aggregateOnException", def.getAggregateOnException(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("cacheSize", def.getCacheSize(), null);
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute("aggregateOnException", def.getAggregateOnException(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("timeout", def.getTimeout(), "-1");
+        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteProcessDefinition(String name, ProcessDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteProcessorDefinitionAttributes(ProcessorDefinition<?> def) throws IOException {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("inheritErrorHandler", toString(def.isInheritErrorHandler()), "@@none@@");
-        doWriteAttribute("disabled", def.getDisabled(), "@@none@@");
+        doWriteAttribute("inheritErrorHandler", toString(def.isInheritErrorHandler()), null);
+        doWriteAttribute("disabled", def.getDisabled(), null);
     }
     protected void doWriteProcessorDefinition(String name, ProcessorDefinition<?> def) throws IOException {
         startElement(name);
@@ -1362,8 +1362,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWritePropertyDefinition(String name, PropertyDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("value", def.getValue(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("value", def.getValue(), null);
+        doWriteAttribute("key", def.getKey(), null);
         endElement(name);
     }
     protected void doWritePropertyDefinitions(String name, PropertyDefinitions def) throws IOException {
@@ -1373,90 +1373,90 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWritePropertyExpressionDefinition(String name, PropertyExpressionDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("key", def.getKey(), null);
         doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         endElement(name);
     }
     protected void doWriteRecipientListDefinition(String name, RecipientListDefinition<?> def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("cacheSize", def.getCacheSize(), "@@none@@");
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("onPrepare", def.getOnPrepare(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("synchronous", def.getSynchronous(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
-        doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), "@@none@@");
-        doWriteAttribute("streaming", def.getStreaming(), "@@none@@");
-        doWriteAttribute("stopOnException", def.getStopOnException(), "@@none@@");
-        doWriteAttribute("delimiter", def.getDelimiter(), "@@none@@");
-        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), "@@none@@");
-        doWriteAttribute("parallelAggregate", def.getParallelAggregate(), "@@none@@");
-        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), "@@none@@");
+        doWriteAttribute("cacheSize", def.getCacheSize(), null);
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("onPrepare", def.getOnPrepare(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("synchronous", def.getSynchronous(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("timeout", def.getTimeout(), "0");
+        doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
+        doWriteAttribute("streaming", def.getStreaming(), null);
+        doWriteAttribute("stopOnException", def.getStopOnException(), null);
+        doWriteAttribute("delimiter", def.getDelimiter(), ",");
+        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
+        doWriteAttribute("parallelAggregate", def.getParallelAggregate(), null);
+        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteRedeliveryPolicyDefinition(String name, RedeliveryPolicyDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("logNewException", def.getLogNewException(), "@@none@@");
-        doWriteAttribute("backOffMultiplier", def.getBackOffMultiplier(), "@@none@@");
-        doWriteAttribute("exchangeFormatterRef", def.getExchangeFormatterRef(), "@@none@@");
-        doWriteAttribute("allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), "@@none@@");
-        doWriteAttribute("delayPattern", def.getDelayPattern(), "@@none@@");
-        doWriteAttribute("retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), "@@none@@");
-        doWriteAttribute("logStackTrace", def.getLogStackTrace(), "@@none@@");
-        doWriteAttribute("retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), "@@none@@");
-        doWriteAttribute("logRetryAttempted", def.getLogRetryAttempted(), "@@none@@");
-        doWriteAttribute("maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), "@@none@@");
-        doWriteAttribute("useExponentialBackOff", def.getUseExponentialBackOff(), "@@none@@");
-        doWriteAttribute("logExhaustedMessageHistory", def.getLogExhaustedMessageHistory(), "@@none@@");
-        doWriteAttribute("collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), "@@none@@");
-        doWriteAttribute("logRetryStackTrace", def.getLogRetryStackTrace(), "@@none@@");
-        doWriteAttribute("asyncDelayedRedelivery", def.getAsyncDelayedRedelivery(), "@@none@@");
-        doWriteAttribute("disableRedelivery", def.getDisableRedelivery(), "@@none@@");
-        doWriteAttribute("logContinued", def.getLogContinued(), "@@none@@");
-        doWriteAttribute("retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), "@@none@@");
-        doWriteAttribute("redeliveryDelay", def.getRedeliveryDelay(), "@@none@@");
-        doWriteAttribute("logExhaustedMessageBody", def.getLogExhaustedMessageBody(), "@@none@@");
-        doWriteAttribute("logHandled", def.getLogHandled(), "@@none@@");
-        doWriteAttribute("maximumRedeliveries", def.getMaximumRedeliveries(), "@@none@@");
-        doWriteAttribute("logExhausted", def.getLogExhausted(), "@@none@@");
-        doWriteAttribute("useCollisionAvoidance", def.getUseCollisionAvoidance(), "@@none@@");
+        doWriteAttribute("logNewException", def.getLogNewException(), "true");
+        doWriteAttribute("backOffMultiplier", def.getBackOffMultiplier(), "2.0");
+        doWriteAttribute("exchangeFormatterRef", def.getExchangeFormatterRef(), null);
+        doWriteAttribute("allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), "true");
+        doWriteAttribute("delayPattern", def.getDelayPattern(), null);
+        doWriteAttribute("retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), "ERROR");
+        doWriteAttribute("logStackTrace", def.getLogStackTrace(), "true");
+        doWriteAttribute("retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), "1");
+        doWriteAttribute("logRetryAttempted", def.getLogRetryAttempted(), "true");
+        doWriteAttribute("maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), "60000");
+        doWriteAttribute("useExponentialBackOff", def.getUseExponentialBackOff(), null);
+        doWriteAttribute("logExhaustedMessageHistory", def.getLogExhaustedMessageHistory(), null);
+        doWriteAttribute("collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), "0.15");
+        doWriteAttribute("logRetryStackTrace", def.getLogRetryStackTrace(), null);
+        doWriteAttribute("asyncDelayedRedelivery", def.getAsyncDelayedRedelivery(), null);
+        doWriteAttribute("disableRedelivery", def.getDisableRedelivery(), null);
+        doWriteAttribute("logContinued", def.getLogContinued(), null);
+        doWriteAttribute("retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), "DEBUG");
+        doWriteAttribute("redeliveryDelay", def.getRedeliveryDelay(), "1000");
+        doWriteAttribute("logExhaustedMessageBody", def.getLogExhaustedMessageBody(), null);
+        doWriteAttribute("logHandled", def.getLogHandled(), null);
+        doWriteAttribute("maximumRedeliveries", def.getMaximumRedeliveries(), null);
+        doWriteAttribute("logExhausted", def.getLogExhausted(), "true");
+        doWriteAttribute("useCollisionAvoidance", def.getUseCollisionAvoidance(), null);
         endElement(name);
     }
     protected void doWriteRemoveHeaderDefinition(String name, RemoveHeaderDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         endElement(name);
     }
     protected void doWriteRemoveHeadersDefinition(String name, RemoveHeadersDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("excludePattern", def.getExcludePattern(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
+        doWriteAttribute("excludePattern", def.getExcludePattern(), null);
+        doWriteAttribute("pattern", def.getPattern(), null);
         endElement(name);
     }
     protected void doWriteRemovePropertiesDefinition(String name, RemovePropertiesDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("excludePattern", def.getExcludePattern(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
+        doWriteAttribute("excludePattern", def.getExcludePattern(), null);
+        doWriteAttribute("pattern", def.getPattern(), null);
         endElement(name);
     }
     protected void doWriteRemovePropertyDefinition(String name, RemovePropertyDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         endElement(name);
     }
     protected void doWriteRemoveVariableDefinition(String name, RemoveVariableDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         endElement(name);
     }
     protected void doWriteResequenceDefinition(String name, ResequenceDefinition def) throws IOException {
@@ -1474,26 +1474,26 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteResilience4jConfigurationCommonAttributes(Resilience4jConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold(), "@@none@@");
-        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "@@none@@");
-        doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "@@none@@");
-        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "@@none@@");
-        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "@@none@@");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "@@none@@");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "@@none@@");
-        doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), "@@none@@");
-        doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "@@none@@");
-        doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "@@none@@");
-        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "@@none@@");
-        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "@@none@@");
-        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "@@none@@");
-        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), "@@none@@");
-        doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), "@@none@@");
-        doWriteAttribute("config", def.getConfig(), "@@none@@");
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "@@none@@");
-        doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), "@@none@@");
-        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "@@none@@");
-        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "@@none@@");
+        doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold(), "50");
+        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
+        doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60");
+        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
+        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), null);
+        doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
+        doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
+        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
+        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
+        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
+        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
+        doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), "100");
+        doWriteAttribute("config", def.getConfig(), null);
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
+        doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
+        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
+        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "60");
     }
     protected void doWriteResilience4jConfigurationCommonElements(Resilience4jConfigurationCommon def) throws IOException {
         doWriteList(null, "ignoreException", def.getIgnoreExceptions(), this::doWriteString);
@@ -1513,40 +1513,40 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteRestContextRefDefinition(String name, RestContextRefDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteResumableDefinition(String name, ResumableDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("resumeStrategy", def.getResumeStrategy(), "@@none@@");
-        doWriteAttribute("intermittent", def.getIntermittent(), "@@none@@");
-        doWriteAttribute("loggingLevel", def.getLoggingLevel(), "@@none@@");
+        doWriteAttribute("resumeStrategy", def.getResumeStrategy(), null);
+        doWriteAttribute("intermittent", def.getIntermittent(), "false");
+        doWriteAttribute("loggingLevel", def.getLoggingLevel(), "ERROR");
         endElement(name);
     }
     protected void doWriteRollbackDefinition(String name, RollbackDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("markRollbackOnly", def.getMarkRollbackOnly(), "@@none@@");
-        doWriteAttribute("message", def.getMessage(), "@@none@@");
-        doWriteAttribute("markRollbackOnlyLast", def.getMarkRollbackOnlyLast(), "@@none@@");
+        doWriteAttribute("markRollbackOnly", def.getMarkRollbackOnly(), null);
+        doWriteAttribute("message", def.getMessage(), null);
+        doWriteAttribute("markRollbackOnlyLast", def.getMarkRollbackOnlyLast(), null);
         endElement(name);
     }
     protected void doWriteRouteBuilderDefinition(String name, RouteBuilderDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteRouteConfigurationContextRefDefinition(String name, RouteConfigurationContextRefDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteRouteConfigurationDefinition(String name, RouteConfigurationDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("precondition", def.getPrecondition(), "@@none@@");
+        doWriteAttribute("precondition", def.getPrecondition(), null);
         doWriteList(null, "onException", def.getOnExceptions(), this::doWriteOnExceptionDefinition);
         doWriteList(null, "onCompletion", def.getOnCompletions(), this::doWriteOnCompletionDefinition);
         doWriteList(null, "interceptSendToEndpoint", def.getInterceptSendTos(), this::doWriteInterceptSendToEndpointDefinition);
@@ -1563,30 +1563,30 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteRouteContextRefDefinition(String name, RouteContextRefDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteRouteDefinition(String name, RouteDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("template", toString(def.isTemplate()), "@@none@@");
-        doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), "@@none@@");
-        doWriteAttribute("streamCache", def.getStreamCache(), "@@none@@");
-        doWriteAttribute("trace", def.getTrace(), "@@none@@");
-        doWriteAttribute("rest", toString(def.isRest()), "@@none@@");
-        doWriteAttribute("routePolicyRef", def.getRoutePolicyRef(), "@@none@@");
-        doWriteAttribute("precondition", def.getPrecondition(), "@@none@@");
-        doWriteAttribute("shutdownRoute", def.getShutdownRoute(), "@@none@@");
-        doWriteAttribute("shutdownRunningTask", def.getShutdownRunningTask(), "@@none@@");
-        doWriteAttribute("startupOrder", toString(def.getStartupOrder()), "@@none@@");
-        doWriteAttribute("logMask", def.getLogMask(), "@@none@@");
-        doWriteAttribute("nodePrefixId", def.getNodePrefixId(), "@@none@@");
-        doWriteAttribute("messageHistory", def.getMessageHistory(), "@@none@@");
-        doWriteAttribute("kamelet", toString(def.isKamelet()), "@@none@@");
-        doWriteAttribute("autoStartup", def.getAutoStartup(), "@@none@@");
-        doWriteAttribute("delayer", def.getDelayer(), "@@none@@");
-        doWriteAttribute("group", def.getGroup(), "@@none@@");
-        doWriteAttribute("errorHandlerRef", def.getErrorHandlerRef(), "@@none@@");
+        doWriteAttribute("template", toString(def.isTemplate()), null);
+        doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), null);
+        doWriteAttribute("streamCache", def.getStreamCache(), null);
+        doWriteAttribute("trace", def.getTrace(), null);
+        doWriteAttribute("rest", toString(def.isRest()), null);
+        doWriteAttribute("routePolicyRef", def.getRoutePolicyRef(), null);
+        doWriteAttribute("precondition", def.getPrecondition(), null);
+        doWriteAttribute("shutdownRoute", def.getShutdownRoute(), "Default");
+        doWriteAttribute("shutdownRunningTask", def.getShutdownRunningTask(), "CompleteCurrentTaskOnly");
+        doWriteAttribute("startupOrder", toString(def.getStartupOrder()), null);
+        doWriteAttribute("logMask", def.getLogMask(), null);
+        doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
+        doWriteAttribute("messageHistory", def.getMessageHistory(), null);
+        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
+        doWriteAttribute("autoStartup", def.getAutoStartup(), "true");
+        doWriteAttribute("delayer", def.getDelayer(), null);
+        doWriteAttribute("group", def.getGroup(), null);
+        doWriteAttribute("errorHandlerRef", def.getErrorHandlerRef(), null);
         doWriteList(null, "routeProperty", def.getRouteProperties(), this::doWritePropertyDefinition);
         doWriteElement("errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
         doWriteElement(null, def.getInput(), this::doWriteFromDefinitionRef);
@@ -1597,7 +1597,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteRouteTemplateContextRefDefinition(String name, RouteTemplateContextRefDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteRouteTemplateDefinition(String name, RouteTemplateDefinition def) throws IOException {
@@ -1610,10 +1610,10 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteRouteTemplateParameterDefinition(String name, RouteTemplateParameterDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("defaultValue", def.getDefaultValue(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("description", def.getDescription(), "@@none@@");
-        doWriteAttribute("required", toString(def.getRequired()), "@@none@@");
+        doWriteAttribute("defaultValue", def.getDefaultValue(), null);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("description", def.getDescription(), null);
+        doWriteAttribute("required", toString(def.getRequired()), null);
         endElement(name);
     }
     protected void doWriteRouteTemplatesDefinition(String name, RouteTemplatesDefinition def) throws IOException {
@@ -1631,9 +1631,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRoutingSlipDefinition(String name, RoutingSlipDefinition<?> def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("uriDelimiter", def.getUriDelimiter(), "@@none@@");
-        doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), "@@none@@");
-        doWriteAttribute("cacheSize", def.getCacheSize(), "@@none@@");
+        doWriteAttribute("uriDelimiter", def.getUriDelimiter(), ",");
+        doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
+        doWriteAttribute("cacheSize", def.getCacheSize(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1645,10 +1645,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSagaDefinition(String name, SagaDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("propagation", def.getPropagation(), "@@none@@");
-        doWriteAttribute("completionMode", def.getCompletionMode(), "@@none@@");
-        doWriteAttribute("sagaService", def.getSagaService(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
+        doWriteAttribute("propagation", def.getPropagation(), "REQUIRED");
+        doWriteAttribute("completionMode", def.getCompletionMode(), "AUTO");
+        doWriteAttribute("sagaService", def.getSagaService(), null);
+        doWriteAttribute("timeout", def.getTimeout(), null);
         doWriteElement("completion", def.getCompletion(), this::doWriteSagaActionUriDefinition);
         doWriteList(null, "option", def.getOptions(), this::doWritePropertyExpressionDefinition);
         doWriteElement("compensation", def.getCompensation(), this::doWriteSagaActionUriDefinition);
@@ -1658,8 +1658,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSamplingDefinition(String name, SamplingDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("messageFrequency", def.getMessageFrequency(), "@@none@@");
-        doWriteAttribute("samplePeriod", def.getSamplePeriod(), "@@none@@");
+        doWriteAttribute("messageFrequency", def.getMessageFrequency(), null);
+        doWriteAttribute("samplePeriod", def.getSamplePeriod(), "1000");
         endElement(name);
     }
     protected void doWriteScriptDefinition(String name, ScriptDefinition def) throws IOException {
@@ -1670,7 +1670,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteSendDefinitionAttributes(SendDefinition<?> def) throws IOException {
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
+        doWriteAttribute("uri", def.getUri(), null);
     }
     protected void doWriteSendDefinition(String name, SendDefinition<?> def) throws IOException {
         startElement(name);
@@ -1686,13 +1686,13 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSetExchangePatternDefinition(String name, SetExchangePatternDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
+        doWriteAttribute("pattern", def.getPattern(), null);
         endElement(name);
     }
     protected void doWriteSetHeaderDefinition(String name, SetHeaderDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1705,14 +1705,14 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSetPropertyDefinition(String name, SetPropertyDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteSetVariableDefinition(String name, SetVariableDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1725,26 +1725,26 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSortDefinition(String name, SortDefinition<?> def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("comparator", def.getComparator(), "@@none@@");
+        doWriteAttribute("comparator", def.getComparator(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteSplitDefinition(String name, SplitDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), "@@none@@");
-        doWriteAttribute("onPrepare", def.getOnPrepare(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("synchronous", def.getSynchronous(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
-        doWriteAttribute("streaming", def.getStreaming(), "@@none@@");
-        doWriteAttribute("stopOnException", def.getStopOnException(), "@@none@@");
-        doWriteAttribute("delimiter", def.getDelimiter(), "@@none@@");
-        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), "@@none@@");
-        doWriteAttribute("parallelAggregate", def.getParallelAggregate(), "@@none@@");
-        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), "@@none@@");
-        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), "@@none@@");
+        doWriteAttribute("aggregationStrategy", def.getAggregationStrategy(), null);
+        doWriteAttribute("onPrepare", def.getOnPrepare(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("synchronous", def.getSynchronous(), null);
+        doWriteAttribute("aggregationStrategyMethodName", def.getAggregationStrategyMethodName(), null);
+        doWriteAttribute("timeout", def.getTimeout(), "0");
+        doWriteAttribute("streaming", def.getStreaming(), null);
+        doWriteAttribute("stopOnException", def.getStopOnException(), null);
+        doWriteAttribute("delimiter", def.getDelimiter(), ",");
+        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
+        doWriteAttribute("parallelAggregate", def.getParallelAggregate(), null);
+        doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("aggregationStrategyMethodAllowNull", def.getAggregationStrategyMethodAllowNull(), null);
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
@@ -1761,17 +1761,17 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteTemplatedRouteDefinition(String name, TemplatedRouteDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("routeId", def.getRouteId(), "@@none@@");
-        doWriteAttribute("routeTemplateRef", def.getRouteTemplateRef(), "@@none@@");
-        doWriteAttribute("prefixId", def.getPrefixId(), "@@none@@");
+        doWriteAttribute("routeId", def.getRouteId(), null);
+        doWriteAttribute("routeTemplateRef", def.getRouteTemplateRef(), null);
+        doWriteAttribute("prefixId", def.getPrefixId(), null);
         doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
         doWriteList(null, "parameter", def.getParameters(), this::doWriteTemplatedRouteParameterDefinition);
         endElement(name);
     }
     protected void doWriteTemplatedRouteParameterDefinition(String name, TemplatedRouteParameterDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("value", def.getValue(), "@@none@@");
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("value", def.getValue(), null);
         endElement(name);
     }
     protected void doWriteTemplatedRoutesDefinition(String name, TemplatedRoutesDefinition def) throws IOException {
@@ -1783,40 +1783,40 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteThreadPoolProfileDefinition(String name, ThreadPoolProfileDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("keepAliveTime", def.getKeepAliveTime(), "@@none@@");
-        doWriteAttribute("maxQueueSize", def.getMaxQueueSize(), "@@none@@");
-        doWriteAttribute("allowCoreThreadTimeOut", def.getAllowCoreThreadTimeOut(), "@@none@@");
-        doWriteAttribute("poolSize", def.getPoolSize(), "@@none@@");
-        doWriteAttribute("defaultProfile", def.getDefaultProfile(), "@@none@@");
-        doWriteAttribute("maxPoolSize", def.getMaxPoolSize(), "@@none@@");
-        doWriteAttribute("rejectedPolicy", def.getRejectedPolicy(), "@@none@@");
-        doWriteAttribute("timeUnit", def.getTimeUnit(), "@@none@@");
+        doWriteAttribute("keepAliveTime", def.getKeepAliveTime(), null);
+        doWriteAttribute("maxQueueSize", def.getMaxQueueSize(), null);
+        doWriteAttribute("allowCoreThreadTimeOut", def.getAllowCoreThreadTimeOut(), null);
+        doWriteAttribute("poolSize", def.getPoolSize(), null);
+        doWriteAttribute("defaultProfile", def.getDefaultProfile(), null);
+        doWriteAttribute("maxPoolSize", def.getMaxPoolSize(), null);
+        doWriteAttribute("rejectedPolicy", def.getRejectedPolicy(), null);
+        doWriteAttribute("timeUnit", def.getTimeUnit(), null);
         endElement(name);
     }
     protected void doWriteThreadsDefinition(String name, ThreadsDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("keepAliveTime", def.getKeepAliveTime(), "@@none@@");
-        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "@@none@@");
-        doWriteAttribute("maxQueueSize", def.getMaxQueueSize(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("allowCoreThreadTimeOut", def.getAllowCoreThreadTimeOut(), "@@none@@");
-        doWriteAttribute("poolSize", def.getPoolSize(), "@@none@@");
-        doWriteAttribute("maxPoolSize", def.getMaxPoolSize(), "@@none@@");
-        doWriteAttribute("threadName", def.getThreadName(), "@@none@@");
-        doWriteAttribute("rejectedPolicy", def.getRejectedPolicy(), "@@none@@");
-        doWriteAttribute("timeUnit", def.getTimeUnit(), "@@none@@");
+        doWriteAttribute("keepAliveTime", def.getKeepAliveTime(), null);
+        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "true");
+        doWriteAttribute("maxQueueSize", def.getMaxQueueSize(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("allowCoreThreadTimeOut", def.getAllowCoreThreadTimeOut(), null);
+        doWriteAttribute("poolSize", def.getPoolSize(), null);
+        doWriteAttribute("maxPoolSize", def.getMaxPoolSize(), null);
+        doWriteAttribute("threadName", def.getThreadName(), "Threads");
+        doWriteAttribute("rejectedPolicy", def.getRejectedPolicy(), null);
+        doWriteAttribute("timeUnit", def.getTimeUnit(), null);
         endElement(name);
     }
     protected void doWriteThrottleDefinition(String name, ThrottleDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("mode", def.getMode(), "@@none@@");
-        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis(), "@@none@@");
-        doWriteAttribute("rejectExecution", def.getRejectExecution(), "@@none@@");
-        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("asyncDelayed", def.getAsyncDelayed(), "@@none@@");
+        doWriteAttribute("mode", def.getMode(), "TotalRequests");
+        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis(), "1000");
+        doWriteAttribute("rejectExecution", def.getRejectExecution(), null);
+        doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "true");
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("asyncDelayed", def.getAsyncDelayed(), null);
         doWriteExpressionNodeElements(def);
         doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
         endElement(name);
@@ -1824,29 +1824,29 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteThrowExceptionDefinition(String name, ThrowExceptionDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("exceptionType", def.getExceptionType(), "@@none@@");
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("message", def.getMessage(), "@@none@@");
+        doWriteAttribute("exceptionType", def.getExceptionType(), null);
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("message", def.getMessage(), null);
         endElement(name);
     }
     protected void doWriteToDefinition(String name, ToDefinition def) throws IOException {
         startElement(name);
         doWriteSendDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("variableSend", def.getVariableSend(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("variableSend", def.getVariableSend(), null);
+        doWriteAttribute("pattern", def.getPattern(), null);
         endElement(name);
     }
     protected void doWriteToDynamicDefinitionAttributes(ToDynamicDefinition def) throws IOException {
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("variableSend", def.getVariableSend(), "@@none@@");
-        doWriteAttribute("cacheSize", def.getCacheSize(), "@@none@@");
-        doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), "@@none@@");
-        doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
-        doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("variableSend", def.getVariableSend(), null);
+        doWriteAttribute("cacheSize", def.getCacheSize(), null);
+        doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
+        doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute("pattern", def.getPattern(), null);
+        doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
+        doWriteAttribute("uri", def.getUri(), null);
     }
     protected void doWriteToDynamicDefinition(String name, ToDynamicDefinition def) throws IOException {
         startElement(name);
@@ -1875,15 +1875,15 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteTransactedDefinition(String name, TransactedDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWriteTransformDefinition(String name, TransformDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("toType", def.getToType(), "@@none@@");
-        doWriteAttribute("fromType", def.getFromType(), "@@none@@");
+        doWriteAttribute("toType", def.getToType(), null);
+        doWriteAttribute("fromType", def.getFromType(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1896,9 +1896,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteUnmarshalDefinition(String name, UnmarshalDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("variableReceive", def.getVariableReceive(), "@@none@@");
-        doWriteAttribute("variableSend", def.getVariableSend(), "@@none@@");
-        doWriteAttribute("allowNullBody", def.getAllowNullBody(), "@@none@@");
+        doWriteAttribute("variableReceive", def.getVariableReceive(), null);
+        doWriteAttribute("variableSend", def.getVariableSend(), null);
+        doWriteAttribute("allowNullBody", def.getAllowNullBody(), "false");
         doWriteElement(null, def.getDataFormatType(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "ASN1DataFormat" -> doWriteASN1DataFormat("asn1", (ASN1DataFormat) v);
@@ -1951,7 +1951,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteValidateDefinition(String name, ValidateDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("predicateExceptionFactory", def.getPredicateExceptionFactory(), "@@none@@");
+        doWriteAttribute("predicateExceptionFactory", def.getPredicateExceptionFactory(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1969,10 +1969,10 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteWireTapDefinition(String name, WireTapDefinition<?> def) throws IOException {
         startElement(name);
         doWriteToDynamicDefinitionAttributes(def);
-        doWriteAttribute("dynamicUri", def.getDynamicUri(), "@@none@@");
-        doWriteAttribute("onPrepare", def.getOnPrepare(), "@@none@@");
-        doWriteAttribute("executorService", def.getExecutorService(), "@@none@@");
-        doWriteAttribute("copy", def.getCopy(), "@@none@@");
+        doWriteAttribute("dynamicUri", def.getDynamicUri(), "true");
+        doWriteAttribute("onPrepare", def.getOnPrepare(), null);
+        doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("copy", def.getCopy(), "true");
         endElement(name);
     }
     protected void doWriteApplicationDefinition(String name, ApplicationDefinition def) throws IOException {
@@ -1982,8 +1982,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteBeanConstructorDefinition(String name, BeanConstructorDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("index", toString(def.getIndex()), "@@none@@");
-        doWriteAttribute("value", def.getValue(), "@@none@@");
+        doWriteAttribute("index", toString(def.getIndex()), null);
+        doWriteAttribute("value", def.getValue(), null);
         endElement(name);
     }
     protected void doWriteBeanConstructorsDefinition(String name, BeanConstructorsDefinition def) throws IOException {
@@ -1998,8 +1998,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteBeanPropertyDefinition(String name, BeanPropertyDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("value", def.getValue(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("value", def.getValue(), null);
+        doWriteAttribute("key", def.getKey(), null);
         doWriteElement("properties", def.getProperties(), this::doWriteBeanPropertiesDefinition);
         endElement(name);
     }
@@ -2023,7 +2023,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteComponentScanDefinition(String name, ComponentScanDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("base-package", def.getBasePackage(), "@@none@@");
+        doWriteAttribute("base-package", def.getBasePackage(), null);
         endElement(name);
     }
     protected void doWriteBlacklistServiceCallServiceFilterConfiguration(String name, BlacklistServiceCallServiceFilterConfiguration def) throws IOException {
@@ -2036,8 +2036,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCachingServiceCallServiceDiscoveryConfiguration(String name, CachingServiceCallServiceDiscoveryConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("units", def.getUnits(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
+        doWriteAttribute("units", def.getUnits(), "SECONDS");
+        doWriteAttribute("timeout", def.getTimeout(), "60");
         doWriteServiceCallConfigurationElements(def);
         doWriteElement(null, def.getServiceDiscoveryConfiguration(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
@@ -2082,22 +2082,22 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteConsulServiceCallServiceDiscoveryConfiguration(String name, ConsulServiceCallServiceDiscoveryConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("password", def.getPassword(), "@@none@@");
-        doWriteAttribute("readTimeoutMillis", def.getReadTimeoutMillis(), "@@none@@");
-        doWriteAttribute("aclToken", def.getAclToken(), "@@none@@");
-        doWriteAttribute("connectTimeoutMillis", def.getConnectTimeoutMillis(), "@@none@@");
-        doWriteAttribute("writeTimeoutMillis", def.getWriteTimeoutMillis(), "@@none@@");
-        doWriteAttribute("datacenter", def.getDatacenter(), "@@none@@");
-        doWriteAttribute("userName", def.getUserName(), "@@none@@");
-        doWriteAttribute("blockSeconds", def.getBlockSeconds(), "@@none@@");
-        doWriteAttribute("url", def.getUrl(), "@@none@@");
+        doWriteAttribute("password", def.getPassword(), null);
+        doWriteAttribute("readTimeoutMillis", def.getReadTimeoutMillis(), null);
+        doWriteAttribute("aclToken", def.getAclToken(), null);
+        doWriteAttribute("connectTimeoutMillis", def.getConnectTimeoutMillis(), null);
+        doWriteAttribute("writeTimeoutMillis", def.getWriteTimeoutMillis(), null);
+        doWriteAttribute("datacenter", def.getDatacenter(), null);
+        doWriteAttribute("userName", def.getUserName(), null);
+        doWriteAttribute("blockSeconds", def.getBlockSeconds(), "10");
+        doWriteAttribute("url", def.getUrl(), null);
         doWriteServiceCallConfigurationElements(def);
         endElement(name);
     }
     protected void doWriteCustomServiceCallServiceFilterConfiguration(String name, CustomServiceCallServiceFilterConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("ref", def.getServiceFilterRef(), "@@none@@");
+        doWriteAttribute("ref", def.getServiceFilterRef(), null);
         doWriteServiceCallConfigurationElements(def);
         endElement(name);
     }
@@ -2110,8 +2110,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteDnsServiceCallServiceDiscoveryConfiguration(String name, DnsServiceCallServiceDiscoveryConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("domain", def.getDomain(), "@@none@@");
-        doWriteAttribute("proto", def.getProto(), "@@none@@");
+        doWriteAttribute("domain", def.getDomain(), null);
+        doWriteAttribute("proto", def.getProto(), "_tcp");
         doWriteServiceCallConfigurationElements(def);
         endElement(name);
     }
@@ -2124,25 +2124,25 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteKubernetesServiceCallServiceDiscoveryConfiguration(String name, KubernetesServiceCallServiceDiscoveryConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("lookup", def.getLookup(), "@@none@@");
-        doWriteAttribute("portProtocol", def.getPortProtocol(), "@@none@@");
-        doWriteAttribute("caCertData", def.getCaCertData(), "@@none@@");
-        doWriteAttribute("portName", def.getPortName(), "@@none@@");
-        doWriteAttribute("oauthToken", def.getOauthToken(), "@@none@@");
-        doWriteAttribute("clientKeyAlgo", def.getClientKeyAlgo(), "@@none@@");
-        doWriteAttribute("clientCertFile", def.getClientCertFile(), "@@none@@");
-        doWriteAttribute("dnsDomain", def.getDnsDomain(), "@@none@@");
-        doWriteAttribute("password", def.getPassword(), "@@none@@");
-        doWriteAttribute("apiVersion", def.getApiVersion(), "@@none@@");
-        doWriteAttribute("clientKeyData", def.getClientKeyData(), "@@none@@");
-        doWriteAttribute("masterUrl", def.getMasterUrl(), "@@none@@");
-        doWriteAttribute("namespace", def.getNamespace(), "@@none@@");
-        doWriteAttribute("clientCertData", def.getClientCertData(), "@@none@@");
-        doWriteAttribute("clientKeyFile", def.getClientKeyFile(), "@@none@@");
-        doWriteAttribute("caCertFile", def.getCaCertFile(), "@@none@@");
-        doWriteAttribute("clientKeyPassphrase", def.getClientKeyPassphrase(), "@@none@@");
-        doWriteAttribute("trustCerts", def.getTrustCerts(), "@@none@@");
-        doWriteAttribute("username", def.getUsername(), "@@none@@");
+        doWriteAttribute("lookup", def.getLookup(), "environment");
+        doWriteAttribute("portProtocol", def.getPortProtocol(), null);
+        doWriteAttribute("caCertData", def.getCaCertData(), null);
+        doWriteAttribute("portName", def.getPortName(), null);
+        doWriteAttribute("oauthToken", def.getOauthToken(), null);
+        doWriteAttribute("clientKeyAlgo", def.getClientKeyAlgo(), null);
+        doWriteAttribute("clientCertFile", def.getClientCertFile(), null);
+        doWriteAttribute("dnsDomain", def.getDnsDomain(), null);
+        doWriteAttribute("password", def.getPassword(), null);
+        doWriteAttribute("apiVersion", def.getApiVersion(), null);
+        doWriteAttribute("clientKeyData", def.getClientKeyData(), null);
+        doWriteAttribute("masterUrl", def.getMasterUrl(), null);
+        doWriteAttribute("namespace", def.getNamespace(), null);
+        doWriteAttribute("clientCertData", def.getClientCertData(), null);
+        doWriteAttribute("clientKeyFile", def.getClientKeyFile(), null);
+        doWriteAttribute("caCertFile", def.getCaCertFile(), null);
+        doWriteAttribute("clientKeyPassphrase", def.getClientKeyPassphrase(), null);
+        doWriteAttribute("trustCerts", def.getTrustCerts(), null);
+        doWriteAttribute("username", def.getUsername(), null);
         doWriteServiceCallConfigurationElements(def);
         endElement(name);
     }
@@ -2164,14 +2164,14 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteServiceCallConfigurationDefinition(String name, ServiceCallConfigurationDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("serviceDiscoveryRef", def.getServiceDiscoveryRef(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
-        doWriteAttribute("expressionRef", def.getExpressionRef(), "@@none@@");
-        doWriteAttribute("component", def.getComponent(), "@@none@@");
-        doWriteAttribute("loadBalancerRef", def.getLoadBalancerRef(), "@@none@@");
-        doWriteAttribute("serviceFilterRef", def.getServiceFilterRef(), "@@none@@");
-        doWriteAttribute("serviceChooserRef", def.getServiceChooserRef(), "@@none@@");
+        doWriteAttribute("serviceDiscoveryRef", def.getServiceDiscoveryRef(), null);
+        doWriteAttribute("pattern", def.getPattern(), null);
+        doWriteAttribute("uri", def.getUri(), null);
+        doWriteAttribute("expressionRef", def.getExpressionRef(), null);
+        doWriteAttribute("component", def.getComponent(), "http");
+        doWriteAttribute("loadBalancerRef", def.getLoadBalancerRef(), null);
+        doWriteAttribute("serviceFilterRef", def.getServiceFilterRef(), null);
+        doWriteAttribute("serviceChooserRef", def.getServiceChooserRef(), null);
         doWriteElement(null, def.getServiceFilterConfiguration(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "BlacklistServiceCallServiceFilterConfiguration" -> doWriteBlacklistServiceCallServiceFilterConfiguration("blacklistServiceFilter", (BlacklistServiceCallServiceFilterConfiguration) v);
@@ -2203,16 +2203,16 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteServiceCallDefinition(String name, ServiceCallDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("serviceDiscoveryRef", def.getServiceDiscoveryRef(), "@@none@@");
-        doWriteAttribute("configurationRef", def.getConfigurationRef(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
-        doWriteAttribute("expressionRef", def.getExpressionRef(), "@@none@@");
-        doWriteAttribute("component", def.getComponent(), "@@none@@");
-        doWriteAttribute("loadBalancerRef", def.getLoadBalancerRef(), "@@none@@");
-        doWriteAttribute("serviceFilterRef", def.getServiceFilterRef(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("serviceChooserRef", def.getServiceChooserRef(), "@@none@@");
+        doWriteAttribute("serviceDiscoveryRef", def.getServiceDiscoveryRef(), null);
+        doWriteAttribute("configurationRef", def.getConfigurationRef(), null);
+        doWriteAttribute("pattern", def.getPattern(), null);
+        doWriteAttribute("uri", def.getUri(), null);
+        doWriteAttribute("expressionRef", def.getExpressionRef(), null);
+        doWriteAttribute("component", def.getComponent(), "http");
+        doWriteAttribute("loadBalancerRef", def.getLoadBalancerRef(), null);
+        doWriteAttribute("serviceFilterRef", def.getServiceFilterRef(), null);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("serviceChooserRef", def.getServiceChooserRef(), null);
         doWriteElement(null, def.getServiceFilterConfiguration(), (n, v) -> {
             switch (v.getClass().getSimpleName()) {
                 case "BlacklistServiceCallServiceFilterConfiguration" -> doWriteBlacklistServiceCallServiceFilterConfiguration("blacklistServiceFilter", (BlacklistServiceCallServiceFilterConfiguration) v);
@@ -2244,8 +2244,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteServiceCallExpressionConfiguration(String name, ServiceCallExpressionConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("hostHeader", def.getHostHeader(), "@@none@@");
-        doWriteAttribute("portHeader", def.getPortHeader(), "@@none@@");
+        doWriteAttribute("hostHeader", def.getHostHeader(), "CamelServiceCallServiceHost");
+        doWriteAttribute("portHeader", def.getPortHeader(), "CamelServiceCallServicePort");
         doWriteServiceCallConfigurationElements(def);
         doWriteElement(null, def.getExpressionType(), this::doWriteExpressionDefinitionRef);
         endElement(name);
@@ -2284,24 +2284,24 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteZooKeeperServiceCallServiceDiscoveryConfiguration(String name, ZooKeeperServiceCallServiceDiscoveryConfiguration def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("reconnectMaxRetries", def.getReconnectMaxRetries(), "@@none@@");
-        doWriteAttribute("nodes", def.getNodes(), "@@none@@");
-        doWriteAttribute("basePath", def.getBasePath(), "@@none@@");
-        doWriteAttribute("reconnectBaseSleepTime", def.getReconnectBaseSleepTime(), "@@none@@");
-        doWriteAttribute("namespace", def.getNamespace(), "@@none@@");
-        doWriteAttribute("reconnectMaxSleepTime", def.getReconnectMaxSleepTime(), "@@none@@");
-        doWriteAttribute("sessionTimeout", def.getSessionTimeout(), "@@none@@");
-        doWriteAttribute("connectionTimeout", def.getConnectionTimeout(), "@@none@@");
+        doWriteAttribute("reconnectMaxRetries", def.getReconnectMaxRetries(), null);
+        doWriteAttribute("nodes", def.getNodes(), null);
+        doWriteAttribute("basePath", def.getBasePath(), null);
+        doWriteAttribute("reconnectBaseSleepTime", def.getReconnectBaseSleepTime(), null);
+        doWriteAttribute("namespace", def.getNamespace(), null);
+        doWriteAttribute("reconnectMaxSleepTime", def.getReconnectMaxSleepTime(), null);
+        doWriteAttribute("sessionTimeout", def.getSessionTimeout(), null);
+        doWriteAttribute("connectionTimeout", def.getConnectionTimeout(), null);
         doWriteServiceCallConfigurationElements(def);
         endElement(name);
     }
     protected void doWriteBatchResequencerConfig(String name, BatchResequencerConfig def) throws IOException {
         startElement(name);
-        doWriteAttribute("reverse", def.getReverse(), "@@none@@");
-        doWriteAttribute("batchSize", def.getBatchSize(), "@@none@@");
-        doWriteAttribute("allowDuplicates", def.getAllowDuplicates(), "@@none@@");
-        doWriteAttribute("batchTimeout", def.getBatchTimeout(), "@@none@@");
-        doWriteAttribute("ignoreInvalidExchanges", def.getIgnoreInvalidExchanges(), "@@none@@");
+        doWriteAttribute("reverse", def.getReverse(), null);
+        doWriteAttribute("batchSize", def.getBatchSize(), "100");
+        doWriteAttribute("allowDuplicates", def.getAllowDuplicates(), null);
+        doWriteAttribute("batchTimeout", def.getBatchTimeout(), "1000");
+        doWriteAttribute("ignoreInvalidExchanges", def.getIgnoreInvalidExchanges(), null);
         endElement(name);
     }
     protected void doWriteResequencerConfig(String name, ResequencerConfig def) throws IOException {
@@ -2310,153 +2310,153 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteStreamResequencerConfig(String name, StreamResequencerConfig def) throws IOException {
         startElement(name);
-        doWriteAttribute("comparator", def.getComparator(), "@@none@@");
-        doWriteAttribute("timeout", def.getTimeout(), "@@none@@");
-        doWriteAttribute("rejectOld", def.getRejectOld(), "@@none@@");
-        doWriteAttribute("ignoreInvalidExchanges", def.getIgnoreInvalidExchanges(), "@@none@@");
-        doWriteAttribute("deliveryAttemptInterval", def.getDeliveryAttemptInterval(), "@@none@@");
-        doWriteAttribute("capacity", def.getCapacity(), "@@none@@");
+        doWriteAttribute("comparator", def.getComparator(), null);
+        doWriteAttribute("timeout", def.getTimeout(), "1000");
+        doWriteAttribute("rejectOld", def.getRejectOld(), null);
+        doWriteAttribute("ignoreInvalidExchanges", def.getIgnoreInvalidExchanges(), null);
+        doWriteAttribute("deliveryAttemptInterval", def.getDeliveryAttemptInterval(), "1000");
+        doWriteAttribute("capacity", def.getCapacity(), "1000");
         endElement(name);
     }
     protected void doWriteASN1DataFormat(String name, ASN1DataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("usingIterator", def.getUsingIterator(), "@@none@@");
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("usingIterator", def.getUsingIterator(), null);
         endElement(name);
     }
     protected void doWriteAvroDataFormat(String name, AvroDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "@@none@@");
-        doWriteAttribute("include", def.getInclude(), "@@none@@");
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "@@none@@");
-        doWriteAttribute("timezone", def.getTimezone(), "@@none@@");
-        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), "@@none@@");
-        doWriteAttribute("instanceClassName", def.getInstanceClassName(), "@@none@@");
-        doWriteAttribute("collectionType", def.getCollectionTypeName(), "@@none@@");
-        doWriteAttribute("allowJmsType", def.getAllowJmsType(), "@@none@@");
-        doWriteAttribute("jsonView", def.getJsonViewTypeName(), "@@none@@");
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), "@@none@@");
-        doWriteAttribute("useList", def.getUseList(), "@@none@@");
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), "@@none@@");
-        doWriteAttribute("moduleRefs", def.getModuleRefs(), "@@none@@");
-        doWriteAttribute("schemaResolver", def.getSchemaResolver(), "@@none@@");
-        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "@@none@@");
-        doWriteAttribute("objectMapper", def.getObjectMapper(), "@@none@@");
-        doWriteAttribute("library", toString(def.getLibrary()), "@@none@@");
-        doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "@@none@@");
+        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), null);
+        doWriteAttribute("include", def.getInclude(), null);
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute("timezone", def.getTimezone(), null);
+        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), null);
+        doWriteAttribute("instanceClassName", def.getInstanceClassName(), null);
+        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
+        doWriteAttribute("allowJmsType", def.getAllowJmsType(), null);
+        doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
+        doWriteAttribute("useList", def.getUseList(), null);
+        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
+        doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
+        doWriteAttribute("schemaResolver", def.getSchemaResolver(), null);
+        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
+        doWriteAttribute("objectMapper", def.getObjectMapper(), null);
+        doWriteAttribute("library", toString(def.getLibrary()), "avroJackson");
+        doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), null);
         endElement(name);
     }
     protected void doWriteBarcodeDataFormat(String name, BarcodeDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("barcodeFormat", def.getBarcodeFormat(), "@@none@@");
-        doWriteAttribute("width", def.getWidth(), "@@none@@");
-        doWriteAttribute("imageType", def.getImageType(), "@@none@@");
-        doWriteAttribute("height", def.getHeight(), "@@none@@");
+        doWriteAttribute("barcodeFormat", def.getBarcodeFormat(), null);
+        doWriteAttribute("width", def.getWidth(), null);
+        doWriteAttribute("imageType", def.getImageType(), null);
+        doWriteAttribute("height", def.getHeight(), null);
         endElement(name);
     }
     protected void doWriteBase64DataFormat(String name, Base64DataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("urlSafe", def.getUrlSafe(), "@@none@@");
-        doWriteAttribute("lineSeparator", def.getLineSeparator(), "@@none@@");
-        doWriteAttribute("lineLength", def.getLineLength(), "@@none@@");
+        doWriteAttribute("urlSafe", def.getUrlSafe(), null);
+        doWriteAttribute("lineSeparator", def.getLineSeparator(), null);
+        doWriteAttribute("lineLength", def.getLineLength(), "76");
         endElement(name);
     }
     protected void doWriteBeanioDataFormat(String name, BeanioDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("mapping", def.getMapping(), "@@none@@");
-        doWriteAttribute("ignoreUnexpectedRecords", def.getIgnoreUnexpectedRecords(), "@@none@@");
-        doWriteAttribute("ignoreUnidentifiedRecords", def.getIgnoreUnidentifiedRecords(), "@@none@@");
-        doWriteAttribute("beanReaderErrorHandlerType", def.getBeanReaderErrorHandlerType(), "@@none@@");
-        doWriteAttribute("unmarshalSingleObject", def.getUnmarshalSingleObject(), "@@none@@");
-        doWriteAttribute("encoding", def.getEncoding(), "@@none@@");
-        doWriteAttribute("streamName", def.getStreamName(), "@@none@@");
-        doWriteAttribute("ignoreInvalidRecords", def.getIgnoreInvalidRecords(), "@@none@@");
+        doWriteAttribute("mapping", def.getMapping(), null);
+        doWriteAttribute("ignoreUnexpectedRecords", def.getIgnoreUnexpectedRecords(), null);
+        doWriteAttribute("ignoreUnidentifiedRecords", def.getIgnoreUnidentifiedRecords(), null);
+        doWriteAttribute("beanReaderErrorHandlerType", def.getBeanReaderErrorHandlerType(), null);
+        doWriteAttribute("unmarshalSingleObject", def.getUnmarshalSingleObject(), null);
+        doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("streamName", def.getStreamName(), null);
+        doWriteAttribute("ignoreInvalidRecords", def.getIgnoreInvalidRecords(), null);
         endElement(name);
     }
     protected void doWriteBindyDataFormat(String name, BindyDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("unwrapSingleInstance", def.getUnwrapSingleInstance(), "@@none@@");
-        doWriteAttribute("classType", def.getClassTypeAsString(), "@@none@@");
-        doWriteAttribute("locale", def.getLocale(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("allowEmptyStream", def.getAllowEmptyStream(), "@@none@@");
+        doWriteAttribute("unwrapSingleInstance", def.getUnwrapSingleInstance(), "true");
+        doWriteAttribute("classType", def.getClassTypeAsString(), null);
+        doWriteAttribute("locale", def.getLocale(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("allowEmptyStream", def.getAllowEmptyStream(), "false");
         endElement(name);
     }
     protected void doWriteCBORDataFormat(String name, CBORDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "@@none@@");
-        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "@@none@@");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "@@none@@");
-        doWriteAttribute("objectMapper", def.getObjectMapper(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("collectionType", def.getCollectionTypeName(), "@@none@@");
-        doWriteAttribute("allowJmsType", def.getAllowJmsType(), "@@none@@");
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), "@@none@@");
-        doWriteAttribute("useList", def.getUseList(), "@@none@@");
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), "@@none@@");
+        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "false");
+        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "false");
+        doWriteAttribute("objectMapper", def.getObjectMapper(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
+        doWriteAttribute("allowJmsType", def.getAllowJmsType(), "false");
+        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
+        doWriteAttribute("useList", def.getUseList(), "false");
+        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
         endElement(name);
     }
     protected void doWriteCryptoDataFormat(String name, CryptoDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("shouldAppendHMAC", def.getShouldAppendHMAC(), "@@none@@");
-        doWriteAttribute("inline", def.getInline(), "@@none@@");
-        doWriteAttribute("macAlgorithm", def.getMacAlgorithm(), "@@none@@");
-        doWriteAttribute("algorithmParameterRef", def.getAlgorithmParameterRef(), "@@none@@");
-        doWriteAttribute("initVectorRef", def.getInitVectorRef(), "@@none@@");
-        doWriteAttribute("cryptoProvider", def.getCryptoProvider(), "@@none@@");
-        doWriteAttribute("keyRef", def.getKeyRef(), "@@none@@");
-        doWriteAttribute("bufferSize", def.getBufferSize(), "@@none@@");
-        doWriteAttribute("algorithm", def.getAlgorithm(), "@@none@@");
+        doWriteAttribute("shouldAppendHMAC", def.getShouldAppendHMAC(), "true");
+        doWriteAttribute("inline", def.getInline(), "false");
+        doWriteAttribute("macAlgorithm", def.getMacAlgorithm(), "HmacSHA1");
+        doWriteAttribute("algorithmParameterRef", def.getAlgorithmParameterRef(), null);
+        doWriteAttribute("initVectorRef", def.getInitVectorRef(), null);
+        doWriteAttribute("cryptoProvider", def.getCryptoProvider(), null);
+        doWriteAttribute("keyRef", def.getKeyRef(), null);
+        doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
+        doWriteAttribute("algorithm", def.getAlgorithm(), null);
         endElement(name);
     }
     protected void doWriteCsvDataFormat(String name, CsvDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("escapeDisabled", def.getEscapeDisabled(), "@@none@@");
-        doWriteAttribute("recordConverterRef", def.getRecordConverterRef(), "@@none@@");
-        doWriteAttribute("ignoreEmptyLines", def.getIgnoreEmptyLines(), "@@none@@");
-        doWriteAttribute("trailingDelimiter", def.getTrailingDelimiter(), "@@none@@");
-        doWriteAttribute("lazyLoad", def.getLazyLoad(), "@@none@@");
-        doWriteAttribute("headerDisabled", def.getHeaderDisabled(), "@@none@@");
-        doWriteAttribute("commentMarkerDisabled", def.getCommentMarkerDisabled(), "@@none@@");
-        doWriteAttribute("skipHeaderRecord", def.getSkipHeaderRecord(), "@@none@@");
-        doWriteAttribute("quote", def.getQuote(), "@@none@@");
-        doWriteAttribute("useMaps", def.getUseMaps(), "@@none@@");
-        doWriteAttribute("trim", def.getTrim(), "@@none@@");
-        doWriteAttribute("delimiter", def.getDelimiter(), "@@none@@");
-        doWriteAttribute("nullString", def.getNullString(), "@@none@@");
-        doWriteAttribute("allowMissingColumnNames", def.getAllowMissingColumnNames(), "@@none@@");
-        doWriteAttribute("escape", def.getEscape(), "@@none@@");
-        doWriteAttribute("nullStringDisabled", def.getNullStringDisabled(), "@@none@@");
-        doWriteAttribute("commentMarker", def.getCommentMarker(), "@@none@@");
-        doWriteAttribute("formatRef", def.getFormatRef(), "@@none@@");
-        doWriteAttribute("quoteMode", def.getQuoteMode(), "@@none@@");
-        doWriteAttribute("formatName", def.getFormatName(), "@@none@@");
-        doWriteAttribute("ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), "@@none@@");
-        doWriteAttribute("quoteDisabled", def.getQuoteDisabled(), "@@none@@");
-        doWriteAttribute("useOrderedMaps", def.getUseOrderedMaps(), "@@none@@");
-        doWriteAttribute("ignoreHeaderCase", def.getIgnoreHeaderCase(), "@@none@@");
-        doWriteAttribute("recordSeparatorDisabled", def.getRecordSeparatorDisabled(), "@@none@@");
-        doWriteAttribute("captureHeaderRecord", def.getCaptureHeaderRecord(), "@@none@@");
-        doWriteAttribute("marshallerFactoryRef", def.getMarshallerFactoryRef(), "@@none@@");
-        doWriteAttribute("recordSeparator", def.getRecordSeparator(), "@@none@@");
+        doWriteAttribute("escapeDisabled", def.getEscapeDisabled(), null);
+        doWriteAttribute("recordConverterRef", def.getRecordConverterRef(), null);
+        doWriteAttribute("ignoreEmptyLines", def.getIgnoreEmptyLines(), null);
+        doWriteAttribute("trailingDelimiter", def.getTrailingDelimiter(), null);
+        doWriteAttribute("lazyLoad", def.getLazyLoad(), null);
+        doWriteAttribute("headerDisabled", def.getHeaderDisabled(), null);
+        doWriteAttribute("commentMarkerDisabled", def.getCommentMarkerDisabled(), null);
+        doWriteAttribute("skipHeaderRecord", def.getSkipHeaderRecord(), null);
+        doWriteAttribute("quote", def.getQuote(), null);
+        doWriteAttribute("useMaps", def.getUseMaps(), null);
+        doWriteAttribute("trim", def.getTrim(), null);
+        doWriteAttribute("delimiter", def.getDelimiter(), null);
+        doWriteAttribute("nullString", def.getNullString(), null);
+        doWriteAttribute("allowMissingColumnNames", def.getAllowMissingColumnNames(), null);
+        doWriteAttribute("escape", def.getEscape(), null);
+        doWriteAttribute("nullStringDisabled", def.getNullStringDisabled(), null);
+        doWriteAttribute("commentMarker", def.getCommentMarker(), null);
+        doWriteAttribute("formatRef", def.getFormatRef(), null);
+        doWriteAttribute("quoteMode", def.getQuoteMode(), null);
+        doWriteAttribute("formatName", def.getFormatName(), "DEFAULT");
+        doWriteAttribute("ignoreSurroundingSpaces", def.getIgnoreSurroundingSpaces(), null);
+        doWriteAttribute("quoteDisabled", def.getQuoteDisabled(), null);
+        doWriteAttribute("useOrderedMaps", def.getUseOrderedMaps(), null);
+        doWriteAttribute("ignoreHeaderCase", def.getIgnoreHeaderCase(), null);
+        doWriteAttribute("recordSeparatorDisabled", def.getRecordSeparatorDisabled(), null);
+        doWriteAttribute("captureHeaderRecord", def.getCaptureHeaderRecord(), null);
+        doWriteAttribute("marshallerFactoryRef", def.getMarshallerFactoryRef(), null);
+        doWriteAttribute("recordSeparator", def.getRecordSeparator(), null);
         doWriteList(null, "header", def.getHeader(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteCustomDataFormat(String name, CustomDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteDataFormatsDefinition(String name, DataFormatsDefinition def) throws IOException {
@@ -2512,24 +2512,24 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteFhirDataformatAttributes(FhirDataformat def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("dontStripVersionsFromReferencesAtPaths", def.getDontStripVersionsFromReferencesAtPaths(), "@@none@@");
-        doWriteAttribute("parserOptions", def.getParserOptions(), "@@none@@");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "@@none@@");
-        doWriteAttribute("dontEncodeElements", def.getDontEncodeElements(), "@@none@@");
-        doWriteAttribute("summaryMode", def.getSummaryMode(), "@@none@@");
-        doWriteAttribute("forceResourceId", def.getForceResourceId(), "@@none@@");
-        doWriteAttribute("encodeElementsAppliesToChildResourcesOnly", def.getEncodeElementsAppliesToChildResourcesOnly(), "@@none@@");
-        doWriteAttribute("parserErrorHandler", def.getParserErrorHandler(), "@@none@@");
-        doWriteAttribute("serverBaseUrl", def.getServerBaseUrl(), "@@none@@");
-        doWriteAttribute("fhirVersion", def.getFhirVersion(), "@@none@@");
-        doWriteAttribute("suppressNarratives", def.getSuppressNarratives(), "@@none@@");
-        doWriteAttribute("fhirContext", def.getFhirContext(), "@@none@@");
-        doWriteAttribute("stripVersionsFromReferences", def.getStripVersionsFromReferences(), "@@none@@");
-        doWriteAttribute("encodeElements", def.getEncodeElements(), "@@none@@");
-        doWriteAttribute("preferTypes", def.getPreferTypes(), "@@none@@");
-        doWriteAttribute("overrideResourceIdWithBundleEntryFullUrl", def.getOverrideResourceIdWithBundleEntryFullUrl(), "@@none@@");
-        doWriteAttribute("omitResourceId", def.getOmitResourceId(), "@@none@@");
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("dontStripVersionsFromReferencesAtPaths", def.getDontStripVersionsFromReferencesAtPaths(), null);
+        doWriteAttribute("parserOptions", def.getParserOptions(), null);
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
+        doWriteAttribute("dontEncodeElements", def.getDontEncodeElements(), null);
+        doWriteAttribute("summaryMode", def.getSummaryMode(), null);
+        doWriteAttribute("forceResourceId", def.getForceResourceId(), null);
+        doWriteAttribute("encodeElementsAppliesToChildResourcesOnly", def.getEncodeElementsAppliesToChildResourcesOnly(), null);
+        doWriteAttribute("parserErrorHandler", def.getParserErrorHandler(), null);
+        doWriteAttribute("serverBaseUrl", def.getServerBaseUrl(), null);
+        doWriteAttribute("fhirVersion", def.getFhirVersion(), "R4");
+        doWriteAttribute("suppressNarratives", def.getSuppressNarratives(), null);
+        doWriteAttribute("fhirContext", def.getFhirContext(), null);
+        doWriteAttribute("stripVersionsFromReferences", def.getStripVersionsFromReferences(), null);
+        doWriteAttribute("encodeElements", def.getEncodeElements(), null);
+        doWriteAttribute("preferTypes", def.getPreferTypes(), null);
+        doWriteAttribute("overrideResourceIdWithBundleEntryFullUrl", def.getOverrideResourceIdWithBundleEntryFullUrl(), null);
+        doWriteAttribute("omitResourceId", def.getOmitResourceId(), null);
     }
     protected void doWriteFhirDataformat(String name, FhirDataformat def) throws IOException {
         startElement(name);
@@ -2549,32 +2549,32 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteFlatpackDataFormat(String name, FlatpackDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("allowShortLines", def.getAllowShortLines(), "@@none@@");
-        doWriteAttribute("delimiter", def.getDelimiter(), "@@none@@");
-        doWriteAttribute("fixed", def.getFixed(), "@@none@@");
-        doWriteAttribute("definition", def.getDefinition(), "@@none@@");
-        doWriteAttribute("ignoreFirstRecord", def.getIgnoreFirstRecord(), "@@none@@");
-        doWriteAttribute("parserFactoryRef", def.getParserFactoryRef(), "@@none@@");
-        doWriteAttribute("textQualifier", def.getTextQualifier(), "@@none@@");
-        doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns(), "@@none@@");
+        doWriteAttribute("allowShortLines", def.getAllowShortLines(), null);
+        doWriteAttribute("delimiter", def.getDelimiter(), ",");
+        doWriteAttribute("fixed", def.getFixed(), null);
+        doWriteAttribute("definition", def.getDefinition(), null);
+        doWriteAttribute("ignoreFirstRecord", def.getIgnoreFirstRecord(), "true");
+        doWriteAttribute("parserFactoryRef", def.getParserFactoryRef(), null);
+        doWriteAttribute("textQualifier", def.getTextQualifier(), null);
+        doWriteAttribute("ignoreExtraColumns", def.getIgnoreExtraColumns(), null);
         endElement(name);
     }
     protected void doWriteFuryDataFormat(String name, FuryDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("threadSafe", def.getThreadSafe(), "@@none@@");
-        doWriteAttribute("requireClassRegistration", def.getRequireClassRegistration(), "@@none@@");
-        doWriteAttribute("allowAutoWiredFury", def.getAllowAutoWiredFury(), "@@none@@");
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("threadSafe", def.getThreadSafe(), "true");
+        doWriteAttribute("requireClassRegistration", def.getRequireClassRegistration(), "true");
+        doWriteAttribute("allowAutoWiredFury", def.getAllowAutoWiredFury(), "true");
         endElement(name);
     }
     protected void doWriteGrokDataFormat(String name, GrokDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("flattened", def.getFlattened(), "@@none@@");
-        doWriteAttribute("namedOnly", def.getNamedOnly(), "@@none@@");
-        doWriteAttribute("pattern", def.getPattern(), "@@none@@");
-        doWriteAttribute("allowMultipleMatchesPerLine", def.getAllowMultipleMatchesPerLine(), "@@none@@");
+        doWriteAttribute("flattened", def.getFlattened(), null);
+        doWriteAttribute("namedOnly", def.getNamedOnly(), null);
+        doWriteAttribute("pattern", def.getPattern(), null);
+        doWriteAttribute("allowMultipleMatchesPerLine", def.getAllowMultipleMatchesPerLine(), "true");
         endElement(name);
     }
     protected void doWriteGzipDeflaterDataFormat(String name, GzipDeflaterDataFormat def) throws IOException {
@@ -2585,163 +2585,163 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteHL7DataFormat(String name, HL7DataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("validate", def.getValidate(), "@@none@@");
+        doWriteAttribute("validate", def.getValidate(), "true");
         endElement(name);
     }
     protected void doWriteIcalDataFormat(String name, IcalDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("validating", def.getValidating(), "@@none@@");
+        doWriteAttribute("validating", def.getValidating(), null);
         endElement(name);
     }
     protected void doWriteJacksonXMLDataFormat(String name, JacksonXMLDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("include", def.getInclude(), "@@none@@");
-        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "@@none@@");
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("timezone", def.getTimezone(), "@@none@@");
-        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), "@@none@@");
-        doWriteAttribute("collectionType", def.getCollectionTypeName(), "@@none@@");
-        doWriteAttribute("allowJmsType", def.getAllowJmsType(), "@@none@@");
-        doWriteAttribute("jsonView", def.getJsonViewTypeName(), "@@none@@");
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), "@@none@@");
-        doWriteAttribute("useList", def.getUseList(), "@@none@@");
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), "@@none@@");
-        doWriteAttribute("moduleRefs", def.getModuleRefs(), "@@none@@");
-        doWriteAttribute("enableJaxbAnnotationModule", def.getEnableJaxbAnnotationModule(), "@@none@@");
-        doWriteAttribute("xmlMapper", def.getXmlMapper(), "@@none@@");
+        doWriteAttribute("include", def.getInclude(), null);
+        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), null);
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("timezone", def.getTimezone(), null);
+        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), null);
+        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
+        doWriteAttribute("allowJmsType", def.getAllowJmsType(), null);
+        doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
+        doWriteAttribute("useList", def.getUseList(), null);
+        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
+        doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
+        doWriteAttribute("enableJaxbAnnotationModule", def.getEnableJaxbAnnotationModule(), null);
+        doWriteAttribute("xmlMapper", def.getXmlMapper(), null);
         endElement(name);
     }
     protected void doWriteJaxbDataFormat(String name, JaxbDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("accessExternalSchemaProtocols", def.getAccessExternalSchemaProtocols(), "@@none@@");
-        doWriteAttribute("schema", def.getSchema(), "@@none@@");
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "@@none@@");
-        doWriteAttribute("schemaLocation", def.getSchemaLocation(), "@@none@@");
-        doWriteAttribute("contextPathIsClassName", def.getContextPathIsClassName(), "@@none@@");
-        doWriteAttribute("ignoreJAXBElement", def.getIgnoreJAXBElement(), "@@none@@");
-        doWriteAttribute("xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), "@@none@@");
-        doWriteAttribute("schemaSeverityLevel", def.getSchemaSeverityLevel(), "@@none@@");
-        doWriteAttribute("contextPath", def.getContextPath(), "@@none@@");
-        doWriteAttribute("noNamespaceSchemaLocation", def.getNoNamespaceSchemaLocation(), "@@none@@");
-        doWriteAttribute("encoding", def.getEncoding(), "@@none@@");
-        doWriteAttribute("fragment", def.getFragment(), "@@none@@");
-        doWriteAttribute("filterNonXmlChars", def.getFilterNonXmlChars(), "@@none@@");
-        doWriteAttribute("mustBeJAXBElement", def.getMustBeJAXBElement(), "@@none@@");
-        doWriteAttribute("objectFactory", def.getObjectFactory(), "@@none@@");
-        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), "@@none@@");
-        doWriteAttribute("partClass", def.getPartClass(), "@@none@@");
-        doWriteAttribute("jaxbProviderProperties", def.getJaxbProviderProperties(), "@@none@@");
-        doWriteAttribute("partNamespace", def.getPartNamespace(), "@@none@@");
+        doWriteAttribute("accessExternalSchemaProtocols", def.getAccessExternalSchemaProtocols(), "false");
+        doWriteAttribute("schema", def.getSchema(), null);
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
+        doWriteAttribute("schemaLocation", def.getSchemaLocation(), null);
+        doWriteAttribute("contextPathIsClassName", def.getContextPathIsClassName(), null);
+        doWriteAttribute("ignoreJAXBElement", def.getIgnoreJAXBElement(), null);
+        doWriteAttribute("xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
+        doWriteAttribute("schemaSeverityLevel", def.getSchemaSeverityLevel(), "0");
+        doWriteAttribute("contextPath", def.getContextPath(), null);
+        doWriteAttribute("noNamespaceSchemaLocation", def.getNoNamespaceSchemaLocation(), null);
+        doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("fragment", def.getFragment(), null);
+        doWriteAttribute("filterNonXmlChars", def.getFilterNonXmlChars(), null);
+        doWriteAttribute("mustBeJAXBElement", def.getMustBeJAXBElement(), null);
+        doWriteAttribute("objectFactory", def.getObjectFactory(), null);
+        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
+        doWriteAttribute("partClass", def.getPartClass(), null);
+        doWriteAttribute("jaxbProviderProperties", def.getJaxbProviderProperties(), null);
+        doWriteAttribute("partNamespace", def.getPartNamespace(), null);
         endElement(name);
     }
     protected void doWriteJsonApiDataFormat(String name, JsonApiDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("dataFormatTypes", def.getDataFormatTypes(), "@@none@@");
-        doWriteAttribute("mainFormatType", def.getMainFormatType(), "@@none@@");
+        doWriteAttribute("dataFormatTypes", def.getDataFormatTypes(), null);
+        doWriteAttribute("mainFormatType", def.getMainFormatType(), null);
         endElement(name);
     }
     protected void doWriteJsonDataFormat(String name, JsonDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("dateFormatPattern", def.getDateFormatPattern(), "@@none@@");
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("timezone", def.getTimezone(), "@@none@@");
-        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), "@@none@@");
-        doWriteAttribute("collectionType", def.getCollectionTypeName(), "@@none@@");
-        doWriteAttribute("allowJmsType", def.getAllowJmsType(), "@@none@@");
-        doWriteAttribute("jsonView", def.getJsonViewTypeName(), "@@none@@");
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), "@@none@@");
-        doWriteAttribute("library", toString(def.getLibrary()), "@@none@@");
-        doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "@@none@@");
-        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "@@none@@");
-        doWriteAttribute("include", def.getInclude(), "@@none@@");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "@@none@@");
-        doWriteAttribute("useList", def.getUseList(), "@@none@@");
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), "@@none@@");
-        doWriteAttribute("moduleRefs", def.getModuleRefs(), "@@none@@");
-        doWriteAttribute("schemaResolver", def.getSchemaResolver(), "@@none@@");
-        doWriteAttribute("combineUnicodeSurrogates", def.getCombineUnicodeSurrogates(), "@@none@@");
-        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "@@none@@");
-        doWriteAttribute("objectMapper", def.getObjectMapper(), "@@none@@");
-        doWriteAttribute("namingStrategy", def.getNamingStrategy(), "@@none@@");
+        doWriteAttribute("dateFormatPattern", def.getDateFormatPattern(), null);
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("timezone", def.getTimezone(), null);
+        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), null);
+        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
+        doWriteAttribute("allowJmsType", def.getAllowJmsType(), null);
+        doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
+        doWriteAttribute("library", toString(def.getLibrary()), "Jackson");
+        doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "false");
+        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), null);
+        doWriteAttribute("include", def.getInclude(), null);
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute("useList", def.getUseList(), null);
+        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
+        doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
+        doWriteAttribute("schemaResolver", def.getSchemaResolver(), null);
+        doWriteAttribute("combineUnicodeSurrogates", def.getCombineUnicodeSurrogates(), null);
+        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
+        doWriteAttribute("objectMapper", def.getObjectMapper(), null);
+        doWriteAttribute("namingStrategy", def.getNamingStrategy(), null);
         endElement(name);
     }
     protected void doWriteLZFDataFormat(String name, LZFDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("usingParallelCompression", def.getUsingParallelCompression(), "@@none@@");
+        doWriteAttribute("usingParallelCompression", def.getUsingParallelCompression(), null);
         endElement(name);
     }
     protected void doWriteMimeMultipartDataFormat(String name, MimeMultipartDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("headersInline", def.getHeadersInline(), "@@none@@");
-        doWriteAttribute("multipartWithoutAttachment", def.getMultipartWithoutAttachment(), "@@none@@");
-        doWriteAttribute("multipartSubType", def.getMultipartSubType(), "@@none@@");
-        doWriteAttribute("includeHeaders", def.getIncludeHeaders(), "@@none@@");
-        doWriteAttribute("binaryContent", def.getBinaryContent(), "@@none@@");
+        doWriteAttribute("headersInline", def.getHeadersInline(), null);
+        doWriteAttribute("multipartWithoutAttachment", def.getMultipartWithoutAttachment(), null);
+        doWriteAttribute("multipartSubType", def.getMultipartSubType(), "mixed");
+        doWriteAttribute("includeHeaders", def.getIncludeHeaders(), null);
+        doWriteAttribute("binaryContent", def.getBinaryContent(), null);
         endElement(name);
     }
     protected void doWritePGPDataFormat(String name, PGPDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("armored", def.getArmored(), "@@none@@");
-        doWriteAttribute("signaturePassword", def.getSignaturePassword(), "@@none@@");
-        doWriteAttribute("signatureKeyRing", def.getSignatureKeyRing(), "@@none@@");
-        doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), "@@none@@");
-        doWriteAttribute("keyFileName", def.getKeyFileName(), "@@none@@");
-        doWriteAttribute("signatureKeyUserid", def.getSignatureKeyUserid(), "@@none@@");
-        doWriteAttribute("integrity", def.getIntegrity(), "@@none@@");
-        doWriteAttribute("password", def.getPassword(), "@@none@@");
-        doWriteAttribute("provider", def.getProvider(), "@@none@@");
-        doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), "@@none@@");
-        doWriteAttribute("keyUserid", def.getKeyUserid(), "@@none@@");
-        doWriteAttribute("signatureKeyFileName", def.getSignatureKeyFileName(), "@@none@@");
-        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), "@@none@@");
-        doWriteAttribute("algorithm", def.getAlgorithm(), "@@none@@");
+        doWriteAttribute("armored", def.getArmored(), "false");
+        doWriteAttribute("signaturePassword", def.getSignaturePassword(), null);
+        doWriteAttribute("signatureKeyRing", def.getSignatureKeyRing(), null);
+        doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute("keyFileName", def.getKeyFileName(), null);
+        doWriteAttribute("signatureKeyUserid", def.getSignatureKeyUserid(), null);
+        doWriteAttribute("integrity", def.getIntegrity(), "true");
+        doWriteAttribute("password", def.getPassword(), null);
+        doWriteAttribute("provider", def.getProvider(), null);
+        doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), null);
+        doWriteAttribute("keyUserid", def.getKeyUserid(), null);
+        doWriteAttribute("signatureKeyFileName", def.getSignatureKeyFileName(), null);
+        doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
+        doWriteAttribute("algorithm", def.getAlgorithm(), null);
         endElement(name);
     }
     protected void doWriteParquetAvroDataFormat(String name, ParquetAvroDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("compressionCodecName", def.getCompressionCodecName(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("lazyLoad", def.getLazyLoad(), "@@none@@");
+        doWriteAttribute("compressionCodecName", def.getCompressionCodecName(), "GZIP");
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("lazyLoad", def.getLazyLoad(), null);
         endElement(name);
     }
     protected void doWriteProtobufDataFormat(String name, ProtobufDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "@@none@@");
-        doWriteAttribute("timezone", def.getTimezone(), "@@none@@");
-        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), "@@none@@");
-        doWriteAttribute("collectionType", def.getCollectionTypeName(), "@@none@@");
-        doWriteAttribute("allowJmsType", def.getAllowJmsType(), "@@none@@");
-        doWriteAttribute("jsonView", def.getJsonViewTypeName(), "@@none@@");
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), "@@none@@");
-        doWriteAttribute("library", toString(def.getLibrary()), "@@none@@");
-        doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "@@none@@");
-        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "@@none@@");
-        doWriteAttribute("include", def.getInclude(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "@@none@@");
-        doWriteAttribute("instanceClass", def.getInstanceClass(), "@@none@@");
-        doWriteAttribute("useList", def.getUseList(), "@@none@@");
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), "@@none@@");
-        doWriteAttribute("moduleRefs", def.getModuleRefs(), "@@none@@");
-        doWriteAttribute("schemaResolver", def.getSchemaResolver(), "@@none@@");
-        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "@@none@@");
-        doWriteAttribute("objectMapper", def.getObjectMapper(), "@@none@@");
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "native");
+        doWriteAttribute("timezone", def.getTimezone(), null);
+        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), null);
+        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
+        doWriteAttribute("allowJmsType", def.getAllowJmsType(), null);
+        doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
+        doWriteAttribute("library", toString(def.getLibrary()), "GoogleProtobuf");
+        doWriteAttribute("autoDiscoverObjectMapper", def.getAutoDiscoverObjectMapper(), "false");
+        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), null);
+        doWriteAttribute("include", def.getInclude(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute("instanceClass", def.getInstanceClass(), null);
+        doWriteAttribute("useList", def.getUseList(), null);
+        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
+        doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
+        doWriteAttribute("schemaResolver", def.getSchemaResolver(), null);
+        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
+        doWriteAttribute("objectMapper", def.getObjectMapper(), null);
         endElement(name);
     }
     protected void doWriteRssDataFormat(String name, RssDataFormat def) throws IOException {
@@ -2752,33 +2752,33 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSmooksDataFormat(String name, SmooksDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("smooksConfig", def.getSmooksConfig(), "@@none@@");
+        doWriteAttribute("smooksConfig", def.getSmooksConfig(), null);
         endElement(name);
     }
     protected void doWriteSoapDataFormat(String name, SoapDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("schema", def.getSchema(), "@@none@@");
-        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), "@@none@@");
-        doWriteAttribute("elementNameStrategyRef", def.getElementNameStrategyRef(), "@@none@@");
-        doWriteAttribute("contextPath", def.getContextPath(), "@@none@@");
-        doWriteAttribute("encoding", def.getEncoding(), "@@none@@");
-        doWriteAttribute("version", def.getVersion(), "@@none@@");
+        doWriteAttribute("schema", def.getSchema(), null);
+        doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
+        doWriteAttribute("elementNameStrategyRef", def.getElementNameStrategyRef(), null);
+        doWriteAttribute("contextPath", def.getContextPath(), null);
+        doWriteAttribute("encoding", def.getEncoding(), null);
+        doWriteAttribute("version", def.getVersion(), "1.1");
         endElement(name);
     }
     protected void doWriteSwiftMtDataFormat(String name, SwiftMtDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("writeInJson", def.getWriteInJson(), "@@none@@");
+        doWriteAttribute("writeInJson", def.getWriteInJson(), null);
         endElement(name);
     }
     protected void doWriteSwiftMxDataFormat(String name, SwiftMxDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("readMessageId", def.getReadMessageId(), "@@none@@");
-        doWriteAttribute("writeInJson", def.getWriteInJson(), "@@none@@");
-        doWriteAttribute("writeConfigRef", def.getWriteConfigRef(), "@@none@@");
-        doWriteAttribute("readConfigRef", def.getReadConfigRef(), "@@none@@");
+        doWriteAttribute("readMessageId", def.getReadMessageId(), null);
+        doWriteAttribute("writeInJson", def.getWriteInJson(), null);
+        doWriteAttribute("writeConfigRef", def.getWriteConfigRef(), null);
+        doWriteAttribute("readConfigRef", def.getReadConfigRef(), null);
         endElement(name);
     }
     protected void doWriteSyslogDataFormat(String name, SyslogDataFormat def) throws IOException {
@@ -2789,42 +2789,42 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteTarFileDataFormat(String name, TarFileDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "@@none@@");
-        doWriteAttribute("usingIterator", def.getUsingIterator(), "@@none@@");
-        doWriteAttribute("preservePathElements", def.getPreservePathElements(), "@@none@@");
-        doWriteAttribute("allowEmptyDirectory", def.getAllowEmptyDirectory(), "@@none@@");
+        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
+        doWriteAttribute("usingIterator", def.getUsingIterator(), null);
+        doWriteAttribute("preservePathElements", def.getPreservePathElements(), null);
+        doWriteAttribute("allowEmptyDirectory", def.getAllowEmptyDirectory(), null);
         endElement(name);
     }
     protected void doWriteThriftDataFormat(String name, ThriftDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "@@none@@");
-        doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "@@none@@");
-        doWriteAttribute("instanceClass", def.getInstanceClass(), "@@none@@");
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "binary");
+        doWriteAttribute("instanceClass", def.getInstanceClass(), null);
         endElement(name);
     }
     protected void doWriteTidyMarkupDataFormat(String name, TidyMarkupDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("omitXmlDeclaration", def.getOmitXmlDeclaration(), "@@none@@");
-        doWriteAttribute("dataObjectType", def.getDataObjectTypeName(), "@@none@@");
+        doWriteAttribute("omitXmlDeclaration", def.getOmitXmlDeclaration(), null);
+        doWriteAttribute("dataObjectType", def.getDataObjectTypeName(), "org.w3c.dom.Node");
         endElement(name);
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(UniVocityAbstractDataFormat def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("headerExtractionEnabled", def.getHeaderExtractionEnabled(), "@@none@@");
-        doWriteAttribute("skipEmptyLines", def.getSkipEmptyLines(), "@@none@@");
-        doWriteAttribute("asMap", def.getAsMap(), "@@none@@");
-        doWriteAttribute("ignoreLeadingWhitespaces", def.getIgnoreLeadingWhitespaces(), "@@none@@");
-        doWriteAttribute("lineSeparator", def.getLineSeparator(), "@@none@@");
-        doWriteAttribute("ignoreTrailingWhitespaces", def.getIgnoreTrailingWhitespaces(), "@@none@@");
-        doWriteAttribute("lazyLoad", def.getLazyLoad(), "@@none@@");
-        doWriteAttribute("nullValue", def.getNullValue(), "@@none@@");
-        doWriteAttribute("normalizedLineSeparator", def.getNormalizedLineSeparator(), "@@none@@");
-        doWriteAttribute("emptyValue", def.getEmptyValue(), "@@none@@");
-        doWriteAttribute("headersDisabled", def.getHeadersDisabled(), "@@none@@");
-        doWriteAttribute("comment", def.getComment(), "@@none@@");
-        doWriteAttribute("numberOfRecordsToRead", def.getNumberOfRecordsToRead(), "@@none@@");
+        doWriteAttribute("headerExtractionEnabled", def.getHeaderExtractionEnabled(), null);
+        doWriteAttribute("skipEmptyLines", def.getSkipEmptyLines(), "true");
+        doWriteAttribute("asMap", def.getAsMap(), null);
+        doWriteAttribute("ignoreLeadingWhitespaces", def.getIgnoreLeadingWhitespaces(), "true");
+        doWriteAttribute("lineSeparator", def.getLineSeparator(), null);
+        doWriteAttribute("ignoreTrailingWhitespaces", def.getIgnoreTrailingWhitespaces(), "true");
+        doWriteAttribute("lazyLoad", def.getLazyLoad(), null);
+        doWriteAttribute("nullValue", def.getNullValue(), null);
+        doWriteAttribute("normalizedLineSeparator", def.getNormalizedLineSeparator(), null);
+        doWriteAttribute("emptyValue", def.getEmptyValue(), null);
+        doWriteAttribute("headersDisabled", def.getHeadersDisabled(), null);
+        doWriteAttribute("comment", def.getComment(), "#");
+        doWriteAttribute("numberOfRecordsToRead", def.getNumberOfRecordsToRead(), null);
     }
     protected void doWriteUniVocityAbstractDataFormatElements(UniVocityAbstractDataFormat def) throws IOException {
         doWriteList(null, null, def.getHeaders(), this::doWriteUniVocityHeaderRef);
@@ -2838,111 +2838,111 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteUniVocityCsvDataFormat(String name, UniVocityCsvDataFormat def) throws IOException {
         startElement(name);
         doWriteUniVocityAbstractDataFormatAttributes(def);
-        doWriteAttribute("quoteEscape", def.getQuoteEscape(), "@@none@@");
-        doWriteAttribute("quote", def.getQuote(), "@@none@@");
-        doWriteAttribute("delimiter", def.getDelimiter(), "@@none@@");
-        doWriteAttribute("quoteAllFields", def.getQuoteAllFields(), "@@none@@");
+        doWriteAttribute("quoteEscape", def.getQuoteEscape(), "\"");
+        doWriteAttribute("quote", def.getQuote(), "\"");
+        doWriteAttribute("delimiter", def.getDelimiter(), ",");
+        doWriteAttribute("quoteAllFields", def.getQuoteAllFields(), null);
         doWriteUniVocityAbstractDataFormatElements(def);
         endElement(name);
     }
     protected void doWriteUniVocityFixedDataFormat(String name, UniVocityFixedDataFormat def) throws IOException {
         startElement(name);
         doWriteUniVocityAbstractDataFormatAttributes(def);
-        doWriteAttribute("recordEndsOnNewline", def.getRecordEndsOnNewline(), "@@none@@");
-        doWriteAttribute("padding", def.getPadding(), "@@none@@");
-        doWriteAttribute("skipTrailingCharsUntilNewline", def.getSkipTrailingCharsUntilNewline(), "@@none@@");
+        doWriteAttribute("recordEndsOnNewline", def.getRecordEndsOnNewline(), null);
+        doWriteAttribute("padding", def.getPadding(), null);
+        doWriteAttribute("skipTrailingCharsUntilNewline", def.getSkipTrailingCharsUntilNewline(), null);
         doWriteUniVocityAbstractDataFormatElements(def);
         endElement(name);
     }
     protected void doWriteUniVocityHeader(String name, UniVocityHeader def) throws IOException {
         startElement(name);
-        doWriteAttribute("length", def.getLength(), "@@none@@");
+        doWriteAttribute("length", def.getLength(), null);
         doWriteValue(def.getName());
         endElement(name);
     }
     protected void doWriteUniVocityTsvDataFormat(String name, UniVocityTsvDataFormat def) throws IOException {
         startElement(name);
         doWriteUniVocityAbstractDataFormatAttributes(def);
-        doWriteAttribute("escapeChar", def.getEscapeChar(), "@@none@@");
+        doWriteAttribute("escapeChar", def.getEscapeChar(), "\\");
         doWriteUniVocityAbstractDataFormatElements(def);
         endElement(name);
     }
     protected void doWriteXMLSecurityDataFormat(String name, XMLSecurityDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "@@none@@");
-        doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "@@none@@");
-        doWriteAttribute("recipientKeyAlias", def.getRecipientKeyAlias(), "@@none@@");
-        doWriteAttribute("keyOrTrustStoreParametersRef", def.getKeyOrTrustStoreParametersRef(), "@@none@@");
-        doWriteAttribute("digestAlgorithm", def.getDigestAlgorithm(), "@@none@@");
-        doWriteAttribute("mgfAlgorithm", def.getMgfAlgorithm(), "@@none@@");
-        doWriteAttribute("secureTagContents", def.getSecureTagContents(), "@@none@@");
-        doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), "@@none@@");
-        doWriteAttribute("keyPassword", def.getKeyPassword(), "@@none@@");
-        doWriteAttribute("secureTag", def.getSecureTag(), "@@none@@");
-        doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "@@none@@");
-        doWriteAttribute("passPhrase", def.getPassPhrase(), "@@none@@");
+        doWriteAttribute("addKeyValueForEncryptedKey", def.getAddKeyValueForEncryptedKey(), "true");
+        doWriteAttribute("keyCipherAlgorithm", def.getKeyCipherAlgorithm(), "RSA_OAEP");
+        doWriteAttribute("recipientKeyAlias", def.getRecipientKeyAlias(), null);
+        doWriteAttribute("keyOrTrustStoreParametersRef", def.getKeyOrTrustStoreParametersRef(), null);
+        doWriteAttribute("digestAlgorithm", def.getDigestAlgorithm(), "SHA1");
+        doWriteAttribute("mgfAlgorithm", def.getMgfAlgorithm(), "MGF1_SHA1");
+        doWriteAttribute("secureTagContents", def.getSecureTagContents(), null);
+        doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
+        doWriteAttribute("keyPassword", def.getKeyPassword(), null);
+        doWriteAttribute("secureTag", def.getSecureTag(), null);
+        doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute("passPhrase", def.getPassPhrase(), null);
         endElement(name);
     }
     protected void doWriteYAMLDataFormat(String name, YAMLDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("resolver", def.getResolver(), "@@none@@");
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), "@@none@@");
-        doWriteAttribute("prettyFlow", def.getPrettyFlow(), "@@none@@");
-        doWriteAttribute("allowAnyType", def.getAllowAnyType(), "@@none@@");
-        doWriteAttribute("representer", def.getRepresenter(), "@@none@@");
-        doWriteAttribute("constructor", def.getConstructor(), "@@none@@");
-        doWriteAttribute("library", toString(def.getLibrary()), "@@none@@");
-        doWriteAttribute("maxAliasesForCollections", def.getMaxAliasesForCollections(), "@@none@@");
-        doWriteAttribute("dumperOptions", def.getDumperOptions(), "@@none@@");
-        doWriteAttribute("useApplicationContextClassLoader", def.getUseApplicationContextClassLoader(), "@@none@@");
-        doWriteAttribute("allowRecursiveKeys", def.getAllowRecursiveKeys(), "@@none@@");
+        doWriteAttribute("resolver", def.getResolver(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("prettyFlow", def.getPrettyFlow(), null);
+        doWriteAttribute("allowAnyType", def.getAllowAnyType(), null);
+        doWriteAttribute("representer", def.getRepresenter(), null);
+        doWriteAttribute("constructor", def.getConstructor(), null);
+        doWriteAttribute("library", toString(def.getLibrary()), "SnakeYAML");
+        doWriteAttribute("maxAliasesForCollections", def.getMaxAliasesForCollections(), "50");
+        doWriteAttribute("dumperOptions", def.getDumperOptions(), null);
+        doWriteAttribute("useApplicationContextClassLoader", def.getUseApplicationContextClassLoader(), "true");
+        doWriteAttribute("allowRecursiveKeys", def.getAllowRecursiveKeys(), null);
         doWriteList(null, "typeFilter", def.getTypeFilters(), this::doWriteYAMLTypeFilterDefinition);
         endElement(name);
     }
     protected void doWriteYAMLTypeFilterDefinition(String name, YAMLTypeFilterDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("value", def.getValue(), "@@none@@");
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("value", def.getValue(), null);
         endElement(name);
     }
     protected void doWriteZipDeflaterDataFormat(String name, ZipDeflaterDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("compressionLevel", def.getCompressionLevel(), "@@none@@");
+        doWriteAttribute("compressionLevel", def.getCompressionLevel(), "-1");
         endElement(name);
     }
     protected void doWriteZipFileDataFormat(String name, ZipFileDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "@@none@@");
-        doWriteAttribute("usingIterator", def.getUsingIterator(), "@@none@@");
-        doWriteAttribute("preservePathElements", def.getPreservePathElements(), "@@none@@");
-        doWriteAttribute("allowEmptyDirectory", def.getAllowEmptyDirectory(), "@@none@@");
+        doWriteAttribute("maxDecompressedSize", def.getMaxDecompressedSize(), "1073741824");
+        doWriteAttribute("usingIterator", def.getUsingIterator(), null);
+        doWriteAttribute("preservePathElements", def.getPreservePathElements(), null);
+        doWriteAttribute("allowEmptyDirectory", def.getAllowEmptyDirectory(), null);
         endElement(name);
     }
     protected void doWriteDeadLetterChannelDefinition(String name, DeadLetterChannelDefinition def) throws IOException {
         startElement(name);
         doWriteDefaultErrorHandlerDefinitionAttributes(def);
-        doWriteAttribute("deadLetterHandleNewException", def.getDeadLetterHandleNewException(), "@@none@@");
-        doWriteAttribute("deadLetterUri", def.getDeadLetterUri(), "@@none@@");
+        doWriteAttribute("deadLetterHandleNewException", def.getDeadLetterHandleNewException(), "true");
+        doWriteAttribute("deadLetterUri", def.getDeadLetterUri(), null);
         doWriteDefaultErrorHandlerDefinitionElements(def);
         endElement(name);
     }
     protected void doWriteDefaultErrorHandlerDefinitionAttributes(DefaultErrorHandlerDefinition def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("executorServiceRef", def.getExecutorServiceRef(), "@@none@@");
-        doWriteAttribute("level", def.getLevel(), "@@none@@");
-        doWriteAttribute("loggerRef", def.getLoggerRef(), "@@none@@");
-        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), "@@none@@");
-        doWriteAttribute("onRedeliveryRef", def.getOnRedeliveryRef(), "@@none@@");
-        doWriteAttribute("retryWhileRef", def.getRetryWhileRef(), "@@none@@");
-        doWriteAttribute("logName", def.getLogName(), "@@none@@");
-        doWriteAttribute("useOriginalBody", def.getUseOriginalBody(), "@@none@@");
-        doWriteAttribute("onPrepareFailureRef", def.getOnPrepareFailureRef(), "@@none@@");
-        doWriteAttribute("onExceptionOccurredRef", def.getOnExceptionOccurredRef(), "@@none@@");
-        doWriteAttribute("redeliveryPolicyRef", def.getRedeliveryPolicyRef(), "@@none@@");
+        doWriteAttribute("executorServiceRef", def.getExecutorServiceRef(), null);
+        doWriteAttribute("level", def.getLevel(), "ERROR");
+        doWriteAttribute("loggerRef", def.getLoggerRef(), null);
+        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), null);
+        doWriteAttribute("onRedeliveryRef", def.getOnRedeliveryRef(), null);
+        doWriteAttribute("retryWhileRef", def.getRetryWhileRef(), null);
+        doWriteAttribute("logName", def.getLogName(), null);
+        doWriteAttribute("useOriginalBody", def.getUseOriginalBody(), null);
+        doWriteAttribute("onPrepareFailureRef", def.getOnPrepareFailureRef(), null);
+        doWriteAttribute("onExceptionOccurredRef", def.getOnExceptionOccurredRef(), null);
+        doWriteAttribute("redeliveryPolicyRef", def.getRedeliveryPolicyRef(), null);
     }
     protected void doWriteDefaultErrorHandlerDefinitionElements(DefaultErrorHandlerDefinition def) throws IOException {
         doWriteElement("redeliveryPolicy", def.getRedeliveryPolicy(), this::doWriteRedeliveryPolicyDefinition);
@@ -2967,7 +2967,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRefErrorHandlerDefinition(String name, RefErrorHandlerDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteSpringTransactionErrorHandlerDefinition(String name, SpringTransactionErrorHandlerDefinition def) throws IOException {
@@ -2978,8 +2978,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteTransactionErrorHandlerDefinitionAttributes(TransactionErrorHandlerDefinition def) throws IOException {
         doWriteDefaultErrorHandlerDefinitionAttributes(def);
-        doWriteAttribute("rollbackLoggingLevel", def.getRollbackLoggingLevel(), "@@none@@");
-        doWriteAttribute("transactedPolicyRef", def.getTransactedPolicyRef(), "@@none@@");
+        doWriteAttribute("rollbackLoggingLevel", def.getRollbackLoggingLevel(), "WARN");
+        doWriteAttribute("transactedPolicyRef", def.getTransactedPolicyRef(), null);
     }
     protected void doWriteTransactionErrorHandlerDefinition(String name, TransactionErrorHandlerDefinition def) throws IOException {
         startElement(name);
@@ -3002,8 +3002,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteDatasonnetExpression(String name, DatasonnetExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("outputMediaType", def.getOutputMediaType(), "@@none@@");
-        doWriteAttribute("bodyMediaType", def.getBodyMediaType(), "@@none@@");
+        doWriteAttribute("outputMediaType", def.getOutputMediaType(), null);
+        doWriteAttribute("bodyMediaType", def.getBodyMediaType(), null);
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3014,8 +3014,8 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteExpressionDefinitionAttributes(ExpressionDefinition def) throws IOException {
-        doWriteAttribute("trim", def.getTrim(), "@@none@@");
-        doWriteAttribute("id", def.getId(), "@@none@@");
+        doWriteAttribute("trim", def.getTrim(), "true");
+        doWriteAttribute("id", def.getId(), null);
     }
     protected void doWriteExpressionDefinition(String name, ExpressionDefinition def) throws IOException {
         startElement(name);
@@ -3044,8 +3044,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteJavaExpression(String name, JavaExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("preCompile", def.getPreCompile(), "@@none@@");
-        doWriteAttribute("singleQuotes", def.getSingleQuotes(), "@@none@@");
+        doWriteAttribute("preCompile", def.getPreCompile(), "true");
+        doWriteAttribute("singleQuotes", def.getSingleQuotes(), "true");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3058,8 +3058,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteJoorExpression(String name, JoorExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("preCompile", def.getPreCompile(), "@@none@@");
-        doWriteAttribute("singleQuotes", def.getSingleQuotes(), "@@none@@");
+        doWriteAttribute("preCompile", def.getPreCompile(), "true");
+        doWriteAttribute("singleQuotes", def.getSingleQuotes(), "true");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3072,30 +3072,30 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteJsonPathExpression(String name, JsonPathExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("unpackArray", def.getUnpackArray(), "@@none@@");
-        doWriteAttribute("writeAsString", def.getWriteAsString(), "@@none@@");
-        doWriteAttribute("allowSimple", def.getAllowSimple(), "@@none@@");
-        doWriteAttribute("suppressExceptions", def.getSuppressExceptions(), "@@none@@");
-        doWriteAttribute("allowEasyPredicate", def.getAllowEasyPredicate(), "@@none@@");
-        doWriteAttribute("option", def.getOption(), "@@none@@");
+        doWriteAttribute("unpackArray", def.getUnpackArray(), "false");
+        doWriteAttribute("writeAsString", def.getWriteAsString(), "false");
+        doWriteAttribute("allowSimple", def.getAllowSimple(), "true");
+        doWriteAttribute("suppressExceptions", def.getSuppressExceptions(), "false");
+        doWriteAttribute("allowEasyPredicate", def.getAllowEasyPredicate(), "true");
+        doWriteAttribute("option", def.getOption(), null);
         doWriteValue(def.getExpression());
         endElement(name);
     }
     protected void doWriteLanguageExpression(String name, LanguageExpression def) throws IOException {
         startElement(name);
         doWriteExpressionDefinitionAttributes(def);
-        doWriteAttribute("language", def.getLanguage(), "@@none@@");
+        doWriteAttribute("language", def.getLanguage(), null);
         doWriteValue(def.getExpression());
         endElement(name);
     }
     protected void doWriteMethodCallExpression(String name, MethodCallExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("method", def.getMethod(), "@@none@@");
-        doWriteAttribute("scope", def.getScope(), "@@none@@");
-        doWriteAttribute("beanType", def.getBeanTypeName(), "@@none@@");
-        doWriteAttribute("validate", def.getValidate(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("method", def.getMethod(), null);
+        doWriteAttribute("scope", def.getScope(), "Singleton");
+        doWriteAttribute("beanType", def.getBeanTypeName(), null);
+        doWriteAttribute("validate", def.getValidate(), "true");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3141,7 +3141,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteSingleInputTypedExpressionDefinitionAttributes(SingleInputTypedExpressionDefinition def) throws IOException {
         doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("source", def.getSource(), "@@none@@");
+        doWriteAttribute("source", def.getSource(), null);
     }
     protected void doWriteSingleInputTypedExpressionDefinition(String name, SingleInputTypedExpressionDefinition def) throws IOException {
         startElement(name);
@@ -3158,21 +3158,21 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteTokenizerExpression(String name, TokenizerExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("regex", def.getRegex(), "@@none@@");
-        doWriteAttribute("endToken", def.getEndToken(), "@@none@@");
-        doWriteAttribute("includeTokens", def.getIncludeTokens(), "@@none@@");
-        doWriteAttribute("skipFirst", def.getSkipFirst(), "@@none@@");
-        doWriteAttribute("xml", def.getXml(), "@@none@@");
-        doWriteAttribute("inheritNamespaceTagName", def.getInheritNamespaceTagName(), "@@none@@");
-        doWriteAttribute("groupDelimiter", def.getGroupDelimiter(), "@@none@@");
-        doWriteAttribute("group", def.getGroup(), "@@none@@");
-        doWriteAttribute("token", def.getToken(), "@@none@@");
+        doWriteAttribute("regex", def.getRegex(), null);
+        doWriteAttribute("endToken", def.getEndToken(), null);
+        doWriteAttribute("includeTokens", def.getIncludeTokens(), null);
+        doWriteAttribute("skipFirst", def.getSkipFirst(), null);
+        doWriteAttribute("xml", def.getXml(), null);
+        doWriteAttribute("inheritNamespaceTagName", def.getInheritNamespaceTagName(), null);
+        doWriteAttribute("groupDelimiter", def.getGroupDelimiter(), null);
+        doWriteAttribute("group", def.getGroup(), null);
+        doWriteAttribute("token", def.getToken(), null);
         doWriteValue(def.getExpression());
         endElement(name);
     }
     protected void doWriteTypedExpressionDefinitionAttributes(TypedExpressionDefinition def) throws IOException {
         doWriteExpressionDefinitionAttributes(def);
-        doWriteAttribute("resultType", def.getResultTypeName(), "@@none@@");
+        doWriteAttribute("resultType", def.getResultTypeName(), null);
     }
     protected void doWriteTypedExpressionDefinition(String name, TypedExpressionDefinition def) throws IOException {
         startElement(name);
@@ -3189,15 +3189,15 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteWasmExpression(String name, WasmExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("module", def.getModule(), "@@none@@");
+        doWriteAttribute("module", def.getModule(), null);
         doWriteValue(def.getExpression());
         endElement(name);
     }
     protected void doWriteXMLTokenizerExpression(String name, XMLTokenizerExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("mode", def.getMode(), "@@none@@");
-        doWriteAttribute("group", def.getGroup(), "@@none@@");
+        doWriteAttribute("mode", def.getMode(), "i");
+        doWriteAttribute("group", def.getGroup(), null);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);
         endElement(name);
@@ -3205,14 +3205,14 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteXPathExpression(String name, XPathExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("preCompile", def.getPreCompile(), "@@none@@");
-        doWriteAttribute("objectModel", def.getObjectModel(), "@@none@@");
-        doWriteAttribute("logNamespaces", def.getLogNamespaces(), "@@none@@");
-        doWriteAttribute("threadSafety", def.getThreadSafety(), "@@none@@");
-        doWriteAttribute("factoryRef", def.getFactoryRef(), "@@none@@");
-        doWriteAttribute("resultQName", def.getResultQName(), "@@none@@");
-        doWriteAttribute("saxon", def.getSaxon(), "@@none@@");
-        doWriteAttribute("documentType", def.getDocumentTypeName(), "@@none@@");
+        doWriteAttribute("preCompile", def.getPreCompile(), "true");
+        doWriteAttribute("objectModel", def.getObjectModel(), null);
+        doWriteAttribute("logNamespaces", def.getLogNamespaces(), null);
+        doWriteAttribute("threadSafety", def.getThreadSafety(), null);
+        doWriteAttribute("factoryRef", def.getFactoryRef(), null);
+        doWriteAttribute("resultQName", def.getResultQName(), "NODESET");
+        doWriteAttribute("saxon", def.getSaxon(), null);
+        doWriteAttribute("documentType", def.getDocumentTypeName(), null);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);
         endElement(name);
@@ -3220,7 +3220,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteXQueryExpression(String name, XQueryExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("configurationRef", def.getConfigurationRef(), "@@none@@");
+        doWriteAttribute("configurationRef", def.getConfigurationRef(), null);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);
         endElement(name);
@@ -3228,15 +3228,15 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCustomLoadBalancerDefinition(String name, CustomLoadBalancerDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
         endElement(name);
     }
     protected void doWriteFailoverLoadBalancerDefinition(String name, FailoverLoadBalancerDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("sticky", def.getSticky(), "@@none@@");
-        doWriteAttribute("maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "@@none@@");
-        doWriteAttribute("roundRobin", def.getRoundRobin(), "@@none@@");
+        doWriteAttribute("sticky", def.getSticky(), null);
+        doWriteAttribute("maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
+        doWriteAttribute("roundRobin", def.getRoundRobin(), null);
         doWriteList(null, "exception", def.getExceptions(), this::doWriteString);
         endElement(name);
     }
@@ -3264,18 +3264,18 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteWeightedLoadBalancerDefinition(String name, WeightedLoadBalancerDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("distributionRatioDelimiter", def.getDistributionRatioDelimiter(), "@@none@@");
-        doWriteAttribute("distributionRatio", def.getDistributionRatio(), "@@none@@");
-        doWriteAttribute("roundRobin", def.getRoundRobin(), "@@none@@");
+        doWriteAttribute("distributionRatioDelimiter", def.getDistributionRatioDelimiter(), ",");
+        doWriteAttribute("distributionRatio", def.getDistributionRatio(), null);
+        doWriteAttribute("roundRobin", def.getRoundRobin(), null);
         endElement(name);
     }
     protected void doWriteApiKeyDefinition(String name, ApiKeyDefinition def) throws IOException {
         startElement(name);
         doWriteRestSecurityDefinitionAttributes(def);
-        doWriteAttribute("inHeader", def.getInHeader(), "@@none@@");
-        doWriteAttribute("inCookie", def.getInCookie(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("inQuery", def.getInQuery(), "@@none@@");
+        doWriteAttribute("inHeader", def.getInHeader(), null);
+        doWriteAttribute("inCookie", def.getInCookie(), null);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("inQuery", def.getInQuery(), null);
         endElement(name);
     }
     protected void doWriteBasicAuthDefinition(String name, BasicAuthDefinition def) throws IOException {
@@ -3286,7 +3286,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBearerTokenDefinition(String name, BearerTokenDefinition def) throws IOException {
         startElement(name);
         doWriteRestSecurityDefinitionAttributes(def);
-        doWriteAttribute("format", def.getFormat(), "@@none@@");
+        doWriteAttribute("format", def.getFormat(), null);
         endElement(name);
     }
     protected void doWriteDeleteDefinition(String name, DeleteDefinition def) throws IOException {
@@ -3315,41 +3315,41 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOAuth2Definition(String name, OAuth2Definition def) throws IOException {
         startElement(name);
         doWriteRestSecurityDefinitionAttributes(def);
-        doWriteAttribute("tokenUrl", def.getTokenUrl(), "@@none@@");
-        doWriteAttribute("authorizationUrl", def.getAuthorizationUrl(), "@@none@@");
-        doWriteAttribute("refreshUrl", def.getRefreshUrl(), "@@none@@");
-        doWriteAttribute("flow", def.getFlow(), "@@none@@");
+        doWriteAttribute("tokenUrl", def.getTokenUrl(), null);
+        doWriteAttribute("authorizationUrl", def.getAuthorizationUrl(), null);
+        doWriteAttribute("refreshUrl", def.getRefreshUrl(), null);
+        doWriteAttribute("flow", def.getFlow(), null);
         doWriteList(null, "scopes", def.getScopes(), this::doWriteRestPropertyDefinition);
         endElement(name);
     }
     protected void doWriteOpenApiDefinition(String name, OpenApiDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "@@none@@");
-        doWriteAttribute("missingOperation", def.getMissingOperation(), "@@none@@");
-        doWriteAttribute("routeId", def.getRouteId(), "@@none@@");
-        doWriteAttribute("specification", def.getSpecification(), "@@none@@");
-        doWriteAttribute("disabled", def.getDisabled(), "@@none@@");
+        doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
+        doWriteAttribute("routeId", def.getRouteId(), null);
+        doWriteAttribute("specification", def.getSpecification(), null);
+        doWriteAttribute("disabled", def.getDisabled(), null);
                 doWriteElement("${n}", def.getApiContextPath(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteOpenIdConnectDefinition(String name, OpenIdConnectDefinition def) throws IOException {
         startElement(name);
         doWriteRestSecurityDefinitionAttributes(def);
-        doWriteAttribute("url", def.getUrl(), "@@none@@");
+        doWriteAttribute("url", def.getUrl(), null);
         endElement(name);
     }
     protected void doWriteParamDefinition(String name, ParamDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("arrayType", def.getArrayType(), "@@none@@");
-        doWriteAttribute("dataFormat", def.getDataFormat(), "@@none@@");
-        doWriteAttribute("defaultValue", def.getDefaultValue(), "@@none@@");
-        doWriteAttribute("dataType", def.getDataType(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("description", def.getDescription(), "@@none@@");
-        doWriteAttribute("type", toString(def.getType()), "@@none@@");
-        doWriteAttribute("collectionFormat", toString(def.getCollectionFormat()), "@@none@@");
-        doWriteAttribute("required", toString(def.getRequired()), "@@none@@");
+        doWriteAttribute("arrayType", def.getArrayType(), "string");
+        doWriteAttribute("dataFormat", def.getDataFormat(), null);
+        doWriteAttribute("defaultValue", def.getDefaultValue(), null);
+        doWriteAttribute("dataType", def.getDataType(), "string");
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("description", def.getDescription(), null);
+        doWriteAttribute("type", toString(def.getType()), "path");
+        doWriteAttribute("collectionFormat", toString(def.getCollectionFormat()), "csv");
+        doWriteAttribute("required", toString(def.getRequired()), "true");
         doWriteList("allowableValues", "value", def.getAllowableValues(), this::doWriteValueDefinition);
         doWriteList(null, "examples", def.getExamples(), this::doWriteRestPropertyDefinition);
         endElement(name);
@@ -3374,21 +3374,21 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteResponseHeaderDefinition(String name, ResponseHeaderDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("arrayType", def.getArrayType(), "@@none@@");
-        doWriteAttribute("dataFormat", def.getDataFormat(), "@@none@@");
-        doWriteAttribute("dataType", def.getDataType(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
-        doWriteAttribute("description", def.getDescription(), "@@none@@");
-        doWriteAttribute("collectionFormat", toString(def.getCollectionFormat()), "@@none@@");
-        doWriteAttribute("example", def.getExample(), "@@none@@");
+        doWriteAttribute("arrayType", def.getArrayType(), "string");
+        doWriteAttribute("dataFormat", def.getDataFormat(), null);
+        doWriteAttribute("dataType", def.getDataType(), "string");
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("description", def.getDescription(), null);
+        doWriteAttribute("collectionFormat", toString(def.getCollectionFormat()), "csv");
+        doWriteAttribute("example", def.getExample(), null);
         doWriteList("allowableValues", "value", def.getAllowableValues(), this::doWriteValueDefinition);
         endElement(name);
     }
     protected void doWriteResponseMessageDefinition(String name, ResponseMessageDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("code", def.getCode(), "@@none@@");
-        doWriteAttribute("responseModel", def.getResponseModel(), "@@none@@");
-        doWriteAttribute("message", def.getMessage(), "@@none@@");
+        doWriteAttribute("code", def.getCode(), "200");
+        doWriteAttribute("responseModel", def.getResponseModel(), null);
+        doWriteAttribute("message", def.getMessage(), null);
         doWriteList(null, "header", def.getHeaders(), this::doWriteResponseHeaderDefinition);
         doWriteList(null, "examples", def.getExamples(), this::doWriteRestPropertyDefinition);
         endElement(name);
@@ -3396,43 +3396,43 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRestBindingDefinition(String name, RestBindingDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("outType", def.getOutType(), "@@none@@");
-        doWriteAttribute("component", def.getComponent(), "@@none@@");
-        doWriteAttribute("bindingMode", def.getBindingMode(), "@@none@@");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "@@none@@");
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "@@none@@");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "@@none@@");
-        doWriteAttribute("produces", def.getProduces(), "@@none@@");
-        doWriteAttribute("consumes", def.getConsumes(), "@@none@@");
+        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("outType", def.getOutType(), null);
+        doWriteAttribute("component", def.getComponent(), null);
+        doWriteAttribute("bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute("produces", def.getProduces(), null);
+        doWriteAttribute("consumes", def.getConsumes(), null);
         endElement(name);
     }
     protected void doWriteRestConfigurationDefinition(String name, RestConfigurationDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("scheme", def.getScheme(), "@@none@@");
-        doWriteAttribute("inlineRoutes", def.getInlineRoutes(), "@@none@@");
-        doWriteAttribute("apiContextPath", def.getApiContextPath(), "@@none@@");
-        doWriteAttribute("hostNameResolver", toString(def.getHostNameResolver()), "@@none@@");
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "@@none@@");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "@@none@@");
-        doWriteAttribute("producerApiDoc", def.getProducerApiDoc(), "@@none@@");
-        doWriteAttribute("host", def.getHost(), "@@none@@");
-        doWriteAttribute("producerComponent", def.getProducerComponent(), "@@none@@");
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "@@none@@");
-        doWriteAttribute("bindingPackageScan", def.getBindingPackageScan(), "@@none@@");
-        doWriteAttribute("useXForwardHeaders", def.getUseXForwardHeaders(), "@@none@@");
-        doWriteAttribute("apiHost", def.getApiHost(), "@@none@@");
-        doWriteAttribute("contextPath", def.getContextPath(), "@@none@@");
-        doWriteAttribute("apiContextRouteId", def.getApiContextRouteId(), "@@none@@");
-        doWriteAttribute("component", def.getComponent(), "@@none@@");
-        doWriteAttribute("bindingMode", toString(def.getBindingMode()), "@@none@@");
-        doWriteAttribute("port", def.getPort(), "@@none@@");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "@@none@@");
-        doWriteAttribute("xmlDataFormat", def.getXmlDataFormat(), "@@none@@");
-        doWriteAttribute("apiVendorExtension", def.getApiVendorExtension(), "@@none@@");
-        doWriteAttribute("apiComponent", def.getApiComponent(), "@@none@@");
-        doWriteAttribute("jsonDataFormat", def.getJsonDataFormat(), "@@none@@");
+        doWriteAttribute("scheme", def.getScheme(), null);
+        doWriteAttribute("inlineRoutes", def.getInlineRoutes(), "true");
+        doWriteAttribute("apiContextPath", def.getApiContextPath(), null);
+        doWriteAttribute("hostNameResolver", toString(def.getHostNameResolver()), "allLocalIp");
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute("producerApiDoc", def.getProducerApiDoc(), null);
+        doWriteAttribute("host", def.getHost(), null);
+        doWriteAttribute("producerComponent", def.getProducerComponent(), null);
+        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute("bindingPackageScan", def.getBindingPackageScan(), null);
+        doWriteAttribute("useXForwardHeaders", def.getUseXForwardHeaders(), null);
+        doWriteAttribute("apiHost", def.getApiHost(), null);
+        doWriteAttribute("contextPath", def.getContextPath(), null);
+        doWriteAttribute("apiContextRouteId", def.getApiContextRouteId(), null);
+        doWriteAttribute("component", def.getComponent(), null);
+        doWriteAttribute("bindingMode", toString(def.getBindingMode()), "off");
+        doWriteAttribute("port", def.getPort(), null);
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("xmlDataFormat", def.getXmlDataFormat(), null);
+        doWriteAttribute("apiVendorExtension", def.getApiVendorExtension(), "false");
+        doWriteAttribute("apiComponent", def.getApiComponent(), null);
+        doWriteAttribute("jsonDataFormat", def.getJsonDataFormat(), null);
         doWriteList(null, "consumerProperty", def.getConsumerProperties(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "corsHeaders", def.getCorsHeaders(), this::doWriteRestPropertyDefinition);
         doWriteList(null, "componentProperty", def.getComponentProperties(), this::doWriteRestPropertyDefinition);
@@ -3444,17 +3444,17 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteRestDefinition(String name, RestDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "@@none@@");
-        doWriteAttribute("path", def.getPath(), "@@none@@");
-        doWriteAttribute("bindingMode", def.getBindingMode(), "@@none@@");
-        doWriteAttribute("apiDocs", def.getApiDocs(), "@@none@@");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "@@none@@");
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "@@none@@");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "@@none@@");
-        doWriteAttribute("produces", def.getProduces(), "@@none@@");
-        doWriteAttribute("disabled", def.getDisabled(), "@@none@@");
-        doWriteAttribute("tag", def.getTag(), "@@none@@");
-        doWriteAttribute("consumes", def.getConsumes(), "@@none@@");
+        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute("path", def.getPath(), null);
+        doWriteAttribute("bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute("apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute("produces", def.getProduces(), null);
+        doWriteAttribute("disabled", def.getDisabled(), null);
+        doWriteAttribute("tag", def.getTag(), null);
+        doWriteAttribute("consumes", def.getConsumes(), null);
         doWriteElement("openApi", def.getOpenApi(), this::doWriteOpenApiDefinition);
         doWriteList(null, "securityRequirements", def.getSecurityRequirements(), this::doWriteSecurityDefinition);
         doWriteList(null, null, def.getVerbs(), this::doWriteVerbDefinitionRef);
@@ -3463,8 +3463,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteRestPropertyDefinition(String name, RestPropertyDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("value", def.getValue(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("value", def.getValue(), null);
+        doWriteAttribute("key", def.getKey(), null);
         endElement(name);
     }
     protected void doWriteRestSecuritiesDefinition(String name, RestSecuritiesDefinition def) throws IOException {
@@ -3482,8 +3482,8 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteRestSecurityDefinitionAttributes(RestSecurityDefinition def) throws IOException {
-        doWriteAttribute("description", def.getDescription(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("description", def.getDescription(), null);
+        doWriteAttribute("key", def.getKey(), null);
     }
     protected void doWriteRestSecurityDefinition(String name, RestSecurityDefinition def) throws IOException {
         startElement(name);
@@ -3498,27 +3498,27 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteSecurityDefinition(String name, SecurityDefinition def) throws IOException {
         startElement(name);
-        doWriteAttribute("scopes", def.getScopes(), "@@none@@");
-        doWriteAttribute("key", def.getKey(), "@@none@@");
+        doWriteAttribute("scopes", def.getScopes(), null);
+        doWriteAttribute("key", def.getKey(), null);
         endElement(name);
     }
     protected void doWriteVerbDefinitionAttributes(VerbDefinition def) throws IOException {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "@@none@@");
-        doWriteAttribute("deprecated", def.getDeprecated(), "@@none@@");
-        doWriteAttribute("streamCache", def.getStreamCache(), "@@none@@");
-        doWriteAttribute("type", def.getType(), "@@none@@");
-        doWriteAttribute("outType", def.getOutType(), "@@none@@");
-        doWriteAttribute("path", def.getPath(), "@@none@@");
-        doWriteAttribute("routeId", def.getRouteId(), "@@none@@");
-        doWriteAttribute("bindingMode", def.getBindingMode(), "@@none@@");
-        doWriteAttribute("apiDocs", def.getApiDocs(), "@@none@@");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "@@none@@");
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "@@none@@");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "@@none@@");
-        doWriteAttribute("produces", def.getProduces(), "@@none@@");
-        doWriteAttribute("disabled", def.getDisabled(), "@@none@@");
-        doWriteAttribute("consumes", def.getConsumes(), "@@none@@");
+        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute("deprecated", def.getDeprecated(), "false");
+        doWriteAttribute("streamCache", def.getStreamCache(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("outType", def.getOutType(), null);
+        doWriteAttribute("path", def.getPath(), null);
+        doWriteAttribute("routeId", def.getRouteId(), null);
+        doWriteAttribute("bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute("apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute("produces", def.getProduces(), null);
+        doWriteAttribute("disabled", def.getDisabled(), null);
+        doWriteAttribute("consumes", def.getConsumes(), null);
     }
     protected void doWriteVerbDefinitionElements(VerbDefinition def) throws IOException {
         doWriteList(null, null, def.getParams(), this::doWriteParamDefinitionRef);
@@ -3554,9 +3554,9 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteLangChain4jTokenizerDefinitionAttributes(LangChain4jTokenizerDefinition def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("maxTokens", def.getMaxTokens(), "@@none@@");
-        doWriteAttribute("tokenizerType", def.getTokenizerType(), "@@none@@");
-        doWriteAttribute("maxOverlap", def.getMaxOverlap(), "@@none@@");
+        doWriteAttribute("maxTokens", def.getMaxTokens(), null);
+        doWriteAttribute("tokenizerType", def.getTokenizerType(), null);
+        doWriteAttribute("maxOverlap", def.getMaxOverlap(), null);
     }
     protected void doWriteLangChain4jTokenizerDefinition(String name, LangChain4jTokenizerDefinition def) throws IOException {
         startElement(name);
@@ -3571,8 +3571,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCustomTransformerDefinition(String name, CustomTransformerDefinition def) throws IOException {
         startElement(name);
         doWriteTransformerDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("className", def.getClassName(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("className", def.getClassName(), null);
         endElement(name);
     }
     protected void doWriteDataFormatTransformerDefinition(String name, DataFormatTransformerDefinition def) throws IOException {
@@ -3630,22 +3630,22 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteEndpointTransformerDefinition(String name, EndpointTransformerDefinition def) throws IOException {
         startElement(name);
         doWriteTransformerDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("uri", def.getUri(), null);
         endElement(name);
     }
     protected void doWriteLoadTransformerDefinition(String name, LoadTransformerDefinition def) throws IOException {
         startElement(name);
         doWriteTransformerDefinitionAttributes(def);
-        doWriteAttribute("defaults", def.getDefaults(), "@@none@@");
-        doWriteAttribute("packageScan", def.getPackageScan(), "@@none@@");
+        doWriteAttribute("defaults", def.getDefaults(), "false");
+        doWriteAttribute("packageScan", def.getPackageScan(), null);
         endElement(name);
     }
     protected void doWriteTransformerDefinitionAttributes(TransformerDefinition def) throws IOException {
-        doWriteAttribute("toType", def.getToType(), "@@none@@");
-        doWriteAttribute("fromType", def.getFromType(), "@@none@@");
-        doWriteAttribute("scheme", def.getScheme(), "@@none@@");
-        doWriteAttribute("name", def.getName(), "@@none@@");
+        doWriteAttribute("toType", def.getToType(), null);
+        doWriteAttribute("fromType", def.getFromType(), null);
+        doWriteAttribute("scheme", def.getScheme(), null);
+        doWriteAttribute("name", def.getName(), null);
     }
     protected void doWriteTransformerDefinition(String name, TransformerDefinition def) throws IOException {
         startElement(name);
@@ -3667,15 +3667,15 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCustomValidatorDefinition(String name, CustomValidatorDefinition def) throws IOException {
         startElement(name);
         doWriteValidatorDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("className", def.getClassName(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("className", def.getClassName(), null);
         endElement(name);
     }
     protected void doWriteEndpointValidatorDefinition(String name, EndpointValidatorDefinition def) throws IOException {
         startElement(name);
         doWriteValidatorDefinitionAttributes(def);
-        doWriteAttribute("ref", def.getRef(), "@@none@@");
-        doWriteAttribute("uri", def.getUri(), "@@none@@");
+        doWriteAttribute("ref", def.getRef(), null);
+        doWriteAttribute("uri", def.getUri(), null);
         endElement(name);
     }
     protected void doWritePredicateValidatorDefinition(String name, PredicateValidatorDefinition def) throws IOException {
@@ -3685,7 +3685,7 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteValidatorDefinitionAttributes(ValidatorDefinition def) throws IOException {
-        doWriteAttribute("type", def.getType(), "@@none@@");
+        doWriteAttribute("type", def.getType(), null);
     }
     protected void doWriteValidatorDefinition(String name, ValidatorDefinition def) throws IOException {
         startElement(name);
