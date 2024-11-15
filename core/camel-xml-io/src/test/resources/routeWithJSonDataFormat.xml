@@ -22,7 +22,7 @@
         <from uri="seda:a"/>
         <pipeline>
             <marshal>
-                <json library="Jackson"/>
+                <json/>
             </marshal>
             <to uri="seda:b"/>
         </pipeline>

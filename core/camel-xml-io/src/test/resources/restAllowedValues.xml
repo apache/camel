@@ -21,7 +21,7 @@
     <rest path="/say/bye">
         <get consumes="application/json">
             <param name="header_count" type="header" description="header param description1" dataType="integer"
-                   defaultValue="1" required="true">
+                   defaultValue="1">
                 <allowableValues>
                     <value>1</value>
                     <value>2</value>

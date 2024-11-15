@@ -20,7 +20,7 @@
 <routes id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="seda:a"/>
-    <routingSlip uriDelimiter=",">
+    <routingSlip>
       <header>destinations</header>
     </routingSlip>
   </route>

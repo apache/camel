@@ -116,9 +116,9 @@ public class ModelWriter extends BaseWriter {
                 #end
                 #foreach( $member in $thisAttributes )
                     #if( $member.type.getName() == "java.lang.String" )
-        doWriteAttribute("${member.attributeName}", def.${member.getter}());
+        doWriteAttribute("${member.attributeName}", def.${member.getter}(), ${member.defaultValue});
                     #else
-        doWriteAttribute("${member.attributeName}", toString(def.${member.getter}()));
+        doWriteAttribute("${member.attributeName}", toString(def.${member.getter}()), ${member.defaultValue});
                     #end
                 #end
             #end
@@ -277,10 +277,19 @@ public class ModelWriter extends BaseWriter {
 
     protected void doWriteAttribute(
             String attribute,
-            Object value)
+            String value)
+            throws IOException {
+        doWriteAttribute(attribute, value, null);
+    }
+    protected void doWriteAttribute(
+            String attribute,
+            String value,
+            String defaultValue)
             throws IOException {
         if (value != null) {
-            attribute(attribute, value);
+            if (defaultValue == null || !defaultValue.equals(value)) {
+                attribute(attribute, value);
+            }
         }
     }
     protected void doWriteValue(String value) throws IOException {
