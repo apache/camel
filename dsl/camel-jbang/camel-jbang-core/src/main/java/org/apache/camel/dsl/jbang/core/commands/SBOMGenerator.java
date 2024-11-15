@@ -49,12 +49,12 @@ public class SBOMGenerator extends Export {
     protected String outputName = "sbom";
 
     @CommandLine.Option(names = { "--cyclonedx-plugin-version" }, description = "The CycloneDX Maven Plugin version",
-                        defaultValue = "2.7.9")
-    protected String cyclonedxPluginVersion = "2.7.9";
+                        defaultValue = "2.9.0")
+    protected String cyclonedxPluginVersion = "2.9.0";
 
     @CommandLine.Option(names = { "--spdx-plugin-version" }, description = "The SPDX Maven Plugin version",
-                        defaultValue = "0.7.0")
-    protected String spdxPluginVersion = "0.7.0";
+                        defaultValue = "0.7.4")
+    protected String spdxPluginVersion = "0.7.4";
 
     @CommandLine.Option(names = { "--sbom-format" }, description = "The SBOM format, possible values are cyclonedx or spdx",
                         defaultValue = CYCLONEDX_FORMAT)
