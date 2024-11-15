@@ -279,6 +279,13 @@ public class ModelWriter extends BaseWriter {
             String attribute,
             Object value)
             throws IOException {
+        doWriteAttribute(attribute, value, null);
+    }
+    protected void doWriteAttribute(
+            String attribute,
+            Object value,
+            Object defaultValue)
+            throws IOException {
         if (value != null) {
             attribute(attribute, value);
         }
