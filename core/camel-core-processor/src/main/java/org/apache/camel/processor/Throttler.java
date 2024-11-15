@@ -14,22 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 
+/**
+ * Interface for different Throttler implementations.
+ */
 public interface Throttler extends Processor {
+
+    /**
+     * Whether to reject the incoming request such as when max rate limit hit.
+     */
     boolean isRejectExecution();
 
+    /**
+     * Whether to delay task asynchronously
+     */
     boolean isAsyncDelayed();
 
+    /**
+     * Whether to process the task using the current thread when the throttler rejected executing the task
+     */
     boolean isCallerRunsWhenRejected();
 
+    /**
+     * Expression for computing the maximum requests (can be dynamic and group based)
+     */
     void setMaximumRequestsExpression(Expression maxConcurrentRequestsExpression);
 
+    /**
+     * The current maximum number of requests
+     */
     int getCurrentMaximumRequests();
 
+    /**
+     * The mode of the throttler (different implementations).
+     */
     String getMode();
 }
