@@ -82,9 +82,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
@@ -107,9 +107,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Assertions.assertTrue(hasService(rt, ClusterType.KUBERNETES));
@@ -264,20 +264,6 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route-service", route.getSpec().getTo().getName());
         Assertions.assertTrue(certificate.startsWith(route.getSpec().getTls().getCertificate()));
         Assertions.assertTrue(key.startsWith(route.getSpec().getTls().getKey()));
-
-        if (RuntimeType.quarkus.equals(rt)) {
-            Properties applicationProperties = getApplicationProperties(workingDir);
-            Assertions.assertEquals("true", applicationProperties.get("quarkus.openshift.route.expose"));
-            Assertions.assertEquals("example.com",
-                    applicationProperties.get("quarkus.openshift.route.host"));
-            Assertions.assertEquals("http",
-                    applicationProperties.get("quarkus.openshift.route.target-port"));
-            Assertions.assertEquals("edge",
-                    applicationProperties.get("quarkus.openshift.route.tls.termination"));
-            Assertions.assertTrue(certificate.startsWith(
-                    applicationProperties.get("quarkus.openshift.route.tls.certificate").toString()));
-            Assertions.assertTrue(key.startsWith(applicationProperties.get("quarkus.openshift.route.tls.key").toString()));
-        }
     }
 
     @ParameterizedTest
@@ -412,7 +398,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(3, labels.size());
         Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("bar", labels.get("foo"));
     }
 

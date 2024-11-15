@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.IntOrStringBuilder;
@@ -33,7 +30,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Route;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -117,56 +113,6 @@ public class RouteTrait extends BaseTrait {
         routeBuilder.editSpec().withTls(tlsConfigBuilder.build()).endSpec();
         context.add(routeBuilder);
 
-    }
-
-    @Override
-    public void applyRuntimeSpecificProperties(Traits traitConfig, TraitContext context, RuntimeType runtimeType) {
-        List<String> routeProperties = new ArrayList<>();
-        if (runtimeType == RuntimeType.quarkus) {
-            Route routeTrait = Optional.ofNullable(traitConfig.getRoute()).orElseGet(Route::new);
-            Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
-
-            routeProperties.add("quarkus.openshift.route.expose=true");
-            if (routeTrait.getAnnotations() != null) {
-                routeTrait.getAnnotations().forEach((name, value) -> routeProperties
-                        .add("quarkus.openshift.route.annotations.\"%s\"=%s".formatted(name, value)));
-            }
-
-            if (routeTrait.getHost() != null) {
-                routeProperties.add("quarkus.openshift.route.host=%s".formatted(routeTrait.getHost()));
-            }
-            routeProperties.add("quarkus.openshift.route.target-port=%s"
-                    .formatted(Optional.ofNullable(containerTrait.getServicePortName()).orElse(DEFAULT_CONTAINER_PORT_NAME)));
-
-            if (routeTrait.getTlsTermination() != null) {
-                routeProperties
-                        .add("quarkus.openshift.route.tls.termination=%s".formatted(routeTrait.getTlsTermination().getValue()));
-            }
-            if (routeTrait.getTlsCertificate() != null) {
-                routeProperties.add(
-                        "quarkus.openshift.route.tls.certificate=%s"
-                                .formatted(getContent(routeTrait.getTlsCertificate()).replaceAll("\n", "\\\\n")));
-            }
-            if (routeTrait.getTlsKey() != null) {
-                routeProperties.add("quarkus.openshift.route.tls.key=%s"
-                        .formatted(getContent(routeTrait.getTlsKey()).replaceAll("\n", "\\\\n")));
-            }
-            if (routeTrait.getTlsCACertificate() != null) {
-                routeProperties
-                        .add("quarkus.openshift.route.tls.ca-certificate=%s"
-                                .formatted(getContent(routeTrait.getTlsCACertificate()).replaceAll("\n", "\\\\n")));
-            }
-            if (routeTrait.getTlsDestinationCACertificate() != null) {
-                routeProperties.add("quarkus.openshift.route.tls.destination-ca-certificate=%s"
-                        .formatted(getContent(routeTrait.getTlsDestinationCACertificate()).replaceAll("\n", "\\\\n")));
-            }
-            if (routeTrait.getTlsInsecureEdgeTerminationPolicy() != null) {
-                routeProperties.add("quarkus.openshift.route.tls.insecure-edge-termination-policy=%s"
-                        .formatted(routeTrait.getTlsInsecureEdgeTerminationPolicy()));
-            }
-        }
-        context.addOrAppendConfigurationResource("application.properties",
-                routeProperties.stream().collect(Collectors.joining(System.lineSeparator())));
     }
 
     @Override
