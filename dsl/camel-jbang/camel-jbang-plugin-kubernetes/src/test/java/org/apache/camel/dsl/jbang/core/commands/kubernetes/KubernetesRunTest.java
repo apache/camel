@@ -101,8 +101,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals("IfNotPresent", containers.get(0).getImagePullPolicy());
     }
@@ -145,8 +145,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("custom", deployment.getMetadata().getNamespace());
         Assertions.assertEquals(1, containers.size());
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
     }
 

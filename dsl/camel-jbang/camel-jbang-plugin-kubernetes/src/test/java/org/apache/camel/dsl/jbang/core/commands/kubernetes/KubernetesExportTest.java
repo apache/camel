@@ -89,9 +89,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var matchLabels = deployment.getSpec().getSelector().getMatchLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Assertions.assertTrue(hasService(rt));
@@ -114,9 +114,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
-        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
 
         Assertions.assertTrue(hasService(rt));
@@ -270,20 +270,6 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route-service", route.getSpec().getTo().getName());
         Assertions.assertTrue(certificate.startsWith(route.getSpec().getTls().getCertificate()));
         Assertions.assertTrue(key.startsWith(route.getSpec().getTls().getKey()));
-
-        if (RuntimeType.quarkus.equals(rt)) {
-            Properties applicationProperties = getApplicationProperties(workingDir);
-            Assertions.assertEquals("true", applicationProperties.get("quarkus.openshift.route.expose"));
-            Assertions.assertEquals("example.com",
-                    applicationProperties.get("quarkus.openshift.route.host"));
-            Assertions.assertEquals("http",
-                    applicationProperties.get("quarkus.openshift.route.target-port"));
-            Assertions.assertEquals("edge",
-                    applicationProperties.get("quarkus.openshift.route.tls.termination"));
-            Assertions.assertTrue(certificate.startsWith(
-                    applicationProperties.get("quarkus.openshift.route.tls.certificate").toString()));
-            Assertions.assertTrue(key.startsWith(applicationProperties.get("quarkus.openshift.route.tls.key").toString()));
-        }
     }
 
     @ParameterizedTest
@@ -364,14 +350,14 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
         Assertions.assertEquals("route-service", service.getMetadata().getName());
         Assertions.assertEquals(3, service.getMetadata().getLabels().size());
-        Assertions.assertEquals("route-service", service.getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route-service", service.getMetadata().getLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("true", service.getMetadata().getLabels().get("bindings.knative.dev/include"));
         Assertions.assertEquals("cluster-local", service.getMetadata().getLabels().get("networking.knative.dev/visibility"));
         Assertions.assertEquals(1, service.getMetadata().getAnnotations().size());
         Assertions.assertEquals("60", service.getMetadata().getAnnotations().get("serving.knative.dev/rolloutDuration"));
         Assertions.assertEquals(1, service.getSpec().getTemplate().getMetadata().getLabels().size());
         Assertions.assertEquals("route-service",
-                service.getSpec().getTemplate().getMetadata().getLabels().get(BaseTrait.KUBERNETES_NAME_LABEL));
+                service.getSpec().getTemplate().getMetadata().getLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals(5, service.getSpec().getTemplate().getMetadata().getAnnotations().size());
         Assertions.assertEquals("cpu",
                 service.getSpec().getTemplate().getMetadata().getAnnotations().get("autoscaling.knative.dev/metric"));
@@ -664,7 +650,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(3, labels.size());
         Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
-        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_NAME_LABEL));
+        Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("bar", labels.get("foo"));
     }
 
