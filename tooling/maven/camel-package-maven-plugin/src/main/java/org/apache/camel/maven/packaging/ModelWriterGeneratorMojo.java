@@ -515,5 +515,10 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             return an;
         }
 
+        public Object getDefaultValue() {
+            // TODO: find default value
+            return "\"@@none@@\"";
+        }
+
     }
 }
