@@ -44,10 +44,10 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
 
         Optional<Object> answer = super.newInstance(key);
         if (answer.isEmpty()) {
-            // need to use regular factory finder as bootstrap has already marked the loader as a miss
+            // need to use regular factory finder as bootstrap has already marked as a miss
             final FactoryFinder finder
                     = camelContext.getCamelContextExtension().getFactoryFinder(PeriodTaskResolver.RESOURCE_PATH);
-            Object obj = ResolverHelper.resolveService(camelContext, finder, key, PeriodTaskResolver.class).orElse(null);
+            Object obj = ResolverHelper.resolveService(camelContext, finder, key, Object.class).orElse(null);
             return Optional.ofNullable(obj);
         }
         return answer;
@@ -59,7 +59,7 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
 
         Optional<T> answer = super.newInstance(key, type);
         if (answer.isEmpty()) {
-            // need to use regular factory finder as bootstrap has already marked the loader as a miss
+            // need to use regular factory finder as bootstrap has already marked as a miss
             final FactoryFinder finder
                     = camelContext.getCamelContextExtension().getFactoryFinder(PeriodTaskResolver.RESOURCE_PATH);
             T obj = ResolverHelper.resolveService(camelContext, finder, key, type).orElse(null);
