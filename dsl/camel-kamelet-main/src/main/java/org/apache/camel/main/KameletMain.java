@@ -48,6 +48,7 @@ import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
+import org.apache.camel.main.download.DependencyDownloaderPeriodTaskResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesComponent;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesFunctionResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertyBindingListener;
@@ -58,7 +59,6 @@ import org.apache.camel.main.download.DependencyDownloaderTransformerResolver;
 import org.apache.camel.main.download.DependencyDownloaderUriFactoryResolver;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.download.DownloadModelineParser;
-import org.apache.camel.main.download.ExportPeriodTaskResolver;
 import org.apache.camel.main.download.ExportPropertiesParser;
 import org.apache.camel.main.download.ExportTypeConverter;
 import org.apache.camel.main.download.KameletAutowiredLifecycleStrategy;
@@ -612,6 +612,12 @@ public class KameletMain extends MainCommandLineSupport {
             ff = ffr.resolveDefaultFactoryFinder(classResolver);
             answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
 
+            // period task resolver that can download needed dependencies
+            Object camelVersion = getInitialProperties().get(getInstanceType() + ".camelVersion");
+            PeriodTaskResolver ptr = new DependencyDownloaderPeriodTaskResolver(
+                    ff, answer, Optional.ofNullable(camelVersion).map(Object::toString).orElse(null), export);
+            answer.getCamelContextExtension().addContextPlugin(PeriodTaskResolver.class, ptr);
+
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
@@ -732,12 +738,6 @@ public class KameletMain extends MainCommandLineSupport {
         answer.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
         answer.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
         answer.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
-
-        // override default period task with our export that does not run tasks
-        FactoryFinder finder = PluginHelper.getFactoryFinderResolver(answer)
-                .resolveBootstrapFactoryFinder(answer.getClassResolver(), PeriodTaskResolver.RESOURCE_PATH);
-        ExportPeriodTaskResolver eptr = new ExportPeriodTaskResolver(finder);
-        answer.getCamelContextExtension().addContextPlugin(PeriodTaskResolver.class, eptr);
     }
 
     private String getInstanceType() {
