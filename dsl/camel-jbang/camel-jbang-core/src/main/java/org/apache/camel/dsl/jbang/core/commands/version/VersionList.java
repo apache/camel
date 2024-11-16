@@ -73,7 +73,7 @@ public class VersionList extends CamelCommand {
     RuntimeType runtime = RuntimeType.main;
 
     @CommandLine.Option(names = { "--from-version" },
-                        description = "Filter by Camel version (inclusive)")
+                        description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
     String fromVersion;
 
     @CommandLine.Option(names = { "--to-version" },
