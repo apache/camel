@@ -30,17 +30,24 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
     private final DependencyDownloader downloader;
     private final CamelContext camelContext;
     private final String camelVersion;
+    private final boolean export;
 
-    public DependencyDownloaderPeriodTaskResolver(FactoryFinder finder, CamelContext camelContext, String camelVersion) {
+    public DependencyDownloaderPeriodTaskResolver(FactoryFinder finder, CamelContext camelContext, String camelVersion,
+                                                  boolean export) {
         super(finder);
         this.camelContext = camelContext;
         this.camelVersion = camelVersion;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
+        this.export = export;
     }
 
     @Override
     public Optional<Object> newInstance(String key) {
         maybeDownload(key);
+
+        if (export && skip(key)) {
+            return Optional.empty();
+        }
 
         Optional<Object> answer = super.newInstance(key);
         if (answer.isEmpty()) {
@@ -56,6 +63,10 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
     @Override
     public <T> Optional<T> newInstance(String key, Class<T> type) {
         maybeDownload(key);
+
+        if (export && skip(key)) {
+            return Optional.empty();
+        }
 
         Optional<T> answer = super.newInstance(key, type);
         if (answer.isEmpty()) {
@@ -91,6 +102,12 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
         if (!downloader.alreadyOnClasspath("org.apache.camel", artifactId, resolvedCamelVersion)) {
             downloader.downloadDependency("org.apache.camel", artifactId, resolvedCamelVersion);
         }
+    }
+
+    private boolean skip(String key) {
+        // skip all vault refresh during export as they will attempt to connect to remote system
+        return "aws-secret-refresh".equals(key) || "gcp-secret-refresh".equals(key) || "azure-secret-refresh".equals(key)
+                || "kubernetes-secret-refresh".equals(key) || "kubernetes-configmaps-refresh".equals(key);
     }
 
 }
