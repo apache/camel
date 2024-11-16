@@ -48,6 +48,7 @@ import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
+import org.apache.camel.main.download.DependencyDownloaderPeriodTaskResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesComponent;
 import org.apache.camel.main.download.DependencyDownloaderPropertiesFunctionResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertyBindingListener;
@@ -611,6 +612,14 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().setBootstrapFactoryFinder(ff);
             ff = ffr.resolveDefaultFactoryFinder(classResolver);
             answer.getCamelContextExtension().setDefaultFactoryFinder(ff);
+
+            // period task resolver that can download needed dependencies
+            if (!export) {
+                Object camelVersion = getInitialProperties().get(getInstanceType() + ".camelVersion");
+                PeriodTaskResolver ptr = new DependencyDownloaderPeriodTaskResolver(
+                        ff, answer, Optional.ofNullable(camelVersion).map(Object::toString).orElse(null));
+                answer.getCamelContextExtension().addContextPlugin(PeriodTaskResolver.class, ptr);
+            }
 
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
