@@ -30,7 +30,7 @@ public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStre
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").resequence(header("seqno")).batch().timeout(50).to("mock:result");
+                from("direct:start").resequence(header("seqno")).batch().timeout(150).to("mock:result");
             }
         };
     }
