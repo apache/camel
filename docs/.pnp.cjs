@@ -1627,10 +1627,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["cross-spawn", [\
-        ["npm:7.0.3", {\
-          "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.3-e4ff3e65b3-671cc7c728.zip/node_modules/cross-spawn/",\
+        ["npm:7.0.5", {\
+          "packageLocation": "./.yarn/cache/cross-spawn-npm-7.0.5-cf92562a27-55c50004cb.zip/node_modules/cross-spawn/",\
           "packageDependencies": [\
-            ["cross-spawn", "npm:7.0.3"],\
+            ["cross-spawn", "npm:7.0.5"],\
             ["path-key", "npm:3.1.1"],\
             ["shebang-command", "npm:2.0.0"],\
             ["which", "npm:2.0.2"]\
@@ -2283,7 +2283,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@nodelib/fs.walk", "npm:1.2.8"],\
             ["ajv", "npm:6.12.6"],\
             ["chalk", "npm:4.1.2"],\
-            ["cross-spawn", "npm:7.0.3"],\
+            ["cross-spawn", "npm:7.0.5"],\
             ["debug", "virtual:352060d453a801a0fd16b073afb56a2607e33f96a5ff7faf9351853a737843ea6ad854442954d36ef1f89461751ed94f005ea67c746b39723d1da041a244f7d2#npm:4.3.4"],\
             ["doctrine", "npm:3.0.0"],\
             ["escape-string-regexp", "npm:4.0.0"],\
@@ -2330,7 +2330,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ungap/structured-clone", "npm:1.2.0"],\
             ["ajv", "npm:6.12.6"],\
             ["chalk", "npm:4.1.2"],\
-            ["cross-spawn", "npm:7.0.3"],\
+            ["cross-spawn", "npm:7.0.5"],\
             ["debug", "virtual:352060d453a801a0fd16b073afb56a2607e33f96a5ff7faf9351853a737843ea6ad854442954d36ef1f89461751ed94f005ea67c746b39723d1da041a244f7d2#npm:4.3.4"],\
             ["doctrine", "npm:3.0.0"],\
             ["escape-string-regexp", "npm:4.0.0"],\
@@ -3158,7 +3158,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/foreground-child-npm-3.2.0-67c4f78608-6a285b94c5.zip/node_modules/foreground-child/",\
           "packageDependencies": [\
             ["foreground-child", "npm:3.2.0"],\
-            ["cross-spawn", "npm:7.0.3"],\
+            ["cross-spawn", "npm:7.0.5"],\
             ["signal-exit", "npm:4.1.0"]\
           ],\
           "linkType": "HARD"\
