@@ -463,7 +463,7 @@
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.1.2</spring-batch-version>
         <spring-data-redis-version>3.3.5</spring-data-redis-version>
-        <spring-ldap-version>3.2.7</spring-ldap-version>
+        <spring-ldap-version>3.2.8</spring-ldap-version>
         <spring-vault-core-version>3.1.2</spring-vault-core-version>
         <spring-version>6.2.0</spring-version>
         <spring-rabbitmq-version>3.1.7</spring-rabbitmq-version>
