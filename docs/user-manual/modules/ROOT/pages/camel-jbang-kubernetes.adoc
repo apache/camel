@@ -512,6 +512,12 @@ Specifically, this option applies the `networking.knative.dev/visibility` label 
 
 Refer to the Knative documentation for more information.
 
+| knative-service.timeout-seconds
+| int
+| The maximum duration in seconds that the request instance is allowed to respond to a request. This field propagates to the integration Pod’s terminationGracePeriodSeconds.
+
+Refer to the Knative documentation for more information.
+
 |===
 
 === Connecting to Knative
