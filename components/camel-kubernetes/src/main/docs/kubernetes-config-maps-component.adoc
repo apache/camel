@@ -150,4 +150,19 @@ You can also provide a default value in case a key does not exist:
     <log message="I want {{configmap:myconfig/second:Heineken}}"/>
 ----
 
+== Automatic Camel context reloading on Configmaps Refresh
+
+Being able to reload Camel context on a Configmap Refresh could be done by specifying the following properties: 
+
+[source,properties]
+----
+camel.vault.kubernetescm.refreshEnabled=true
+camel.vault.kubernetescm.configmaps=Configmap
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.kubernetescm.refreshEnabled` will enable the automatic context reload and `camel.vault.kubernetescm.configmaps` is a regex representing or a comma separated lists of the configmaps we want to track for updates.
+
+Whenever a configmap listed in the property, will be updated in the same namespace of the running application, the Camel context will be reloaded, refreshing the configmap value.
+
 include::spring-boot:partial$starter.adoc[]
