@@ -124,6 +124,16 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
                 .endTemplate()
                 .endSpec();
 
+        if (serviceTrait.getTimeoutSeconds() != null && serviceTrait.getTimeoutSeconds() > 0) {
+            service.editSpec()
+                    .editTemplate()
+                    .editSpec()
+                    .withTimeoutSeconds(serviceTrait.getTimeoutSeconds())
+                    .endSpec()
+                    .endTemplate()
+                    .endSpec();
+        }
+
         if (context.getServiceAccount() != null) {
             service.editSpec()
                     .editTemplate()
