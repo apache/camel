@@ -59,7 +59,8 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
                 "knative-service.min-scale=1",
                 "knative-service.max-scale=10",
                 "knative-service.rollout-duration=60",
-                "knative-service.visibility=cluster-local" };
+                "knative-service.visibility=cluster-local",
+                "knative-service.timeout-seconds=300" };
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -88,6 +89,7 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("80", annotations.get("autoscaling.knative.dev/target"));
         Assertions.assertEquals("1", annotations.get("autoscaling.knative.dev/minScale"));
         Assertions.assertEquals("10", annotations.get("autoscaling.knative.dev/maxScale"));
+        Assertions.assertEquals(300, service.getSpec().getTemplate().getSpec().getTimeoutSeconds());
     }
 
     @ParameterizedTest
