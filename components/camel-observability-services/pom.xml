@@ -41,6 +41,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-micrometer-prometheus</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-opentelemetry</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
