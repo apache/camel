@@ -14,10 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.common.services;
 
-public interface TestServiceBuilder<T extends InfrastructureService> {
+public interface InfrastructureService extends AutoCloseable {
 
-    T build();
+    /**
+     * Register service properties (such as using System.setProperties) so that they can be resolved at distance (ie.:
+     * when using Spring's PropertySourcesPlaceholderConfigurer or simply when trying to collect test infra information
+     * outside of the test class itself).
+     */
+    void registerProperties();
+
+    /**
+     * Perform any initialization necessary
+     */
+    void initialize();
+
+    /**
+     * Shuts down the service after the test has completed
+     */
+    void shutdown();
+
+    @Override
+    default void close() {
+        shutdown();
+    }
 }

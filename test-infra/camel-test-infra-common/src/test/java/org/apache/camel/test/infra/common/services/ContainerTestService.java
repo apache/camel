@@ -22,13 +22,11 @@ import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
 
-public interface ContainerService<T extends GenericContainer> extends ExecutionCondition {
+public interface ContainerTestService extends ExecutionCondition {
 
     @Override
     default ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext extensionContext) {
-
         if (ContainerEnvironmentUtil.isDockerAvailable()) {
             return ConditionEvaluationResult.enabled("Docker is available");
         }
@@ -40,6 +38,4 @@ public interface ContainerService<T extends GenericContainer> extends ExecutionC
                 "Container-based tests were disabled because Docker is NOT available. Check the log files on target/failsafe-reports");
         return ConditionEvaluationResult.disabled("Docker is NOT available");
     }
-
-    T getContainer();
 }

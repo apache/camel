@@ -14,10 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.arangodb.services;
 
-package org.apache.camel.test.infra.common.services;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public interface TestServiceBuilder<T extends InfrastructureService> {
+public interface ArangoDBService extends InfrastructureService {
 
-    T build();
+    int getPort();
+
+    String getHost();
+
+    default String getServiceAddress() {
+        return String.format("%s:%d", getHost(), getPort());
+    }
 }

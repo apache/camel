@@ -17,7 +17,9 @@
 
 package org.apache.camel.test.infra.common.services;
 
-public interface TestServiceBuilder<T extends InfrastructureService> {
+import org.testcontainers.containers.GenericContainer;
 
-    T build();
+public interface ContainerService<T extends GenericContainer> {
+
+    T getContainer();
 }
