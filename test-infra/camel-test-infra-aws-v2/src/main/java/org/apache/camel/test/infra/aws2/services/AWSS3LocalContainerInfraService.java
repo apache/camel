@@ -17,9 +17,12 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = AWSInfraService.class, serviceAlias = { "s3", "aws-s3" })
 public class AWSS3LocalContainerInfraService extends AWSLocalContainerInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(AWSS3LocalContainerInfraService.class);
 

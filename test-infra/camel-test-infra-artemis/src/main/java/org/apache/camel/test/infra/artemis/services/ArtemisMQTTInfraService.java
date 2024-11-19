@@ -19,8 +19,10 @@ package org.apache.camel.test.infra.artemis.services;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
+@InfraService(service = ArtemisInfraService.class, serviceAlias = "artemis", serviceImplementationAlias = "mqtt")
 public class ArtemisMQTTInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;

@@ -106,13 +106,15 @@ maintenance.
 
 ==== Recommended Structure for Test Infrastructure Modules
 
-The service should provide an interface, named after the infrastructure being implemented, and this interface should 
-extend the https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/test/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
-interface. The services should try to minimize the test execution time and resource usage when running. As such,
-the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/BeforeAllCallback.html[BeforeAllCallback]
-and https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/AfterAllCallback.html[AfterAllCallback]
-should be the preferred extensions whenever possible because they allow the instance of the infrastructure to be static
-throughout the test execution.
+The actual Service interface and implementation should be added under `src/main`, while the actual integration with JUnit 
+can be added to `src/test`, in this way the classes needed to run the service (most of them, with testcontainers) are decoupled
+by JUnit and can be run separately.
+
+===== Main Sources
+
+The service should provide an interface, named after the infrastructure being implemented, and this interface should extend the 
+https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/main/java/org/apache/camel/test/infra/common/services/InfrastructureService.java[InfrastructureService]
+interface.
 
 [NOTE]
 ====
@@ -141,6 +143,15 @@ service to choose between running as a local container or as remote instance, a 
 as `<name>.<parameter>`. More complex services may use the builder available through the factory classes to compose 
 the service accordingly.
 
+===== Test Sources
+
+Once the main sources are implemented, https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/test/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
+interface can be used to integrate the actual Service implementation with JUnit and its lifecycle.
+The services should try to minimize the test execution time and resource usage when running. As such,
+the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/BeforeAllCallback.html[BeforeAllCallback]
+and https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/AfterAllCallback.html[AfterAllCallback]
+should be the preferred extensions whenever possible because they allow the instance of the infrastructure to be static
+throughout the test execution.
 
 ==== Registering Properties
 

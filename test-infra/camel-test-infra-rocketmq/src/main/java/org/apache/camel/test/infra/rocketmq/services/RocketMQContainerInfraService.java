@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.rocketmq.services;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rocketmq.common.RocketMQProperties;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.Network;
 
+@InfraService(service = RocketMQInfraService.class, serviceAlias = { "rocketmq" })
 public class RocketMQContainerInfraService implements RocketMQInfraService, ContainerService<RocketMQNameserverContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainerInfraService.class);
     public static final String ROCKETMQ_VERSION = LocalPropertyResolver.getProperty(

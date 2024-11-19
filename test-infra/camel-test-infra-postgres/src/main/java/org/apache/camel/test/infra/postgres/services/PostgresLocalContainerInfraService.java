@@ -16,13 +16,16 @@
  */
 package org.apache.camel.test.infra.postgres.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = PostgresInfraService.class, serviceAlias = { "postgres" })
 public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer> {
     public static final String DEFAULT_POSTGRES_CONTAINER
             = LocalPropertyResolver.getProperty(PostgresLocalContainerInfraService.class,
@@ -43,7 +46,8 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
     }
 
     protected PostgreSQLContainer initContainer(String imageName) {
-        return new PostgreSQLContainer(imageName);
+        return new PostgreSQLContainer(
+                DockerImageName.parse(imageName).asCompatibleSubstituteFor("postgres"));
     }
 
     @Override

@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
+@InfraService(service = KafkaInfraService.class, serviceAlias = "kafka", serviceImplementationAlias = "strimzi")
 public class StrimziInfraService implements KafkaInfraService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziInfraService.class);
 

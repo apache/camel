@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.google.pubsub.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.google.pubsub.common.GooglePubSubProperties;
@@ -24,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = GooglePubSubInfraService.class, serviceAlias = { "google", "google-pub-sub" },
+              serviceImplementationAlias = "pub-sub")
 public class GooglePubSubLocalContainerInfraService
         implements GooglePubSubInfraService, ContainerService<PubSubEmulatorContainer> {
 

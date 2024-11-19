@@ -19,13 +19,21 @@ package org.apache.camel.test.infra.ftp.services.embedded;
 
 import java.io.File;
 
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.ftp.services.FtpInfraService;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
 
+@InfraService(service = FtpInfraService.class, serviceAlias = { "ftps" })
 public class FtpsEmbeddedInfraService extends FtpEmbeddedInfraService {
-    public FtpsEmbeddedInfraService(EmbeddedConfigurationBuilder embeddedConfigurationBuilder) {
-        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate());
+
+    /**
+     * Use a default constructor with a default security configuration for camel jbang
+     */
+    public FtpsEmbeddedInfraService() {
+        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate()
+                .withSecurityConfiguration(false, "TLSv1.3", true));
     }
 
     public FtpsEmbeddedInfraService(EmbeddedConfiguration.SecurityConfiguration securityConfiguration) {

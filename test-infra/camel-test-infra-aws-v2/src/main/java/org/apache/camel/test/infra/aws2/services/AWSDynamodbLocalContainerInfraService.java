@@ -17,6 +17,10 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
+
+@InfraService(service = AWSInfraService.class, serviceAlias = { "dynamodb", "aws-dynamo-db", "dynamo-db" })
 public class AWSDynamodbLocalContainerInfraService extends AWSLocalContainerInfraService {
 
     public AWSDynamodbLocalContainerInfraService() {
