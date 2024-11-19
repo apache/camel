@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.mongodb.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = MongoDBInfraService.class, serviceAlias = { "mongodb" })
 public class MongoDBLocalContainerInfraService implements MongoDBInfraService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerInfraService.class);
     private static final int DEFAULT_MONGODB_PORT = 27017;

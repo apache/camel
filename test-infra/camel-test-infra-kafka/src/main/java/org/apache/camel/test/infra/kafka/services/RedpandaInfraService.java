@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import org.testcontainers.redpanda.RedpandaContainer;
 
+@InfraService(service = KafkaInfraService.class, serviceAlias = "kafka", serviceImplementationAlias = "redpanda")
 public class RedpandaInfraService implements KafkaInfraService, ContainerService<RedpandaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedpandaInfraService.class);
 

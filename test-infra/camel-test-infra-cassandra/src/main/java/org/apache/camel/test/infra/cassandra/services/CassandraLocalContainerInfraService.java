@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.cassandra.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.cassandra.common.CassandraProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -27,6 +28,7 @@ import org.testcontainers.utility.DockerImageName;
 /**
  * A service for a local instance of Apache Cassandra running with TestContainers
  */
+@InfraService(service = CassandraInfraService.class, serviceAlias = { "cassandra" })
 public class CassandraLocalContainerInfraService implements CassandraInfraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerInfraService.class);
 

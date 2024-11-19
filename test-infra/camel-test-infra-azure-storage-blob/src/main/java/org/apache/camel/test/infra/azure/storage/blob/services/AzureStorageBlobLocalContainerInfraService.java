@@ -17,11 +17,15 @@
 
 package org.apache.camel.test.infra.azure.storage.blob.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
 import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
+import org.apache.camel.test.infra.azure.common.services.AzureInfraService;
 import org.apache.camel.test.infra.azure.common.services.AzureServices;
 import org.apache.camel.test.infra.azure.common.services.AzureStorageInfraService;
 
+@InfraService(service = AzureInfraService.class, serviceAlias = { "azure-storage-blob", "azure" },
+              serviceImplementationAlias = "storage-blob")
 public class AzureStorageBlobLocalContainerInfraService extends AzureStorageInfraService {
 
     @Override

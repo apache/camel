@@ -89,7 +89,15 @@
         <module>camel-test-infra-hivemq</module>
         <module>camel-test-infra-torchserve</module>
         <module>camel-test-infra-tensorflow-serving</module>
+        <module>camel-test-infra-all</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>spi-annotations</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

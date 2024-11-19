@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.rabbitmq.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.rabbitmq.common.RabbitMQProperties;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = RabbitMQInfraService.class, serviceAlias = { "rabbitmq" })
 public class RabbitMQLocalContainerInfraService implements RabbitMQInfraService, ContainerService<RabbitMQContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQLocalContainerInfraService.class);
 

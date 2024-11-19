@@ -17,6 +17,10 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
+
+@InfraService(service = AWSInfraService.class, serviceAlias = { "lambda", "aws-lambda" })
 public class AWSLambdaLocalContainerInfraService extends AWSLocalContainerInfraService {
     public AWSLambdaLocalContainerInfraService() {
         super(Service.LAMBDA);

@@ -29,9 +29,11 @@ import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQSecurityManager;
 import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
+@InfraService(service = ArtemisInfraService.class, serviceAlias = "artemis", serviceImplementationAlias = "amqp")
 public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;

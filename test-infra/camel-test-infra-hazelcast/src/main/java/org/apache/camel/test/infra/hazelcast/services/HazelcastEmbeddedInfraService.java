@@ -18,7 +18,9 @@
 package org.apache.camel.test.infra.hazelcast.services;
 
 import com.hazelcast.config.Config;
+import org.apache.camel.spi.annotations.InfraService;
 
+@InfraService(service = HazelcastInfraService.class, serviceAlias = { "hazelcast" })
 public class HazelcastEmbeddedInfraService implements HazelcastInfraService {
 
     @Override

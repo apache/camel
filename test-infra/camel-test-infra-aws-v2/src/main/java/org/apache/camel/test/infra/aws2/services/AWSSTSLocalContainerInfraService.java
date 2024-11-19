@@ -17,6 +17,10 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
+
+@InfraService(service = AWSInfraService.class, serviceAlias = { "aws-sts" })
 public class AWSSTSLocalContainerInfraService extends AWSLocalContainerInfraService {
     public AWSSTSLocalContainerInfraService() {
         super(Service.STS);

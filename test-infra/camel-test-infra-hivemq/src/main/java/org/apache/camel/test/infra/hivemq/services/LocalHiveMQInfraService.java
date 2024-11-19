@@ -16,11 +16,13 @@
  */
 package org.apache.camel.test.infra.hivemq.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.hivemq.common.HiveMQProperties;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = HiveMQInfraService.class, serviceAlias = { "hivemq", "hive-mq" })
 public class LocalHiveMQInfraService extends AbstractLocalHiveMQService<LocalHiveMQInfraService> {
 
     LocalHiveMQInfraService() {

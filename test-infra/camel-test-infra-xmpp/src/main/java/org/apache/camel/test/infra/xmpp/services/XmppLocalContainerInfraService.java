@@ -16,12 +16,14 @@
  */
 package org.apache.camel.test.infra.xmpp.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = XmppInfraService.class, serviceAlias = { "xmpp" })
 public class XmppLocalContainerInfraService implements XmppInfraService, ContainerService<XmppServerContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(XmppLocalContainerInfraService.class);
 

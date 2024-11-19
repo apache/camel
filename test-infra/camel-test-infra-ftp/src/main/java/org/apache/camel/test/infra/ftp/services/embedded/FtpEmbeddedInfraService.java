@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.AbstractService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpInfraService;
@@ -45,6 +46,7 @@ import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = FtpInfraService.class, serviceAlias = { "ftp" })
 public class FtpEmbeddedInfraService extends AbstractService implements FtpInfraService {
     protected static final String DEFAULT_LISTENER = "default";
     private static final Logger LOG = LoggerFactory.getLogger(FtpEmbeddedInfraService.class);

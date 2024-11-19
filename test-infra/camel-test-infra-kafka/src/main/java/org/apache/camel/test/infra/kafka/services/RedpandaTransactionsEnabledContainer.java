@@ -21,6 +21,7 @@ import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.redpanda.RedpandaContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
     public static final String REDPANDA_CONTAINER = LocalPropertyResolver.getProperty(
@@ -29,7 +30,8 @@ public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
     public static final int REDPANDA_PORT = 9092;
 
     public RedpandaTransactionsEnabledContainer(String image) {
-        super(image);
+        super(DockerImageName.parse(System.getProperty(KafkaProperties.REDPANDA_CONTAINER, REDPANDA_CONTAINER))
+                .asCompatibleSubstituteFor("redpandadata/redpanda"));
     }
 
     protected void containerIsStarting(InspectContainerResponse containerInfo) {
