@@ -11,6 +11,8 @@
 
 The Camel Observability Services component is used to run Camel standalone (Camel Main) and provide a set of opinionated components and configuration which simplify operations such as observability on cloud environments. Although the component is mainly targeted for cloud, it can be used in any other environment, giving to the Camel application the capability to expose a set of observability features by default.
 
+NOTE: you may build your application using this component and only enable the consumption of the exposed metrics in upper environments.
+
 == Usage
 
 === Auto-detection from classpath
@@ -26,6 +28,7 @@ WARNING: the customization of the configuration for this component is not availa
 The presence of this dependency will provide the following components:
 
 * camel-micrometer-prometheus
+* camel-opentelemetry
 
 === List of known endpoints
 
@@ -37,3 +40,23 @@ The presence of this dependency will expose the following endpoints:
 | `/observe/metrics` | metrics exposed as in Micrometer Prometheus Registry
 
 |====
+
+== OpenTelemetry configuration
+
+The presence of this component will provide the required instrumentation to easily enable the collection of Opentelemetry metrics.
+
+=== Testing OpenTelemetry collector
+
+If you need a quick way to verify the configuration of OpenTelemetry traces, you can start a local collector by running a Docker service:
+
+```bash
+docker run -p 4318:4318 otel/opentelemetry-collector-contrib:0.113.0
+```
+
+This service will expose the port `4318` to `localhost` which is the default setting expected by the agent. You can change this configuration accordingly.
+
+=== Agent configuration
+
+In order to collect the metrics exposed by the application, and, depending on the runtime of choice, you will need to start your Camel application with a Java agent, whose goal is to push those metrics to the OpenTelemetry compatible collector server. Follow the instructions provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[Opentelemetry Java Agent configuration]
+
+WARNING: due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work.
