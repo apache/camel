@@ -100,7 +100,12 @@ public abstract class JBangTestSupport {
         BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
         DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
         SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
-        CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java");
+        CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java"),
+        SRC_MAPPING_DATA("data.json", "/jbang/it/data-mapping/src/data.json"),
+        SRC_MAPPING_TEMPLATE("transform.yaml", "/jbang/it/data-mapping/src/transform.yaml"),
+        COMP_MAPPING_DATA("data.xml", "/jbang/it/data-mapping/components/data.xml"),
+        COMP_MAPPING_TEMPLATE("transform.xml", "/jbang/it/data-mapping/components/transform.xml"),
+        FORMATS_MAPPING_DATA("data.csv", "/jbang/it/data-mapping/data-formats/data.csv");
 
         private String name;
         private String resPath;
