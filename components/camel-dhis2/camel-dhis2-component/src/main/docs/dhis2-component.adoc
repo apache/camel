@@ -49,6 +49,10 @@ include::partial$component-endpoint-options.adoc[]
 
 * Fetch an organisation unit by ID:
 +
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -59,13 +63,32 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getResource")
-            .to("dhis2://get/resource?path=organisationUnits/O6uvpzGd5pu&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
+            .to("dhis2:get/resource?path=organisationUnits/O6uvpzGd5pu&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
             .unmarshal()
             .json(org.hisp.dhis.api.model.v40_2_2.OrganisationUnit.class);
     }
 }
-
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:getResource
+    steps:
+      - to:
+          uri: dhis2:get/resource
+          parameters:
+            path: organisationUnits/O6uvpzGd5pu
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+      - unmarshal:
+          json:
+            unmarshalType: org.hisp.dhis.api.model.v40_2_2.OrganisationUnit
+----
+====
 
 * Fetch an organisation unit code by ID:
 +
@@ -89,6 +112,10 @@ public class MyRouteBuilder extends RouteBuilder {
 
 * Fetch all organisation units:
 +
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -99,14 +126,42 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=organisationUnits&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
+            .to("dhis2:get/collection?path=organisationUnits&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
             .split().body()
             .convertBodyTo(org.hisp.dhis.api.model.v40_2_2.OrganisationUnit.class).log("${body}");
     }
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:getCollection
+    steps:
+      - to:
+          uri: dhis2:get/collection
+          parameters:
+            path: organisationUnits
+            arrayName: organisationUnits
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+      - split:
+          simple: ${body}
+          steps:
+            - convertBodyTo:
+                type: org.hisp.dhis.api.model.v40_2_2.OrganisationUnit
+            - log: ${body}
+----
+====
+
 * Fetch all organisation unit codes:
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -118,15 +173,43 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=organisationUnits&fields=code&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
+            .to("dhis2:get/collection?path=organisationUnits&arrayName=organisationUnits&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
             .split().body()
-            .convertBodyTo(org.hisp.dhis.api.model.v40_2_2.OrganisationUnit.class)
-            .log("${body}");
+            .convertBodyTo(org.hisp.dhis.api.model.v40_2_2.OrganisationUnit.class).log("${body}");
     }
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:getCollection
+    steps:
+      - to:
+          uri: dhis2:get/collection
+          parameters:
+            path: organisationUnits
+            arrayName: organisationUnits
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+            fields: code
+      - split:
+          simple: ${body}
+          steps:
+            - convertBodyTo:
+                type: org.hisp.dhis.api.model.v40_2_2.OrganisationUnit
+            - log: ${body}
+----
+====
+
 * Fetch users with a phone number:
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -138,7 +221,7 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:getCollection")
-            .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&arrayName=users&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
+            .to("dhis2://get/collection?path=users&filter=phoneNumber:!null:&arrayName=users&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
             .split().body()
             .convertBodyTo(org.hisp.dhis.api.model.v40_2_2.User.class)
             .log("${body}");
@@ -146,7 +229,36 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:getCollection
+    steps:
+      - to:
+          uri: dhis2:get/collection
+          parameters:
+            path: users
+            arrayName: users
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+            filter: "phoneNumber:!null:"
+      - split:
+          simple: ${body}
+          steps:
+            - convertBodyTo:
+                type: org.hisp.dhis.api.model.v40_2_2.User
+            - log: ${body}
+----
+====
+
 * Save a data value set
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -156,7 +268,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.hisp.dhis.api.model.v40_2_2.DataValueSet;
 import org.hisp.dhis.api.model.v40_2_2.DataValue;
-import org.hisp.dhis.api.model.v40_2_2.WebMessage;
 import org.hisp.dhis.integration.sdk.support.period.PeriodBuilder;
 
 import java.time.ZoneOffset;
@@ -170,22 +281,60 @@ public class MyRouteBuilder extends RouteBuilder {
     public void configure() {
         from("direct:postResource")
             .setBody(exchange -> new DataValueSet().withCompleteDate(
-                    ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT))
+                    ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE))
                                                                    .withOrgUnit("O6uvpzGd5pu")
                                                                    .withDataSet("lyLU2wR22tC").withPeriod(PeriodBuilder.monthOf(new Date(), -1))
                                                                    .withDataValues(
                                                                        List.of(new DataValue().withDataElement("aIJZ2d2QgVV").withValue("20"))))
-            .to("dhis2://post/resource?path=dataValueSets&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
-            .unmarshal().json(WebMessage.class)
+            .to("dhis2://post/resource?path=dataValueSets&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
+            .unmarshal().json()
             .choice()
-            .when(exchange -> !exchange.getMessage().getBody(WebMessage.class).getStatus().equals(WebMessage.StatusRef.OK))
+            .when().groovy("body.status != 'OK'")
                 .log(LoggingLevel.ERROR, "Import error from DHIS2 while saving data value set => ${body}")
             .end();
     }
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:postResource
+    steps:
+      - setBody:
+          groovy: |
+            new org.hisp.dhis.api.model.v40_2_2.DataValueSet()
+              .withCompleteDate(java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC).format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE))
+              .withOrgUnit('O6uvpzGd5pu')
+              .withDataSet('lyLU2wR22tC')
+              .withPeriod(org.hisp.dhis.integration.sdk.support.period.PeriodBuilder.monthOf(new Date(), -1))
+              .withDataValues([new org.hisp.dhis.api.model.v40_2_2.DataValue().withDataElement('aIJZ2d2QgVV').withValue('20')])
+      - to:
+          uri: dhis2:post/resource
+          parameters:
+            path: dataValueSets
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+      - unmarshal:
+          json: {}
+      - choice:
+          when:
+            - groovy: body.status != 'OK'
+              steps:
+                - log:
+                    loggingLevel: ERROR
+                    message: Import error from DHIS2 while saving data value set => ${body}
+----
+====
+
 * Update an organisation unit
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -194,31 +343,61 @@ package org.camel.dhis2.example;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.hisp.dhis.api.model.v40_2_2.OrganisationUnit;
-import org.hisp.dhis.api.model.v40_2_2.WebMessage;
-import org.hisp.dhis.integration.sdk.support.period.PeriodBuilder;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 
 public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:putResource")
             .setBody(exchange -> new OrganisationUnit().withName("Acme").withShortName("Acme").withOpeningDate(new Date()))
-            .to("dhis2://put/resource?path=organisationUnits/jUb8gELQApl&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
-            .unmarshal().json(WebMessage.class)
+            .to("dhis2://put/resource?path=organisationUnits/jUb8gELQApl&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
+            .unmarshal().json()
             .choice()
-            .when(exchange -> !exchange.getMessage().getBody(WebMessage.class).getStatus().equals(WebMessage.StatusRef.OK))
+            .when().groovy("body.status != 'OK'")
                 .log(LoggingLevel.ERROR, "Import error from DHIS2 while updating org unit => ${body}")
             .end();
     }
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:putResource
+    steps:
+      - setBody:
+          groovy: |
+            new org.hisp.dhis.api.model.v40_2_2.OrganisationUnit()
+              .withName('Acme')
+              .withShortName('Acme')
+              .withOpeningDate(new Date())
+      - to:
+          uri: dhis2:put/resource
+          parameters:
+            path: organisationUnits/jUb8gELQApl
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+      - unmarshal:
+          json: {}
+      - choice:
+          when:
+            - groovy: body.status != 'OK'
+              steps:
+                - log:
+                    loggingLevel: ERROR
+                    message: Import error from DHIS2 while updating org unit => ${body}
+----
+====
+
 * Delete an organisation unit
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -226,30 +405,52 @@ package org.camel.dhis2.example;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.hisp.dhis.api.model.v40_2_2.WebMessage;
-import org.hisp.dhis.integration.sdk.support.period.PeriodBuilder;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
 
 public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:deleteResource")
-            .to("dhis2://delete/resource?path=organisationUnits/jUb8gELQApl&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
-            .unmarshal().json(WebMessage.class)
+            .to("dhis2://delete/resource?path=organisationUnits/jUb8gELQApl&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api")
+            .unmarshal().json()
             .choice()
-            .when(exchange -> !exchange.getMessage().getBody(WebMessage.class).getStatus().equals(WebMessage.StatusRef.OK))
+            .when().groovy("body.status != 'OK'")
                 .log(LoggingLevel.ERROR, "Import error from DHIS2 while deleting org unit => ${body}")
             .end();
     }
 }
+
 ----
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:deleteResource
+    steps:
+      - to:
+          uri: dhis2:delete/resource
+          parameters:
+            path: organisationUnits/jUb8gELQApl
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+      - unmarshal:
+          json: {}
+      - choice:
+          when:
+            - groovy: body.status != 'OK'
+              steps:
+                - log:
+                    loggingLevel: ERROR
+                    message: Import error from DHIS2 while deleting org unit => ${body}
+----
+====
 
 * Run analytics
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -261,12 +462,35 @@ public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
         from("direct:resourceTablesAnalytics")
-            .to("dhis2://resourceTables/analytics?skipAggregate=false&skipEvents=true&lastYears=1&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api");
+            .to("dhis2://resourceTables/analytics?skipAggregate=false&skipEvents=true&lastYears=1&username=admin&password=district&baseApiUrl=https://play.im.dhis2.org/stable-2-40-5/api");
     }
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:resourceTablesAnalytics
+    steps:
+      - to:
+          uri: dhis2:resourceTables/analytics
+          parameters:
+            skipAggregate: false
+            skipEvents: true
+            lastYears: 1
+            username: admin
+            password: district
+            baseApiUrl: https://play.im.dhis2.org/stable-2-40-5/api
+----
+====
+
 * Reference DHIS2 client
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -279,7 +503,7 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
-        Dhis2Client dhis2Client = Dhis2ClientBuilder.newClient("https://play.dhis2.org/40.2.2/api", "admin", "district").build();
+        Dhis2Client dhis2Client = Dhis2ClientBuilder.newClient("https://play.im.dhis2.org/stable-2-40-5/api", "admin", "district").build();
         getCamelContext().getRegistry().bind("dhis2Client", dhis2Client);
 
         from("direct:resourceTablesAnalytics")
@@ -288,7 +512,35 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: dhis2Client
+    type: org.hisp.dhis.integration.sdk.api.Dhis2Client
+    scriptLanguage: groovy
+    script: >
+      org.hisp.dhis.integration.sdk.Dhis2ClientBuilder.newClient('https://play.im.dhis2.org/stable-2-40-5/api', 'admin', 'district').build()
+
+- from:
+    uri: direct:resourceTablesAnalytics
+    steps:
+      - to:
+          uri: dhis2:resourceTables/analytics
+          parameters:
+            skipAggregate: true
+            skipEvents: true
+            lastYears: 1
+            client: "#dhis2Client"
+----
+====
+
 * Set custom query parameters
++
+[tabs]
+====
+Java::
 +
 [source,java]
 ----
@@ -296,15 +548,32 @@ package org.camel.dhis2.example;
 
 import org.apache.camel.builder.RouteBuilder;
 
-import java.util.List;
 import java.util.Map;
 
 public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() {
-        from("direct:postResource")
-            .setHeader("CamelDhis2.queryParams", constant(Map.of("cacheClear", List.of("true"))))
+        from("direct:clearCache")
+            .setHeader("CamelDhis2.queryParams", constant(Map.of("cacheClear", "true")))
             .to("dhis2://post/resource?path=maintenance&client=#dhis2Client");
     }
 }
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:clearCache
+    steps:
+      - setHeader:
+          name: CamelDhis2.queryParams
+          groovy: "['cacheClear':'true']"
+      - to:
+          uri: dhis2:post/resource
+          parameters:
+            path: maintenance
+            client: "#dhis2Client"
+----
+====
