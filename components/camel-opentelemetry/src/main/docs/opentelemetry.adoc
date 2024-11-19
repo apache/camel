@@ -111,6 +111,17 @@ public SpanExporter logTraces() {
 
 Multiple `SpanExporters` can be used at the same time.
 
+[[OpenTelemetry-Collector]]
+== Testing OpenTelemetry collector
+
+If you need a quick way to verify the configuration of OpenTelemetry traces, you can start a local collector by running a Docker service:
+
+```bash
+docker run -p 4318:4318 otel/opentelemetry-collector-contrib:0.113.0
+```
+
+This service will expose the port `4318` to `localhost` which is the default setting expected by the agent. You can change this configuration accordingly.
+
 [[OpenTelemetry-JavaAgent]]
 == Java Agent
 
