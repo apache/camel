@@ -29,6 +29,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("DownloadEnabled", boolean.class);
         map.put("Enabled", boolean.class);
         map.put("HealthCheckEnabled", boolean.class);
+        map.put("HealthPath", java.lang.String.class);
         map.put("Host", java.lang.String.class);
         map.put("InfoEnabled", boolean.class);
         map.put("JolokiaEnabled", boolean.class);
@@ -66,6 +67,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckenabled":
         case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthpath":
+        case "healthPath": target.setHealthPath(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "infoenabled":
         case "infoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
@@ -124,6 +127,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "enabled": return boolean.class;
         case "healthcheckenabled":
         case "healthCheckEnabled": return boolean.class;
+        case "healthpath":
+        case "healthPath": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "infoenabled":
         case "infoEnabled": return boolean.class;
@@ -174,6 +179,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "enabled": return target.isEnabled();
         case "healthcheckenabled":
         case "healthCheckEnabled": return target.isHealthCheckEnabled();
+        case "healthpath":
+        case "healthPath": return target.getHealthPath();
         case "host": return target.getHost();
         case "infoenabled":
         case "infoEnabled": return target.isInfoEnabled();

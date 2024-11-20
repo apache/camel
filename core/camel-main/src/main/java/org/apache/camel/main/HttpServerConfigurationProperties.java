@@ -65,6 +65,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     @Metadata(label = "security", secret = true)
     private String jwtKeystorePassword;
 
+    @Metadata(defaultValue = "/q/health")
+    private String healthPath = "/q/health";
+
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
     }
@@ -199,7 +202,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * Whether to enable health-check console. If enabled then you can access health-check status on context-path:
-     * /q/health
+     * /q/health (default)
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
@@ -225,6 +228,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
+    }
+
+    public String getHealthPath() {
+        return healthPath;
+    }
+
+    /**
+     * The path endpoint used to expose the health status
+     */
+    public void setHealthPath(String healthPath) {
+        this.healthPath = healthPath;
     }
 
     public boolean isUploadEnabled() {
@@ -431,7 +445,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * Whether to enable health-check console. If enabled then you can access health-check status on context-path:
-     * /q/health
+     * /q/health (default)
      */
     public HttpServerConfigurationProperties withHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;

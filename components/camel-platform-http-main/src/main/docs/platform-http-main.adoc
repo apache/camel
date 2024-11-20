@@ -31,9 +31,9 @@ These features are as follows:
 
 - `/q/info` - Report basic information about Camel
 - `/dev/console` - Developer console that provides a lot of statistics and information
-- `/q/health` - Health checks
+- `/q/health (default)` - Health checks
 - `/q/jolokia` - To use Jolokia to expose JMX over HTTP REST
-- `/q/metrics` - To provide otel metrics in prometheus format
+- `/q/metrics (default)` - To provide otel metrics in prometheus format
 - `/q/upload` - Uploading source files, to allow hot reloading.
 - `/q/download` - Downloading source files, to allow inspecting
 - `/q/send` - Sending messages to the Camel application via HTTP
