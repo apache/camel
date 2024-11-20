@@ -400,7 +400,7 @@
         <optaplanner-version>9.44.0.Final</optaplanner-version>
         <paho-version>1.2.5</paho-version>
         <parson-version>1.1.7</parson-version>
-        <parquet-common-version>1.14.3</parquet-common-version>
+        <parquet-common-version>1.14.4</parquet-common-version>
         <parquet-avro-version>1.14.4</parquet-avro-version>
         <pdfbox-version>3.0.3</pdfbox-version>
         <pgjdbc-driver-version>42.7.4</pgjdbc-driver-version>
