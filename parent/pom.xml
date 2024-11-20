@@ -138,7 +138,7 @@
         <directory-watcher-version>0.18.0</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.6.2</dnsjava-version>
-        <djl-version>0.30.0</djl-version>
+        <djl-version>0.31.0</djl-version>
         <docker-java-version>3.4.0</docker-java-version>
         <dropbox-version>7.0.0</dropbox-version>
         <eddsa-version>0.3.0</eddsa-version>
