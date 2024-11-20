@@ -5,7 +5,7 @@
     "title": "Flowable",
     "description": "Send and receive messages from the Flowable BPMN and CMMN engines.",
     "deprecated": false,
-    "firstVersion": "4.19.0",
+    "firstVersion": "4.9.0",
     "label": "workflow",
     "javaType": "org.apache.camel.component.flowable.FlowableComponent",
     "supportLevel": "Preview",
