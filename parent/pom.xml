@@ -319,7 +319,7 @@
         <knative-client-version>6.13.4</knative-client-version>
         <kubernetes-client-version>6.13.4</kubernetes-client-version>
         <kudu-version>1.17.0</kudu-version>
-        <langchain4j-version>0.36.0</langchain4j-version>
+        <langchain4j-version>0.36.1</langchain4j-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
