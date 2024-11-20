@@ -81,6 +81,12 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+      <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-smb</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
