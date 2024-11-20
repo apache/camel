@@ -132,6 +132,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private String uploadSourceDir;
     private boolean downloadEnabled;
     private boolean sendEnabled;
+    private String healthPath;
 
     @Override
     public CamelContext getCamelContext() {
@@ -195,7 +196,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.devConsoleEnabled = devConsoleEnabled;
     }
 
-    @ManagedAttribute(description = "Whether health check is enabled (q/health)")
+    @ManagedAttribute(description = "Whether health check is enabled")
     public boolean isHealthCheckEnabled() {
         return healthCheckEnabled;
     }
@@ -219,7 +220,18 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.jolokiaEnabled = jolokiaEnabledEnabled;
     }
 
-    @ManagedAttribute(description = "Whether metrics is enabled (q/metric)")
+    public String getHealthPath() {
+        return healthPath;
+    }
+
+    /**
+     * The path endpoint used to expose the health status.
+     */
+    public void setHealthPath(String healthPath) {
+        this.healthPath = healthPath;
+    }
+
+    @ManagedAttribute(description = "Whether metrics is enabled")
     public boolean isMetricsEnabled() {
         return metricsEnabled;
     }
@@ -688,13 +700,13 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     protected void setupHealthCheckConsole() {
-        final Route health = router.route("/q/health");
+        final Route health = router.route(this.healthPath);
         health.method(HttpMethod.GET);
         health.produces("application/json");
-        final Route live = router.route("/q/health/live");
+        final Route live = router.route(this.healthPath + "/live");
         live.method(HttpMethod.GET);
         live.produces("application/json");
-        final Route ready = router.route("/q/health/ready");
+        final Route ready = router.route(this.healthPath + "/ready");
         ready.method(HttpMethod.GET);
         ready.produces("application/json");
 
@@ -757,7 +769,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         live.handler(new BlockingHandlerDecorator(handler, true));
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/health", "GET", null,
+        platformHttpComponent.addHttpEndpoint(this.healthPath, "GET", null,
                 "application/json", null);
     }
 
