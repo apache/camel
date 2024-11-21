@@ -27,6 +27,7 @@ WARNING: the customization of the configuration for this component is not availa
 
 The presence of this dependency will provide the following components:
 
+* camel-health
 * camel-micrometer-prometheus
 * camel-opentelemetry
 
@@ -37,6 +38,9 @@ The presence of this dependency will expose the following endpoints:
 |====
 |Endpoint | Description
 
+| `/observe/health` | startup probe endpoint
+| `/observe/health/live` | liveness probe endpoint
+| `/observe/health/ready` | readiness probe endpoint
 | `/observe/metrics` | metrics exposed as in Micrometer Prometheus Registry
 
 |====
@@ -59,4 +63,4 @@ This service will expose the port `4318` to `localhost` which is the default set
 
 In order to collect the metrics exposed by the application, and, depending on the runtime of choice, you will need to start your Camel application with a Java agent, whose goal is to push those metrics to the OpenTelemetry compatible collector server. Follow the instructions provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[Opentelemetry Java Agent configuration]
 
-WARNING: due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work.
+WARNING: due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work until the issue is fixed.
