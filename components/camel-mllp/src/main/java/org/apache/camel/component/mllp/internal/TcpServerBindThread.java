@@ -20,11 +20,13 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.SocketException;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -33,15 +35,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
+
 /**
  * Runnable to handle the ServerSocket.accept requests
  */
 public class TcpServerBindThread extends Thread {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final MllpTcpServerConsumer consumer;
+    private final SSLContextParameters sslContextParameters;
 
-    public TcpServerBindThread(MllpTcpServerConsumer consumer) {
+
+    public TcpServerBindThread(MllpTcpServerConsumer consumer, SSLContextParameters sslContextParameters) {
         this.consumer = consumer;
+        this.sslContextParameters =  sslContextParameters;
 
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
@@ -68,7 +76,16 @@ public class TcpServerBindThread extends Thread {
         try {
             // Note: this socket is going to be closed in the TcpServerAcceptThread instance
             // launched by the consumer
-            ServerSocket serverSocket = new ServerSocket();
+            ServerSocket serverSocket;
+            if (sslContextParameters != null) {
+                SSLContext sslContext = sslContextParameters.createSSLContext(consumer.getEndpoint().getCamelContext());
+                SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
+                serverSocket = sslServerSocketFactory.createServerSocket(consumer.getEndpoint().getPort());
+                log.info("SSL/TLS ServerSocket created on port {}", consumer.getEndpoint().getPort());
+            } else {
+                serverSocket = new ServerSocket(consumer.getEndpoint().getPort());
+                log.info("Plain ServerSocket created on port {}", consumer.getEndpoint().getPort());
+            }
             InetSocketAddress socketAddress = setupSocket(serverSocket);
 
             log.debug("Attempting to bind to {}", socketAddress);
@@ -76,6 +93,9 @@ public class TcpServerBindThread extends Thread {
             doAccept(serverSocket, socketAddress);
         } catch (IOException ioEx) {
             log.error("Unexpected exception encountered initializing ServerSocket before attempting to bind", ioEx);
+        } catch (GeneralSecurityException e) {
+            log.error("Error creating SSLContext for secure server socket", e);
+            throw new RuntimeException("SSLContext initialization failed", e);
         }
     }
 
