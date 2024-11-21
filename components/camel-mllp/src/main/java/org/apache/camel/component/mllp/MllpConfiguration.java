@@ -114,9 +114,6 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
-
-
-
     public MllpConfiguration() {
     }
 
@@ -564,27 +561,30 @@ public class MllpConfiguration implements Cloneable {
         this.maxBufferSize = maxBufferSize;
     }
 
-
     /**
      * Gets the SSLContextParameters for securing TCP connections.
      *
-     * Returns the SSLContextParameters that configure SSL/TLS settings for the MLLP component. If null,
-     * plain TCP communication will be used.
+     * Returns the SSLContextParameters that configure SSL/TLS settings for the MLLP component. If null, plain TCP
+     * communication will be used.
      *
      * @return the configured SSLContextParameters, or null if not set.
      */
-    public SSLContextParameters getSslContextParameters() {return sslContextParameters;}
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
 
     /**
      * Sets the SSLContextParameters for securing TCP connections.
      *
-     * If set, the MLLP component will use SSL/TLS for securing both producer and consumer TCP connections.
-     * This allows the configuration of trust stores, key stores, protocols, and other SSL/TLS settings.
-     * If not set, the MLLP component will use plain TCP communication.
+     * If set, the MLLP component will use SSL/TLS for securing both producer and consumer TCP connections. This allows
+     * the configuration of trust stores, key stores, protocols, and other SSL/TLS settings. If not set, the MLLP
+     * component will use plain TCP communication.
      *
      * @param sslContextParameters the SSLContextParameters to use for secure connections.
      */
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {this.sslContextParameters = sslContextParameters;}
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
 
     @Override
     public int hashCode() {

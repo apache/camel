@@ -23,6 +23,9 @@ import java.net.SocketException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
+
 import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
@@ -35,9 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocketFactory;
-
 /**
  * Runnable to handle the ServerSocket.accept requests
  */
@@ -46,10 +46,9 @@ public class TcpServerBindThread extends Thread {
     private final MllpTcpServerConsumer consumer;
     private final SSLContextParameters sslContextParameters;
 
-
     public TcpServerBindThread(MllpTcpServerConsumer consumer, SSLContextParameters sslContextParameters) {
         this.consumer = consumer;
-        this.sslContextParameters =  sslContextParameters;
+        this.sslContextParameters = sslContextParameters;
 
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
@@ -78,6 +77,7 @@ public class TcpServerBindThread extends Thread {
             // launched by the consumer
             ServerSocket serverSocket;
             if (sslContextParameters != null) {
+                log.debug("Initializing SSLContextParameters");
                 SSLContext sslContext = sslContextParameters.createSSLContext(consumer.getEndpoint().getCamelContext());
                 SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
                 serverSocket = sslServerSocketFactory.createServerSocket(consumer.getEndpoint().getPort());
