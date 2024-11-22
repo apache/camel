@@ -427,7 +427,7 @@
         <qpid-broker-version>9.2.0</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.6.1</qpid-jms-client-version>
-        <quartz-version>2.3.2</quartz-version>
+        <quartz-version>2.5.0</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.7.0</reactor-version>
