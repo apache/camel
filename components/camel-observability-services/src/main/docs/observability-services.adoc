@@ -28,6 +28,7 @@ WARNING: the customization of the configuration for this component is not availa
 The presence of this dependency will provide the following components:
 
 * camel-health
+* camel-management
 * camel-micrometer-prometheus
 * camel-opentelemetry
 
@@ -59,8 +60,24 @@ docker run -p 4318:4318 otel/opentelemetry-collector-contrib:0.113.0
 
 This service will expose the port `4318` to `localhost` which is the default setting expected by the agent. You can change this configuration accordingly.
 
-=== Agent configuration
+=== OpenTelemetry Agent configuration
 
-In order to collect the metrics exposed by the application, and, depending on the runtime of choice, you will need to start your Camel application with a Java agent, whose goal is to push those metrics to the OpenTelemetry compatible collector server. Follow the instructions provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[Opentelemetry Java Agent configuration]
+In order to collect the metrics exposed by the application, and, depending on the runtime of choice, you will need to start your Camel application with a Java agent, whose goal is to push those metrics to the OpenTelemetry compatible collector server. Follow the instructions provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[Opentelemetry Java Agent configuration].
 
 WARNING: due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work until the issue is fixed.
+
+== JMX configuration
+
+The presence of this component implies the presence of `camel-management` component. This is in charge to include information about Camel application status in JMX format.
+
+NOTE: the presence of this components automatically enable the collection of the JMX metrics. This should be negligible from performance point of view, however, you may want to disable that running the application with `-Dorg.apache.camel.jmx.disabled=true` JVM option.
+
+=== Testing JMX
+
+An easy way to test the JMX configuration is to run a JMX client such as `jconsole`. Just execute it from the same machine where the Camel application you want to monitor is running and you can quickly verify the status of the application (selecting the local process). There is the possibility to https://docs.oracle.com/javase/tutorial/jmx/remote/jconsole.html[expose the JMX remotely as well].
+
+Exposing remote JMX would require some security setting in place to avoid disclosing sensitive information. Also mind that it may not be suitable for cloud development (ie, Kubernetes) due to possible limitations within the binary protocols used by the JMX technology. In this case it is recommended the usage of a JSR 160 compatible Java agent.
+
+=== JMX Agent configuration
+
+When dealing with JMX you may want to expose the information available via HTTP(S) protocol which would make JMX more suitable to cloud based development. A possible way to expose the information is to use a JSR 160 compatible Java agent, whose goal is to interact as an adapter interface towards JMX, exposing an HTTP based service instead. Follow the instructions provided in xref:manual::jmx.adoc#_how_to_use_a_java_agent[JMX Java Agent configuration].
