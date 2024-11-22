@@ -27,6 +27,9 @@ updates:
     schedule:
       interval: "daily"
     ignore:
+      # amazon-kinesis-client 3.x requires protobuf 4.x
+      - dependency-name: "software.amazon.kinesis:amazon-kinesis-client"
+        update-types: ["version-update:semver-major"]
       # Quarkus related
       - dependency-name: "io.vertx:*"
       - dependency-name: "io.smallrye:jandex:*"
