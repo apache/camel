@@ -461,7 +461,7 @@
         <solr-zookeeper-version>3.9.3</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
-        <spring-batch-version>5.1.2</spring-batch-version>
+        <spring-batch-version>5.2.0</spring-batch-version>
         <spring-data-redis-version>3.4.0</spring-data-redis-version>
         <spring-ldap-version>3.2.8</spring-ldap-version>
         <spring-vault-core-version>3.1.2</spring-vault-core-version>
