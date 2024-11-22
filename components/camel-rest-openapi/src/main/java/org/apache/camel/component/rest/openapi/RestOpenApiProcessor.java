@@ -127,8 +127,15 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         if (m instanceof RestOpenApiConsumerPath rcp) {
             Operation o = rcp.getConsumer();
 
+            String consumerPath = rcp.getConsumerPath();
+
+            //if uri is not starting with slash then remove the slash in the consumerPath from the openApi spec
+            if (consumerPath.startsWith("/") && uri != null && !uri.startsWith("/")) {
+                consumerPath = consumerPath.substring(1);
+            }
+
             // map path-parameters from operation to camel headers
-            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, rcp.getConsumerPath());
+            HttpHelper.evalPlaceholders(exchange.getMessage().getHeaders(), uri, consumerPath);
 
             // process the incoming request
             return restOpenapiProcessorStrategy.process(openAPI, o, verb, uri, rcp.getBinding(), exchange, callback);
