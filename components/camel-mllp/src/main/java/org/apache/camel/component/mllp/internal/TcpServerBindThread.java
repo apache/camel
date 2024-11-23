@@ -47,6 +47,7 @@ public class TcpServerBindThread extends Thread {
     private final SSLContextParameters sslContextParameters;
 
     public TcpServerBindThread(MllpTcpServerConsumer consumer, SSLContextParameters sslContextParameters) {
+//public TcpServerBindThread(MllpTcpServerConsumer consumer) {
         this.consumer = consumer;
         this.sslContextParameters = sslContextParameters;
 
@@ -80,11 +81,9 @@ public class TcpServerBindThread extends Thread {
                 log.debug("Initializing SSLContextParameters");
                 SSLContext sslContext = sslContextParameters.createSSLContext(consumer.getEndpoint().getCamelContext());
                 SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
-                serverSocket = sslServerSocketFactory.createServerSocket(consumer.getEndpoint().getPort());
-                log.info("SSL/TLS ServerSocket created on port {}", consumer.getEndpoint().getPort());
+                serverSocket = sslServerSocketFactory.createServerSocket();
             } else {
-                serverSocket = new ServerSocket(consumer.getEndpoint().getPort());
-                log.info("Plain ServerSocket created on port {}", consumer.getEndpoint().getPort());
+                serverSocket = new ServerSocket();
             }
             InetSocketAddress socketAddress = setupSocket(serverSocket);
 
