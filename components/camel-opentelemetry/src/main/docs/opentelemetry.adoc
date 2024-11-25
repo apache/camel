@@ -72,13 +72,51 @@ NOTE: You would still need OpenTelemetry to instrument your code, which can be d
 
 == Spring Boot
 
-If you are using Spring Boot, just add
-the `camel-opentelemetry-starter` dependency to get started.
+When running on Spring Boot, add the `camel-opentelemetry-starter` dependency to get started.
 
-OpenTelemetry's `Tracer` will be
+There are several ways to configure instrumentation of your Camel application running on Spring Boot with OpenTelemetry.
+The first and easiest one is by using the https://opentelemetry.io/docs/zero-code/java/agent/[OpenTelemetry Java agent].
+The other one is through Spring Boot's Actuator. We'll cover both.
+
+[[OpenTelemetry-JavaAgent]]
+=== Java Agent
+
+Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
+
+This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters.
+The package provides a completely automatic, out-of-the-box experience.
+
+Enable the instrumentation agent using the `-javaagent` flag to the JVM.
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -jar myapp.jar
+----
+
+By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
+
+Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/agent-config.md[the configuration documentation] for the full list of configuration items. For example:
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel.service.name=your-service-name \
+     -Dotel.traces.exporter=otlp \
+     -jar myapp.jar
+----
+
+include::spring-boot:partial$starter.adoc[]
+
+
+=== Spring Boot's Actuator
+
+To have Spring Boot's Actuator configure OpenTelemetry, you need to add
+`org.springframework.boot:spring-boot-starter-actuator` and `io.micrometer:micrometer-tracing-bridge-otel` to your project.
+OpenTelemetry's `Tracer` will then be
 https://docs.spring.io/spring-boot/reference/actuator/tracing.html[configured] through `spring-boot-starter-actuator` unless a `Tracer` is already defined.
 
-*Noteworthy*: by default, Spring Boot samples only 10% of requests to prevent overwhelming the trace backend.
+*Noteworthy*: by default, this will sample only 10% of requests to prevent overwhelming the trace backend.
 Set the property `management.tracing.sampling.probability` to `1.0` if you want to see all traces.
 
 === SpanExporters
@@ -111,46 +149,6 @@ public SpanExporter logTraces() {
 
 Multiple `SpanExporters` can be used at the same time.
 
-[[OpenTelemetry-Collector]]
-== Testing OpenTelemetry collector
-
-If you need a quick way to verify the configuration of OpenTelemetry traces, you can start a local collector by running a Docker service:
-
-```bash
-docker run -p 4318:4318 otel/opentelemetry-collector-contrib:0.113.0
-```
-
-This service will expose the port `4318` to `localhost` which is the default setting expected by the agent. You can change this configuration accordingly.
-
-[[OpenTelemetry-JavaAgent]]
-== Java Agent
-
-Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
-
-This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters.
-The package provides a completely automatic, out-of-the-box experience.
-
-Enable the instrumentation agent using the `-javaagent` flag to the JVM.
-
-[source,bash]
-----
-java -javaagent:path/to/opentelemetry-javaagent.jar \
-     -jar myapp.jar
-----
-
-By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
-
-Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/agent-features.md[the configuration documentation] for the full list of configuration items. For example:
-
-[source,bash]
-----
-java -javaagent:path/to/opentelemetry-javaagent.jar \
-     -Dotel.service.name=your-service-name \
-     -Dotel.traces.exporter=otlp \
-     -jar myapp.jar
-----
-
-include::spring-boot:partial$starter.adoc[]
 
 == MDC Logging
 
