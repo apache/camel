@@ -109,6 +109,8 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
 
 include::spring-boot:partial$starter.adoc[]
 
+WARNING: the dependencies used by Camel core are not in sync with the one provided by Spring Boot BOM. If you're using this component be mindful of the https://issues.apache.org/jira/browse/CAMEL-21460[4.8.x Opentelemetry configuration] required.
+
 == MDC Logging
 
 When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `trace_id` and `span_id`, respectively.
