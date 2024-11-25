@@ -20,7 +20,7 @@
         <quarkus.platform.version>{{ .QuarkusVersion }}</quarkus.platform.version>
 {{ .BuildProperties }}
         <skipITs>true</skipITs>
-        <surefire-plugin.version>3.1.2</surefire-plugin.version>
+        <surefire-plugin.version>3.5.2</surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -152,7 +152,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.7.1</version>
+                        <version>3.8.1</version>
                         <executions>
                             <execution>
                                 <id>copy</id>
@@ -165,7 +165,7 @@
                                       <artifactItem>
                                         <groupId>org.jolokia</groupId>
                                         <artifactId>jolokia-agent-jvm</artifactId>
-                                        <version>2.1.0</version>
+                                        <version>2.1.2</version>
                                         <type>jar</type>
                                         <classifier>javaagent</classifier>
                                       </artifactItem>
