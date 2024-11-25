@@ -373,7 +373,7 @@
         <mojo-executor-version>2.4.0</mojo-executor-version>
         <mongo-java-driver-version>5.2.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-        <msal4j-version>1.17.2</msal4j-version>
+        <msal4j-version>1.17.3</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.16</mybatis-version>
