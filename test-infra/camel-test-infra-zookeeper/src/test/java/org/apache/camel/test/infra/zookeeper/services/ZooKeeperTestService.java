@@ -19,8 +19,7 @@ package org.apache.camel.test.infra.zookeeper.services;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for ZooKeeper
+ * Test infra service for Zookeeper
  */
-public interface ZooKeeperService extends TestService {
-    String getConnectionString();
+public interface ZooKeeperTestService extends TestService, ZooKeeperService {
 }
