@@ -139,7 +139,7 @@
         <jaxb-osgi-version>4.0.4</jaxb-osgi-version>
         <jaxb-xjc-version>4.0.4</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.4</jaxb-jxc-version>
-        <groovy-version>4.0.18</groovy-version>
+        <groovy-version>4.0.24</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
 
