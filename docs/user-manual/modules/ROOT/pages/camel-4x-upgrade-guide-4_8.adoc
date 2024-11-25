@@ -19,6 +19,61 @@ The `camel-opentelemetry` component has had significant bug fixes to handle span
 better when Camel route messages synchronously and asynchronously. This component should also work better
 on Spring Boot.
 
+In order to fix the problems reported we had to align the Opentelemetry dependencies to a version which is different from the one used in Spring Boot 3.3.x BOM. 
+If you're using such BOM for your **Camel Spring Boot runtime** application, you will need to make sure to force the usage of the Opentelemetry dependencies below:
+```
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-api</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-context</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-logs</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-metrics</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-common</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-metrics</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-logs</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-sdk-trace</artifactId>
+    <version>1.43.0</version>
+</dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-api-incubator</artifactId>
+    <version>1.43.0-alpha</version>
+</dependency>
+```
+
 == Upgrading Camel 4.7 to 4.8
 
 === camel-api
