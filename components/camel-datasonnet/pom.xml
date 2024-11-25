@@ -43,10 +43,21 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.datasonnet</groupId>
             <artifactId>datasonnet-mapper</artifactId>
             <version>${datasonnet-mapper-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
