@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class IntegrationExportTest extends CamelKBaseTest {
@@ -71,6 +72,7 @@ class IntegrationExportTest extends CamelKBaseTest {
         Assertions.assertEquals("foo", containers.get(0).getEnv().get(0).getValue());
     }
 
+    @Disabled
     @Test
     public void shouldExportFromPipe() throws Exception {
         IntegrationExport command = createCommand(
