@@ -339,10 +339,7 @@ class SimpleLRUCacheTest {
     @ParameterizedTest
     @ValueSource(ints = { 1, 2, 5, 10, 20, 50, 100, 1_000 })
     void concurrentPut(int maximumCacheSize) throws Exception {
-        int threads = Runtime.getRuntime().availableProcessors() - 1;
-        if (threads < 1) {
-            threads = 1;
-        }
+        int threads = Runtime.getRuntime().availableProcessors();
         int totalKeysPerThread = 1_000;
         AtomicInteger counter = new AtomicInteger();
         SimpleLRUCache<String, String> cache = new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());
@@ -369,10 +366,7 @@ class SimpleLRUCacheTest {
     @ParameterizedTest
     @ValueSource(ints = { 1, 2, 5, 10, 20, 50, 100, 500 })
     void concurrentPutWithCollisions(int maximumCacheSize) throws Exception {
-        int threads = Runtime.getRuntime().availableProcessors() - 1;
-        if (threads < 1) {
-            threads = 1;
-        }
+        int threads = Runtime.getRuntime().availableProcessors();
         int totalKeys = 1_000;
         AtomicInteger counter = new AtomicInteger();
         SimpleLRUCache<String, String> cache = new SimpleLRUCache<>(16, maximumCacheSize, v -> counter.incrementAndGet());

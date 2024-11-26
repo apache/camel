@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,11 +56,7 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
     /**
      * The last changes recorded.
      */
-    private volatile Deque<Entry<K, V>> lastChanges = new ConcurrentLinkedDeque<>();
-    /**
-     * The total amount of changes recorded.
-     */
-    private final LongAdder totalChanges = new LongAdder();
+    private final AtomicReference<Deque<Entry<K, V>>> lastChanges = new AtomicReference<>(new ConcurrentLinkedDeque<>());
     /**
      * The function to call when an entry is evicted.
      */
@@ -88,8 +84,7 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
         if (value == null) {
             return null;
         }
-        lastChanges.add(Map.entry(key, value));
-        totalChanges.increment();
+        lastChanges.get().add(Map.entry(key, value));
         return value;
     }
 
@@ -231,7 +226,7 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
      * @return the size of the queue of changes.
      */
     int getQueueSize() {
-        return totalChanges.intValue();
+        return lastChanges.get().size();
     }
 
     /**
@@ -266,27 +261,20 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
      * @return the oldest existing change.
      */
     private Entry<K, V> nextOldestChange() {
-        Entry<K, V> oldest = lastChanges.poll();
-        if (oldest != null) {
-            totalChanges.decrement();
-        }
-        return oldest;
+        return lastChanges.get().poll();
     }
 
     /**
      * Removes duplicates from the queue of changes.
      */
     private void compressChanges() {
-        Deque<Entry<K, V>> currentChanges = this.lastChanges;
         Deque<Entry<K, V>> newChanges = new ConcurrentLinkedDeque<>();
-        this.lastChanges = newChanges;
+        Deque<Entry<K, V>> currentChanges = lastChanges.getAndSet(newChanges);
         Set<K> keys = new HashSet<>();
         Entry<K, V> entry;
         while ((entry = currentChanges.pollLast()) != null) {
             if (keys.add(entry.getKey())) {
                 newChanges.addFirst(entry);
-            } else {
-                totalChanges.decrement();
             }
         }
     }
