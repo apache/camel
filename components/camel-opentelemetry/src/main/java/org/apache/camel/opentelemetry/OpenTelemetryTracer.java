@@ -163,8 +163,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             builder = builder.setParent(Context.current().with(spanFromExchange.getOpenTelemetrySpan()));
             baggage = spanFromExchange.getBaggage();
         } else {
+            builder.setNoParent();
             ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
-            Context ctx = getContextPropagators().getTextMapPropagator().extract(Context.current(), adapter,
+            Context ctx = getContextPropagators().getTextMapPropagator().extract(Context.root(), adapter,
                     new OpenTelemetryGetter(adapter));
             Span span = Span.fromContext(ctx);
             baggage = Baggage.fromContext(ctx);
