@@ -19,7 +19,7 @@ package org.apache.camel.test.infra.solr.services;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for ArangoDB
+ * Test infra service for Solr
  */
 public interface SolrTestService extends TestService, SolrService {
 }

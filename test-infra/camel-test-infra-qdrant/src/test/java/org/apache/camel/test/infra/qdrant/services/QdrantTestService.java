@@ -19,7 +19,7 @@ package org.apache.camel.test.infra.qdrant.services;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for ArangoDB
+ * Test infra service for Qdrant
  */
 public interface QdrantTestService extends TestService, QdrantService {
 }

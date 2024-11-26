@@ -19,7 +19,7 @@ package org.apache.camel.test.infra.redis.services;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for ArangoDB
+ * Test infra service for Redis
  */
 public interface RedisTestService extends TestService, RedisService {
 }

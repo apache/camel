@@ -19,7 +19,7 @@ package org.apache.camel.test.infra.rabbitmq.services;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for ArangoDB
+ * Test infra service for RabbitMQ
  */
 public interface RabbitMQTestService extends TestService, RabbitMQService {
 }
