@@ -33,6 +33,16 @@
         <jmxAgent id="jmx" disabled="true"/>
 
         <route>
+            <from uri="direct:many"/>
+            <aggregate aggregationStrategy="latestAggregationStrategy" completionTimeout="2000" completionTimeoutCheckerInterval="100">
+                <correlationExpression>
+                    <header>cheese</header>
+                </correlationExpression>
+                <to uri="mock:result"/>
+            </aggregate>
+        </route>
+
+        <route>
             <from uri="direct:start"/>
             <aggregate aggregationStrategy="latestAggregationStrategy" completionTimeout="{{aggregation.timeout}}">
                 <correlationExpression>
