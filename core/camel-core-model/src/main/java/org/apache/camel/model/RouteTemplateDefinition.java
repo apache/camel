@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -46,6 +47,9 @@ import org.apache.camel.spi.ResourceAware;
 @XmlType(propOrder = { "templateParameters", "templateBeans", "route" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteTemplateDefinition> implements ResourceAware {
+
+    @XmlTransient
+    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     @XmlTransient
     private Consumer<RouteTemplateContext> configurer;
@@ -406,6 +410,16 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         }
         copy.setErrorHandler(route.getErrorHandler());
 
+        // ensure the copy has unique node prefix to avoid duplicate id clash
+        // when creating multiple routes from the same template
+        copy.setNodePrefixId(route.getNodePrefixId());
+        String npi = copy.getNodePrefixId();
+        if (npi == null) {
+            npi = "route";
+        }
+        npi = npi + "-" + incNodePrefixId();
+        copy.setNodePrefixId(npi);
+
         // and then copy over the rest
         // (do not copy id as it is used for route template id)
         copy.setAutoStartup(route.getAutoStartup());
@@ -445,6 +459,10 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
 
     private <K, V> Map<K, V> shallowCopy(Map<K, V> map) {
         return (map != null) ? new HashMap<>(map) : null;
+    }
+
+    private int incNodePrefixId() {
+        return COUNTER.incrementAndGet();
     }
 
     @FunctionalInterface
