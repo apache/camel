@@ -6,6 +6,14 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading from 4.8.1 to 4.8.2
 
+=== camel-management
+
+==== Using Route Templates
+
+Camel will now ensure the created routes via route templates
+always use unique _nodePrefixId_ to ensure there are no duplicate id clashes, when the template
+is used for creating multiple routes.
+
 === camel-debezium
 
 To avoid split package that can be a problem in environments like OSGI, each camel-debezium module has its own
