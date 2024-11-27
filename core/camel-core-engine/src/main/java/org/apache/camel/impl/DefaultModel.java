@@ -534,6 +534,9 @@ public class DefaultModel implements Model {
         }
 
         // assign ids to the routes and validate that the id's are all unique
+        if (prefixId == null) {
+            prefixId = def.getNodePrefixId();
+        }
         String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions, prefixId);
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(

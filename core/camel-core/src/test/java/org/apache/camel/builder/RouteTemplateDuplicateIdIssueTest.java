@@ -58,7 +58,7 @@ public class RouteTemplateDuplicateIdIssueTest extends ContextTestSupport {
         assertDoesNotThrow(() -> context.start(), "Route creation should not fail");
 
         // should generate unique id per template for the runtime processors
-        List<Processor> processors = getProcessors("recipientList*");
+        List<Processor> processors = getProcessors(".*recipientList.*");
         assertEquals(2, processors.size());
         Processor p1 = processors.get(0);
         Processor p2 = processors.get(1);
