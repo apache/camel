@@ -129,7 +129,7 @@ public class ListProcess extends ProcessWatchCommand {
                         new Column().header("REMOTE").with(this::getTotalRemote),
                         new Column().header("FAIL").with(this::getFailed),
                         new Column().header("INFLIGHT").with(this::getInflight),
-                        new Column().header("MESSAGE")
+                        new Column().header("") // empty header as we only show info when there is an error
                                 .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(70, OverflowBehaviour.NEWLINE)
                                 .with(this::getDescription))));

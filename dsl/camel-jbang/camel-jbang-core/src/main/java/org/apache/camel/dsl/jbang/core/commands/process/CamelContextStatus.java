@@ -183,7 +183,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     new Column().header("INFLIGHT").with(this::getInflight),
                     new Column().header("LAST").with(r -> r.last),
                     new Column().header("SINCE-LAST").with(this::getSinceLast),
-                    new Column().header("MESSAGE")
+                    new Column().header("") // empty header as we only show info when there is an error
                             .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(70, OverflowBehaviour.NEWLINE)
                             .with(this::getDescription))));
