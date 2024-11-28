@@ -96,7 +96,15 @@ public class ListProcess extends ProcessWatchCommand {
                             if (num != null) {
                                 row.inflightRemote = num.toString();
                             }
+                            stats = (Map<String, ?>) stats.get("reload");
+                            if (stats != null) {
+                                stats = (Map<String, ?>) stats.get("lastError");
+                            }
+                            if (stats != null) {
+                                row.reloadError = (String) stats.get("message");
+                            }
                         }
+
                         rows.add(row);
                     }
                 });
@@ -115,16 +123,34 @@ public class ListProcess extends ProcessWatchCommand {
                                 .with(r -> r.name),
                         new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                         new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                                .with(r -> extractState(r.state)),
+                                .with(this::getStatus),
                         new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                         new Column().header("TOTAL").with(this::getTotal),
                         new Column().header("REMOTE").with(this::getTotalRemote),
                         new Column().header("FAIL").with(this::getFailed),
-                        new Column().header("INFLIGHT").with(this::getInflight))));
+                        new Column().header("INFLIGHT").with(this::getInflight),
+                        new Column().header("MESSAGE")
+                                .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(70, OverflowBehaviour.NEWLINE)
+                                .with(this::getDescription))));
             }
         }
 
         return 0;
+    }
+
+    private String getStatus(Row r) {
+        if (r.reloadError != null) {
+            return "Error";
+        }
+        return extractState(r.state);
+    }
+
+    private String getDescription(Row r) {
+        if (r.reloadError != null) {
+            return "Reload failed due to: " + r.reloadError;
+        }
+        return null;
     }
 
     private String getTotal(Row r) {
@@ -184,6 +210,7 @@ public class ListProcess extends ProcessWatchCommand {
         String failedRemote;
         String inflight;
         String inflightRemote;
+        String reloadError;
     }
 
 }
