@@ -1604,10 +1604,13 @@ public class Run extends CamelCommand {
                 } else {
                     // TODO: we probably need a way to parse the content and match against the YAML DSL expected by Camel
                     // This check looks very fragile
-                    return source.content().contains("from:") || source.content().contains("- from:")
+                    return source.content().contains("- from:")
                             || source.content().contains("- route:")
+                            || source.content().contains("- routeTemplate") || source.content().contains("- route-template:")
+                            || source.content().contains("- routeConfiguration:")
                             || source.content().contains("- route-configuration:")
-                            || source.content().contains("- rest:") || source.content().contains("- beans:")
+                            || source.content().contains("- rest:")
+                            || source.content().contains("- beans:")
                             // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
                             || source.content().contains("KameletBinding")
                             || source.content().contains("Pipe")
