@@ -8978,7 +8978,7 @@ value: 0
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default value: false
+To enable pretty printing output nicely formatted. Is by default false. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8988,7 +8988,7 @@ To enable pretty printing output nicely formatted. Is by default false. Default 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to POJO
-classes that has not been annotated with JAXB and providing jaxb.index descriptor files. Default value: false
+classes that has not been annotated with JAXB and providing jaxb.index descriptor files. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8997,7 +8997,7 @@ classes that has not been annotated with JAXB and providing jaxb.index descripto
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases. Default value: false
+Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
