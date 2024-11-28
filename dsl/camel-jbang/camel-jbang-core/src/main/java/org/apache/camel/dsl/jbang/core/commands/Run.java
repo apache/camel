@@ -1576,10 +1576,13 @@ public class Run extends CamelCommand {
                     }
                     return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                 } else {
-                    // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
-                    return source.content().contains("- from:") || source.content().contains("- route:")
+                    // TODO: we probably need a way to parse the content and match against the YAML DSL expected by Camel
+                    // This check looks very fragile
+                    return source.content().contains("from:") || source.content().contains("- from:")
+                            || source.content().contains("- route:")
                             || source.content().contains("- route-configuration:")
                             || source.content().contains("- rest:") || source.content().contains("- beans:")
+                            // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
                             || source.content().contains("KameletBinding")
                             || source.content().contains("Pipe")
                             || source.content().contains("kind: Integration");
