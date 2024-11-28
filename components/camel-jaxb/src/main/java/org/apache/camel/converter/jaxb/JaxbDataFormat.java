@@ -89,7 +89,7 @@ public class JaxbDataFormat extends ServiceSupport
     private String schemaLocation;
     private String noNamespaceSchemaLocation;
 
-    private boolean prettyPrint;
+    private boolean prettyPrint = true;
     private boolean objectFactory = true;
     private boolean ignoreJAXBElement = true;
     private boolean mustBeJAXBElement;

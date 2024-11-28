@@ -45,10 +45,10 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0")
     private String schemaSeverityLevel;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String prettyPrint;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String objectFactory;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")

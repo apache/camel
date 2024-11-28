@@ -2621,7 +2621,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("accessExternalSchemaProtocols", def.getAccessExternalSchemaProtocols(), "false");
         doWriteAttribute("schema", def.getSchema(), null);
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "true");
         doWriteAttribute("schemaLocation", def.getSchemaLocation(), null);
         doWriteAttribute("contextPathIsClassName", def.getContextPathIsClassName(), null);
         doWriteAttribute("ignoreJAXBElement", def.getIgnoreJAXBElement(), "true");
@@ -2633,7 +2633,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("fragment", def.getFragment(), null);
         doWriteAttribute("filterNonXmlChars", def.getFilterNonXmlChars(), null);
         doWriteAttribute("mustBeJAXBElement", def.getMustBeJAXBElement(), null);
-        doWriteAttribute("objectFactory", def.getObjectFactory(), null);
+        doWriteAttribute("objectFactory", def.getObjectFactory(), "true");
         doWriteAttribute("namespacePrefixRef", def.getNamespacePrefixRef(), null);
         doWriteAttribute("partClass", def.getPartClass(), null);
         doWriteAttribute("jaxbProviderProperties", def.getJaxbProviderProperties(), null);

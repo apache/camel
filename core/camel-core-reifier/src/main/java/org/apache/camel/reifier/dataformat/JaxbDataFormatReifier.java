@@ -30,8 +30,18 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("objectFactory", definition.getObjectFactory());
+        if (definition.getPrettyPrint() != null) {
+            properties.put("prettyPrint", definition.getPrettyPrint());
+        } else {
+            // is default true
+            properties.put("prettyPrint", "true");
+        }
+        if (definition.getObjectFactory() != null) {
+            properties.put("objectFactory", definition.getObjectFactory());
+        } else {
+            // is default true
+            properties.put("objectFactory", "true");
+        }
         if (definition.getIgnoreJAXBElement() != null) {
             properties.put("ignoreJAXBElement", definition.getIgnoreJAXBElement());
         } else {
