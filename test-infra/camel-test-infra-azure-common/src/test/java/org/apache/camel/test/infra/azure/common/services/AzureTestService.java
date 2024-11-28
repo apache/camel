@@ -14,18 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.azure.common.services;
 
-import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface AzureService extends TestService {
-
-    /**
-     * Gets the credentials for the test service
-     *
-     * @return
-     */
-    AzureCredentialsHolder azureCredentials();
+public interface AzureTestService extends AzureService, TestService, ContainerTestService {
 }

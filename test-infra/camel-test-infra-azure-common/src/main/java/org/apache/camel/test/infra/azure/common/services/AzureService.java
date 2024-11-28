@@ -15,27 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.azure.storage.datalake.services;
+package org.apache.camel.test.infra.azure.common.services;
 
-import org.apache.camel.test.infra.azure.common.services.AzureTestService;
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public final class AzureStorageDataLakeServiceFactory {
+public interface AzureService extends InfrastructureService {
 
-    private AzureStorageDataLakeServiceFactory() {
-
-    }
-
-    public static SimpleTestServiceBuilder<AzureTestService> builder() {
-        return new SimpleTestServiceBuilder<>("azure");
-    }
-
-    public static AzureTestService createService() {
-        return builder()
-                .addRemoteMapping(AzureStorageDataLakeRemoteTestService::new)
-                .build();
-    }
-
-    static class AzureStorageDataLakeRemoteTestService extends AzureStorageDataLakeRemoteService implements AzureTestService {
-    }
+    /**
+     * Gets the credentials for the test service
+     *
+     * @return
+     */
+    AzureCredentialsHolder azureCredentials();
 }

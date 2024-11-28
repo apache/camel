@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.azure.storage.queue.services;
 
-import org.apache.camel.test.infra.azure.common.services.AzureService;
+import org.apache.camel.test.infra.azure.common.services.AzureTestService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AzureStorageQueueServiceFactory {
@@ -25,14 +25,21 @@ public final class AzureStorageQueueServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<AzureService> builder() {
+    public static SimpleTestServiceBuilder<AzureTestService> builder() {
         return new SimpleTestServiceBuilder<>("azure");
     }
 
-    public static AzureService createService() {
+    public static AzureTestService createService() {
         return builder()
-                .addLocalMapping(AzureStorageQueueLocalContainerService::new)
-                .addRemoteMapping(AzureStorageQueueRemoteService::new)
+                .addLocalMapping(AzureStorageQueueLocalContainerTestService::new)
+                .addRemoteMapping(AzureStorageQueueRemoteTestService::new)
                 .build();
+    }
+
+    public static class AzureStorageQueueLocalContainerTestService extends AzureStorageQueueLocalContainerService
+            implements AzureTestService {
+    }
+
+    public static class AzureStorageQueueRemoteTestService extends AzureStorageQueueRemoteService implements AzureTestService {
     }
 }
