@@ -37,6 +37,7 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     private CamelContext camelContext;
     private int succeeded;
     private int failed;
+    private Exception lastError;
 
     @Override
     public CamelContext getCamelContext() {
@@ -57,12 +58,14 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     public void onReload(Object source) {
         LOG.info("Reloading CamelContext ({}) triggered by: {}", camelContext.getName(), source);
         try {
+            lastError = null;
             EventHelper.notifyContextReloading(getCamelContext(), source);
             reloadProperties(source);
             reloadRoutes(source);
             incSucceededCounter();
             EventHelper.notifyContextReloaded(getCamelContext(), source);
         } catch (Exception e) {
+            lastError = e;
             incFailedCounter();
             LOG.warn("Error reloading CamelContext ({}) due to: {}", camelContext.getName(), e.getMessage(), e);
             EventHelper.notifyContextReloadFailure(getCamelContext(), source, e);
@@ -104,6 +107,11 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     public void resetCounters() {
         succeeded = 0;
         failed = 0;
+    }
+
+    @Override
+    public Exception getLastError() {
+        return lastError;
     }
 
     protected void incSucceededCounter() {

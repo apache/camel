@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -26,8 +27,10 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "context", displayName = "CamelContext", description = "Overall information about the CamelContext")
@@ -57,9 +60,11 @@ public class ContextDevConsole extends AbstractDevConsole {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
                 int reloaded = 0;
+                int reloadedFailed = 0;
                 Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
                 for (ReloadStrategy r : rs) {
                     reloaded += r.getReloadCounter();
+                    reloadedFailed += r.getFailedCounter();
                 }
                 String load1 = getLoad1(mb);
                 String load5 = getLoad5(mb);
@@ -80,7 +85,7 @@ public class ContextDevConsole extends AbstractDevConsole {
                 } else {
                     sb.append(String.format("\n    Idle Since: %s", ""));
                 }
-                sb.append(String.format("\n    Reloaded: %s", reloaded));
+                sb.append(String.format("\n    Reloaded: %s/%s", reloaded, reloadedFailed));
                 sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
                 sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
                 sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
@@ -131,11 +136,6 @@ public class ContextDevConsole extends AbstractDevConsole {
             if (mb != null) {
                 JsonObject stats = new JsonObject();
 
-                int reloaded = 0;
-                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
-                for (ReloadStrategy r : rs) {
-                    reloaded += r.getReloadCounter();
-                }
                 String load1 = getLoad1(mb);
                 String load5 = getLoad5(mb);
                 String load15 = getLoad15(mb);
@@ -155,7 +155,6 @@ public class ContextDevConsole extends AbstractDevConsole {
                 stats.put("remoteExchangesTotal", mb.getRemoteExchangesTotal());
                 stats.put("remoteExchangesFailed", mb.getRemoteExchangesFailed());
                 stats.put("remoteExchangesInflight", mb.getRemoteExchangesInflight());
-                stats.put("reloaded", reloaded);
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());
                 stats.put("minProcessingTime", mb.getMinProcessingTime());
@@ -175,6 +174,32 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (last != null) {
                     stats.put("lastFailedExchangeTimestamp", last.getTime());
                 }
+                // reload stats
+                int reloaded = 0;
+                int reloadedFailed = 0;
+                Exception reloadCause = null;
+                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
+                for (ReloadStrategy r : rs) {
+                    reloaded += r.getReloadCounter();
+                    reloadedFailed += r.getFailedCounter();
+                    if (reloadCause == null) {
+                        reloadCause = r.getLastError();
+                    }
+                }
+                JsonObject ro = new JsonObject();
+                ro.put("reloaded", reloaded);
+                ro.put("failed", reloadedFailed);
+                if (reloadCause != null) {
+                    JsonObject eo = new JsonObject();
+                    eo.put("message", reloadCause.getMessage());
+                    JsonArray arr2 = new JsonArray();
+                    final String trace = ExceptionHelper.stackTraceToString(reloadCause);
+                    eo.put("stackTrace", arr2);
+                    Collections.addAll(arr2, trace.split("\n"));
+                    ro.put("lastError", eo);
+                }
+                stats.put("reload", ro);
+
                 root.put("statistics", stats);
             }
         }
