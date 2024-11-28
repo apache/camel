@@ -2624,7 +2624,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
         doWriteAttribute("schemaLocation", def.getSchemaLocation(), null);
         doWriteAttribute("contextPathIsClassName", def.getContextPathIsClassName(), null);
-        doWriteAttribute("ignoreJAXBElement", def.getIgnoreJAXBElement(), null);
+        doWriteAttribute("ignoreJAXBElement", def.getIgnoreJAXBElement(), "true");
         doWriteAttribute("xmlStreamWriterWrapper", def.getXmlStreamWriterWrapper(), null);
         doWriteAttribute("schemaSeverityLevel", def.getSchemaSeverityLevel(), "0");
         doWriteAttribute("contextPath", def.getContextPath(), null);

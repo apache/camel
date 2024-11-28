@@ -51,7 +51,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String objectFactory;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String ignoreJAXBElement;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")

@@ -32,7 +32,12 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("prettyPrint", definition.getPrettyPrint());
         properties.put("objectFactory", definition.getObjectFactory());
-        properties.put("ignoreJAXBElement", definition.getIgnoreJAXBElement());
+        if (definition.getIgnoreJAXBElement() != null) {
+            properties.put("ignoreJAXBElement", definition.getIgnoreJAXBElement());
+        } else {
+            // is default true
+            properties.put("ignoreJAXBElement", "true");
+        }
         properties.put("mustBeJAXBElement", definition.getMustBeJAXBElement());
         properties.put("filterNonXmlChars", definition.getFilterNonXmlChars());
         properties.put("fragment", definition.getFragment());
@@ -48,6 +53,12 @@ public class JaxbDataFormatReifier extends DataFormatReifier<JaxbDataFormat> {
         properties.put("schemaLocation", definition.getSchemaLocation());
         properties.put("noNamespaceSchemaLocation", definition.getNoNamespaceSchemaLocation());
         properties.put("jaxbProviderProperties", definition.getJaxbProviderProperties());
+        if (definition.getContentTypeHeader() != null) {
+            properties.put("contentTypeHeader", definition.getContentTypeHeader());
+        } else {
+            // is default true
+            properties.put("contentTypeHeader", "true");
+        }
         properties.put("accessExternalSchemaProtocols", definition.getAccessExternalSchemaProtocols());
     }
 

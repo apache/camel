@@ -9062,7 +9062,7 @@ classes that has not been annotated with JAXB and providing jaxb.index descripto
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases. Default value: false
+Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
