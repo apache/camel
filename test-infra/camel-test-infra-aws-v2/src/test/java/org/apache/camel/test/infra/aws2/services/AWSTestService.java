@@ -14,14 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.aws2.services;
 
-package org.apache.camel.test.infra.aws.common.services;
-
-import java.util.Properties;
-
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface AWSService extends TestService {
-
-    Properties getConnectionProperties();
+public interface AWSTestService extends TestService, AWSService, ContainerTestService {
 }

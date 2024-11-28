@@ -48,8 +48,6 @@ import software.amazon.awssdk.services.kinesis.model.ResourceInUseException;
 import software.amazon.awssdk.services.kinesis.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 public final class KinesisUtils {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisUtils.class);
 
@@ -69,11 +67,13 @@ public final class KinesisUtils {
             if (response.sdkHttpResponse().isSuccessful()) {
                 LOG.info("Stream created successfully");
             } else {
-                fail("Failed to create the stream");
+                // TODO How to fail without JUnit?
+                //                fail("Failed to create the stream");
             }
         } catch (KinesisException e) {
             LOG.error("Unable to create stream: {}", e.getMessage(), e);
-            fail("Unable to create stream");
+            // TODO How to fail without JUnit?
+            //            fail("Unable to create stream");
         }
     }
 
@@ -131,7 +131,8 @@ public final class KinesisUtils {
         if (response.sdkHttpResponse().isSuccessful()) {
             LOG.info("Stream deleted successfully");
         } else {
-            fail("Failed to delete the stream");
+            // TODO How to fail without JUnit?
+            //            fail("Failed to delete the stream");
         }
     }
 

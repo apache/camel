@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.aws.secretsmanager.integration;
 
-import java.net.URI;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerComponent;
-import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -32,10 +30,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 
+import java.net.URI;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AwsSecretsManagerBaseTest extends CamelTestSupport {
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createSecretsManagerService();
+    public static AWSTestService service = AWSServiceFactory.createSecretsManagerService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

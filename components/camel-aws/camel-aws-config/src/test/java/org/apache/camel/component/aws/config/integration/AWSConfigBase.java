@@ -18,9 +18,9 @@ package org.apache.camel.component.aws.config.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.config.AWSConfigComponent;
-import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AWSConfigBase extends CamelTestSupport {
     @RegisterExtension
-    public static AWSService service = AWSServiceFactory.createConfigService();
+    public static AWSTestService service = AWSServiceFactory.createConfigService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
