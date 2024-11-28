@@ -283,23 +283,31 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.container-image.imagePullPolicy=%s".formatted(imagePullPolicy));
         }
 
-        if ("docker".equals(imageBuilder) || "jib".equals(imageBuilder)) {
-            buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
-        }
         var skipPush = !container.getImagePush();
-        buildProperties.add("jkube.skip.push=%b".formatted(skipPush));
-
-        // Runtime specific for Main
-        if (runtime == RuntimeType.main) {
-            addDependencies("org.apache.camel:camel-health",
-                    "org.apache.camel:camel-platform-http-main");
-        }
-
         if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            if (!"docker".equals(imageBuilder)) {
+                printer().printf("OpenShift forcing --image-builder=docker%n");
+                imageBuilder = "docker";
+            }
+            if (skipPush) {
+                printer().printf("OpenShift forcing --trait container.image-push=true%n");
+                container.setImagePush(true);
+            }
             buildProperties.add("jkube.maven.plugin=%s".formatted("openshift-maven-plugin"));
         } else {
             buildProperties.add("jkube.maven.plugin=%s".formatted("kubernetes-maven-plugin"));
         }
+
+        if ("docker".equals(imageBuilder) || "jib".equals(imageBuilder)) {
+            buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
+        }
+        buildProperties.add("jkube.skip.push=%b".formatted(skipPush));
+
+        // Runtime specific for Main
+        if (runtime == RuntimeType.main) {
+            addDependencies("org.apache.camel:camel-health", "org.apache.camel:camel-platform-http-main");
+        }
+
         File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
         var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
