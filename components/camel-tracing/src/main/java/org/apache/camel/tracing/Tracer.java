@@ -248,8 +248,8 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
                     inject(span, injectAdapter);
                     ActiveSpanManager.activate(ese.getExchange(), span);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Tracing: start client span: {}", span);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Tracing: start client span: {} with parent {}", span, parent);
                     }
                 } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
@@ -259,8 +259,8 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
 
                     SpanAdapter span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Tracing: stop client span: {}", span);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Tracing: stop client span: {}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         ActiveSpanManager.deactivate(ese.getExchange());
@@ -288,7 +288,6 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     }
 
     private final class TracingRoutePolicy extends RoutePolicySupport {
-
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
             try {
@@ -302,8 +301,8 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                         sd.getReceiverSpanKind(), parent);
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Tracing: start server span={}", span);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Tracing: start server span={} with parent {}", span, parent);
                 }
             } catch (Exception t) {
                 // This exception is ignored
@@ -319,8 +318,8 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 }
                 SpanAdapter span = ActiveSpanManager.getSpan(exchange);
                 if (span != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Tracing: finish server span={}", span);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Tracing: finish server span={}", span);
                     }
                     SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                     sd.post(span, exchange, route.getEndpoint());

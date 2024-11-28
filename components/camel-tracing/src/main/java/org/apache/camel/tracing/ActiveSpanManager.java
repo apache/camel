@@ -126,8 +126,8 @@ public final class ActiveSpanManager {
             this.parent = parent;
             this.span = span;
             this.scope = span.makeCurrent();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Tracing: started scope: {}", this.scope);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Tracing: started scope: {}", this.scope);
             }
         }
 
@@ -141,8 +141,8 @@ public final class ActiveSpanManager {
 
         private void closeScope() {
             try {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Tracing: closing scope: {}", this.scope);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Tracing: closing scope: {}", this.scope);
                 }
                 scope.close();
             } catch (Exception e) {

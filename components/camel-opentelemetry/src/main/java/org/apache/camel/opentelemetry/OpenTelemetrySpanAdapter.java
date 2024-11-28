@@ -174,4 +174,9 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "OpenTelemetrySpanAdapter [baggage=" + baggage + ", span=" + span + "]";
+    }
 }
