@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2-parent</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.9.0</version>
     </parent>
 
     <artifactId>camel-as2</artifactId>
@@ -144,7 +144,7 @@
                                     <apiName>receipt</apiName>
                                     <consumerOnly>true</consumerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2AsyncMDNServerManager</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <excludeConfigNames>handler</excludeConfigNames>
                                 </api>
                             </apis>

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tooling</artifactId>
-        <version>4.9.0-SNAPSHOT</version>
+        <version>4.9.0</version>
     </parent>
 
     <artifactId>camel-util-json</artifactId>
