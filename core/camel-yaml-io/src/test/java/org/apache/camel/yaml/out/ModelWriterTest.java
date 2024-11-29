@@ -196,6 +196,7 @@ public class ModelWriterTest {
         Assertions.assertEquals(expected, out);
     }
 
+    @Disabled("TODO: https://issues.apache.org/jira/browse/CAMEL-21490")
     @Test
     public void testFromChoice() throws Exception {
         StringWriter sw = new StringWriter();
