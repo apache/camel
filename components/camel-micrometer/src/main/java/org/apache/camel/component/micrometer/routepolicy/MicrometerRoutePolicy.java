@@ -327,7 +327,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                                 || (it.isCreatedByRouteTemplate() && !registerTemplates);
                     }
                     if (!skip && configuration.getExcludePattern() != null) {
-                        skip = PatternHelper.matchPattern(route.getRouteId(), configuration.getExcludePattern());
+                        String[] patterns = configuration.getExcludePattern().split(",");
+                        skip = PatternHelper.matchPatterns(route.getRouteId(), patterns);
                     }
                     LOG.debug("Capturing metrics for route: {} -> {}", route.getRouteId(), skip);
                     if (skip) {
