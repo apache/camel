@@ -27,8 +27,8 @@ import com.couchbase.client.java.manager.view.DesignDocument;
 import com.couchbase.client.java.manager.view.View;
 import com.couchbase.client.java.view.DesignDocumentNamespace;
 import org.apache.camel.test.infra.common.TestUtils;
-import org.apache.camel.test.infra.couchbase.services.CouchbaseService;
 import org.apache.camel.test.infra.couchbase.services.CouchbaseServiceFactory;
+import org.apache.camel.test.infra.couchbase.services.CouchbaseTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,7 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CouchbaseIntegrationTestBase extends CamelTestSupport {
     @RegisterExtension
-    public static CouchbaseService service = CouchbaseServiceFactory.createService();
+    public static CouchbaseTestService service = CouchbaseServiceFactory.createService();
 
     protected static String bucketName;
     protected static Cluster cluster;

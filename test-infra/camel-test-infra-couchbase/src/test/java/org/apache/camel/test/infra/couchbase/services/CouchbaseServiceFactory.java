@@ -21,8 +21,8 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CouchbaseServiceFactory {
-    static class SingletonCouchbaseService extends SingletonService<CouchbaseService> implements CouchbaseService {
-        public SingletonCouchbaseService(CouchbaseService service, String name) {
+    static class SingletonCouchbaseService extends SingletonService<CouchbaseTestService> implements CouchbaseTestService {
+        public SingletonCouchbaseService(CouchbaseTestService service, String name) {
             super(service, name);
         }
 
@@ -56,35 +56,42 @@ public final class CouchbaseServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<CouchbaseService> builder() {
+    public static SimpleTestServiceBuilder<CouchbaseTestService> builder() {
         return new SimpleTestServiceBuilder<>("couchbase");
     }
 
-    public static CouchbaseService createService() {
+    public static CouchbaseTestService createService() {
         return builder()
-                .addLocalMapping(CouchbaseLocalContainerService::new)
-                .addRemoteMapping(CouchbaseRemoteService::new)
+                .addLocalMapping(CouchbaseLocalContainerTestService::new)
+                .addRemoteMapping(CouchbaseRemoteTestService::new)
                 .build();
     }
 
-    public static CouchbaseService createSingletonService() {
+    public static CouchbaseTestService createSingletonService() {
         return SingletonServiceHolder.INSTANCE;
     }
 
     @Deprecated
-    public static CouchbaseService getService() {
+    public static CouchbaseTestService getService() {
         return createService();
     }
 
     private static class SingletonServiceHolder {
-        static final CouchbaseService INSTANCE;
+        static final CouchbaseTestService INSTANCE;
         static {
-            SimpleTestServiceBuilder<CouchbaseService> instance = builder();
+            SimpleTestServiceBuilder<CouchbaseTestService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerService(), "couchbase"))
-                    .addRemoteMapping(CouchbaseRemoteService::new);
+            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerTestService(), "couchbase"))
+                    .addRemoteMapping(CouchbaseRemoteTestService::new);
 
             INSTANCE = instance.build();
         }
+    }
+
+    public static class CouchbaseLocalContainerTestService extends CouchbaseLocalContainerService
+            implements CouchbaseTestService {
+    }
+
+    public static class CouchbaseRemoteTestService extends CouchbaseRemoteService implements CouchbaseTestService {
     }
 }

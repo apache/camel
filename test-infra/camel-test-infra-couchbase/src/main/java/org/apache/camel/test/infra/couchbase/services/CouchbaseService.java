@@ -17,9 +17,9 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
-import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public interface CouchbaseService extends TestService {
+public interface CouchbaseService extends InfrastructureService {
 
     String getConnectionString();
 
