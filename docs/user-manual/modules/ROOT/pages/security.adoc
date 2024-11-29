@@ -44,6 +44,7 @@ utilizing xref:components:eips:marshal-eip.adoc[Marshal] are:
 
 * xref:components:dataformats:crypto-dataformat.adoc[Crypto]
 * xref:components:dataformats:pgp-dataformat.adoc[PGP]
+* xref:components:dataformats:xmlSecurity-dataformat.adoc[XML security]
 
 == Endpoint Security
 
