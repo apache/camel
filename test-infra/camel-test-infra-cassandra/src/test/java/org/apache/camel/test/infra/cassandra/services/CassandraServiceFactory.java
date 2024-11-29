@@ -23,14 +23,30 @@ public final class CassandraServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<CassandraService> builder() {
+    public static SimpleTestServiceBuilder<CassandraTestService> builder() {
         return new SimpleTestServiceBuilder<>("cassandra");
     }
 
-    public static CassandraService createService() {
+    public static CassandraTestService createLocalService(String initScript) {
+        CassandraLocalContainerTestService service = new CassandraLocalContainerTestService();
+        service.getContainer()
+                .withInitScript(initScript)
+                .withNetworkAliases("cassandra");
+
+        return service;
+    }
+
+    public static CassandraTestService createService() {
         return builder()
-                .addLocalMapping(CassandraLocalContainerService::new)
-                .addRemoteMapping(RemoteCassandraService::new)
+                .addLocalMapping(CassandraLocalContainerTestService::new)
+                .addRemoteMapping(RemoteCassandraTestService::new)
                 .build();
+    }
+
+    public static class CassandraLocalContainerTestService extends CassandraLocalContainerService
+            implements CassandraTestService {
+    }
+
+    public static class RemoteCassandraTestService extends RemoteCassandraService implements CassandraTestService {
     }
 }
