@@ -47,7 +47,7 @@ public class TcpServerBindThread extends Thread {
     private final SSLContextParameters sslContextParameters;
 
     public TcpServerBindThread(MllpTcpServerConsumer consumer, SSLContextParameters sslContextParameters) {
-//public TcpServerBindThread(MllpTcpServerConsumer consumer) {
+        //public TcpServerBindThread(MllpTcpServerConsumer consumer) {
         this.consumer = consumer;
         this.sslContextParameters = sslContextParameters;
 

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -82,4 +85,32 @@ public class MllpEndpointTest extends CamelTestSupport {
         assertEquals(resetStrategy, upperCaseResetStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
     }
 
+    //TODO is this test needed?
+
+    /**
+     * Assert that an endpoint with SSLContextParameters can be created successfully.
+     */
+    @Test
+    public void testCreateEndpointWithSslContextParameters() throws Exception {
+        // Create a dummy SSLContextParameters object with minimal setup
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        KeyManagersParameters keyManagers = new KeyManagersParameters();
+        KeyStoreParameters keyStore = new KeyStoreParameters();
+        keyStore.setResource("dummy.keystore"); // Dummy placeholder, won't be used
+        keyStore.setPassword("dummyPassword");
+        keyManagers.setKeyPassword("dummyKeyPassword");
+        keyManagers.setKeyStore(keyStore);
+        sslContextParameters.setKeyManagers(keyManagers);
+
+        // Bind the SSLContextParameters to the Camel registry
+        context.getRegistry().bind("mySslContext", sslContextParameters);
+
+        // Create the endpoint using SSLContextParameters
+        MllpComponent mllpComponent = context.getComponent("mllp", MllpComponent.class);
+        MllpEndpoint sslEndpoint
+                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?sslContextParameters=#mySslContext");
+
+        // Verify that the SSLContextParameters were set correctly
+        assertEquals(sslContextParameters, sslEndpoint.getConfiguration().getSslContextParameters());
+    }
 }
