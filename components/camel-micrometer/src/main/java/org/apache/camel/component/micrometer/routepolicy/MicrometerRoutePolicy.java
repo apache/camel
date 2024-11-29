@@ -34,9 +34,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
@@ -49,6 +52,8 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_
  * The metrics is reported in JMX by default, but this can be configured.
  */
 public class MicrometerRoutePolicy extends RoutePolicySupport implements NonManagedService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MicrometerRoutePolicy.class);
 
     private final MicrometerRoutePolicyFactory factory;
     private MeterRegistry meterRegistry;
@@ -321,6 +326,11 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                         skip = (it.isCreatedByKamelet() && !registerKamelets)
                                 || (it.isCreatedByRouteTemplate() && !registerTemplates);
                     }
+                    if (!skip && configuration.getExcludePattern() != null) {
+                        String[] patterns = configuration.getExcludePattern().split(",");
+                        skip = PatternHelper.matchPatterns(route.getRouteId(), patterns);
+                    }
+                    LOG.debug("Capturing metrics for route: {} -> {}", route.getRouteId(), skip);
                     if (skip) {
                         return null;
                     }
