@@ -16,16 +16,11 @@
  */
 package org.apache.camel.test.infra.consul.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Consul
  */
-public interface ConsulService extends TestService {
-
-    String getConsulUrl();
-
-    String host();
-
-    int port();
+public interface ConsulTestService extends ConsulService, TestService, ContainerTestService {
 }

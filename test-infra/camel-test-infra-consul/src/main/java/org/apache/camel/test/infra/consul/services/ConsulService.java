@@ -16,27 +16,16 @@
  */
 package org.apache.camel.test.infra.consul.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public final class ConsulServiceFactory {
+/**
+ * Test infra service for Consul
+ */
+public interface ConsulService extends InfrastructureService {
 
-    private ConsulServiceFactory() {
-    }
+    String getConsulUrl();
 
-    public static SimpleTestServiceBuilder<ConsulTestService> builder() {
-        return new SimpleTestServiceBuilder<>("consul");
-    }
+    String host();
 
-    public static ConsulTestService createService() {
-        return builder()
-                .addLocalMapping(ConsulLocalContainerTestService::new)
-                .addRemoteMapping(ConsulRemoteTestService::new)
-                .build();
-    }
-
-    public static class ConsulLocalContainerTestService extends ConsulLocalContainerService implements ConsulTestService {
-    }
-
-    public static class ConsulRemoteTestService extends ConsulRemoteService implements ConsulTestService {
-    }
+    int port();
 }

@@ -28,8 +28,8 @@ import java.util.stream.IntStream;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
-import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
+import org.apache.camel.test.infra.consul.services.ConsulTestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -39,7 +39,7 @@ import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 public class ConsulClusteredRoutePolicyFactoryIT {
     @RegisterExtension
-    public static ConsulService service = ConsulServiceFactory.createService();
+    public static ConsulTestService service = ConsulServiceFactory.createService();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();

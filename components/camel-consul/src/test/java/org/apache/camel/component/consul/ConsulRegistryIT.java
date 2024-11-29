@@ -23,12 +23,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
+import org.apache.camel.test.infra.consul.services.ConsulTestService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.kiwiproject.consul.Consul;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class ConsulRegistryIT implements Serializable {
     @RegisterExtension
-    public static ConsulService consulService = ConsulServiceFactory.createService();
+    public static ConsulTestService consulService = ConsulServiceFactory.createService();
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
