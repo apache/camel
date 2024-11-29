@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MicrometerRoutePolicyConfigrationTest extends AbstractMicrometerRoutePolicyTest {
+public class MicrometerRoutePolicyConfigurationTest extends AbstractMicrometerRoutePolicyTest {
 
     @Override
     protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
