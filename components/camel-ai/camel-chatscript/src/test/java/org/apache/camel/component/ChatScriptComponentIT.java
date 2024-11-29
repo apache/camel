@@ -24,8 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chatscript.ChatScriptMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.test.infra.chatscript.services.ChatScriptService;
 import org.apache.camel.test.infra.chatscript.services.ChatScriptServiceFactory;
+import org.apache.camel.test.infra.chatscript.services.ChatScriptTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,7 +37,7 @@ public class ChatScriptComponentIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentIT.class);
 
     @RegisterExtension
-    public static ChatScriptService service = ChatScriptServiceFactory.createService();
+    public static ChatScriptTestService service = ChatScriptServiceFactory.createService();
 
     @Test
     public void testChatScript() throws Exception {

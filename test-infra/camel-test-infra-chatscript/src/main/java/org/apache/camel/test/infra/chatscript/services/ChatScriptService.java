@@ -16,29 +16,12 @@
  */
 package org.apache.camel.test.infra.chatscript.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public final class ChatScriptServiceFactory {
+/**
+ * Test infra service for ChatScript
+ */
+public interface ChatScriptService extends InfrastructureService {
 
-    private ChatScriptServiceFactory() {
-
-    }
-
-    public static SimpleTestServiceBuilder<ChatScriptTestService> builder() {
-        return new SimpleTestServiceBuilder<>("chatscript");
-    }
-
-    public static ChatScriptTestService createService() {
-        return builder()
-                .addLocalMapping(ChatScriptLocalContainerTestService::new)
-                .addRemoteMapping(ChatScriptRemoteTestService::new)
-                .build();
-    }
-
-    public static class ChatScriptLocalContainerTestService extends ChatScriptLocalContainerService
-            implements ChatScriptTestService {
-    }
-
-    public static class ChatScriptRemoteTestService extends ChatScriptRemoteService implements ChatScriptTestService {
-    }
+    String serviceAddress();
 }
