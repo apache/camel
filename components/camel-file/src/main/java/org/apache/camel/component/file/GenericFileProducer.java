@@ -22,10 +22,11 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Generic file producer
  */
-public class GenericFileProducer<T> extends DefaultProducer {
+public class GenericFileProducer<T> extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileProducer.class);
 
     protected final GenericFileEndpoint<T> endpoint;
@@ -63,7 +64,18 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            doProcess(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            callback.done(true);
+        }
+        return true;
+    }
+
+    protected void doProcess(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate
         final String existing = exchange.getIn().getHeader(FileConstants.FILE_NAME, String.class);
 
@@ -78,6 +90,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         lock.lock();
         try {
             processExchange(exchange, target);
+        } catch (Exception e) {
+            exchange.setException(e);
         } finally {
             // do not remove as the locks cache has an upper bound
             // this ensure the locks is appropriate reused
@@ -512,4 +526,5 @@ public class GenericFileProducer<T> extends DefaultProducer {
         super.doStop();
         ServiceHelper.stopService(locks);
     }
+
 }

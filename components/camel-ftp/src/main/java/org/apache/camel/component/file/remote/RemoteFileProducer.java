@@ -50,7 +50,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doProcess(Exchange exchange) throws Exception {
         // store any existing file header which we want to keep and propagate
         final String existing = exchange.getIn().getHeader(FtpConstants.FILE_NAME, String.class);
 
