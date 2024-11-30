@@ -694,3 +694,14 @@ public final class MyUserAppender {
 
 Notice that the return type is a `List` which we want to contain the name of the users.
 The first parameter is the `List` of names, and the second parameter is the incoming `com.foo.User` type.
+
+=== Aggregating after large split
+
+If you use the xref:split-eip.adoc[Split] EIP before this aggregator then beware that if you
+use a completion condition, such as `completionSize(1)` then this can lead to the current thread
+being over utilized and its thread-stack becomes very large, and the JVM can throw `StackOverflowException`.
+
+The reason is that same thread is both doing the large split, the aggregation, and also the completion
+of the aggregator all in the same thread. This can lead to deep thread-stacks. To avoid this,
+you can ensure the aggregator uses a different thread to process the completion routing, by enabling `parallelProcessing(true)`.
+
