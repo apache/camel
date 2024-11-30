@@ -18,6 +18,12 @@ Renamed `ExchangePropertyKey.ACTIVE_SPAN` to `ExchangePropertyKey.OTEL_ACTIVE_SP
 The `queueSize` attribute on endpoints which are `ManagedBrowseableEndpoint` is changed from returning a `Long` value
 to an `Integer` value.
 
+==== Using Route Templates
+
+Camel will now ensure the created routes via route templates
+always use unique _nodePrefixId_ to ensure there are no duplicate id clashes, when the template
+is used for creating multiple routes.
+
 === camel-xml-io
 
 The XML dumper no longer includes attributes which are using default values.

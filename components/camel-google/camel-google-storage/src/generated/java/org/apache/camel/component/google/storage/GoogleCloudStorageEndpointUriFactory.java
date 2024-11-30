@@ -23,7 +23,7 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(35);
+        Set<String> props = new HashSet<>(36);
         props.add("autoCreateBucket");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -46,6 +46,7 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
         props.add("objectName");
         props.add("operation");
         props.add("pollStrategy");
+        props.add("prefix");
         props.add("repeatCount");
         props.add("runLoggingLevel");
         props.add("scheduledExecutorService");

@@ -305,12 +305,14 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         if (accept) {
                             LOG.debug("Accepted Modified/Created file: {}", name);
                             try {
+                                setLastError(null);
                                 // must use file resource loader as we cannot load from classpath
                                 Resource resource
                                         = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
                                 getResourceReload().onReload(name, resource);
                                 incSucceededCounter();
                             } catch (Exception e) {
+                                setLastError(e);
                                 incFailedCounter();
                                 LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name,
                                         e.getMessage(), e);

@@ -76,7 +76,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.29.21</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.29.23</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.29</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.27</azure-storage-blob-changefeed-version>
@@ -131,7 +131,7 @@
         <cxf-xjc-plugin-version>4.0.2</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.2</cxf-xjc-utils-version>
         <datasonnet-mapper-version>3.0.0</datasonnet-mapper-version>
-        <debezium-version>3.0.3.Final</debezium-version>
+        <debezium-version>3.0.4.Final</debezium-version>
         <debezium-mysql-connector-version>9.1.0</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
@@ -198,7 +198,7 @@
         <greenmail-version>2.1.1</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.24</groovy-version>
-        <grpc-version>1.68.1</grpc-version>
+        <grpc-version>1.68.2</grpc-version>
         <grpc-google-auth-library-version>1.29.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.4.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
@@ -224,7 +224,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.9</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.123</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.124</huaweicloud-sdk-version>
         <ical4j-version>4.0.6</ical4j-version>
         <icu4j-version>76.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
@@ -237,7 +237,7 @@
         <ivy-version>2.5.2</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.1.0</jackson-jq-version>
-        <jackson2-version>2.18.1</jackson2-version>
+        <jackson2-version>2.18.2</jackson2-version>
         <jackrabbit-version>2.22.0</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
         <jandex-version>3.2.3</jandex-version>
@@ -305,7 +305,7 @@
         <json-smart-version>2.5.1</json-smart-version>
         <jsonata-version>0.9.8</jsonata-version>
         <json-unit-version>4.0.0</json-unit-version>
-        <jsoup-version>1.18.1</jsoup-version>
+        <jsoup-version>1.18.2</jsoup-version>
         <jt400-version>20.0.7</jt400-version>
         <jte-version>3.1.15</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
@@ -357,12 +357,12 @@
         <maven-surefire-report-plugin-version>3.5.2</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
-        <metrics-version>4.2.28</metrics-version>
+        <metrics-version>4.2.29</metrics-version>
         <micrometer-version>1.14.1</micrometer-version>
         <micrometer-tracing-version>1.4.0</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.1</microprofile-fault-tolerance-version>
-        <milvus-client-version>2.4.8</milvus-client-version>
+        <milvus-client-version>2.5.0</milvus-client-version>
         <mina-version>2.2.3</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
@@ -376,7 +376,7 @@
         <msal4j-version>1.17.3</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
-        <mybatis-version>3.5.16</mybatis-version>
+        <mybatis-version>3.5.17</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty-version>4.1.115.Final</netty-version>
@@ -3580,7 +3580,7 @@
                         <quiet>true</quiet>
                         <bottom>Apache Camel</bottom>
                         <detectOfflineLinks>false</detectOfflineLinks>
-                        <javadocVersion>1.8.0</javadocVersion>
+                        <javadocVersion>${jdk.version}</javadocVersion>
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>

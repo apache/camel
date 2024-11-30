@@ -39,6 +39,13 @@ Camel offers encryption/decryption services to secure payloads or
 selectively apply encryption/decryption capabilities on
 portions/sections of a payload.
 
+The dataformats offering encryption/decryption of payloads
+utilizing xref:components:eips:marshal-eip.adoc[Marshal] are:
+
+* xref:components:dataformats:crypto-dataformat.adoc[Crypto]
+* xref:components:dataformats:pgp-dataformat.adoc[PGP]
+* xref:components:dataformats:xmlSecurity-dataformat.adoc[XML security]
+
 == Endpoint Security
 
 Some components in Camel offer an ability to secure their endpoints
@@ -64,9 +71,9 @@ Camel also support accessing the secured configuration from an external vault sy
 The following _Vaults_ are supported by Camel:
 
 * xref:components::aws-secrets-manager-component.adoc[AWS Secrets Manager]
-// TODO: Enable link when website build works again
-// * xref:components::google-secret-manager-component.adoc[Google Secret Manager]
-// * xref:components::azure-key-vault-component.adoc[Azure Key Vault]
+* xref:components::google-secret-manager-component.adoc[Google Secret Manager]
+* xref:components::azure-key-vault-component.adoc[Azure Key Vault]
+* xref:components::hashicorp-vault-component.adoc[Hashicorp Vault]
 
 ==== Using AWS Vault
 

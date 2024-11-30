@@ -51,7 +51,7 @@ public class SmbProducer extends DefaultProducer {
 
     private boolean loggedIn;
     private Session session;
-    private final SMBClient smbClient;
+    private SMBClient smbClient;
 
     HashSet<AccessMask> GENERIC_ALL_ACCESSMASK = new HashSet<AccessMask>(Arrays.asList(AccessMask.GENERIC_ALL));
     HashSet<AccessMask> FILE_WRITE_DATA_ACCESSMASK = new HashSet<AccessMask>(Arrays.asList(AccessMask.FILE_WRITE_DATA));
@@ -62,6 +62,11 @@ public class SmbProducer extends DefaultProducer {
 
     protected SmbProducer(final SmbEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (getEndpoint().getConfiguration().getSmbConfig() != null) {
             smbClient = new SMBClient(getEndpoint().getConfiguration().getSmbConfig());
@@ -72,14 +77,14 @@ public class SmbProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        LOGGER.debug("Producer SMB client stopped");
         super.doStop();
-    }
 
-    @Override
-    protected void doStart() throws Exception {
-        LOGGER.debug("Producer SMB client started");
-        super.doStart();
+        disconnect();
+
+        if (smbClient != null) {
+            smbClient.close();
+            smbClient = null;
+        }
     }
 
     /*
@@ -94,7 +99,6 @@ public class SmbProducer extends DefaultProducer {
     private int getReadBufferSize() {
         int readBufferSize = getEndpoint().getConfiguration().getReadBufferSize();
         readBufferSize = (readBufferSize <= 0) ? 2048 : readBufferSize;
-
         return readBufferSize;
     }
 
@@ -118,9 +122,10 @@ public class SmbProducer extends DefaultProducer {
         loggedIn = false;
         LOGGER.debug("Disconnecting from: {}", getEndpoint());
 
-        session.close();
-
-        session = null;
+        if (session != null) {
+            session.close();
+            session = null;
+        }
     }
 
     public void createDirectory(DiskShare share, java.io.File file) {
@@ -250,6 +255,14 @@ public class SmbProducer extends DefaultProducer {
 
         } catch (IOException ioe) {
             throw new RuntimeCamelException(ioe);
+        }
+
+        if (configuration.isDisconnect()) {
+            try {
+                disconnect();
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 

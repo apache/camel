@@ -60,5 +60,9 @@ public class FtpLoginNoRetryIT extends FtpServerTestSupport {
         producer.start();
         producer.process(exchange);
         producer.stop();
+
+        if (exchange.isFailed()) {
+            throw exchange.getException();
+        }
     }
 }

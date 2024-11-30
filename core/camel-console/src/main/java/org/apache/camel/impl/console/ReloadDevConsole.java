@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -71,6 +73,14 @@ public class ReloadDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\nReloadStrategy: %s", r.getClass().getName()));
                 sb.append(String.format("\n    Reloaded: %s", r.getReloadCounter()));
                 sb.append(String.format("\n    Failed: %s", r.getFailedCounter()));
+                Exception cause = r.getLastError();
+                if (cause != null) {
+                    sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
+                    final String stackTrace = ExceptionHelper.stackTraceToString(cause);
+                    sb.append("\n\n");
+                    sb.append(stackTrace);
+                    sb.append("\n\n");
+                }
             }
         }
         if (trigger) {
@@ -117,6 +127,16 @@ public class ReloadDevConsole extends AbstractDevConsole {
                 jo.put("className", r.getClass().getName());
                 jo.put("reloaded", r.getReloadCounter());
                 jo.put("failed", r.getFailedCounter());
+                Throwable cause = r.getLastError();
+                if (cause != null) {
+                    JsonObject eo = new JsonObject();
+                    eo.put("message", cause.getMessage());
+                    JsonArray arr2 = new JsonArray();
+                    final String trace = ExceptionHelper.stackTraceToString(cause);
+                    eo.put("stackTrace", arr2);
+                    Collections.addAll(arr2, trace.split("\n"));
+                    jo.put("lastError", eo);
+                }
             }
         }
 

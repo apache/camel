@@ -40,6 +40,7 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.IOHelper.stripLineComments;
@@ -205,6 +206,7 @@ public class ModelWriterUriAsParametersTest {
         Assertions.assertEquals(expected, out);
     }
 
+    @Disabled("TODO: https://issues.apache.org/jira/browse/CAMEL-21490")
     @Test
     public void testFromChoice() throws Exception {
         StringWriter sw = new StringWriter();
