@@ -28,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.8.2</version>
+    <version>4.8.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -89,7 +89,7 @@
         <connection>scm:git:http://gitbox.apache.org/repos/asf/camel.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=camel.git;a=summary</url>
-        <tag>camel-4.8.2</tag>
+        <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>jira</system>
@@ -117,7 +117,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2024-12-01T11:34:01Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2024-12-01T12:28:13Z</project.build.outputTimestamp>
 
         <cyclonedx-maven-plugin-version>2.8.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.6.0</flatten-maven-plugin-version>
