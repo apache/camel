@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "kubernetes-configmaps",
+    "title": "Kubernetes Config Maps",
+    "description": "Kubernetes Cluster Config Maps",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.kubernetes.config_maps.vault.ConfigmapsDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kubernetes",
+    "version": "4.9.0-SNAPSHOT"
+  }
+}
+
