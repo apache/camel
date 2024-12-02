@@ -16,18 +16,11 @@
  */
 package org.apache.camel.test.infra.couchdb.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for CouchDb
  */
-public interface CouchDbService extends TestService {
-
-    String host();
-
-    int port();
-
-    default String getServiceAddress() {
-        return String.format("%s:%d", host(), port());
-    }
+public interface CouchDbTestService extends TestService, CouchDbService, ContainerTestService {
 }

@@ -20,8 +20,8 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CouchDbServiceFactory {
-    static class SingletonCouchDbService extends SingletonService<CouchDbService> implements CouchDbService {
-        public SingletonCouchDbService(CouchDbService service, String name) {
+    static class SingletonCouchDbService extends SingletonService<CouchDbTestService> implements CouchDbTestService {
+        public SingletonCouchDbService(CouchDbTestService service, String name) {
             super(service, name);
         }
 
@@ -45,30 +45,36 @@ public final class CouchDbServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<CouchDbService> builder() {
+    public static SimpleTestServiceBuilder<CouchDbTestService> builder() {
         return new SimpleTestServiceBuilder<>("consul");
     }
 
-    public static CouchDbService createService() {
+    public static CouchDbTestService createService() {
         return builder()
-                .addLocalMapping(CouchDbLocalContainerService::new)
-                .addRemoteMapping(CouchDbRemoteService::new)
+                .addLocalMapping(CouchDbLocalContainerTestService::new)
+                .addRemoteMapping(CouchDbRemoteTestService::new)
                 .build();
     }
 
-    public static CouchDbService createSingletonService() {
+    public static CouchDbTestService createSingletonService() {
         return SingletonServiceHolder.INSTANCE;
     }
 
     private static class SingletonServiceHolder {
-        static final CouchDbService INSTANCE;
+        static final CouchDbTestService INSTANCE;
         static {
-            SimpleTestServiceBuilder<CouchDbService> instance = builder();
+            SimpleTestServiceBuilder<CouchDbTestService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerService(), "couchdb"))
-                    .addRemoteMapping(CouchDbRemoteService::new);
+            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerTestService(), "couchdb"))
+                    .addRemoteMapping(CouchDbRemoteTestService::new);
 
             INSTANCE = instance.build();
         }
+    }
+
+    public static class CouchDbLocalContainerTestService extends CouchDbLocalContainerService implements CouchDbTestService {
+    }
+
+    public static class CouchDbRemoteTestService extends CouchDbRemoteService implements CouchDbTestService {
     }
 }
