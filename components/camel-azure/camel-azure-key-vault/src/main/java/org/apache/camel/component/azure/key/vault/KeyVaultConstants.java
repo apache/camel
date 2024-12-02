@@ -29,6 +29,9 @@ public final class KeyVaultConstants {
     @Metadata(label = "producer", description = "The secret name to be used in Key Vault",
               javaType = "String")
     public static final String SECRET_NAME = HEADER_PREFIX + "SecretName";
+    @Metadata(label = "producer", description = "The secret properties to be used in Key Vault for updating a secret",
+              javaType = "String")
+    public static final String SECRET_PROPERTIES = HEADER_PREFIX + "SecretProperties";
 
     private KeyVaultConstants() {
     }

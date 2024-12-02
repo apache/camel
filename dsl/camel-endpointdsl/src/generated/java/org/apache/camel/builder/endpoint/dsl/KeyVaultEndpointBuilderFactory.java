@@ -330,6 +330,18 @@ public interface KeyVaultEndpointBuilderFactory {
         public String azureKeyVaultSecretName() {
             return "CamelAzureKeyVaultSecretName";
         }
+        /**
+         * The secret properties to be used in Key Vault for updating a secret.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureKeyVaultSecretProperties}.
+         */
+        public String azureKeyVaultSecretProperties() {
+            return "CamelAzureKeyVaultSecretProperties";
+        }
     }
     static KeyVaultEndpointBuilder endpointBuilder(String componentName, String path) {
         class KeyVaultEndpointBuilderImpl extends AbstractEndpointBuilder implements KeyVaultEndpointBuilder, AdvancedKeyVaultEndpointBuilder {
