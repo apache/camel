@@ -47,14 +47,12 @@ public final class RestUtil {
             return true;
         }
 
-        boolean isXml = valid.contains("xml");
-        if (isXml && !target.contains("xml")) {
-            return false;
-        }
-
-        boolean isJson = valid.contains("json");
-        if (isJson && !target.contains("json")) {
-            return false;
+        // try each part of the target
+        for (String part : target.split(",")) {
+            part = part.trim();
+            if (valid.contains(part)) {
+                return true;
+            }
         }
 
         return false;
