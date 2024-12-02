@@ -16,26 +16,16 @@
  */
 package org.apache.camel.test.infra.fhir.services;
 
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public class FhirLocalSingletonContainerService extends FhirLocalContainerTestService
-        implements ExtensionContext.Store.CloseableResource {
+/**
+ * Test infra service for FHIR
+ */
+public interface FhirService extends InfrastructureService {
 
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) {
-        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent("fhir", s -> {
-            super.initialize();
-            return this;
-        });
-    }
+    String getServiceBaseURL();
 
-    @Override
-    public void afterAll(ExtensionContext extensionContext) {
-        // no op
-    }
+    String getHost();
 
-    @Override
-    public void close() {
-        super.shutdown();
-    }
+    Integer getPort();
 }
