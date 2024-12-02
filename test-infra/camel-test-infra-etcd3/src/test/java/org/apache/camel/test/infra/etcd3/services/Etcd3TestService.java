@@ -16,28 +16,11 @@
  */
 package org.apache.camel.test.infra.etcd3.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.ContainerTestService;
+import org.apache.camel.test.infra.common.services.TestService;
 
-public final class Etcd3ServiceFactory {
-
-    private Etcd3ServiceFactory() {
-
-    }
-
-    public static SimpleTestServiceBuilder<Etcd3TestService> builder() {
-        return new SimpleTestServiceBuilder<>("etcd");
-    }
-
-    public static Etcd3TestService createService() {
-        return builder()
-                .addLocalMapping(Etcd3LocalContainerTestService::new)
-                .addRemoteMapping(Etcd3RemoteTestService::new)
-                .build();
-    }
-
-    public static class Etcd3LocalContainerTestService extends Etcd3LocalContainerService implements Etcd3TestService {
-    }
-
-    public static class Etcd3RemoteTestService extends Etcd3RemoteService implements Etcd3TestService {
-    }
+/**
+ * Test infra service for EtcD
+ */
+public interface Etcd3TestService extends TestService, ContainerTestService, Etcd3Service {
 }
