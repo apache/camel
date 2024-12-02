@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
+import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedTestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupport {
 
     @RegisterExtension
-    protected static SftpEmbeddedService service = new SftpEmbeddedService(true);
+    protected static SftpEmbeddedTestService service = new SftpEmbeddedTestService(true);
 
     protected String getSftpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}?password=admin&initialDelay=3000&stepwise=false"

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.test.infra.common.services.AbstractTestService;
+import org.apache.camel.test.infra.common.services.AbstractService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
 import org.apache.commons.io.FileUtils;
@@ -42,20 +42,20 @@ import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FtpEmbeddedService extends AbstractTestService implements FtpService {
+public class FtpEmbeddedService extends AbstractService implements FtpService {
     protected static final String DEFAULT_LISTENER = "default";
     private static final Logger LOG = LoggerFactory.getLogger(FtpEmbeddedService.class);
 
     protected FtpServer ftpServer;
     protected int port;
+    protected String testDirectory = "camel-test-infra-test-directory";
+    protected String configurationTestDirectory = "camel-test-infra-configuration-test-directory";
 
     protected Path rootDir;
-    private final EmbeddedConfigurationBuilder embeddedConfigurationTemplate;
-    private ExtensionContext context;
+    protected EmbeddedConfigurationBuilder embeddedConfigurationTemplate;
 
     public FtpEmbeddedService() {
         this(EmbeddedConfigurationBuilder.defaultConfigurationTemplate());
@@ -67,7 +67,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
 
     @Override
     protected void setUp() throws Exception {
-        embeddedConfigurationTemplate.withTestDirectory(context.getDisplayName().replace("()", ""));
+        embeddedConfigurationTemplate.withTestDirectory(configurationTestDirectory);
         EmbeddedConfiguration embeddedConfiguration = embeddedConfigurationTemplate.build();
 
         rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
@@ -87,7 +87,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
 
     @Deprecated
     private Path testDirectory() {
-        return Paths.get("target", "ftp", context.getRequiredTestClass().getSimpleName());
+        return Paths.get("target", "ftp", testDirectory);
     }
 
     protected void createUser(UserManager userMgr, String name, String password, Path home, boolean writePermission) {
@@ -176,12 +176,6 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
     }
 
     @Override
-    public void registerProperties() {
-        ExtensionContext.Store store = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        registerProperties(store::put);
-    }
-
-    @Override
     public Path getFtpRootDir() {
         return rootDir;
     }
@@ -208,29 +202,11 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         return count;
     }
 
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) {
-        this.context = extensionContext;
-    }
-
-    @Override
-    public void afterAll(ExtensionContext extensionContext) {
-        this.context = null;
-    }
-
-    @Override
-    public void afterEach(ExtensionContext extensionContext) {
-        shutdown();
-        this.context = null;
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        this.context = extensionContext;
-        initialize();
-    }
-
     public Path ftpFile(String file) {
         return getFtpRootDir().resolve(file);
+    }
+
+    @Override
+    public void registerProperties() {
     }
 }

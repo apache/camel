@@ -14,19 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.ftp.services;
+package org.apache.camel.test.infra.common.services;
 
-import java.nio.file.Path;
+import java.util.function.BiConsumer;
 
-import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+public abstract class AbstractService implements InfrastructureService {
 
-/**
- * Test infra service for Ftp
- */
-public interface FtpService extends TestService, BeforeEachCallback, AfterEachCallback {
-    int getPort();
+    @Override
+    public void initialize() {
+        try {
+            setUp();
+            registerProperties();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
-    Path getFtpRootDir();
+    @Override
+    public void shutdown() {
+        try {
+            tearDown();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    protected abstract void registerProperties(BiConsumer<String, String> store);
+
+    @Deprecated
+    protected abstract void setUp() throws Exception;
+
+    @Deprecated
+    protected abstract void tearDown() throws Exception;
 }

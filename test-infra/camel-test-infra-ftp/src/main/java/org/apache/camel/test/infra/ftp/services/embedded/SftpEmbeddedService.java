@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.test.infra.common.services.AbstractTestService;
+import org.apache.camel.test.infra.common.services.AbstractService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
 import org.apache.sshd.common.NamedFactory;
@@ -40,11 +40,10 @@ import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SftpEmbeddedService extends AbstractTestService implements FtpService {
+public class SftpEmbeddedService extends AbstractService implements FtpService {
     private static final Logger LOG = LoggerFactory.getLogger(SftpEmbeddedService.class);
 
     protected SshServer sshd;
@@ -54,7 +53,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
     private Path rootDir;
     private Path knownHosts;
     private final EmbeddedConfiguration embeddedConfiguration;
-    private ExtensionContext context;
+    protected String testDirectory = "camel-test-infra-test-directory";
 
     public SftpEmbeddedService() {
         this(false);
@@ -69,7 +68,6 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         this.embeddedConfiguration = embeddedConfiguration;
     }
 
-    @Override
     public void setUp() throws Exception {
         rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
         knownHosts = testDirectory().resolve(embeddedConfiguration.getKnownHostsPath());
@@ -81,7 +79,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
     }
 
     private Path testDirectory() {
-        return Paths.get("target", "ftp", context.getRequiredTestClass().getSimpleName());
+        return Paths.get("target", "ftp", testDirectory);
     }
 
     public void setUpServer() throws Exception {
@@ -161,7 +159,6 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         return rootDir;
     }
 
-    @Override
     protected void registerProperties(BiConsumer<String, String> store) {
         store.accept(FtpProperties.SERVER_HOST, embeddedConfiguration.getServerAddress());
         store.accept(FtpProperties.SERVER_PORT, String.valueOf(port));
@@ -170,34 +167,10 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
 
     @Override
     public void registerProperties() {
-        ExtensionContext.Store store = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        registerProperties(store::put);
     }
 
     @Override
     public int getPort() {
         return port;
-    }
-
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) {
-        this.context = extensionContext;
-    }
-
-    @Override
-    public void afterAll(ExtensionContext extensionContext) {
-        this.context = null;
-    }
-
-    @Override
-    public void afterEach(ExtensionContext extensionContext) {
-        shutdown();
-        this.context = null;
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        this.context = extensionContext;
-        initialize();
     }
 }

@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.integration;
+package org.apache.camel.test.infra.ftp.services;
 
-import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
-import org.apache.camel.test.infra.ftp.services.embedded.EmbeddedConfiguration;
-import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedTestService;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.common.services.ContainerTestService;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 
 /**
- * Abstract base class for unit testing using a secure FTP Server over TLS (explicit) and without client authentication.
+ * Test infra service for Ftp
  */
-public abstract class FtpsServerExplicitTLSWithoutClientAuthTestSupport extends FtpsServerTestSupport {
-    @RegisterExtension
-    static FtpsEmbeddedTestService service = FtpServiceFactory
-            .createSecureEmbeddedService(new EmbeddedConfiguration.SecurityConfiguration(false, AUTH_VALUE_TLS, false));
+public interface FtpTestService extends ContainerTestService, FtpService, TestService, BeforeEachCallback, AfterEachCallback {
+
 }
