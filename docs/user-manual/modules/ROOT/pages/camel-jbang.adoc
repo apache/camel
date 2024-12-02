@@ -1775,6 +1775,8 @@ The `run` command allows running Camel in the background with the `--background`
 Therefore, to see and understand what happens then the management commands
 cane be used, such as `camel ps`, `camel get`, and `camel log`.
 
+NOTE: Only Camel Main is supported to run in background
+
 [source,bash]
 ----
 $ camel run chuck.yaml --background
@@ -1801,6 +1803,11 @@ To stop the integration you can use `camel stop`
 $ camel stop chuck
 Shutting down Camel integration (pid: 80093)
 ----
+
+When running in background, then Camel JBang (**4.10 onwards**) will now automatic wait for the integration
+to startup before returning from the CLI command. This ensures that if there are any startup
+errors such as compilation errors or DSL errors etc. then these are captured and printed in the shell.
+You can use the option `--background-wait=false` to turn this off.
 
 ==== Starting and Stopping routes
 

@@ -22,6 +22,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,7 +60,10 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
 import picocli.CommandLine;
@@ -68,6 +72,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
@@ -128,6 +133,10 @@ public class Run extends CamelCommand {
 
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     public boolean background;
+
+    @Option(names = { "--background-wait" }, defaultValue = "true",
+            description = "To wait for run in background to startup successfully, before returning")
+    public boolean backgroundWait = true;
 
     @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
     public boolean empty;
@@ -896,6 +905,11 @@ public class Run extends CamelCommand {
     }
 
     protected int runQuarkus() throws Exception {
+        if (background) {
+            printer().println("Run Camel Quarkus with --background is not supported");
+            return 1;
+        }
+
         // create temp run dir
         File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
@@ -934,13 +948,13 @@ public class Run extends CamelCommand {
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
 
+        printer().println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
+
         // run export
         int exit = eq.export();
         if (exit != 0 || this.exportRun) {
             return exit;
         }
-
-        System.out.println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
 
         // run quarkus via maven
         String mvnw = "/mvnw";
@@ -950,24 +964,19 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "package", "quarkus:" + (dev ? "dev" : "run"));
 
-        if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel Quarkus integration: " + name + " (version: " + eq.quarkusVersion
-                                  + ") in background");
-            }
-            return 0;
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            // wait for that process to exit as we run in foreground
-            return p.waitFor();
-        }
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // wait for that process to exit as we run in foreground
+        return p.waitFor();
     }
 
     protected int runSpringBoot() throws Exception {
+        if (background) {
+            printer().println("Run Camel Spring Boot with --background is not supported");
+            return 1;
+        }
+
         // create temp run dir
         File runDir = new File(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
@@ -1010,13 +1019,13 @@ public class Run extends CamelCommand {
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
 
+        printer().println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
+
         // run export
         int exit = eq.export();
         if (exit != 0 || exportRun) {
             return exit;
         }
-
-        System.out.println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
 
         // prepare spring-boot for logging to file
         InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
@@ -1030,21 +1039,11 @@ public class Run extends CamelCommand {
         }
         pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "spring-boot:run");
 
-        if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel Spring Boot integration: " + name + " (version: " + camelVersion
-                                  + ") in background");
-            }
-            return 0;
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            // wait for that process to exit as we run in foreground
-            return p.waitFor();
-        }
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Process p = pb.start();
+        this.spawnPid = p.pid();
+        // wait for that process to exit as we run in foreground
+        return p.waitFor();
     }
 
     private boolean acceptPropertiesFile(String file) {
@@ -1150,6 +1149,7 @@ public class Run extends CamelCommand {
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
+            backgroundWait = "true".equals(answer.getProperty("camel.jbang.backgroundWait", backgroundWait ? "true" : "false"));
             jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));
             camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
             kameletsVersion = answer.getProperty("camel.jbang.kameletsVersion", kameletsVersion);
@@ -1201,6 +1201,9 @@ public class Run extends CamelCommand {
         if (background) {
             cmds.remove("--background=true");
             cmds.remove("--background");
+            cmds.remove("--background-wait");
+            cmds.remove("--background-wait=false");
+            cmds.remove("--background-wait=true");
         }
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
@@ -1236,13 +1239,7 @@ public class Run extends CamelCommand {
         pb.command(jbangArgs);
 
         if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel integration: " + name + " (version: " + camelVersion
-                                  + ") in background with PID: " + p.pid());
-            }
-            return 0;
+            return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
@@ -1266,17 +1263,74 @@ public class Run extends CamelCommand {
 
         cmds.remove("--background=true");
         cmds.remove("--background");
+        cmds.remove("--background-wait=false");
+        cmds.remove("--background-wait=true");
+        cmds.remove("--background-wait");
 
         addCamelCommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
+
+        return runBackgroundProcess(pb, "Camel Main");
+    }
+
+    protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
+        File log = null;
+        if (backgroundWait) {
+            // store background output in a log file to capture any error on startup
+            log = getRunBackgroundLogFile("" + new Random().nextLong());
+            log.deleteOnExit();
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(log);
+        }
+
         Process p = pb.start();
         this.spawnPid = p.pid();
         if (!exportRun && !transformRun && !transformMessageRun) {
-            printer().println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+            printer().println(
+                    "Running " + kind + ": " + name + " in background with PID: " + p.pid()
+                              + (backgroundWait ? " (waiting to startup)" : ""));
         }
-        return 0;
+
+        int ec = 0;
+        if (log != null) {
+            StopWatch watch = new StopWatch();
+            int state = 0; // state 5 is running
+            while (p.isAlive() && watch.taken() < 20000 && state < 5) {
+                JsonObject root = loadStatus(p.pid());
+                if (root != null) {
+                    JsonObject context = (JsonObject) root.get("context");
+                    if (context != null) {
+                        state = context.getInteger("phase");
+                    }
+                }
+                if (state < 5) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (Exception e) {
+                        // we want to exit
+                        break;
+                    }
+                }
+            }
+            if (!p.isAlive()) {
+                ec = p.exitValue();
+                if (ec != 0) {
+                    printer().println(kind + ": " + name + " startup failure");
+                    printer().println("");
+                    String text = IOHelper.loadText(new FileInputStream(log));
+                    printer().print(text);
+                }
+            } else {
+                printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
+            }
+        }
+        if (log != null) {
+            log.delete();
+        }
+
+        return ec;
     }
 
     protected int runDebug(KameletMain main) throws Exception {
@@ -1335,6 +1389,9 @@ public class Run extends CamelCommand {
         if (background) {
             cmds.remove("--background=true");
             cmds.remove("--background");
+            cmds.remove("--background-wait=true");
+            cmds.remove("--background-wait=false");
+            cmds.remove("--background-wait");
         }
         if (repositories != null) {
             if (!VersionHelper.isGE(v, "3.18.1")) {
@@ -1354,13 +1411,7 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
         if (background) {
-            Process p = pb.start();
-            this.spawnPid = p.pid();
-            if (!exportRun && !transformRun && !transformMessageRun) {
-                printer().println("Running Camel integration: " + name + " (version: " + camelVersion
-                                  + ") in background with PID: " + p.pid());
-            }
-            return 0;
+            return runBackgroundProcess(pb, "Camel Main");
         } else {
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
@@ -1873,4 +1924,20 @@ public class Run extends CamelCommand {
             cmds.add(0, "camel");
         }
     }
+
+    private JsonObject loadStatus(long pid) {
+        try {
+            File f = getStatusFile(Long.toString(pid));
+            if (f != null) {
+                FileInputStream fis = new FileInputStream(f);
+                String text = IOHelper.loadText(fis);
+                IOHelper.close(fis);
+                return (JsonObject) Jsoner.deserialize(text);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
 }

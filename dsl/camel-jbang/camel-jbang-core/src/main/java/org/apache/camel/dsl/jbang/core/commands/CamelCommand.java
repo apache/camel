@@ -117,6 +117,10 @@ public abstract class CamelCommand implements Callable<Integer> {
         return new File(CommandLineHelper.getCamelDir(), pid + "-debug.json");
     }
 
+    public File getRunBackgroundLogFile(String uuid) {
+        return new File(CommandLineHelper.getCamelDir(), uuid + "-run.log");
+    }
+
     protected Printer printer() {
         var out = getMain().getOut();
         CommandHelper.SetPrinter(out);
