@@ -1,7 +1,7 @@
 = Security
 
-Camel offers several forms & levels of security capabilities that can be
-utilized on Camel routes. These various forms of security may be used in
+Camel offers several forms and levels of security capabilities that can be
+used on Camel routes. These various forms of security may be used in
 conjunction with each other or separately.
 
 The broad categories offered are:
@@ -60,11 +60,11 @@ Camel offers the xref:components::properties-component.adoc[Properties] componen
 externalize configuration values to properties files. Those values could
 contain sensitive information such as usernames and passwords.
 
-Those values can be encrypted and automatic decrypted by Camel using:
+Those values can be encrypted and automatically decrypted by Camel using:
 
 * xref:components:others:jasypt.adoc[Jasypt]
 
-Camel also support accessing the secured configuration from an external vault systems.
+Camel also supports accessing the secured configuration from an external vault systems.
 
 === Configuration Security using Vaults
 
@@ -77,7 +77,7 @@ The following _Vaults_ are supported by Camel:
 
 ==== Using AWS Vault
 
-To use AWS Secrets Manager you need to provide _accessKey_, _secretKey_ and the _region_.
+To use AWS Secrets Manager, you need to provide _accessKey_, _secretKey_ and the _region_.
 This can be done using environmental variables before starting the application:
 
 [source,bash]
@@ -156,9 +156,9 @@ You could specify a default value in case the secret is not present on AWS Secre
 </camelContext>
 ----
 
-In this case if the secret doesn't exist, the property will fallback to "default" as value.
+In this case, if the secret doesn't exist, the property will fallback to "default" as value.
 
-Also, you are able to get particular field of the secret, if you have for example a secret named database of this form:
+Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
 [source,json]
 ----
@@ -198,15 +198,15 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
-In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fall back to "admin" as value.
 
-NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+NOTE: For the moment we are not considering the rotation function if any are applied, but it is in the work to be done.
 
 The only requirement is adding `camel-aws-secrets-manager` JAR to your Camel application.
 
 ==== Using GCP Vault
 
-To use GCP Secret Manager you need to provide _serviceAccountKey_ file and GCP _projectId_.
+To use GCP Secret Manager, you need to provide _serviceAccountKey_ file and GCP _projectId_.
 This can be done using environmental variables before starting the application:
 
 [source,bash]
@@ -265,9 +265,9 @@ You could specify a default value in case the secret is not present on GCP Secre
 </camelContext>
 ----
 
-In this case if the secret doesn't exist, the property will fallback to "default" as value.
+In this case, if the secret doesn't exist, the property will fallback to "default" as value.
 
-Also, you are able to get particular field of the secret, if you have for example a secret named database of this form:
+Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
 [source,json]
 ----
@@ -307,9 +307,9 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
-In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
 
-NOTE: For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+NOTE: For the moment we are not considering the rotation function if any are applied, but it is in the work to be done.
 
 There are only two requirements: 
 - Adding `camel-google-secret-manager` JAR to your Camel application.
@@ -317,7 +317,7 @@ There are only two requirements:
 
 ==== Using Azure Key Vault
 
-To use this function you'll need to provide credentials to Azure Key Vault Service as environment variables:
+To use this function, you'll need to provide credentials to Azure Key Vault Service as environment variables:
 
 [source,bash]
 ----
@@ -353,7 +353,7 @@ camel.vault.azure.azureIdentityEnabled = true
 camel.vault.azure.vaultName = vaultName
 ----
 
-At this point you'll be able to reference a property in the following way:
+At this point, you'll be able to reference a property in the following way:
 
 [source,xml]
 ----
@@ -379,9 +379,9 @@ You could specify a default value in case the secret is not present on Azure Key
 </camelContext>
 ----
 
-In this case if the secret doesn't exist, the property will fallback to "default" as value.
+In this case, if the secret doesn't exist, the property will fallback to "default" as value.
 
-Also you are able to get particular field of the secret, if you have for example a secret named database of this form:
+Also you are able to get a particular field of the secret if you have, for example, a secret named database of this form:
 
 [source,bash]
 ----
@@ -421,9 +421,9 @@ You could specify a default value in case the particular field of secret is not 
 </camelContext>
 ----
 
-In this case if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
+In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
 
-For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
+For the moment we are not considering the rotation function if any are applied, but it is in the work to be done.
 
 The only requirement is adding the camel-azure-key-vault jar to your Camel application.
 
@@ -491,7 +491,7 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 }
 ----
 
-You're able to do get single secret value in your route, in the 'secret' engine, like for example:
+You're able to do get single secret value in your route, in the 'secret' engine, like, for example:
 
 [source,xml]
 ----
@@ -579,7 +579,7 @@ camel.vault.aws.region = region
 
 Or by specifying accessKey/SecretKey and region, instead of using the default credentials provider chain.
 
-To enable the automatic refresh you'll need additional properties to set:
+To enable the automatic refresh, you'll need additional properties to set:
 
 [source,properties]
 ----
@@ -601,9 +601,9 @@ Another option is to use AWS EventBridge in conjunction with the AWS SQS service
 
 On the AWS side, the following resources need to be created:
 
-- an AWS Couldtrail trail
+- an AWS CloudTrail trail
 - an AWS SQS Queue
-- an Eventbridge rule of the following kind
+- an EventBridge rule of the following kind
 
 [source,json]
 ----
@@ -638,7 +638,7 @@ aws sqs set-queue-attributes --queue-url <queue_url> --attributes file://policy.
 
 where queue_url is the AWS SQS Queue URL of the just created Queue.
 
-Now you should be able to set up the configuration on the Camel side. To enable the SQS notification add the following properties:
+Now you should be able to set up the configuration on the Camel side. To enable the SQS notification, add the following properties:
 
 [source,properties]
 ----
@@ -694,12 +694,12 @@ Note that `camel.vault.gcp.secrets` is not mandatory: if not specified the task 
 
 The `camel.vault.gcp.subscriptionName` is the subscription name created in relation to the Google PubSub topic associated with the tracked secrets.
 
-This mechanism while make use of the notification system related to Google Secret Manager: through this feature, every secret could be associated to one up to ten Google Pubsub Topics. These topics will receive 
-events related to life cycle of the secret.
+This mechanism makes use of the notification system related to Google Secret Manager: through this feature, every secret could be associated with one up to ten Google Pubsub Topics. These topics will receive
+events related to the life cycle of the secret.
 
 There are only two requirements: 
 - Adding `camel-google-secret-manager` JAR to your Camel application.
-- Give the service account used permissions to do operation at secret management level (for example accessing the secret payload, or being admin of secret manager service and also have permission over the Pubsub service)
+- Give the service account used permissions to do operation at secret management level (for example, accessing the secret payload, or being admin of secret manager service and also have permission over the Pubsub service)
 
 ==== Automatic Camel context reloading on Secret Refresh while using Azure Key Vault
 
@@ -741,7 +741,7 @@ camel.vault.azure.azureIdentityEnabled = true
 camel.vault.azure.vaultName = vaultName
 ----
 
-To enable the automatic refresh you'll need additional properties to set:
+To enable the automatic refresh, you'll need additional properties to set:
 
 [source,properties]
 ----

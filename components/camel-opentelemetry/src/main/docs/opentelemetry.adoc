@@ -122,7 +122,7 @@ Set the property `management.tracing.sampling.probability` to `1.0` if you want 
 === SpanExporters
 
 You'll probably want to configure at least one https://opentelemetry.io/docs/languages/java/sdk/#spanexporter[SpanExporter]
-as they allow you to export your traces to various backends (e.g Zipkin and Jaeger) or log them. For example, to export your traces to Jaeger using OTLP via gRPC,
+as they allow you to export your traces to various backends (e.g., Zipkin and Jaeger), or log them. For example, to export your traces to Jaeger using OTLP via gRPC,
 add `io.opentelemetry:opentelemetry-exporter-otlp` as a dependency to your project. To configure it, you can
 use the `management.otlp.tracing` properties or register a new `SpanExporter` bean yourself:
 
