@@ -136,12 +136,12 @@ Caller can call `list` to confirm the model is unregistered. |
 The Metrics API provides the operations to fetch metrics in the Prometheus format.
 
 ----
-torchserve:mertrics/<operation>[?options]
+torchserve:metrics/<operation>[?options]
 ----
 
 [width="100%",cols="2,5,1,2",options="header"]
 |===
-| operation | Description | Headers | Result
+| Operation | Description | Options | Result
 | `metrics` | Get TorchServe application metrics in prometheus format. | `metricsName` | `String`
 |===
 
