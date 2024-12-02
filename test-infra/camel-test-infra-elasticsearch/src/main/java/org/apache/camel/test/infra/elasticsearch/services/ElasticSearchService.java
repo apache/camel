@@ -21,9 +21,9 @@ import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public interface ElasticSearchService extends TestService {
+public interface ElasticSearchService extends InfrastructureService {
 
     int getPort();
 

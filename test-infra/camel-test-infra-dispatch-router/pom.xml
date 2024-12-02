@@ -35,14 +35,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-messaging-common</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>
