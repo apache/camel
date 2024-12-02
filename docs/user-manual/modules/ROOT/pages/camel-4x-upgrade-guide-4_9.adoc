@@ -21,7 +21,7 @@ to an `Integer` value.
 ==== Using Route Templates
 
 Camel will now ensure the created routes via route templates
-always use unique _nodePrefixId_ to ensure there are no duplicate id clashes, when the template
+always use unique _nodePrefixId_ to ensure there are no duplicate id clashes when the template
 is used for creating multiple routes.
 
 === camel-xml-io
@@ -49,7 +49,7 @@ on Spring Boot.
 
 === camel-pubnub
 
-Upgraded to pubnub client to 10.x which removed the `cipherKey` option.
+Upgraded the pubnub client to 10.x, which removed the `cipherKey` option.
 
 === camel-smooks
 
@@ -60,11 +60,11 @@ https://www.smooks.org/documentation/#migrating_from_smooks_1_7_to_2_0[API break
 
 The syntax for retrieving a single field of a secret has been changed.
 
-From this
+From this:
 
 `{{hashicorp:secret:database/username}}`
 
-to this
+to this:
 
 `{{hashicorp:secret:database#username}}`
 
@@ -74,11 +74,11 @@ You could find more details on CAMEL-21179 issue
 
 The syntax for retrieving a single field of a secret has been changed.
 
-From this
+From this:
 
 `{{aws:database/username}}`
 
-to this
+to this:
 
 `{{aws:database#username}}`
 
@@ -88,11 +88,11 @@ You could find more details on CAMEL-21179 issue
 
 The syntax for retrieving a single field of a secret has been changed.
 
-From this
+From this:
 
 `{{gcp:database/username}}`
 
-to this
+to this:
 
 `{{gcp:database#username}}`
 
@@ -102,11 +102,11 @@ You could find more details on CAMEL-21179 issue
 
 The syntax for retrieving a single field of a secret has been changed.
 
-From this
+From this:
 
 `{{azure:database/username}}`
 
-to this
+to this:
 
 `{{azure:database#username}}`
 
