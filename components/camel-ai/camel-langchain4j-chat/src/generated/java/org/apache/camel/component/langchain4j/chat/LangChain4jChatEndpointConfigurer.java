@@ -25,20 +25,16 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cameltoolparameter":
-        case "camelToolParameter": target.setCamelToolParameter(property(camelContext, org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter.class, value)); return true;
         case "chatmodel":
         case "chatModel": target.getConfiguration().setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatLanguageModel.class, value)); return true;
         case "chatoperation":
         case "chatOperation": target.getConfiguration().setChatOperation(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class, value)); return true;
-        case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         default: return false;
         }
     }
@@ -53,20 +49,16 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "cameltoolparameter":
-        case "camelToolParameter": return org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter.class;
         case "chatmodel":
         case "chatModel": return dev.langchain4j.model.chat.ChatLanguageModel.class;
         case "chatoperation":
         case "chatOperation": return org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class;
-        case "description": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "parameters": return java.util.Map.class;
         default: return null;
         }
     }
@@ -77,28 +69,16 @@ public class LangChain4jChatEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "cameltoolparameter":
-        case "camelToolParameter": return target.getCamelToolParameter();
         case "chatmodel":
         case "chatModel": return target.getConfiguration().getChatModel();
         case "chatoperation":
         case "chatOperation": return target.getConfiguration().getChatOperation();
-        case "description": return target.getDescription();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "parameters": return target.getParameters();
-        default: return null;
-        }
-    }
-
-    @Override
-    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "parameters": return java.lang.String.class;
         default: return null;
         }
     }
