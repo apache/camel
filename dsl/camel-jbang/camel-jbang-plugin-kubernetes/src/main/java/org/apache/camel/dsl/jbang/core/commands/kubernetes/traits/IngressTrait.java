@@ -23,6 +23,8 @@ import io.fabric8.kubernetes.api.model.networking.v1.HTTPIngressPathBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressBuilder;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressRule;
 import io.fabric8.kubernetes.api.model.networking.v1.IngressRuleBuilder;
+import io.fabric8.kubernetes.api.model.networking.v1.IngressTLS;
+import io.fabric8.kubernetes.api.model.networking.v1.IngressTLSBuilder;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Ingress;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
@@ -95,6 +97,14 @@ public class IngressTrait extends BaseTrait {
                 .withIngressClassName(INGRESS_CLASS_NAME)
                 .withRules(rule)
                 .endSpec();
+
+        if (ingressTrait.getTlsHosts() != null && ingressTrait.getTlsSecretName() != null) {
+            IngressTLS tls = new IngressTLSBuilder()
+                    .withHosts(ingressTrait.getTlsHosts())
+                    .withSecretName(ingressTrait.getTlsSecretName())
+                    .build();
+            ingressBuilder.editSpec().withTls(tls).endSpec();
+        }
 
         context.add(ingressBuilder);
     }

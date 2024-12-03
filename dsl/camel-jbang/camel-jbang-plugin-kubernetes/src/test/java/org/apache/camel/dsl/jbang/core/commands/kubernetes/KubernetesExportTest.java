@@ -201,6 +201,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
                 "--trait", "ingress.pathType=ImplementationSpecific",
                 "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/rewrite-target=/$2",
                 "--trait", "ingress.annotations=nginx.ingress.kubernetes.io/use-regex=true",
+                "--trait", "ingress.tls-hosts=acme.com,acme2.com",
+                "--trait", "ingress.tls-secret-name=acme-tls-secret",
                 "--runtime=" + rt.runtime());
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -232,6 +234,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("/$2",
                 ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/rewrite-target"));
         Assertions.assertEquals("true", ingress.getMetadata().getAnnotations().get("nginx.ingress.kubernetes.io/use-regex"));
+        Assertions.assertTrue(ingress.getSpec().getTls().get(0).getHosts().contains("acme.com"));
+        Assertions.assertTrue(ingress.getSpec().getTls().get(0).getHosts().contains("acme2.com"));
+        Assertions.assertEquals("acme-tls-secret", ingress.getSpec().getTls().get(0).getSecretName());
     }
 
     @ParameterizedTest
