@@ -81,57 +81,6 @@ public interface LangChain4jChatEndpointBuilderFactory {
             doSetProperty("chatOperation", chatOperation);
             return this;
         }
-        /**
-         * Tool description.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         * 
-         * @param description the value to set
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointConsumerBuilder description(String description) {
-            doSetProperty("description", description);
-            return this;
-        }
-        /**
-         * List of Tool parameters in the form of parameter.=.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
-         * The option is multivalued, and you can use the parameters(String,
-         * Object) method to add a value (call the method multiple times to set
-         * more values).
-         * 
-         * Group: consumer
-         * 
-         * @param key the option key
-         * @param value the option value
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointConsumerBuilder parameters(String key, Object value) {
-            doSetMultiValueProperty("parameters", "parameter." + key, value);
-            return this;
-        }
-        /**
-         * List of Tool parameters in the form of parameter.=.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
-         * The option is multivalued, and you can use the parameters(String,
-         * Object) method to add a value (call the method multiple times to set
-         * more values).
-         * 
-         * Group: consumer
-         * 
-         * @param values the values
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointConsumerBuilder parameters(Map values) {
-            doSetMultiValueProperties("parameters", "parameter.", values);
-            return this;
-        }
     }
 
     /**
@@ -193,38 +142,6 @@ public interface LangChain4jChatEndpointBuilderFactory {
          */
         default AdvancedLangChain4jChatEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Tool's Camel Parameters, programmatically define Tool description and
-         * parameters.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param camelToolParameter the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder camelToolParameter(org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter camelToolParameter) {
-            doSetProperty("camelToolParameter", camelToolParameter);
-            return this;
-        }
-        /**
-         * Tool's Camel Parameters, programmatically define Tool description and
-         * parameters.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.langchain4j.chat.tool.CamelSimpleToolParameter</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param camelToolParameter the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder camelToolParameter(String camelToolParameter) {
-            doSetProperty("camelToolParameter", camelToolParameter);
             return this;
         }
         /**
