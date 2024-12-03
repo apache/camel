@@ -21,8 +21,8 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsComponentTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createVMService();
 
     protected final String componentName = "activemq123";
     protected JmsEndpoint endpoint;

@@ -19,8 +19,7 @@ package org.apache.camel.test.infra.artemis.services;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
 public class ArtemisMQTTService extends AbstractArtemisEmbeddedService {
 
@@ -50,7 +49,7 @@ public class ArtemisMQTTService extends AbstractArtemisEmbeddedService {
             configuration.setMaxDiskUsage(98);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            fail("mqtt acceptor cannot be configured");
+            throw new ArtemisRunException("mqtt acceptor cannot be configured", e);
         }
 
         return configuration;

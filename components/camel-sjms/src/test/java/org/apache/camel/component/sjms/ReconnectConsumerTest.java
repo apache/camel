@@ -19,8 +19,8 @@ package org.apache.camel.component.sjms;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -36,12 +36,12 @@ public class ReconnectConsumerTest extends JmsExclusiveTestSupport {
     private static final String MOCK_RESULT = "mock:result";
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createVMService();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    public ArtemisService getService() {
+    public ArtemisTestService getService() {
         return service;
     }
 

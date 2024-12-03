@@ -20,8 +20,8 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createSingletonVMService();
 
     @BindToRegistry("activemqCF")
     private ActiveMQConnectionFactory connectionFactory

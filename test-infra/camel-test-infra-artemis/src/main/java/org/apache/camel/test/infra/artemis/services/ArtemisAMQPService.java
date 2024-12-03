@@ -30,8 +30,7 @@ import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 import org.apache.activemq.artemis.spi.core.security.ActiveMQSecurityManager;
 import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
 public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
 
@@ -60,7 +59,7 @@ public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
             artemisConfiguration.addAcceptorConfiguration("amqp", brokerURL);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            fail("AMQP acceptor cannot be configured");
+            throw new ArtemisRunException("AMQP acceptor cannot be configured", e);
         }
         artemisConfiguration.setPersistenceEnabled(false);
         artemisConfiguration.addAddressesSetting("#", addressSettings);

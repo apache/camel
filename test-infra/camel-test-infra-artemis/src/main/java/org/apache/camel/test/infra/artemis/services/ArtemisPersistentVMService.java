@@ -17,43 +17,36 @@
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
-import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
+import org.apache.activemq.artemis.core.server.JournalType;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedService {
+public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
-    private int port;
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        this.port = port;
+        brokerURL = "vm://" + brokerId;
 
-        port = AvailablePortFinder.getNextAvailable();
-        brokerURL = "tcp://0.0.0.0:" + port;
+        configuration.setPersistenceEnabled(true);
+        configuration.setJournalType(JournalType.NIO);
+        configuration.setMaxDiskUsage(98);
 
-        configuration.setPersistenceEnabled(false);
         try {
-            configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
-            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
-            configuration.addConnectorConfiguration("connector",
-                    new TransportConfiguration(NettyConnectorFactory.class.getName()));
-            configuration.setJournalDirectory("target/data/journal");
+            configuration.addAcceptorConfiguration("in-vm", brokerURL);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            fail("vm acceptor cannot be configured");
+            throw new ArtemisRunException("vm acceptor cannot be configured", e);
         }
         configuration.addAddressSetting("#",
                 new AddressSettings()
                         .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
+                        .setAutoDeleteQueues(false)
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue")));
 
         return configuration;
     }
@@ -65,6 +58,6 @@ public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedServic
 
     @Override
     public int brokerPort() {
-        return port;
+        return 0;
     }
 }

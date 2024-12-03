@@ -26,8 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
@@ -46,7 +46,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable();
-    public static ArtemisService service = new ArtemisVMService.ReusableArtemisVMService(PORT);
+    public static ArtemisTestService service = new ArtemisVMTestService.ReusableArtemisVMService(PORT);
 
     private final Long recoveryInterval = 1000L;
 
@@ -69,7 +69,7 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
     }
 
     private static void createBroker() {
-        service = new ArtemisVMService.ReusableArtemisVMService(PORT);
+        service = new ArtemisVMTestService.ReusableArtemisVMService(PORT);
         service.initialize();
     }
 

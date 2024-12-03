@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.artemis.services;
 
-package org.apache.camel.test.infra.messaging.services;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public final class MessagingServiceFactory {
+public class ArtemisPersistentVMTestService extends ArtemisPersistentVMService implements ArtemisTestService {
 
-    private MessagingServiceFactory() {
+    @Override
+    protected Configuration configure(Configuration configuration, int port, int brokerId) {
+        Configuration config = null;
+        try {
+            config = super.configure(configuration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
+        }
 
-    }
-
-    public static SimpleTestServiceBuilder<MessagingService> builder() {
-        return new SimpleTestServiceBuilder<>("messaging");
-    }
-
-    public static MessagingService createService() {
-        return builder()
-                .addRemoteMapping(MessagingRemoteService::new)
-                .build();
+        return config;
     }
 }

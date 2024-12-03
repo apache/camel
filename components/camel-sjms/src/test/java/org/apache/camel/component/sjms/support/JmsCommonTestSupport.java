@@ -32,7 +32,7 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -74,7 +74,7 @@ public abstract class JmsCommonTestSupport extends CamelTestSupport {
 
     protected abstract String getBrokerUri();
 
-    protected void setupFactoryExternal(ActiveMQConnectionFactory factory, ArtemisService service) {
+    protected void setupFactoryExternal(ActiveMQConnectionFactory factory, ArtemisTestService service) {
         if (service.userName() != null) {
             factory.setUser(service.userName());
         }

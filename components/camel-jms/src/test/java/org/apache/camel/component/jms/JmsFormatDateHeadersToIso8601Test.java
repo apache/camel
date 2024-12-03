@@ -24,8 +24,8 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -44,7 +44,7 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
     private static final Date DATE = Date.from(Instant.ofEpochMilli(1519672338000L));
 
     @RegisterExtension
-    public static ArtemisService service = new ArtemisVMService();
+    public static ArtemisTestService service = new ArtemisVMTestService();
 
     @Test
     public void testComponentFormatDateHeaderToIso8601() {

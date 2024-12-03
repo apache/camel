@@ -17,63 +17,42 @@
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-public class ArtemisVMService extends AbstractArtemisEmbeddedService {
-    private static final Logger LOG = LoggerFactory.getLogger(ArtemisVMService.class);
+public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
-
-    public ArtemisVMService() {
-    }
-
-    protected ArtemisVMService(int port) {
-        super(port);
-    }
-
-    /**
-     * This class should rarely be used. It is intended for some tests that check for reliability operations and require
-     * using the same broker ID between start/stop cycles.
-     */
-    public static class ReusableArtemisVMService extends ArtemisVMService {
-
-        public ReusableArtemisVMService(int port) {
-            super(port);
-        }
-
-        @Override
-        protected int computeBrokerId() {
-            return 0;
-        }
-    }
+    private int port;
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        brokerURL = "vm://" + brokerId;
+        this.port = port;
 
-        LOG.info("Creating a new Artemis VM-based broker");
+        port = AvailablePortFinder.getNextAvailable();
+        brokerURL = "tcp://0.0.0.0:" + port;
+
         configuration.setPersistenceEnabled(false);
-        configuration.setJournalMinFiles(10);
-        configuration.setSecurityEnabled(false);
-
         try {
             configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
+            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
+            configuration.addConnectorConfiguration("connector",
+                    new TransportConfiguration(NettyConnectorFactory.class.getName()));
+            configuration.setJournalDirectory("target/data/journal");
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            fail("vm acceptor cannot be configured");
+            throw new ArtemisRunException("vm acceptor cannot be configured", e);
         }
         configuration.addAddressSetting("#",
                 new AddressSettings()
                         .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
-                        .setAutoDeleteQueues(false)
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue")));
 
         return configuration;
     }
@@ -85,6 +64,6 @@ public class ArtemisVMService extends AbstractArtemisEmbeddedService {
 
     @Override
     public int brokerPort() {
-        return 0;
+        return port;
     }
 }

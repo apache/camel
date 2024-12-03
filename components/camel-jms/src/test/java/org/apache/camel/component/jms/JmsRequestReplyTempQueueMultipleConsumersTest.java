@@ -27,8 +27,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.support.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createVMService();
 
     private final Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<>();
     private JmsPoolConnectionFactory connectionFactory;

@@ -21,7 +21,7 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.artemis.services.AbstractArtemisEmbeddedService;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ServiceAware;
 import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 
 public final class ConnectionFactoryHelper {
@@ -39,8 +39,8 @@ public final class ConnectionFactoryHelper {
             return createConnectionFactory(embeddedService.serviceAddress(), maximumRedeliveries);
         }
 
-        if (service instanceof ArtemisServiceFactory.SingletonArtemisService) {
-            return createConnectionFactory(((ArtemisServiceFactory.SingletonArtemisService) service).getService(),
+        if (service instanceof ServiceAware) {
+            return createConnectionFactory(((ServiceAware<ArtemisService>) service).getService(),
                     maximumRedeliveries);
         }
 

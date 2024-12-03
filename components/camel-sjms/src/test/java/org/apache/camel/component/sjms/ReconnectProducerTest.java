@@ -23,8 +23,8 @@ import jakarta.jms.TextMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -40,10 +40,10 @@ public class ReconnectProducerTest extends JmsExclusiveTestSupport {
     private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test.ReconnectProducerTest";
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createVMService();
 
     @Override
-    public ArtemisService getService() {
+    public ArtemisTestService getService() {
         return service;
     }
 

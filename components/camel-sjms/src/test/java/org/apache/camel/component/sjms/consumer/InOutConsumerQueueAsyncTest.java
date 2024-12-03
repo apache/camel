@@ -23,15 +23,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsCommonTestSupport;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class InOutConsumerQueueAsyncTest extends JmsCommonTestSupport {
 
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createVMService();
 
     @Test
     public void testAsync() throws Exception {

@@ -32,12 +32,11 @@ import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractArtemisEmbeddedService implements ArtemisService, ConnectionFactoryAware {
 
@@ -160,7 +159,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
             }
         } catch (Exception e) {
             LOG.warn("Unable to start embedded Artemis broker: {}", e.getMessage(), e);
-            fail(e.getMessage());
+            throw new ArtemisRunException(e);
         }
     }
 
@@ -170,7 +169,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
             embeddedBrokerService.stop();
         } catch (Exception e) {
             LOG.warn("Unable to start embedded Artemis broker: {}", e.getMessage(), e);
-            fail(e.getMessage());
+            throw new ArtemisRunException(e);
         }
     }
 
@@ -190,6 +189,6 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
 
     @Override
     public QueueQueryResult getQueueQueryResult(String queueQuery) throws Exception {
-        return embeddedBrokerService.getActiveMQServer().queueQuery(new SimpleString(queueQuery));
+        return embeddedBrokerService.getActiveMQServer().queueQuery(SimpleString.of(queueQuery));
     }
 }

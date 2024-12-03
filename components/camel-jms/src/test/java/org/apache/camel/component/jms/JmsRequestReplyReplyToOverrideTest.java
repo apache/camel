@@ -25,7 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +71,7 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisTestService service, String componentName) {
         final JmsComponent jmsComponent = super.setupComponent(camelContext, service, componentName);
 
         jmsComponent.getConfiguration().setReplyTo("baz");

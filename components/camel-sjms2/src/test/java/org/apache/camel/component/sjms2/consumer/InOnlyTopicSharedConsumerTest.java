@@ -21,8 +21,8 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms2.support.Jms2TestSupport;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -30,7 +30,7 @@ public class InOnlyTopicSharedConsumerTest extends Jms2TestSupport {
 
     private static final String TEST_DESTINATION_NAME = "sjms2:topic:in.only.topic.consumer.test";
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
     @Test
     public void testSynchronous() throws Exception {

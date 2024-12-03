@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.support.Jms2TestSupport;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -38,7 +38,7 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
     private static final String CONNECTION_ID = "test-connection-1";
     private CountDownLatch latch = new CountDownLatch(2);
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
     @Test
     public void testDurableTopic() throws Exception {

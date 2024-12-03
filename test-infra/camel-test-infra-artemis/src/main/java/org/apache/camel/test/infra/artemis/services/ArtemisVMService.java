@@ -18,36 +18,61 @@ package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.server.JournalType;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
+public class ArtemisVMService extends AbstractArtemisEmbeddedService {
+    private static final Logger LOG = LoggerFactory.getLogger(ArtemisVMService.class);
 
     private String brokerURL;
+
+    public ArtemisVMService() {
+    }
+
+    protected ArtemisVMService(int port) {
+        super(port);
+    }
+
+    /**
+     * This class should rarely be used. It is intended for some tests that check for reliability operations and require
+     * using the same broker ID between start/stop cycles.
+     */
+    public static class ReusableArtemisVMService extends ArtemisVMService {
+
+        public ReusableArtemisVMService(int port) {
+            super(port);
+        }
+
+        @Override
+        protected int computeBrokerId() {
+            return 0;
+        }
+    }
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
         brokerURL = "vm://" + brokerId;
 
-        configuration.setPersistenceEnabled(true);
-        configuration.setJournalType(JournalType.NIO);
-        configuration.setMaxDiskUsage(98);
+        LOG.info("Creating a new Artemis VM-based broker");
+        configuration.setPersistenceEnabled(false);
+        configuration.setJournalMinFiles(10);
+        configuration.setSecurityEnabled(false);
 
         try {
-            configuration.addAcceptorConfiguration("in-vm", brokerURL);
+            configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            fail("vm acceptor cannot be configured");
+            throw new ArtemisRunException("vm acceptor cannot be configured", e);
         }
         configuration.addAddressSetting("#",
                 new AddressSettings()
                         .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
                         .setAutoDeleteQueues(false)
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue")));
 
         return configuration;
     }

@@ -20,8 +20,8 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class SjmsComponentRestartTest extends CamelTestSupport {
      * This one needs a custom lifecycle due to binding to registry via @BindToRegistry.
      * The broker needs to be started earlier than usual.
      */
-    public static ArtemisService service;
+    public static ArtemisTestService service;
 
     @BindToRegistry("activemqCF")
     private ActiveMQConnectionFactory connectionFactory

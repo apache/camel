@@ -21,9 +21,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
-import org.apache.camel.test.infra.artemis.services.ArtemisAMQPService;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisAMQPTestService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
@@ -62,8 +62,8 @@ public class AMQPSAuthRouteTest implements ConfigurableContext, ConfigurableRout
 
     @Order(1)
     @RegisterExtension
-    protected static ArtemisService service
-            = new ArtemisServiceFactory.SingletonArtemisService(new ArtemisAMQPService(), "artemis-amqps");
+    protected static ArtemisTestService service
+            = new ArtemisServiceFactory.SingletonArtemisService(new ArtemisAMQPTestService(), "artemis-amqps");
 
     @Order(2)
     @RegisterExtension

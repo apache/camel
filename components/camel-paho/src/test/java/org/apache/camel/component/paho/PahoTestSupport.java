@@ -18,8 +18,8 @@ package org.apache.camel.component.paho;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
@@ -30,7 +30,7 @@ public abstract class PahoTestSupport implements CamelTestSupportHelper, Configu
 
     @Order(1)
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createSingletonMQTTService();
+    public static ArtemisTestService service = ArtemisServiceFactory.createSingletonMQTTService();
 
     @RouteFixture
     @Override

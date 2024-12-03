@@ -26,7 +26,7 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +74,7 @@ public class JmsPassThroughJmsKeyFormatStrategyUsingJmsConfigurationTest extends
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisTestService service, String componentName) {
         final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
         component.getConfiguration().setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
