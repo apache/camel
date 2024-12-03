@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriParams;
 public class TensorFlowServingConfiguration implements Cloneable {
 
     @UriParam(label = "common", defaultValue = "localhost:8500")
-    private String target;
+    private String target = "localhost:8500";
 
     @UriParam(label = "security")
     private ChannelCredentials credentials;
