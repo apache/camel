@@ -1029,6 +1029,14 @@ The ingress trait provides the following configuration options:
 | bool
 | To automatically add an Ingress Resource whenever the route uses an HTTP endpoint consumer (default `true`).
 
+| ingress.tls-hosts
+| []string
+| To configure specific hosts exposed through SNI TLS extension by the ingess.
+
+| ingress.tls-secret-name
+| string
+| To indicate the secret containing the TLS private key and certificate to use for TLS.
+
 |===
 
 The syntax to specify container trait options is as follows:
@@ -1104,7 +1112,7 @@ The Route trait provides the following configuration options:
 | string
 | To configure the host exposed by the route.
 
-| ingress.tls-termination
+| route.tls-termination
 | string
 | The TLS termination type, like `edge`, `passthrough` or `reencrypt`. Refer to the OpenShift route documentation for additional information.
 
