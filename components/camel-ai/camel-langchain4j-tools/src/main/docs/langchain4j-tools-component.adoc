@@ -120,7 +120,7 @@ in the consumer route `${header.userId}` can be used.
 from("direct:test")
     .to("langchain4j-tools:test1?tags=users");
 
-from("langchain4j-chat:test1?tags=users&description=Query user database by user ID&parameter.userId=integer")
+from("langchain4j-tools:test1?tags=users&description=Query user database by user ID&parameter.userId=integer")
     .to("sql:SELECT name FROM users WHERE id = :#userId");
 ----
 
