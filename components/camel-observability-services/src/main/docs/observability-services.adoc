@@ -2,9 +2,9 @@
 :doctitle: Observability Services
 :shortname: observability-services
 :artifactid: camel-observability-services
-:description: Camel Observability Services for Camel Main
+:description: Camel Observability Services
 :since: 4.9
-:supportlevel: Stable
+:supportlevel: Preview
 :tabs-sync-option:
 
 *Since Camel {since}*

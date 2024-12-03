@@ -30,7 +30,7 @@
     <artifactId>camel-observability-services</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Observability Services</name>
-    <description>Camel Observability Services for Camel Main</description>
+    <description>Camel Observability Services</description>
 
     <properties>
         <firstVersion>4.9.0</firstVersion>
@@ -54,5 +54,31 @@
             <artifactId>camel-management</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-postcompile</id>
+                        <goals>
+                            <goal>generate-others-list</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core-model</artifactId>
+                        <version>${project.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
