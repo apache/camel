@@ -84,5 +84,6 @@
         <module>camel-test-infra-hazelcast</module>
         <module>camel-test-infra-hivemq</module>
         <module>camel-test-infra-torchserve</module>
+        <module>camel-test-infra-tensorflow-serving</module>
     </modules>
 </project>

@@ -1,0 +1,286 @@
+= TensorFlow Serving Component
+:doctitle: TensorFlow Serving
+:shortname: tensorflow-serving
+:artifactid: camel-tensorflow-serving
+:description: Provide access to TensorFlow Serving model servers to run inference with TensorFlow saved models remotely
+:since: 4.9
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: tensorflow-serving
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The TensorFlow Serving component provides support for invoking the https://github.com/tensorflow/serving/blob/2.18.0/tensorflow_serving/apis/prediction_service.proto[TensorFlow Serving Client API (gRPC)]. It enables Camel to access https://www.tensorflow.org/tfx/guide/serving[TensorFlow Serving model servers] to run inference with TensorFlow saved models remotely.
+
+To use the TensorFlow Serving component, Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-tensorflow-serving</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+tensorflow-serving:api[?options]
+----
+
+Where `api` represents one of the https://github.com/tensorflow/serving/blob/2.18.0/tensorflow_serving/apis/prediction_service.proto[TensorFlow Serving Client API (gPRC)]. While its RESTful Client API is not directly supported by the component, you can refer to the https://www.tensorflow.org/tfx/serving/api_rest[doc] to get an idea of each API that TensorFlow Serving provides.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+The component supports the following APIs.
+
+----
+tensorflow-serving:<api>[?options]
+----
+
+[width="100%",cols="2,5,1,2,2",options="header"]
+|===
+| API | Description | Options | Input (Message Body) | Result (Message Body)
+
+| `model-status`
+| Return the status of a model in the Model server.
+| `modelName` +
+  `modelVersion` +
+  `modelVersionLabel`
+| `GetModelStatusRequest` footnote:[`tensorflow.serving.GetModelStatus.GetModelStatusRequest`] +
+  (optional)
+| `GetModelStatusResponse` footnote:[`tensorflow.serving.GetModelStatus.GetModelStatusResponse`]
+
+| `model-metadata`
+| Return the metadata of a model in the Model server.
+| `modelName` +
+  `modelVersion` +
+  `modelVersionLabel`
+| `GetModelMetadataRequest` footnote:[`tensorflow.serving.GetModelMetadata.GetModelMetadataRequest`] +
+  (optional)
+| `GetModelMetadataResponse` footnote:[`tensorflow.serving.GetModelMetadata.GetModelMetadataResponse`]
+
+| `classify`
+| Run a classification with a model in the Model server.
+| `modelName` +
+  `modelVersion` +
+  `modelVersionLabel` +
+  `signatureName`
+| `ClassificationRequest` footnote:[`tensorflow.serving.Classification.ClassificationRequest`] +
+  `Input` footnote:[`tensorflow.serving.InputOuterClass.Input`]
+| `ClassificationResponse` footnote:[`tensorflow.serving.Classification.ClassificationResponse`]
+
+| `regress`
+| Run a regression with a model in the Model server.
+| `modelName` +
+  `modelVersion` +
+  `modelVersionLabel` +
+  `signatureName`
+| `RegressionRequest` footnote:[`tensorflow.serving.RegressionOuterClass.RegressionRequest`] +
+  `Input` footnote:[`tensorflow.serving.InputOuterClass.Input`]
+| `RegressionResponse` footnote:[`tensorflow.serving.RegressionOuterClass.RegressionResponse`]
+
+| `predict`
+| Provide generic access to a model in the Model server.
+| `modelName` +
+  `modelVersion` +
+  `modelVersionLabel` +
+  `signatureName`
+| `PredictRequest` footnote:[`tensorflow.serving.Predict.PredictRequest`]
+| `PredictResponse` footnote:[`tensorflow.serving.Predict.PredictResponse`]
+|===
+
+== Examples
+
+=== Model status API
+
+.Check model status
+[source,java]
+----
+from("direct:model-status")
+    .to("tensorflow-serving:model-status?modelName=half_plus_two&modelVersion=123")
+    .log("Status: ${body.getModelVersionStatus(0).state}");
+----
+
+.Specify the model name and version with headers
+[source,java]
+----
+from("direct:model-status-with-headers")
+    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
+    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .to("tensorflow-serving:model-status")
+    .log("Status: ${body.getModelVersionStatus(0).state}");
+----
+
+=== Model Metadata API
+
+Currently, TensorFlow Serving only supports `signature_def` as the metadata field.
+See: https://github.com/tensorflow/serving/blob/2.18.0/tensorflow_serving/apis/get_model_metadata.proto#L26-L28[get_model_metadata.proto]
+
+.Fetch model metadata
+[source,java]
+----
+from("direct:model-metadata")
+    .to("tensorflow-serving:model-metadata?modelName=half_plus_two&modelVersion=123")
+    .log("Metadata: ${body.getMetadataOrThrow('signature_def')}");
+----
+
+.Specify the model name and version with headers
+[source,java]
+----
+from("direct:model-metadata-with-headers")
+    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
+    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .to("tensorflow-serving:model-metadata")
+    .log("Metadata: ${body.getMetadataOrThrow('signature_def')}");
+----
+
+=== Classify API
+
+The signature name should be resolved by looking up <<Model Metadata API,the model metadata>>.
+
+.Classify
+[source,java]
+----
+from("direct:classify")
+    .setBody(constant(InputOuterClass.Input.newBuilder()
+        .setExampleList(InputOuterClass.ExampleList.newBuilder()
+            .addExamples(Example.newBuilder()
+                .setFeatures(Features.newBuilder()
+                    .putFeature("x", Feature.newBuilder()
+                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
+                        .build()))))
+        .build()))
+    .to("tensorflow-serving:classify?modelName=half_plus_two&modelVersion=123&signatureName=classify_x_to_y")
+    .log("Result: ${body.result.getClassifications(0).getClasses(0).score}");
+----
+
+.Specify the model and signature name with headers
+[source,java]
+----
+from("direct:classify-with-headers")
+    .setBody(constant(InputOuterClass.Input.newBuilder()
+        .setExampleList(InputOuterClass.ExampleList.newBuilder()
+            .addExamples(Example.newBuilder()
+                .setFeatures(Features.newBuilder()
+                    .putFeature("x", Feature.newBuilder()
+                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
+                        .build()))))
+        .build()))
+    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
+    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .setHeader(TensorFlowServingConstants.SIGNATURE_NAME, constant("classify_x_to_y"))
+    .to("tensorflow-serving:classify")
+    .log("Result: ${body.result.getClassifications(0).getClasses(0).score}");
+----
+
+=== Regress API
+
+The signature name should be resolved by looking up <<Model Metadata API,the model metadata>>.
+
+.Regress
+[source,java]
+----
+from("direct:regress")
+    .setBody(constant(InputOuterClass.Input.newBuilder()
+        .setExampleList(InputOuterClass.ExampleList.newBuilder()
+            .addExamples(Example.newBuilder()
+                .setFeatures(Features.newBuilder()
+                    .putFeature("x", Feature.newBuilder()
+                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
+                        .build()))))
+        .build()))
+    .to("tensorflow-serving:regress?modelName=half_plus_two&modelVersion=123&signatureName=regress_x_to_y")
+    .log("Result: ${body.result.getRegressions(0).value}");
+----
+
+.Specify the model and signature name with headers
+[source,java]
+----
+from("direct:regress-with-headers")
+    .setBody(constant(InputOuterClass.Input.newBuilder()
+        .setExampleList(InputOuterClass.ExampleList.newBuilder()
+            .addExamples(Example.newBuilder()
+                .setFeatures(Features.newBuilder()
+                    .putFeature("x", Feature.newBuilder()
+                        .setFloatList(FloatList.newBuilder().addValue(1.0f))
+                        .build()))))
+        .build()))
+    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
+    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .setHeader(TensorFlowServingConstants.SIGNATURE_NAME, constant("regress_x_to_y"))
+    .to("tensorflow-serving:regress")
+    .log("Result: ${body.result.getRegressions(0).value}");
+----
+
+=== Predict API
+
+The labels of inputs (`x`) and outputs (`y`) should be resolved by looking up <<Model Metadata API,the model metadata>>.
+
+.Predict
+[source,java]
+----
+from("direct:predict")
+    .setBody(constant(Predict.PredictRequest.newBuilder()
+        .putInputs("x", TensorProto.newBuilder()
+            .setDtype(DataType.DT_FLOAT)
+            .setTensorShape(TensorShapeProto.newBuilder()
+                .addDim(TensorShapeProto.Dim.newBuilder().setSize(3)))
+            .addFloatVal(1.0f)
+            .addFloatVal(2.0f)
+            .addFloatVal(5.0f)
+            .build())
+        .build()))
+    .to("tensorflow-serving:predict?modelName=half_plus_two&modelVersion=123")
+    .log("Result1: ${body.getOutputsOrThrow('y').getFloatVal(0)}")
+    .log("Result2: ${body.getOutputsOrThrow('y').getFloatVal(1)}")
+    .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
+----
+
+.Specify the model name and version with headers
+[source,java]
+----
+from("direct:predict-with-headers")
+    .setBody(constant(Predict.PredictRequest.newBuilder()
+        .putInputs("x", TensorProto.newBuilder()
+            .setDtype(DataType.DT_FLOAT)
+            .setTensorShape(TensorShapeProto.newBuilder()
+                .addDim(TensorShapeProto.Dim.newBuilder().setSize(3)))
+            .addFloatVal(1.0f)
+            .addFloatVal(2.0f)
+            .addFloatVal(5.0f)
+            .build())
+        .build()))
+    .setHeader(TensorFlowServingConstants.MODEL_NAME, constant("half_plus_two"))
+    .setHeader(TensorFlowServingConstants.MODEL_VERSION, constant(123))
+    .to("tensorflow-serving:predict")
+    .log("Result1: ${body.getOutputsOrThrow('y').getFloatVal(0)}")
+    .log("Result2: ${body.getOutputsOrThrow('y').getFloatVal(1)}")
+    .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
+----
+
+include::spring-boot:partial$starter.adoc[]

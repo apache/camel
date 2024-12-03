@@ -1,0 +1,53 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package tensorflow.serving;
+
+import "tensorflow_serving/apis/input.proto";
+import "tensorflow_serving/apis/model.proto";
+
+option cc_enable_arenas = true;
+
+// Regression result for a single item (tensorflow.Example).
+message Regression {
+  float value = 1;
+}
+
+// Contains one result per input example, in the same order as the input in
+// RegressionRequest.
+message RegressionResult {
+  repeated Regression regressions = 1;
+}
+
+// RPC interfaces.
+
+message RegressionRequest {
+  // Model Specification. If version is not specified, will use the latest
+  // (numerical) version.
+  ModelSpec model_spec = 1;
+
+  // Input data.
+  tensorflow.serving.Input input = 2;
+}
+
+message RegressionResponse {
+  // Effective Model Specification used for regression.
+  ModelSpec model_spec = 2;
+
+  RegressionResult result = 1;
+}
