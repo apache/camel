@@ -16,13 +16,9 @@
  */
 package org.apache.camel.tracing;
 
-import static org.apache.camel.tracing.ActiveSpanManager.MDC_SPAN_ID;
-import static org.apache.camel.tracing.ActiveSpanManager.MDC_TRACE_ID;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -49,7 +45,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 public abstract class Tracer extends ServiceSupport implements CamelTracingService, RoutePolicyFactory, StaticService {
     protected static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
@@ -76,6 +71,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private String excludePatterns;
     private InterceptStrategy tracingStrategy;
     private CamelContext camelContext;
+    private boolean createSpanPerProcessor = false;
 
     protected abstract void initTracer();
 
@@ -346,11 +342,6 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             try {
                 SpanAdapter span = ActiveSpanManager.getSpan(exchange);
                 if (span != null) {
-                    // in case we changed threads within an active span: set traceId/spanId on current thread
-                    if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
-                        MDC.put(MDC_TRACE_ID, span.traceId());
-                        MDC.put(MDC_SPAN_ID, span.spanId());
-                    }
                     Map<String, String> fields = new HashMap<>();
                     fields.put("message", message);
                     span.log(fields);
@@ -361,5 +352,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             }
             return message;
         }
+    }
+
+    public boolean isCreateSpanPerProcessor() {
+        return createSpanPerProcessor;
     }
 }

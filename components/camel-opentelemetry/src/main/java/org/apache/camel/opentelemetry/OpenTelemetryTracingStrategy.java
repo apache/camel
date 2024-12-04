@@ -16,12 +16,17 @@
  */
 package org.apache.camel.opentelemetry;
 
+import static org.apache.camel.tracing.ActiveSpanManager.MDC_SPAN_ID;
+import static org.apache.camel.tracing.ActiveSpanManager.MDC_TRACE_ID;
+
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
@@ -29,6 +34,7 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.tracing.SpanDecorator;
+import org.slf4j.MDC;
 
 public class OpenTelemetryTracingStrategy implements InterceptStrategy {
 
@@ -44,9 +50,8 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
     @Override
     public Processor wrapProcessorInInterceptors(
             CamelContext camelContext,
-            NamedNode processorDefinition, Processor target, Processor nextTarget)
-            throws Exception {
-        if (shouldTrace(processorDefinition)) {
+            NamedNode processorDefinition, Processor target, Processor nextTarget) {
+        if (tracer.isCreateSpanPerProcessor() && shouldTrace(processorDefinition)) {
             return new PropagateContextAndCreateSpan(processorDefinition, target);
         } else if (isPropagateContext()) {
             return new PropagateContext(target);
@@ -112,15 +117,14 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
         }
     }
 
-    private static class PropagateContext implements Processor {
-        private final Processor target;
+    private static class PropagateContext extends DelegateAsyncProcessor {
 
         public PropagateContext(Processor target) {
-            this.target = target;
+            super(target);
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public boolean process(Exchange exchange, AsyncCallback callback) {
             Span span = null;
             OpenTelemetrySpanAdapter spanWrapper = (OpenTelemetrySpanAdapter) ActiveSpanManager.getSpan(exchange);
             if (spanWrapper != null) {
@@ -128,29 +132,18 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
             }
 
             if (span == null) {
-                target.process(exchange);
-                return;
+                return super.process(exchange, callback);
+            }
+            exchange.setProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, true);
+
+            if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
+                MDC.put(MDC_TRACE_ID, spanWrapper.traceId());
+                MDC.put(MDC_SPAN_ID, spanWrapper.spanId());
             }
 
-            boolean activateExchange = !(target instanceof GetCorrelationContextProcessor
-                    || target instanceof SetCorrelationContextProcessor);
-
-            if (activateExchange) {
-                ActiveSpanManager.activate(exchange, new OpenTelemetrySpanAdapter(span));
-            }
-
-            try {
-                target.process(exchange);
-            } catch (Exception ex) {
-                span.setStatus(StatusCode.ERROR);
-                span.recordException(ex);
-                throw ex;
-            } finally {
-                if (activateExchange) {
-                    ActiveSpanManager.deactivate(exchange);
-                }
-            }
+            return super.process(exchange, callback);
         }
+
     }
 
     private static String getComponentName(NamedNode processorDefinition) {
