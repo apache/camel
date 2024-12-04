@@ -11,3 +11,6 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 The cluster lock has been removed as it has been removed in JGroups 5.4 onwards, and it was
 not recommended to be used in older JGroups releases. You can use another Camel component such as
 `camel-infinispan` that has cluster locking.
+
+The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been removed.
+
