@@ -11,7 +11,7 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-python",
-    "version": "4.9.0-SNAPSHOT",
+    "version": "4.10.0-SNAPSHOT",
     "modelName": "python",
     "modelJavaType": "org.apache.camel.model.language.PythonExpression"
   },
