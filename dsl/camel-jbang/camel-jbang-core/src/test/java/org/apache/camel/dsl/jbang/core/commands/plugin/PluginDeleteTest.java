@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
@@ -38,13 +37,13 @@ class PluginDeleteTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldDeletePlugin() throws Exception {
-        PluginHelper.enable(PluginType.CAMEL_K);
+        PluginHelper.enable(PluginType.KUBERNETES);
 
         PluginDelete command = new PluginDelete(new CamelJBangMain().withPrinter(printer));
-        command.name = "camel-k";
+        command.name = "kubernetes";
         command.doCall();
 
-        Assertions.assertEquals("Plugin camel-k removed", printer.getOutput());
+        Assertions.assertEquals("Plugin kubernetes removed", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
     }
