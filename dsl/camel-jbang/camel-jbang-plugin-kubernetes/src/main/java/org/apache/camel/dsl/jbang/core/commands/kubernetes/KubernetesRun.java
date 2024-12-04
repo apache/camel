@@ -30,6 +30,7 @@ import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -501,6 +502,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         devModeShutdownTask = new Thread(() -> {
             try {
                 deleteCommand.doCall();
+                CommandHelper.cleanExportDir(deleteCommand.workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
