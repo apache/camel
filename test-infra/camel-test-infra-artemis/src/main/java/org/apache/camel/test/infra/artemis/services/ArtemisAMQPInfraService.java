@@ -32,7 +32,7 @@ import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
+public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
     private int amqpPort;

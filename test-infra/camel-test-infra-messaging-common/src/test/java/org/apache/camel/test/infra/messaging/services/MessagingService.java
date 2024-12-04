@@ -14,24 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.artemis.services;
+package org.apache.camel.test.infra.messaging.services;
 
-import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
+import org.apache.camel.test.infra.common.services.TestService;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-public class ArtemisPersistentVMTestService extends ArtemisPersistentVMService implements ArtemisTestService {
-
-    @Override
-    protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        Configuration config = null;
-        try {
-            config = super.configure(configuration, port, brokerId);
-        } catch (ArtemisRunException e) {
-            fail(e.getMessage());
-        }
-
-        return config;
-    }
+/**
+ * Test infra service for Messaging
+ */
+public interface MessagingService extends TestService, MessagingInfraService {
 }

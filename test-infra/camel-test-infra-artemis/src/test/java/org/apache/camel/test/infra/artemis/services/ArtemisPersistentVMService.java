@@ -14,12 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.arangodb.services;
+package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-/**
- * Test infra service for ArangoDB
- */
-public interface ArangoDBTestService extends TestService, ArangoDBService {
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class ArtemisPersistentVMService extends ArtemisPersistentVMInfraService implements ArtemisService {
+
+    @Override
+    protected Configuration configure(Configuration configuration, int port, int brokerId) {
+        Configuration config = null;
+        try {
+            config = super.configure(configuration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
+        }
+
+        return config;
+    }
 }

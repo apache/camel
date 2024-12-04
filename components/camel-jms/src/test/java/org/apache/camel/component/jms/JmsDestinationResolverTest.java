@@ -22,7 +22,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.support.MyDestinationResolver;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +57,7 @@ public class JmsDestinationResolverTest extends AbstractJMSTest {
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisTestService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
         component.getConfiguration().setDestinationResolver(new MyDestinationResolver());

@@ -17,8 +17,8 @@
 package org.apache.camel.component.jms.integration.activemq;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
-import org.apache.camel.test.infra.artemis.services.ArtemisVMTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Tag;
@@ -31,10 +31,10 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 public class TwoEmbeddedActiveMQBrokersIT extends CamelSpringTestSupport {
 
     @RegisterExtension
-    public static ArtemisTestService firstBroker = new ArtemisVMTestService();
+    public static ArtemisService firstBroker = new ArtemisVMService();
 
     @RegisterExtension
-    public static ArtemisTestService secondBroker = new ArtemisVMTestService();
+    public static ArtemisService secondBroker = new ArtemisVMService();
 
     /**
      * Used by spring xml configurations

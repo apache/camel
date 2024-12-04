@@ -27,7 +27,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.fusesource.stomp.client.Stomp;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -39,7 +39,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
     static int servicePort = AvailablePortFinder.getNextAvailable();
 
     @RegisterExtension
-    public static ArtemisTestService service = new ArtemisEmbeddedServiceBuilder()
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withCustomConfiguration(configuration -> {
                 try {
                     configuration.setJMXManagementEnabled(true);

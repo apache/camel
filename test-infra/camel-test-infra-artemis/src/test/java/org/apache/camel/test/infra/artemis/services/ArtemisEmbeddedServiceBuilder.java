@@ -40,12 +40,12 @@ public class ArtemisEmbeddedServiceBuilder {
         return this;
     }
 
-    public ArtemisTestService build() {
-        ArtemisTestService artemisService;
+    public ArtemisService build() {
+        ArtemisService artemisService;
         if (isPersistent) {
-            artemisService = new ArtemisPersistentVMTestService();
+            artemisService = new ArtemisPersistentVMService();
         } else {
-            artemisService = new ArtemisVMTestService();
+            artemisService = new ArtemisVMService();
         }
 
         ((AbstractArtemisEmbeddedService) artemisService).customConfiguration(customConfigurator);

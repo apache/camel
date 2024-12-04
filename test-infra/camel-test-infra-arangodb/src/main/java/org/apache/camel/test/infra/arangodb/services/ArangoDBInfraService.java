@@ -16,32 +16,15 @@
  */
 package org.apache.camel.test.infra.arangodb.services;
 
-import org.apache.camel.test.infra.arangodb.common.ArangoDBProperties;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public class ArangoDBRemoteService implements ArangoDBService {
+public interface ArangoDBInfraService extends InfrastructureService {
 
-    @Override
-    public int getPort() {
-        return Integer.valueOf(System.getProperty(ArangoDBProperties.ARANGODB_PORT));
-    }
+    int getPort();
 
-    @Override
-    public String getHost() {
-        return System.getProperty(ArangoDBProperties.ARANGODB_HOST);
-    }
+    String getHost();
 
-    @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
+    default String getServiceAddress() {
+        return String.format("%s:%d", getHost(), getPort());
     }
 }

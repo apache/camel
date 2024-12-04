@@ -14,24 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
+package org.apache.camel.test.infra.messaging.services;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.camel.test.infra.messaging.common.MessagingProperties;
 
-public class ArtemisMQTTTestService extends ArtemisMQTTService implements ArtemisTestService {
+public class MessagingRemoteInfraService implements MessagingInfraService {
 
     @Override
-    protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        Configuration config = null;
-        try {
-            config = super.configure(configuration, port, brokerId);
-        } catch (ArtemisRunException e) {
-            fail(e.getMessage());
-        }
+    public void registerProperties() {
+        // NO-OP
+    }
 
-        return config;
+    @Override
+    public void initialize() {
+        registerProperties();
+    }
+
+    @Override
+    public void shutdown() {
+        // NO-OP
+    }
+
+    @Override
+    public String defaultEndpoint() {
+        return System.getProperty(MessagingProperties.MESSAGING_BROKER_ADDRESS);
     }
 }

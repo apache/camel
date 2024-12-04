@@ -38,7 +38,7 @@ import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractArtemisEmbeddedService implements ArtemisService, ConnectionFactoryAware {
+public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraService, ConnectionFactoryAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractArtemisEmbeddedService.class);
     private static final LongAdder BROKER_COUNT = new LongAdder();

@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
@@ -42,7 +42,7 @@ public class AMQPEmbeddedBrokerTest {
 
     @Order(1)
     @RegisterExtension
-    public static ArtemisTestService service = ArtemisServiceFactory.createSingletonAMQPService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonAMQPService();
 
     @Order(2)
     @RegisterExtension

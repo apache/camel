@@ -31,7 +31,7 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -51,7 +51,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
     @RegisterExtension
-    public static ArtemisTestService service = new ArtemisEmbeddedServiceBuilder()
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withPersistent(true)
             .withCustomConfiguration(configuration -> configureArtemis(configuration))
             .build();

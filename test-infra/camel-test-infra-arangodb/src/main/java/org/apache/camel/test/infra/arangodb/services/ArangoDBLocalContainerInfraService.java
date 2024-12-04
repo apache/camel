@@ -23,20 +23,21 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ArangoDBLocalContainerService implements ArangoDBService, ContainerService<ArangoDbContainer> {
-    private static final Logger LOG = LoggerFactory.getLogger(ArangoDBLocalContainerService.class);
+public class ArangoDBLocalContainerInfraService implements ArangoDBInfraService, ContainerService<ArangoDbContainer> {
+    private static final Logger LOG = LoggerFactory.getLogger(ArangoDBLocalContainerInfraService.class);
 
     private final ArangoDbContainer container;
 
-    public ArangoDBLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(ArangoDBLocalContainerService.class, ArangoDBProperties.ARANGODB_CONTAINER));
+    public ArangoDBLocalContainerInfraService() {
+        this(LocalPropertyResolver.getProperty(ArangoDBLocalContainerInfraService.class,
+                ArangoDBProperties.ARANGODB_CONTAINER));
     }
 
-    public ArangoDBLocalContainerService(String imageName) {
+    public ArangoDBLocalContainerInfraService(String imageName) {
         container = initContainer(imageName);
     }
 
-    public ArangoDBLocalContainerService(ArangoDbContainer container) {
+    public ArangoDBLocalContainerInfraService(ArangoDbContainer container) {
         this.container = container;
     }
 

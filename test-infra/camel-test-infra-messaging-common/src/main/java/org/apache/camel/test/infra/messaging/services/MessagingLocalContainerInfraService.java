@@ -28,13 +28,14 @@ import org.testcontainers.containers.GenericContainer;
 /**
  * A specialized container that can be used to create message broker instances.
  */
-public class MessagingLocalContainerService<T extends GenericContainer<T>> implements MessagingService, ContainerService<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(MessagingLocalContainerService.class);
+public class MessagingLocalContainerInfraService<T extends GenericContainer<T>>
+        implements MessagingInfraService, ContainerService<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(MessagingLocalContainerInfraService.class);
 
     private final T container;
     private final Function<T, String> endpointFunction;
 
-    public MessagingLocalContainerService(T container, Function<T, String> endpointFunction) {
+    public MessagingLocalContainerInfraService(T container, Function<T, String> endpointFunction) {
         this.container = container;
         this.endpointFunction = endpointFunction;
     }

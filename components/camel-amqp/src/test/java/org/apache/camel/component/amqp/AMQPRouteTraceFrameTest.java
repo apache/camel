@@ -23,8 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
     @RegisterExtension
-    protected static ArtemisTestService service = ArtemisServiceFactory.createSingletonAMQPService();
+    protected static ArtemisService service = ArtemisServiceFactory.createSingletonAMQPService();
 
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();

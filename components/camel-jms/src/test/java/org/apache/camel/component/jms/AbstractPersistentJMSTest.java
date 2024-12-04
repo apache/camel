@@ -21,8 +21,8 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -33,7 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Tags({ @Tag("jms") })
 public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public static ArtemisTestService service = ArtemisServiceFactory.createSingletonPersistentVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonPersistentVMService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

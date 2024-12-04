@@ -14,30 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.arangodb.services;
 
-package org.apache.camel.test.infra.messaging.services;
+import org.apache.camel.test.infra.common.services.TestService;
 
-import org.apache.camel.test.infra.messaging.common.MessagingProperties;
-
-public class MessagingRemoteService implements MessagingService {
-
-    @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
-    }
-
-    @Override
-    public String defaultEndpoint() {
-        return System.getProperty(MessagingProperties.MESSAGING_BROKER_ADDRESS);
-    }
+/**
+ * Test infra service for ArangoDB
+ */
+public interface ArangoDBService extends TestService, ArangoDBInfraService {
 }

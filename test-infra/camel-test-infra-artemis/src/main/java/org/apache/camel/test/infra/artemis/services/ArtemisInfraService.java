@@ -20,7 +20,7 @@ import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public interface ArtemisService extends InfrastructureService {
+public interface ArtemisInfraService extends InfrastructureService {
 
     String serviceAddress();
 

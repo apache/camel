@@ -20,8 +20,8 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms2.support.Jms2TestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class Sjms2ToDSendDynamicTest extends Jms2TestSupport {
 
     @RegisterExtension
-    public static ArtemisTestService service = ArtemisServiceFactory.createTCPAllProtocolsService();
+    public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
     @Test
     public void testToD() {

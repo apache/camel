@@ -22,8 +22,8 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
@@ -41,7 +41,7 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
 
     @Order(1)
     @RegisterExtension
-    public static ArtemisTestService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();
@@ -59,7 +59,7 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
     }
 
     protected JmsComponent setupComponent(
-            CamelContext camelContext, ArtemisTestService service, String componentName) {
+            CamelContext camelContext, ArtemisService service, String componentName) {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
 
         return setupComponent(camelContext, connectionFactory, componentName);

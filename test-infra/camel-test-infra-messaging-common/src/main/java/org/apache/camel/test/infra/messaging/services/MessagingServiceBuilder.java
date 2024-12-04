@@ -54,16 +54,16 @@ public class MessagingServiceBuilder<T extends GenericContainer<T>> {
         return this;
     }
 
-    public MessagingService build() {
+    public MessagingInfraService build() {
         String instanceType = System.getProperty("messaging.instance.type");
 
         if (instanceType == null || instanceType.isEmpty()) {
             LOG.info("Creating a new messaging local container service");
-            return new MessagingLocalContainerService<>(containerSupplier.get(), this.endpointFunction);
+            return new MessagingLocalContainerInfraService<>(containerSupplier.get(), this.endpointFunction);
         }
 
         if (instanceType.equals("remote")) {
-            return new MessagingRemoteService();
+            return new MessagingRemoteInfraService();
         }
 
         throw new UnsupportedOperationException("Invalid messaging instance type");

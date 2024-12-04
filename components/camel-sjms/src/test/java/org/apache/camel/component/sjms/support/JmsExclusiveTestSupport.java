@@ -17,7 +17,7 @@
 package org.apache.camel.component.sjms.support;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public abstract class JmsExclusiveTestSupport extends JmsCommonTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected abstract ArtemisTestService getService();
+    protected abstract ArtemisService getService();
 
     @Override
     protected String getBrokerUri() {

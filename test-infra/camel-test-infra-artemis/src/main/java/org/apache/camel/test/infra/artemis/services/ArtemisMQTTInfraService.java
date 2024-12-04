@@ -16,37 +16,41 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.server.JournalType;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
+public class ArtemisMQTTInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
+    private int port;
+
+    public ArtemisMQTTInfraService(int port) {
+        super(port);
+    }
+
+    public ArtemisMQTTInfraService() {
+        super();
+    }
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
-        brokerURL = "vm://" + brokerId;
+        this.port = port;
+        brokerURL = "tcp://0.0.0.0:" + port;
 
-        configuration.setPersistenceEnabled(true);
-        configuration.setJournalType(JournalType.NIO);
-        configuration.setMaxDiskUsage(98);
+        AddressSettings addressSettings = new AddressSettings();
+        addressSettings.setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL);
 
         try {
-            configuration.addAcceptorConfiguration("in-vm", brokerURL);
+            configuration.addAcceptorConfiguration("mqtt", brokerURL + "?protocols=MQTT");
+
+            configuration.addAddressSetting("#", addressSettings);
+            configuration.setMaxDiskUsage(98);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            throw new ArtemisRunException("vm acceptor cannot be configured", e);
+            throw new ArtemisRunException("mqtt acceptor cannot be configured", e);
         }
-        configuration.addAddressSetting("#",
-                new AddressSettings()
-                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
-                        .setAutoDeleteQueues(false)
-                        .setDeadLetterAddress(SimpleString.of("DLQ"))
-                        .setExpiryAddress(SimpleString.of("ExpiryQueue")));
 
         return configuration;
     }
@@ -58,6 +62,6 @@ public class ArtemisPersistentVMService extends AbstractArtemisEmbeddedService {
 
     @Override
     public int brokerPort() {
-        return 0;
+        return port;
     }
 }

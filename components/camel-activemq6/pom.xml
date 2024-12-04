@@ -52,12 +52,6 @@
             <version>${activemq6-version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-core</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-       </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-core</artifactId>
@@ -66,12 +60,6 @@
             <type>test-jar</type>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-artemis</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-       </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-artemis</artifactId>
@@ -80,12 +68,6 @@
             <type>test-jar</type>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-messaging-common</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-       </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-messaging-common</artifactId>
@@ -93,7 +75,6 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
 
 </project>

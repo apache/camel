@@ -21,7 +21,7 @@ import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ArtemisTCPAllProtocolsTestService extends ArtemisTCPAllProtocolsService implements ArtemisTestService {
+public class ArtemisTCPAllProtocolsService extends ArtemisTCPAllProtocolsInfraService implements ArtemisService {
 
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {

@@ -16,41 +16,43 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
+import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-public class ArtemisMQTTService extends AbstractArtemisEmbeddedService {
+public class ArtemisTCPAllProtocolsInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
     private int port;
 
-    public ArtemisMQTTService(int port) {
-        super(port);
-    }
-
-    public ArtemisMQTTService() {
-        super();
-    }
-
     @Override
     protected Configuration configure(Configuration configuration, int port, int brokerId) {
         this.port = port;
+
+        port = AvailablePortFinder.getNextAvailable();
         brokerURL = "tcp://0.0.0.0:" + port;
 
-        AddressSettings addressSettings = new AddressSettings();
-        addressSettings.setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL);
-
+        configuration.setPersistenceEnabled(false);
         try {
-            configuration.addAcceptorConfiguration("mqtt", brokerURL + "?protocols=MQTT");
-
-            configuration.addAddressSetting("#", addressSettings);
-            configuration.setMaxDiskUsage(98);
+            configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
+            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
+            configuration.addConnectorConfiguration("connector",
+                    new TransportConfiguration(NettyConnectorFactory.class.getName()));
+            configuration.setJournalDirectory("target/data/journal");
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            throw new ArtemisRunException("mqtt acceptor cannot be configured", e);
+            throw new ArtemisRunException("vm acceptor cannot be configured", e);
         }
+        configuration.addAddressSetting("#",
+                new AddressSettings()
+                        .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue")));
 
         return configuration;
     }

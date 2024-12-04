@@ -23,15 +23,15 @@ import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.apache.camel.test.infra.messaging.services.MessagingService;
 import org.apache.camel.test.infra.messaging.services.MessagingServiceFactory;
-import org.apache.camel.test.infra.messaging.services.MessagingTestService;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class ActiveMQITSupport implements ConfigurableContext, ConfigurableRoute {
     @Order(1)
     @RegisterExtension
-    protected static MessagingTestService service = MessagingServiceFactory.builder()
+    protected static MessagingService service = MessagingServiceFactory.builder()
             .addLocalMapping(ActiveMQITSupport::createLocalService)
             .build();
 
@@ -39,10 +39,10 @@ public abstract class ActiveMQITSupport implements ConfigurableContext, Configur
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    public static MessagingServiceFactory.MessagingLocalContainerTestService<ArtemisContainer> createLocalService() {
+    public static MessagingServiceFactory.MessagingLocalContainerService<ArtemisContainer> createLocalService() {
         ArtemisContainer container = new ArtemisContainer();
 
-        return new MessagingServiceFactory.MessagingLocalContainerTestService(container, c -> container.defaultEndpoint());
+        return new MessagingServiceFactory.MessagingLocalContainerService(container, c -> container.defaultEndpoint());
     }
 
     /* We don't want topic advisories here: they may cause publication issues (i.e.:

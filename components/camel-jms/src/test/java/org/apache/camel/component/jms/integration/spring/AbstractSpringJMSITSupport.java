@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms.integration.spring;
 
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -29,7 +29,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 public abstract class AbstractSpringJMSITSupport extends CamelSpringTestSupport {
 
     @RegisterExtension
-    public static ArtemisTestService service = ArtemisServiceFactory.createSingletonVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     /**
      * Used by spring xml configurations

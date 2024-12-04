@@ -28,22 +28,23 @@ public final class MessagingServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<MessagingTestService> builder() {
+    public static SimpleTestServiceBuilder<MessagingService> builder() {
         return new SimpleTestServiceBuilder<>("messaging");
     }
 
-    public static MessagingTestService createService() {
+    public static MessagingService createService() {
         return builder()
-                .addRemoteMapping(MessagingRemoteTestService::new)
+                .addRemoteMapping(MessagingRemoteService::new)
                 .build();
     }
 
-    public static class MessagingRemoteTestService extends MessagingRemoteService implements MessagingTestService {
+    public static class MessagingRemoteService extends MessagingRemoteInfraService implements MessagingService {
     }
 
-    public static class MessagingLocalContainerTestService<T extends GenericContainer<T>> extends MessagingLocalContainerService
-            implements MessagingTestService {
-        public MessagingLocalContainerTestService(GenericContainer container, Function endpointFunction) {
+    public static class MessagingLocalContainerService<T extends GenericContainer<T>>
+            extends MessagingLocalContainerInfraService
+            implements MessagingService {
+        public MessagingLocalContainerService(GenericContainer container, Function endpointFunction) {
             super(container, endpointFunction);
         }
     }

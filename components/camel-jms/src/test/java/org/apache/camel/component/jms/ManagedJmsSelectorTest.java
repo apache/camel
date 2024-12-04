@@ -30,8 +30,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
@@ -52,7 +52,7 @@ public class ManagedJmsSelectorTest implements CamelTestSupportHelper {
 
     @Order(1)
     @RegisterExtension
-    public static ArtemisTestService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Order(2)
     @RegisterExtension

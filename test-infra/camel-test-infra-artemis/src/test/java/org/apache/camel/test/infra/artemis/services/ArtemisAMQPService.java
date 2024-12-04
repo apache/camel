@@ -16,21 +16,22 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.camel.test.infra.common.services.TestService;
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-public interface ArtemisTestService extends ArtemisService, AfterAllCallback, BeforeAllCallback, TestService {
+import static org.junit.jupiter.api.Assertions.fail;
 
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
-    }
+public class ArtemisAMQPService extends ArtemisAMQPInfraService implements ArtemisService {
 
     @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
+    protected Configuration configure(Configuration artemisConfiguration, int port, int brokerId) {
+        Configuration config = null;
+        try {
+            config = super.configure(artemisConfiguration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
+        }
+
+        return config;
     }
 }

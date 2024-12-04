@@ -14,17 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.artemis.services;
 
-package org.apache.camel.test.infra.messaging.services;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import org.apache.camel.test.infra.common.services.InfrastructureService;
+public interface ArtemisService extends ArtemisInfraService, AfterAllCallback, BeforeAllCallback, TestService {
 
-public interface MessagingService extends InfrastructureService {
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryShutdown(this, extensionContext);
+    }
 
-    /**
-     * Gets the default endpoint for the messaging service (ie.: amqp://host:port, or tcp://host:port, etc)
-     *
-     * @return the endpoint URL as a string in the specific format used by the service
-     */
-    String defaultEndpoint();
+    @Override
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryInitialize(this, extensionContext);
+    }
 }

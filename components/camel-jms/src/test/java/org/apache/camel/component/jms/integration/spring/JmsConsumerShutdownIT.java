@@ -23,7 +23,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +39,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @Tags({ @Tag("not-parallel"), @Tag("spring") })
 public final class JmsConsumerShutdownIT extends CamelSpringTestSupport {
     @RegisterExtension
-    public static ArtemisTestService service = new ArtemisEmbeddedServiceBuilder()
+    public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withCustomConfiguration(configuration -> {
                 AddressSettings addressSettings = new AddressSettings();
                 addressSettings.setMaxSizeMessages(5);

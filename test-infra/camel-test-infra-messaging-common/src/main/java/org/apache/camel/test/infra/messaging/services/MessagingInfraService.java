@@ -14,24 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
+package org.apache.camel.test.infra.messaging.services;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-public class ArtemisAMQPTestService extends ArtemisAMQPService implements ArtemisTestService {
+public interface MessagingInfraService extends InfrastructureService {
 
-    @Override
-    protected Configuration configure(Configuration artemisConfiguration, int port, int brokerId) {
-        Configuration config = null;
-        try {
-            config = super.configure(artemisConfiguration, port, brokerId);
-        } catch (ArtemisRunException e) {
-            fail(e.getMessage());
-        }
-
-        return config;
-    }
+    /**
+     * Gets the default endpoint for the messaging service (ie.: amqp://host:port, or tcp://host:port, etc)
+     *
+     * @return the endpoint URL as a string in the specific format used by the service
+     */
+    String defaultEndpoint();
 }

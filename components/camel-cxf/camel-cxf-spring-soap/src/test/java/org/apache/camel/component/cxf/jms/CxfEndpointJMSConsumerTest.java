@@ -19,8 +19,8 @@ package org.apache.camel.component.cxf.jms;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.infra.artemis.services.ArtemisTestService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CxfEndpointJMSConsumerTest extends CamelSpringTestSupport {
 
     @RegisterExtension
-    private static ArtemisTestService broker = ArtemisServiceFactory.createVMService();
+    private static ArtemisService broker = ArtemisServiceFactory.createVMService();
 
     CxfEndpointJMSConsumerTest() {
         System.setProperty("CxfEndpointJMSConsumerTest.serviceAddress", broker.serviceAddress());

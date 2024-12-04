@@ -14,17 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.arangodb.services;
+package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.camel.test.infra.common.services.InfrastructureService;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-public interface ArangoDBService extends InfrastructureService {
+import static org.junit.jupiter.api.Assertions.fail;
 
-    int getPort();
+public class ArtemisMQTTService extends ArtemisMQTTInfraService implements ArtemisService {
 
-    String getHost();
+    public ArtemisMQTTService(int port) {
+        super(port);
+    }
 
-    default String getServiceAddress() {
-        return String.format("%s:%d", getHost(), getPort());
+    public ArtemisMQTTService() {
+        super();
+    }
+
+    @Override
+    protected Configuration configure(Configuration configuration, int port, int brokerId) {
+        Configuration config = null;
+        try {
+            config = super.configure(configuration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
+        }
+
+        return config;
     }
 }
