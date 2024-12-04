@@ -218,7 +218,7 @@ to wait for its tasks to complete). Will wait until all tasks are completed or t
 == JMX Management
 
 All the thread pools that Camel creates are managed and thus you can see
-them in JXM under the `threadpools` tree.
+them in JMX under the `threadpools` tree.
 
 NOTE: This requires to enabled JMX by including `camel-management` JAR in the classpath.
 
