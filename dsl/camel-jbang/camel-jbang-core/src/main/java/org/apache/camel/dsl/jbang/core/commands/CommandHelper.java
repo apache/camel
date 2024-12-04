@@ -37,13 +37,17 @@ public final class CommandHelper {
     }
 
     public static void cleanExportDir(String dir) {
+        CommandHelper.cleanExportDir(dir, true);
+    }
+
+    public static void cleanExportDir(String dir, boolean keepHidden) {
         File target = new File(dir);
         File[] files = target.listFiles();
         if (files != null) {
             for (File f : files) {
-                if (!f.isHidden() && f.isDirectory()) {
+                if (f.isDirectory() && (!keepHidden || !f.isHidden())) {
                     FileUtil.removeDir(f);
-                } else if (!f.isHidden() && f.isFile()) {
+                } else if (f.isFile() && (!keepHidden || !f.isHidden())) {
                     FileUtil.deleteFile(f);
                 }
             }
