@@ -4,7 +4,7 @@
 :artifactid: camel-tahu
 :description: Sparkplug B Host Application support over MQTT using Eclipse Tahu
 :since: 4.8
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes

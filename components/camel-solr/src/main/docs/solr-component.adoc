@@ -4,7 +4,7 @@
 :artifactid: camel-solr
 :description: Perform operations against Apache Lucene Solr.
 :since: 4.8
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
