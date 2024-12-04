@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
@@ -39,14 +38,14 @@ class PluginAddTest extends CamelCommandBaseTest {
     @Test
     public void shouldAddDefaultPlugin() throws Exception {
         PluginAdd command = new PluginAdd(new CamelJBangMain().withPrinter(printer));
-        command.name = "camel-k";
+        command.name = "kubernetes";
         command.doCall();
 
         Assertions.assertEquals("", printer.getOutput());
 
         Assertions.assertEquals(
-                "{\"plugins\":{\"camel-k\":{\"name\":\"camel-k\",\"command\":\"k\",\"firstVersion\":\"4.4.0\",\"description\":\"%s\"}}}"
-                        .formatted(PluginType.CAMEL_K.getDescription()),
+                "{\"plugins\":{\"kubernetes\":{\"name\":\"kubernetes\",\"command\":\"kubernetes\",\"firstVersion\":\"4.8.0\",\"description\":\"%s\"}}}"
+                        .formatted(PluginType.KUBERNETES.getDescription()),
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
 

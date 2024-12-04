@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import java.util.List;
@@ -49,16 +48,18 @@ class PluginGetTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldGetPlugin() throws Exception {
-        PluginHelper.enable(PluginType.CAMEL_K);
+        PluginHelper.enable(PluginType.KUBERNETES);
 
         PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
         command.doCall();
 
         List<String> output = printer.getLines();
         Assertions.assertEquals(2, output.size());
-        Assertions.assertEquals("NAME     COMMAND  DEPENDENCY                             DESCRIPTION", output.get(0));
+        Assertions.assertEquals("NAME        COMMAND     DEPENDENCY                                      DESCRIPTION",
+                output.get(0));
         Assertions.assertEquals(
-                "camel-k  k        org.apache.camel:camel-jbang-plugin-k  %s".formatted(PluginType.CAMEL_K.getDescription()),
+                "kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  %s"
+                        .formatted(PluginType.KUBERNETES.getDescription()),
                 output.get(1));
     }
 
@@ -69,13 +70,13 @@ class PluginGetTest extends CamelCommandBaseTest {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(6, output.size());
+        Assertions.assertEquals(5, output.size());
         Assertions.assertEquals("Supported plugins:", output.get(0));
         Assertions.assertEquals("NAME        COMMAND     DEPENDENCY                                      DESCRIPTION",
                 output.get(2));
         Assertions.assertEquals(
-                "camel-k     k           org.apache.camel:camel-jbang-plugin-k           %s"
-                        .formatted(PluginType.CAMEL_K.getDescription()),
+                "kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  %s"
+                        .formatted(PluginType.KUBERNETES.getDescription()),
                 output.get(3));
     }
 
@@ -119,7 +120,7 @@ class PluginGetTest extends CamelCommandBaseTest {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(9, output.size());
+        Assertions.assertEquals(8, output.size());
         Assertions.assertEquals("NAME        COMMAND  DEPENDENCY                         DESCRIPTION", output.get(0));
         Assertions.assertEquals(
                 "foo-plugin  foo      org.apache.camel:foo-plugin:1.0.0  Plugin foo-plugin called with command foo",
@@ -129,17 +130,13 @@ class PluginGetTest extends CamelCommandBaseTest {
         Assertions.assertEquals("NAME        COMMAND     DEPENDENCY                                      DESCRIPTION",
                 output.get(5));
         Assertions.assertEquals(
-                "camel-k     k           org.apache.camel:camel-jbang-plugin-k           %s"
-                        .formatted(PluginType.CAMEL_K.getDescription()),
-                output.get(6));
-        Assertions.assertEquals(
                 "kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  %s"
                         .formatted(PluginType.KUBERNETES.getDescription()),
-                output.get(7));
+                output.get(6));
         Assertions.assertEquals(
                 "generate    generate    org.apache.camel:camel-jbang-plugin-generate    %s"
                         .formatted(PluginType.GENERATE.getDescription()),
-                output.get(8));
+                output.get(7));
     }
 
 }

@@ -39,7 +39,6 @@
         <module>camel-jbang-main</module>
         <module>camel-jbang-plugin-generate</module>
         <module>camel-jbang-plugin-kubernetes</module>
-        <module>camel-jbang-plugin-k</module>
         <module>camel-jbang-it</module>
     </modules>
 </project>

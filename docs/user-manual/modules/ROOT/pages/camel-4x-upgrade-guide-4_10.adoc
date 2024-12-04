@@ -14,3 +14,7 @@ not recommended to be used in older JGroups releases. You can use another Camel 
 
 The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been removed.
 
+=== camel-jbang
+
+The camel-jbang commands for `camel-k` has been removed.
+
