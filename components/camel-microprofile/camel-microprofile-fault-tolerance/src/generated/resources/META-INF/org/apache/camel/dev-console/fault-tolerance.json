@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.component.microprofile.faulttolerance.FaultToleranceConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-microprofile-fault-tolerance",
-    "version": "4.9.0-SNAPSHOT"
+    "version": "4.10.0-SNAPSHOT"
   }
 }
 
