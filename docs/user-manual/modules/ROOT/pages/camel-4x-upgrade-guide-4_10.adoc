@@ -1,0 +1,13 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.9 to 4.10
+
+=== camel-jgroups
+
+The cluster lock has been removed as it has been removed in JGroups 5.4 onwards, and it was
+not recommended to be used in older JGroups releases. You can use another Camel component such as
+`camel-infinispan` that has cluster locking.

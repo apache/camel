@@ -185,25 +185,3 @@ from("jgroups:clusterName?enableViewMessages=true").to(mockEndpoint);
 ...
 mockEndpoint.assertIsSatisfied();
 ---------------------------------------------------------------------
-
-=== Keeping singleton route within the cluster
-
-The snippet below demonstrates how to keep the singleton consumer route
-in the cluster of Camel Contexts. As soon as the master node dies, one
-of the slaves will be elected as a new master and started. In this
-particular example, we want to keep singleton xref:jetty-component.adoc[jetty]
-instance listening for the requests on
-address` http://localhost:8080/orders`.
-
-[source,java]
------------------------------------------------------------------------------------------------------------------------------------------------------------------
-JGroupsLockClusterService service = new JGroupsLockClusterService();
-service.setId("uniqueNodeId");
-...
-context.addService(service);
-
-from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-include::spring-boot:partial$starter.adoc[]
