@@ -4,7 +4,7 @@
 :artifactid: camel-langchain4j-web-search
 :description: LangChain4j Web Search Engine
 :since: 4.8
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

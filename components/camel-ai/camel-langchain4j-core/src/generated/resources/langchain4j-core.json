@@ -10,6 +10,6 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-langchain4j-core",
-    "version": "4.9.0-SNAPSHOT"
+    "version": "4.10.0-SNAPSHOT"
   }
 }
