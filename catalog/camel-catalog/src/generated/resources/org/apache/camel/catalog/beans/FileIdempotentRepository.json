@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-support",
-    "version": "4.9.0-SNAPSHOT",
+    "version": "4.10.0-SNAPSHOT",
     "properties": { "cacheSize": { "index": 0, "kind": "property", "displayName": "Cache Size", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "The maximum size of the 1st-level in-memory cache" }, "fileStore": { "index": 1, "kind": "property", "displayName": "File Store", "required": true, "type": "string", "javaType": "java.io.File", "deprecated": false, "autowired": false, "secret": false, "description": "File name of the repository (incl directory)" }, "maxFileStoreSize": { "index": 2, "kind": "property", "displayName": "Max File Store Size", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "32768000", "description": "The maximum file size for the file store in bytes. The default value is 32mb" }, "dropOldestFileStore": { "index": 3, "kind": "property", "displayName": "Drop Oldest File Store", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk space to allow room for new entries." } }
   }
 }

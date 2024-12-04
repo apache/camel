@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
-    "version": "4.9.0-SNAPSHOT",
+    "version": "4.10.0-SNAPSHOT",
     "properties": { "cacheName": { "index": 0, "kind": "property", "displayName": "Cache Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "CaffeineIdempotentRepository", "description": "Name of cache" } }
   }
 }

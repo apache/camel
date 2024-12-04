@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd3",
-    "version": "4.9.0-SNAPSHOT",
+    "version": "4.10.0-SNAPSHOT",
     "scheme": "etcd3",
     "extendsScheme": "",
     "syntax": "etcd3:path",

@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-support",
-    "version": "4.9.0-SNAPSHOT",
+    "version": "4.10.0-SNAPSHOT",
     "properties": { "cacheSize": { "index": 0, "kind": "property", "displayName": "Cache Size", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Maximum elements that can be stored in-memory" } }
   }
 }
