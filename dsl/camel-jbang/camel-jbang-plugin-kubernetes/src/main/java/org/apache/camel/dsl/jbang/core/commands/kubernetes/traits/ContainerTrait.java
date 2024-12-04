@@ -23,8 +23,8 @@ import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 public class ContainerTrait extends BaseTrait {
 

@@ -26,9 +26,9 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ServiceTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.KnativeService;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.v1.integrationspec.Traits;
-import org.apache.camel.v1.integrationspec.traits.KnativeService;
 
 public class KnativeServiceTrait extends KnativeBaseTrait {
 

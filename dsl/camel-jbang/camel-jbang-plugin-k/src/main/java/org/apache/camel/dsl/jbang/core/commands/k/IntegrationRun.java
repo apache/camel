@@ -35,7 +35,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesBaseCommand
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitProfile;
 import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -245,10 +244,10 @@ public class IntegrationRun extends KubernetesBaseCommand {
                     .collect(Collectors.toMap(it -> it[0].trim(), it -> it[1].trim())));
         }
 
-        Traits traitsSpec = TraitHelper.parseTraits(traits);
+        Traits traitsSpec = IntegrationTraitHelper.parseTraits(traits);
 
         if (image != null) {
-            TraitHelper.configureContainerImage(traitsSpec, image, null, null, null, null);
+            IntegrationTraitHelper.configureContainerImage(traitsSpec, image, null, null, null, null);
         } else {
             List<Source> resolvedSources = SourceHelper.resolveSources(integrationSources, compression);
 
@@ -315,10 +314,14 @@ public class IntegrationRun extends KubernetesBaseCommand {
                     List<Source> sources = SourceHelper.resolveSources(integrationSources);
                     TraitContext context
                             = new TraitContext(integration.getMetadata().getName(), "1.0-SNAPSHOT", printer(), sources);
-                    TraitHelper.configureContainerImage(traitsSpec, image, "quay.io", null, integration.getMetadata().getName(),
+                    IntegrationTraitHelper.configureContainerImage(traitsSpec, image, "quay.io", null,
+                            integration.getMetadata().getName(),
                             "1.0-SNAPSHOT");
-
-                    new TraitCatalog().apply(traitsSpec, context, traitProfile, RuntimeType.quarkus);
+                    org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits kubernetesTraits
+                            = KubernetesHelper.yaml(this.getClass().getClassLoader())
+                                    .loadAs(KubernetesHelper.dumpYaml(traits),
+                                            org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits.class);
+                    new TraitCatalog().apply(kubernetesTraits, context, traitProfile, RuntimeType.quarkus);
 
                     printer().println(
                             context.buildItems().stream().map(KubernetesHelper::dumpYaml).collect(Collectors.joining("---")));
@@ -363,14 +366,14 @@ public class IntegrationRun extends KubernetesBaseCommand {
     }
 
     private void convertOptionsToTraits(Traits traitsSpec) {
-        TraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
+        IntegrationTraitHelper.configureMountTrait(traitsSpec, configs, resources, volumes);
         if (openApis != null) {
-            Stream.of(openApis).forEach(openapi -> TraitHelper.configureOpenApiSpec(traitsSpec, openapi));
+            Stream.of(openApis).forEach(openapi -> IntegrationTraitHelper.configureOpenApiSpec(traitsSpec, openapi));
         }
-        TraitHelper.configureProperties(traitsSpec, properties);
-        TraitHelper.configureBuildProperties(traitsSpec, buildProperties);
-        TraitHelper.configureEnvVars(traitsSpec, envVars);
-        TraitHelper.configureConnects(traitsSpec, connects);
+        IntegrationTraitHelper.configureProperties(traitsSpec, properties);
+        IntegrationTraitHelper.configureBuildProperties(traitsSpec, buildProperties);
+        IntegrationTraitHelper.configureEnvVars(traitsSpec, envVars);
+        IntegrationTraitHelper.configureConnects(traitsSpec, connects);
     }
 
     private String getIntegrationName(List<String> sources) {

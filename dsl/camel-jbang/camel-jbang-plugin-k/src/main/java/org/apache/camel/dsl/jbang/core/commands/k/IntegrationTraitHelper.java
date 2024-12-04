@@ -14,43 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
+package org.apache.camel.dsl.jbang.core.commands.k;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Addons;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Camel;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Mount;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Openapi;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.ServiceBinding;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-import org.apache.camel.dsl.jbang.core.common.Source;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.v1.integrationspec.Traits;
+import org.apache.camel.v1.integrationspec.traits.AddonsBuilder;
+import org.apache.camel.v1.integrationspec.traits.Builder;
+import org.apache.camel.v1.integrationspec.traits.Camel;
+import org.apache.camel.v1.integrationspec.traits.Container;
+import org.apache.camel.v1.integrationspec.traits.Environment;
+import org.apache.camel.v1.integrationspec.traits.Mount;
+import org.apache.camel.v1.integrationspec.traits.Openapi;
+import org.apache.camel.v1.integrationspec.traits.ServiceBinding;
 
-/**
- * Utility class manages trait expressions and its conversion to proper trait model.
- */
-public final class TraitHelper {
+public final class IntegrationTraitHelper {
 
-    private TraitHelper() {
+    private IntegrationTraitHelper() {
         //prevent instantiation of utility class.
     }
 
@@ -140,7 +130,7 @@ public final class TraitHelper {
             for (Map.Entry<String, Map<String, Object>> traitConfig : traitConfigMap.entrySet()) {
                 if (!knownTraits.contains(traitConfig.getKey())) {
                     traitModel.getAddons().put(traitConfig.getKey(),
-                            new Addons(traitConfig.getValue()));
+                            new AddonsBuilder().addToAdditionalProperties(traitConfig.getValue()).build());
                 }
             }
         }
@@ -217,6 +207,19 @@ public final class TraitHelper {
         traitsSpec.setEnvironment(environmentTrait);
     }
 
+    public static void configureBuildProperties(Traits traitsSpec, String[] buildProperties) {
+        if (buildProperties == null || buildProperties.length == 0) {
+            return;
+        }
+
+        Builder builderTrait = Optional.ofNullable(traitsSpec.getBuilder()).orElseGet(Builder::new);
+        if (builderTrait.getProperties() == null) {
+            builderTrait.setProperties(new ArrayList<>());
+        }
+        builderTrait.getProperties().addAll(List.of(buildProperties));
+        traitsSpec.setBuilder(builderTrait);
+    }
+
     public static void configureProperties(Traits traitsSpec, String[] properties) {
         if (properties == null || properties.length == 0) {
             return;
@@ -290,8 +293,12 @@ public final class TraitHelper {
                 registryPrefix = imageRegistry + "/";
             }
 
-            var resolvedImageName = getResolvedImageName(imageGroup, imageName, version);
-            containerTrait.setImage("%s%s".formatted(registryPrefix, resolvedImageName));
+            imageGroup = Optional.ofNullable(imageGroup).orElse("");
+            if (!imageGroup.isEmpty()) {
+                containerTrait.setImage("%s%s/%s:%s".formatted(registryPrefix, imageGroup, imageName, version));
+            } else {
+                containerTrait.setImage("%s%s:%s".formatted(registryPrefix, imageName, version));
+            }
 
             // Plain export command always exposes a health endpoint on 8080.
             // Skip this, when we decide that the health endpoint can be disabled.
@@ -304,105 +311,4 @@ public final class TraitHelper {
         }
     }
 
-    public static String getResolvedImageName(String imageGroup, String imageName, String version) {
-        imageGroup = Optional.ofNullable(imageGroup).orElse("");
-        if (!imageGroup.isEmpty()) {
-            return "%s/%s:%s".formatted(imageGroup, imageName, version);
-        } else {
-            return "%s:%s".formatted(imageName, version);
-        }
-    }
-
-    /**
-     * Inspect sources in context to retrieve routes that expose a Http service as an endpoint.
-     *
-     * @param  context the trait context holding all route sources.
-     * @return         true when routes expose a Http service, false otherwise.
-     */
-    public static boolean exposesHttpService(TraitContext context) {
-        try {
-            boolean exposesHttpServices = false;
-            CamelCatalog catalog = context.getCatalog();
-            if (context.getSources() != null) {
-                for (Source source : context.getSources()) {
-                    SourceMetadata metadata = context.inspectMetaData(source);
-                    if (MetadataHelper.exposesHttpServices(catalog, metadata)) {
-                        exposesHttpServices = true;
-                        break;
-                    }
-                }
-            }
-
-            return exposesHttpServices;
-        } catch (Exception e) {
-            context.printer().printf("Failed to apply service trait %s%n", e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Extract properties traits (camel.jbang.trait.key=value) and transform them into regular trait form (key=value)
-     *
-     * @param  properties properties
-     * @return            traits
-     */
-    public static String[] extractTraitsFromProperties(Properties properties) {
-        if (properties != null && !properties.isEmpty()) {
-            Stream<String> propertyTraits = properties.entrySet().stream()
-                    .filter(property -> property.getKey().toString().startsWith("camel.jbang.trait"))
-                    .map(property -> StringHelper.after(property.getKey().toString(), "camel.jbang.trait.") + "="
-                                     + properties.get(property.getKey()).toString());
-            return propertyTraits.collect(Collectors.toSet()).toArray(String[]::new);
-        }
-        return new String[0];
-    }
-
-    /**
-     * Extract annotation traits (trait.camel.apache.org/key=value) and transform them into regular trait form
-     * (key=value)
-     *
-     * @param  annotations annotations
-     * @return             traits
-     */
-    public static String[] extractTraitsFromAnnotations(String[] annotations) {
-        if (annotations != null && annotations.length > 0) {
-            Stream<String> annotationTraits = Stream.of(annotations)
-                    .filter(annotation -> annotation.startsWith("trait.camel.apache.org/"))
-                    .map(annotation -> StringHelper.after(annotation, "trait.camel.apache.org/"));
-            return annotationTraits.collect(Collectors.toSet()).toArray(String[]::new);
-        }
-        return new String[0];
-    }
-
-    /**
-     * Merge all the traits from multiple sources in one keeping overrides priority by its position in the list. A trait
-     * property value in the array 0 will have priority on the value of the same trait property in an array 1. Supports
-     * trait options in the form of key=value.
-     *
-     * @param  traitsBySource traits grouped by source
-     * @return                the traits merged
-     */
-    public static String[] mergeTraits(String[]... traitsBySource) {
-        if (traitsBySource == null || traitsBySource.length == 0) {
-            return new String[0];
-        }
-        Set<String> existingKeys = new HashSet<>();
-        List<String> mergedTraits = new ArrayList<>();
-        for (String[] traits : traitsBySource) {
-            if (traits != null && traits.length > 0) {
-                for (String trait : traits) {
-                    final String[] traitConfig = trait.split("=", 2);
-                    if (!existingKeys.contains(traitConfig[0])) {
-                        mergedTraits.add(trait);
-                    }
-                }
-                existingKeys.clear();
-                for (String trait : mergedTraits) {
-                    final String[] traitConfig = trait.split("=", 2);
-                    existingKeys.add(traitConfig[0]);
-                }
-            }
-        }
-        return mergedTraits.toArray(new String[0]);
-    }
 }
