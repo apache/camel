@@ -26,7 +26,6 @@ import java.util.Arrays;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,8 +60,8 @@ class TransformTest {
 
         Assertions.assertTrue(out.exists());
         String data = IOHelper.loadText(new FileInputStream(out));
-        String expected = IOHelper.loadText(new FileInputStream("src/test/resources/transform-out.yaml"));
-        expected = "- route:" + StringHelper.after(expected, "- route:"); // skip license header
+        String expected
+                = IOHelper.stripLineComments(Paths.get("src/test/resources/transform-out.yaml"), "#", true);
         Assertions.assertEquals(expected, data);
     }
 
