@@ -550,6 +550,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default GooglePubsubLiteHeaderNameBuilder googlePubsubLite() {
             return GooglePubsubLiteHeaderNameBuilder.INSTANCE;
         }
@@ -578,6 +579,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * @param path projectId:location:destinationName
          * @return the dsl builder
          */
+        @Deprecated
         default GooglePubsubLiteEndpointBuilder googlePubsubLite(String path) {
             return GooglePubsubLiteEndpointBuilderFactory.endpointBuilder("google-pubsub-lite", path);
         }
@@ -608,6 +610,7 @@ public interface GooglePubsubLiteEndpointBuilderFactory {
          * @param path projectId:location:destinationName
          * @return the dsl builder
          */
+        @Deprecated
         default GooglePubsubLiteEndpointBuilder googlePubsubLite(String componentName, String path) {
             return GooglePubsubLiteEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

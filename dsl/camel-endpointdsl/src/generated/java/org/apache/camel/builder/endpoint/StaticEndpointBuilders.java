@@ -5530,6 +5530,7 @@ public class StaticEndpointBuilders {
      * @param path projectId:location:destinationName
      * @return the dsl builder
      */
+    @Deprecated
     public static GooglePubsubLiteEndpointBuilderFactory.GooglePubsubLiteEndpointBuilder googlePubsubLite(String path) {
         return googlePubsubLite("google-pubsub-lite", path);
     }
@@ -5560,6 +5561,7 @@ public class StaticEndpointBuilders {
      * @param path projectId:location:destinationName
      * @return the dsl builder
      */
+    @Deprecated
     public static GooglePubsubLiteEndpointBuilderFactory.GooglePubsubLiteEndpointBuilder googlePubsubLite(String componentName, String path) {
         return GooglePubsubLiteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

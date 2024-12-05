@@ -18,3 +18,9 @@ The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been remove
 
 The camel-jbang commands for `camel-k` has been removed.
 
+
+=== camel-google-pubsub-lite
+
+The component `camel-google-pubsub-lite` has been deprecated following the deprecation of the corresponding service by Google Cloud Platform. 
+
+Google recommends migrating your Pub/Sub Lite service to either Google Cloud Managed Service for Apache Kafka or Google Cloud Pub/Sub. Depending on your choice, you should use `camel-kafka` or `camel-google-pubsub component`, respectively.

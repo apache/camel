@@ -29,7 +29,7 @@
 
     <artifactId>camel-google-pubsub-lite</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Google :: PubSub Lite</name>
+    <name>Camel :: Google :: PubSub Lite (deprecated)</name>
     <description>Camel Component for Google Cloud Platform PubSub Lite</description>
 
     <properties>

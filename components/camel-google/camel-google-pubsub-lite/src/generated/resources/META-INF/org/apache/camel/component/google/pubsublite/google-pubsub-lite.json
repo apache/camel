@@ -4,7 +4,7 @@
     "name": "google-pubsub-lite",
     "title": "Google PubSub Lite",
     "description": "Send and receive messages to\/from Google Cloud Platform PubSub Lite Service.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "4.6.0",
     "label": "cloud,messaging",
     "javaType": "org.apache.camel.component.google.pubsublite.GooglePubsubLiteComponent",
