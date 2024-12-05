@@ -14,6 +14,7 @@
 *** xref:milvus-component.adoc[Milvus]
 *** xref:pinecone-component.adoc[Pinecone]
 *** xref:qdrant-component.adoc[Qdrant]
+*** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
 *** xref:torchserve-component.adoc[TorchServe]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]

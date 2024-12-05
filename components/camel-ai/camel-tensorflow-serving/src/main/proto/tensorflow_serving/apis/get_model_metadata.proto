@@ -1,0 +1,46 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package tensorflow.serving;
+option cc_enable_arenas = true;
+
+import "google/protobuf/any.proto";
+import "tensorflow/core/protobuf/meta_graph.proto";
+import "tensorflow_serving/apis/model.proto";
+
+// Message returned for "signature_def" field.
+message SignatureDefMap {
+  map<string, SignatureDef> signature_def = 1;
+};
+
+message GetModelMetadataRequest {
+  // Model Specification indicating which model we are querying for metadata.
+  // If version is not specified, will use the latest (numerical) version.
+  ModelSpec model_spec = 1;
+  // Metadata fields to get. Currently supported: "signature_def".
+  repeated string metadata_field = 2;
+}
+
+message GetModelMetadataResponse {
+  // Model Specification indicating which model this metadata belongs to.
+  ModelSpec model_spec = 1;
+  // Map of metadata field name to metadata field. The options for metadata
+  // field name are listed in GetModelMetadataRequest. Currently supported:
+  // "signature_def".
+  map<string, google.protobuf.Any> metadata = 2;
+}

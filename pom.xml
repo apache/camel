@@ -255,6 +255,7 @@
                                     <exclude>**/*.cer</exclude>
                                     <exclude>**/*.channel</exclude>
                                     <exclude>**/*.chtml</exclude>
+                                    <exclude>**/*.crt</exclude>
                                     <exclude>**/*.csv</exclude>
                                     <exclude>**/*.event</exclude>
                                     <exclude>**/*.gif</exclude>
@@ -274,7 +275,7 @@
                                     <exclude>**/*.p12</exclude>
                                     <exclude>**/*.params</exclude>
                                     <exclude>**/*.parquet</exclude>
-                                    <exclude>**/*.crt</exclude>
+                                    <exclude>**/*.pb</exclude>
                                     <exclude>**/*.pem</exclude>
                                     <exclude>**/*.pfx</exclude>
                                     <exclude>**/*.pgp</exclude>
@@ -330,6 +331,8 @@
                                     <exclude>**/src/main/resources/templates/*.tmpl</exclude>
                                     <exclude>**/src/test/resources/generated/**</exclude>
                                     <exclude>**/test-kerb5.conf</exclude>
+                                    <exclude>**/variables/variables.data-*-of-*</exclude>
+                                    <exclude>**/variables/variables.index</exclude>
                                     <exclude>**/yarn.lock</exclude>
                                     <exclude>**/zkserver*.conf</exclude>
                                     <exclude>**/*.wasm</exclude>
