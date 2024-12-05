@@ -574,8 +574,8 @@ public class KameletMain extends MainCommandLineSupport {
         // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
         boolean transform = "true".equals(getInitialProperties().get("camel.jbang.transform"));
         if (transform) {
-            // we just want to transform, so disable all processors
-            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_ALL_PROCESSORS, "true");
+            // we just want to transform, so disable custom bean or processors as they may use code that does not work
+            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_BEAN_OR_PROCESS_PROCESSORS, "true");
             blueprintXmlBeansHandler.setTransform(true);
         }
         if (silent) {

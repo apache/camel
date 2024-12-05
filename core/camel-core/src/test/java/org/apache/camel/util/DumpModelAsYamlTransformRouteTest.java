@@ -38,12 +38,25 @@ public class DumpModelAsYamlTransformRouteTest extends DumpModelAsYamlTestSuppor
         Assertions.assertEquals(expected, out);
     }
 
+    @Test
+    public void testDumpModelAsYamlUriAsParameters() throws Exception {
+        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
+                true, true, true);
+        assertNotNull(out);
+        log.info(out);
+
+        String expected
+                = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/transform2.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").transform().simple("Hello ${body}").to("mock:result").id("myMock");
+                from("direct:start?exchangePattern=InOnly").routeId("myRoute").transform().simple("Hello ${body}")
+                        .to("mock:result?failFast=false&retainFirst=5&browseLimit=123").id("myMock");
             }
         };
     }

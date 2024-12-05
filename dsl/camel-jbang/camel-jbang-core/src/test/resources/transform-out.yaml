@@ -16,15 +16,17 @@
 #
 
 - route:
-    id: myRoute
+    id: route-b785
+    nodePrefixId: route-14b
     from:
-      id: from
-      uri: direct:start?exchangePattern=InOnly
+      id: from-959e
+      uri: direct
+      parameters:
+        name: start
       steps:
-        - transform:
-            id: transform
-            simple:
-              expression: "Hello ${body}"
         - to:
-            id: myMock
-            uri: mock:result?failFast=false&retainFirst=5&browseLimit=123
+            id: to-65f9
+            uri: jms
+            parameters:
+              destinationType: queue
+              destinationName: demo
