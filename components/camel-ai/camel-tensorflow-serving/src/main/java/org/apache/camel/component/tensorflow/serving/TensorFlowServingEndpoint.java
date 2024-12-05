@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import tensorflow.serving.ModelServiceGrpc;
 import tensorflow.serving.PredictionServiceGrpc;
 
-@UriEndpoint(firstVersion = "4.9.0", scheme = "tensorflow-serving", title = "TensorFlow Serving",
+@UriEndpoint(firstVersion = "4.10.0", scheme = "tensorflow-serving", title = "TensorFlow Serving",
              syntax = "tensorflow-serving:api", producerOnly = true,
              category = { Category.AI }, headersClass = TensorFlowServingConstants.class)
 public class TensorFlowServingEndpoint extends DefaultEndpoint {

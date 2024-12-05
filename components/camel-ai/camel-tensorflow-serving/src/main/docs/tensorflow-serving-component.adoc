@@ -3,7 +3,7 @@
 :shortname: tensorflow-serving
 :artifactid: camel-tensorflow-serving
 :description: Provide access to TensorFlow Serving model servers to run inference with TensorFlow saved models remotely
-:since: 4.9
+:since: 4.10
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
