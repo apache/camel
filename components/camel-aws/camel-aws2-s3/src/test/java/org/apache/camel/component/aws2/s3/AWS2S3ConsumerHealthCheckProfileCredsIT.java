@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.s3;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
@@ -24,8 +27,8 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +42,7 @@ import static org.awaitility.Awaitility.await;
 public class AWS2S3ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSTestService service = AWSServiceFactory.createSingletonS3Service();
+    public static AWSService service = AWSServiceFactory.createSingletonS3Service();
 
     CamelContext context;
 

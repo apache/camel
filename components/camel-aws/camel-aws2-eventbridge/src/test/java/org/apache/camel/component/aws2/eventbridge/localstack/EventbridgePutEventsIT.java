@@ -27,7 +27,7 @@ import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 public class EventbridgePutEventsIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSTestService service = AWSServiceFactory.createEventBridgeService();
+    public static AWSService service = AWSServiceFactory.createEventBridgeService();
 
     @EndpointInject
     private ProducerTemplate template;

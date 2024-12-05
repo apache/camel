@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.azure.storage.datalake.services;
 
-import org.apache.camel.test.infra.azure.common.services.AzureTestService;
+import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AzureStorageDataLakeServiceFactory {
@@ -26,16 +26,16 @@ public final class AzureStorageDataLakeServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<AzureTestService> builder() {
+    public static SimpleTestServiceBuilder<AzureService> builder() {
         return new SimpleTestServiceBuilder<>("azure");
     }
 
-    public static AzureTestService createService() {
+    public static AzureService createService() {
         return builder()
-                .addRemoteMapping(AzureStorageDataLakeRemoteTestService::new)
+                .addRemoteMapping(AzureStorageDataLakeRemoteService::new)
                 .build();
     }
 
-    static class AzureStorageDataLakeRemoteTestService extends AzureStorageDataLakeRemoteService implements AzureTestService {
+    static class AzureStorageDataLakeRemoteService extends AzureStorageDataLakeRemoteInfraService implements AzureService {
     }
 }

@@ -18,52 +18,52 @@ package org.apache.camel.test.infra.aws2.services;
 
 public class AWSTestServices {
 
-    public static class AWSCloudWatchLocalContainerTestService extends AWSCloudWatchLocalContainerService
-            implements AWSTestService {
+    public static class AWSCloudWatchLocalContainerTestService extends AWSCloudWatchLocalContainerInfraService
+            implements AWSService {
     }
 
-    public static class AWSConfigLocalContainerTestService extends AWSConfigLocalContainerService implements AWSTestService {
+    public static class AWSConfigLocalContainerTestService extends AWSConfigLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSDynamodbLocalContainerTestService extends AWSDynamodbLocalContainerService
-            implements AWSTestService {
+    public static class AWSDynamodbLocalContainerTestService extends AWSDynamodbLocalContainerInfraService
+            implements AWSService {
     }
 
-    public static class AWSEC2LocalContainerTestService extends AWSEC2LocalContainerService implements AWSTestService {
+    public static class AWSEC2LocalContainerTestService extends AWSEC2LocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSEventBridgeLocalContainerTestService extends AWSEventBridgeLocalContainerService
-            implements AWSTestService {
+    public static class AWSEventBridgeLocalContainerTestService extends AWSEventBridgeLocalContainerInfraService
+            implements AWSService {
     }
 
-    public static class AWSIAMLocalContainerTestService extends AWSIAMLocalContainerService implements AWSTestService {
+    public static class AWSIAMLocalContainerTestService extends AWSIAMLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSKinesisLocalContainerTestService extends AWSKinesisLocalContainerService implements AWSTestService {
+    public static class AWSKinesisLocalContainerTestService extends AWSKinesisLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSKMSLocalContainerTestService extends AWSKMSLocalContainerService implements AWSTestService {
+    public static class AWSKMSLocalContainerTestService extends AWSKMSLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSLambdaLocalContainerTestService extends AWSLambdaLocalContainerService implements AWSTestService {
+    public static class AWSLambdaLocalContainerTestService extends AWSLambdaLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSS3LocalContainerTestService extends AWSS3LocalContainerService implements AWSTestService {
+    public static class AWSS3LocalContainerTestService extends AWSS3LocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSSecretsManagerLocalContainerTestService extends AWSSecretsManagerLocalContainerService
-            implements AWSTestService {
+    public static class AWSSecretsManagerLocalContainerTestService extends AWSSecretsManagerLocalContainerInfraService
+            implements AWSService {
     }
 
-    public static class AWSSNSLocalContainerTestService extends AWSSNSLocalContainerService implements AWSTestService {
+    public static class AWSSNSLocalContainerTestService extends AWSSNSLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSSQSLocalContainerTestService extends AWSSQSLocalContainerService implements AWSTestService {
+    public static class AWSSQSLocalContainerTestService extends AWSSQSLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSSTSLocalContainerTestService extends AWSSTSLocalContainerService implements AWSTestService {
+    public static class AWSSTSLocalContainerTestService extends AWSSTSLocalContainerInfraService implements AWSService {
     }
 
-    public static class AWSRemoteTestService extends AWSRemoteService implements AWSTestService {
+    public static class AWSRemoteTestService extends AWSRemoteInfraService implements AWSService {
     }
 }

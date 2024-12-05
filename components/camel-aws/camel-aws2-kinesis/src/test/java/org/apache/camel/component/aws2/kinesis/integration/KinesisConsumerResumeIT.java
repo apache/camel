@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.aws2.kinesis.integration;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +32,8 @@ import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.test.infra.aws.common.AWSCommon;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -47,10 +51,6 @@ import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResultEntry;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.deleteStream;
@@ -113,7 +113,7 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
     }
 
     @RegisterExtension
-    public static AWSTestService awsService = AWSServiceFactory.createSingletonKinesisService();
+    public static AWSService awsService = AWSServiceFactory.createSingletonKinesisService();
 
     private static final Logger LOG = LoggerFactory.getLogger(KinesisProducerIT.class);
 

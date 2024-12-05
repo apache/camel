@@ -27,7 +27,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerContainer> {
 
     public RocketMQBrokerContainer(Network network, String confName) {
-        super(RocketMQContainerService.ROCKETMQ_IMAGE);
+        super(RocketMQContainerInfraService.ROCKETMQ_IMAGE);
 
         withNetwork(network);
         withExposedPorts(RocketMQProperties.ROCKETMQ_BROKER3_PORT,
@@ -35,13 +35,13 @@ public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerCont
                 RocketMQProperties.ROCKETMQ_BROKER1_PORT);
         withEnv("NAMESRV_ADDR", "nameserver:9876");
         withClasspathResourceMapping(confName + "/" + confName + ".conf",
-                "/opt/rocketmq-" + RocketMQContainerService.ROCKETMQ_VERSION + "/conf/broker.conf",
+                "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf",
                 BindMode.READ_WRITE);
 
         withTmpFs(Collections.singletonMap("/home/rocketmq/store", "rw"));
         withTmpFs(Collections.singletonMap("/home/rocketmq/logs", "rw"));
         withCommand("sh", "mqbroker",
-                "-c", "/opt/rocketmq-" + RocketMQContainerService.ROCKETMQ_VERSION + "/conf/broker.conf");
+                "-c", "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf");
 
         waitingFor(Wait.forListeningPort());
         withCreateContainerCmdModifier(cmd -> cmd.withName(confName));

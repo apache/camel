@@ -18,7 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
 import org.apache.camel.test.infra.ftp.services.embedded.EmbeddedConfiguration;
-import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedTestService;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedService;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public abstract class FtpsServerExplicitTLSWithClientAuthTestSupport extends FtpsServerTestSupport {
 
     @RegisterExtension
-    static FtpsEmbeddedTestService service = FtpServiceFactory
+    static FtpsEmbeddedService service = FtpServiceFactory
             .createSecureEmbeddedService(new EmbeddedConfiguration.SecurityConfiguration(false, AUTH_VALUE_TLS, true));
 
     @Deprecated

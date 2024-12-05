@@ -81,12 +81,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-azure-storage-datalake</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-       </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-azure-storage-datalake</artifactId>

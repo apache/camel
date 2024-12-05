@@ -30,17 +30,16 @@
     <artifactId>camel-test-infra-infinispan</artifactId>
     <name>Camel :: Test Infra :: Infinispan</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -49,6 +48,5 @@
             <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>
-
 
 </project>

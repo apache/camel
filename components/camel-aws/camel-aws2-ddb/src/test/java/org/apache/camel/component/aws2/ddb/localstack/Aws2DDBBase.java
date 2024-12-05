@@ -19,8 +19,8 @@ package org.apache.camel.component.aws2.ddb.localstack;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.ddb.Ddb2Component;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class Aws2DDBBase extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSTestService service = AWSServiceFactory.createSingletonDynamoDBService();
+    public static AWSService service = AWSServiceFactory.createSingletonDynamoDBService();
 
     protected DynamoDbClient ddbClient;
 

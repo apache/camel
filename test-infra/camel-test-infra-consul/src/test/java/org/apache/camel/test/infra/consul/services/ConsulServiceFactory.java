@@ -23,20 +23,20 @@ public final class ConsulServiceFactory {
     private ConsulServiceFactory() {
     }
 
-    public static SimpleTestServiceBuilder<ConsulTestService> builder() {
+    public static SimpleTestServiceBuilder<ConsulService> builder() {
         return new SimpleTestServiceBuilder<>("consul");
     }
 
-    public static ConsulTestService createService() {
+    public static ConsulService createService() {
         return builder()
                 .addLocalMapping(ConsulLocalContainerTestService::new)
                 .addRemoteMapping(ConsulRemoteTestService::new)
                 .build();
     }
 
-    public static class ConsulLocalContainerTestService extends ConsulLocalContainerService implements ConsulTestService {
+    public static class ConsulLocalContainerTestService extends ConsulLocalContainerInfraService implements ConsulService {
     }
 
-    public static class ConsulRemoteTestService extends ConsulRemoteService implements ConsulTestService {
+    public static class ConsulRemoteTestService extends ConsulRemoteInfraService implements ConsulService {
     }
 }

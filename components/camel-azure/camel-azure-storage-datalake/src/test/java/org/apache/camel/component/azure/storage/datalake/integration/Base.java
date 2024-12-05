@@ -27,7 +27,7 @@ import com.azure.storage.file.datalake.DataLakeServiceClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
-import org.apache.camel.test.infra.azure.common.services.AzureTestService;
+import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.azure.storage.datalake.clients.AzureStorageDataLakeClientUtils;
 import org.apache.camel.test.infra.azure.storage.datalake.services.AzureStorageDataLakeServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -42,7 +42,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class Base extends CamelTestSupport {
 
     @RegisterExtension
-    public AzureTestService service = AzureStorageDataLakeServiceFactory.createService();
+    public AzureService service = AzureStorageDataLakeServiceFactory.createService();
 
     protected DataLakeServiceClient serviceClient;
     protected DataLakeConfiguration configuration;

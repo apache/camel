@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
-import org.apache.camel.test.infra.consul.services.ConsulTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestNameExtension;
 import org.junit.jupiter.api.Order;
@@ -31,7 +31,7 @@ import org.kiwiproject.consul.Consul;
 
 public class ConsulTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static ConsulTestService service = ConsulServiceFactory.createService();
+    public static ConsulService service = ConsulServiceFactory.createService();
 
     @RegisterExtension
     @Order(10)

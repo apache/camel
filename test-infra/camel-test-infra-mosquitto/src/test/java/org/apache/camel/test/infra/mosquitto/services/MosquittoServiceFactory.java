@@ -33,4 +33,7 @@ public final class MosquittoServiceFactory {
                 .addRemoteMapping(MosquittoRemoteService::new)
                 .build();
     }
+
+    public static class MosquittoRemoteService extends MosquittoRemoteInfraService implements MosquittoService {
+    }
 }

@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
-import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedTestService;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
     @RegisterExtension
-    static FtpEmbeddedTestService service = FtpServiceFactory.createEmbeddedService();
+    static FtpEmbeddedService service = FtpServiceFactory.createEmbeddedService();
 
     // we want to poll enrich from FTP and therefore want to fail fast if
     // something is wrong

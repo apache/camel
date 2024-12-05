@@ -24,7 +24,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.hivemq.HiveMQContainer;
 
 public abstract class AbstractLocalHiveMQService<T extends AbstractLocalHiveMQService<T>>
-        implements HiveMQService, ContainerService<HiveMQContainer> {
+        implements HiveMQInfraService, ContainerService<HiveMQContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLocalHiveMQService.class);
 

@@ -30,8 +30,8 @@ public final class AWSServiceFactory {
 
     }
 
-    private static class SingletonAWSService extends SingletonService<AWSTestService> implements AWSTestService {
-        public SingletonAWSService(AWSTestService service, String name) {
+    private static class SingletonAWSService extends SingletonService<AWSService> implements AWSService {
+        public SingletonAWSService(AWSService service, String name) {
             super(service, name);
         }
 
@@ -41,11 +41,11 @@ public final class AWSServiceFactory {
         }
     }
 
-    public static <T extends AWSTestService> SimpleTestServiceBuilder<T> builder() {
+    public static <T extends AWSService> SimpleTestServiceBuilder<T> builder() {
         return new SimpleTestServiceBuilder<>("aws");
     }
 
-    private static AWSTestService createService(Supplier<AWSTestService> supplier) {
+    private static AWSService createService(Supplier<AWSService> supplier) {
         return builder()
                 .addRemoteMapping(AWSTestServices.AWSRemoteTestService::new)
                 .addLocalMapping(supplier)
@@ -53,7 +53,7 @@ public final class AWSServiceFactory {
                 .build();
     }
 
-    public static AWSTestService createKinesisService() {
+    public static AWSService createKinesisService() {
         return builder()
                 .addRemoteMapping(AWSTestServices.AWSRemoteTestService::new)
                 .addLocalMapping(AWSTestServices.AWSKinesisLocalContainerTestService::new)
@@ -61,84 +61,84 @@ public final class AWSServiceFactory {
                 .build();
     }
 
-    public static AWSTestService createSQSService() {
+    public static AWSService createSQSService() {
         return createService(AWSTestServices.AWSSQSLocalContainerTestService::new);
     }
 
-    public static AWSTestService createS3Service() {
+    public static AWSService createS3Service() {
         return createService(AWSTestServices.AWSS3LocalContainerTestService::new);
     }
 
-    public static AWSTestService createSNSService() {
+    public static AWSService createSNSService() {
         return createService(AWSTestServices.AWSSNSLocalContainerTestService::new);
     }
 
-    public static AWSTestService createConfigService() {
+    public static AWSService createConfigService() {
         return createService(AWSTestServices.AWSConfigLocalContainerTestService::new);
     }
 
-    public static AWSTestService createCloudWatchService() {
+    public static AWSService createCloudWatchService() {
         return createService(AWSTestServices.AWSCloudWatchLocalContainerTestService::new);
     }
 
-    public static AWSTestService createEC2Service() {
+    public static AWSService createEC2Service() {
         return createService(AWSTestServices.AWSEC2LocalContainerTestService::new);
     }
 
-    public static AWSTestService createEventBridgeService() {
+    public static AWSService createEventBridgeService() {
         return createService(AWSTestServices.AWSEventBridgeLocalContainerTestService::new);
     }
 
-    public static AWSTestService createIAMService() {
+    public static AWSService createIAMService() {
         return createService(AWSTestServices.AWSIAMLocalContainerTestService::new);
     }
 
-    public static AWSTestService createKMSService() {
+    public static AWSService createKMSService() {
         return createService(AWSTestServices.AWSKMSLocalContainerTestService::new);
     }
 
-    public static AWSTestService createLambdaService() {
+    public static AWSService createLambdaService() {
         return createService(AWSTestServices.AWSLambdaLocalContainerTestService::new);
     }
 
-    public static AWSTestService createSTSService() {
+    public static AWSService createSTSService() {
         return createService(AWSTestServices.AWSSTSLocalContainerTestService::new);
     }
 
-    public static AWSTestService createDynamodbService() {
+    public static AWSService createDynamodbService() {
         return createService(AWSTestServices.AWSDynamodbLocalContainerTestService::new);
     }
 
-    public static AWSTestService createSecretsManagerService() {
+    public static AWSService createSecretsManagerService() {
         return createService(AWSTestServices.AWSSecretsManagerLocalContainerTestService::new);
     }
 
-    public static AWSTestService createSingletonDynamoDBService() {
+    public static AWSService createSingletonDynamoDBService() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSDynamodbLocalContainerTestService(), "dynamoDB");
     }
 
-    public static AWSTestService createSingletonS3Service() {
+    public static AWSService createSingletonS3Service() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSS3LocalContainerTestService(), "s3");
     }
 
-    public static AWSTestService createSingletonSQSService() {
+    public static AWSService createSingletonSQSService() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSSQSLocalContainerTestService(), "sqs");
     }
 
-    public static AWSTestService createSingletonEventBridgeService() {
+    public static AWSService createSingletonEventBridgeService() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSEventBridgeLocalContainerTestService(), "eventBridge");
     }
 
-    public static AWSTestService createSingletonKinesisService() {
+    public static AWSService createSingletonKinesisService() {
         return SingletonServiceHolder.getInstance(new AWSTestServices.AWSKinesisLocalContainerTestService(), "kinesis");
     }
 
     private static class SingletonServiceHolder {
-        private static final Map<String, AWSTestService> INSTANCES_HOLDER = new ConcurrentHashMap<>();
+        private static final Map<String, AWSService> INSTANCES_HOLDER = new ConcurrentHashMap<>();
 
-        public synchronized static AWSTestService getInstance(AWSTestService service, String name) {
+        public synchronized static AWSService getInstance(AWSService service, String name) {
             if (INSTANCES_HOLDER.get(name) == null) {
-                SimpleTestServiceBuilder<AWSTestService> instance = builder();
+                SimpleTestServiceBuilder<AWSService> instance = builder();
                 instance.addLocalMapping(() -> new SingletonAWSService(service, name))
                         .addRemoteMapping(AWSTestServices.AWSRemoteTestService::new)
                         .build();

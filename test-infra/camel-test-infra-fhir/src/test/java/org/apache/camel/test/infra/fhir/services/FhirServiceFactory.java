@@ -27,24 +27,24 @@ public final class FhirServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<FhirTestService> builder() {
+    public static SimpleTestServiceBuilder<FhirService> builder() {
         return new SimpleTestServiceBuilder<>("fhir");
     }
 
-    public static FhirTestService createService() {
+    public static FhirService createService() {
         return builder()
-                .addLocalMapping(FhirLocalContainerTestService::new)
+                .addLocalMapping(FhirLocalContainerService::new)
                 .addRemoteMapping(FhirRemoteTestService::new)
                 .build();
     }
 
-    public static FhirTestService createSingletonService() {
+    public static FhirService createSingletonService() {
         return builder()
                 .addLocalMapping(() -> new FhirLocalSingletonContainerService())
                 .addRemoteMapping(FhirRemoteTestService::new)
                 .build();
     }
 
-    public static class FhirRemoteTestService extends FhirRemoteService implements FhirTestService {
+    public static class FhirRemoteTestService extends FhirRemoteInfraService implements FhirService {
     }
 }

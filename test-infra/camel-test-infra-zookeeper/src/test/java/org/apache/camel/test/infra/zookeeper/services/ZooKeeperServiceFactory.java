@@ -21,9 +21,9 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class ZooKeeperServiceFactory {
-    private static class SingletonZooKeeperService extends SingletonService<ZooKeeperTestService>
-            implements ZooKeeperTestService {
-        public SingletonZooKeeperService(ZooKeeperTestService service, String name) {
+    private static class SingletonZooKeeperService extends SingletonService<ZooKeeperService>
+            implements ZooKeeperService {
+        public SingletonZooKeeperService(ZooKeeperService service, String name) {
             super(service, name);
         }
 
@@ -37,21 +37,21 @@ public final class ZooKeeperServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<ZooKeeperTestService> builder() {
+    public static SimpleTestServiceBuilder<ZooKeeperService> builder() {
         return new SimpleTestServiceBuilder<>("zookeeper");
     }
 
-    public static ZooKeeperTestService createService() {
+    public static ZooKeeperService createService() {
         return builder()
-                .addLocalMapping(ZooKeeperLocalContainerTestService::new)
-                .addRemoteMapping(ZooKeeperRemoteTestService::new)
+                .addLocalMapping(ZooKeeperLocalContainerService::new)
+                .addRemoteMapping(ZooKeeperRemoteService::new)
                 .build();
     }
 }
 
-class ZooKeeperLocalContainerTestService extends ZooKeeperLocalContainerService
-        implements ZooKeeperTestService, ContainerTestService {
+class ZooKeeperLocalContainerService extends ZooKeeperLocalContainerInfraService
+        implements ZooKeeperService, ContainerTestService {
 }
 
-class ZooKeeperRemoteTestService extends ZooKeeperRemoteService implements ZooKeeperTestService {
+class ZooKeeperRemoteService extends ZooKeeperRemoteInfraService implements ZooKeeperService {
 }

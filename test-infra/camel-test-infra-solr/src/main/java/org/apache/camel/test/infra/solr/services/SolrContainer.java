@@ -32,7 +32,7 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
     public static final String CONTAINER_NAME = "solr";
 
     public SolrContainer() {
-        super(LocalPropertyResolver.getProperty(SolrLocalContainerService.class, SolrProperties.SOLR_CONTAINER));
+        super(LocalPropertyResolver.getProperty(SolrLocalContainerInfraService.class, SolrProperties.SOLR_CONTAINER));
 
         this.withNetworkAliases(CONTAINER_NAME)
                 .withExposedPorts(SolrProperties.DEFAULT_PORT)

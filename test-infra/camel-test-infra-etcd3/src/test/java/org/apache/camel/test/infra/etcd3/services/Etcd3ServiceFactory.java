@@ -24,20 +24,20 @@ public final class Etcd3ServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<Etcd3TestService> builder() {
+    public static SimpleTestServiceBuilder<Etcd3Service> builder() {
         return new SimpleTestServiceBuilder<>("etcd");
     }
 
-    public static Etcd3TestService createService() {
+    public static Etcd3Service createService() {
         return builder()
                 .addLocalMapping(Etcd3LocalContainerTestService::new)
                 .addRemoteMapping(Etcd3RemoteTestService::new)
                 .build();
     }
 
-    public static class Etcd3LocalContainerTestService extends Etcd3LocalContainerService implements Etcd3TestService {
+    public static class Etcd3LocalContainerTestService extends Etcd3LocalContainerInfraService implements Etcd3Service {
     }
 
-    public static class Etcd3RemoteTestService extends Etcd3RemoteService implements Etcd3TestService {
+    public static class Etcd3RemoteTestService extends Etcd3RemoteInfraService implements Etcd3Service {
     }
 }

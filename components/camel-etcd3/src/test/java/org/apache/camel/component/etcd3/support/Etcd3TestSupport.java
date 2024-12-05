@@ -22,14 +22,14 @@ import io.etcd.jetcd.watch.WatchEvent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.component.etcd3.Etcd3Component;
+import org.apache.camel.test.infra.etcd3.services.Etcd3Service;
 import org.apache.camel.test.infra.etcd3.services.Etcd3ServiceFactory;
-import org.apache.camel.test.infra.etcd3.services.Etcd3TestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class Etcd3TestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static Etcd3TestService service = Etcd3ServiceFactory.createService();
+    public static Etcd3Service service = Etcd3ServiceFactory.createService();
 
     protected static final Processor NODE_TO_VALUE_IN = exchange -> {
         WatchEvent event = exchange.getMessage().getBody(WatchEvent.class);

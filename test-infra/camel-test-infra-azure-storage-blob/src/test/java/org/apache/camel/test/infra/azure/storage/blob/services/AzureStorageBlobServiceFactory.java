@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.azure.storage.blob.services;
 
-import org.apache.camel.test.infra.azure.common.services.AzureTestService;
+import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class AzureStorageBlobServiceFactory {
@@ -25,21 +25,21 @@ public final class AzureStorageBlobServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<AzureTestService> builder() {
+    public static SimpleTestServiceBuilder<AzureService> builder() {
         return new SimpleTestServiceBuilder<>("azure");
     }
 
-    public static AzureTestService createService() {
+    public static AzureService createService() {
         return builder()
-                .addLocalMapping(AzureStorageBlobLocalContainerTestService::new)
-                .addRemoteMapping(AzureStorageBlobRemoteTestService::new)
+                .addLocalMapping(AzureStorageBlobLocalContainerService::new)
+                .addRemoteMapping(AzureStorageBlobRemoteService::new)
                 .build();
     }
 
-    static class AzureStorageBlobLocalContainerTestService extends AzureStorageBlobLocalContainerService
-            implements AzureTestService {
+    static class AzureStorageBlobLocalContainerService extends AzureStorageBlobLocalContainerInfraService
+            implements AzureService {
     }
 
-    static class AzureStorageBlobRemoteTestService extends AzureStorageBlobRemoteService implements AzureTestService {
+    static class AzureStorageBlobRemoteService extends AzureStorageBlobRemoteInfraService implements AzureService {
     }
 }

@@ -19,8 +19,8 @@ package org.apache.camel.component.aws2.sns.integration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.sns.Sns2Component;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class Aws2SNSBase extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSTestService service = AWSServiceFactory.createSNSService();
+    public static AWSService service = AWSServiceFactory.createSNSService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

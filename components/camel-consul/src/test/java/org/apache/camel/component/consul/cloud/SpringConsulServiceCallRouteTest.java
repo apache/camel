@@ -27,8 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
-import org.apache.camel.test.infra.consul.services.ConsulTestService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ import org.kiwiproject.consul.model.agent.Registration;
 
 public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
     @RegisterExtension
-    public static ConsulTestService service = ConsulServiceFactory.createService();
+    public static ConsulService service = ConsulServiceFactory.createService();
 
     private AgentClient client;
     private List<Registration> registrations;

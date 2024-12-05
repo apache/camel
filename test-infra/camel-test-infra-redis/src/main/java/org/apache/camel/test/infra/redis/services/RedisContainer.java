@@ -27,7 +27,7 @@ public class RedisContainer extends GenericContainer<RedisContainer> {
     public static final String CONTAINER_NAME = "redis";
 
     public RedisContainer() {
-        super(LocalPropertyResolver.getProperty(RedisLocalContainerService.class, RedisProperties.REDIS_CONTAINER));
+        super(LocalPropertyResolver.getProperty(RedisLocalContainerInfraService.class, RedisProperties.REDIS_CONTAINER));
 
         this.withNetworkAliases(CONTAINER_NAME)
                 .withExposedPorts(RedisProperties.DEFAULT_PORT)

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.aws2.kinesis.integration;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
@@ -25,8 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.aws.common.AWSCommon;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.clients.KinesisUtils;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,18 +47,13 @@ import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KinesisProducerIT extends CamelTestSupport {
     @RegisterExtension
-    public static AWSTestService awsService = AWSServiceFactory.createSingletonKinesisService();
+    public static AWSService awsService = AWSServiceFactory.createSingletonKinesisService();
 
     private static final Logger LOG = LoggerFactory.getLogger(KinesisProducerIT.class);
 

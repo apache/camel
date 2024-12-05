@@ -25,7 +25,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class RocketMQNameserverContainer extends GenericContainer<RocketMQNameserverContainer> {
     public RocketMQNameserverContainer(Network network) {
-        super(RocketMQContainerService.ROCKETMQ_IMAGE);
+        super(RocketMQContainerInfraService.ROCKETMQ_IMAGE);
 
         withNetwork(network);
         withNetworkAliases("nameserver");

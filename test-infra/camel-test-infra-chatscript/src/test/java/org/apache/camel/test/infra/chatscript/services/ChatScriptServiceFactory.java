@@ -24,21 +24,21 @@ public final class ChatScriptServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<ChatScriptTestService> builder() {
+    public static SimpleTestServiceBuilder<ChatScriptService> builder() {
         return new SimpleTestServiceBuilder<>("chatscript");
     }
 
-    public static ChatScriptTestService createService() {
+    public static ChatScriptService createService() {
         return builder()
                 .addLocalMapping(ChatScriptLocalContainerTestService::new)
                 .addRemoteMapping(ChatScriptRemoteTestService::new)
                 .build();
     }
 
-    public static class ChatScriptLocalContainerTestService extends ChatScriptLocalContainerService
-            implements ChatScriptTestService {
+    public static class ChatScriptLocalContainerTestService extends ChatScriptLocalContainerInfraService
+            implements ChatScriptService {
     }
 
-    public static class ChatScriptRemoteTestService extends ChatScriptRemoteService implements ChatScriptTestService {
+    public static class ChatScriptRemoteTestService extends ChatScriptRemoteInfraService implements ChatScriptService {
     }
 }

@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
+import java.util.Locale;
+import java.util.function.Supplier;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.s3.AWS2S3Component;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
-import org.apache.camel.test.infra.aws2.services.AWSTestService;
 import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -28,13 +31,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
 
-import java.util.Locale;
-import java.util.function.Supplier;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2S3Base extends CamelTestSupport {
     @RegisterExtension
-    public static AWSTestService service = AWSServiceFactory.createSingletonS3Service();
+    public static AWSService service = AWSServiceFactory.createSingletonS3Service();
 
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();

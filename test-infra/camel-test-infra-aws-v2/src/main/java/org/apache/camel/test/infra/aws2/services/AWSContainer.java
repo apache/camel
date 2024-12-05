@@ -38,7 +38,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
  */
 public class AWSContainer extends GenericContainer<AWSContainer> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerInfraService.class);
     private static final int SERVICE_PORT = 4566;
 
     public AWSContainer() {

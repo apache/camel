@@ -73,4 +73,7 @@ public final class RocketMQServiceFactory {
             INSTANCE = instance.build();
         }
     }
+
+    public static class RocketMQContainerService extends RocketMQContainerInfraService implements RocketMQService {
+    }
 }

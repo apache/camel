@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.couchdb.integration;
 
+import org.apache.camel.test.infra.couchdb.services.CouchDbService;
 import org.apache.camel.test.infra.couchdb.services.CouchDbServiceFactory;
-import org.apache.camel.test.infra.couchdb.services.CouchDbTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CouchDbTestSupport extends CamelTestSupport {
     @SuppressWarnings("unused")
     @RegisterExtension
-    static CouchDbTestService service = CouchDbServiceFactory.createSingletonService();
+    static CouchDbService service = CouchDbServiceFactory.createSingletonService();
 
 }

@@ -24,8 +24,8 @@ import java.util.UUID;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulHealthActions;
+import org.apache.camel.test.infra.consul.services.ConsulService;
 import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
-import org.apache.camel.test.infra.consul.services.ConsulTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class ConsulHealthIT extends CamelTestSupport {
      NOTE: this one is not registered as extension because it requires a different lifecycle. It
      needs to be started much earlier than usual, so in this test we take care of handling it.
      */
-    private ConsulTestService consulService = ConsulServiceFactory.createService();
+    private ConsulService consulService = ConsulServiceFactory.createService();
 
     private AgentClient client;
     private List<Registration> registrations;

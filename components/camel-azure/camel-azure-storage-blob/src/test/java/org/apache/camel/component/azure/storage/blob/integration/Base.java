@@ -21,7 +21,7 @@ import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
-import org.apache.camel.test.infra.azure.common.services.AzureTestService;
+import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.azure.storage.blob.clients.AzureStorageBlobClientUtils;
 import org.apache.camel.test.infra.azure.storage.blob.services.AzureStorageBlobServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -36,7 +36,7 @@ import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARE
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Base extends CamelTestSupport {
     @RegisterExtension
-    public static AzureTestService service;
+    public static AzureService service;
 
     protected BlobServiceClient serviceClient;
     protected String containerName;

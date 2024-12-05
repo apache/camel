@@ -18,8 +18,8 @@ package org.apache.camel.test.infra.ftp.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.ftp.services.embedded.EmbeddedConfiguration;
-import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedTestService;
-import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedTestService;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedService;
 
 public final class FtpServiceFactory {
 
@@ -27,18 +27,18 @@ public final class FtpServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<FtpEmbeddedTestService> embeddedBuilder() {
+    public static SimpleTestServiceBuilder<FtpEmbeddedService> embeddedBuilder() {
         return new SimpleTestServiceBuilder<>("ftp");
     }
 
-    public static FtpEmbeddedTestService createEmbeddedService() {
+    public static FtpEmbeddedService createEmbeddedService() {
         return embeddedBuilder()
-                .addLocalMapping(FtpEmbeddedTestService::new)
+                .addLocalMapping(FtpEmbeddedService::new)
                 .build();
     }
 
-    public static FtpsEmbeddedTestService createSecureEmbeddedService(
+    public static FtpsEmbeddedService createSecureEmbeddedService(
             EmbeddedConfiguration.SecurityConfiguration securityConfiguration) {
-        return new FtpsEmbeddedTestService(securityConfiguration);
+        return new FtpsEmbeddedService(securityConfiguration);
     }
 }

@@ -24,8 +24,8 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.es.ElasticsearchComponent;
+import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchService;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchServiceFactory;
-import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchTestService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestNameExtension;
 import org.apache.http.HttpHost;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class ElasticsearchTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    protected static ElasticSearchTestService service = ElasticSearchServiceFactory.createSingletonService();
+    protected static ElasticSearchService service = ElasticSearchServiceFactory.createSingletonService();
 
     @RegisterExtension
     @Order(10)

@@ -79,26 +79,6 @@
             <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-       </dependency>
-       <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-hazelcast</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-       </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-hazelcast</artifactId>
@@ -106,7 +86,6 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
 
     <profiles>

@@ -21,7 +21,7 @@ import com.azure.storage.queue.QueueServiceClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
-import org.apache.camel.test.infra.azure.common.services.AzureTestService;
+import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.azure.storage.queue.clients.AzureStorageClientUtils;
 import org.apache.camel.test.infra.azure.storage.queue.services.AzureStorageQueueServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StorageQueueBase extends CamelTestSupport {
     @RegisterExtension
-    public static AzureTestService service;
+    public static AzureService service;
 
     protected QueueServiceClient serviceClient;
     protected String queueName;

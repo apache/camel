@@ -20,8 +20,8 @@ import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CouchDbServiceFactory {
-    static class SingletonCouchDbService extends SingletonService<CouchDbTestService> implements CouchDbTestService {
-        public SingletonCouchDbService(CouchDbTestService service, String name) {
+    static class SingletonCouchDbService extends SingletonService<CouchDbService> implements CouchDbService {
+        public SingletonCouchDbService(CouchDbService service, String name) {
             super(service, name);
         }
 
@@ -45,25 +45,25 @@ public final class CouchDbServiceFactory {
 
     }
 
-    public static SimpleTestServiceBuilder<CouchDbTestService> builder() {
+    public static SimpleTestServiceBuilder<CouchDbService> builder() {
         return new SimpleTestServiceBuilder<>("consul");
     }
 
-    public static CouchDbTestService createService() {
+    public static CouchDbService createService() {
         return builder()
                 .addLocalMapping(CouchDbLocalContainerTestService::new)
                 .addRemoteMapping(CouchDbRemoteTestService::new)
                 .build();
     }
 
-    public static CouchDbTestService createSingletonService() {
+    public static CouchDbService createSingletonService() {
         return SingletonServiceHolder.INSTANCE;
     }
 
     private static class SingletonServiceHolder {
-        static final CouchDbTestService INSTANCE;
+        static final CouchDbService INSTANCE;
         static {
-            SimpleTestServiceBuilder<CouchDbTestService> instance = builder();
+            SimpleTestServiceBuilder<CouchDbService> instance = builder();
 
             instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerTestService(), "couchdb"))
                     .addRemoteMapping(CouchDbRemoteTestService::new);
@@ -72,9 +72,9 @@ public final class CouchDbServiceFactory {
         }
     }
 
-    public static class CouchDbLocalContainerTestService extends CouchDbLocalContainerService implements CouchDbTestService {
+    public static class CouchDbLocalContainerTestService extends CouchDbLocalContainerInfraService implements CouchDbService {
     }
 
-    public static class CouchDbRemoteTestService extends CouchDbRemoteService implements CouchDbTestService {
+    public static class CouchDbRemoteTestService extends CouchDbRemoteInfraService implements CouchDbService {
     }
 }
