@@ -92,7 +92,7 @@
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camunda-version>7.22.0</camunda-version>
         <camel-k-version>2.5.0</camel-k-version>
-        <cassandra-driver-version>4.17.0</cassandra-driver-version>
+        <cassandra-driver-version>4.18.1</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
         <chicocy-version>0.0.12</chicocy-version>
@@ -271,6 +271,7 @@
         <jboss-transaction-spi-version>7.6.1.Final</jboss-transaction-spi-version>
         <jboss-xnio-version>3.8.14.Final</jboss-xnio-version>
         <jcache-version>1.1.1</jcache-version>
+        <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
         <jetcd-version>0.8.4</jetcd-version>
