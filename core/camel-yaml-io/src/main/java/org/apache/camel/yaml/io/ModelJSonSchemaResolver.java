@@ -19,7 +19,10 @@ package org.apache.camel.yaml.io;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.catalog.JSonSchemaResolver;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -29,44 +32,94 @@ import org.apache.camel.util.ObjectHelper;
  */
 class ModelJSonSchemaResolver implements JSonSchemaResolver {
 
+    private CatalogCamelContext camelContext;
+    private ClassLoader classLoader;
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = (CatalogCamelContext) camelContext;
+    }
+
     @Override
     public void setClassLoader(ClassLoader classLoader) {
-        // not in use
+        this.classLoader = classLoader;
     }
 
     @Override
     public String getComponentJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        if (camelContext != null) {
+            try {
+                return camelContext.getComponentParameterJsonSchema(name);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     @Override
     public String getDataFormatJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        if (camelContext != null) {
+            try {
+                return camelContext.getDataFormatParameterJsonSchema(name);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     @Override
     public String getLanguageJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        if (camelContext != null) {
+            try {
+                return camelContext.getLanguageParameterJsonSchema(name);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     @Override
     public String getTransformerJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        if (camelContext != null) {
+            try {
+                return camelContext.getTransformerParameterJsonSchema(name);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     @Override
     public String getDevConsoleJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        if (camelContext != null) {
+            try {
+                return camelContext.getDevConsoleParameterJsonSchema(name);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     @Override
     public String getOtherJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        // not supported
+        return null;
     }
 
     @Override
     public String getPojoBeanJSonSchema(String name) {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        if (camelContext != null) {
+            try {
+                return camelContext.getPojoBeanParameterJsonSchema(name);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     @Override
@@ -77,9 +130,9 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
                     "transformer/", "validator/" };
             for (String sub : subPackages) {
                 String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + name + ".json";
-                String inputStream = doLoadResource(path);
-                if (inputStream != null) {
-                    return inputStream;
+                String data = doLoadResource(path);
+                if (data != null) {
+                    return data;
                 }
             }
         } catch (Exception e) {
@@ -90,16 +143,34 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getMainJsonSchema() {
-        throw new UnsupportedOperationException("Only getModelJSonSchema is in use");
+        try {
+            String path = "META-INF/camel-main-configuration-metadata.json";
+            return doLoadResource(path);
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
-    private static String doLoadResource(String path) throws IOException {
-        InputStream inputStream = ObjectHelper.loadResourceAsStream(path, Thread.currentThread().getContextClassLoader());
-        if (inputStream != null) {
+    private String doLoadResource(String path) throws IOException {
+        InputStream is = null;
+        if (classLoader != null) {
+            is = classLoader.getResourceAsStream(path);
+        }
+        if (is == null && camelContext != null) {
+            ClassResolver resolver = camelContext.getClassResolver();
+            is = resolver.loadResourceAsStream(path);
+        }
+        if (is == null) {
+            is = ObjectHelper.loadResourceAsStream(path, Thread.currentThread().getContextClassLoader());
+        }
+        if (is != null) {
             try {
-                return IOHelper.loadText(inputStream);
+                return IOHelper.loadText(is);
+            } catch (IOException e) {
+                // ignore
             } finally {
-                IOHelper.close(inputStream);
+                IOHelper.close(is);
             }
         }
         return null;
