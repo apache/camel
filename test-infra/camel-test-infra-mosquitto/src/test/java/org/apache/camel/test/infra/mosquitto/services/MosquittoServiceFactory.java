@@ -34,6 +34,4 @@ public final class MosquittoServiceFactory {
                 .build();
     }
 
-    public static class MosquittoRemoteService extends MosquittoRemoteInfraService implements MosquittoService {
-    }
 }

@@ -14,26 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.solr.services;
+package org.apache.camel.test.infra.nats.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
-
-public final class SolrServiceFactory {
-    private SolrServiceFactory() {
-
-    }
-
-    public static SimpleTestServiceBuilder<SolrService> builder() {
-        return new SimpleTestServiceBuilder<>(SolrContainer.CONTAINER_NAME);
-    }
-
-    public static SolrService createService() {
-        return builder()
-                .addLocalMapping(SolrLocalContainerService::new)
-                .addRemoteMapping(SolrRemoteService::new)
-                .build();
-    }
-
-    public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {
-    }
+public class NatsLocalContainerService extends NatsLocalContainerInfraService implements NatsService {
 }

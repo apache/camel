@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.solr.services;
+package org.apache.camel.test.infra.mosquitto.services;
 
-public class SolrLocalContainerCloudInfraService extends SolrLocalContainerInfraService {
+public class MosquittoRemoteService extends MosquittoRemoteInfraService implements MosquittoService {
+    public MosquittoRemoteService() {
+    }
 
-    @Override
-    public boolean isCloudMode() {
-        return true;
+    public MosquittoRemoteService(int port) {
+        super(port);
     }
 }

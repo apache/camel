@@ -20,15 +20,16 @@ import org.apache.camel.test.infra.nats.common.NatsProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class NatsLocalContainerAuthTokenInfraService extends NatsLocalContainerInfraService {
-    public static final String TOKEN = "!admin23456";
+public class NatsLocalContainerAuthService extends NatsLocalContainerService implements NatsService {
+    private static final String USERNAME = "admin";
+    private static final String PASSWORD = "password";
 
     protected GenericContainer initContainer(String imageName, String containerName) {
         GenericContainer container = super.initContainer(imageName, containerName);
 
         container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
-                .withCommand("-DV", "-auth", TOKEN);
+                .withCommand("-DV", "--user", USERNAME, "--pass", PASSWORD);
 
         return container;
     }
@@ -37,11 +38,12 @@ public class NatsLocalContainerAuthTokenInfraService extends NatsLocalContainerI
     public void registerProperties() {
         super.registerProperties();
 
-        System.setProperty(NatsProperties.ACCESS_TOKEN, TOKEN);
+        System.setProperty(NatsProperties.ACCESS_USERNAME, USERNAME);
+        System.setProperty(NatsProperties.ACCESS_PASSWORD, PASSWORD);
     }
 
     @Override
     public String getServiceAddress() {
-        return String.format("%s@%s:%d", TOKEN, getHost(), getPort());
+        return String.format("%s:%s@%s:%d", USERNAME, PASSWORD, getHost(), getPort());
     }
 }

@@ -20,7 +20,7 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class NatsLocalContainerTLSAuthInfraService extends NatsLocalContainerInfraService {
+public class NatsLocalContainerTLSAuthService extends NatsLocalContainerService implements NatsService {
     /*Certificates used for tests with TLS authentication come from:
      *https://github.com/nats-io/jnats/tree/master/src/test/resources */
     protected GenericContainer initContainer(String imageName, String containerName) {

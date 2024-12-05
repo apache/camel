@@ -16,24 +16,5 @@
  */
 package org.apache.camel.test.infra.solr.services;
 
-import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
-
-public final class SolrServiceFactory {
-    private SolrServiceFactory() {
-
-    }
-
-    public static SimpleTestServiceBuilder<SolrService> builder() {
-        return new SimpleTestServiceBuilder<>(SolrContainer.CONTAINER_NAME);
-    }
-
-    public static SolrService createService() {
-        return builder()
-                .addLocalMapping(SolrLocalContainerService::new)
-                .addRemoteMapping(SolrRemoteService::new)
-                .build();
-    }
-
-    public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {
-    }
+public class SolrLocalContainerService extends SolrLocalContainerInfraService implements SolrService {
 }

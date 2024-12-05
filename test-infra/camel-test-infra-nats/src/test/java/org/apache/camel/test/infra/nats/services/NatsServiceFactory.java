@@ -33,9 +33,6 @@ public final class NatsServiceFactory {
                 .build();
     }
 
-    public static class NatsLocalContainerService extends NatsLocalContainerInfraService implements NatsService {
-    }
-
     public static class NatsRemoteService extends NatsRemoteInfraService implements NatsService {
     }
 }
