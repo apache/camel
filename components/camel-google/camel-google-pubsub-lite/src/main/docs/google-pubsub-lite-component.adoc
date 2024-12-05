@@ -1,4 +1,4 @@
-= Google PubSub Lite Component
+= Google PubSub Lite Component (deprecated)
 :doctitle: Google PubSub Lite
 :shortname: google-pubsub-lite
 :artifactid: camel-google-pubsub-lite
