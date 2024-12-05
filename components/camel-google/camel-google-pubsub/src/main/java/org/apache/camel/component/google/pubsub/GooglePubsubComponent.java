@@ -64,38 +64,27 @@ import org.threeten.bp.Duration;
 public class GooglePubsubComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubComponent.class);
 
-    @Metadata(
-              label = "common",
+    @Metadata(label = "common",
               description = "Endpoint to use with local Pub/Sub emulator.")
     private String endpoint;
-
     @Metadata(label = "common",
               description = "Use Credentials when interacting with PubSub service (no authentication is required when using emulator).",
               defaultValue = "true")
     private boolean authenticate = true;
-
     @Metadata(label = "common",
               description = "The Service account key that can be used as credentials for the PubSub publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
-
-    @Metadata(
-              label = "producer",
+    @Metadata(label = "producer",
               description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
     private int publisherCacheSize = 100;
-
-    @Metadata(
-              label = "producer",
+    @Metadata(label = "producer",
               description = "How many milliseconds should each producer stay alive in the cache.")
     private int publisherCacheTimeout = 180000;
-
-    @Metadata(
-              label = "advanced",
+    @Metadata(label = "advanced",
               description = "How many milliseconds should a producer be allowed to terminate.")
     private int publisherTerminationTimeout = 60000;
-
-    @Metadata(
-              label = "consumer",
+    @Metadata(label = "consumer",
               description = "Comma-separated list of additional retryable error codes for synchronous pull. By default the PubSub client library retries ABORTED, UNAVAILABLE, UNKNOWN")
     private String synchronousPullRetryableCodes;
 
@@ -173,9 +162,12 @@ public class GooglePubsubComponent extends DefaultComponent {
         if (googlePubsubEndpoint.isMessageOrderingEnabled()) {
             builder.setEnableMessageOrdering(true);
             if (StringHelper.trimToNull(googlePubsubEndpoint.getPubsubEndpoint()) == null) {
-                LOG.warn("In conjunction with enabeling message ordering the pubsubEndpoint should be set. "
+                LOG.warn("In conjunction with enabling message ordering the pubsubEndpoint should be set. "
                          + "Message ordering is only guaranteed when send to the same region.");
             }
+        }
+        if (googlePubsubEndpoint.getRetry() != null) {
+            builder.setRetrySettings(googlePubsubEndpoint.getRetry());
         }
         return builder.build();
     }

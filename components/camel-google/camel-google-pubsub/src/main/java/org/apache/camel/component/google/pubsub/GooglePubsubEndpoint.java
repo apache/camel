@@ -19,6 +19,7 @@ package org.apache.camel.component.google.pubsub;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import com.google.api.gax.retrying.RetrySettings;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -103,6 +104,10 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
               label = "producer,advanced")
     @Metadata(autowired = true)
     private GooglePubsubSerializer serializer;
+
+    @UriParam(description = "A custom RetrySettings to control how the publisher handles retry-able failures",
+              label = "producer,advanced")
+    private RetrySettings retry;
 
     public GooglePubsubEndpoint(String uri, Component component) {
         super(uri, component);
@@ -250,6 +255,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
 
     public void setMessageOrderingEnabled(boolean messageOrderingEnabled) {
         this.messageOrderingEnabled = messageOrderingEnabled;
+    }
+
+    public RetrySettings getRetry() {
+        return retry;
+    }
+
+    public void setRetry(RetrySettings retry) {
+        this.retry = retry;
     }
 
     public String getPubsubEndpoint() {

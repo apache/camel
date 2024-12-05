@@ -572,6 +572,38 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom RetrySettings to control how the publisher handles
+         * retry-able failures.
+         * 
+         * The option is a:
+         * <code>com.google.api.gax.retrying.RetrySettings</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder retry(com.google.api.gax.retrying.RetrySettings retry) {
+            doSetProperty("retry", retry);
+            return this;
+        }
+        /**
+         * A custom RetrySettings to control how the publisher handles
+         * retry-able failures.
+         * 
+         * The option will be converted to a
+         * <code>com.google.api.gax.retrying.RetrySettings</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder retry(String retry) {
+            doSetProperty("retry", retry);
+            return this;
+        }
+        /**
          * A custom GooglePubsubSerializer to use for serializing message
          * payloads in the producer.
          * 
