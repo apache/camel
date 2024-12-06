@@ -33,6 +33,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
+import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.dataformat.CsvDataFormat;
@@ -316,6 +317,31 @@ public class ModelWriterUriAsParametersTest {
 
         String out = sw.toString();
         String expected = stripLineComments(Paths.get("src/test/resources/route9.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testConstantExpression() throws Exception {
+        StringWriter sw = new StringWriter();
+        ModelWriter writer = new ModelWriter(sw);
+        writer.setUriAsParameters(true);
+
+        RouteDefinition route = new RouteDefinition();
+        route.setId("myRoute11");
+        route.setInput(new FromDefinition("timer:yaml?period=1234&includeMetadata=true"));
+        SetBodyDefinition sb = new SetBodyDefinition();
+        sb.setExpression(new ConstantExpression("Hello from yaml"));
+        route.addOutput(sb);
+        route.addOutput(new LogDefinition("${body}"));
+        SetHeaderDefinition sh = new SetHeaderDefinition();
+        sh.setName("Exchange.HTTP_RESPONSE_CODE");
+        sh.setExpression(new ConstantExpression("404"));
+        route.addOutput(sh);
+
+        writer.writeRouteDefinition(route);
+
+        String out = sw.toString();
+        String expected = stripLineComments(Paths.get("src/test/resources/route11.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
