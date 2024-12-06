@@ -462,6 +462,8 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getGlobalOptions().put(ProcessorReifier.DISABLE_BEAN_OR_PROCESS_PROCESSORS, "true");
             // stub everything
             this.stubPattern = "*";
+            // turn off inlining routes
+            configure().rest().withInlineRoutes(false);
             blueprintXmlBeansHandler.setTransform(true);
         }
         if (silent) {

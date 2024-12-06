@@ -316,8 +316,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // add advices
         if (definition.getRestBindingDefinition() != null) {
             try {
-                internal.addAdvice(
-                        new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
+                // when disabling bean or processor we should also disable rest-dsl binding advice
+                boolean disabled
+                        = "true".equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
+                if (!disabled) {
+                    internal.addAdvice(
+                            new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
+                }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
