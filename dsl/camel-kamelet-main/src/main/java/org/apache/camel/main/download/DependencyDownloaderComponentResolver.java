@@ -37,17 +37,23 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     private static final String ACCEPTED_STUB_NAMES
             = "stub,bean,class,direct,kamelet,log,platform-http,rest,seda,vertx-http";
 
+    private static final String ACCEPTED_TRANSFORM_NAMES
+            = "stub,direct,kamelet,log,seda";
+
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final CamelContext camelContext;
     private final DependencyDownloader downloader;
     private final String stubPattern;
     private final boolean silent;
+    private final boolean transform;
 
-    public DependencyDownloaderComponentResolver(CamelContext camelContext, String stubPattern, boolean silent) {
+    public DependencyDownloaderComponentResolver(CamelContext camelContext, String stubPattern, boolean silent,
+                                                 boolean transform) {
         this.camelContext = camelContext;
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.stubPattern = stubPattern;
         this.silent = silent;
+        this.transform = transform;
     }
 
     @Override
@@ -64,7 +70,7 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
         } else {
             answer = super.resolveComponent("stub", context);
         }
-        if ((silent || stubPattern != null) && answer instanceof StubComponent) {
+        if ((silent || transform || stubPattern != null) && answer instanceof StubComponent) {
             StubComponent sc = (StubComponent) answer;
             // enable shadow mode on stub component
             sc.setShadow(true);
@@ -112,6 +118,9 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     }
 
     private boolean accept(String name) {
+        if (transform) {
+            return ACCEPTED_TRANSFORM_NAMES.contains(name);
+        }
         if (stubPattern == null) {
             return true;
         }

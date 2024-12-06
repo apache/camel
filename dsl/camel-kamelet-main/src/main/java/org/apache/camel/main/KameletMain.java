@@ -455,6 +455,20 @@ public class KameletMain extends MainCommandLineSupport {
         // in case we use saga
         SagaDownloader.registerDownloadReifiers(this);
 
+        // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
+        boolean transform = "true".equals(getInitialProperties().get(getInstanceType() + ".transform"));
+        if (transform) {
+            // we just want to transform, so disable custom bean or processors as they may use code that does not work
+            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_BEAN_OR_PROCESS_PROCESSORS, "true");
+            // stub everything
+            this.stubPattern = "*";
+            blueprintXmlBeansHandler.setTransform(true);
+        }
+        if (silent) {
+            // silent should not include http server
+            configure().httpServer().withEnabled(false);
+        }
+
         if (silent || "*".equals(stubPattern)) {
             // turn off auto-wiring when running in silent mode (or stub = *)
             mainConfigurationProperties.setAutowiredEnabled(false);
@@ -544,17 +558,6 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getPropertiesComponent().setIgnoreMissingProperty(true);
             answer.getPropertiesComponent().setIgnoreMissingLocation(true);
         }
-        // if transforming DSL then disable processors as we just want to work on the model (not runtime processors)
-        boolean transform = "true".equals(getInitialProperties().get(getInstanceType() + ".transform"));
-        if (transform) {
-            // we just want to transform, so disable custom bean or processors as they may use code that does not work
-            answer.getGlobalOptions().put(ProcessorReifier.DISABLE_BEAN_OR_PROCESS_PROCESSORS, "true");
-            blueprintXmlBeansHandler.setTransform(true);
-        }
-        if (silent) {
-            // silent should not include http server
-            configure().httpServer().withEnabled(false);
-        }
 
         // need to setup jfr early
         Object jfr = getInitialProperties().get(getInstanceType() + ".jfr");
@@ -619,7 +622,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().addContextPlugin(PeriodTaskResolver.class, ptr);
 
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
-                    new DependencyDownloaderComponentResolver(answer, stubPattern, silent));
+                    new DependencyDownloaderComponentResolver(answer, stubPattern, silent, transform));
             answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
                     new DependencyDownloaderDataFormatResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,

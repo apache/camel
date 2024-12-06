@@ -65,10 +65,27 @@ class TransformTest {
         Assertions.assertEquals(expected, data);
     }
 
+    @Test
+    public void shouldTransformBlueprintToYaml() throws Exception {
+        String name = workingDir + "/blueprint.yaml";
+        File out = new File(name);
+
+        String[] args = new String[] { "--output=" + out.getPath() };
+        TransformRoute command = createCommand(new String[] { "src/test/resources/blueprint.xml" }, args);
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Assertions.assertTrue(out.exists());
+        String data = IOHelper.loadText(new FileInputStream(out));
+        String expected
+                = IOHelper.stripLineComments(Paths.get("src/test/resources/blueprint-out.yaml"), "#", true);
+        Assertions.assertEquals(expected, data);
+    }
+
     private TransformRoute createCommand(String[] files, String... args) {
         TransformRoute command = new TransformRoute(new CamelJBangMain());
 
-        CommandLine.populateCommand(command, "--format=yaml", "--uri-as-parameters");
+        CommandLine.populateCommand(command, "--format=yaml");
         if (args != null) {
             CommandLine.populateCommand(command, args);
         }
