@@ -280,7 +280,7 @@
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
-        <jgit-version>7.0.0.202409031743-r</jgit-version>
+        <jgit-version>7.1.0.202411261347-r</jgit-version>
         <jgroups-version>5.4.0.Final</jgroups-version>
         <jgroups-raft-version>1.0.14.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
