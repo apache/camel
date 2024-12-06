@@ -436,7 +436,7 @@
         <redisson-version>3.40.0</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.5.0</rest-assured-version>
-        <roaster-version>2.29.0.Final</roaster-version>
+        <roaster-version>2.30.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.3.1</rocketmq-version>
         <rome-version>2.1.0</rome-version>
