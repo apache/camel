@@ -317,7 +317,7 @@
         <jython-standalone-version>2.7.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <kafka-version>3.8.0</kafka-version>
-        <knative-client-version>6.13.4</knative-client-version>
+        <knative-client-version>7.0.0</knative-client-version>
         <kubernetes-client-version>6.13.4</kubernetes-client-version>
         <kudu-version>1.17.0</kudu-version>
         <langchain4j-version>0.36.2</langchain4j-version>
