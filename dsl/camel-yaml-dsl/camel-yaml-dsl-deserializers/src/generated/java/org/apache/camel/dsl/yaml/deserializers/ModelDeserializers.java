@@ -9528,6 +9528,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
+                    @YamlProperty(name = "logLanguage", type = "string", description = "To configure the language to use. By default, the simple language is used. However, Camel also supports other languages such as groovy.", displayName = "Log Language"),
                     @YamlProperty(name = "logName", type = "string", description = "Sets the name of the logger. The name is default the routeId or the source:line if source location is enabled. You can also specify the name using tokens: ${class} - the logger class name (org.apache.camel.processor.LogProcessor) ${contextId} - the camel context id ${routeId} - the route id ${groupId} - the route group id ${nodeId} - the node id ${nodePrefixId} - the node prefix id ${source} - the source:line (source location must be enabled) ${source.name} - the source filename (source location must be enabled) ${source.line} - the source line number (source location must be enabled) For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}", displayName = "Log Name"),
                     @YamlProperty(name = "logger", type = "string", description = "To refer to a custom logger instance to lookup from the registry.", displayName = "Logger"),
                     @YamlProperty(name = "loggingLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "INFO", description = "Sets the logging level. The default value is INFO", displayName = "Logging Level"),
@@ -9563,6 +9564,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inheritErrorHandler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    break;
+                }
+                case "logLanguage": {
+                    String val = asText(node);
+                    target.setLogLanguage(val);
                     break;
                 }
                 case "logName": {

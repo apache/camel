@@ -2632,6 +2632,11 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "logLanguage" : {
+              "type" : "string",
+              "title" : "Log Language",
+              "description" : "To configure the language to use. By default, the simple language is used. However, Camel also supports other languages such as groovy."
+            },
             "logName" : {
               "type" : "string",
               "title" : "Log Name",

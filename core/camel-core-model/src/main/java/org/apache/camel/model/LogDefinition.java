@@ -49,6 +49,9 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.slf4j.Logger")
     private String logger;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String logLanguage;
 
     public LogDefinition() {
     }
@@ -170,5 +173,17 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     public String getLogger() {
         return logger;
+    }
+
+    public String getLogLanguage() {
+        return logLanguage;
+    }
+
+    /**
+     * To configure the language to use. By default, the simple language is used. However, Camel also
+     * supports other languages such as groovy.
+     */
+    public void setLogLanguage(String logLanguage) {
+        this.logLanguage = logLanguage;
     }
 }

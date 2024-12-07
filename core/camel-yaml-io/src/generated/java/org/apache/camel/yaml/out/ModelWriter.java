@@ -1128,6 +1128,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("logName", def.getLogName(), null);
+        doWriteAttribute("logLanguage", def.getLogLanguage(), null);
         doWriteAttribute("marker", def.getMarker(), null);
         doWriteAttribute("logger", def.getLogger(), null);
         doWriteAttribute("message", def.getMessage(), null);

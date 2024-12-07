@@ -7252,6 +7252,16 @@ To refer to a custom logger instance to lookup from the registry.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="logLanguage" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To configure the language to use. By default, the simple language is used. However, Camel also supports other languages
+such as groovy.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

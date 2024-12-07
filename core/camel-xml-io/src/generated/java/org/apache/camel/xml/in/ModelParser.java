@@ -485,6 +485,7 @@ public class ModelParser extends BaseParser {
     }
     protected LogDefinition doParseLogDefinition() throws IOException, XmlPullParserException {
         return doParse(new LogDefinition(), (def, key, val) -> switch (key) {
+                case "logLanguage": def.setLogLanguage(val); yield true;
                 case "logName": def.setLogName(val); yield true;
                 case "logger": def.setLogger(val); yield true;
                 case "loggingLevel": def.setLoggingLevel(val); yield true;
