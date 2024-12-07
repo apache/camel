@@ -57,4 +57,10 @@ public final class PulsarServiceFactory {
                 .addLocalMapping(() -> new SingletonPulsarService(new PulsarLocalContainerService(), "pulsar"))
                 .build();
     }
+
+    public static class PulsarLocalContainerService extends PulsarLocalContainerInfraService implements PulsarService {
+    }
+
+    public static class PulsarRemoteService extends PulsarRemoteInfraService implements PulsarService {
+    }
 }

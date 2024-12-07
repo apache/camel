@@ -62,4 +62,10 @@ public final class MilvusServiceFactory {
                 .addLocalMapping(() -> new SingletonMilvusService(new MilvusLocalContainerService(), "milvus"))
                 .build();
     }
+
+    public static class MilvusLocalContainerService extends MilvusLocalContainerInfraService implements MilvusService {
+    }
+
+    public static class MilvusRemoteService extends MilvusRemoteInfraService implements MilvusService {
+    }
 }

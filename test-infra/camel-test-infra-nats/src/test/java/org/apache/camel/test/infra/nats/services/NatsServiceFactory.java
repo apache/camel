@@ -32,4 +32,7 @@ public final class NatsServiceFactory {
                 .addRemoteMapping(NatsRemoteService::new)
                 .build();
     }
+
+    public static class NatsRemoteService extends NatsRemoteInfraService implements NatsService {
+    }
 }

@@ -27,10 +27,26 @@ public final class CassandraServiceFactory {
         return new SimpleTestServiceBuilder<>("cassandra");
     }
 
+    public static CassandraService createLocalService(String initScript) {
+        CassandraLocalContainerService service = new CassandraLocalContainerService();
+        service.getContainer()
+                .withInitScript(initScript)
+                .withNetworkAliases("cassandra");
+
+        return service;
+    }
+
     public static CassandraService createService() {
         return builder()
                 .addLocalMapping(CassandraLocalContainerService::new)
                 .addRemoteMapping(RemoteCassandraService::new)
                 .build();
+    }
+
+    public static class CassandraLocalContainerService extends CassandraLocalContainerInfraService
+            implements CassandraService {
+    }
+
+    public static class RemoteCassandraService extends RemoteCassandraInfraService implements CassandraService {
     }
 }

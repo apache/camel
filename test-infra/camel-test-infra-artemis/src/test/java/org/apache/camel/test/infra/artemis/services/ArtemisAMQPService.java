@@ -16,91 +16,22 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
-import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
-import org.apache.activemq.artemis.core.security.Role;
-import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
-import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
-import org.apache.activemq.artemis.spi.core.security.ActiveMQSecurityManager;
-import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
-import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
+import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ArtemisAMQPService extends AbstractArtemisEmbeddedService {
-
-    private String brokerURL;
-    private int amqpPort;
+public class ArtemisAMQPService extends ArtemisAMQPInfraService implements ArtemisService {
 
     @Override
     protected Configuration configure(Configuration artemisConfiguration, int port, int brokerId) {
-        amqpPort = port;
-        String sslEnabled = System.getProperty(ArtemisProperties.ARTEMIS_SSL_ENABLED, "false");
-        String keyStorePath = System.getProperty(ArtemisProperties.ARTEMIS_SSL_KEYSTORE_PATH, "");
-        String keyStorePassword = System.getProperty(ArtemisProperties.ARTEMIS_SSL_KEYSTORE_PASSWORD, "");
-        String trustStorePath = System.getProperty(ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PATH, "");
-        String trustStorePassword = System.getProperty(ArtemisProperties.ARTEMIS_SSL_TRUSTSTORE_PASSWORD, "");
-        brokerURL = "tcp://0.0.0.0:" + amqpPort
-                    + "?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300"
-                    + String.format(
-                            ";sslEnabled=%s;keyStorePath=%s;keyStorePassword=%s;trustStorePath=%s;trustStorePassword=%s",
-                            sslEnabled, keyStorePath, keyStorePassword, trustStorePath, trustStorePassword);
-
-        AddressSettings addressSettings = new AddressSettings();
-        addressSettings.setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL);
-
-        // Disable auto create address to make sure that topic name is correct without prefix
+        Configuration config = null;
         try {
-            artemisConfiguration.addAcceptorConfiguration("amqp", brokerURL);
-        } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            fail("AMQP acceptor cannot be configured");
+            config = super.configure(artemisConfiguration, port, brokerId);
+        } catch (ArtemisRunException e) {
+            fail(e.getMessage());
         }
-        artemisConfiguration.setPersistenceEnabled(false);
-        artemisConfiguration.addAddressesSetting("#", addressSettings);
-        artemisConfiguration.setSecurityEnabled(
-                "true".equalsIgnoreCase(System.getProperty(ArtemisProperties.ARTEMIS_AUTHENTICATION_ENABLED)));
-        if (artemisConfiguration.isSecurityEnabled()) {
-            SecurityConfiguration sc = new SecurityConfiguration();
-            String user = System.getProperty(ArtemisProperties.ARTEMIS_USERNAME, "camel");
-            String pw = System.getProperty(ArtemisProperties.ARTEMIS_PASSWORD, "rider");
-            sc.addUser(user, pw);
-            sc.addRole(user, "ALLOW_ALL");
-            ActiveMQSecurityManager securityManager = new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), sc);
-            embeddedBrokerService.setSecurityManager(securityManager);
 
-            // any user can have full control of generic topics
-            String roleName = "ALLOW_ALL";
-            Role role = new Role(roleName, true, true, true, true, true, true, true, true, true, true, false, false);
-            Set<Role> roles = new HashSet<>();
-            roles.add(role);
-            artemisConfiguration.putSecurityRoles("#", roles);
-        }
-        artemisConfiguration.setMaxDiskUsage(98);
-
-        // Set explicit topic name
-        CoreAddressConfiguration pingTopicConfig = new CoreAddressConfiguration();
-        pingTopicConfig.setName("topic.ping");
-        pingTopicConfig.addRoutingType(RoutingType.MULTICAST);
-
-        artemisConfiguration.addAddressConfiguration(pingTopicConfig);
-
-        return artemisConfiguration;
-    }
-
-    @Override
-    public String serviceAddress() {
-        return brokerURL;
-    }
-
-    @Override
-    public int brokerPort() {
-        return amqpPort;
+        return config;
     }
 }

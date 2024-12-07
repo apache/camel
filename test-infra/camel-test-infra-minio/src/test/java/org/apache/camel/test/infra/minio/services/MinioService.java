@@ -16,18 +16,11 @@
  */
 package org.apache.camel.test.infra.minio.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Minio
  */
-public interface MinioService extends TestService {
-
-    String secretKey();
-
-    String accessKey();
-
-    int port();
-
-    String host();
+public interface MinioService extends TestService, MinioInfraService, ContainerTestService {
 }

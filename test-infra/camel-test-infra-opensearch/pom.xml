@@ -29,6 +29,10 @@
     <artifactId>camel-test-infra-opensearch</artifactId>
     <name>Camel :: Test Infra :: opensearch</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -49,6 +53,5 @@
             <version>${opensearch-testcontainers-version}</version>
         </dependency>
     </dependencies>
-
 
 </project>

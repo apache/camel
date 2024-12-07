@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.apache.camel.test.infra.jetty.common.JettyProperties;
 import org.awaitility.Awaitility;
 import org.eclipse.jetty.server.Handler;
@@ -29,14 +28,11 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * An embedded Jetty service that can be used to run servlets for testing purposes
  */
-public class JettyEmbeddedService implements JettyService, BeforeEachCallback, AfterEachCallback {
+public class JettyEmbeddedService implements JettyService {
 
     private final JettyConfiguration jettyConfiguration;
     private ServerConnector connector;
@@ -122,16 +118,6 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
         server.stop();
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS).until(server::isStopped);
-    }
-
-    @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override

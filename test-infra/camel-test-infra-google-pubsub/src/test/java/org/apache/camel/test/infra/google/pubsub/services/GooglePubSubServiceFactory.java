@@ -33,4 +33,11 @@ public final class GooglePubSubServiceFactory {
                 .addRemoteMapping(GooglePubSubRemoteService::new)
                 .build();
     }
+
+    public static class GooglePubSubLocalContainerService extends GooglePubSubLocalContainerInfraService
+            implements GooglePubSubService {
+    }
+
+    public static class GooglePubSubRemoteService extends GooglePubSubRemoteInfraService implements GooglePubSubService {
+    }
 }

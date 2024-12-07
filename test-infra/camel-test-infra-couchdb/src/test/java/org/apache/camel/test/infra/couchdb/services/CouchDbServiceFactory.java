@@ -51,8 +51,8 @@ public final class CouchDbServiceFactory {
 
     public static CouchDbService createService() {
         return builder()
-                .addLocalMapping(CouchDbLocalContainerService::new)
-                .addRemoteMapping(CouchDbRemoteService::new)
+                .addLocalMapping(CouchDbLocalContainerTestService::new)
+                .addRemoteMapping(CouchDbRemoteTestService::new)
                 .build();
     }
 
@@ -65,10 +65,16 @@ public final class CouchDbServiceFactory {
         static {
             SimpleTestServiceBuilder<CouchDbService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerService(), "couchdb"))
-                    .addRemoteMapping(CouchDbRemoteService::new);
+            instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerTestService(), "couchdb"))
+                    .addRemoteMapping(CouchDbRemoteTestService::new);
 
             INSTANCE = instance.build();
         }
+    }
+
+    public static class CouchDbLocalContainerTestService extends CouchDbLocalContainerInfraService implements CouchDbService {
+    }
+
+    public static class CouchDbRemoteTestService extends CouchDbRemoteInfraService implements CouchDbService {
     }
 }

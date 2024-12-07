@@ -16,12 +16,12 @@
  */
 package org.apache.camel.test.infra.jetty.services;
 
-import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 /**
  * Test infra service for Jetty
  */
-public interface JettyService extends TestService {
+public interface JettyService extends InfrastructureService {
 
     /**
      * Gets the port used to run the service

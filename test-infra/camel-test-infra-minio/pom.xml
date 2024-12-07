@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-minio</artifactId>
     <name>Camel :: Test Infra :: Minio</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

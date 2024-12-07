@@ -26,7 +26,8 @@ import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.cassandra.services.CassandraLocalContainerService;
+import org.apache.camel.test.infra.cassandra.services.CassandraService;
+import org.apache.camel.test.infra.cassandra.services.CassandraServiceFactory;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
@@ -42,7 +43,7 @@ public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSuppo
 
     @Order(1)
     @RegisterExtension
-    public static CassandraLocalContainerService service;
+    public static CassandraService service = CassandraServiceFactory.createLocalService("initScript.cql");
 
     @Order(2)
     @RegisterExtension
@@ -54,14 +55,6 @@ public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSuppo
     protected CamelContext context = camelContextExtension.getContext();
 
     private CqlSession session;
-
-    static {
-        service = new CassandraLocalContainerService();
-
-        service.getContainer()
-                .withInitScript("initScript.cql")
-                .withNetworkAliases("cassandra");
-    }
 
     @BeforeEach
     public void executeScript() throws Exception {

@@ -87,7 +87,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-openldap</artifactId>
             <version>${project.version}</version>

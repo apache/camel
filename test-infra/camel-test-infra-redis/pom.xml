@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-redis</artifactId>
     <name>Camel :: Test Infra :: Redis</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -32,4 +32,11 @@ public final class TorchServeServiceFactory {
                 .addRemoteMapping(TorchServeRemoteService::new)
                 .build();
     }
+
+    public static class TorchServeLocalContainerService extends TorchServeLocalContainerInfraService
+            implements TorchServeService {
+    }
+
+    public static class TorchServeRemoteService extends TorchServeRemoteInfraService implements TorchServeService {
+    }
 }
