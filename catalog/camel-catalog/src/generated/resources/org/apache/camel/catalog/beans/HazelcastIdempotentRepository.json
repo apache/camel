@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "properties": { "repositoryName": { "index": 0, "kind": "property", "displayName": "Repository Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "HazelcastIdempotentRepository", "description": "Name of cache to use" }, "hazelcastInstance": { "index": 1, "kind": "property", "displayName": "Hazelcast Instance", "required": false, "type": "object", "javaType": "com.hazelcast.core.HazelcastInstance", "deprecated": false, "autowired": false, "secret": false, "description": "To use an existing Hazelcast instance instead of local" } }
   }
 }

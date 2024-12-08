@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcache",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "properties": { "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.jcache.JCacheConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "Configuration for JCache" } }
   }
 }

@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-jcache",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "properties": { "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.jcache.JCacheConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "Configuration for JCache" }, "optimistic": { "index": 1, "kind": "property", "displayName": "Optimistic", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether optimistic locking is in use" }, "allowSerializedHeaders": { "index": 2, "kind": "property", "displayName": "Allow Serialized Headers", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository" } }
   }
 }
