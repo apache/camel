@@ -41,7 +41,18 @@ is named foo, then the ID is `consumer:foo`.
 
 == Readiness and Liveness
 
-A health check is by default usable for both readiness and liveness checks.
+Readiness and Liveness probes serve distinct purposes. Readiness indicates whether the application is ready to serve requests or traffic. 
+Liveness probes indicates whether the application is alive and functioning. A health check is by default usable for both readiness and liveness checks.
+
+To check wether a health check is usable for readiness or livesness:
+
+[source,java]
+----
+HealthCheck healthCheck = HealthCheckHelper.getHealthCheck(camelContext, healthCheckId);
+
+System.out.println("Readiness=" + healthCheck.isReadiness());
+System.out.println("Live=" + healthCheck.isLiveness());
+----
 
 To specify a custom health check as only usable for liveness checks,
 you would need to turn off readiness, by overriding the `isReadiness` method and return `false`.
@@ -75,6 +86,19 @@ camel.health.routesEnabled=false
 camel.health.consumersEnabled=false
 camel.health.registryEnabled=false
 ----
+
+The same can also be done programmatically using the Camel health api:
+
+[source,java]
+----
+HealthCheckRepository consumersHealthCheckRepository = HealthCheckHelper.getHealthCheckRepository(context, "consumers");
+
+if(consumersHealthCheckRepository!=null) {
+	consumersHealthCheckRepository.setEnabled(false);
+}
+----
+
+
 
 === Configuring initial state
 
