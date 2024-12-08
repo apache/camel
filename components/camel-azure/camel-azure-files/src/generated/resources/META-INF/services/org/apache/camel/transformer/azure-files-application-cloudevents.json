@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.file.azure.transform.AzureFilesCloudEventDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-files",
-    "version": "4.8.2-SNAPSHOT"
+    "version": "4.8.3-SNAPSHOT"
   }
 }
 
