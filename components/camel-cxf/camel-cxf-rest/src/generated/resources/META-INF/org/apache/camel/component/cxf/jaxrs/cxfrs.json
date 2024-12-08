@@ -12,7 +12,7 @@
     "metadata": { "protocol": "http" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf-rest",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "scheme": "cxfrs",
     "extendsScheme": "",
     "syntax": "cxfrs:beanId:address",
