@@ -38,15 +38,12 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
-import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -213,60 +210,51 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
 
                 if (app.getDataFormats() != null) {
+                    app.getDataFormats().forEach(r -> r.setResource(getResource()));
                     DataFormatsDefinition list = new DataFormatsDefinition();
                     list.setDataFormats(app.getDataFormats());
                     addDataFormats(list);
                 }
 
-                app.getRests().forEach(r -> {
-                    r.setResource(getResource());
-                    List<RestDefinition> list = new ArrayList<>();
-                    list.add(r);
+                if (!app.getRests().isEmpty()) {
+                    app.getRests().forEach(r -> r.setResource(getResource()));
                     RestsDefinition def = new RestsDefinition();
                     def.setResource(getResource());
-                    def.setRests(list);
+                    def.setRests(app.getRests());
                     setRestCollection(def);
-                });
+                }
 
-                app.getRouteConfigurations().forEach(rc -> {
-                    rc.setResource(getResource());
-                    List<RouteConfigurationDefinition> list = new ArrayList<>();
-                    list.add(rc);
+                if (!app.getRouteConfigurations().isEmpty()) {
+                    app.getRouteConfigurations().forEach(r -> r.setResource(getResource()));
                     RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
                     def.setResource(getResource());
-                    def.setRouteConfigurations(list);
+                    def.setRouteConfigurations(app.getRouteConfigurations());
                     addConfigurations(def);
-                });
+                }
 
-                app.getRouteTemplates().forEach(rt -> {
-                    rt.setResource(getResource());
-                    List<RouteTemplateDefinition> list = new ArrayList<>();
-                    list.add(rt);
+                if (!app.getRouteTemplates().isEmpty()) {
+                    app.getRouteTemplates().forEach(r -> r.setResource(getResource()));
                     RouteTemplatesDefinition def = new RouteTemplatesDefinition();
                     def.setResource(getResource());
-                    def.setRouteTemplates(list);
+                    def.setRouteTemplates(app.getRouteTemplates());
                     setRouteTemplateCollection(def);
-                });
+                }
 
-                app.getTemplatedRoutes().forEach(tr -> {
-                    tr.setResource(getResource());
-                    List<TemplatedRouteDefinition> list = new ArrayList<>();
-                    list.add(tr);
+                if (!app.getTemplatedRoutes().isEmpty()) {
+                    app.getTemplatedRoutes().forEach(r -> r.setResource(getResource()));
                     TemplatedRoutesDefinition def = new TemplatedRoutesDefinition();
                     def.setResource(getResource());
-                    def.setTemplatedRoutes(list);
+                    def.setTemplatedRoutes(app.getTemplatedRoutes());
                     setTemplatedRouteCollection(def);
-                });
+                }
 
-                app.getRoutes().forEach(r -> {
-                    r.setResource(getResource());
-                    List<RouteDefinition> list = new ArrayList<>();
-                    list.add(r);
+                if (!app.getRoutes().isEmpty()) {
+                    app.getRoutes().forEach(r -> r.setResource(getResource()));
                     RoutesDefinition def = new RoutesDefinition();
                     def.setResource(getResource());
-                    def.setRoutes(list);
+                    def.setRoutes(app.getRoutes());
                     addRoutes(def);
-                });
+                }
             }
 
             private void addRoutes(RoutesDefinition routes) {
