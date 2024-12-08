@@ -93,11 +93,10 @@ The same can also be done programmatically using the Camel health api:
 ----
 HealthCheckRepository consumersHealthCheckRepository = HealthCheckHelper.getHealthCheckRepository(context, "consumers");
 
-if(consumersHealthCheckRepository!=null) {
-	consumersHealthCheckRepository.setEnabled(false);
+if (consumersHealthCheckRepository != null) {
+    consumersHealthCheckRepository.setEnabled(false);
 }
 ----
-
 
 
 === Configuring initial state
