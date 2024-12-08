@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-redis",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "properties": { "repositoryName": { "index": 0, "kind": "property", "displayName": "Repository Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of repository" }, "redisConfiguration": { "index": 1, "kind": "property", "displayName": "Redis Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.redis.RedisConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "Redis configuration" }, "flushOnStartup": { "index": 2, "kind": "property", "displayName": "Flush On Startup", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Delete all keys of the currently selected database. Be careful if enabling this as all existing data will be deleted." } }
   }
 }
