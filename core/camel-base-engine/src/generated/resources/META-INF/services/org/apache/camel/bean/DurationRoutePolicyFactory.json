@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-base-engine",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "properties": { "fromRouteId": { "index": 0, "kind": "property", "displayName": "From Route Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Route pattern to select a set of routes (by their route id). By default all routes are selected" }, "maxSeconds": { "index": 1, "kind": "property", "displayName": "Max Seconds", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "Maximum seconds Camel is running before the action is triggered" }, "maxMessages": { "index": 2, "kind": "property", "displayName": "Max Messages", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "Maximum number of messages to process before the action is triggered" }, "action": { "index": 3, "kind": "property", "displayName": "Action", "required": false, "type": "object", "javaType": "org.apache.camel.impl.engine.DurationRoutePolicy$Action", "enum": [ "STOP_CAMEL_CONTEXT", "STOP_ROUTE", "SUSPEND_ROUTE", "SUSPEND_ALL_ROUTES" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "STOP_ROUTE", "description": "Action to perform" } }
   }
 }

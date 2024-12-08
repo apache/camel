@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.model.console.BeanModelDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-model",
-    "version": "4.8.2-SNAPSHOT"
+    "version": "4.8.3-SNAPSHOT"
   }
 }
 

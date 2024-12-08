@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-support",
-    "version": "4.8.2-SNAPSHOT",
+    "version": "4.8.3-SNAPSHOT",
     "properties": { "scope": { "index": 0, "kind": "property", "displayName": "Scope", "required": false, "type": "object", "javaType": "org.apache.camel.throttling.ThrottlingInflightRoutePolicy$ThrottlingScope", "enum": [ "Context", "Route" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "Route", "description": "Sets which scope the throttling should be based upon, either route or total scoped." }, "maxInflightExchanges": { "index": 1, "kind": "property", "displayName": "Max Inflight Exchanges", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "1000", "description": "Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should suspend the route." }, "resumePercentOfMax": { "index": 2, "kind": "property", "displayName": "Resume Percent Of Max", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "70", "description": "Sets at which percentage of the max the throttler should start resuming the route." }, "loggingLevel": { "index": 3, "kind": "property", "displayName": "Logging Level", "required": false, "type": "object", "javaType": "org.apache.camel.LoggingLevel", "enum": [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "INFO", "description": "Sets the logging level to report the throttling activity." } }
   }
 }
