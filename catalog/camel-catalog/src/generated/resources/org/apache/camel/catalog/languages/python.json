@@ -11,7 +11,7 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-python",
-    "version": "3.22.2-SNAPSHOT",
+    "version": "3.22.3-SNAPSHOT",
     "modelName": "python",
     "modelJavaType": "org.apache.camel.model.language.PythonExpression"
   },
