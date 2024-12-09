@@ -180,8 +180,8 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     }
 
     /**
-     * To configure the language to use. By default, the simple language is used. However, Camel also
-     * supports other languages such as groovy.
+     * To configure the language to use. By default, the simple language is used. However, Camel also supports other
+     * languages such as groovy.
      */
     public void setLogLanguage(String logLanguage) {
         this.logLanguage = logLanguage;

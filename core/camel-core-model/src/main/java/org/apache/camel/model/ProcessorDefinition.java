@@ -1305,9 +1305,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at INFO level.
      *
-     * @param logLanguage to use a custom log language such as groovy
-     * @param message     the log message (you can use simple language syntax)
-     * @return            the builder
+     * @param  logLanguage to use a custom log language such as groovy
+     * @param  message     the log message (you can use simple language syntax)
+     * @return             the builder
      */
     public Type log(String logLanguage, String message) {
         LogDefinition answer = new LogDefinition(message);
@@ -1319,10 +1319,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at INFO level.
      *
-     * @param logLanguage  to use a custom log language such as groovy
-     * @param loggingLevel the logging level to use
-     * @param message      the log message (you can use simple language syntax)
-     * @return             the builder
+     * @param  logLanguage  to use a custom log language such as groovy
+     * @param  loggingLevel the logging level to use
+     * @param  message      the log message (you can use simple language syntax)
+     * @return              the builder
      */
     public Type log(String logLanguage, LoggingLevel loggingLevel, String message) {
         LogDefinition answer = new LogDefinition(message);
