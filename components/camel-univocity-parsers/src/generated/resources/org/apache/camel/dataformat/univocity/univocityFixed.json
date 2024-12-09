@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
-    "version": "3.22.2-SNAPSHOT",
+    "version": "3.22.3-SNAPSHOT",
     "modelName": "univocityFixed",
     "modelJavaType": "org.apache.camel.model.dataformat.UniVocityFixedDataFormat"
   },
