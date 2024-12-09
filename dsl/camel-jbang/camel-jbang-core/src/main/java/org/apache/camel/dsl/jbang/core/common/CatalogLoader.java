@@ -137,8 +137,6 @@ public final class CatalogLoader {
                 answer.getVersionManager().setClassLoader(cl);
             }
             answer.enableCache();
-        } catch (Exception e) {
-            // ignore
         } finally {
             downloader.stop();
         }
@@ -212,8 +210,6 @@ public final class CatalogLoader {
                 }
             }
             answer.enableCache();
-        } catch (Exception e) {
-            // ignore
         } finally {
             downloader.stop();
         }
