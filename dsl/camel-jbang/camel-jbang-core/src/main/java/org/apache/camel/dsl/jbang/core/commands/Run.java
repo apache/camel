@@ -1560,7 +1560,7 @@ public class Run extends CamelCommand {
                 }
                 sj.add(part);
             }
-            main = new KameletMain(sj.toString());
+            main = new KameletMain(CAMEL_INSTANCE_TYPE, sj.toString());
             writeSettings("camel.jbang.localKameletDir", sj.toString());
         }
         return main;
