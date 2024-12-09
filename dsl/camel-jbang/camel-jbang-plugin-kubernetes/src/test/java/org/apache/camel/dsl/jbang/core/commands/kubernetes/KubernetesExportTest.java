@@ -23,9 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -42,37 +39,22 @@ import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import picocli.CommandLine;
 
-class KubernetesExportTest extends KubernetesBaseTest {
-
-    private File workingDir;
-    private String[] defaultArgs;
-
-    @BeforeEach
-    public void setup() {
-        super.setup();
-
-        try {
-            workingDir = Files.createTempDirectory("camel-k8s-export").toFile();
-            workingDir.deleteOnExit();
-        } catch (IOException e) {
-            throw new RuntimeCamelException(e);
-        }
-
-        defaultArgs = new String[] { "--dir=" + workingDir, "--quiet" };
-    }
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Requires too much network resources")
+@EnabledIf("isDockerAvailable")
+class KubernetesExportTest extends KubernetesExportBaseTest {
 
     private static Stream<Arguments> runtimeProvider() {
         return Stream.of(
@@ -773,15 +755,6 @@ class KubernetesExportTest extends KubernetesBaseTest {
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
     }
 
-    private KubernetesExport createCommand(String[] files, String... args) {
-        var argsArr = Optional.ofNullable(args).orElse(new String[0]);
-        var argsLst = new ArrayList<>(Arrays.asList(argsArr));
-        argsLst.addAll(Arrays.asList(defaultArgs));
-        KubernetesExport command = new KubernetesExport(new CamelJBangMain(), files);
-        CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
-        return command;
-    }
-
     private Deployment getDeployment(RuntimeType rt) throws IOException {
         return getResource(rt, Deployment.class)
                 .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
@@ -847,13 +820,13 @@ class KubernetesExportTest extends KubernetesBaseTest {
         return Optional.empty();
     }
 
-    private String readResource(File workingDir, String path) throws IOException {
+    protected String readResource(File workingDir, String path) throws IOException {
         try (FileInputStream fis = new FileInputStream(workingDir.toPath().resolve(path).toFile())) {
             return IOHelper.loadText(fis);
         }
     }
 
-    private Properties getApplicationProperties(File workingDir) throws IOException {
+    protected Properties getApplicationProperties(File workingDir) throws IOException {
         String content = readResource(workingDir, "src/main/resources/application.properties");
         Properties applicationProperties = new Properties();
         applicationProperties.load(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
