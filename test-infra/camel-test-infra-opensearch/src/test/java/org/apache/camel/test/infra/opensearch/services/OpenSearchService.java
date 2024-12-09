@@ -14,22 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.opensearch.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface OpenSearchService extends TestService {
-
-    int getPort();
-
-    String getOpenSearchHost();
-
-    default String getHttpHostAddress() {
-        return String.format("%s:%d", getOpenSearchHost(), getPort());
-    }
-
-    String getUsername();
-
-    String getPassword();
+/**
+ * Test infra service for OpenSearch
+ */
+public interface OpenSearchService extends TestService, OpenSearchInfraService, ContainerTestService {
 }

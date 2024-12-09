@@ -33,4 +33,7 @@ public final class IgniteServiceFactory {
                 .addLocalMapping(IgniteEmbeddedService::new)
                 .build();
     }
+
+    public static class IgniteEmbeddedService extends IgniteEmbeddedInfraService implements IgniteService {
+    }
 }

@@ -16,20 +16,11 @@
  */
 package org.apache.camel.test.infra.microprofile.lra.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
- * Test infra service for Microprofile LRA
+ * Test infra service for MicroprofileLRA
  */
-public interface MicroprofileLRAService extends TestService {
-
-    String host();
-
-    int port();
-
-    String callbackHost();
-
-    default String getServiceAddress() {
-        return String.format("http://%s:%d", host(), port());
-    }
+public interface MicroprofileLRAService extends TestService, MicroprofileLRAInfraService, ContainerTestService {
 }

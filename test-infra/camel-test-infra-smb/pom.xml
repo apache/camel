@@ -33,6 +33,10 @@
     <name>Camel :: Test Infra :: Server Message Block</name>
     <description>Server Message Block test infrastructure for Camel</description>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

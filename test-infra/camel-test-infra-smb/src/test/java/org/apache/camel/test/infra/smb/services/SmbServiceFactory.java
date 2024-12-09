@@ -28,4 +28,10 @@ public class SmbServiceFactory {
                 .addRemoteMapping(SmbRemoteService::new)
                 .build();
     }
+
+    public static class SmbRemoteService extends SmbRemoteInfraService implements SmbService {
+    }
+
+    public static class SmbLocalContainerService extends SmbLocalContainerInfraService implements SmbService {
+    }
 }

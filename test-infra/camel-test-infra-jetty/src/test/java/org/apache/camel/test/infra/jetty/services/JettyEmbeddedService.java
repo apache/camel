@@ -125,6 +125,11 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
     }
 
     @Override
+    public int getPort() {
+        return jettyConfiguration.getPort();
+    }
+
+    @Override
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         TestServiceUtil.tryShutdown(this, extensionContext);
     }
@@ -132,10 +137,5 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         TestServiceUtil.tryInitialize(this, extensionContext);
-    }
-
-    @Override
-    public int getPort() {
-        return jettyConfiguration.getPort();
     }
 }

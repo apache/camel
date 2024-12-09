@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-ollama</artifactId>
     <name>Camel :: Test Infra :: Ollama</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -37,7 +41,6 @@
             <version>${project.version}</version>
             <type>test-jar</type>
         </dependency>
-
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>

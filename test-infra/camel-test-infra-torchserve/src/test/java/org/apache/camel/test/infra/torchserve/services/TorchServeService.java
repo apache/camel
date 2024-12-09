@@ -16,13 +16,11 @@
  */
 package org.apache.camel.test.infra.torchserve.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface TorchServeService extends TestService {
-
-    int inferencePort();
-
-    int managementPort();
-
-    int metricsPort();
+/**
+ * Test infra service for TorchServe
+ */
+public interface TorchServeService extends TestService, TorchServeInfraService, ContainerTestService {
 }

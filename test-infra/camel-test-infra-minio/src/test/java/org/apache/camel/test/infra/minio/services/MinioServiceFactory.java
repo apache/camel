@@ -33,4 +33,10 @@ public final class MinioServiceFactory {
                 .addRemoteMapping(MinioRemoteService::new)
                 .build();
     }
+
+    public static class MinioLocalContainerService extends MinioLocalContainerInfraService implements MinioService {
+    }
+
+    public static class MinioRemoteService extends MinioRemoteInfraService implements MinioService {
+    }
 }

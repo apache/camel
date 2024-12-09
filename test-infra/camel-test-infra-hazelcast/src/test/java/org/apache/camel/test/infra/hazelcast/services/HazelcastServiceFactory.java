@@ -33,4 +33,7 @@ public final class HazelcastServiceFactory {
                 .addLocalMapping(HazelcastEmbeddedService::new)
                 .build();
     }
+
+    public static class HazelcastEmbeddedService extends HazelcastEmbeddedInfraService implements HazelcastService {
+    }
 }

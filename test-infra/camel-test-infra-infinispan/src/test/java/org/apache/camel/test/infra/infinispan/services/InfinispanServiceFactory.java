@@ -100,4 +100,11 @@ public final class InfinispanServiceFactory {
     public static InfinispanService createSingletonInfinispanService() {
         return SingletonServiceHolder.INSTANCE;
     }
+
+    public static class InfinispanLocalContainerService extends InfinispanLocalContainerInfraService
+            implements InfinispanService {
+    }
+
+    public static class InfinispanRemoteService extends InfinispanRemoteInfraService implements InfinispanService {
+    }
 }

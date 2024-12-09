@@ -16,12 +16,11 @@
  */
 package org.apache.camel.test.infra.mosquitto.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Mosquitto
  */
-public interface MosquittoService extends TestService {
-
-    Integer getPort();
+public interface MosquittoService extends TestService, MosquittoInfraService, ContainerTestService {
 }

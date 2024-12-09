@@ -20,7 +20,7 @@ import org.apache.camel.test.infra.nats.common.NatsProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class NatsLocalContainerAuthTokenService extends NatsLocalContainerService {
+public class NatsLocalContainerAuthTokenService extends NatsLocalContainerService implements NatsService {
     public static final String TOKEN = "!admin23456";
 
     protected GenericContainer initContainer(String imageName, String containerName) {

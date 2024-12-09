@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-ignite</artifactId>
     <name>Camel :: Test Infra :: Ignite</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -48,6 +52,11 @@
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-log4j2</artifactId>
             <version>${ignite-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
         </dependency>
     </dependencies>
 </project>

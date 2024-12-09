@@ -29,6 +29,10 @@
     <artifactId>camel-test-infra-elasticsearch</artifactId>
     <name>Camel :: Test Infra :: Elasticsearch</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

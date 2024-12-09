@@ -19,11 +19,12 @@ package org.apache.camel.test.infra.ftp.services.embedded;
 
 import java.io.File;
 
+import org.apache.camel.test.infra.ftp.services.FtpService;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
 
-public class FtpsEmbeddedService extends FtpEmbeddedService {
+public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpService {
     public FtpsEmbeddedService(EmbeddedConfigurationBuilder embeddedConfigurationBuilder) {
         super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate());
     }

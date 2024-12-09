@@ -16,16 +16,12 @@
  */
 package org.apache.camel.test.infra.fhir.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for FHIR
  */
-public interface FhirService extends TestService {
+public interface FhirService extends TestService, ContainerTestService, FhirInfraService {
 
-    String getServiceBaseURL();
-
-    String getHost();
-
-    Integer getPort();
 }

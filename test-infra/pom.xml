@@ -31,6 +31,10 @@
     <name>Camel :: Test Infra</name>
     <description>Test infrastructure for Camel</description>
 
+    <properties>
+        <assembly.skipAssembly>true</assembly.skipAssembly>
+    </properties>
+
     <modules>
         <module>camel-test-infra-common</module>
         <module>camel-test-infra-kafka</module>
@@ -86,4 +90,43 @@
         <module>camel-test-infra-torchserve</module>
         <module>camel-test-infra-tensorflow-serving</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Include main and test classes in the test-jar -->
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <inlineDescriptors>
+                        <inlineDescriptor>
+                            <id>tests</id>
+                            <formats>
+                                <format>jar</format>
+                            </formats>
+                            <includeBaseDirectory>false</includeBaseDirectory>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.testOutputDirectory}</directory>
+                                    <outputDirectory>/</outputDirectory>
+                                </fileSet>
+                                <fileSet>
+                                    <directory>${project.build.outputDirectory}</directory>
+                                    <outputDirectory>/</outputDirectory>
+                                </fileSet>
+                            </fileSets>
+                        </inlineDescriptor>
+                    </inlineDescriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

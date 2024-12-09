@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-couchdb</artifactId>
     <name>Camel :: Test Infra :: CouchDb</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

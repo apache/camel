@@ -29,6 +29,10 @@
     <artifactId>camel-test-infra-couchbase</artifactId>
     <name>Camel :: Test Infra :: Couchbase</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

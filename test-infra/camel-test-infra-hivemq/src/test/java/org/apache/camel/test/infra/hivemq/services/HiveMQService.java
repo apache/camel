@@ -16,21 +16,11 @@
  */
 package org.apache.camel.test.infra.hivemq.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface HiveMQService extends TestService {
-
-    int getMqttPort();
-
-    String getMqttHost();
-
-    boolean isRunning();
-
-    String getUserName();
-
-    char[] getUserPassword();
-
-    default String getMqttHostAddress() {
-        return String.format("tcp://%s:%d", getMqttHost(), getMqttPort());
-    }
+/**
+ * Test infra service for Hive
+ */
+public interface HiveMQService extends TestService, HiveMQInfraService, ContainerTestService {
 }

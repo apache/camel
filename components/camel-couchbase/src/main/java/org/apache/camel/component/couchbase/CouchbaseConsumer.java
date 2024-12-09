@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.apache.camel.support.DefaultScheduledPollConsumer;
 import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.slf4j.Logger;
@@ -70,6 +71,9 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
         } else {
             this.collection = client.defaultCollection();
         }
+
+        setPollStrategy(
+                endpoint.getPollStrategy() != null ? endpoint.getPollStrategy() : new DefaultPollingConsumerPollStrategy());
     }
 
     @Override

@@ -16,20 +16,11 @@
  */
 package org.apache.camel.test.infra.infinispan.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Infinispan
  */
-public interface InfinispanService extends TestService {
-
-    String username();
-
-    String password();
-
-    int port();
-
-    String host();
-
-    String getServiceAddress();
+public interface InfinispanService extends TestService, InfinispanInfraService, ContainerTestService {
 }

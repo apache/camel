@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-chatscript</artifactId>
     <name>Camel :: Test Infra :: ChatScript</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

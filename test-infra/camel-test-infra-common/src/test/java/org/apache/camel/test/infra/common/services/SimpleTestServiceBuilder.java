@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleTestServiceBuilder<T extends TestService> implements TestServiceBuilder<T> {
+public class SimpleTestServiceBuilder<T extends InfrastructureService> implements TestServiceBuilder<T> {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleTestServiceBuilder.class);
 
     private final Map<String, Supplier<T>> mappings = new HashMap<>();

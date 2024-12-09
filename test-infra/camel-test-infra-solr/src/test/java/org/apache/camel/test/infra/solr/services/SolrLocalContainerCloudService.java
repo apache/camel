@@ -16,8 +16,7 @@
  */
 package org.apache.camel.test.infra.solr.services;
 
-public class SolrLocalContainerCloudService extends SolrLocalContainerService {
-
+public class SolrLocalContainerCloudService extends SolrLocalContainerService implements SolrService {
     @Override
     public boolean isCloudMode() {
         return true;
