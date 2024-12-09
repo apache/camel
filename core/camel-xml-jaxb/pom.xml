@@ -39,6 +39,7 @@
             org.apache.camel.model.cloud;${camel.osgi.import.camel.version},
             org.apache.camel.model.config;${camel.osgi.import.camel.version},
             org.apache.camel.model.dataformat;${camel.osgi.import.camel.version},
+            org.apache.camel.model.errorhandler;${camel.osgi.import.camel.version},
             org.apache.camel.model.language;${camel.osgi.import.camel.version},
             org.apache.camel.model.loadbalancer;${camel.osgi.import.camel.version},
             org.apache.camel.model.rest;${camel.osgi.import.camel.version},
