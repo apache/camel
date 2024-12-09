@@ -54,6 +54,10 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
 
     @Override
     protected SalesforceException createRestException(Response response, InputStream responseContent) {
+        if (responseContent == null) {
+            return new SalesforceException(
+                    "Unexpected error: " + response.getReason() + ", with content: null", response.getStatus());
+        }
         String message = null;
         try {
             message = IOUtils.toString(responseContent, StandardCharsets.UTF_8);
