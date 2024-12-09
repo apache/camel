@@ -10,6 +10,6 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsh-dsl",
-    "version": "3.22.2-SNAPSHOT"
+    "version": "3.22.3-SNAPSHOT"
   }
 }
