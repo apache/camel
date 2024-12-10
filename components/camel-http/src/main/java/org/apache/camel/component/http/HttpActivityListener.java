@@ -26,8 +26,25 @@ import org.apache.hc.core5.http.HttpHost;
  */
 public interface HttpActivityListener {
 
+    /**
+     * HTTP request is about to be sent
+     *
+     * @param source   the http producer that are used
+     * @param exchange the current exchange
+     * @param httpHost the host the request is sent to
+     * @param request  the http request
+     */
     void onRequestSubmitted(Object source, Exchange exchange, HttpHost httpHost, ClassicHttpRequest request);
 
+    /**
+     * HTTP response received
+     *
+     * @param source   the http producer that are used
+     * @param exchange the current exchange
+     * @param httpHost the host the request is received from
+     * @param response the http response
+     * @param elapsed  time in millis before the response was received after sending
+     */
     void onResponseReceived(Object source, Exchange exchange, HttpHost httpHost, ClassicHttpResponse response, long elapsed);
 
 }
