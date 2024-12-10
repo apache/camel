@@ -225,6 +225,14 @@ The container trait is able to customize the container specification with follow
 | PullPolicy
 | The pull policy: Always\|Never\|IfNotPresent
 
+| container.image-pull-secrets
+| string[]
+| The pull secrets for private registries
+
+| container.image-push
+| boolean
+| Enable image push to the registry
+
 | container.request-cpu
 | string
 | The minimum amount of CPU required.
@@ -501,6 +509,12 @@ rounded to a second precision.
 | string
 | Setting `cluster-local`, Knative service becomes a private service.
 Specifically, this option applies the `networking.knative.dev/visibility` label to Knative service.
+
+Refer to the Knative documentation for more information.
+
+| knative-service.timeout-seconds
+| int
+| The maximum duration in seconds that the request instance is allowed to respond to a request. This field propagates to the integration Pod’s terminationGracePeriodSeconds.
 
 Refer to the Knative documentation for more information.
 
@@ -960,6 +974,14 @@ The ingress trait provides the following configuration options:
 | bool
 | To automatically add an Ingress Resource whenever the route uses an HTTP endpoint consumer (default `true`).
 
+| ingress.tls-hosts
+| []string
+| To configure specific hosts exposed through SNI TLS extension by the ingess.
+
+| ingress.tls-secret-name
+| string
+| To indicate the secret containing the TLS private key and certificate to use for TLS.
+
 |===
 
 The syntax to specify container trait options is as follows:
@@ -1037,7 +1059,7 @@ The Route trait provides the following configuration options:
 | string
 | To configure the host exposed by the route.
 
-| ingress.tls-termination
+| route.tls-termination
 | string
 | The TLS termination type, like `edge`, `passthrough` or `reencrypt`. Refer to the OpenShift route documentation for additional information.
 

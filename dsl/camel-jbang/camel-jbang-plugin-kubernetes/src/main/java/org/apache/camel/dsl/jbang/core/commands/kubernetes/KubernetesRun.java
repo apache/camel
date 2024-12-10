@@ -30,6 +30,7 @@ import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -134,8 +135,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The image registry group used to push images to.")
     String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" },
-                        description = "The image builder used to build the container image (e.g. docker, jib, podman, s2i).")
+    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
+                        description = "The image builder used to build the container image (e.g. docker, jib, podman).")
     String imageBuilder;
 
     @CommandLine.Option(names = { "--cluster-type" },
@@ -483,13 +484,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void waitForRunningPod(String projectName) {
         if (!quiet) {
             String kubectlCmd = "kubectl get pod";
-            kubectlCmd += " -l %s=%s".formatted(BaseTrait.KUBERNETES_NAME_LABEL, projectName);
+            kubectlCmd += " -l %s=%s".formatted(BaseTrait.KUBERNETES_LABEL_NAME, projectName);
             if (!ObjectHelper.isEmpty(namespace)) {
                 kubectlCmd += " -n %s".formatted(namespace);
             }
             printer().println("Run: " + kubectlCmd);
         }
-        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_NAME_LABEL, projectName)
+        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
                 .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
         if (!quiet) {
             printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
@@ -505,6 +506,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         devModeShutdownTask = new Thread(() -> {
             try {
                 deleteCommand.doCall();
+                CommandHelper.cleanExportDir(deleteCommand.workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -532,11 +534,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add(workingDir);
 
         if (!ObjectHelper.isEmpty(namespace)) {
-            if (runtime == RuntimeType.quarkus && ClusterType.KUBERNETES.isEqualTo(clusterType)) {
-                args.add("-Dquarkus.kubernetes.namespace=" + namespace);
-            } else {
-                args.add("-Djkube.namespace=%s".formatted(namespace));
-            }
+            args.add("-Djkube.namespace=%s".formatted(namespace));
         }
 
         args.add("package");
@@ -578,45 +576,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("--file");
         args.add(workingDir);
 
-        boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
-
-        if (runtime == RuntimeType.quarkus) {
-
-            if (imagePlatforms != null) {
-                args.add("-Dquarkus.jib.platforms=%s".formatted(imagePlatforms));
-            }
-
-            args.add("-Dquarkus.container-image.build=" + imageBuild);
-            args.add("-Dquarkus.container-image.push=" + imagePush);
-
-            if (isOpenshift) {
-                args.add("-Dquarkus.openshift.deploy=true");
-            } else {
-                args.add("-Dquarkus.kubernetes.deploy=true");
-                if (!ObjectHelper.isEmpty(namespace)) {
-                    args.add("-Dquarkus.kubernetes.namespace=" + namespace);
-                }
-            }
-
-            args.add("package");
-
-        } else {
-
-            if (!imageBuild) {
-                args.add("-Djkube.skip.build=true");
-            }
-
-            if (imagePush) {
-                args.add("-Djkube.%s.push=true".formatted(imageBuilder));
-            }
-
-            if (!ObjectHelper.isEmpty(namespace)) {
-                args.add("-Djkube.namespace=%s".formatted(namespace));
-            }
-
-            var prefix = isOpenshift ? "oc" : "k8s";
-            args.add(prefix + ":deploy");
+        if (!imageBuild) {
+            args.add("-Djkube.skip.build=true");
         }
+
+        if (imagePush) {
+            args.add("-Djkube.%s.push=true".formatted(imageBuilder));
+        }
+
+        if (!ObjectHelper.isEmpty(namespace)) {
+            args.add("-Djkube.namespace=%s".formatted(namespace));
+        }
+
+        boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
+        var prefix = isOpenshift ? "oc" : "k8s";
+        args.add(prefix + ":deploy");
 
         if (!quiet) {
             printer().println("Run: " + String.join(" ", args));
