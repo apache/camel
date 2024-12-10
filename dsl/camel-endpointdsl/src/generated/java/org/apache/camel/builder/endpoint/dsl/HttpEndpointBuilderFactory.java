@@ -1133,6 +1133,38 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom activity listener.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.http.HttpActivityListener</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param httpActivityListener the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder httpActivityListener(org.apache.camel.component.http.HttpActivityListener httpActivityListener) {
+            doSetProperty("httpActivityListener", httpActivityListener);
+            return this;
+        }
+        /**
+         * To use a custom activity listener.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.http.HttpActivityListener</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param httpActivityListener the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder httpActivityListener(String httpActivityListener) {
+            doSetProperty("httpActivityListener", httpActivityListener);
+            return this;
+        }
+        /**
          * If this option is true, The http producer won't read response body
          * and cache the input stream.
          * 

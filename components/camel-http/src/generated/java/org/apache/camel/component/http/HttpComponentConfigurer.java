@@ -57,6 +57,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "followRedirects": target.setFollowRedirects(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "httpactivitylistener":
+        case "httpActivityListener": target.setHttpActivityListener(property(camelContext, org.apache.camel.component.http.HttpActivityListener.class, value)); return true;
         case "httpbinding":
         case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "httpclientconfigurer":
@@ -101,10 +103,17 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "useragent":
+        case "userAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": target.setX509HostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"httpActivityListener"};
     }
 
     @Override
@@ -144,6 +153,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "followRedirects": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpactivitylistener":
+        case "httpActivityListener": return org.apache.camel.component.http.HttpActivityListener.class;
         case "httpbinding":
         case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
         case "httpclientconfigurer":
@@ -188,6 +199,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         default: return null;
@@ -232,6 +245,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "followRedirects": return target.isFollowRedirects();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "httpactivitylistener":
+        case "httpActivityListener": return target.getHttpActivityListener();
         case "httpbinding":
         case "httpBinding": return target.getHttpBinding();
         case "httpclientconfigurer":
@@ -276,6 +291,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
+        case "useragent":
+        case "userAgent": return target.getUserAgent();
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return target.getX509HostnameVerifier();
         default: return null;
