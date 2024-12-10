@@ -30,8 +30,8 @@ public class VersionHelper {
         if (version != null) {
             return version;
         }
+        // First, try to load from maven properties
         InputStream is = null;
-        // try to load from maven properties first
         try {
             Properties p = new Properties();
             is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-catalog/pom.properties");
@@ -51,7 +51,29 @@ public class VersionHelper {
             }
         }
 
-        // fallback to using Java API
+        // Next, try to load from version.properties
+        if (version == null) {
+            try {
+                Properties p = new Properties();
+                is = getClass().getResourceAsStream("/META-INF/version.properties");
+                if (is != null) {
+                    p.load(is);
+                    version = p.getProperty("version", "");
+                }
+            } catch (Exception e) {
+                // ignore
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+            }
+        }
+
+        // Fallback to using Java API
         if (version == null) {
             Package aPackage = getClass().getPackage();
             if (aPackage != null) {
