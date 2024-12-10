@@ -1068,6 +1068,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             clientConnectionManager.close();
             clientConnectionManager = null;
         }
+        ServiceHelper.stopService(httpActivityListener);
 
         super.doStop();
     }

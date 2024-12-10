@@ -332,6 +332,8 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         if (httpClient instanceof Closeable closeable) {
             IOHelper.close(closeable);
         }
+        ServiceHelper.stopService(httpActivityListener);
+        super.doStop();
     }
 
     // Properties

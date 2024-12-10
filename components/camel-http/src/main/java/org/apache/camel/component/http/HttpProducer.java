@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -83,7 +84,7 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpProducer extends DefaultProducer {
+public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
 
@@ -813,4 +814,23 @@ public class HttpProducer extends DefaultProducer {
         this.httpClient = httpClient;
     }
 
+    @Override
+    public int getLineNumber() {
+        return getEndpoint().getLineNumber();
+    }
+
+    @Override
+    public void setLineNumber(int lineNumber) {
+        // noop
+    }
+
+    @Override
+    public String getLocation() {
+        return getEndpoint().getLocation();
+    }
+
+    @Override
+    public void setLocation(String location) {
+        // noop
+    }
 }

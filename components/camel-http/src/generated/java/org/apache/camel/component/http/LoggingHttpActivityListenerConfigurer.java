@@ -36,6 +36,8 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         case "showRouteGroup": target.setShowRouteGroup(property(camelContext, boolean.class, value)); return true;
         case "showrouteid":
         case "showRouteId": target.setShowRouteId(property(camelContext, boolean.class, value)); return true;
+        case "showstreams":
+        case "showStreams": target.setShowStreams(property(camelContext, boolean.class, value)); return true;
         case "sourcelocationloggername":
         case "sourceLocationLoggerName": target.setSourceLocationLoggerName(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -58,6 +60,8 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         case "showRouteGroup": return boolean.class;
         case "showrouteid":
         case "showRouteId": return boolean.class;
+        case "showstreams":
+        case "showStreams": return boolean.class;
         case "sourcelocationloggername":
         case "sourceLocationLoggerName": return boolean.class;
         default: return null;
@@ -81,6 +85,8 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         case "showRouteGroup": return target.isShowRouteGroup();
         case "showrouteid":
         case "showRouteId": return target.isShowRouteId();
+        case "showstreams":
+        case "showStreams": return target.isShowStreams();
         case "sourcelocationloggername":
         case "sourceLocationLoggerName": return target.isSourceLocationLoggerName();
         default: return null;

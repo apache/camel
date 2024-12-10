@@ -35,8 +35,10 @@ import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 
 import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
@@ -59,8 +61,13 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     private boolean showExchangeId = true;
     @Metadata(defaultValue = "true", description = "Show the HTTP body.")
     private boolean showBody = true;
+    @Metadata(defaultValue = "true",
+              description = "Whether to show HTTP body that are streaming based. Beware that Camel will have to read the content into memory to print to log, and will re-create the HttpEntity stored on the request/response object. If you have large payloads then this can impact performance.")
+    private boolean showStreams = true;
     @Metadata(defaultValue = "true", label = "formatting", description = "Show the HTTP headers.")
     private boolean showHeaders = true;
+    @Metadata(defaultValue = "50000", description = "Limits the number of characters logged from the HTTP body.")
+    private int maxChars = 50000;
     @Metadata(description = "If true, mask sensitive information like password or passphrase in the log.")
     private Boolean logMask;
     @Metadata(defaultValue = "true", description = "If enabled then each information is outputted as separate LOG events.")
@@ -77,29 +84,6 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         if (maskingFormatter == null) {
             maskingFormatter = new DefaultMaskingFormatter();
         }
-    }
-
-    private CamelLogger getLogger(Object source, Exchange exchange) {
-        String name = null;
-        if (sourceLocationLoggerName) {
-            name = getLineNumberLoggerName(source);
-        }
-        if (name == null) {
-            name = LoggingHttpActivityListener.class.getName();
-        }
-        LoggingLevel level = LoggingLevel.INFO;
-        if (loggingLevel != null && !loggingLevel.equals("INFO")) {
-            level = LoggingLevel.valueOf(loggingLevel);
-        }
-        return new CamelLogger(name, level);
-    }
-
-    private String getValue(boolean sensitive, Object value) {
-        String v = value != null ? value.toString() : null;
-        if (v != null && (sensitive || logMask != null && logMask)) {
-            v = maskingFormatter.format(v);
-        }
-        return v;
     }
 
     @Override
@@ -170,12 +154,33 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
             lines.add(""); // empty line before body
             try {
                 var e = request != null ? request.getEntity() : response.getEntity();
-                if (e != null && e.isRepeatable()) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    e.writeTo(bos);
-                    lines.add(getValue(false, bos.toString()));
-                } else if (e != null) {
-                    lines.add("WARN: Cannot log HTTP body because the body is not repeatable");
+                if (e != null) {
+                    if (e.isStreaming() && !showStreams) {
+                        lines.add("WARN: Cannot log HTTP body because the body is streaming");
+                    } else {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        e.writeTo(bos);
+                        String data = bos.toString();
+                        if (data.length() > maxChars) {
+                            data = data.substring(0, maxChars) + " ... [Body clipped after " + maxChars
+                                   + " chars, total length is " + data.length() + "]";
+                        }
+                        lines.add(getValue(false, data));
+                        if (!e.isRepeatable()) {
+                            // need to re-create body as stream is EOL
+                            byte[] arr = bos.toByteArray();
+                            ContentType ct = null;
+                            if (e.getContentType() != null) {
+                                ct = ContentType.parse(e.getContentType());
+                            }
+                            e = new ByteArrayEntity(arr, ct);
+                            if (request != null) {
+                                request.setEntity(e);
+                            } else {
+                                response.setEntity(e);
+                            }
+                        }
+                    }
                 }
             } catch (Exception e) {
                 // ignore
@@ -191,6 +196,29 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
             lines.forEach(sj::add);
             logger.log(sj.toString());
         }
+    }
+
+    private CamelLogger getLogger(Object source, Exchange exchange) {
+        String name = null;
+        if (sourceLocationLoggerName) {
+            name = getLineNumberLoggerName(source);
+        }
+        if (name == null) {
+            name = LoggingHttpActivityListener.class.getName();
+        }
+        LoggingLevel level = LoggingLevel.INFO;
+        if (loggingLevel != null && !loggingLevel.equals("INFO")) {
+            level = LoggingLevel.valueOf(loggingLevel);
+        }
+        return new CamelLogger(name, level);
+    }
+
+    private String getValue(boolean sensitive, Object value) {
+        String v = value != null ? value.toString() : null;
+        if (v != null && (sensitive || logMask != null && logMask)) {
+            v = maskingFormatter.format(v);
+        }
+        return v;
     }
 
     @Override
@@ -241,6 +269,14 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
 
     public void setShowBody(boolean showBody) {
         this.showBody = showBody;
+    }
+
+    public boolean isShowStreams() {
+        return showStreams;
+    }
+
+    public void setShowStreams(boolean showStreams) {
+        this.showStreams = showStreams;
     }
 
     public boolean isShowHeaders() {
