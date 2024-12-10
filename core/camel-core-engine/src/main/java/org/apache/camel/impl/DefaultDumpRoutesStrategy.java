@@ -222,7 +222,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         }
 
         if (include.contains("*") || include.contains("all") || include.contains("routeConfigurations")
-            || include.contains("route-configurations")) {
+                || include.contains("route-configurations")) {
             int size = model.getRouteConfigurationDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteConfigurationsDefinition> groups = new LinkedHashMap<>();
@@ -254,7 +254,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         }
 
         if (include.contains("*") || include.contains("all") || include.contains("routeTemplates")
-            || include.contains("route-templates")) {
+                || include.contains("route-templates")) {
             int size = model.getRouteTemplateDefinitions().size();
             if (size > 0) {
                 Map<Resource, RouteTemplatesDefinition> groups = new LinkedHashMap<>();
