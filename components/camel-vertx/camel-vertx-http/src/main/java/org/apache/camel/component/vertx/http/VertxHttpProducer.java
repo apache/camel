@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx.http;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -123,7 +124,10 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
     }
 
     private Handler<AsyncResult<HttpResponse<Buffer>>> createResultHandler(Exchange exchange, AsyncCallback callback) {
-        return response -> {
+        // Process the response on a thread from the Vert.x worker pool since there may be blocking code:
+        // - If a custom VertxHttpBinding is in use
+        // - If the Camel error handler routes to logic that contains blocking code
+        return response -> getEndpoint().getVertx().executeBlocking((Callable<Void>) () -> {
             try {
                 vertxHttpBinding.handleResponse(getEndpoint(), exchange, response);
             } catch (Exception e) {
@@ -131,6 +135,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
             } finally {
                 callback.done(false);
             }
-        };
+            return null;
+        });
     }
 }
