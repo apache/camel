@@ -29,7 +29,6 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.support.service.ServiceSupport;
@@ -51,7 +50,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     private CamelContext camelContext;
     private MaskingFormatter maskingFormatter;
 
-    @UriParam(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
     @Metadata(defaultValue = "true", description = "Show route ID.")
     private boolean showRouteId = true;
@@ -293,6 +292,14 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
 
     public void setLogMask(Boolean logMask) {
         this.logMask = logMask;
+    }
+
+    public int getMaxChars() {
+        return maxChars;
+    }
+
+    public void setMaxChars(int maxChars) {
+        this.maxChars = maxChars;
     }
 
     public boolean isMultiline() {

@@ -25,6 +25,10 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "logmask":
         case "logMask": target.setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "logginglevel":
+        case "loggingLevel": target.setLoggingLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxchars":
+        case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
         case "showbody":
         case "showBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
@@ -49,6 +53,10 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "logmask":
         case "logMask": return java.lang.Boolean.class;
+        case "logginglevel":
+        case "loggingLevel": return java.lang.String.class;
+        case "maxchars":
+        case "maxChars": return int.class;
         case "multiline": return boolean.class;
         case "showbody":
         case "showBody": return boolean.class;
@@ -74,6 +82,10 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "logmask":
         case "logMask": return target.getLogMask();
+        case "logginglevel":
+        case "loggingLevel": return target.getLoggingLevel();
+        case "maxchars":
+        case "maxChars": return target.getMaxChars();
         case "multiline": return target.isMultiline();
         case "showbody":
         case "showBody": return target.isShowBody();
