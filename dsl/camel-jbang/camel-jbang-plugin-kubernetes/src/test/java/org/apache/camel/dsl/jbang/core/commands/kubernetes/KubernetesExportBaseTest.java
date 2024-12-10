@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,10 +33,16 @@ import java.util.Properties;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
+import io.fabric8.openshift.api.model.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import picocli.CommandLine;
@@ -71,16 +78,50 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
         return command;
     }
 
-    protected boolean hasService(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, Service.class).isPresent();
+    protected Properties getApplicationProperties(File workingDir) throws IOException {
+        String content = readResource(workingDir, "src/main/resources/application.properties");
+        Properties applicationProperties = new Properties();
+        applicationProperties.load(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+        return applicationProperties;
     }
 
-    protected boolean hasKnativeService(RuntimeType rt, ClusterType ct) throws IOException {
-        return getResource(rt, ct, io.fabric8.knative.serving.v1.Service.class).isPresent();
+    protected Deployment getDeployment(RuntimeType rt) throws IOException {
+        return getResource(rt, Deployment.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find deployment for: %s".formatted(rt.runtime())));
     }
 
-    protected <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, ClusterType ct, Class<T> type)
-            throws IOException {
+    protected Ingress getIngress(RuntimeType rt) throws IOException {
+        return getResource(rt, Ingress.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find ingress for: %s".formatted(rt.runtime())));
+    }
+
+    protected boolean hasIngress(RuntimeType rt) throws IOException {
+        return getResource(rt, Ingress.class).isPresent();
+    }
+
+    protected boolean hasKnativeService(RuntimeType rt) throws IOException {
+        return getResource(rt, io.fabric8.knative.serving.v1.Service.class).isPresent();
+    }
+
+    protected Route getRoute(RuntimeType rt) throws IOException {
+        return getResource(rt, Route.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find route for: %s".formatted(rt.runtime())));
+    }
+
+    protected boolean hasRoute(RuntimeType rt) throws IOException {
+        return getResource(rt, Route.class).isPresent();
+    }
+
+    protected Service getService(RuntimeType rt) throws IOException {
+        return getResource(rt, Service.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find service for: %s".formatted(rt.runtime())));
+    }
+
+    protected boolean hasService(RuntimeType rt) throws IOException {
+        return getResource(rt, Service.class).isPresent();
+    }
+
+    protected <T extends HasMetadata> Optional<T> getResource(RuntimeType rt, Class<T> type) throws IOException {
         var kind = type.getSimpleName().toLowerCase();
         File file = new File(workingDir, "src/main/jkube/%s.yml".formatted(kind));
         if (file.isFile()) {
@@ -101,10 +142,12 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
         }
     }
 
-    protected Properties getApplicationProperties(File workingDir) throws IOException {
-        String content = readResource(workingDir, "src/main/resources/application.properties");
-        Properties applicationProperties = new Properties();
-        applicationProperties.load(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
-        return applicationProperties;
+    protected Model readMavenModel() throws Exception {
+        File f = workingDir.toPath().resolve("pom.xml").toFile();
+        Assertions.assertTrue(f.isFile(), "Not a pom.xml file: " + f);
+        MavenXpp3Reader mavenReader = new MavenXpp3Reader();
+        Model model = mavenReader.read(new FileReader(f));
+        model.setPomFile(f);
+        return model;
     }
 }
