@@ -35,17 +35,6 @@
     <properties>
         <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
     </properties>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-cloud-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>

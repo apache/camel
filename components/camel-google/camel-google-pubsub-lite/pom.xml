@@ -38,18 +38,6 @@
         <componentPackage>org.apache.camel.component.google.pubsublite</componentPackage>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-cloud-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
