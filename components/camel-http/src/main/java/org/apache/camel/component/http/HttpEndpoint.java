@@ -22,8 +22,10 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,6 +38,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -62,9 +65,12 @@ import org.slf4j.LoggerFactory;
         "protocol=http"
 })
 @ManagedResource(description = "Managed HttpEndpoint")
-public class HttpEndpoint extends HttpCommonEndpoint {
+public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
+
+    private int lineNumber;
+    private String location;
 
     @UriParam(label = "security", description = "To configure security using SSLContextParameters."
                                                 + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
@@ -162,6 +168,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private boolean followRedirects;
     @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     private String userAgent;
+    @UriParam(label = "producer,advanced", description = "To use a custom activity listener")
+    private HttpActivityListener httpActivityListener;
+    @UriParam(label = "producer",
+              description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
+    private boolean logHttpActivity;
 
     public HttpEndpoint() {
     }
@@ -303,6 +314,16 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (logHttpActivity && httpActivityListener == null) {
+            httpActivityListener = new LoggingHttpActivityListener();
+        }
+        CamelContextAware.trySetCamelContext(httpActivityListener, getCamelContext());
+        ServiceHelper.startService(httpActivityListener);
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (getComponent() != null && getComponent().getClientConnectionManager() != clientConnectionManager) {
             // need to shutdown the ConnectionManager
@@ -311,10 +332,32 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         if (httpClient instanceof Closeable closeable) {
             IOHelper.close(closeable);
         }
+        ServiceHelper.stopService(httpActivityListener);
+        super.doStop();
     }
 
     // Properties
     //-------------------------------------------------------------------------
+
+    @Override
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    @Override
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public HttpClientBuilder getClientBuilder() {
         return clientBuilder;
@@ -646,6 +689,22 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public HttpActivityListener getHttpActivityListener() {
+        return httpActivityListener;
+    }
+
+    public void setHttpActivityListener(HttpActivityListener httpActivityListener) {
+        this.httpActivityListener = httpActivityListener;
+    }
+
+    public boolean isLogHttpActivity() {
+        return logHttpActivity;
+    }
+
+    public void setLogHttpActivity(boolean logHttpActivity) {
+        this.logHttpActivity = logHttpActivity;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")

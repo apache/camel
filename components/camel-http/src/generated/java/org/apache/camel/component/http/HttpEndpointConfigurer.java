@@ -67,6 +67,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "httpactivitylistener":
+        case "httpActivityListener": target.setHttpActivityListener(property(camelContext, org.apache.camel.component.http.HttpActivityListener.class, value)); return true;
         case "httpclient":
         case "httpClient": target.setHttpClient(property(camelContext, org.apache.hc.client5.http.classic.HttpClient.class, value)); return true;
         case "httpclientconfigurer":
@@ -83,6 +85,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "loghttpactivity":
+        case "logHttpActivity": target.setLogHttpActivity(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
         case "oauth2cachetokens":
@@ -188,6 +192,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpactivitylistener":
+        case "httpActivityListener": return org.apache.camel.component.http.HttpActivityListener.class;
         case "httpclient":
         case "httpClient": return org.apache.hc.client5.http.classic.HttpClient.class;
         case "httpclientconfigurer":
@@ -204,6 +210,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "loghttpactivity":
+        case "logHttpActivity": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
         case "oauth2cachetokens":
@@ -310,6 +318,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "getWithBody": return target.isGetWithBody();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "httpactivitylistener":
+        case "httpActivityListener": return target.getHttpActivityListener();
         case "httpclient":
         case "httpClient": return target.getHttpClient();
         case "httpclientconfigurer":
@@ -326,6 +336,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return target.isIgnoreResponseBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "loghttpactivity":
+        case "logHttpActivity": return target.isLogHttpActivity();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
         case "oauth2cachetokens":
