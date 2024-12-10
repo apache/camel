@@ -51,12 +51,12 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
 
     @UriParam(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
-    @Metadata(label = "formatting", description = "Show route ID.")
-    private boolean showRouteId;
-    @Metadata(label = "formatting", description = "Show route Group.")
-    private boolean showRouteGroup;
-    @Metadata(label = "formatting", description = "Show the unique exchange ID.")
-    private boolean showExchangeId;
+    @Metadata(defaultValue = "true", description = "Show route ID.")
+    private boolean showRouteId = true;
+    @Metadata(defaultValue = "true", description = "Show route Group.")
+    private boolean showRouteGroup = true;
+    @Metadata(defaultValue = "true", description = "Show the unique exchange ID.")
+    private boolean showExchangeId = true;
     @Metadata(defaultValue = "true", description = "Show the HTTP body.")
     private boolean showBody = true;
     @Metadata(defaultValue = "true", label = "formatting", description = "Show the HTTP headers.")
@@ -135,19 +135,23 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         }
 
         if (request != null) {
-            top.add("Sending HTTP Request (");
+            top.add("Sending HTTP Request   (");
         } else {
             top.add("Received HTTP Response (");
         }
         top.add(String.format("host: %s", host));
-        if (elapsed != -1) {
-            top.add(String.format(" elapsed: %sms", elapsed));
-        }
         if (showRouteGroup && showRouteId) {
-            top.add(String.format(" route: %s/%s", routeGroup, routeId));
+            if (routeGroup != null && routeId != null) {
+                top.add(String.format(" route: %s/%s", routeGroup, routeId));
+            } else if (routeId != null) {
+                top.add(String.format(" route: %s", routeId));
+            }
         }
         if (showExchangeId) {
             top.add(String.format(" exchangeId: %s", exchangeId));
+        }
+        if (elapsed != -1) {
+            top.add(String.format(" elapsed: %sms", elapsed));
         }
         top.add(")");
         if (request != null) {

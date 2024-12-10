@@ -205,6 +205,40 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * To enable logging HTTP request and response. You can use a custom
+         * LoggingHttpActivityListener as httpActivityListener to control
+         * logging options.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param logHttpActivity the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder logHttpActivity(boolean logHttpActivity) {
+            doSetProperty("logHttpActivity", logHttpActivity);
+            return this;
+        }
+        /**
+         * To enable logging HTTP request and response. You can use a custom
+         * LoggingHttpActivityListener as httpActivityListener to control
+         * logging options.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param logHttpActivity the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder logHttpActivity(String logHttpActivity) {
+            doSetProperty("logHttpActivity", logHttpActivity);
+            return this;
+        }
+        /**
          * Whether to skip mapping all the Camel headers as HTTP request
          * headers. If there are no data from Camel headers needed to be
          * included in the HTTP request then this can avoid parsing overhead

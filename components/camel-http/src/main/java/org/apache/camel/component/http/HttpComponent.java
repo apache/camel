@@ -202,6 +202,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected String userAgent;
     @Metadata(label = "producer,advanced", autowired = true, description = "To use a custom activity listener")
     protected HttpActivityListener httpActivityListener;
+    @Metadata(label = "producer",
+              description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
+    protected boolean logHttpActivity;
 
     public HttpComponent() {
         registerExtension(HttpComponentVerifierExtension::new);
@@ -438,6 +441,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setUserAgent(userAgent);
         endpoint.setMuteException(muteException);
         endpoint.setHttpActivityListener(httpActivityListener);
+        endpoint.setLogHttpActivity(logHttpActivity);
 
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
@@ -1038,9 +1042,20 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.httpActivityListener = httpActivityListener;
     }
 
+    public boolean isLogHttpActivity() {
+        return logHttpActivity;
+    }
+
+    public void setLogHttpActivity(boolean logHttpActivity) {
+        this.logHttpActivity = logHttpActivity;
+    }
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
+        if (logHttpActivity && httpActivityListener == null) {
+            httpActivityListener = new LoggingHttpActivityListener();
+        }
         CamelContextAware.trySetCamelContext(httpActivityListener, getCamelContext());
         ServiceHelper.startService(httpActivityListener);
     }

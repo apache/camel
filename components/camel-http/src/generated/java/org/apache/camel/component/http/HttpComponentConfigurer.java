@@ -69,6 +69,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpContext": target.setHttpContext(property(camelContext, org.apache.hc.core5.http.protocol.HttpContext.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "loghttpactivity":
+        case "logHttpActivity": target.setLogHttpActivity(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
         case "proxyauthdomain":
@@ -165,6 +167,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpContext": return org.apache.hc.core5.http.protocol.HttpContext.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "loghttpactivity":
+        case "logHttpActivity": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
         case "proxyauthdomain":
@@ -257,6 +261,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpContext": return target.getHttpContext();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "loghttpactivity":
+        case "logHttpActivity": return target.isLogHttpActivity();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
         case "proxyauthdomain":

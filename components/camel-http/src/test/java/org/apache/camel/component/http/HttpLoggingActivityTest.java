@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
@@ -40,8 +40,13 @@ public class HttpLoggingActivityTest extends BaseHttpTest {
     private HttpServer localServer;
     private String endpointUrl;
 
-    @BindToRegistry
-    private LoggingHttpActivityListener lal = new LoggingHttpActivityListener();
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setLogHttpActivity(true);
+        return context;
+    }
 
     @Override
     public void setupResources() throws Exception {
@@ -106,7 +111,6 @@ public class HttpLoggingActivityTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithImage() {
-
         Exchange exchange = template.send(endpointUrl + "/post1", exchange1 -> {
             exchange1.getIn().setBody(new File("src/test/data/logo.jpeg"));
             exchange1.getIn().setHeader(CONTENT_TYPE, IMAGE_JPEG.getMimeType());

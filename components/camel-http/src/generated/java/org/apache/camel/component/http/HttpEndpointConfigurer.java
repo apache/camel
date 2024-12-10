@@ -85,6 +85,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "loghttpactivity":
+        case "logHttpActivity": target.setLogHttpActivity(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
         case "oauth2cachetokens":
@@ -208,6 +210,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "loghttpactivity":
+        case "logHttpActivity": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
         case "oauth2cachetokens":
@@ -332,6 +336,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreResponseBody": return target.isIgnoreResponseBody();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "loghttpactivity":
+        case "logHttpActivity": return target.isLogHttpActivity();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
         case "oauth2cachetokens":

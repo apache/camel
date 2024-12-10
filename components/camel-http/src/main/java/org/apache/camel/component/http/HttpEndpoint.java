@@ -169,7 +169,10 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     private String userAgent;
     @UriParam(label = "producer,advanced", description = "To use a custom activity listener")
-    protected HttpActivityListener httpActivityListener;
+    private HttpActivityListener httpActivityListener;
+    @UriParam(label = "producer",
+              description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
+    private boolean logHttpActivity;
 
     public HttpEndpoint() {
     }
@@ -313,6 +316,9 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (logHttpActivity && httpActivityListener == null) {
+            httpActivityListener = new LoggingHttpActivityListener();
+        }
         CamelContextAware.trySetCamelContext(httpActivityListener, getCamelContext());
         ServiceHelper.startService(httpActivityListener);
     }
@@ -687,11 +693,16 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         return httpActivityListener;
     }
 
-    /**
-     * To use a custom activity listener
-     */
     public void setHttpActivityListener(HttpActivityListener httpActivityListener) {
         this.httpActivityListener = httpActivityListener;
+    }
+
+    public boolean isLogHttpActivity() {
+        return logHttpActivity;
+    }
+
+    public void setLogHttpActivity(boolean logHttpActivity) {
+        this.logHttpActivity = logHttpActivity;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")
