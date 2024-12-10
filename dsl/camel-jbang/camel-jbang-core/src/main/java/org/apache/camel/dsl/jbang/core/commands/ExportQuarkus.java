@@ -366,14 +366,14 @@ class ExportQuarkus extends Export {
             camelVersion = catalog.getCatalogVersion();
         }
 
-        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
-        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceFirst("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
-        context = context.replaceFirst("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
+        context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
+        context = context.replaceAll("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
-        context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
-        context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
 
         context = replaceBuildProperties(context);
 

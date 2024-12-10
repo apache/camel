@@ -22,7 +22,8 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 
 public abstract class BaseTrait implements Trait {
 
-    public static final String KUBERNETES_NAME_LABEL = "app.kubernetes.io/name";
+    public static final String KUBERNETES_LABEL_NAME = "app.kubernetes.io/name";
+    public static final String KUBERNETES_LABEL_MANAGED_BY = "app.kubernetes.io/managed-by";
 
     private final String id;
     private final int order;

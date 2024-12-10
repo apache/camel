@@ -17,10 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.LabelSelectorBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 
 public class DeploymentTrait extends BaseTrait {
@@ -42,9 +45,18 @@ public class DeploymentTrait extends BaseTrait {
                 .endMetadata()
                 .withNewSpec()
                 .withSelector(new LabelSelectorBuilder()
-                        .withMatchLabels(Map.of(KUBERNETES_NAME_LABEL, context.getName()))
+                        .withMatchLabels(Map.of(KUBERNETES_LABEL_NAME, context.getName()))
                         .build())
                 .endSpec();
+
+        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Optional.ofNullable(containerTrait.getImagePullSecrets()).orElseGet(List::of).forEach(sec -> deployment.editSpec()
+                .editOrNewTemplate()
+                .editOrNewSpec()
+                .addNewImagePullSecret(sec)
+                .endSpec()
+                .endTemplate()
+                .endSpec());
 
         if (context.getServiceAccount() != null) {
             deployment.editSpec()

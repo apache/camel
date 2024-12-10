@@ -31,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,6 +46,10 @@ public class KubernetesBaseTest {
     protected KubernetesClient kubernetesClient;
 
     protected StringPrinter printer;
+
+    public static boolean isDockerAvailable() {
+        return ContainerEnvironmentUtil.isDockerAvailable();
+    }
 
     @BeforeAll
     public void setupFixtures() {
