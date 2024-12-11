@@ -87,7 +87,7 @@ public final class RuntimeUtil {
                 name = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
                 Files.writeString(Paths.get(name), content);
 
-                Configurator.initialize("CamelJBang", "file://" + Path.of(name).toAbsolutePath());
+                Configurator.initialize("CamelJBang", Path.of(name).toAbsolutePath().toUri().toString());
             } else {
                 // use out of the box logging configuration
                 if (export) {
