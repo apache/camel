@@ -398,7 +398,7 @@
         <opentelemetry-log4j2-version>2.10.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
         <opentelemetry-alpha-version>1.27.0-alpha</opentelemetry-alpha-version>
-        <optaplanner-version>9.44.0.Final</optaplanner-version>
+        <optaplanner-version>10.0.0</optaplanner-version>
         <paho-version>1.2.5</paho-version>
         <parson-version>1.1.7</parson-version>
         <parquet-common-version>1.15.0</parquet-common-version>
