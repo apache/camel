@@ -39,6 +39,7 @@ import static org.apache.camel.component.etcd3.Etcd3Helper.toPathPrefix;
  * An implementation of a {@link Etcd3ServiceDiscovery} that retrieves all the service definitions from etcd at first
  * call, then refresh the list when a change has been detected.
  */
+@Deprecated
 public class Etcd3WatchServiceDiscovery extends Etcd3ServiceDiscovery
         implements Watch.Listener {
 

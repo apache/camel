@@ -23,6 +23,7 @@ import org.apache.camel.cloud.ServiceDefinition;
 /**
  * A plain Java object representing the list of services that could be found at a specific revision.
  */
+@Deprecated
 final class Etcd3GetServicesResponse {
 
     /**

@@ -24,6 +24,7 @@ import org.apache.camel.component.etcd3.Etcd3Configuration;
 /**
  * An implementation of a {@link Etcd3ServiceDiscovery} that retrieves the service definitions from etcd at each call.
  */
+@Deprecated
 public class Etcd3OnDemandServiceDiscovery extends Etcd3ServiceDiscovery {
     public Etcd3OnDemandServiceDiscovery(Etcd3Configuration configuration) {
         super(configuration);

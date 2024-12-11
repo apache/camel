@@ -34,6 +34,7 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperServiceRegistry.class);
 

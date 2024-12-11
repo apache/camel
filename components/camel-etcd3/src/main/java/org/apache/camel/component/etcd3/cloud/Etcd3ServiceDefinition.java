@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 
+@Deprecated
 public class Etcd3ServiceDefinition extends DefaultServiceDefinition {
     public static final Comparator<Etcd3ServiceDefinition> COMPARATOR = Comparator.comparing(Etcd3ServiceDefinition::getHost)
             .thenComparingInt(Etcd3ServiceDefinition::getPort);

@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow.cloud;
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated
 public final class UndertowServiceExpression extends DefaultServiceCallExpression {
     public UndertowServiceExpression() {
     }

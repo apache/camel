@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Discovers where services are running on which servers in Kubernetes.
  */
+@Deprecated
 public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery {
     private static final Logger LOGGER;
     private static final String[] ATTRIBUTE_IDS;

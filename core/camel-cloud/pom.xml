@@ -28,8 +28,8 @@
 
     <artifactId>camel-cloud</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Cloud</name>
-    <description>Camel Cloud support (deprecated since 4.7)</description>
+    <name>Camel :: Cloud (deprecated)</name>
+    <description>Camel Cloud support</description>
 
     <properties>
         <firstVersion>3.0</firstVersion>

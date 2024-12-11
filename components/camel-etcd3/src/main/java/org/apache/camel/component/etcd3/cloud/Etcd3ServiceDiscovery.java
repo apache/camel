@@ -44,6 +44,7 @@ import static org.apache.camel.component.etcd3.Etcd3Helper.toPathPrefix;
 /**
  * The root implementation of {@code ServiceDiscovery} fetching the data from etcd.
  */
+@Deprecated
 abstract class Etcd3ServiceDiscovery extends DefaultServiceDiscovery {
     /**
      * The logger.

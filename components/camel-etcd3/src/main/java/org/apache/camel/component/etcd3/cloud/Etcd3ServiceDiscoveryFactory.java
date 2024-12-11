@@ -30,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @CloudServiceFactory("etcd-service-discovery")
 @Configurer
+@Deprecated
 public class Etcd3ServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     /**
      * The configuration of the factory.

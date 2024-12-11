@@ -25,6 +25,7 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 
+@Deprecated
 public class KubernetesEnvServiceDiscovery extends KubernetesServiceDiscovery {
     public KubernetesEnvServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);

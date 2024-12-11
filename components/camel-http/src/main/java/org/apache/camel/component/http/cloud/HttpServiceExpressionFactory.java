@@ -24,6 +24,7 @@ import org.apache.camel.spi.annotations.CloudServiceFactory;
 
 @CloudServiceFactory("http-service-expression,https-service-expression")
 @Configurer
+@Deprecated
 public class HttpServiceExpressionFactory implements ServiceExpressionFactory {
     @Override
     public Expression newInstance(CamelContext camelContext) throws Exception {
