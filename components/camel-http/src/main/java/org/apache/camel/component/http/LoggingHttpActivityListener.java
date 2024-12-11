@@ -59,24 +59,27 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
 
     @Metadata(defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
-    @Metadata(defaultValue = "true", description = "Show route ID.")
+    @Metadata(defaultValue = "true", description = "Show route ID")
     private boolean showRouteId = true;
-    @Metadata(defaultValue = "true", description = "Show route Group.")
+    @Metadata(defaultValue = "true", description = "Show route Group")
     private boolean showRouteGroup = true;
-    @Metadata(defaultValue = "true", description = "Show the unique exchange ID.")
+    @Metadata(defaultValue = "true", description = "Show the unique exchange ID")
     private boolean showExchangeId = true;
-    @Metadata(defaultValue = "true", description = "Show the HTTP body.")
+    @Metadata(defaultValue = "true", description = "Show the HTTP body")
     private boolean showBody = true;
+    @Metadata(defaultValue = "true", label = "formatting", description = "Show the HTTP headers")
+    private boolean showHeaders = true;
     @Metadata(defaultValue = "true",
               description = "Whether to show HTTP body that are streaming based. Beware that Camel will have to read the content into memory to print to log, and will re-create the HttpEntity stored on the request/response object. If you have large payloads then this can impact performance.")
     private boolean showStreams = true;
-    @Metadata(defaultValue = "true", label = "formatting", description = "Show the HTTP headers.")
-    private boolean showHeaders = true;
-    @Metadata(defaultValue = "50000", description = "Limits the number of characters logged from the HTTP body.")
+    @Metadata(defaultValue = "false",
+              description = "Whether to show HTTP body that are binary based (uses content-type to determine whether binary)")
+    private boolean showBinary;
+    @Metadata(defaultValue = "50000", description = "Limits the number of characters logged from the HTTP body")
     private int maxChars = 50000;
-    @Metadata(description = "If true, mask sensitive information like password or passphrase in the log.")
+    @Metadata(description = "If true, mask sensitive information like password or passphrase in the log")
     private Boolean logMask;
-    @Metadata(defaultValue = "true", description = "If enabled then each information is outputted as separate LOG events.")
+    @Metadata(defaultValue = "true", description = "If enabled then each information is outputted as separate LOG events")
     private boolean multiline;
     @Metadata(defaultValue = "true",
               description = "If enabled then the source location of where the log endpoint is used in Camel routes, would be used as logger name, instead"
@@ -163,37 +166,48 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                     if (e.isStreaming() && !showStreams) {
                         lines.add("WARN: Cannot log HTTP body because the body is streaming");
                     } else {
-                        Header ce = request != null
-                                ? request.getHeader(HttpHeaders.CONTENT_ENCODING)
-                                : response.getHeader(HttpHeaders.CONTENT_ENCODING);
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        e.writeTo(bos);
-                        String data;
-                        if (ce != null && GZIPHelper.isGzip(ce.getValue())) {
-                            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-                            InputStream is = GZIPHelper.uncompressGzip(ce.getValue(), bis);
-                            data = new String(is.readAllBytes());
-                            IOHelper.close(is);
+                        ContentType ct = null;
+                        if (e.getContentType() != null) {
+                            ct = ContentType.parse(e.getContentType());
+                        }
+                        boolean accepted;
+                        if (showBinary || ct == null) {
+                            accepted = true;
                         } else {
-                            data = bos.toString();
+                            // we do not want to show binary content
+                            accepted = !isBinaryData(ct);
                         }
-                        if (data.length() > maxChars) {
-                            data = data.substring(0, maxChars) + " ... [Body clipped after " + maxChars
-                                   + " chars, total length is " + data.length() + "]";
-                        }
-                        lines.add(getValue(false, data));
-                        if (!e.isRepeatable()) {
-                            // need to re-create body as stream is EOL
-                            byte[] arr = bos.toByteArray();
-                            ContentType ct = null;
-                            if (e.getContentType() != null) {
-                                ct = ContentType.parse(e.getContentType());
+                        if (!accepted) {
+                            lines.add("WARN: Cannot log HTTP body because the body is binary");
+                        } else {
+                            Header ce = request != null
+                                    ? request.getHeader(HttpHeaders.CONTENT_ENCODING)
+                                    : response.getHeader(HttpHeaders.CONTENT_ENCODING);
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            e.writeTo(bos);
+                            String data;
+                            if (ce != null && GZIPHelper.isGzip(ce.getValue())) {
+                                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+                                InputStream is = GZIPHelper.uncompressGzip(ce.getValue(), bis);
+                                data = new String(is.readAllBytes());
+                                IOHelper.close(is);
+                            } else {
+                                data = bos.toString();
                             }
-                            e = new ByteArrayEntity(arr, ct);
-                            if (request instanceof HttpEntityContainer ec) {
-                                ec.setEntity(e);
-                            } else if (response instanceof HttpEntityContainer ec) {
-                                ec.setEntity(e);
+                            if (data.length() > maxChars) {
+                                data = data.substring(0, maxChars) + " ... [Body clipped after " + maxChars
+                                       + " chars, total length is " + data.length() + "]";
+                            }
+                            lines.add(getValue(false, data));
+                            if (!e.isRepeatable()) {
+                                // need to re-create body as stream is EOL
+                                byte[] arr = bos.toByteArray();
+                                e = new ByteArrayEntity(arr, ct);
+                                if (request instanceof HttpEntityContainer ec) {
+                                    ec.setEntity(e);
+                                } else if (response instanceof HttpEntityContainer ec) {
+                                    ec.setEntity(e);
+                                }
                             }
                         }
                     }
@@ -212,6 +226,19 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
             lines.forEach(sj::add);
             logger.log(sj.toString());
         }
+    }
+
+    /**
+     * Determine whether the content type is binary or not
+     */
+    protected boolean isBinaryData(ContentType ct) {
+        String t = ct.getMimeType();
+        if (t.contains("text") || t.contains("xml") || t.contains("json") || t.contains("multipart")
+                || t.contains("x-www-form-urlencoded")) {
+            return false;
+        }
+        // assume binary
+        return true;
     }
 
     private CamelLogger getLogger(Object source, Exchange exchange) {
@@ -293,6 +320,14 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
 
     public void setShowStreams(boolean showStreams) {
         this.showStreams = showStreams;
+    }
+
+    public boolean isShowBinary() {
+        return showBinary;
+    }
+
+    public void setShowBinary(boolean showBinary) {
+        this.showBinary = showBinary;
     }
 
     public boolean isShowHeaders() {

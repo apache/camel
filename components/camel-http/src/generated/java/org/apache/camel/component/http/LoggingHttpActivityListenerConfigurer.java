@@ -30,6 +30,8 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         case "maxchars":
         case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
+        case "showbinary":
+        case "showBinary": target.setShowBinary(property(camelContext, boolean.class, value)); return true;
         case "showbody":
         case "showBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showexchangeid":
@@ -58,6 +60,8 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         case "maxchars":
         case "maxChars": return int.class;
         case "multiline": return boolean.class;
+        case "showbinary":
+        case "showBinary": return boolean.class;
         case "showbody":
         case "showBody": return boolean.class;
         case "showexchangeid":
@@ -87,6 +91,8 @@ public class LoggingHttpActivityListenerConfigurer extends org.apache.camel.supp
         case "maxchars":
         case "maxChars": return target.getMaxChars();
         case "multiline": return target.isMultiline();
+        case "showbinary":
+        case "showBinary": return target.isShowBinary();
         case "showbody":
         case "showBody": return target.isShowBody();
         case "showexchangeid":
