@@ -360,7 +360,7 @@
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.29</metrics-version>
         <micrometer-version>1.14.2</micrometer-version>
-        <micrometer-tracing-version>1.4.0</micrometer-tracing-version>
+        <micrometer-tracing-version>1.4.1</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.1</microprofile-fault-tolerance-version>
         <milvus-client-version>2.5.2</milvus-client-version>
