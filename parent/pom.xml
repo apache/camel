@@ -432,7 +432,7 @@
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.7.0</reactor-version>
-        <reactor-netty-version>1.2.0</reactor-netty-version>
+        <reactor-netty-version>1.2.1</reactor-netty-version>
         <redisson-version>3.40.1</redisson-version>
         <resilience4j-version>2.2.0</resilience4j-version>
         <rest-assured-version>5.5.0</rest-assured-version>
