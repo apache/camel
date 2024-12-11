@@ -57,7 +57,6 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -95,7 +94,6 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     private final boolean throwException;
     private final boolean transferException;
     private final HeaderFilterStrategy httpProtocolHeaderFilterStrategy = new HttpProtocolHeaderFilterStrategy();
-    private final HttpActivityListener httpActivityListener;
     private int minOkRange;
     private int maxOkRange;
     private String defaultUrl;
@@ -108,7 +106,6 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         this.httpContext = endpoint.getHttpContext();
         this.throwException = endpoint.isThrowExceptionOnFailure();
         this.transferException = endpoint.isTransferException();
-        this.httpActivityListener = endpoint.getHttpActivityListener();
     }
 
     @Override
@@ -479,22 +476,19 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     protected <T> T executeMethod(
             Exchange exchange, HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
             throws IOException, HttpException {
+        // use a local context per execution
         HttpContext localContext;
         if (httpContext != null) {
             localContext = new BasicHttpContext(httpContext);
         } else {
             localContext = HttpClientContext.create();
         }
-        StopWatch watch = null;
-        if (httpActivityListener != null) {
-            watch = new StopWatch();
-            httpActivityListener.onRequestSubmitted(this, exchange, httpHost, httpRequest);
+        if (getEndpoint().getHttpActivityListener() != null) {
+            localContext.setAttribute("org.apache.camel.Exchange", exchange);
+            localContext.setAttribute("org.apache.hc.core5.http.HttpHost", httpHost);
         }
         // execute open that does not automatic close response input-stream (this is done in exchange on-completion by Camel)
         ClassicHttpResponse res = httpClient.executeOpen(httpHost, httpRequest, localContext);
-        if (httpActivityListener != null) {
-            httpActivityListener.onResponseReceived(this, exchange, httpHost, res, watch.taken());
-        }
         return handler.handleResponse(res);
     }
 

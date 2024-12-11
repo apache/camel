@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import javax.net.ssl.HostnameVerifier;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -41,6 +43,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
@@ -48,7 +51,14 @@ import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.pool.ConnPoolControl;
 import org.apache.hc.core5.pool.PoolStats;
@@ -301,6 +311,33 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(clientBuilder);
+        }
+
+        if (httpActivityListener != null) {
+            clientBuilder.addRequestInterceptorLast(new HttpRequestInterceptor() {
+                @Override
+                public void process(HttpRequest request, EntityDetails entity, HttpContext context)
+                        throws HttpException, IOException {
+                    Exchange exchange = (Exchange) context.getAttribute("org.apache.camel.Exchange");
+                    HttpHost host = (HttpHost) context.getAttribute("org.apache.hc.core5.http.HttpHost");
+                    context.setAttribute("org.apache.camel.util.StopWatch", new StopWatch());
+                    httpActivityListener.onRequestSubmitted(this, exchange, host, request, (HttpEntity) entity);
+                }
+            });
+            clientBuilder.addResponseInterceptorFirst(new HttpResponseInterceptor() {
+                @Override
+                public void process(HttpResponse response, EntityDetails entity, HttpContext context)
+                        throws HttpException, IOException {
+                    long elapsed = -1;
+                    StopWatch watch = (StopWatch) context.removeAttribute("org.apache.camel.util.StopWatch");
+                    if (watch != null) {
+                        elapsed = watch.taken();
+                    }
+                    Exchange exchange = (Exchange) context.removeAttribute("org.apache.camel.Exchange");
+                    HttpHost host = (HttpHost) context.removeAttribute("org.apache.hc.core5.http.HttpHost");
+                    httpActivityListener.onResponseReceived(this, exchange, host, response, (HttpEntity) entity, elapsed);
+                }
+            });
         }
 
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -30,13 +32,18 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.camel.util.IOHelper;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 
 import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
@@ -86,24 +93,24 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
     }
 
     @Override
-    public void onRequestSubmitted(Object source, Exchange exchange, HttpHost httpHost, ClassicHttpRequest request) {
+    public void onRequestSubmitted(Object source, Exchange exchange, HttpHost host, HttpRequest request, HttpEntity entity) {
         CamelLogger logger = getLogger(source, exchange);
         if (logger.shouldLog()) {
-            onActivity(logger, exchange, httpHost, request, null, -1);
+            onActivity(logger, exchange, host, request, null, entity, -1);
         }
     }
 
     @Override
     public void onResponseReceived(
-            Object source, Exchange exchange, HttpHost httpHost, ClassicHttpResponse response, long elapsed) {
+            Object source, Exchange exchange, HttpHost host, HttpResponse response, HttpEntity entity, long elapsed) {
         CamelLogger logger = getLogger(source, exchange);
         if (logger.shouldLog()) {
-            onActivity(logger, exchange, httpHost, null, response, elapsed);
+            onActivity(logger, exchange, host, null, response, entity, elapsed);
         }
     }
 
     protected void onActivity(
-            CamelLogger logger, Exchange exchange, HttpHost httpHost, ClassicHttpRequest request, ClassicHttpResponse response,
+            CamelLogger logger, Exchange exchange, HttpHost host, HttpRequest request, HttpResponse response, HttpEntity entity,
             long elapsed) {
         final StringJoiner top = new StringJoiner("");
         final List<String> lines = new ArrayList<>();
@@ -111,7 +118,6 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         String routeId = ExchangeHelper.getRouteId(exchange);
         String routeGroup = ExchangeHelper.getRouteGroup(exchange);
         String exchangeId = exchange.getExchangeId();
-        String host = httpHost.toHostString();
         String protocol = null;
         if (request != null) {
             protocol = request.getVersion() != null ? request.getVersion().toString() : "HTTP/1.1";
@@ -122,7 +128,7 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         } else {
             top.add("Received HTTP Response (");
         }
-        top.add(String.format("host: %s", host));
+        top.add(String.format("host: %s", host.toHostString()));
         if (showRouteGroup && showRouteId) {
             if (routeGroup != null && routeId != null) {
                 top.add(String.format(" route: %s/%s", routeGroup, routeId));
@@ -152,14 +158,25 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
         if (showBody) {
             lines.add(""); // empty line before body
             try {
-                var e = request != null ? request.getEntity() : response.getEntity();
+                var e = entity;
                 if (e != null) {
                     if (e.isStreaming() && !showStreams) {
                         lines.add("WARN: Cannot log HTTP body because the body is streaming");
                     } else {
+                        Header ce = request != null
+                                ? request.getHeader(HttpHeaders.CONTENT_ENCODING)
+                                : response.getHeader(HttpHeaders.CONTENT_ENCODING);
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
                         e.writeTo(bos);
-                        String data = bos.toString();
+                        String data;
+                        if (ce != null && GZIPHelper.isGzip(ce.getValue())) {
+                            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+                            InputStream is = GZIPHelper.uncompressGzip(ce.getValue(), bis);
+                            data = new String(is.readAllBytes());
+                            IOHelper.close(is);
+                        } else {
+                            data = bos.toString();
+                        }
                         if (data.length() > maxChars) {
                             data = data.substring(0, maxChars) + " ... [Body clipped after " + maxChars
                                    + " chars, total length is " + data.length() + "]";
@@ -173,10 +190,10 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                                 ct = ContentType.parse(e.getContentType());
                             }
                             e = new ByteArrayEntity(arr, ct);
-                            if (request != null) {
-                                request.setEntity(e);
-                            } else {
-                                response.setEntity(e);
+                            if (request instanceof HttpEntityContainer ec) {
+                                ec.setEntity(e);
+                            } else if (response instanceof HttpEntityContainer ec) {
+                                ec.setEntity(e);
                             }
                         }
                     }

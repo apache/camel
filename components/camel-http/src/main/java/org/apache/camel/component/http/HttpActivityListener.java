@@ -17,9 +17,10 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
 
 /**
  * Listener when HTTP requests and responses are sent and received.
@@ -31,20 +32,23 @@ public interface HttpActivityListener {
      *
      * @param source   the http producer that are used
      * @param exchange the current exchange
-     * @param httpHost the host the request is sent to
+     * @param host     the host where the request is sent to
      * @param request  the http request
+     * @param entity   the http data
      */
-    void onRequestSubmitted(Object source, Exchange exchange, HttpHost httpHost, ClassicHttpRequest request);
+    void onRequestSubmitted(Object source, Exchange exchange, HttpHost host, HttpRequest request, HttpEntity entity);
 
     /**
      * HTTP response received
      *
      * @param source   the http producer that are used
      * @param exchange the current exchange
-     * @param httpHost the host the request is received from
+     * @param host     the host where the response was received from
      * @param response the http response
+     * @param entity   the http data
      * @param elapsed  time in millis before the response was received after sending
      */
-    void onResponseReceived(Object source, Exchange exchange, HttpHost httpHost, ClassicHttpResponse response, long elapsed);
+    void onResponseReceived(
+            Object source, Exchange exchange, HttpHost host, HttpResponse response, HttpEntity entity, long elapsed);
 
 }
