@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.java.joor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +32,9 @@ public final class Helper {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    private static final Pattern IMPORT_PATTERN = Pattern.compile(
+            "^import\\s+([a-zA-Z][.\\w]*)\\s*;", Pattern.MULTILINE);
 
     private Helper() {
 
@@ -52,4 +57,16 @@ public final class Helper {
                 ? matcher.group(1) + "." + name
                 : name;
     }
+
+    public static List<String> determineImports(String content) {
+        List<String> answer = new ArrayList<>();
+        final Matcher matcher = IMPORT_PATTERN.matcher(content);
+        while (matcher.find()) {
+            String imp = matcher.group(1);
+            imp = imp.trim();
+            answer.add(imp);
+        }
+        return answer;
+    }
+
 }

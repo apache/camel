@@ -16,16 +16,23 @@
  */
 package org.apache.camel.dsl.java.joor;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import java.io.FileInputStream;
+import java.util.Collections;
+import java.util.List;
 
-public class DummyRoute extends RouteBuilder {
+import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    private CamelContext camelContext;
+public class HelperTest {
 
-    @Override
-    public void configure() throws Exception {
-        from("direct:dummy")
-                .to("mock:end");
+    @Test
+    public void testImports() throws Exception {
+        List<String> list = Helper.determineImports(
+                IOHelper.loadText(new FileInputStream("src/test/java/org/apache/camel/dsl/java/joor/DummyRoute.java")));
+        Collections.sort(list);
+        Assertions.assertEquals(2, list.size());
+        Assertions.assertEquals("org.apache.camel.CamelContext", list.get(0));
+        Assertions.assertEquals("org.apache.camel.builder.RouteBuilder", list.get(1));
     }
 }

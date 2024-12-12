@@ -19,29 +19,24 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 
 /**
- * Allows to plugin custom post-processors that are processed after the DSL has loaded the source and compiled into a
+ * Allows to plugin custom pre-processors that are processed before the DSL has loaded the source and compiled into a
  * Java object.
  * <p/>
- * This is used to detect and handle {@link org.apache.camel.BindToRegistry} and {@link org.apache.camel.Converter}
- * classes.
+ * This is used among others to detect imported classes that may need to be downloaded into classloader
+ * to allow to compile the class.
  *
- * @see CompilePreProcessor
+ * @see CompilePostProcessor
  */
-public interface CompilePostProcessor {
+public interface CompilePreProcessor {
 
     /**
-     * Invoked after the class has been compiled
+     * Invoked before the class has been compiled
      *
      * @param  camelContext the camel context
      * @param  name         the name of the resource/class
-     * @param  clazz        the class
-     * @param  byteCode     byte code that was compiled from the source as the class (only supported on some DSLs)
-     * @param  instance     the object created as instance of the class (if any)
+     * @param  code         the source code of the class
      * @throws Exception    is thrown if error during post-processing
      */
-    void postCompile(
-            CamelContext camelContext, String name,
-            Class<?> clazz, byte[] byteCode, Object instance)
-            throws Exception;
+    void preCompile(CamelContext camelContext, String name, String code) throws Exception;
 
 }

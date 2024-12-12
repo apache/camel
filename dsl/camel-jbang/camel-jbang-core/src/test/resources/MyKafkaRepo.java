@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.java.joor;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-public class DummyRoute extends RouteBuilder {
+import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
 
-    private CamelContext camelContext;
+@Component
+public class MyKafkaRepo {
 
-    @Override
-    public void configure() throws Exception {
-        from("direct:dummy")
-                .to("mock:end");
+    @Bean
+    public KafkaIdempotentRepository createRepo() {
+        KafkaIdempotentRepository repo = new KafkaIdempotentRepository("myrepo", "localhost:9091");
+        return repo;
     }
 }
+
