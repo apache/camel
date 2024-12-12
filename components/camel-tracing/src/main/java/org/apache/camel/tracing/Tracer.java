@@ -173,6 +173,14 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         initTracer();
         initContextPropagators();
         ServiceHelper.startService(eventNotifier);
+
+        if (Boolean.TRUE.equals(camelContext.isUseMDCLogging())) {
+            LOG.warn("Initialized tracing component to put trace_id and span_id into MDC. " +
+                     "This is a deprecated feature and may disappear in the future. " +
+                     "You should replace it with the specific MDC instrumentation provided by your tracing/telemetry SDK instead. "
+                     +
+                     "See the tracing component documentation to learn more about it.");
+        }
     }
 
     @Override

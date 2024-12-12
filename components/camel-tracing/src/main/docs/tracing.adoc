@@ -16,3 +16,6 @@ This module is not intended to be used by end users. Instead, you should use one
 * xref:opentelemetry.adoc[`camel-opentelemetry`]
 * xref:observation.adoc[`camel-observation`]
 
+== MDC logging
+
+Mapped Diagnostic Context logging *trace_id* and *span_id* are included when you're setting the MDC configuration `camel.main.use-mdc-logging = true`. However this is a **deprecated** feature that may disappear in future version of the project. The feature can be enabled using the specific tracing/telemetry framework SDK. See more detail on the tracing component documentation page you're using.

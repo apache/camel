@@ -158,4 +158,4 @@ Multiple `SpanExporters` can be used at the same time.
 
 == MDC Logging
 
-When MDC Logging is enabled for the active Camel context the Trace ID and Span ID will be added and removed from the MDC for each route, the keys are `trace_id` and `span_id`, respectively.
+You can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific [Opentelemetry Logger MDC auto instrumentation](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md). The configuration depends on the logging framework you're using.
