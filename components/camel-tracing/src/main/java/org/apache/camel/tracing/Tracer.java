@@ -19,7 +19,6 @@ package org.apache.camel.tracing;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -72,6 +71,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private String excludePatterns;
     private InterceptStrategy tracingStrategy;
     private CamelContext camelContext;
+    private boolean createSpanPerProcessor = false;
 
     protected abstract void initTracer();
 
@@ -352,5 +352,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             }
             return message;
         }
+    }
+
+    public boolean isCreateSpanPerProcessor() {
+        return createSpanPerProcessor;
     }
 }
