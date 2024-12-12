@@ -21073,11 +21073,7 @@ converter classes. Default value: false
             <xs:documentation xml:lang="en"><![CDATA[
 Sets whether or not type converter statistics is enabled. By default the type
 converter utilization statistics is disabled. Notice: If enabled then there is a
-slight performance impact under very heavy load. You can enable/disable the
-statistics at runtime using the
-org.apache.camel.spi.TypeConverterRegistry#getStatistics()#setTypeConverterStatisticsEnabled(Boolean)
-method, or from JMX on the
-org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean mbean.
+slight performance impact under very heavy load.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

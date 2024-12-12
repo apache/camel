@@ -1228,10 +1228,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * <p/>
      * By default the type converter utilization statistics is disabled. <b>Notice:</b> If enabled then there is a
      * slight performance impact under very heavy load.
-     * <p/>
-     * You can enable/disable the statistics at runtime using the
-     * {@link org.apache.camel.spi.TypeConverterRegistry#getStatistics()#setTypeConverterStatisticsEnabled(Boolean)}
-     * method, or from JMX on the {@link org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean} mbean.
      */
     public void setTypeConverterStatisticsEnabled(String typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
