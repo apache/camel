@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.spi.CompilePreProcessor;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.PojoBeanModel;
 
 /**
@@ -37,9 +38,11 @@ public class JavaKnownImportsDownloader implements CompilePreProcessor {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
+    private final KnownDependenciesResolver knownDependenciesResolver;
 
-    public JavaKnownImportsDownloader(CamelContext camelContext) {
+    public JavaKnownImportsDownloader(CamelContext camelContext, KnownDependenciesResolver knownDependenciesResolver) {
         this.downloader = camelContext.hasService(DependencyDownloader.class);
+        this.knownDependenciesResolver = knownDependenciesResolver;
         camelContext.getRegistry().bind("JavaJoorKnownImportsDownloader", this);
     }
 
@@ -47,12 +50,18 @@ public class JavaKnownImportsDownloader implements CompilePreProcessor {
     public void preCompile(CamelContext camelContext, String name, String code) throws Exception {
         List<String> imports = determineImports(code);
         for (String imp : imports) {
-            // is this a known bean then we can determine the dependency
-            for (String n : catalog.findBeansNames()) {
-                PojoBeanModel m = catalog.pojoBeanModel(n);
-                if (m != null && imp.equals(m.getJavaType())) {
-                    downloadLoader(m.getGroupId(), m.getArtifactId(), m.getVersion());
-                    break;
+            // attempt known dependency resolver first
+            MavenGav gav = knownDependenciesResolver.mavenGavForClass(imp);
+            if (gav != null) {
+                downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+            } else {
+                // is this a known bean then we can determine the dependency
+                for (String n : catalog.findBeansNames()) {
+                    PojoBeanModel m = catalog.pojoBeanModel(n);
+                    if (m != null && imp.equals(m.getJavaType())) {
+                        downloadLoader(m.getGroupId(), m.getArtifactId(), m.getVersion());
+                        break;
+                    }
                 }
             }
         }

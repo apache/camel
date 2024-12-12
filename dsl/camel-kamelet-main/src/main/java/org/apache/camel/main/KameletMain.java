@@ -496,9 +496,6 @@ public class KameletMain extends MainCommandLineSupport {
         boolean lazyBean = "true".equals(getInitialProperties().get(getInstanceType() + ".lazyBean"));
         new AnnotationDependencyInjection(answer, lazyBean);
 
-        // add support for automatic downloaded needed JARs from java imports
-        new JavaKnownImportsDownloader(answer);
-
         if (!silent) {
             // silent should not include cli-connector
             // setup cli-connector if not already done
@@ -610,6 +607,8 @@ public class KameletMain extends MainCommandLineSupport {
                     .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
             answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
                     new DependencyDownloaderStrategy(answer));
+            // add support for automatic downloaded needed JARs from java imports
+            new JavaKnownImportsDownloader(answer, knownDeps);
 
             // download class-resolver
             ClassResolver classResolver = new DependencyDownloaderClassResolver(answer, knownDeps, silent);
