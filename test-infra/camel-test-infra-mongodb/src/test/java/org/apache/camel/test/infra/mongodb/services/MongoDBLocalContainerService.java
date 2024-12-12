@@ -23,6 +23,7 @@ import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 import org.testcontainers.utility.DockerImageName;
 
 public class MongoDBLocalContainerService implements MongoDBService, ContainerService<MongoDBContainer> {
@@ -31,7 +32,15 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
     private final MongoDBContainer container;
 
     public MongoDBLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(MongoDBLocalContainerService.class, MongoDBProperties.MONGODB_CONTAINER));
+        this(LocalPropertyResolver.getProperty(MongoDBLocalContainerService.class, getPropertyKeyForContainerImage()));
+    }
+
+    private static String getPropertyKeyForContainerImage() {
+        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+            return MongoDBProperties.MONGODB_CONTAINER_PPC64LE;
+        } else {
+            return MongoDBProperties.MONGODB_CONTAINER;
+        }
     }
 
     public MongoDBLocalContainerService(String imageName) {
