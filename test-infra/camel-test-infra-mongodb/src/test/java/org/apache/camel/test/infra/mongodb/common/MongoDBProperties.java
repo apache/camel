@@ -21,6 +21,7 @@ public final class MongoDBProperties {
     public static final String MONGODB_URL = "mongodb.url";
     public static final String MONGODB_CONNECTION_ADDRESS = "mongodb.connection.address";
     public static final String MONGODB_CONTAINER = "mongodb.container";
+    public static final String MONGODB_CONTAINER_PPC64LE = "mongodb.container.ppc64le";
 
     private MongoDBProperties() {
 

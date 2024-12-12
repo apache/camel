@@ -45,6 +45,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
@@ -71,9 +72,13 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
 
     static {
 
-        // This one requires Mongo 4.4. This is related to
-        // "CAMEL-15604 support allowDiskUse for MongoDB find operations"
-        mongoDbContainer = System.getProperty(MongoDBProperties.MONGODB_CONTAINER, "mongo:4.4");
+        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+            mongoDbContainer = ("icr.io/ppc64le-oss/mongodb-ppc64le:4.4.24");
+        } else {
+            // This one requires Mongo 4.4. This is related to
+            // "CAMEL-15604 support allowDiskUse for MongoDB find operations"
+            mongoDbContainer = System.getProperty(MongoDBProperties.MONGODB_CONTAINER, "mongo:4.4");
+        }
 
         service = new MongoDBLocalContainerService(mongoDbContainer);
 
