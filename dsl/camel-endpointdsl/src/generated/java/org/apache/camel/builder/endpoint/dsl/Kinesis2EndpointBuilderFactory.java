@@ -200,6 +200,21 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The message timestamp to start polling from. Required if iteratorType
+         * is set to AT_TIMESTAMP.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param messageTimestamp the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder messageTimestamp(String messageTimestamp) {
+            doSetProperty("messageTimestamp", messageTimestamp);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
