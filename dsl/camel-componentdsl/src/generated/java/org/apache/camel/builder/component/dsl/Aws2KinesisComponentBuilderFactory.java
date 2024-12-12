@@ -199,6 +199,22 @@ public interface Aws2KinesisComponentBuilderFactory {
         }
     
         /**
+         * The message timestamp to start polling from. Required if iteratorType
+         * is set to AT_TIMESTAMP.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param messageTimestamp the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder messageTimestamp(java.lang.String messageTimestamp) {
+            doSetProperty("messageTimestamp", messageTimestamp);
+            return this;
+        }
+    
+        /**
          * The sequence number to start polling from. Required if iteratorType
          * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
          * 
@@ -668,6 +684,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Kinesis2Component) component).setMaxResultsPerRequest((int) value); return true;
+            case "messageTimestamp": getOrCreateConfiguration((Kinesis2Component) component).setMessageTimestamp((java.lang.String) value); return true;
             case "sequenceNumber": getOrCreateConfiguration((Kinesis2Component) component).setSequenceNumber((java.lang.String) value); return true;
             case "shardClosed": getOrCreateConfiguration((Kinesis2Component) component).setShardClosed((org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum) value); return true;
             case "shardId": getOrCreateConfiguration((Kinesis2Component) component).setShardId((java.lang.String) value); return true;
