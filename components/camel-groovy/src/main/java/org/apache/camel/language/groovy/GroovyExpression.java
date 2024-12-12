@@ -62,7 +62,7 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     @SuppressWarnings("unchecked")
-    private Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
+    protected Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
         // Get the script from the cache, or create a new instance
         GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
         Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
@@ -87,7 +87,7 @@ public class GroovyExpression extends ExpressionSupport {
         return ObjectHelper.newInstance(scriptClass, Script.class);
     }
 
-    private Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
+    protected Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
         Map<String, Object> map = new HashMap<>(globalVariables);
         ExchangeHelper.populateVariableMap(exchange, map, true);
         map.put("log", LOG);

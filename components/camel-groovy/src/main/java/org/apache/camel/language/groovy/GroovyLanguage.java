@@ -23,11 +23,13 @@ import java.util.Map;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
@@ -154,6 +156,27 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         gs.getBinding().setVariable("log", LOG);
         Object value = gs.run();
         return getCamelContext().getTypeConverter().convertTo(resultType, value);
+    }
+
+    // use by tooling
+    public boolean validateExpression(String expression) throws GroovyValidationException {
+        final Exchange dummy = new DefaultExchange(getCamelContext());
+        Map<String, Object> globalVariables = new HashMap<>();
+
+        try {
+            GroovyExpression ge = createExpression(expression);
+            Script script = ge.instantiateScript(dummy, globalVariables);
+            script.setBinding(ge.createBinding(dummy, globalVariables));
+            script.run();
+        } catch (Exception e) {
+            throw new GroovyValidationException(expression, e);
+        }
+        return true;
+    }
+
+    // use by tooling
+    public boolean validatePredicate(String expression) throws GroovyValidationException {
+        return validateExpression(expression);
     }
 
     Class<Script> getScriptFromCache(String script) {
