@@ -420,6 +420,31 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportKafka(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt, new String[] { "src/test/resources/MyKafkaRepo.java" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kafka", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kafka-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kafka", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportSecretBean(RuntimeType rt) throws Exception {
         Export command = createCommand(rt,
                 new String[] { "src/test/resources/k8s-secret-bean.yaml" },

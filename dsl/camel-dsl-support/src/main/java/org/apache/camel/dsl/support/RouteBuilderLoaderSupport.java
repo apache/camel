@@ -32,6 +32,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteBuilderLifecycleStrategy;
 import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.CompilePreProcessor;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -42,6 +43,7 @@ import org.apache.camel.support.RoutesBuilderLoaderSupport;
  */
 public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSupport {
     private final String extension;
+    private final List<CompilePreProcessor> compilePreProcessors = new ArrayList<>();
     private final List<CompilePostProcessor> compilePostProcessors = new ArrayList<>();
     private StartupStepRecorder recorder;
     private SourceLoader sourceLoader = new DefaultSourceLoader();
@@ -60,6 +62,21 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
     @Override
     public boolean isSupportedExtension(String extension) {
         return super.isSupportedExtension(extension);
+    }
+
+    /**
+     * Gets the registered {@link CompilePreProcessor}.
+     */
+    public List<CompilePreProcessor> getCompilePreProcessors() {
+        return compilePreProcessors;
+    }
+
+    /**
+     * Add a custom {@link CompilePreProcessor} to handle specific pre-processing before compiling the source into a
+     * Java object.
+     */
+    public void addCompilePreProcessor(CompilePreProcessor preProcessor) {
+        this.compilePreProcessors.add(preProcessor);
     }
 
     /**
@@ -91,11 +108,18 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         super.doStart();
 
         if (getCamelContext() != null) {
-            // discover optional compile post-processors to be used
-            Set<CompilePostProcessor> pres = getCamelContext().getRegistry().findByType(CompilePostProcessor.class);
+            // discover optional compile pre-processors to be used
+            Set<CompilePreProcessor> pres = getCamelContext().getRegistry().findByType(CompilePreProcessor.class);
             if (pres != null && !pres.isEmpty()) {
-                for (CompilePostProcessor pre : pres) {
-                    addCompilePostProcessor(pre);
+                for (CompilePreProcessor pre : pres) {
+                    addCompilePreProcessor(pre);
+                }
+            }
+            // discover optional compile post-processors to be used
+            Set<CompilePostProcessor> posts = getCamelContext().getRegistry().findByType(CompilePostProcessor.class);
+            if (posts != null && !posts.isEmpty()) {
+                for (CompilePostProcessor post : posts) {
+                    addCompilePostProcessor(post);
                 }
             }
             // discover a special source loader to be used

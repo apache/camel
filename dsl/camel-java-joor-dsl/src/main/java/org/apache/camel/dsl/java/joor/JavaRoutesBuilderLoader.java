@@ -42,6 +42,7 @@ import org.apache.camel.language.joor.CompilationUnit;
 import org.apache.camel.language.joor.JavaJoorClassLoader;
 import org.apache.camel.language.joor.MultiCompile;
 import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.CompilePreProcessor;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
@@ -189,6 +190,12 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 }
                 String content = IOHelper.loadText(is);
                 String name = determineName(resource, content);
+
+                // allow any pre-processing
+                for (CompilePreProcessor pre : getCompilePreProcessors()) {
+                    pre.preCompile(getCamelContext(), name, content);
+                }
+
                 unit.addClass(name, content);
                 // ensure class gets recompiled
                 classLoader.removeClass(name);

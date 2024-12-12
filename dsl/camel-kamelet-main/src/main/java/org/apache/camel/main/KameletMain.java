@@ -61,6 +61,7 @@ import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.download.DownloadModelineParser;
 import org.apache.camel.main.download.ExportPropertiesParser;
 import org.apache.camel.main.download.ExportTypeConverter;
+import org.apache.camel.main.download.JavaKnownImportsDownloader;
 import org.apache.camel.main.download.KameletAutowiredLifecycleStrategy;
 import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
@@ -494,6 +495,9 @@ public class KameletMain extends MainCommandLineSupport {
 
         boolean lazyBean = "true".equals(getInitialProperties().get(getInstanceType() + ".lazyBean"));
         new AnnotationDependencyInjection(answer, lazyBean);
+
+        // add support for automatic downloaded needed JARs from java imports
+        new JavaKnownImportsDownloader(answer);
 
         if (!silent) {
             // silent should not include cli-connector
