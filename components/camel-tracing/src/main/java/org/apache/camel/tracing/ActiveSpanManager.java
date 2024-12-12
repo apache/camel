@@ -27,7 +27,11 @@ import org.slf4j.MDC;
  */
 public final class ActiveSpanManager {
 
+    @Deprecated
+    // Use specific MDC instrumentation provided by your tracing/telemetry SDK instead
     public static final String MDC_TRACE_ID = "trace_id";
+    @Deprecated
+    // Use specific MDC instrumentation provided by your tracing/telemetry SDK instead
     public static final String MDC_SPAN_ID = "span_id";
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
 
