@@ -1127,6 +1127,23 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateGroovyLanguage() {
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "groovy", "4 * 3");
+        assertTrue(result.isSuccess());
+        assertEquals("4 * 3", result.getText());
+
+        var code = """
+                var a = 123;
+                println a */ 2;
+                """;
+        result = catalog.validateLanguageExpression(null, "groovy", code);
+        assertFalse(result.isSuccess());
+        assertEquals(code, result.getText());
+        assertEquals(23, result.getIndex());
+        assertEquals("Unexpected input: '*' @ line 2, column 11.", result.getShortError());
+    }
+
+    @Test
     public void testSpringCamelContext() {
         String xml = catalog.springSchemaAsXml();
         assertNotNull(xml);
