@@ -291,7 +291,9 @@ public abstract class BaseMainSupport extends BaseService {
      * @param listener the listener
      */
     public void addMainListener(MainListener listener) {
-        listeners.add(listener);
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -544,6 +546,9 @@ public abstract class BaseMainSupport extends BaseService {
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         }
 
+        // configure main listener
+        configureMainListener(camelContext);
+
         // configure from main configuration properties
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
 
@@ -665,10 +670,14 @@ public abstract class BaseMainSupport extends BaseService {
         mainConfigurationProperties.getMainListeners().forEach(this::addMainListener);
         if (mainConfigurationProperties.getMainListenerClasses() != null) {
             for (String fqn : mainConfigurationProperties.getMainListenerClasses().split(",")) {
-                fqn = fqn.trim();
-                Class<? extends MainListener> clazz
-                        = camelContext.getClassResolver().resolveMandatoryClass(fqn, MainListener.class);
-                addMainListener(camelContext.getInjector().newInstance(clazz));
+                String target = fqn.trim();
+                // the class may already be added so avoid creating duplicate classes
+                boolean added = listeners.stream().map(l -> l.getClass().getName()).anyMatch(l -> l.equals(target));
+                if (!added) {
+                    Class<? extends MainListener> clazz
+                            = camelContext.getClassResolver().resolveMandatoryClass(fqn, MainListener.class);
+                    addMainListener(camelContext.getInjector().newInstance(clazz));
+                }
             }
         }
     }
