@@ -68,7 +68,13 @@ camel.opentelemetry.enabled = true
 # camel.opentelemetry.instrumentationName = myApp
 ----
 
-NOTE: You would still need OpenTelemetry to instrument your code, which can be done via a <<OpenTelemetry-JavaAgent,Java agent>>.
+The configuration alone provide a NOOP default implementation, which is only useful for testing purposes as it will always create the same trace and span. In order to leverage an easy configuration you can also use the https://opentelemetry.io/docs/languages/java/configuration/#zero-code-sdk-autoconfigure[OpenTelemetry zero code SDK autoconfiguration]. With this approach you will need to add the `io.opentelemetry:opentelemetry-sdk-extension-autoconfigure` to your Camel main application, and start the application with the following system properties:
+
+```bash
+$ java -Dotel.java.global-autoconfigure.enabled=true -Dotel.metrics.exporter=none -Dotel.traces.exporter=none -Dotel.logs.exporter=none -jar my-app.jar
+```
+
+NOTE: you will need to check the SDK manual to configure according to your specific needs.
 
 == Spring Boot
 
