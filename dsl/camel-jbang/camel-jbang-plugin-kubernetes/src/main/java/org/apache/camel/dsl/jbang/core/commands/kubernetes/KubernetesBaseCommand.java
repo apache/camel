@@ -17,6 +17,11 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -25,9 +30,13 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.PodResource;
 import io.fabric8.kubernetes.client.dsl.Resource;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 /**
@@ -45,10 +54,45 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--namespace", "-n" }, description = "Namespace to use for all operations")
     String namespace;
 
+    @CommandLine.Option(names = { "--name" },
+                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    String name;
+
+    List<Supplier<String>> projectNameSuppliers = new ArrayList<>();
+
     private KubernetesClient kubernetesClient;
 
     public KubernetesBaseCommand(CamelJBangMain main) {
         super(main);
+        projectNameSuppliers.add(() -> name);
+    }
+
+    protected String getProjectName() {
+        return projectNameSuppliers.stream().map(Supplier::get).filter(Objects::nonNull).findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("Failed to resolve project name"));
+    }
+
+    protected String projectNameFromImage(Supplier<String> imageSupplier) {
+        return KubernetesHelper.sanitize(StringHelper.beforeLast(imageSupplier.get(), ":"));
+    }
+
+    protected String projectNameFromGav(Supplier<String> gavSupplier) {
+        var gav = gavSupplier.get();
+        if (gav != null) {
+            String[] ids = gav.split(":");
+            if (ids.length > 1) {
+                return KubernetesHelper.sanitize(ids[1]); // artifactId
+            }
+        }
+        return null;
+    }
+
+    protected String projectNameFromFilePath(Supplier<String> pathSupplier) {
+        var filePath = pathSupplier.get();
+        if (filePath != null) {
+            return KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
+        }
+        return null;
     }
 
     /**
