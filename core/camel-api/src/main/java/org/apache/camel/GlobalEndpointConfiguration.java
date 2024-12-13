@@ -40,7 +40,7 @@ public interface GlobalEndpointConfiguration {
      * consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by
      * the routing Error Handler.
      * <p/>
-     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
+     * By default, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
      */
     void setBridgeErrorHandler(boolean bridgeErrorHandler);

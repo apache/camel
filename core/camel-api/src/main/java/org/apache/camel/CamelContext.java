@@ -155,7 +155,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setManagementName(String name);
 
     /**
-     * Gets the version of the this CamelContext.
+     * Gets the version of this CamelContext.
      *
      * @return the version
      */
