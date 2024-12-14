@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.22.3-SNAPSHOT</version>
+        <version>3.22.3</version>
     </parent>
 
     <artifactId>camel-facebook</artifactId>
