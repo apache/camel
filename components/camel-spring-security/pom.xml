@@ -22,7 +22,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.22.3</version>
+        <version>3.22.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-security</artifactId>

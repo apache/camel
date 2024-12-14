@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache</groupId>
@@ -28,7 +27,7 @@
   </parent>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-dependencies</artifactId>
-  <version>3.22.3</version>
+  <version>3.22.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel :: Dependencies</name>
   <description>Camel Dependencies POM</description>
@@ -82,18 +81,18 @@
     <californium-scandium-version>2.7.4</californium-scandium-version>
     <californium-version>2.7.4</californium-version>
     <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
-    <camel.osgi.activator></camel.osgi.activator>
-    <camel.osgi.dynamic></camel.osgi.dynamic>
+    <camel.osgi.activator />
+    <camel.osgi.dynamic />
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
     <camel.osgi.export>${camel.osgi.export.pkg};-noimport:=true;${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.export.pkg>$${replace;{local-packages};;;\;}</camel.osgi.export.pkg>
     <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
-    <camel.osgi.import.additional></camel.osgi.import.additional>
-    <camel.osgi.import.before.defaults></camel.osgi.import.before.defaults>
+    <camel.osgi.import.additional />
+    <camel.osgi.import.before.defaults />
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
-    <camel.osgi.import.defaults></camel.osgi.import.defaults>
+    <camel.osgi.import.defaults />
     <camel.osgi.import.pkg>org.apache.camel.*;${camel.osgi.import.camel.version},
             ${camel.osgi.import.before.defaults},
             ${camel.osgi.import.defaults},
@@ -102,8 +101,8 @@
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-    <camel.osgi.provide.capability></camel.osgi.provide.capability>
-    <camel.osgi.require.capability></camel.osgi.require.capability>
+    <camel.osgi.provide.capability />
+    <camel.osgi.require.capability />
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError</camel.surefire.fork.vmargs>
@@ -155,9 +154,9 @@
     <cxf-version-range>[3.6,3.7)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.2</cxf-xjc-utils-version>
-    <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
+    <cxf.codegen.jvmArgs />
     <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-    <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
+    <cxf.xjc.jvmArgs />
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
     <debezium-version>1.9.6.Final</debezium-version>

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy-dsl-parent</artifactId>
-        <version>3.22.3</version>
+        <version>3.22.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-groovy-dsl</artifactId>

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.22.3</version>
+        <version>3.22.4-SNAPSHOT</version>
     </parent>
 
     <name>Camel :: Hyperledger Aries</name>

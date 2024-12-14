@@ -21,7 +21,7 @@
     <parent>
         <artifactId>test-infra</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.22.3</version>
+        <version>3.22.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>camel-test-infra-parent</artifactId>
