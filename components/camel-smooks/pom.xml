@@ -55,15 +55,18 @@
             <groupId>org.smooks</groupId>
             <artifactId>smooks-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.smooks.cartridges</groupId>
+            <artifactId>smooks-javabean-cartridge</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.smooks.cartridges.edi</groupId>
             <artifactId>smooks-edi-cartridge</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.smooks.cartridges</groupId>
-            <artifactId>smooks-javabean-cartridge</artifactId>
+            <groupId>org.smooks</groupId>
+            <artifactId>smooks-test-kit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
