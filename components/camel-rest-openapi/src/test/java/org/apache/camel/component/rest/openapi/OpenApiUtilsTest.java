@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import java.util.Map;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -159,15 +159,13 @@ public class OpenApiUtilsTest {
         return requestBody;
     }
 
-
     private static Schema<Object> createTagSchema() {
         Schema<Object> tagSchema = new ObjectSchema();
         Schema<Number> idSchema = new IntegerSchema();
         Schema<String> nameSchema = new StringSchema();
         tagSchema.setProperties(Map.of(
                 "id", idSchema,
-                "name", nameSchema
-        ));
+                "name", nameSchema));
         tagSchema.setDescription("Schema representing the Tag class");
         return tagSchema;
     }
