@@ -236,7 +236,7 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.2</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
-        <jackson-jq-version>1.1.0</jackson-jq-version>
+        <jackson-jq-version>1.2.0</jackson-jq-version>
         <jackson2-version>2.18.2</jackson2-version>
         <jackrabbit-version>2.22.0</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
