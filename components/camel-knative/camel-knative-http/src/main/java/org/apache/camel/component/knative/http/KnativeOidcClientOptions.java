@@ -37,7 +37,7 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
 
     private static final String PROPERTY_PREFIX = "camel.knative.client.oidc.";
 
-    private final OAuth2WebClientOptions oAuth2ClientOptions = new OAuth2WebClientOptions().setRenewTokenOnForbidden(true);
+    private OAuth2WebClientOptions oAuth2ClientOptions;
 
     private boolean oidcEnabled;
 
@@ -60,6 +60,10 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
      */
     public void configureOptions(CamelContext camelContext) {
         super.configureOptions(camelContext);
+
+        if (oAuth2ClientOptions == null) {
+            oAuth2ClientOptions = new OAuth2WebClientOptions().setRenewTokenOnForbidden(true);
+        }
 
         PropertiesComponent propertiesComponent = camelContext.getPropertiesComponent();
 
@@ -138,6 +142,10 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
 
     public boolean isRenewTokenOnForbidden() {
         return this.oAuth2ClientOptions.isRenewTokenOnForbidden();
+    }
+
+    public void setOAuth2ClientOptions(OAuth2WebClientOptions oAuth2ClientOptions) {
+        this.oAuth2ClientOptions = oAuth2ClientOptions;
     }
 
     public OAuth2WebClientOptions getOAuth2ClientOptions() {

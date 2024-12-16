@@ -173,7 +173,9 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
         this.client = WebClient.create(vertx, clientOptions);
 
         if (clientOptions instanceof KnativeOidcClientOptions oidcClientOptions) {
-            ((WebClientBase) this.client).addInterceptor(new KnativeOidcInterceptor(oidcClientOptions));
+            if (oidcClientOptions.isOidcEnabled()) {
+                ((WebClientBase) this.client).addInterceptor(new KnativeOidcInterceptor(oidcClientOptions));
+            }
         }
     }
 
