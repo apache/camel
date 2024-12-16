@@ -23,8 +23,6 @@ import java.util.List;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
@@ -36,10 +34,6 @@ public class KubernetesDelete extends KubernetesBaseCommand {
                             arity = "0..1", paramLabel = "<file>")
     String filePath;
 
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived from the source file name.")
-    String name;
-
     @CommandLine.Option(names = { "--working-dir" },
                         description = "The working directory where to find exported project sources.")
     String workingDir;
@@ -50,6 +44,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
 
     public KubernetesDelete(CamelJBangMain main) {
         super(main);
+        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> filePath));
     }
 
     public Integer doCall() throws Exception {
@@ -64,15 +59,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             }
         }
 
-        String projectName;
-        if (name != null) {
-            projectName = KubernetesHelper.sanitize(name);
-        } else if (filePath != null) {
-            projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
-        } else {
-            printer().println("Name or source file must be set");
-            return 1;
-        }
+        String projectName = getProjectName();
 
         // Next, try the project name in the run dir
         if (resolvedManifestDir == null) {

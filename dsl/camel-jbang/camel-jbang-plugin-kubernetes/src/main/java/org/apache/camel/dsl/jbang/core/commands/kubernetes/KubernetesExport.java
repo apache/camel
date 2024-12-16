@@ -130,6 +130,7 @@ public class KubernetesExport extends Export {
         quarkusVersion = configurer.quarkusVersion;
 
         files = configurer.files;
+        name = configurer.name;
         gav = configurer.gav;
         repositories = configurer.repositories;
         dependencies = configurer.dependencies;
@@ -468,10 +469,12 @@ public class KubernetesExport extends Export {
     }
 
     protected String getProjectName() {
-        if (image != null) {
-            return KubernetesHelper.sanitize(KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":")));
+        if (name != null) {
+            return KubernetesHelper.sanitize(name);
         }
-
+        if (image != null) {
+            return KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":"));
+        }
         return KubernetesHelper.sanitize(super.getProjectName());
     }
 
@@ -489,6 +492,7 @@ public class KubernetesExport extends Export {
     public record ExportConfigurer(RuntimeType runtime,
             String quarkusVersion,
             List<String> files,
+            String name,
             String gav,
             String repositories,
             List<String> dependencies,

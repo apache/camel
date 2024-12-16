@@ -65,6 +65,20 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldGenerateNamedProject(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--name=projName", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("proj-name", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--runtime=" + rt.runtime());
