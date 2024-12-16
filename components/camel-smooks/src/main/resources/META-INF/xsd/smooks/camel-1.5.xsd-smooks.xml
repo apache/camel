@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:camel="https://www.smooks.org/xsd/smooks/camel-1.5.xsd">
+
+    <resource-config selector="camel:route">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.NewResourceConfig</resource>
+        <param name="resource">org.apache.camel.component.smooks.routing.BeanRouter</param>
+        <param name="isTemplate">true</param>
+    </resource-config>
+    
+    <resource-config selector="camel:route">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">beanId</param>
+    </resource-config>
+
+    <resource-config selector="camel:route">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">routeOnElement</param>
+        <param name="mapTo">selector</param>
+    </resource-config>
+
+    <resource-config selector="camel:route">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">correlationIdName</param>
+        <param name="mapTo">correlationIdName</param>
+    </resource-config>
+
+    <resource-config selector="camel:route">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">correlationIdPattern</param>
+        <param name="mapTo">correlationIdPattern</param>
+    </resource-config>
+
+    <resource-config selector="camel:route/to">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.CloneResourceConfig</resource>
+    </resource-config>
+    
+    <resource-config selector="camel:route/to">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">endpoint</param>
+        <param name="mapTo">toEndpoint</param>
+    </resource-config>
+    
+    <resource-config selector="camel:route/to">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">if</param>
+        <param name="mapTo">condition</param>
+    </resource-config>
+    
+    <resource-config selector="camel:route/to">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromText</resource>
+        <param name="mapTo">condition</param>
+    </resource-config>
+
+    <resource-config selector="camel:route/to">
+        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
+        <param name="attribute">correlationIdName</param>
+        <param name="mapTo">correlationIdName</param>
+    </resource-config>
+
+</smooks-resource-list>

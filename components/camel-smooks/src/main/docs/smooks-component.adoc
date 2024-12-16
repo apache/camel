@@ -62,7 +62,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-Using the Smooks component lets you leverage all the features of Smooks, such as transformation and fragment-driven routing, from within Camel. You can take an existing Smooks configuration and use this in your Camel routes as shown below:
+Using the Smooks component lets you leverage all the features of Smooks, such as transformation and fragment-driven routing, from within Camel. You can take an existing Smooks configuration and reference it from your Camel routes as shown below:
 
 [tabs]
 ====
@@ -87,7 +87,7 @@ YAML::
 ----
 ====
 
-The Smooks component is configured with a mandatory configuration file, which is `smooks-config.xml` in the example above. It is not clear what type of output the component is producing from looking at the above route. By default, the message body output is a stream but the type of output can be changed by configuring `{https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd}exports` in `smooks-config.xml` as shown in this Smooks configuration:
+The Smooks component is configured with a mandatory configuration file, which is `smooks-config.xml` in the example above. It is not clear what type of output the component is producing from looking at the above route. By default, the message body output is a stream but the type of output can be changed by configuring `{https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd}exports` in the Smooks configuration as shown next:
 
 .smooks-config.xml
 [source,xml]
@@ -106,4 +106,53 @@ The Smooks component is configured with a mandatory configuration file, which is
 </smooks-resource-list>
 ----
 
-The example `<core:exports>` configures Smooks to export the execution result to Camel as a string. Keep in mind that exporting the result as string means that the whole result will be kept in-memory which could cause unexpected performance issues for large payloads.
+The `{https://www.smooks.org/xsd/smooks/smooks-core-1.6.xsd}exports` element in this example configures Smooks to export the execution result to Camel as a string. Keep in mind that exporting the result as string means that the whole result will be kept in-memory which could cause unexpected performance issues for large payloads.
+
+=== Bean routing
+
+Smooks is capable of routing fragments to Camel endpoints using the `{https://www.smooks.org/xsd/smooks/camel-1.5.xsd}route` element from the Smooks configuration. As an example, you can route to an endpoint by declaring the following in your Smooks configuration:
+
+.smooks-config.xml
+[source,xml]
+----
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:jb="https://www.smooks.org/xsd/smooks/javabean-1.6.xsd"
+                      xmlns:camel="https://www.smooks.org/xsd/smooks/camel-1.5.xsd">
+
+  <!-- Create some bean instances from the input source... -->
+  <jb:bean beanId="orderItem"  ...>
+    <!-- etc... See Smooks Java Binding docs -->
+  </jb:bean>
+
+  <!-- Route bean to camel endpoints... -->
+  <camel:route beanId="orderItem">
+    <camel:to endpoint="direct:slow" if="orderItem.priority == 'Normal'"/>
+    <camel:to endpoint="direct:express" if="orderItem.priority == 'High'"/>
+  </camel:route>
+
+</smooks-resource-list>
+----
+
+The above file configures Smooks to route the Java bean `orderItem` in the https://www.smooks.org/documentation/#bean_context[bean context] to the endpoints `direct:slow` and `direct:express`, depending on whether the `priority` field of the `orderItem` instance is equal to `Normal` or `High`. It is possible to route based on an event selector rather than a condition thanks to the `routeOnElement` XML attribute:
+
+.smooks-config.xml
+[source,xml]
+----
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:jb="https://www.smooks.org/xsd/smooks/javabean-1.6.xsd"
+                      xmlns:camel="https://www.smooks.org/xsd/smooks/camel-1.5.xsd">
+
+  <!-- Create some bean instances from the input source... -->
+  <jb:bean beanId="orderItem"  ...>
+    <!-- etc... See Smooks Java Binding docs -->
+  </jb:bean>
+
+  <!-- Route bean to camel endpoints... -->
+  <camel:route beanId="orderItem" routeOnElement="order">
+    <camel:to endpoint="direct:all"/>
+  </camel:route>
+
+</smooks-resource-list>
+----
+
+NOTE: instead of routing complex objects to Camel, a https://www.smooks.org/documentation/#pipeline[pipeline] allows you to have a template (e.g., FreeMarker) reference the beans and then route the evaluated template as string (e.g., XML, CSV, etc...) to Camel.
