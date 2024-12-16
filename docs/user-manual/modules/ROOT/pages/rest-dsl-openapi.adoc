@@ -292,6 +292,25 @@ Here Camel will detect the `schema` part:
 
 And compute the class name as `Pet` and attempt to discover this class from classpath scanning specified via the `bindingPackageScan` option.
 
+You can also use `title` attribute of the Schema to provide the name of the POJO class. This is helpful when you need to use one name for the Schema in the OpenAPI contract and use another name for the actual POJO class in the implementation.
+
+[source,json]
+----
+"components": {
+        "schemas": {
+            "Pet": {
+                "type": "object",
+                "title": "PetResponseDto",
+                "properties": {
+                    ...
+                }
+            }
+        }
+    },
+----
+
+Here Camel will detect the class name as `PetResponseDto` and try to discover it from the classpath. This can be used for both Responses and RequestBodies.
+
 You can source code generate Java POJO classes from an OpenAPI specification via tooling such as the `swagger-codegen-maven-plugin` Maven plugin.
 For more details, see this https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first[Spring Boot example].
 

@@ -190,6 +190,7 @@ public class OpenApiUtils {
                     return primitiveType;
                 }
             }
+            String schemaTitle = schema.getTitle();
             Pattern classNamePattern = Pattern.compile(".*\\/(.*)");
             schemaName = Optional.ofNullable(schemaName)
                     .orElse(Optional.ofNullable(schema.get$ref()).orElse(schema.getType()));
@@ -199,7 +200,7 @@ public class OpenApiUtils {
                     : schemaName;
 
             return scannedClasses.stream()
-                    .filter(aClass -> aClass.getSimpleName().equals(classToFind))
+                    .filter(aClass -> aClass.getSimpleName().equals(classToFind) || aClass.getSimpleName().equals(schemaTitle)) //use either the name or title of schema to find the class
                     .findFirst()
                     .orElse(null);
         }
