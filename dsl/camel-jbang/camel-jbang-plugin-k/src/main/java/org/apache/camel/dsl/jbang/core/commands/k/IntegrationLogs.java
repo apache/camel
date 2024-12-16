@@ -17,34 +17,23 @@
 package org.apache.camel.dsl.jbang.core.commands.k;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.PodLogs;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesPodLogs;
 import org.apache.camel.v1.Integration;
 import picocli.CommandLine.Command;
 
 @Command(name = "logs", description = "Print the logs of an integration", sortOptions = false)
-public class IntegrationLogs extends PodLogs {
+public class IntegrationLogs extends KubernetesPodLogs {
 
     public IntegrationLogs(CamelJBangMain main) {
         super(main);
+        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> filePath));
     }
 
     public Integer doCall() throws Exception {
-        if (name == null && label == null && filePath == null) {
-            printer().println("Name or label selector must be set");
-            return 1;
-        }
+
+        String integrationName = getProjectName();
 
         if (label == null) {
-            String integrationName;
-            if (name != null) {
-                integrationName = KubernetesHelper.sanitize(name);
-            } else {
-                integrationName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
-            }
-
             Integration integration = client(Integration.class).withName(integrationName).get();
             if (integration == null) {
                 printer().printf("Integration %s not found%n", integrationName);

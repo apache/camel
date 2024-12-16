@@ -25,8 +25,6 @@ import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -34,15 +32,11 @@ import picocli.CommandLine.Command;
 import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
 
 @Command(name = "logs", description = "Print the logs of a Kubernetes pod", sortOptions = false)
-public class PodLogs extends KubernetesBaseCommand {
+public class KubernetesPodLogs extends KubernetesBaseCommand {
 
     @CommandLine.Parameters(description = "The Camel file to get logs from. Integration name is derived from the file name.",
                             arity = "0..1", paramLabel = "<file>")
     protected String filePath;
-
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived from the source file name.")
-    protected String name;
 
     @CommandLine.Option(names = { "--label" },
                         description = "Label name and value used as a pod selector.")
@@ -66,24 +60,15 @@ public class PodLogs extends KubernetesBaseCommand {
     long maxMessageCount = -1;
     long messageCount = 0;
 
-    public PodLogs(CamelJBangMain main) {
+    public KubernetesPodLogs(CamelJBangMain main) {
         super(main);
+        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> filePath));
     }
 
     public Integer doCall() throws Exception {
 
-        if (name == null && label == null && filePath == null) {
-            printer().println("Name or label selector must be set");
-            return 1;
-        }
-
         if (label == null) {
-            String projectName;
-            if (name != null) {
-                projectName = KubernetesHelper.sanitize(name);
-            } else {
-                projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
-            }
+            String projectName = getProjectName();
             label = "%s=%s".formatted(BaseTrait.KUBERNETES_LABEL_NAME, projectName);
         }
 

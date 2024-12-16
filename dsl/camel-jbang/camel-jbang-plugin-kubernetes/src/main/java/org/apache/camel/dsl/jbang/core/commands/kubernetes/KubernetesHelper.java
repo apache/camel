@@ -132,12 +132,14 @@ public final class KubernetesHelper {
      * @return      sanitized name ready to be used as a Kubernetes resource name.
      */
     public static String sanitize(String name) {
-        name = FileUtil.onlyName(name);
-        name = StringHelper.sanitize(name);
-        name = StringHelper.camelCaseToDash(name);
-        name = name.toLowerCase(Locale.US);
-        name = name.replaceAll("[^a-z0-9-]", "");
-        name = name.trim();
+        if (name != null) {
+            name = FileUtil.onlyName(name);
+            name = StringHelper.sanitize(name);
+            name = StringHelper.camelCaseToDash(name);
+            name = name.toLowerCase(Locale.US);
+            name = name.replaceAll("[^a-z0-9-]", "");
+            name = name.trim();
+        }
         return name;
     }
 
