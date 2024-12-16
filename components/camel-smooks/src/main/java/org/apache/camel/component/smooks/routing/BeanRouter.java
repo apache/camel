@@ -49,8 +49,6 @@ import org.smooks.support.FreeMarkerUtils;
 /**
  * Camel bean routing visitor.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- * @author <a href="mailto:daniel.bevenius@gmail.com">daniel.bevenius@gmail.com</a>
  */
 public class BeanRouter implements AfterVisitor, Consumer, PreExecutionLifecycle, PostExecutionLifecycle {
 

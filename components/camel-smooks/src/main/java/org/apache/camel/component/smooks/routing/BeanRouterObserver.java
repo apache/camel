@@ -28,7 +28,6 @@ import org.smooks.assertion.AssertArgument;
  * endpoint.
  * </p>
  *
- * @author Daniel Bevenius
  */
 public class BeanRouterObserver implements BeanContextLifecycleObserver {
     private final BeanRouter beanRouter;

@@ -46,7 +46,6 @@ import static org.mockito.Mockito.when;
 /**
  * Unit test for {@link BeanRouter}.
  *
- * @author Daniel Bevenius
  */
 public class BeanRouterTest extends CamelTestSupport {
     private static final String END_POINT_URI = "mock://beanRouterUnitTest";
