@@ -1120,6 +1120,45 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     deprecationNote, false, null, oneOfTypes, false, false);
             eipOptions.add(ep);
         }
+
+        System.out.println("Field: " + fieldName + " on " + originalClassType);
+
+        if ("params".equals(fieldName) || "responseMsgs".equals(fieldName) || "security".equals(fieldName)) {
+            String name;
+            String docComment;
+            if ("params".equals(fieldName)) {
+                name = "param";
+                docComment = "Information about parameters for this REST operation";
+            } else if ("responseMsgs".equals(fieldName)) {
+                name = "responseMessage";
+                docComment = "Response details for this REST operation";
+            } else {
+                name = "security";
+                docComment = "Security settings for this REST operation";
+            }
+
+            String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
+            String displayName = null;
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            if (metadata != null) {
+                displayName = metadata.displayName();
+            }
+            boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            String deprecationNote = null;
+            if (metadata != null) {
+                deprecationNote = metadata.deprecationNote();
+            }
+            String label = null;
+            if (metadata != null) {
+                label = metadata.label();
+            }
+
+            String kind = "element";
+            EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, false, "", label, docComment, deprecated,
+                    deprecationNote, false, null, null, false, false);
+            // insert before "to"
+            eipOptions.add(ep);
+        }
     }
 
     /**

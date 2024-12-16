@@ -14421,6 +14421,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -14437,6 +14439,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -14448,6 +14452,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -14539,6 +14545,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -14555,6 +14563,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -14566,6 +14576,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -14657,6 +14669,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -14673,6 +14687,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -14684,6 +14700,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -14989,6 +15007,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -15005,6 +15025,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -15016,6 +15038,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -15107,6 +15131,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -15123,6 +15149,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -15134,6 +15162,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
@@ -15225,6 +15255,8 @@
           },
           "param" : {
             "type" : "array",
+            "title" : "Param",
+            "description" : "Information about parameters for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ParamDefinition"
             }
@@ -15241,6 +15273,8 @@
           },
           "responseMessage" : {
             "type" : "array",
+            "title" : "Response Message",
+            "description" : "Response details for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
@@ -15252,6 +15286,8 @@
           },
           "security" : {
             "type" : "array",
+            "title" : "Security",
+            "description" : "Security settings for this REST operation",
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.SecurityDefinition"
             }
