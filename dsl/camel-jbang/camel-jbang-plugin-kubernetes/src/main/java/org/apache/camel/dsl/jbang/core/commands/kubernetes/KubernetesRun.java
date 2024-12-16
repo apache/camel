@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
@@ -41,7 +40,6 @@ import org.apache.camel.support.FileWatcherResourceReloadStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import picocli.CommandLine;
 
@@ -247,15 +245,22 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private Thread devModeShutdownTask;
     private int devModeReloadCount;
 
-    private PodLogs reusablePodLogs;
+    private KubernetesPodLogs reusablePodLogs;
 
     public KubernetesRun(CamelJBangMain main) {
-        super(main);
+        this(main, null);
     }
 
     public KubernetesRun(CamelJBangMain main, String[] files) {
         super(main);
         filePaths = files;
+        projectNameSuppliers.add(() -> projectNameFromImage(() -> image));
+        projectNameSuppliers.add(() -> projectNameFromGav(() -> gav));
+        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> firstFilePath()));
+    }
+
+    private String firstFilePath() {
+        return filePaths != null && filePaths.length > 0 ? filePaths[0] : null;
     }
 
     public Integer doCall() throws Exception {
@@ -331,6 +336,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 runtime,
                 quarkusVersion,
                 List.of(filePaths),
+                name,
                 gav,
                 repositories,
                 dependencies,
@@ -386,11 +392,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private void setupDevMode(String projectName, String workingDir) throws Exception {
+        String firstPath = firstFilePath();
 
         String watchDir = ".";
         FileFilter filter = null;
-        if (filePaths != null && filePaths.length > 0) {
-            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(filePaths[0]));
+        if (firstPath != null) {
+            String filePath = FileUtil.onlyPath(SourceScheme.onlyName(firstPath));
             if (filePath != null) {
                 watchDir = filePath;
             }
@@ -469,7 +476,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private void startPodLogging(String projectName) throws Exception {
         try {
-            reusablePodLogs = new PodLogs(getMain());
+            reusablePodLogs = new KubernetesPodLogs(getMain());
             if (!ObjectHelper.isEmpty(namespace)) {
                 reusablePodLogs.namespace = namespace;
             }
@@ -608,25 +615,5 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         return 0;
-    }
-
-    private String getProjectName() {
-        if (image != null) {
-            return KubernetesHelper.sanitize(StringHelper.beforeLast(image, ":"));
-        }
-
-        if (gav != null) {
-            String[] ids = gav.split(":");
-            if (ids.length > 1) {
-                return KubernetesHelper.sanitize(ids[1]); // artifactId
-            }
-        }
-
-        if (filePaths != null && filePaths.length > 0) {
-            return KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePaths[0])));
-        }
-
-        throw new RuntimeCamelException(
-                "Failed to resolve project name - please provide --gav, --image option or at least one source file");
     }
 }

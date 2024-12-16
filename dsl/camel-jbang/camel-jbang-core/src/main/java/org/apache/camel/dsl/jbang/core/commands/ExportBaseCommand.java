@@ -105,6 +105,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     protected RuntimeType runtime;
 
+    @CommandLine.Option(names = { "--name" },
+                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    protected String name;
+
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
     protected String gav;
 

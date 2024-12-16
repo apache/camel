@@ -29,11 +29,11 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-class PodLogsTest extends KubernetesBaseTest {
+class KubernetesPodLogsTest extends KubernetesBaseTest {
 
     @Test
     public void shouldHandlePodNotFound() throws Exception {
-        PodLogs command = createCommand();
+        KubernetesPodLogs command = createCommand();
         command.name = "mickey-mouse";
         command.maxRetryAttempts = 2; // total timeout of 4 seconds
         int exit = command.doCall();
@@ -64,8 +64,8 @@ class PodLogsTest extends KubernetesBaseTest {
         Assertions.assertEquals(0, exit);
     }
 
-    private PodLogs createCommand() {
-        PodLogs command = new PodLogs(new CamelJBangMain().withPrinter(printer));
+    private KubernetesPodLogs createCommand() {
+        KubernetesPodLogs command = new KubernetesPodLogs(new CamelJBangMain().withPrinter(printer));
         command.withClient(kubernetesClient);
         return command;
     }

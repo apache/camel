@@ -23,8 +23,6 @@ import java.util.List;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
@@ -36,10 +34,6 @@ public class KubernetesDelete extends KubernetesBaseCommand {
                             arity = "0..1", paramLabel = "<file>")
     String filePath;
 
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived from the source file name.")
-    String name;
-
     @CommandLine.Option(names = { "--working-dir" },
                         description = "The working directory where to find exported project sources.")
     String workingDir;
@@ -50,41 +44,61 @@ public class KubernetesDelete extends KubernetesBaseCommand {
 
     public KubernetesDelete(CamelJBangMain main) {
         super(main);
+        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> filePath));
     }
 
     public Integer doCall() throws Exception {
-        File resolvedWorkingDir;
-        if (workingDir != null) {
-            resolvedWorkingDir = new File(workingDir);
-        } else {
-            String projectName;
-            if (name != null) {
-                projectName = KubernetesHelper.sanitize(name);
-            } else if (filePath != null) {
-                projectName = KubernetesHelper.sanitize(FileUtil.onlyName(SourceScheme.onlyName(filePath)));
-            } else {
-                printer().println("Name or source file must be set");
-                return 1;
-            }
 
-            resolvedWorkingDir = new File(RUN_PLATFORM_DIR + "/" + projectName);
+        // First, try the explicit workingDir
+        File resolvedManifestDir = null;
+        if (workingDir != null) {
+            File resolvedWorkingDir = new File(workingDir);
+            File candidateDir = new File(resolvedWorkingDir, "target/kubernetes");
+            if (candidateDir.isDirectory()) {
+                resolvedManifestDir = candidateDir;
+            }
         }
 
-        if (!resolvedWorkingDir.exists()) {
-            printer().printf("Failed to resolve exported project from path '%s'%n", resolvedWorkingDir);
+        String projectName = getProjectName();
+
+        // Next, try the project name in the run dir
+        if (resolvedManifestDir == null) {
+            File resolvedWorkingDir = new File(RUN_PLATFORM_DIR + "/" + projectName);
+            File candidateDir = new File(resolvedWorkingDir, "target/kubernetes");
+            if (candidateDir.isDirectory()) {
+                resolvedManifestDir = candidateDir;
+            }
+        }
+
+        // Next, try the project name in the current dir
+        if (resolvedManifestDir == null) {
+            File candidateDir = new File("./target/kubernetes");
+            if (candidateDir.isDirectory()) {
+                resolvedManifestDir = candidateDir;
+            }
+        }
+
+        if (resolvedManifestDir == null) {
+            printer().printf("Failed to resolve exported project: %s%n", projectName);
             return 1;
         }
 
-        File resolvedManifestDir = new File(resolvedWorkingDir, "target/kubernetes");
         File manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, resolvedManifestDir);
+        printer().printf("Deleting resources from manifest: %s%n", manifest);
+
         try (FileInputStream fis = new FileInputStream(manifest)) {
             List<StatusDetails> status;
+            var loadedResources = client().load(fis);
             if (!ObjectHelper.isEmpty(namespace)) {
-                status = client().load(fis).inNamespace(namespace).delete();
+                status = loadedResources.inNamespace(namespace).delete();
             } else {
-                status = client().load(fis).delete();
+                // First, let the client choose the default namespace
+                status = loadedResources.delete();
+                // Next, explicitly name the default namespace
+                if (status.isEmpty()) {
+                    status = loadedResources.inNamespace("default").delete();
+                }
             }
-
             status.forEach(s -> printer().printf("Deleted: %s '%s'%n", StringHelper.capitalize(s.getKind()), s.getName()));
         }
 
