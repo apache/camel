@@ -213,7 +213,7 @@
         <hapi-fhir-version>7.6.0</hapi-fhir-version>
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
-        <hibernate-validator-version>8.0.1.Final</hibernate-validator-version>
+        <hibernate-validator-version>8.0.2.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.4</hsqldb-version>
