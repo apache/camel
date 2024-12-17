@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Isolated
 public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "input" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_RESULT = "result" + UUID.randomUUID() + ".txt";
     private static final Logger LOG = LoggerFactory.getLogger(FileConcurrentWriteAppendSameFileTest.class);
 
     private final int size = 100;
@@ -57,7 +60,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
     }
 
     private boolean fileIsOk() {
-        final Path path = testFile("outbox/result.txt");
+        final Path path = testFile("outbox/" + TEST_FILE_NAME_RESULT);
         if (Files.exists(path)) {
             try {
                 final long expectedSize = 1790;
@@ -73,7 +76,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
 
     @Test
     public void testConcurrentAppend() throws Exception {
-        template.sendBodyAndHeader(fileUri(), data, Exchange.FILE_NAME, "input.txt");
+        template.sendBodyAndHeader(fileUri(), data, Exchange.FILE_NAME, TEST_FILE_NAME);
 
         // start route
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -85,12 +88,12 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
 
         // we need to wait a bit for our slow CI server to make sure the entire
         // file is written on disc
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS).until(this::fileIsOk);
+        Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS).until(this::fileIsOk);
 
         assertMockEndpointsSatisfied();
 
         // check the file has correct number of lines
-        String txt = new String(Files.readAllBytes(testFile("outbox/result.txt")));
+        String txt = new String(Files.readAllBytes(testFile("outbox/" + TEST_FILE_NAME_RESULT)));
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
@@ -111,7 +114,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
                 from(fileUri("?initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
                         .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))
-                        .to(fileUri("outbox?fileExist=Append&fileName=result.txt")).to("mock:result").end();
+                        .to(fileUri("outbox?fileExist=Append&fileName=" + TEST_FILE_NAME_RESULT)).to("mock:result").end();
             }
         };
     }

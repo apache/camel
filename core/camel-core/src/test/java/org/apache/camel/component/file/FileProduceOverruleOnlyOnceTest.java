@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,20 +30,22 @@ import org.junit.jupiter.api.Test;
  * Unit test to verify the overrule filename header
  */
 public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_1 = "hello" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_2 = "ruled" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testBoth() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, TEST_FILE_NAME_1);
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
-        mock.expectedFileExists(testFile("write/ruled.txt"), "Hello World");
-        mock.expectedFileExists(testFile("again/hello.txt"), "Hello World");
+        mock.expectedFileExists(testFile("write/" + TEST_FILE_NAME_2), "Hello World");
+        mock.expectedFileExists(testFile("again/" + TEST_FILE_NAME_1), "Hello World");
 
         Map<String, Object> map = new HashMap<>();
-        map.put(Exchange.FILE_NAME, "hello.txt");
+        map.put(Exchange.FILE_NAME, TEST_FILE_NAME_1);
         // this header should overrule the endpoint configuration
-        map.put(Exchange.OVERRULE_FILE_NAME, "ruled.txt");
+        map.put(Exchange.OVERRULE_FILE_NAME, TEST_FILE_NAME_2);
 
         template.sendBodyAndHeaders("direct:start", "Hello World", map);
 
