@@ -225,7 +225,7 @@
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.9</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.127</huaweicloud-sdk-version>
-        <ical4j-version>4.0.6</ical4j-version>
+        <ical4j-version>4.0.7</ical4j-version>
         <icu4j-version>76.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
