@@ -188,7 +188,7 @@
         <google-api-services-calendar-version>v3-rev20241101-2.0.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20241203-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
-        <google-oauth-client-version>1.36.0</google-oauth-client-version>
+        <google-oauth-client-version>1.37.0</google-oauth-client-version>
         <google-cloud-bom-version>26.51.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.57.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.45.3</google-cloud-http-client-version>
