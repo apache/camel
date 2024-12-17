@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     private static int counter;
 
@@ -35,7 +38,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
         String body = "Hello World this file will be deleted";
-        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, TEST_FILE_NAME);
         context.getRouteController().startRoute("FromFilePollThirdTimeOkTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
@@ -45,7 +48,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         assertEquals(3, counter);
 
         // assert the file is deleted
-        assertFileNotExists(testFile("hello.txt"));
+        assertFileNotExists(testFile(TEST_FILE_NAME));
     }
 
     @Override
@@ -58,7 +61,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
                                 counter++;
                                 if (counter < 3) {
                                     // file should exists
-                                    assertFileExists(testFile("hello.txt"));
+                                    assertFileExists(testFile(TEST_FILE_NAME));
                                     throw new IllegalArgumentException("Forced by unittest");
                                 }
                             }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 public class FileConsumerIdempotentKeyChangedIssueTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     private Endpoint endpoint;
 
@@ -32,7 +34,7 @@ public class FileConsumerIdempotentKeyChangedIssueTest extends ContextTestSuppor
     public void testFile() throws Exception {
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         context.getRouteController().startAllRoutes();
 
@@ -42,7 +44,7 @@ public class FileConsumerIdempotentKeyChangedIssueTest extends ContextTestSuppor
         resetMocks();
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World Again");
 
-        template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
