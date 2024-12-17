@@ -539,15 +539,6 @@ public abstract class BaseMainSupport extends BaseService {
                     });
             recorder.endStep(step);
 
-            if (mainConfigurationProperties.isModeline()) {
-                camelContext.setModeline(true);
-            }
-            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
-            // also load other non-route related configuration (e.g., beans)
-            step = recorder.beginStep(BaseMainSupport.class, "modelineRoutes", "Auto Configure");
-            modelineRoutes(camelContext);
-            recorder.endStep(step);
-
             step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationMainConfiguration", "Auto Configure");
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
             recorder.endStep(step);
@@ -565,6 +556,17 @@ public abstract class BaseMainSupport extends BaseService {
         step = recorder.beginStep(BaseMainSupport.class, "doConfigureCamelContextFromMainConfiguration", "Auto Configure");
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         recorder.endStep(step);
+
+        if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            if (mainConfigurationProperties.isModeline()) {
+                camelContext.setModeline(true);
+            }
+            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
+            // also load other non-route related configuration (e.g., beans)
+            step = recorder.beginStep(BaseMainSupport.class, "modelineRoutes", "Auto Configure");
+            modelineRoutes(camelContext);
+            recorder.endStep(step);
+        }
 
         // try to load custom beans/configuration classes via package scanning
         step = recorder.beginStep(BaseMainSupport.class, "configurePackageScan", "Auto Configure");
