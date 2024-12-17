@@ -84,6 +84,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private String configUri;
     private String reportPath;
     private Boolean allowExecutionContextFromHeader = false;
+    private Boolean lazyStartSmooks = true;
 
     private final Set<VisitorAppender> visitorAppender = new HashSet<>();
     private final Map<String, Visitor> selectorVisitorMap = new HashMap<>();
@@ -278,6 +279,14 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             smooks.addVisitor(entry.getValue(), entry.getKey());
     }
 
+    public Boolean getLazyStartSmooks() {
+        return lazyStartSmooks;
+    }
+
+    public void setLazyStartSmooks(Boolean lazyStartSmooks) {
+        this.lazyStartSmooks = lazyStartSmooks;
+    }
+
     @Override
     protected void doStart() {
         try {
@@ -293,6 +302,10 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
 
             addAppender(smooks, visitorAppender);
             addVisitor(smooks, selectorVisitorMap);
+
+            if (!lazyStartSmooks) {
+                smooks.createExecutionContext();
+            }
 
         } catch (Exception e) {
             throw new SmooksException(e.getMessage(), e);

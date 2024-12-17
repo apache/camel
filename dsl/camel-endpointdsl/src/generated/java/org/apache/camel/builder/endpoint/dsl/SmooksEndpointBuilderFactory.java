@@ -46,6 +46,41 @@ public interface SmooksEndpointBuilderFactory {
         }
 
         /**
+         * Whether to lazily initialize Smooks. If enabled, Smooks resources
+         * (e.g., readers and visitors) are constructed while Camel is starting
+         * and not on the first processing of a message.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param lazyStartSmooks the value to set
+         * @return the dsl builder
+         */
+        default SmooksEndpointBuilder lazyStartSmooks(Boolean lazyStartSmooks) {
+            doSetProperty("lazyStartSmooks", lazyStartSmooks);
+            return this;
+        }
+        /**
+         * Whether to lazily initialize Smooks. If enabled, Smooks resources
+         * (e.g., readers and visitors) are constructed while Camel is starting
+         * and not on the first processing of a message.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param lazyStartSmooks the value to set
+         * @return the dsl builder
+         */
+        default SmooksEndpointBuilder lazyStartSmooks(String lazyStartSmooks) {
+            doSetProperty("lazyStartSmooks", lazyStartSmooks);
+            return this;
+        }
+        /**
          * File path to place the generated HTML execution report. The report is
          * a useful tool in the developers arsenal for diagnosing issues or
          * comprehending a transformation. Do not set in production since this

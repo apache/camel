@@ -23,9 +23,10 @@ public class SmooksEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(4);
+        Set<String> props = new HashSet<>(5);
         props.add("allowExecutionContextFromHeader");
         props.add("lazyStartProducer");
+        props.add("lazyStartSmooks");
         props.add("reportPath");
         props.add("smooksConfig");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

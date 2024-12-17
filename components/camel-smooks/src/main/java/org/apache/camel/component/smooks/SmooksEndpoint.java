@@ -46,6 +46,9 @@ public class SmooksEndpoint extends DefaultEndpoint {
               label = "advanced",
               defaultValue = "false")
     private Boolean allowExecutionContextFromHeader = false;
+    @UriParam(description = "Whether to lazily initialize Smooks. If enabled, Smooks resources (e.g., readers and visitors) are constructed while Camel is starting and not on the first processing of a message.",
+              defaultValue = "true")
+    private Boolean lazyStartSmooks = true;
 
     private final SmooksProcessor smooksProcessor;
 
@@ -98,5 +101,13 @@ public class SmooksEndpoint extends DefaultEndpoint {
 
     public void setAllowExecutionContextFromHeader(Boolean allowExecutionContextFromHeader) {
         this.allowExecutionContextFromHeader = allowExecutionContextFromHeader;
+    }
+
+    public Boolean getLazyStartSmooks() {
+        return lazyStartSmooks;
+    }
+
+    public void setLazyStartSmooks(Boolean lazyStartSmooks) {
+        this.lazyStartSmooks = lazyStartSmooks;
     }
 }
