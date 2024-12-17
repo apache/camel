@@ -46,7 +46,7 @@ public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 // Simulate message that takes a while to receive.
-                Thread.sleep(TIMEOUT * 1500L); // 150% of TIMEOUT.
+                Thread.sleep(TIMEOUT * 3000L); // 150% of TIMEOUT.
             }
         });
 
