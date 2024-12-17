@@ -43,8 +43,10 @@ import org.smooks.Smooks;
 import org.smooks.SmooksFactory;
 import org.smooks.api.ExecutionContext;
 import org.smooks.api.NotAppContextScoped;
+import org.smooks.cartridges.edi.parser.EdiParser;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cartridges.javabean.Value;
+import org.smooks.engine.lookup.InstanceLookup;
 import org.smooks.io.payload.Exports;
 import org.smooks.io.sink.JavaSink;
 import org.smooks.io.sink.StringSink;
@@ -190,6 +192,76 @@ public class SmooksProcessorTest extends CamelTestSupport {
 
         Exchange exchange = result.assertExchangeReceived(0);
         assertNotEquals(executionContext[0], exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT));
+    }
+
+    @Test
+    public void testProcessWhenLazyStartProducerIsFalse()
+            throws Exception {
+        Smooks smooks = new Smooks();
+        SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
+        processor.setSmooksFactory(new SmooksFactory() {
+            @Override
+            public Smooks createInstance() {
+                return smooks;
+            }
+
+            @Override
+            public Smooks createInstance(InputStream config) {
+                return null;
+            }
+
+            @Override
+            public Smooks createInstance(String config) {
+                return null;
+            }
+        });
+        processor.setLazyStartProducer(false);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:input")
+                        .process(processor);
+            }
+
+        });
+        context.start();
+        assertEquals(1, smooks.getApplicationContext().getRegistry().lookup(new InstanceLookup<>(EdiParser.class)).size());
+    }
+
+    @Test
+    public void testProcessWhenLazyStartProducerIsTrue()
+            throws Exception {
+        Smooks smooks = new Smooks();
+        SmooksProcessor processor = new SmooksProcessor("edi-to-xml-smooks-config.xml", context);
+        processor.setSmooksFactory(new SmooksFactory() {
+            @Override
+            public Smooks createInstance() {
+                return smooks;
+            }
+
+            @Override
+            public Smooks createInstance(InputStream config) {
+                return null;
+            }
+
+            @Override
+            public Smooks createInstance(String config) {
+                return null;
+            }
+        });
+        processor.setLazyStartProducer(true);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:input")
+                        .process(processor);
+            }
+
+        });
+        context.start();
+        assertEquals(0, smooks.getApplicationContext().getRegistry().lookup(new InstanceLookup<>(EdiParser.class)).size());
     }
 
     @Test
