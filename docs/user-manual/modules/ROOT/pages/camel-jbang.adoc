@@ -3742,21 +3742,21 @@ camel export --build-tool=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SN
 === Exporting with JMX management included
 
 Usually when exporting to Spring Boot, Quarkus or Camel Main, then JMX management is not included out of the box.
-To include JMX, you need to add `camel:management` in the `--deps` option, as shown below:
+To include JMX, you need to add `camel:management` in the `--dep` option, as shown below:
 
 [source,bash]
 ----
-camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:management --directory=../myproject
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:management --directory=../myproject
 ----
 
 === Exporting with Camel CLI included
 
 Usually when exporting to Spring Boot, Quarkus or Camel Main, then Camel JBang CLI is not included out of the box.
-To be able to continue to use Camel CLI (i.e. `camel`), you need to add `camel:cli-connector` in the `--deps` option, as shown below:
+To be able to continue to use Camel CLI (i.e. `camel`), you need to add `camel:cli-connector` in the `--dep` option, as shown below:
 
 [source,bash]
 ----
-camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:cli-connector --directory=../myproject
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:cli-connector --directory=../myproject
 ----
 
 === Configuring exporting
