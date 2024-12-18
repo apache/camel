@@ -369,7 +369,7 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.14</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockwebserver-version>6.13.4</mockwebserver-version>
+        <mockwebserver-version>7.0.1</mockwebserver-version>
         <mockito-version>5.14.2</mockito-version>
         <mojo-executor-version>2.4.0</mojo-executor-version>
         <mongo-java-driver-version>5.2.1</mongo-java-driver-version>
