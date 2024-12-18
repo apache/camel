@@ -18,16 +18,10 @@ package org.apache.camel.component.langchain4j.chat;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.langchain4j.agent.tool.ToolExecutionRequest;
-import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.input.Prompt;
@@ -39,8 +33,6 @@ import dev.langchain4j.rag.content.injector.DefaultContentInjector;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.component.langchain4j.chat.tool.CamelToolExecutorCache;
-import org.apache.camel.component.langchain4j.chat.tool.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -171,52 +163,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
 
         }
 
-        final Map<String, Set<CamelToolSpecification>> tools = CamelToolExecutorCache.getInstance().getTools();
-        if (tools.containsKey(langChain4jChatEndpoint.getChatId())) {
-            final Set<CamelToolSpecification> camelToolSpecificationSet = tools
-                    .get(langChain4jChatEndpoint.getChatId());
-
-            final List<ToolSpecification> toolSpecifications = camelToolSpecificationSet.stream()
-                    .map(camelToolSpecification -> camelToolSpecification.getToolSpecification())
-                    .collect(Collectors.toList());
-
-            response = this.chatLanguageModel.generate(chatMessages, toolSpecifications);
-        } else {
-            response = this.chatLanguageModel.generate(chatMessages);
-        }
-
-        if (response.content().hasToolExecutionRequests()) {
-            chatMessages.add(response.content());
-
-            for (ToolExecutionRequest toolExecutionRequest : response.content().toolExecutionRequests()) {
-                String toolName = toolExecutionRequest.name();
-                CamelToolSpecification camelToolSpecification = CamelToolExecutorCache.getInstance().getTools()
-                        .get(langChain4jChatEndpoint.getChatId()).stream()
-                        .filter(cts -> cts.getToolSpecification().name().equals(toolName))
-                        .findFirst().orElseThrow(() -> new RuntimeException("Tool " + toolName + " not found"));
-                try {
-                    // Map Json to Header
-                    JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
-
-                    jsonNode.fieldNames()
-                            .forEachRemaining(name -> exchange.getMessage().setHeader(name, jsonNode.get(name)));
-
-                    // Execute the consumer route
-                    camelToolSpecification.getConsumer().getProcessor().process(exchange);
-                } catch (Exception e) {
-                    // How to handle this exception?
-                    exchange.setException(e);
-                }
-
-                chatMessages.add(new ToolExecutionResultMessage(
-                        toolExecutionRequest.id(),
-                        toolExecutionRequest.name(),
-                        exchange.getIn().getBody(String.class)));
-            }
-
-            response = this.chatLanguageModel.generate(chatMessages);
-        }
-
+        response = this.chatLanguageModel.generate(chatMessages);
         return extractAiResponse(response);
     }
 
