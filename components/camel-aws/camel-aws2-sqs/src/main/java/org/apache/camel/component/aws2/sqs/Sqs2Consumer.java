@@ -437,14 +437,15 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                                     .build();
 
                     try {
-                        LOG.trace("Extending visibility window by {} seconds for request entries {}", repeatSeconds,
+                        LOG.trace("Extending visibility window by {} seconds for request entries: {}", repeatSeconds,
                                 batchEntries);
                         ChangeMessageVisibilityBatchResponse br
                                 = getEndpoint().getClient().changeMessageVisibilityBatch(request);
-                        LOG.debug("Extended visibility window for request entries successful {}", br.successful());
-                        LOG.debug("Extended visibility window for request entries failed {}", br.failed());
-                    } catch (SqsException e) {
-                        logException(e, batchEntries);
+                        if (br.hasFailed()) {
+                            LOG.warn("Extended visibility window for request entries failed: {}", br.failed());
+                        } else {
+                            LOG.debug("Extended visibility window for request entries successful: {}", br.successful());
+                        }
                     } catch (SdkException e) {
                         logException(e, batchEntries);
                     }
