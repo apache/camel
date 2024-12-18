@@ -629,7 +629,7 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setKubernetesConfigMapVaultConfiguration(kubernetesConfigmaps);
         }
-        configureVault(camelContext);
+        configureVaultRefresh(camelContext);
 
         // apply custom configurations if any
         Set<CamelContextCustomizer> customizers = registry.findByType(CamelContextCustomizer.class);
@@ -641,9 +641,9 @@ public final class DefaultConfigurationConfigurer {
     }
 
     /**
-     * Configures security vaults such as AWS, Azure, Google and Hashicorp.
+     * Configures security vaults refresh such as AWS, Azure, Google.
      */
-    static void configureVault(CamelContext camelContext) throws Exception {
+    static void configureVaultRefresh(CamelContext camelContext) throws Exception {
         VaultConfiguration vc = camelContext.getVaultConfiguration();
         if (vc == null) {
             return;

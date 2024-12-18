@@ -520,7 +520,13 @@ public abstract class BaseMainSupport extends BaseService {
 
         // configure the profile with pre-configured settings
         StartupStep step = recorder.beginStep(BaseMainSupport.class, "configureMain", "Profile Configure");
+        doInitFileConfigurations(camelContext, mainConfigurationProperties);
         ProfileConfigurer.configureMain(camelContext, mainConfigurationProperties.getProfile(), mainConfigurationProperties);
+        recorder.endStep(step);
+
+        // need to pre-load vault configuration as they are used eager during property placeholder resolutions
+        step = recorder.beginStep(BaseMainSupport.class, "configureVault", "Configure Vault");
+        doConfigureVaultFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         recorder.endStep(step);
 
         // need to eager allow to auto-configure properties component
@@ -537,6 +543,15 @@ public abstract class BaseMainSupport extends BaseService {
                         mainConfigurationProperties.setRoutesIncludePattern(value);
                         return null;
                     });
+            recorder.endStep(step);
+
+            if (mainConfigurationProperties.isModeline()) {
+                camelContext.setModeline(true);
+            }
+            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
+            // also load other non-route related configuration (e.g., beans)
+            step = recorder.beginStep(BaseMainSupport.class, "modelineRoutes", "Auto Configure");
+            modelineRoutes(camelContext);
             recorder.endStep(step);
 
             step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationMainConfiguration", "Auto Configure");
@@ -556,17 +571,6 @@ public abstract class BaseMainSupport extends BaseService {
         step = recorder.beginStep(BaseMainSupport.class, "doConfigureCamelContextFromMainConfiguration", "Auto Configure");
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         recorder.endStep(step);
-
-        if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
-            if (mainConfigurationProperties.isModeline()) {
-                camelContext.setModeline(true);
-            }
-            // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
-            // also load other non-route related configuration (e.g., beans)
-            step = recorder.beginStep(BaseMainSupport.class, "modelineRoutes", "Auto Configure");
-            modelineRoutes(camelContext);
-            recorder.endStep(step);
-        }
 
         // try to load custom beans/configuration classes via package scanning
         step = recorder.beginStep(BaseMainSupport.class, "configurePackageScan", "Auto Configure");
@@ -1085,14 +1089,65 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    /**
-     * Configures CamelContext from the {@link MainConfigurationProperties} properties.
-     */
-    protected void doConfigureCamelContextFromMainConfiguration(
+    protected void doConfigureVaultFromMainConfiguration(
             CamelContext camelContext, MainConfigurationProperties config,
             OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
+        OrderedLocationProperties vaultProperties = new OrderedLocationProperties();
+
+        // now configure the various camel groups
+        OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
+                .loadProperties(name -> name.startsWith("camel."), MainHelper::optionKey);
+
+        // load properties from ENV (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV
+                    = MainHelper.loadEnvironmentVariablesAsProperties(GROUP_PREFIXES);
+            if (!propENV.isEmpty()) {
+                prop.putAll("ENV", propENV);
+                LOG.debug("Properties from OS environment variables:");
+                for (String key : propENV.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
+            }
+        }
+        // load properties from JVM (override existing)
+        if (mainConfigurationProperties.isAutoConfigurationSystemPropertiesEnabled()) {
+            Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(GROUP_PREFIXES);
+            if (!propJVM.isEmpty()) {
+                prop.putAll("SYS", propJVM);
+                LOG.debug("Properties from JVM system properties:");
+                for (String key : propJVM.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propJVM.getProperty(key));
+                }
+            }
+        }
+
+        for (String key : prop.stringPropertyNames()) {
+            String loc = prop.getLocation(key);
+            if (startsWithIgnoreCase(key, "camel.vault.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                vaultProperties.put(loc, optionKey(option), value);
+            }
+        }
+
+        if (!vaultProperties.isEmpty() || mainConfigurationProperties.hasVaultConfiguration()) {
+            LOG.debug("Auto-configuring Vault from loaded properties: {}", vaultProperties.size());
+            setVaultProperties(camelContext, vaultProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!vaultProperties.isEmpty()) {
+            vaultProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.vault.{}={}", k, v);
+            });
+        }
+    }
+
+    protected void doInitFileConfigurations(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
         if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
             String[] locs = config.getFileConfigurations().split(",");
             for (String loc : locs) {
@@ -1121,6 +1176,15 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
         }
+    }
+
+    /**
+     * Configures CamelContext from the {@link MainConfigurationProperties} properties.
+     */
+    protected void doConfigureCamelContextFromMainConfiguration(
+            CamelContext camelContext, MainConfigurationProperties config,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
 
         // configure the common/default options
         DefaultConfigurationConfigurer.configure(camelContext, config);
@@ -1169,7 +1233,6 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties resilience4jProperties = new OrderedLocationProperties();
         OrderedLocationProperties faultToleranceProperties = new OrderedLocationProperties();
         OrderedLocationProperties restProperties = new OrderedLocationProperties();
-        OrderedLocationProperties vaultProperties = new OrderedLocationProperties();
         OrderedLocationProperties threadPoolProperties = new OrderedLocationProperties();
         OrderedLocationProperties healthProperties = new OrderedLocationProperties();
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
@@ -1212,12 +1275,6 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
                 restProperties.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.vault.")) {
-                // grab the value
-                String value = prop.getProperty(key);
-                String option = key.substring(12);
-                validateOptionAndValue(key, option, value);
-                vaultProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.threadpool.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1351,11 +1408,6 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
-        if (!vaultProperties.isEmpty() || mainConfigurationProperties.hasVaultConfiguration()) {
-            LOG.debug("Auto-configuring Vault from loaded properties: {}", vaultProperties.size());
-            setVaultProperties(camelContext, vaultProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
-                    autoConfiguredProperties);
-        }
         if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
@@ -1454,11 +1506,6 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.warn("Property not auto-configured: camel.rest.{}={}", k, v);
             });
         }
-        if (!vaultProperties.isEmpty()) {
-            vaultProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.vault.{}={}", k, v);
-            });
-        }
         if (!threadPoolProperties.isEmpty()) {
             threadPoolProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.threadpool.{}={}", k, v);
@@ -1513,7 +1560,7 @@ public abstract class BaseMainSupport extends BaseService {
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
         // and configure vault
-        DefaultConfigurationConfigurer.configureVault(camelContext);
+        DefaultConfigurationConfigurer.configureVaultRefresh(camelContext);
     }
 
     /**
