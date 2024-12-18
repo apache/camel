@@ -273,7 +273,8 @@ public interface ManagementAgent extends Service {
     void setManagementNamePattern(String managementNamePattern);
 
     /**
-     * Sets whether load statistics is enabled (gathers load statistics using a background thread per CamelContext).
+     * Sets whether Camel load (inflight messages, not cpu) statistics is enabled (something like the unix load
+     * average). The statistics requires to have camel-management on the classpath as JMX is required.
      * <p/>
      * The default value is <tt>false</tt>
      *
@@ -282,7 +283,7 @@ public interface ManagementAgent extends Service {
     void setLoadStatisticsEnabled(Boolean flag);
 
     /**
-     * Gets whether load statistics is enabled
+     * Gets whether load (inflight messages, not cpu) statistics is enabled
      *
      * @return <tt>true</tt> if enabled
      */
