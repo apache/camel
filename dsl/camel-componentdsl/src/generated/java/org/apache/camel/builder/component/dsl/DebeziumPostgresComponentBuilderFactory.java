@@ -1445,6 +1445,26 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
+         * Whether or not to create a failover slot. This is only supported when
+         * connecting to a primary server of a Postgres cluster, version 17 or
+         * newer. When not specified, or when not connecting to a Postgres 17
+         * primary, no failover slot will be created.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param slotFailover the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder slotFailover(boolean slotFailover) {
+            doSetProperty("slotFailover", slotFailover);
+            return this;
+        }
+    
+        
+        /**
          * How many times to retry connecting to a replication slot when an
          * attempt fails.
          * 
@@ -2245,6 +2265,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSignalPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "slotDropOnStop": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotDropOnStop((boolean) value); return true;
+            case "slotFailover": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotFailover((boolean) value); return true;
             case "slotMaxRetries": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotMaxRetries((int) value); return true;
             case "slotName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotName((java.lang.String) value); return true;
             case "slotRetryDelayMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSlotRetryDelayMs((long) value); return true;

@@ -1447,7 +1447,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: mysql
          * 
          * @param schemaHistoryInternalStoreOnlyCapturedDatabasesDdl the value

@@ -1653,6 +1653,42 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to create a failover slot. This is only supported when
+         * connecting to a primary server of a Postgres cluster, version 17 or
+         * newer. When not specified, or when not connecting to a Postgres 17
+         * primary, no failover slot will be created.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param slotFailover the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder slotFailover(boolean slotFailover) {
+            doSetProperty("slotFailover", slotFailover);
+            return this;
+        }
+        /**
+         * Whether or not to create a failover slot. This is only supported when
+         * connecting to a primary server of a Postgres cluster, version 17 or
+         * newer. When not specified, or when not connecting to a Postgres 17
+         * primary, no failover slot will be created.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param slotFailover the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder slotFailover(String slotFailover) {
+            doSetProperty("slotFailover", slotFailover);
+            return this;
+        }
+        /**
          * How many times to retry connecting to a replication slot when an
          * attempt fails.
          * 
