@@ -16,6 +16,46 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.BulkWriteOptions;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndDeleteOptions;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.WriteModel;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Processor;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.bson.BsonValue;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
 import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION;
@@ -38,45 +78,6 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMEN
 import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
 import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
 import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
-
-import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.DistinctIterable;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.BulkWriteOptions;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.FindOneAndDeleteOptions;
-import com.mongodb.client.model.FindOneAndReplaceOptions;
-import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.ReturnDocument;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.WriteModel;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.Processor;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.bson.BsonValue;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The MongoDb producer.
