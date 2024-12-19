@@ -310,7 +310,7 @@
         <jython-version>2.7.4</jython-version>
         <jython-standalone-version>2.7.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>3.8.0</kafka-version>
+        <kafka-version>3.8.1</kafka-version>
         <knative-client-version>6.13.3</knative-client-version>
         <kotlin-version>1.9.24</kotlin-version>
         <kotlinpoet-version>1.18.1</kotlinpoet-version>
