@@ -207,6 +207,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("generatorClass", getClass().getName());
         ctx.put("componentName", componentName);
+        ctx.put("package", componentsFactoriesPackageName);
         ctx.put("model", model);
         ctx.put("aliases", aliases);
         ctx.put("mojo", this);
@@ -335,6 +336,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("generatorClass", getClass().getName());
         ctx.put("package", endpointFactoriesPackageName);
+        ctx.put("dslPackage", componentsFactoriesPackageName);
         ctx.put("className", "StaticEndpointBuilders");
         ctx.put("models", models);
         ctx.put("sortedModels", sortedModels);
