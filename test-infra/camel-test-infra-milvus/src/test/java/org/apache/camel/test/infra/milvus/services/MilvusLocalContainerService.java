@@ -26,6 +26,7 @@ import org.apache.camel.test.infra.milvus.common.MilvusProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.milvus.MilvusContainer;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 import org.testcontainers.utility.DockerImageName;
 
 public class MilvusLocalContainerService implements MilvusService, ContainerService<MilvusContainer> {
@@ -35,7 +36,15 @@ public class MilvusLocalContainerService implements MilvusService, ContainerServ
     private final MilvusContainer container;
 
     public MilvusLocalContainerService() {
-        this(LocalPropertyResolver.getProperty(MilvusLocalContainerService.class, MilvusProperties.MILVUS_CONTAINER));
+        this(LocalPropertyResolver.getProperty(MilvusLocalContainerService.class, getPropertyKeyForContainerImage()));
+    }
+
+    private static String getPropertyKeyForContainerImage() {
+        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+            return MilvusProperties.MILVUS_CONTAINER_PPC64LE;
+        } else {
+            return MilvusProperties.MILVUS_CONTAINER;
+        }
     }
 
     public MilvusLocalContainerService(String imageName) {
@@ -47,7 +56,7 @@ public class MilvusLocalContainerService implements MilvusService, ContainerServ
     }
 
     protected MilvusContainer initContainer(String imageName) {
-        return new MilvusContainer(DockerImageName.parse(imageName))
+        return new MilvusContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("milvusdb/milvus"))
                 .withStartupTimeout(Duration.ofMinutes(3L));
     }
 
