@@ -319,7 +319,7 @@
         <kafka-version>3.8.1</kafka-version>
         <knative-client-version>6.13.4</knative-client-version>
         <kubernetes-client-version>6.13.4</kubernetes-client-version>
-        <kudu-version>1.17.0</kudu-version>
+        <kudu-version>1.17.1</kudu-version>
         <langchain4j-version>0.36.2</langchain4j-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
