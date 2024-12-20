@@ -149,6 +149,12 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
             LOG.trace("Bucket [{}] already exists", bucketName);
             return;
         } catch (AwsServiceException ase) {
+            if (ase.statusCode() == 403) { // means we can't check if the bucket exists
+                if (! getConfiguration().isAutoCreateBucket()) {
+                    // We are not requested to create it if it doesn't, so we can only assume that it does
+                    return;
+                }
+            }
             /* 404 means the bucket doesn't exist */
             if (!(ase.awsErrorDetails().sdkHttpResponse().statusCode() == 404)) {
                 throw ase;
