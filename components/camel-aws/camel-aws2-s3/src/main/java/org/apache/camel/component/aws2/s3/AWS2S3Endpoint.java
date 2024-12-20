@@ -150,7 +150,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
             return;
         } catch (AwsServiceException ase) {
             if (ase.statusCode() == 403) { // means we can't check if the bucket exists
-                if (! getConfiguration().isAutoCreateBucket()) {
+                if (!getConfiguration().isAutoCreateBucket()) {
                     // We are not requested to create it if it doesn't, so we can only assume that it does
                     return;
                 }
