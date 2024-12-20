@@ -58,7 +58,7 @@
         <!-- dependency versions -->
         <activemq-version>5.18.6</activemq-version>
         <activemq6-version>6.1.4</activemq6-version>
-        <activemq-artemis-version>2.38.0</activemq-artemis-version>
+        <activemq-artemis-version>2.39.0</activemq-artemis-version>
         <amazon-kinesis-client-version>2.6.1</amazon-kinesis-client-version>
         <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
