@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.22.3-SNAPSHOT</version>
+        <version>3.22.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-master</artifactId>
