@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.debugger;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +77,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<>();
 
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
-    private volatile String singleStepExchangeId;
+    private final Deque<String> singleStepExchangeId = new ArrayDeque<>();
 
     private boolean suspendMode;
     private String initialBreakpoints;
@@ -232,7 +234,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     @Override
     public boolean isSingleStepMode() {
-        return singleStepExchangeId != null;
+        return !singleStepExchangeId.isEmpty();
+    }
+
+    private boolean isSingleStepMode(String exchangeId) {
+        return singleStepExchangeId.contains(exchangeId);
     }
 
     @Override
@@ -350,7 +356,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     @Override
     public void removeAllBreakpoints() {
         // stop single stepping
-        singleStepExchangeId = null;
+        singleStepExchangeId.clear();
 
         for (String nodeId : getSuspendedBreakpointNodeIds()) {
             removeBreakpoint(nodeId);
@@ -371,9 +377,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     public void resumeBreakpoint(String nodeId, boolean stepMode) {
         logger.log("Resume breakpoint " + nodeId);
 
-        if (!stepMode && singleStepExchangeId != null) {
-            debugger.stopSingleStepExchange(singleStepExchangeId);
-            singleStepExchangeId = null;
+        if (!stepMode && !singleStepExchangeId.isEmpty()) {
+            singleStepExchangeId.forEach(debugger::stopSingleStepExchange);
+            singleStepExchangeId.clear();
         }
 
         // remember to remove the dumped message as its no longer in need
@@ -565,7 +571,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     public void resumeAll() {
         logger.log("Resume all");
         // stop single stepping
-        singleStepExchangeId = null;
+        singleStepExchangeId.clear();
 
         for (String node : getSuspendedBreakpointNodeIds()) {
             // remember to remove the dumped message as its no longer in need
@@ -594,8 +600,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String nodeId = msg.getToNode();
             NodeBreakpoint breakpoint = breakpoints.get(nodeId);
             if (breakpoint != null) {
-                singleStepExchangeId = msg.getExchangeId();
-                if (debugger.startSingleStepExchange(singleStepExchangeId, new StepBreakpoint())) {
+                String tid = !singleStepExchangeId.isEmpty() ? singleStepExchangeId.peek() : null;
+                if (tid == null || !tid.equals(msg.getExchangeId())) {
+                    singleStepExchangeId.push(msg.getExchangeId());
+                }
+                if (debugger.startSingleStepExchange(msg.getExchangeId(), new StepBreakpoint())) {
                     // now resume
                     resumeBreakpoint(nodeId, true);
                 }
@@ -616,8 +625,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
         if (msg != null && breakpoint != null) {
-            singleStepExchangeId = msg.getExchangeId();
-            if (debugger.startSingleStepExchange(singleStepExchangeId, new StepBreakpoint())) {
+            String tid = !singleStepExchangeId.isEmpty() ? singleStepExchangeId.peek() : null;
+            if (tid == null || !tid.equals(msg.getExchangeId())) {
+                singleStepExchangeId.push(msg.getExchangeId());
+            }
+            if (debugger.startSingleStepExchange(msg.getExchangeId(), new StepBreakpoint())) {
                 // now resume
                 resumeBreakpoint(nodeId, true);
             }
@@ -1000,13 +1012,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 NamedRoute route = getOriginalRoute(exchange);
                 String completedId = event.getExchange().getExchangeId();
                 try {
-                    if (isSingleStepIncludeStartEnd() && singleStepExchangeId != null
-                            && singleStepExchangeId.equals(completedId)) {
+                    String tid = !singleStepExchangeId.isEmpty() ? singleStepExchangeId.peek() : null;
+                    if (isSingleStepIncludeStartEnd() && completedId.equals(tid)) {
                         doCompleted(exchange, definition, route, cause);
                     }
                 } finally {
+                    singleStepExchangeId.remove(completedId);
                     logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
-                    singleStepExchangeId = null;
                 }
             }
         }
