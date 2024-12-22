@@ -38,7 +38,6 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -266,13 +265,12 @@ public class Debug extends Run {
     }
 
     private void removeDebugOnlyOptions(List<String> cmds) {
-        ReflectionHelper.doWithFields(Debug.class, fc -> {
-            cmds.removeIf(c -> {
-                String n1 = "--" + fc.getName();
-                String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-                return c.startsWith(n1) || c.startsWith(n2);
-            });
-        });
+        // only check Debug.class (not super classes)
+        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
+            String n1 = "--" + fc.getName();
+            String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
+            return c.startsWith(n1) || c.startsWith(n2);
+        }));
     }
 
     protected int doWatch() {
