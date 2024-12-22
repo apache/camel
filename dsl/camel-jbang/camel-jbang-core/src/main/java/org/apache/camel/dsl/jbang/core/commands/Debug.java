@@ -38,7 +38,6 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -220,7 +219,7 @@ public class Debug extends Run {
                             logUpdated.set(true);
                         }
                     }
-                    sendDebugCommand(spawnPid, "step", null);
+                    sendDebugCommand(spawnPid, "step", line, null);
                 }
                 // user have pressed ENTER so continue
                 waitForUser.set(false);
@@ -266,7 +265,8 @@ public class Debug extends Run {
     }
 
     private void removeDebugOnlyOptions(List<String> cmds) {
-        ReflectionHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
+        // only check Debug.class (not super classes)
+        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
             String n1 = "--" + fc.getName();
             String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
             return c.startsWith(n1) || c.startsWith(n2);
@@ -309,7 +309,7 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void sendDebugCommand(long pid, String command, String breakpoint) {
+    private void sendDebugCommand(long pid, String command, String argument, String breakpoint) {
         // ensure output file is deleted before executing action
         File outputFile = getOutputFile(Long.toString(pid));
         FileUtil.deleteFile(outputFile);
@@ -318,6 +318,14 @@ public class Debug extends Run {
         root.put("action", "debug");
         if (command != null) {
             root.put("command", command);
+        }
+        if (argument != null && !argument.isBlank()) {
+            if ("i".equals(argument)) {
+                argument = "into";
+            } else if ("o".equals(argument)) {
+                argument = "over";
+            }
+            root.put("argument", argument);
         }
         if (breakpoint != null) {
             root.put("breakpoint", breakpoint);
@@ -471,7 +479,7 @@ public class Debug extends Run {
                     }
                 }
 
-                String msg = "    Breakpoint suspended. Press ENTER to continue.";
+                String msg = "    Breakpoint suspended. Press ENTER to continue (i = step into (default), o = step over).";
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
