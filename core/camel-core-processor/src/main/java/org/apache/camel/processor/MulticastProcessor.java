@@ -1278,6 +1278,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
         }
         // remove the strategy using this processor as the key
         map.remove(this);
+        // and remove map if its empty
+        if (map.isEmpty()) {
+            exchange.removeProperty(ExchangePropertyKey.AGGREGATION_STRATEGY);
+        }
     }
 
     /**

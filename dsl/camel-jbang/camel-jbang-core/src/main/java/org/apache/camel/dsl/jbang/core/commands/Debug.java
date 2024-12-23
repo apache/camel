@@ -219,7 +219,7 @@ public class Debug extends Run {
                             logUpdated.set(true);
                         }
                     }
-                    sendDebugCommand(spawnPid, "step", line, null);
+                    sendDebugCommand(spawnPid, "step", null);
                 }
                 // user have pressed ENTER so continue
                 waitForUser.set(false);
@@ -309,7 +309,7 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void sendDebugCommand(long pid, String command, String argument, String breakpoint) {
+    private void sendDebugCommand(long pid, String command, String breakpoint) {
         // ensure output file is deleted before executing action
         File outputFile = getOutputFile(Long.toString(pid));
         FileUtil.deleteFile(outputFile);
@@ -318,14 +318,6 @@ public class Debug extends Run {
         root.put("action", "debug");
         if (command != null) {
             root.put("command", command);
-        }
-        if (argument != null && !argument.isBlank()) {
-            if ("i".equals(argument)) {
-                argument = "into";
-            } else if ("o".equals(argument)) {
-                argument = "over";
-            }
-            root.put("argument", argument);
         }
         if (breakpoint != null) {
             root.put("breakpoint", breakpoint);
@@ -479,7 +471,7 @@ public class Debug extends Run {
                     }
                 }
 
-                String msg = "    Breakpoint suspended. Press ENTER to continue (i = step into (default), o = step over).";
+                String msg = "    Breakpoint suspended. Press ENTER to continue.";
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
