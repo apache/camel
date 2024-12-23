@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,18 +28,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilePollingConsumerIssueTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testFilePollingConsumer() throws Exception {
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
-        Endpoint endpoint = context.getEndpoint(fileUri("?initialDelay=0&delay=10&fileName=hello.txt"));
+        Endpoint endpoint = context.getEndpoint(fileUri("?initialDelay=0&delay=10&fileName=" + TEST_FILE_NAME));
         PollingConsumer consumer = endpoint.createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);
         assertNotNull(exchange);
 
-        assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertEquals(TEST_FILE_NAME, exchange.getIn().getHeader(Exchange.FILE_NAME, String.class));
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
         consumer.stop();
