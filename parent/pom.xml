@@ -157,7 +157,7 @@
         <fop-version>2.10</fop-version>
         <formatter-maven-plugin-version>2.24.1</formatter-maven-plugin-version>
         <ftpserver-version>1.2.0</ftpserver-version>
-        <freemarker-version>2.3.33</freemarker-version>
+        <freemarker-version>2.3.34</freemarker-version>
         <fury-version>0.9.0</fury-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
