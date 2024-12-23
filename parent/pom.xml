@@ -383,7 +383,7 @@
         <netty-version>4.1.116.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.4</networknt-json-schema-validator-version>
-        <nimbus-jose-jwt>9.47</nimbus-jose-jwt>
+        <nimbus-jose-jwt>9.48</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
