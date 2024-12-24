@@ -53,8 +53,9 @@ public class KinesisConnection implements Closeable {
         lock.lock();
         try {
             if (Objects.isNull(kinesisAsyncClient)) {
-                kinesisAsyncClient
-                        = KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration()).getKinesisAsyncClient();
+                kinesisAsyncClient = endpoint.getConfiguration().getAmazonKinesisAsyncClient() != null
+                        ? endpoint.getConfiguration().getAmazonKinesisAsyncClient()
+                        : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration()).getKinesisAsyncClient();
             }
             return kinesisAsyncClient;
         } finally {

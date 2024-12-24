@@ -108,4 +108,16 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         assertEquals(ShardIteratorType.AT_TIMESTAMP, endpoint.getConfiguration().getIteratorType());
         assertEquals("1732882967.573", endpoint.getConfiguration().getMessageTimestamp());
     }
+
+    @Test
+    public void createEndpointWithApplicationName() throws Exception {
+        Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint(
+                "aws2-kinesis://some_stream_name?accessKey=xxx&secretKey=yyy&region=eu-west-1&applicationName=myAppName");
+
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
+        assertEquals("myAppName", endpoint.getConfiguration().getApplicationName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+    }
 }
