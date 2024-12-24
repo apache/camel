@@ -34,9 +34,6 @@ public class Kinesis2Configuration implements Cloneable {
     @UriPath(description = "Name of the stream")
     @Metadata(required = true)
     private String streamName;
-    @UriParam(description = "Name of the KCL application. This defaults to the stream name.")
-    @Metadata(label = "advanced")
-    private String applicationName;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
@@ -51,9 +48,6 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     @Metadata(label = "advanced", autowired = true)
     private KinesisClient amazonKinesisClient;
-    @UriParam(description = "Amazon Kinesis async client to use for all requests for this endpoint that require an async client")
-    @Metadata(label = "advanced", autowired = true)
-    private KinesisAsyncClient amazonKinesisAsyncClient;
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll",
               defaultValue = "1")
     private int maxResultsPerRequest = 1;
@@ -129,6 +123,12 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(label = "advanced",
               description = "If we want to use a KCL Consumer and disable the CloudWatch Metrics Export")
     private boolean kclDisableCloudwatchMetricsExport;
+    @UriParam(description = "Supply a pre-constructed Amazon Kinesis async client to use for the KCL Consumer")
+    @Metadata(label = "advanced", autowired = true)
+    private KinesisAsyncClient amazonKinesisAsyncClient;
+    @UriParam(description = "Name of the KCL application. This defaults to the stream name.")
+    @Metadata(label = "advanced")
+    private String applicationName;
 
     public KinesisAsyncClient getAmazonKinesisAsyncClient() {
         return amazonKinesisAsyncClient;
