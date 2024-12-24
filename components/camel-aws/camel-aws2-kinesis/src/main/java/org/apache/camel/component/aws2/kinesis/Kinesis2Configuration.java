@@ -24,6 +24,7 @@ import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
@@ -33,6 +34,9 @@ public class Kinesis2Configuration implements Cloneable {
     @UriPath(description = "Name of the stream")
     @Metadata(required = true)
     private String streamName;
+    @UriParam(description = "Name of the KCL application. This defaults to the stream name.")
+    @Metadata(label = "advanced")
+    private String applicationName;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
@@ -47,6 +51,9 @@ public class Kinesis2Configuration implements Cloneable {
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     @Metadata(label = "advanced", autowired = true)
     private KinesisClient amazonKinesisClient;
+    @UriParam(description = "Amazon Kinesis async client to use for all requests for this endpoint that require an async client")
+    @Metadata(label = "advanced", autowired = true)
+    private KinesisAsyncClient amazonKinesisAsyncClient;
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll",
               defaultValue = "1")
     private int maxResultsPerRequest = 1;
@@ -123,6 +130,14 @@ public class Kinesis2Configuration implements Cloneable {
               description = "If we want to use a KCL Consumer and disable the CloudWatch Metrics Export")
     private boolean kclDisableCloudwatchMetricsExport;
 
+    public KinesisAsyncClient getAmazonKinesisAsyncClient() {
+        return amazonKinesisAsyncClient;
+    }
+
+    public void setAmazonKinesisAsyncClient(KinesisAsyncClient amazonKinesisAsyncClient) {
+        this.amazonKinesisAsyncClient = amazonKinesisAsyncClient;
+    }
+
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
     }
@@ -145,6 +160,14 @@ public class Kinesis2Configuration implements Cloneable {
 
     public void setStreamName(String streamName) {
         this.streamName = streamName;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     public ShardIteratorType getIteratorType() {

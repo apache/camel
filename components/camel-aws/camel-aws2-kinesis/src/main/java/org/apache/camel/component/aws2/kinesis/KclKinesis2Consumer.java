@@ -138,8 +138,8 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         }
         this.executor = this.getEndpoint().createExecutor();
         this.executor.submit(new KclKinesisConsumingTask(
-                configuration.getStreamName(), kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient,
-                configuration.isKclDisableCloudwatchMetricsExport()));
+                configuration.getStreamName(), configuration.getApplicationName(), kinesisAsyncClient, dynamoDbAsyncClient,
+                cloudWatchAsyncClient, configuration.isKclDisableCloudwatchMetricsExport()));
     }
 
     @Override
@@ -250,15 +250,17 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         private final DynamoDbAsyncClient dynamoDbAsyncClient;
         private final CloudWatchAsyncClient cloudWatchAsyncClient;
         private final String streamName;
+        private final String applicationName;
         private final boolean disableMetricsExport;
 
-        KclKinesisConsumingTask(String streamName, KinesisAsyncClient kinesisAsyncClient,
+        KclKinesisConsumingTask(String streamName, String applicationName, KinesisAsyncClient kinesisAsyncClient,
                                 DynamoDbAsyncClient dynamoDbAsyncClient, CloudWatchAsyncClient cloudWatchAsyncClient,
                                 boolean disableMetricsExport) {
             this.cloudWatchAsyncClient = cloudWatchAsyncClient;
             this.dynamoDbAsyncClient = dynamoDbAsyncClient;
             this.kinesisAsyncClient = kinesisAsyncClient;
             this.streamName = streamName;
+            this.applicationName = applicationName != null ? applicationName : streamName;
             this.disableMetricsExport = disableMetricsExport;
         }
 
@@ -266,7 +268,7 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         public void run() {
             try {
                 ConfigsBuilder configsBuilder = new ConfigsBuilder(
-                        streamName, streamName,
+                        streamName, applicationName,
                         kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient,
                         "KclKinesisConsumingTask-" + UUID.randomUUID().toString(),
                         new CamelKinesisRecordProcessorFactory());
