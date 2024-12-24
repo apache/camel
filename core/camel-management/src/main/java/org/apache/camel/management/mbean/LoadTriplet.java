@@ -20,7 +20,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Holds the loads averaged over 1min, 5min, and 15min.
+ * Holds the loads (inflight messages, not cpu) averaged over 1min, 5min, and 15min.
  */
 public final class LoadTriplet {
 

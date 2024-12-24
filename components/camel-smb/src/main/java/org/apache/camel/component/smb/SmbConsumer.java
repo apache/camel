@@ -35,21 +35,14 @@ public class SmbConsumer extends ScheduledPollConsumer {
     private final SmbEndpoint endpoint;
     private final SmbConfiguration configuration;
 
-    private final SMBClient smbClient;
+    private SMBClient smbClient;
     private Connection connection;
-    private Session session;
     private DiskShare share;
 
     public SmbConsumer(SmbEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
-
-        if (this.configuration.getSmbConfig() != null) {
-            smbClient = new SMBClient(this.configuration.getSmbConfig());
-        } else {
-            smbClient = new SMBClient();
-        }
     }
 
     private int pollDirectory(DiskShare share, SmbConfiguration configuration, int polledCount, String path) throws Exception {
@@ -65,13 +58,13 @@ public class SmbConsumer extends ScheduledPollConsumer {
             }
 
             String fullFilePath = "";
-            if (!"".equals(path)) {
-                fullFilePath = new String(path + java.io.File.separator + f.getFileName());
+            if (!path.isEmpty()) {
+                fullFilePath = path + java.io.File.separator + f.getFileName();
             }
 
             if (share.folderExists(fullFilePath)) {
                 if (configuration.isRecursive()) {
-                    polledCount = pollDirectory(share, configuration, polledCount, new String(fullFilePath));
+                    polledCount = pollDirectory(share, configuration, polledCount, fullFilePath);
                 }
                 continue;
             }
@@ -128,16 +121,25 @@ public class SmbConsumer extends ScheduledPollConsumer {
         AuthenticationContext ac = new AuthenticationContext(
                 configuration.getUsername(), configuration.getPassword().toCharArray(),
                 configuration.getDomain());
-        session = connection.authenticate(ac);
+        Session session = connection.authenticate(ac);
 
         // Connect to the share
         share = (DiskShare) session.connectShare(endpoint.getShareName());
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (this.configuration.getSmbConfig() != null) {
+            smbClient = new SMBClient(this.configuration.getSmbConfig());
+        } else {
+            smbClient = new SMBClient();
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         refreshConnection();
     }
 
@@ -145,6 +147,7 @@ public class SmbConsumer extends ScheduledPollConsumer {
     protected void doStop() throws Exception {
         if (connection != null) {
             IOHelper.close(connection);
+            connection = null;
         }
 
         super.doStop();

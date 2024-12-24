@@ -867,8 +867,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets whether context load statistics is enabled (something like the unix load average). The statistics requires
-     * to have camel-management on the classpath as JMX is required.
+     * Sets whether Camel load (inflight messages, not cpu) statistics is enabled (something like the unix load
+     * average). The statistics requires to have camel-management on the classpath as JMX is required.
      *
      * The default value is false.
      */

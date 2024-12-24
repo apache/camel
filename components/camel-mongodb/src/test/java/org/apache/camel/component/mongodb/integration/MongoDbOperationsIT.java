@@ -24,6 +24,7 @@ import java.util.List;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -52,6 +53,7 @@ import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -169,14 +171,16 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         // save (upsert) a document without Id => insert with new Id
         doc = new Document("scientist", "Einstein");
         assertNull(doc.get(MONGO_ID));
-        UpdateResult result = template.requestBody("direct:save", doc, UpdateResult.class);
-        assertNotNull(result.getUpsertedId());
-        // Without Id save perform an insert not an update.
-        assertEquals(0, result.getModifiedCount());
+        Object resultObj = template.requestBody("direct:save", doc);
+        // Without Id save performs an insert not an update.
+        assertInstanceOf(InsertOneResult.class, resultObj);
+        InsertOneResult resultInsertOne = (InsertOneResult) resultObj;
+        assertNotNull(resultInsertOne.getInsertedId());
+
         // Testing the save logic
-        Document record1 = testCollection.find(eq(MONGO_ID, result.getUpsertedId())).first();
+        Document record1 = testCollection.find(eq(MONGO_ID, resultInsertOne.getInsertedId())).first();
         assertEquals("Einstein", record1.get("scientist"),
-                "Scientist field of '" + result.getUpsertedId() + "' must equal 'Einstein'");
+                "Scientist field of '" + resultInsertOne.getInsertedId() + "' must equal 'Einstein'");
     }
 
     @Test
@@ -196,14 +200,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     @Test
     public void testUpdate() {
         for (int i = 1; i <= 100; i++) {
-            String body = null;
-            try (Formatter f = new Formatter();) {
+            String body;
+            try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
                 } else {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
                 }
-                f.close();
             }
             template.requestBody("direct:insert", body);
         }
@@ -240,14 +243,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
 
         for (int i = 1; i <= 100; i++) {
-            String body = null;
-            try (Formatter f = new Formatter();) {
+            String body;
+            try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
                 } else {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
                 }
-                f.close();
             }
             template.requestBody("direct:insert", body);
         }
@@ -285,14 +287,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     @Test
     public void testUpdateUsingFieldsFilterHeader() {
         for (int i = 1; i <= 100; i++) {
-            String body = null;
-            try (Formatter f = new Formatter();) {
+            String body;
+            try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
                 } else {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
                 }
-                f.close();
             }
             template.requestBody("direct:insert", body);
         }
@@ -320,14 +321,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     @Test
     public void testRemove() {
         for (int i = 1; i <= 100; i++) {
-            String body = null;
+            String body;
             try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
                 } else {
                     body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
                 }
-                f.close();
             }
             template.requestBody("direct:insert", body);
         }
@@ -383,10 +383,9 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     public void testColStats() {
         // Add some records to the collection (and do it via camel-mongodb)
         for (int i = 1; i <= 100; i++) {
-            String body = null;
-            try (Formatter f = new Formatter();) {
+            String body;
+            try (Formatter f = new Formatter()) {
                 body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
-                f.close();
             }
             template.requestBody("direct:insert", body);
         }

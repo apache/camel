@@ -1809,7 +1809,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: mysql
          * 
          * @param schemaHistoryInternalStoreOnlyCapturedDatabasesDdl the value
@@ -1828,7 +1828,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: true
+         * Default: false
          * Group: mysql
          * 
          * @param schemaHistoryInternalStoreOnlyCapturedDatabasesDdl the value

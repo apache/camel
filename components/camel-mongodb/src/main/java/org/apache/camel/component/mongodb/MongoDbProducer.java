@@ -41,6 +41,7 @@ import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -49,6 +50,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -635,10 +637,13 @@ public class MongoDbProducer extends DefaultProducer {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
                 Document saveObj = exchange.getIn().getMandatoryBody(Document.class);
                 ReplaceOptions options = new ReplaceOptions().upsert(true);
-                UpdateResult result;
+                Object result;
                 if (null == saveObj.get(MONGO_ID)) {
-                    result = dbCol.replaceOne(Filters.where("false"), saveObj, options);
-                    exchange.getIn().setHeader(OID, result.getUpsertedId().asObjectId().getValue());
+                    result = dbCol.insertOne(saveObj);
+                    BsonValue insertedId = ((InsertOneResult) result).getInsertedId();
+                    if (insertedId != null) {
+                        exchange.getIn().setHeader(OID, insertedId.asObjectId().getValue());
+                    }
                 } else {
                     Bson mongoIdQuery = eq(MONGO_ID, saveObj.get(MONGO_ID));
                     //You can pass sharded key query via CRITERIA header to allow update sharded collection

@@ -172,6 +172,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "slotdroponstop":
         case "slotDropOnStop": target.getConfiguration().setSlotDropOnStop(property(camelContext, boolean.class, value)); return true;
+        case "slotfailover":
+        case "slotFailover": target.getConfiguration().setSlotFailover(property(camelContext, boolean.class, value)); return true;
         case "slotmaxretries":
         case "slotMaxRetries": target.getConfiguration().setSlotMaxRetries(property(camelContext, int.class, value)); return true;
         case "slotname":
@@ -400,6 +402,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "skippedOperations": return java.lang.String.class;
         case "slotdroponstop":
         case "slotDropOnStop": return boolean.class;
+        case "slotfailover":
+        case "slotFailover": return boolean.class;
         case "slotmaxretries":
         case "slotMaxRetries": return int.class;
         case "slotname":
@@ -629,6 +633,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "slotdroponstop":
         case "slotDropOnStop": return target.getConfiguration().isSlotDropOnStop();
+        case "slotfailover":
+        case "slotFailover": return target.getConfiguration().isSlotFailover();
         case "slotmaxretries":
         case "slotMaxRetries": return target.getConfiguration().getSlotMaxRetries();
         case "slotname":

@@ -117,13 +117,13 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Whether to force shutdown now when a timeout occurred")
     boolean isShutdownNowOnTimeout();
 
-    @ManagedAttribute(description = "Average load over the last minute")
+    @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last minute")
     String getLoad01();
 
-    @ManagedAttribute(description = "Average load over the last five minutes")
+    @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last five minutes")
     String getLoad05();
 
-    @ManagedAttribute(description = "Average load over the last fifteen minutes")
+    @ManagedAttribute(description = "Average load (inflight messages, not cpu) over the last fifteen minutes")
     String getLoad15();
 
     @ManagedAttribute(description = "Throughput message/second")
