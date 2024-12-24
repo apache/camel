@@ -95,7 +95,7 @@
         <cassandra-driver-version>4.18.1</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
-        <chicocy-version>0.0.12</chicocy-version>
+        <chicocy-version>1.0.0</chicocy-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.179</classgraph-version>
         <cloudant-version>0.9.3</cloudant-version>
