@@ -208,7 +208,7 @@ public class Debug extends Run {
             String line = c.readLine();
             if (line != null) {
                 line = line.trim();
-                if ("quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     quit.set(true);
                 } else {
                     // continue breakpoint
@@ -219,7 +219,11 @@ public class Debug extends Run {
                             logUpdated.set(true);
                         }
                     }
-                    sendDebugCommand(spawnPid, "step", null);
+                    String cmd = "step";
+                    if (line.equalsIgnoreCase("o") || line.equalsIgnoreCase("over")) {
+                        cmd = "stepover";
+                    }
+                    sendDebugCommand(spawnPid, cmd, null);
                 }
                 // user have pressed ENTER so continue
                 waitForUser.set(false);
@@ -471,7 +475,7 @@ public class Debug extends Run {
                     }
                 }
 
-                String msg = "    Breakpoint suspended. Press ENTER to continue.";
+                String msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue.";
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {

@@ -78,6 +78,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
     private final Deque<String> singleStepExchangeId = new ArrayDeque<>();
+    private final AtomicBoolean stepOverMode = new AtomicBoolean();
 
     private boolean suspendMode;
     private String initialBreakpoints;
@@ -649,6 +650,12 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     }
 
     @Override
+    public void stepOver() {
+        stepOverMode.set(true);
+        step();
+    }
+
+    @Override
     public Set<String> getSuspendedBreakpointNodeIds() {
         return new LinkedHashSet<>(suspendedBreakpoints.keySet());
     }
@@ -785,7 +792,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     public StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
         suspendIfNeeded();
-        if (isEnabled() && (hasBreakpoint(definition.getId()) || isSingleStepMode())) {
+        if (isEnabled() && !stepOverMode.get() && (hasBreakpoint(definition.getId()) || isSingleStepMode())) {
             StopWatch watch = new StopWatch();
             debugger.beforeProcess(exchange, processor, definition);
             return watch;
@@ -952,6 +959,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            if (stepOverMode.get()) {
+                // we are stepping over this
+                return;
+            }
+
             // store a copy of the message so we can see that from the debugger
             long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
@@ -992,6 +1004,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         }
 
         @Override
+        public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
+            stepOverMode.set(false);
+        }
+
+        @Override
         public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition, boolean before) {
             // always match in step (both before and after)
             return true;
@@ -1011,14 +1028,18 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 }
                 NamedRoute route = getOriginalRoute(exchange);
                 String completedId = event.getExchange().getExchangeId();
+                boolean completed = false;
                 try {
                     String tid = !singleStepExchangeId.isEmpty() ? singleStepExchangeId.peek() : null;
-                    if (isSingleStepIncludeStartEnd() && completedId.equals(tid)) {
+                    if (!stepOverMode.get() && isSingleStepIncludeStartEnd() && completedId.equals(tid)) {
+                        completed = true;
                         doCompleted(exchange, definition, route, cause);
                     }
                 } finally {
                     singleStepExchangeId.remove(completedId);
-                    logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
+                    if (completed) {
+                        logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
+                    }
                 }
             }
         }
