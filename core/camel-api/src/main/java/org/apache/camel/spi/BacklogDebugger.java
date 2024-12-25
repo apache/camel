@@ -277,9 +277,14 @@ public interface BacklogDebugger extends StatefulService {
     void stepBreakpoint();
 
     /**
-     * To step to next node when in single step mode.
+     * To step (into) to next node when in single step mode.
      */
     void step();
+
+    /**
+     * To step over to next node when in single step mode.
+     */
+    void stepOver();
 
     /**
      * Gets node ids for all current suspended exchanges at breakpoints
