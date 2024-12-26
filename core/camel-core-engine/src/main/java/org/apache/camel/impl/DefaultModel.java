@@ -205,7 +205,8 @@ public class DefaultModel implements Model {
             for (RouteDefinition r : allRoutes) {
                 // loop all rest routes
                 FromDefinition from = r.getInput();
-                if (from != null) {
+                if (from != null && !r.isInlined()) {
+                    // only attempt to inline if not already inlined
                     String uri = from.getEndpointUri();
                     if (uri != null && uri.startsWith("rest:")) {
                         // find first EIP in the outputs (skip abstract which are onException/intercept etc)
@@ -267,6 +268,7 @@ public class DefaultModel implements Model {
                                 if (toBeInlined.isErrorHandlerFactorySet()) {
                                     r.setErrorHandler(toBeInlined.getErrorHandler());
                                 }
+                                r.markInlined();
                             }
                         }
                     }
