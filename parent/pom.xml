@@ -364,7 +364,7 @@
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.1</microprofile-fault-tolerance-version>
         <milvus-client-version>2.5.2</milvus-client-version>
-        <mina-version>2.2.4</mina-version>
+        <mina-version>2.2.3</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.14</minio-version>
