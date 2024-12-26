@@ -241,6 +241,9 @@ public class Debug extends Run {
 
         cmds.remove("--background=true");
         cmds.remove("--background");
+        cmds.remove("--background-wait=true");
+        cmds.remove("--background-wait=false");
+        cmds.remove("--background-wait");
 
         // remove args from debug that are not supported by run
         removeDebugOnlyOptions(cmds);
@@ -332,6 +335,14 @@ public class Debug extends Run {
         } catch (Exception e) {
             // ignore
         }
+    }
+
+    private static boolean isStepOverSupported(String version) {
+        // step-over is Camel 4.8.3 or 4.10 or better (not in 4.9)
+        if ("4.9.0".equals(version)) {
+            return false;
+        }
+        return version == null || VersionHelper.isGE(version, "4.8.3");
     }
 
     private void printDebugStatus(long pid, StringWriter buffer) {
@@ -475,7 +486,12 @@ public class Debug extends Run {
                     }
                 }
 
-                String msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue.";
+                String msg;
+                if (isStepOverSupported(version)) {
+                    msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue.";
+                } else {
+                    msg = "    Breakpoint suspended. Press ENTER to continue.";
+                }
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
