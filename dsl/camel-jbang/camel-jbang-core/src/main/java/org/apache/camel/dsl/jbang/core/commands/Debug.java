@@ -201,7 +201,7 @@ public class Debug extends Run {
                             if (line.equalsIgnoreCase("o") || line.equalsIgnoreCase("over")) {
                                 cmd = "stepover";
                             }
-                            sendDebugCommand(spawnPid, "step", null);
+                            sendDebugCommand(spawnPid, cmd, null);
                         }
                         // user have pressed ENTER so continue
                         waitForUser.set(false);
