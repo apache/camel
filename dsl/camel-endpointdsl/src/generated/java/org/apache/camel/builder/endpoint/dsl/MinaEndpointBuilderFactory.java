@@ -416,6 +416,22 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Accept the wildcard specified classes for Object deserialization,
+         * unless they are otherwise rejected. Multiple patterns can be
+         * separated by comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: codec
+         * 
+         * @param objectCodecPattern the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder objectCodecPattern(String objectCodecPattern) {
+            doSetProperty("objectCodecPattern", objectCodecPattern);
+            return this;
+        }
+        /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
@@ -776,7 +792,8 @@ public interface MinaEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -786,6 +803,7 @@ public interface MinaEndpointBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedMinaEndpointConsumerBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -796,7 +814,8 @@ public interface MinaEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -806,6 +825,7 @@ public interface MinaEndpointBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedMinaEndpointConsumerBuilder transferExchange(String transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -1163,6 +1183,22 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Accept the wildcard specified classes for Object deserialization,
+         * unless they are otherwise rejected. Multiple patterns can be
+         * separated by comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: codec
+         * 
+         * @param objectCodecPattern the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointProducerBuilder objectCodecPattern(String objectCodecPattern) {
+            doSetProperty("objectCodecPattern", objectCodecPattern);
+            return this;
+        }
+        /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
@@ -1482,7 +1518,8 @@ public interface MinaEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1492,6 +1529,7 @@ public interface MinaEndpointBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedMinaEndpointProducerBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -1502,7 +1540,8 @@ public interface MinaEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1512,6 +1551,7 @@ public interface MinaEndpointBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedMinaEndpointProducerBuilder transferExchange(String transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -1870,6 +1910,22 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Accept the wildcard specified classes for Object deserialization,
+         * unless they are otherwise rejected. Multiple patterns can be
+         * separated by comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: codec
+         * 
+         * @param objectCodecPattern the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointBuilder objectCodecPattern(String objectCodecPattern) {
+            doSetProperty("objectCodecPattern", objectCodecPattern);
+            return this;
+        }
+        /**
          * Only used for TCP. If no codec is specified, you can use this flag to
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
@@ -2082,7 +2138,8 @@ public interface MinaEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2092,6 +2149,7 @@ public interface MinaEndpointBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedMinaEndpointBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
@@ -2102,7 +2160,8 @@ public interface MinaEndpointBuilderFactory {
          * body, Out body, fault body, In headers, Out headers, fault headers,
          * exchange properties, exchange exception. This requires that the
          * objects are serializable. Camel will exclude any non-serializable
-         * objects and log it at WARN level.
+         * objects and log it at WARN level. Also make sure to configure
+         * objectCodecPattern to (star) to allow transferring java objects.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2112,6 +2171,7 @@ public interface MinaEndpointBuilderFactory {
          * @param transferExchange the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedMinaEndpointBuilder transferExchange(String transferExchange) {
             doSetProperty("transferExchange", transferExchange);
             return this;
