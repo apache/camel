@@ -73,7 +73,7 @@ public class MllpSSLContextParametersTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSSLInOutWithMllpConsumer() throws Exception, MllpSocketException {
+    public void testSSLInOutWithMllpConsumer() throws Exception {
 
         String hl7Message =
                 "MSH|^~\\&|CLIENT|TEST|SERVER|ACK|20231118120000||ADT^A01|123456|T|2.6\r" +
