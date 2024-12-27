@@ -18,6 +18,10 @@ The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been remove
 
 The camel-jbang commands for `camel-k` has been removed.
 
+=== camel-mina
+
+If using object codec, then you should configure the `objectCodecPattern` configuration to specify
+which java classes (FQN) to allow for Object serialization. You can use `*` to accept all patterns.
 
 === camel-google-pubsub-lite
 

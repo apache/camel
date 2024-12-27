@@ -370,6 +370,10 @@ public class MinaProducer extends DefaultProducer {
                     codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
+            if (configuration.getObjectCodecPattern() != null) {
+                String[] arr = configuration.getObjectCodecPattern().split(",");
+                codecFactory.accept(arr);
+            }
             addCodecFactory(service, codecFactory);
             LOG.debug("{}: Using ObjectSerializationCodecFactory: {}", type, codecFactory);
         }

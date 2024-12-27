@@ -4,6 +4,13 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.8.2 to 4.8.3
+
+=== camel-mina
+
+If using object codec, then you should configure the `objectCodecPattern` configuration to specify
+which java classes (FQN) to allow for Object serialization. You can use `*` to accept all patterns.
+
 == Upgrading from 4.8.1 to 4.8.2
 
 === camel-management
