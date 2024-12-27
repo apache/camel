@@ -20,7 +20,6 @@ package org.apache.camel.component.couchbase.integration;
 import java.time.Duration;
 import java.util.Collections;
 
-import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.manager.bucket.BucketSettings;
 import com.couchbase.client.java.manager.bucket.BucketType;

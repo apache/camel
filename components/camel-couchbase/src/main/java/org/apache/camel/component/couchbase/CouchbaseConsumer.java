@@ -64,7 +64,9 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     }
 
     @Override
-    protected void doInit() {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         Scope scope;
         if (endpoint.getScope() != null) {
             scope = bucket.scope(endpoint.getScope());
@@ -104,7 +106,6 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         ResumeStrategyHelper.resume(getEndpoint().getCamelContext(), this, resumeStrategy, COUCHBASE_RESUME_ACTION);
     }
 
