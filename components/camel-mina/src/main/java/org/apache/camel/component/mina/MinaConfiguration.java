@@ -61,6 +61,7 @@ public class MinaConfiguration implements Cloneable {
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazySessionCreation = true;
     @UriParam(label = "advanced")
+    @Deprecated
     private boolean transferExchange;
     @UriParam
     private boolean minaLogger;
@@ -72,6 +73,8 @@ public class MinaConfiguration implements Cloneable {
     private List<IoFilter> filters;
     @UriParam(label = "codec", defaultValue = "true")
     private boolean allowDefaultCodec = true;
+    @UriParam(label = "codec")
+    private String objectCodecPattern;
     @UriParam
     private boolean disconnect;
     @UriParam(label = "advanced", defaultValue = "true")
@@ -246,7 +249,8 @@ public class MinaConfiguration implements Cloneable {
      * Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are
      * transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange
      * exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and
-     * log it at WARN level.
+     * log it at WARN level. Also make sure to configure objectCodecPattern to * (star) to allow transferring java
+     * objects.
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
@@ -315,6 +319,18 @@ public class MinaConfiguration implements Cloneable {
 
     public boolean isAllowDefaultCodec() {
         return allowDefaultCodec;
+    }
+
+    public String getObjectCodecPattern() {
+        return objectCodecPattern;
+    }
+
+    /**
+     * Accept the wildcard specified classes for Object deserialization, unless they are otherwise rejected. Multiple
+     * patterns can be separated by comma.
+     */
+    public void setObjectCodecPattern(String pattern) {
+        this.objectCodecPattern = pattern;
     }
 
     public boolean isDisconnect() {

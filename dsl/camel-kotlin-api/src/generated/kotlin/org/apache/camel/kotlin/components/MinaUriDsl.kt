@@ -224,6 +224,10 @@ public class MinaUriDsl(
     it.property("filters", filters)
   }
 
+  public fun objectCodecPattern(objectCodecPattern: String) {
+    it.property("objectCodecPattern", objectCodecPattern)
+  }
+
   public fun textline(textline: String) {
     it.property("textline", textline)
   }
