@@ -2123,7 +2123,7 @@ public class ExpressionBuilder {
                         expression.init(context);
                         if (expression instanceof ConstantExpressionAdapter constantExpressionAdapter) {
                             Object value = constantExpressionAdapter.getValue();
-                            preprocessedExpression.add(value.toString());
+                            preprocessedExpression.add(String.valueOf(value));
                         } else {
                             preprocessedExpression.add(expression);
                             constantsOnly = false;
