@@ -51,7 +51,7 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
         cluster.buckets().createBucket(
                 BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE).flushEnabled(true));
 
-        Bucket bucket = cluster.bucket(bucketName);
+        cluster.bucket(bucketName);
         DesignDocument designDoc = new DesignDocument(
                 bucketName,
                 Collections.singletonMap(bucketName, new View("function (doc, meta) {  emit(meta.id, doc);}")));
