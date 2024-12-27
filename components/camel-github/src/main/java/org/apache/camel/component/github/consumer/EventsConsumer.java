@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,8 +32,12 @@ import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.event.Event;
 import org.eclipse.egit.github.core.service.EventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventsConsumer extends AbstractGitHubConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EventsConsumer.class);
 
     private final EventService eventService;
     private final GitHubEventFetchStrategy eventFetchStrategy;
@@ -72,22 +78,20 @@ public class EventsConsumer extends AbstractGitHubConsumer {
             }
         }
 
-        int counter = 0;
+        Queue<Object> exchanges = new ArrayDeque<>();
         if (!newEvents.isEmpty()) {
             newEvents.sort((e1, e2) -> Long.valueOf(e1.getId()).compareTo(Long.parseLong(e2.getId())));
             Event latestEvent = newEvents.get(newEvents.size() - 1);
             lastEventId = Long.parseLong(latestEvent.getId());
 
             for (Event event : newEvents) {
-                Exchange exchange = createExchange(true);
-                exchange.getMessage().setBody(event.getType());
-                exchange.getMessage().setHeader(GitHubConstants.GITHUB_EVENT_PAYLOAD, event.getPayload());
-                getProcessor().process(exchange);
-                counter++;
+                Exchange e = createExchange(true);
+                e.getMessage().setBody(event.getType());
+                e.getMessage().setHeader(GitHubConstants.GITHUB_EVENT_PAYLOAD, event.getPayload());
+                exchanges.add(e);
             }
         }
-
-        return counter;
+        return processBatch(exchanges);
     }
 
     /**

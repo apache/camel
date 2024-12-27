@@ -22,6 +22,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
@@ -32,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommitConsumer extends AbstractGitHubConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
 
+    private static final Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
     private static final int CAPACITY = 1000; // in case there is a lot of commits and this runs not very frequently
 
     private CommitService commitService;
@@ -156,10 +157,9 @@ public class CommitConsumer extends AbstractGitHubConsumer {
                 }
             }
 
-            int counter = 0;
+            Queue<Object> exchanges = new ArrayDeque<>();
             while (!newCommits.isEmpty()) {
                 RepositoryCommit newCommit = newCommits.pop();
-                lastSha = newCommit.getSha();
                 Exchange e = createExchange(true);
                 if (newCommit.getAuthor() != null) {
                     e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
@@ -170,9 +170,9 @@ public class CommitConsumer extends AbstractGitHubConsumer {
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_SHA, newCommit.getSha());
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_URL, newCommit.getUrl());
                 e.getMessage().setBody(newCommit.getCommit().getMessage());
-                getProcessor().process(e);
-                counter++;
+                exchanges.add(e);
             }
+            int counter = processBatch(exchanges);
             LOG.debug("Last sha: {}", lastSha);
             return counter;
         } finally {
@@ -180,4 +180,26 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         }
     }
 
+    @Override
+    public int processBatch(Queue<Object> exchanges) throws Exception {
+        int total = exchanges.size();
+        int answer = total;
+        if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    this.maxMessagesPerPoll, total);
+            total = this.maxMessagesPerPoll;
+        }
+
+        for (int index = 0; index < total && this.isBatchAllowed(); ++index) {
+            Exchange exchange = (Exchange) exchanges.poll();
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
+            this.pendingExchanges = total - index - 1;
+            this.lastSha = exchange.getMessage().getHeader(GitHubConstants.GITHUB_COMMIT_SHA, String.class);
+            getProcessor().process(exchange);
+        }
+
+        return answer;
+    }
 }
