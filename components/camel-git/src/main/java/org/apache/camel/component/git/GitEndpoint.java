@@ -29,14 +29,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * Perform operations on git repositories.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE },
              headersClass = GitConstants.class)
-public class GitEndpoint extends DefaultEndpoint {
+public class GitEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
     @Metadata(required = true)
@@ -56,10 +56,10 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam(enums = "commit,tag,branch", label = "consumer")
     private GitType type;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,security", secret = true)
     private String username;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,security", secret = true)
     private String password;
 
     @UriParam(label = "producer")
@@ -224,7 +224,7 @@ public class GitEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * A String with path to a .gitconfig file", label = "producer,consumer,advanced
+     * A String with path to a .gitconfig file
      */
     public String getGitConfigFile() {
         return this.gitConfigFile;

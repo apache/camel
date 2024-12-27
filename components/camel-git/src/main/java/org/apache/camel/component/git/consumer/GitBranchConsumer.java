@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.git.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -36,20 +38,31 @@ public class GitBranchConsumer extends AbstractGitConsumer {
 
     @Override
     protected int poll() throws Exception {
-        int count = 0;
+        Queue<Object> exchanges = new ArrayDeque<>();
         List<Ref> call = getGit().branchList().setListMode(ListMode.ALL).call();
         for (Ref ref : call) {
             if (!branchesConsumed.contains(ref.getName())) {
                 Exchange e = createExchange(true);
                 e.getMessage().setBody(ref.getName());
+                e.getMessage().setHeader(GitConstants.GIT_BRANCH_NAME, ref.getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_LEAF, ref.getLeaf().getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_OBJECT_ID, ref.getObjectId().getName());
-                getProcessor().process(e);
-                branchesConsumed.add(ref.getName());
-                count++;
+                exchanges.add(e);
             }
         }
-        return count;
+        return processBatch(exchanges);
+    }
+
+    @Override
+    public Object onPreProcessed(Exchange exchange) {
+        return exchange.getMessage().getHeader(GitConstants.GIT_BRANCH_NAME, String.class);
+    }
+
+    @Override
+    public void onProcessed(Exchange exchange, Object value) {
+        if (value != null) {
+            branchesConsumed.add(value.toString());
+        }
     }
 
 }
