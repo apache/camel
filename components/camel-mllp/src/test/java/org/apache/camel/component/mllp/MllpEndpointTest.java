@@ -85,8 +85,6 @@ public class MllpEndpointTest extends CamelTestSupport {
         assertEquals(resetStrategy, upperCaseResetStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
     }
 
-    //TODO is this test needed?
-
     /**
      * Assert that an endpoint with SSLContextParameters can be created successfully.
      */
