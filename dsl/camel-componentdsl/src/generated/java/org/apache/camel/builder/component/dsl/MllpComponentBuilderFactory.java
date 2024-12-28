@@ -631,6 +631,26 @@ public interface MllpComponentBuilderFactory {
         }
     
         /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
@@ -698,6 +718,7 @@ public interface MllpComponentBuilderFactory {
             case "receiveBufferSize": getOrCreateConfiguration((MllpComponent) component).setReceiveBufferSize((java.lang.Integer) value); return true;
             case "receiveTimeout": getOrCreateConfiguration((MllpComponent) component).setReceiveTimeout((int) value); return true;
             case "sendBufferSize": getOrCreateConfiguration((MllpComponent) component).setSendBufferSize((java.lang.Integer) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((MllpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "idleTimeout": getOrCreateConfiguration((MllpComponent) component).setIdleTimeout((java.lang.Integer) value); return true;
             default: return false;
             }
