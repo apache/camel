@@ -314,10 +314,24 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         configuration.setIdleTimeoutStrategy(strategy);
     }
 
+    /**
+     * Sets the SSLContextParameters for the endpoint.
+     * Subclasses overriding this method should ensure that the configuration's
+     * SSLContextParameters are appropriately updated and validated.
+     *
+     * @param sslContextParameters the SSLContextParameters to use
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         configuration.setSslContextParameters(sslContextParameters);
     }
 
+    /**
+     * Retrieves the SSLContextParameters for the endpoint.
+     * Subclasses overriding this method should ensure the returned
+     * SSLContextParameters are consistent with the endpoint's configuration.
+     *
+     * @return the current SSLContextParameters
+     */
     public SSLContextParameters getSslContextParameters() {
         return configuration.getSslContextParameters();
     }

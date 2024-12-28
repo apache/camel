@@ -46,10 +46,10 @@ public class TcpServerBindThread extends Thread {
     private final MllpTcpServerConsumer consumer;
     private final SSLContextParameters sslContextParameters;
 
-    public TcpServerBindThread(MllpTcpServerConsumer consumer, SSLContextParameters sslContextParameters) {
-        //public TcpServerBindThread(MllpTcpServerConsumer consumer) {
+    public TcpServerBindThread(MllpTcpServerConsumer consumer, final SSLContextParameters sslParams) {
+
         this.consumer = consumer;
-        this.sslContextParameters = sslContextParameters;
+        this.sslContextParameters = sslParams;
 
         // Get the URI without options
         String fullEndpointKey = consumer.getEndpoint().getEndpointKey();
