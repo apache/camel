@@ -701,7 +701,15 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (endpoint.getFilter() != null) {
-            if (!endpoint.getFilter().accept(file.get())) {
+            // use optimized test using file name only
+            Boolean accepted = null;
+            if (endpoint.getFilter() instanceof OptimizedFileFilter off) {
+                accepted = off.accept(name);
+            }
+            if (accepted == null) {
+                accepted = endpoint.getFilter().accept(file.get());
+            }
+            if (!accepted) {
                 return false;
             }
         }
