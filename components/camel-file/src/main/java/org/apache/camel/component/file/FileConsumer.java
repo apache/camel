@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -39,6 +40,7 @@ import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,12 +111,11 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             }
 
             // creates a generic file
-            GenericFile<File> gf
-                    = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
+            Supplier<GenericFile<File>> gf = Suppliers.memorize(
+                    () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
 
             if (resumeStrategy != null) {
-                final ResumeAdapter adapter = setupResumeStrategy(gf);
-
+                final ResumeAdapter adapter = setupResumeStrategy(gf.get());
                 if (adapter instanceof DirectoryEntriesResumeAdapter directoryEntriesResumeAdapter) {
                     LOG.trace("Running the resume process for file {}", file);
                     if (directoryEntriesResumeAdapter.resume(file)) {
@@ -131,7 +132,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return false;
     }
 
-    private boolean processEntry(List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
+    private boolean processEntry(
+            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         if (file.isDirectory()) {
             return processDirectoryEntry(fileList, depth, file, gf, files);
         } else {
@@ -141,35 +143,126 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return false;
     }
 
-    private void processFileEntry(List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
+    private void processFileEntry(
+            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         // Windows can report false to a file on a share so regard it
         // always as a file (if it is not a directory)
-        if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
-            LOG.trace("Adding valid file: {}", file);
-            // matched file so add
-            if (extendedAttributes != null) {
-                Path path = file.toPath();
-                Map<String, Object> allAttributes = new HashMap<>();
-                for (String attribute : extendedAttributes) {
-                    readAttributes(file, path, allAttributes, attribute);
+        if (depth >= endpoint.minDepth) {
+            boolean valid = isValidFile(gf, file, false, files);
+            if (valid) {
+                LOG.trace("Adding valid file: {}", file);
+                if (extendedAttributes != null) {
+                    Path path = file.toPath();
+                    Map<String, Object> allAttributes = new HashMap<>();
+                    for (String attribute : extendedAttributes) {
+                        readAttributes(file, path, allAttributes, attribute);
+                    }
+                    gf.get().setExtendedAttributes(allAttributes);
                 }
-
-                gf.setExtendedAttributes(allAttributes);
+                fileList.add(gf.get());
             }
-
-            fileList.add(gf);
         }
     }
 
     private boolean processDirectoryEntry(
-            List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
-        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
-            boolean canPollMore = pollDirectory(file, fileList, depth);
-            if (!canPollMore) {
+            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            boolean valid = isValidFile(gf, file, true, files);
+            if (valid) {
+                boolean canPollMore = pollDirectory(file, fileList, depth);
+                return !canPollMore;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean isPreMatched() {
+        // the camel-file is optimized for pre-matching
+        return true;
+    }
+
+    protected boolean isValidFile(Supplier<GenericFile<File>> gf, File file, boolean isDirectory, File[] files) {
+        if (!isMatched(file, isDirectory, files)) {
+            LOG.trace("File did not match. Will skip this file: {}", file);
+            return false;
+        }
+        // optimized check done continue to use general check
+        return super.isValidFile(gf.get(), isDirectory, files);
+    }
+
+    /**
+     * Optimized check for is valid that uses java.io.File objects only, as creating the GenericFile object has overhead
+     * when polling from file systems that contains a lot of files.
+     */
+    private boolean isMatched(File file, boolean isDirectory, File[] files) {
+        String name = file.getName();
+
+        if (!isMatchedHiddenFile(file, isDirectory)) {
+            // folders/names starting with dot is always skipped (eg. ".", ".camel",
+            // ".camelLock")
+            return false;
+        }
+
+        // lock files should be skipped
+        if (name.endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+            return false;
+        }
+
+        // check if file matches inclusion/exclusion
+        if (!isDirectory && hasInclusionsOrExclusions(file, name)) {
+            return false;
+        }
+
+        // return true to allow default valid check to process
+        return true;
+    }
+
+    private boolean hasInclusionsOrExclusions(File file, String name) {
+        // exclude take precedence over include
+        if (endpoint.getExcludePattern() != null) {
+            if (endpoint.getExcludePattern().matcher(name).matches()) {
+                return true;
+            }
+        }
+        String fname = file.getName().toLowerCase();
+        if (endpoint.getExcludeExt() != null) {
+            if (hasExtExlusions(fname)) {
+                return true;
+            }
+        }
+        if (endpoint.getIncludePattern() != null) {
+            if (!endpoint.getIncludePattern().matcher(name).matches()) {
+                return true;
+            }
+        }
+        if (endpoint.getIncludeExt() != null) {
+            if (hasExtInclusions(fname)) {
                 return true;
             }
         }
         return false;
+    }
+
+    protected boolean isMatchedHiddenFile(File file, boolean isDirectory) {
+        String name = file.getName();
+        if (isDirectory) {
+            if (!name.startsWith(".")) {
+                return true;
+            }
+            return getEndpoint().isIncludeHiddenDirs() && !FileConstants.DEFAULT_SUB_FOLDER.equals(name);
+        }
+
+        if (getEndpoint().isIncludeHiddenFiles()) {
+            return true;
+        } else {
+            // folders/names starting with dot is always skipped (eg. ".", ".camel",
+            // ".camelLock")
+            if (name.startsWith(".")) {
+                return false;
+            }
+            return true;
+        }
     }
 
     private ResumeAdapter setupResumeStrategy(GenericFile<File> gf) {

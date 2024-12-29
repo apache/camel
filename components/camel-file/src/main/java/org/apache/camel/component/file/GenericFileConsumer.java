@@ -585,8 +585,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, T[] files) {
-        String absoluteFilePath = file.getAbsoluteFilePath();
-
         if (!isMatched(file, isDirectory, files)) {
             LOG.trace("File did not match. Will skip this file: {}", file);
             return false;
@@ -598,6 +596,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // check if file is already in progress
+        String absoluteFilePath = file.getAbsoluteFilePath();
         if (endpoint.getInProgressRepository().contains(absoluteFilePath)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Skipping as file is already in progress: {}", file.getFileName());
@@ -662,6 +661,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Whether the isMatched has been pre-matched such as done by camel-file component.
+     */
+    protected boolean isPreMatched() {
+        return false;
+    }
+
+    /**
      * Strategy to perform file matching based on endpoint configuration.
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
@@ -679,6 +685,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory, T[] files) {
         String name = file.getFileNameOnly();
 
+        // this has already been pre-checked
         if (!isMatchedHiddenFile(file, isDirectory)) {
             // folders/names starting with dot is always skipped (eg. ".", ".camel",
             // ".camelLock")
@@ -717,7 +724,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        if (hasInclusionsOrExclusions(file, name)) {
+        // this has already been pre-checked
+        if (!isPreMatched() && hasInclusionsOrExclusions(file, name)) {
             return false;
         }
 
@@ -789,7 +797,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return false;
     }
 
-    private boolean hasExtInclusions(String fname) {
+    protected boolean hasExtInclusions(String fname) {
         boolean any = false;
         for (String include : includeExt) {
             any |= fname.endsWith("." + include);
@@ -800,7 +808,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return false;
     }
 
-    private boolean hasExtExlusions(String fname) {
+    protected boolean hasExtExlusions(String fname) {
         for (String exclude : excludeExt) {
             if (fname.endsWith("." + exclude)) {
                 return true;
