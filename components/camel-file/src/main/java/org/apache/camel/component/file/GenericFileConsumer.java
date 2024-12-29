@@ -688,7 +688,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected boolean isMatched(
             Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
             Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
-        // this has already been pre-checked
+
         if (!isMatchedHiddenFile(file, name, isDirectory)) {
             // folders/names starting with dot is always skipped (eg. ".", ".camel",
             // ".camelLock")
@@ -701,12 +701,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (endpoint.getFilter() != null) {
-            // use optimized test using file name only
             Boolean accepted = null;
             if (endpoint.getFilter() instanceof OptimizedFileFilter off) {
+                // use optimized test using file name only
                 accepted = off.accept(name);
             }
             if (accepted == null) {
+                // use default test using generic file
                 accepted = endpoint.getFilter().accept(file.get());
             }
             if (!accepted) {
