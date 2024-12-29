@@ -148,7 +148,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         // Windows can report false to a file on a share so regard it
         // always as a file (if it is not a directory)
         if (depth >= endpoint.minDepth) {
-            boolean valid = isValidFile(gf, file, false, files);
+            boolean valid = isValidFile(gf, file.getName(), file.getAbsolutePath(), false, files);
             if (valid) {
                 LOG.trace("Adding valid file: {}", file);
                 if (extendedAttributes != null) {
@@ -167,28 +167,13 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     private boolean processDirectoryEntry(
             List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
-            boolean valid = isValidFile(gf, file, true, files);
+            boolean valid = isValidFile(gf, file.getName(), file.getAbsolutePath(), true, files);
             if (valid) {
                 boolean canPollMore = pollDirectory(file, fileList, depth);
                 return !canPollMore;
             }
         }
         return false;
-    }
-
-    @Override
-    protected boolean isPreMatched() {
-        // the camel-file is optimized for pre-matching
-        return true;
-    }
-
-    protected boolean isValidFile(Supplier<GenericFile<File>> gf, File file, boolean isDirectory, File[] files) {
-        if (!isMatched(file, isDirectory)) {
-            LOG.trace("File did not match. Will skip this file: {}", file);
-            return false;
-        }
-        // optimized check done continue to use general check
-        return super.isValidFile(gf, file.getName(), file.getAbsolutePath(), isDirectory, files);
     }
 
     /**

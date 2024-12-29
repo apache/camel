@@ -661,13 +661,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
-     * Whether the isMatched has been pre-matched such as done by camel-file component.
-     */
-    protected boolean isPreMatched() {
-        return false;
-    }
-
-    /**
      * Strategy to perform file matching based on endpoint configuration.
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
@@ -724,8 +717,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return true;
         }
 
-        // this has already been pre-checked
-        if (!isPreMatched() && hasInclusionsOrExclusions(name)) {
+        if (hasInclusionsOrExclusions(name)) {
             return false;
         }
 
@@ -777,8 +769,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 return true;
             }
         }
-        String fname = name.toLowerCase();
+        String fname = null;
         if (excludeExt != null) {
+            fname = name.toLowerCase();
             if (hasExtExlusions(fname)) {
                 return true;
             }
@@ -789,6 +782,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         if (includeExt != null) {
+            if (fname == null) {
+                fname = name.toLowerCase();
+            }
             if (hasExtInclusions(fname)) {
                 return true;
             }
