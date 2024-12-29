@@ -142,6 +142,11 @@ public class RemoteFileIgnoreDoPollErrorTest {
             protected void updateFileHeaders(GenericFile<Object> genericFile, Message message) {
                 // noop
             }
+
+            @Override
+            protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, Object file) {
+                return null;
+            }
         };
     }
 }

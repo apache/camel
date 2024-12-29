@@ -167,7 +167,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                     Supplier<GenericFile<SftpRemoteFile>> remote
                             = Suppliers.memorize(
                                     () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
-                    if (isValidFile(remote, file.getFilename(), absoluteFilePath, true, files)) {
+                    Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+                    if (isValidFile(remote, file.getFilename(), absoluteFilePath, relativePath, true, files)) {
                         // recursive scan and add the sub files and folders
                         String subDirectory = file.getFilename();
                         String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
@@ -186,7 +187,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                     Supplier<GenericFile<SftpRemoteFile>> remote
                             = Suppliers.memorize(
                                     () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
-                    if (isValidFile(remote, file.getFilename(), absoluteFilePath, false, files)) {
+                    Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+                    if (isValidFile(remote, file.getFilename(), absoluteFilePath, relativePath, false, files)) {
                         // matched file so add
                         fileList.add(remote.get());
                     }
@@ -263,6 +265,15 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             }
         }
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
+    }
+
+    @Override
+    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, SftpRemoteFile file) {
+        return () -> {
+            String relativePath = StringHelper.after(absolutePath, endpointPath);
+            // skip trailing /
+            return FileUtil.stripLeadingSeparator(relativePath);
+        };
     }
 
     private RemoteFile<SftpRemoteFile> asRemoteFile(

@@ -587,8 +587,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     protected boolean isValidFile(
-            Supplier<GenericFile<T>> file, String name, String absoluteFilePath, boolean isDirectory, T[] files) {
-        if (!isMatched(file, name, absoluteFilePath, isDirectory, files)) {
+            Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
+            Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
+        if (!isMatched(file, name, absoluteFilePath, relativeFilePath, isDirectory, files)) {
             LOG.trace("File did not match. Will skip this file: {}", name);
             return false;
         }
@@ -661,6 +662,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Geta the relative path from the given file, calculated from the starting path, current path, and current absolute
+     * path
+     */
+    protected abstract Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, T file);
+
+    /**
      * Strategy to perform file matching based on endpoint configuration.
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
@@ -670,14 +677,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * </ul>
      * And then <tt>true</tt> for directories.
      *
-     * @param  file        the file
-     * @param  name        the file name
-     * @param  isDirectory whether the file is a directory or a file
-     * @param  files       files in the directory
-     * @return             <tt>true</tt> if the file is matched, <tt>false</tt> if not
+     * @param  file             the file
+     * @param  name             the file name
+     * @param  absoluteFilePath the absolute file name
+     * @param  relativeFilePath the relative file name
+     * @param  isDirectory      whether the file is a directory or a file
+     * @param  files            files in the directory
+     * @return                  <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(
-            Supplier<GenericFile<T>> file, String name, String absoluteFilePath, boolean isDirectory, T[] files) {
+            Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
+            Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
         // this has already been pre-checked
         if (!isMatchedHiddenFile(file, name, isDirectory)) {
             // folders/names starting with dot is always skipped (eg. ".", ".camel",
@@ -697,9 +707,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (endpoint.getAntFilter() != null) {
-            // TODO: optimize
-            String relative = file.get().getRelativeFilePath();
-            if (!endpoint.getAntFilter().accept(isDirectory, relative)) {
+            if (!endpoint.getAntFilter().accept(isDirectory, relativeFilePath.get())) {
                 return false;
             }
         }

@@ -148,7 +148,10 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         // Windows can report false to a file on a share so regard it
         // always as a file (if it is not a directory)
         if (depth >= endpoint.minDepth) {
-            boolean valid = isValidFile(gf, file.getName(), file.getAbsolutePath(), false, files);
+            boolean valid
+                    = isValidFile(gf, file.getName(), file.getAbsolutePath(),
+                            getRelativeFilePath(endpointPath, null, null, file),
+                            false, files);
             if (valid) {
                 LOG.trace("Adding valid file: {}", file);
                 if (extendedAttributes != null) {
@@ -167,87 +170,16 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     private boolean processDirectoryEntry(
             List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
-            boolean valid = isValidFile(gf, file.getName(), file.getAbsolutePath(), true, files);
+            boolean valid
+                    = isValidFile(gf, file.getName(), file.getAbsolutePath(),
+                            getRelativeFilePath(endpointPath, null, null, file),
+                            true, files);
             if (valid) {
                 boolean canPollMore = pollDirectory(file, fileList, depth);
                 return !canPollMore;
             }
         }
         return false;
-    }
-
-    /**
-     * Optimized check for is valid that uses java.io.File objects only, as creating the GenericFile object has overhead
-     * when polling from file systems that contains a lot of files.
-     */
-    private boolean isMatched(File file, boolean isDirectory) {
-        String name = file.getName();
-
-        if (!isMatchedHiddenFile(file, isDirectory)) {
-            // folders/names starting with dot is always skipped (eg. ".", ".camel",
-            // ".camelLock")
-            return false;
-        }
-
-        // lock files should be skipped
-        if (name.endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
-            return false;
-        }
-
-        // check if file matches inclusion/exclusion
-        if (!isDirectory && hasInclusionsOrExclusions(file, name)) {
-            return false;
-        }
-
-        // return true to allow default valid check to process
-        return true;
-    }
-
-    private boolean hasInclusionsOrExclusions(File file, String name) {
-        // exclude take precedence over include
-        if (endpoint.getExcludePattern() != null) {
-            if (endpoint.getExcludePattern().matcher(name).matches()) {
-                return true;
-            }
-        }
-        String fname = file.getName().toLowerCase();
-        if (endpoint.getExcludeExt() != null) {
-            if (hasExtExlusions(fname)) {
-                return true;
-            }
-        }
-        if (endpoint.getIncludePattern() != null) {
-            if (!endpoint.getIncludePattern().matcher(name).matches()) {
-                return true;
-            }
-        }
-        if (endpoint.getIncludeExt() != null) {
-            if (hasExtInclusions(fname)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected boolean isMatchedHiddenFile(File file, boolean isDirectory) {
-        String name = file.getName();
-        if (isDirectory) {
-            if (!name.startsWith(".")) {
-                return true;
-            }
-            return getEndpoint().isIncludeHiddenDirs() && !FileConstants.DEFAULT_SUB_FOLDER.equals(name);
-        }
-
-        if (getEndpoint().isIncludeHiddenFiles()) {
-            return true;
-        } else {
-            // folders/names starting with dot is always skipped (eg. ".", ".camel",
-            // ".camelLock")
-            if (name.startsWith(".")) {
-                return false;
-            }
-            return true;
-        }
     }
 
     private ResumeAdapter setupResumeStrategy(GenericFile<File> gf) {
@@ -395,6 +327,27 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         // use file as body as we have converters if needed as stream
         answer.setBody(file);
         return answer;
+    }
+
+    @Override
+    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, File file) {
+        return () -> {
+            File f;
+            String endpointNormalizedSep = FileUtil.normalizePath(endpointPath) + File.separator;
+            String p = file.getPath();
+            if (p.startsWith(endpointNormalizedSep)) {
+                p = p.substring(endpointNormalizedSep.length());
+            }
+            f = new File(p);
+
+            String answer;
+            if (f.getParent() != null) {
+                answer = f.getParent() + File.separator + file.getName();
+            } else {
+                answer = f.getName();
+            }
+            return answer;
+        };
     }
 
     @Override

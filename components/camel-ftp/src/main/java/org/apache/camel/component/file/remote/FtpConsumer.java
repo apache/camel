@@ -189,7 +189,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
             Supplier<GenericFile<FTPFile>> remote
                     = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
-            if (isValidFile(remote, file.getName(), absoluteFilePath, true, files)) {
+            Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+            if (isValidFile(remote, file.getName(), absoluteFilePath, relativePath, true, files)) {
                 // recursive scan and add the sub files and folders
                 String subDirectory = file.getName();
                 String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
@@ -210,7 +211,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
             Supplier<GenericFile<FTPFile>> remote
                     = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
-            if (isValidFile(remote, file.getName(), absoluteFilePath, false, files)) {
+            Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+            if (isValidFile(remote, file.getName(), absoluteFilePath, relativePath, false, files)) {
                 // matched file so add
                 fileList.add(remote.get());
             }
@@ -306,6 +308,16 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
         }
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
+    }
+
+    @Override
+    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, FTPFile file) {
+        return () -> {
+            // the relative filename, skip the leading endpoint configured path
+            String relativePath = StringHelper.after(absolutePath, endpointPath);
+            // skip leading /
+            return FileUtil.stripLeadingSeparator(relativePath);
+        };
     }
 
     private RemoteFile<FTPFile> asRemoteFile(String absolutePath, String absoluteFilePath, FTPFile file, String charset) {

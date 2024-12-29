@@ -156,7 +156,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, dir));
             String absoluteFilePath = FilesPath.concat(path, dir.getName());
-            if (isValidFile(remote, dir.getName(), absoluteFilePath, true, listedFileItems)) {
+            Supplier<String> relative = getRelativeFilePath(endpointPath, path, absoluteFilePath, dir);
+            if (isValidFile(remote, dir.getName(), absoluteFilePath, relative, true, listedFileItems)) {
                 String dirName = dir.getName();
                 String dirPath = FilesPath.concat(path, dirName);
                 boolean canPollMore = doSafePollSubDirectory(dirPath, dirName, polledFiles, depth);
@@ -174,7 +175,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         if (depth >= endpoint.getMinDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, file));
             String absoluteFilePath = FilesPath.concat(path, file.getName());
-            if (isValidFile(remote, file.getName(), absoluteFilePath, false, listedFileItems)) {
+            Supplier<String> relative = getRelativeFilePath(endpointPath, path, absoluteFilePath, file);
+            if (isValidFile(remote, file.getName(), absoluteFilePath, relative, false,
+                    listedFileItems)) {
                 polledFiles.add(remote.get());
             }
         }
@@ -234,6 +237,14 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         answer.setFileName(relativePath);
 
         return answer;
+    }
+
+    @Override
+    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, ShareFileItem file) {
+        return () -> {
+            String relativePath = StringHelper.after(absolutePath, endpointPath);
+            return FilesPath.ensureRelative(relativePath);
+        };
     }
 
     @Override
