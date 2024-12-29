@@ -308,7 +308,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Predicate filterFile;
     @UriParam(label = "consumer,filter", defaultValue = "true", description = "Sets case sensitive flag on ant filter.")
     protected boolean antFilterCaseSensitive = true;
-    protected volatile AntPathMatcherGenericFileFilter<T> antFilter;
+    protected volatile AntFilter antFilter;
     @UriParam(label = "consumer,filter",
               description = "Ant style filter inclusion. Multiple inclusions may be " + "specified in comma-delimited format.")
     protected String antInclude;
@@ -685,7 +685,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.antFilterCaseSensitive = antFilterCaseSensitive;
     }
 
-    public GenericFileFilter<T> getAntFilter() {
+    public AntFilter getAntFilter() {
         return antFilter;
     }
 
@@ -1878,13 +1878,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
         if (antInclude != null) {
             if (antFilter == null) {
-                antFilter = new AntPathMatcherGenericFileFilter<>();
+                antFilter = new AntFilter();
             }
             antFilter.setIncludes(antInclude);
         }
         if (antExclude != null) {
             if (antFilter == null) {
-                antFilter = new AntPathMatcherGenericFileFilter<>();
+                antFilter = new AntFilter();
             }
             antFilter.setExcludes(antExclude);
         }

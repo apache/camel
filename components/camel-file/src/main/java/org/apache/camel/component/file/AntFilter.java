@@ -20,33 +20,26 @@ package org.apache.camel.component.file;
  * File filter using AntPathMatcher.
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
- *
- * @param      <T>
- * @deprecated     use {@link AntFilter}
  */
-@Deprecated
-public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> {
+public class AntFilter {
 
     private final AntPathMatcherFileFilter filter;
 
-    public AntPathMatcherGenericFileFilter() {
+    public AntFilter() {
         filter = new AntPathMatcherFileFilter();
     }
 
-    public AntPathMatcherGenericFileFilter(String... includes) {
+    public AntFilter(String... includes) {
         filter = new AntPathMatcherFileFilter();
         filter.setIncludes(includes);
     }
 
-    @Override
-    public boolean accept(GenericFile<T> file) {
+    public boolean accept(boolean directory, String relativeFilePath) {
         // directories should always be accepted by ANT path matcher
-        if (file.isDirectory()) {
+        if (directory) {
             return true;
         }
-
-        String path = file.getRelativeFilePath();
-        return filter.acceptPathName(path);
+        return filter.acceptPathName(relativeFilePath);
     }
 
     public String[] getExcludes() {
@@ -80,7 +73,7 @@ public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> 
     }
 
     /**
-     * Sets case sensitive flag on {@link org.apache.camel.component.file.AntPathMatcherFileFilter}
+     * Sets case sensitive flag on {@link AntPathMatcherFileFilter}
      * <p/>
      * Is by default turned on <tt>true</tt>.
      */

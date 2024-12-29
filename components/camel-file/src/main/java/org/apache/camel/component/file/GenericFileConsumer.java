@@ -697,7 +697,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (endpoint.getAntFilter() != null) {
-            if (!endpoint.getAntFilter().accept(file.get())) {
+            // TODO: optimize
+            String relative = file.get().getRelativeFilePath();
+            if (!endpoint.getAntFilter().accept(isDirectory, relative)) {
                 return false;
             }
         }
