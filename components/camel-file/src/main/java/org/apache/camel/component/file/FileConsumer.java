@@ -183,19 +183,19 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     protected boolean isValidFile(Supplier<GenericFile<File>> gf, File file, boolean isDirectory, File[] files) {
-        if (!isMatched(file, isDirectory, files)) {
+        if (!isMatched(file, isDirectory)) {
             LOG.trace("File did not match. Will skip this file: {}", file);
             return false;
         }
         // optimized check done continue to use general check
-        return super.isValidFile(gf.get(), isDirectory, files);
+        return super.isValidFile(gf, file.getName(), file.getAbsolutePath(), isDirectory, files);
     }
 
     /**
      * Optimized check for is valid that uses java.io.File objects only, as creating the GenericFile object has overhead
      * when polling from file systems that contains a lot of files.
      */
-    private boolean isMatched(File file, boolean isDirectory, File[] files) {
+    private boolean isMatched(File file, boolean isDirectory) {
         String name = file.getName();
 
         if (!isMatchedHiddenFile(file, isDirectory)) {
@@ -438,9 +438,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
-    protected boolean isMatchedHiddenFile(GenericFile<File> file, boolean isDirectory) {
+    protected boolean isMatchedHiddenFile(Supplier<GenericFile<File>> file, String name, boolean isDirectory) {
         if (isDirectory) {
-            String name = file.getFileNameOnly();
             if (!name.startsWith(".")) {
                 return true;
             }
@@ -450,7 +449,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         if (getEndpoint().isIncludeHiddenFiles()) {
             return true;
         } else {
-            return super.isMatchedHiddenFile(file, isDirectory);
+            return super.isMatchedHiddenFile(file, name, isDirectory);
         }
     }
 
