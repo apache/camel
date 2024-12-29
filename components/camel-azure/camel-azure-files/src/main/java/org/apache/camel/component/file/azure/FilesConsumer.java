@@ -155,7 +155,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, dir));
-            if (isValidFile(remote, dir.getName(), remote.get().getAbsoluteFilePath(), true, listedFileItems)) {
+            String absoluteFilePath = FilesPath.concat(path, dir.getName());
+            if (isValidFile(remote, dir.getName(), absoluteFilePath, true, listedFileItems)) {
                 String dirName = dir.getName();
                 String dirPath = FilesPath.concat(path, dirName);
                 boolean canPollMore = doSafePollSubDirectory(dirPath, dirName, polledFiles, depth);
@@ -172,7 +173,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
             ShareFileItem[] listedFileItems, ShareFileItem file) {
         if (depth >= endpoint.getMinDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, file));
-            if (isValidFile(remote, file.getName(), remote.get().getAbsoluteFilePath(), false, listedFileItems)) {
+            String absoluteFilePath = FilesPath.concat(path, file.getName());
+            if (isValidFile(remote, file.getName(), absoluteFilePath, false, listedFileItems)) {
                 polledFiles.add(remote.get());
             }
         }

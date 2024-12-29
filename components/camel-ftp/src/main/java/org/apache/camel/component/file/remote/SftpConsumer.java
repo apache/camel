@@ -163,9 +163,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+                    String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
                     Supplier<GenericFile<SftpRemoteFile>> remote
-                            = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
-                    if (isValidFile(remote, file.getFilename(), remote.get().getAbsoluteFilePath(), true, files)) {
+                            = Suppliers.memorize(
+                                    () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+                    if (isValidFile(remote, file.getFilename(), absoluteFilePath, true, files)) {
                         // recursive scan and add the sub files and folders
                         String subDirectory = file.getFilename();
                         String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
@@ -180,9 +182,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 // just assuming its a file we should poll
             } else {
                 if (depth >= endpoint.getMinDepth()) {
+                    String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
                     Supplier<GenericFile<SftpRemoteFile>> remote
-                            = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
-                    if (isValidFile(remote, file.getFilename(), remote.get().getAbsoluteFilePath(), false, files)) {
+                            = Suppliers.memorize(
+                                    () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+                    if (isValidFile(remote, file.getFilename(), absoluteFilePath, false, files)) {
                         // matched file so add
                         fileList.add(remote.get());
                     }
@@ -261,7 +265,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<SftpRemoteFile> asRemoteFile(String absolutePath, SftpRemoteFile file, String charset) {
+    private RemoteFile<SftpRemoteFile> asRemoteFile(
+            String absolutePath, String absoluteFilePath, SftpRemoteFile file, String charset) {
         RemoteFile<SftpRemoteFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
@@ -276,19 +281,10 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         // absolute or relative path
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
         answer.setAbsolute(absolute);
-
-        // create a pseudo absolute name
-        String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + file.getFilename());
-        // if absolute start with a leading separator otherwise let it be
-        // relative
-        if (absolute) {
-            absoluteFileName = "/" + absoluteFileName;
-        }
-        answer.setAbsoluteFilePath(absoluteFileName);
+        answer.setAbsoluteFilePath(absoluteFilePath);
 
         // the relative filename, skip the leading endpoint configured path
-        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
+        String relativePath = StringHelper.after(absoluteFilePath, endpointPath);
         // skip trailing /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);

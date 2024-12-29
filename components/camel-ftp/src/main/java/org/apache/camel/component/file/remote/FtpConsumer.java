@@ -184,9 +184,12 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     private boolean handleDirectory(
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            // calculate the absolute file path using util class
+            String absoluteFilePath
+                    = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
             Supplier<GenericFile<FTPFile>> remote
-                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
-            if (isValidFile(remote, file.getName(), remote.get().getAbsoluteFilePath(), true, files)) {
+                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+            if (isValidFile(remote, file.getName(), absoluteFilePath, true, files)) {
                 // recursive scan and add the sub files and folders
                 String subDirectory = file.getName();
                 String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
@@ -202,9 +205,12 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     private void handleFile(
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
         if (depth >= endpoint.getMinDepth()) {
+            // calculate the absolute file path using util class
+            String absoluteFilePath
+                    = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
             Supplier<GenericFile<FTPFile>> remote
-                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
-            if (isValidFile(remote, file.getName(), remote.get().getAbsoluteFilePath(), false, files)) {
+                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+            if (isValidFile(remote, file.getName(), absoluteFilePath, false, files)) {
                 // matched file so add
                 fileList.add(remote.get());
             }
@@ -302,7 +308,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file, String charset) {
+    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, String absoluteFilePath, FTPFile file, String charset) {
         RemoteFile<FTPFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
@@ -319,23 +325,10 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // absolute or relative path
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
         answer.setAbsolute(absolute);
-
-        // create a pseudo absolute name
-        String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String fileName = file.getName();
-        if (((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
-            fileName = FtpUtils.extractDirNameFromAbsolutePath(file.getName());
-        }
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
-        // if absolute start with a leading separator otherwise let it be
-        // relative
-        if (absolute) {
-            absoluteFileName = "/" + absoluteFileName;
-        }
-        answer.setAbsoluteFilePath(absoluteFileName);
+        answer.setAbsoluteFilePath(absoluteFilePath);
 
         // the relative filename, skip the leading endpoint configured path
-        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
+        String relativePath = StringHelper.after(absoluteFilePath, endpointPath);
         // skip leading /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);
