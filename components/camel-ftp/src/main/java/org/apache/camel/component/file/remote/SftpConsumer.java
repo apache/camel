@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
@@ -33,6 +34,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +126,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         dirName = FileUtil.stripTrailingSeparator(dirName);
 
         // compute dir depending on stepwise is enabled or not
-        String dir = null;
+        String dir;
         if (isStepwise()) {
             dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
             operations.changeCurrentDirectory(dir);
@@ -160,24 +162,30 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             }
 
             if (file.isDirectory()) {
-                RemoteFile<SftpRemoteFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
-                    // recursive scan and add the sub files and folders
-                    String subDirectory = file.getFilename();
-                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
-                    boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
-                    if (!canPollMore) {
-                        return false;
+                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+                    Supplier<GenericFile<SftpRemoteFile>> remote
+                            = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
+                    if (isValidFile(remote, file.getFilename(), remote.get().getAbsoluteFilePath(), true, files)) {
+                        // recursive scan and add the sub files and folders
+                        String subDirectory = file.getFilename();
+                        String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+                        boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
+                        if (!canPollMore) {
+                            return false;
+                        }
                     }
                 }
                 // we cannot use file.getAttrs().isLink on Windows, so we dont
                 // invoke the method
                 // just assuming its a file we should poll
             } else {
-                RemoteFile<SftpRemoteFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-                if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
-                    // matched file so add
-                    fileList.add(remote);
+                if (depth >= endpoint.getMinDepth()) {
+                    Supplier<GenericFile<SftpRemoteFile>> remote
+                            = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
+                    if (isValidFile(remote, file.getFilename(), remote.get().getAbsoluteFilePath(), false, files)) {
+                        // matched file so add
+                        fileList.add(remote.get());
+                    }
                 }
             }
         }

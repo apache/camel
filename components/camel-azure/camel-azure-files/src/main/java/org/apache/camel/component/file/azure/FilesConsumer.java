@@ -19,6 +19,7 @@ package org.apache.camel.component.file.azure;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.azure.storage.file.share.models.ShareFileItem;
 import org.apache.camel.Message;
@@ -33,6 +34,7 @@ import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,8 +154,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
             int depth, ShareFileItem[] listedFileItems, ShareFileItem dir) {
 
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
-            var remote = asRemoteFile(path, dir);
-            if (isValidFile(remote, true, listedFileItems)) {
+            Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, dir));
+            if (isValidFile(remote, dir.getName(), remote.get().getAbsoluteFilePath(), true, listedFileItems)) {
                 String dirName = dir.getName();
                 String dirPath = FilesPath.concat(path, dirName);
                 boolean canPollMore = doSafePollSubDirectory(dirPath, dirName, polledFiles, depth);
@@ -169,9 +171,9 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
             String path, List<GenericFile<ShareFileItem>> polledFiles, int depth,
             ShareFileItem[] listedFileItems, ShareFileItem file) {
         if (depth >= endpoint.getMinDepth()) {
-            var remote = asRemoteFile(path, file);
-            if (isValidFile(remote, false, listedFileItems)) {
-                polledFiles.add(remote);
+            Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, file));
+            if (isValidFile(remote, file.getName(), remote.get().getAbsoluteFilePath(), false, listedFileItems)) {
+                polledFiles.add(remote.get());
             }
         }
     }

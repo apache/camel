@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.function.Suppliers;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -181,14 +183,17 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private boolean handleDirectory(
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
-        RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
-            // recursive scan and add the sub files and folders
-            String subDirectory = file.getName();
-            String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
-            boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
-            if (!canPollMore) {
-                return true;
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            Supplier<GenericFile<FTPFile>> remote
+                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
+            if (isValidFile(remote, file.getName(), remote.get().getAbsoluteFilePath(), true, files)) {
+                // recursive scan and add the sub files and folders
+                String subDirectory = file.getName();
+                String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+                boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
+                if (!canPollMore) {
+                    return true;
+                }
             }
         }
         return false;
@@ -196,10 +201,13 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private void handleFile(
             String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
-        RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-        if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
-            // matched file so add
-            fileList.add(remote);
+        if (depth >= endpoint.getMinDepth()) {
+            Supplier<GenericFile<FTPFile>> remote
+                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, file, getEndpoint().getCharset()));
+            if (isValidFile(remote, file.getName(), remote.get().getAbsoluteFilePath(), false, files)) {
+                // matched file so add
+                fileList.add(remote.get());
+            }
         }
     }
 
