@@ -6,6 +6,17 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.9 to 4.10
 
+=== camel-file
+
+The `camel-file` consumer has been optimized when filtering file names using name matching only,
+to avoid creating an `GenericFile` object that represent the file. This is unnessasary if the file
+is to be excluded due the filtering.
+
+This optimization has changed APIs in the `camel-file` component to let methods that accept
+`GenericFile` as parameter, has been changed to use a `Supplier<GenericFile>` to lazy create the wrapper.
+
+Camel users who have created 3rd party component extending `camel-file` may need to migrate your components.
+
 === camel-jgroups
 
 The cluster lock has been removed as it has been removed in JGroups 5.4 onwards, and it was
