@@ -241,7 +241,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     @Override
-    protected boolean isMatched(GenericFile<SftpRemoteFile> file, String doneFileName, SftpRemoteFile[] files) {
+    protected boolean isMatched(Supplier<GenericFile<SftpRemoteFile>> file, String doneFileName, SftpRemoteFile[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
         for (SftpRemoteFile f : files) {

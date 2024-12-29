@@ -197,7 +197,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected boolean isMatched(
-            GenericFile<ShareFileItem> file, String doneFileName,
+            Supplier<GenericFile<ShareFileItem>> file, String doneFileName,
             ShareFileItem[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 

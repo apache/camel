@@ -754,7 +754,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 return false;
             }
 
-            if (!isMatched(file.get(), doneFileName, files)) {
+            if (!isMatched(file, doneFileName, files)) {
                 return false;
             }
         }
@@ -820,7 +820,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param  files        files in the directory
      * @return              <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
-    protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, T[] files);
+    protected abstract boolean isMatched(Supplier<GenericFile<T>> file, String doneFileName, T[] files);
 
     protected String evaluateFileExpression(Exchange exchange) {
         String result = endpoint.getFileName().evaluate(exchange, String.class);

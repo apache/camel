@@ -272,7 +272,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
-    protected boolean isMatched(GenericFile<FTPFile> file, String doneFileName, FTPFile[] files) {
+    protected boolean isMatched(Supplier<GenericFile<FTPFile>> file, String doneFileName, FTPFile[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
         for (FTPFile f : files) {

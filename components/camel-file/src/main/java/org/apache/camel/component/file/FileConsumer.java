@@ -328,7 +328,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
-    protected boolean isMatched(GenericFile<File> file, String doneFileName, File[] files) {
+    protected boolean isMatched(Supplier<GenericFile<File>> file, String doneFileName, File[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
         // the done file name must be among the files
         for (File f : files) {
