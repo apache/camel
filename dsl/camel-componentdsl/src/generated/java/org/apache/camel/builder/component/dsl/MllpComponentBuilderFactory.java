@@ -650,6 +650,23 @@ public interface MllpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+    
         /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
@@ -719,6 +736,7 @@ public interface MllpComponentBuilderFactory {
             case "receiveTimeout": getOrCreateConfiguration((MllpComponent) component).setReceiveTimeout((int) value); return true;
             case "sendBufferSize": getOrCreateConfiguration((MllpComponent) component).setSendBufferSize((java.lang.Integer) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MllpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((MllpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "idleTimeout": getOrCreateConfiguration((MllpComponent) component).setIdleTimeout((java.lang.Integer) value); return true;
             default: return false;
             }

@@ -92,6 +92,8 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "stringPayload": getOrCreateConfiguration(target).setStringPayload(property(camelContext, boolean.class, value)); return true;
         case "tcpnodelay":
         case "tcpNoDelay": getOrCreateConfiguration(target).setTcpNoDelay(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "validatepayload":
         case "validatePayload": getOrCreateConfiguration(target).setValidatePayload(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -163,6 +165,8 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "stringPayload": return boolean.class;
         case "tcpnodelay":
         case "tcpNoDelay": return java.lang.Boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         case "validatepayload":
         case "validatePayload": return boolean.class;
         default: return null;
@@ -235,6 +239,8 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "stringPayload": return getOrCreateConfiguration(target).isStringPayload();
         case "tcpnodelay":
         case "tcpNoDelay": return getOrCreateConfiguration(target).getTcpNoDelay();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "validatepayload":
         case "validatePayload": return getOrCreateConfiguration(target).isValidatePayload();
         default: return null;
