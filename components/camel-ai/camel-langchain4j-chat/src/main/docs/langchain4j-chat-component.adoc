@@ -158,42 +158,6 @@ messages.add(new SystemMessage("You are asked to provide recommendations for a r
 String response = template.requestBody("direct:send-multiple", messages, String.class);
 ----
 
-=== Chat with Tool
-
-IMPORTANT: as of Camel 4.8.0 this feature is deprecated. Users should use the xref:langchain4j-tools-component.adoc[LangChain4j Tool component].
-
-Camel langchain4j-chat component as a consumer can be used to implement a LangChain tool.
-Right now tools are supported only via the OpenAiChatModel backed by OpenAI APIs.
-
-Tool Input parameter can be defined as an Endpoint multiValue option in the form of `parameter.<name>=<type>`,
-or via the endpoint option `camelToolParameter` for a programmatic approach.
-The parameters can be found as headers in the consumer route, in particular, if you define `parameter.userId=5`,
-in the consumer route `${header.userId}` can be used.
-
-.Producer and consumer example:
-[source, java]
-----
-from("direct:test")
-    .to("langchain4j-chat:test1?chatOperation=CHAT_MULTIPLE_MESSAGES");
-
-from("langchain4j-chat:test1?description=Query user database by number&parameter.number=integer")
-    .to("sql:SELECT name FROM users WHERE id = :#number");
-----
-
-.Usage example:
-[source, java]
-----
-List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage("""
-                You provide information about specific user name querying the database given a number.
-                """));
-        messages.add(new UserMessage("""
-                What is the name of the user 1?
-                """));
-
-        Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
-----
-
 === Retrieval Augmented Generation (RAG)
 
 Use the RAG feature to enrich exchanges with data retrieved from any type of Camel endpoint. The feature is compatible with all LangChain4 Chat operations and is ideal for orchestrating the RAG workflow, utilizing the extensive library of components and Enterprise Integration Patterns (EIPs) available in Apache Camel.
