@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -128,7 +129,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
             }
 
             @Override
-            protected boolean isMatched(GenericFile<Object> file, String doneFileName, Object[] files) {
+            protected boolean isMatched(Supplier<GenericFile<Object>> file, String doneFileName, Object[] files) {
                 return false;
             }
 
@@ -140,6 +141,11 @@ public class RemoteFileIgnoreDoPollErrorTest {
             @Override
             protected void updateFileHeaders(GenericFile<Object> genericFile, Message message) {
                 // noop
+            }
+
+            @Override
+            protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, Object file) {
+                return null;
             }
         };
     }

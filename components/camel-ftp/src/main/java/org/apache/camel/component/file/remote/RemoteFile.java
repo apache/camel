@@ -64,7 +64,7 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
 
     @Override
     protected boolean isAbsolute(String name) {
-        if (name.length() > 0) {
+        if (!name.isEmpty()) {
             return name.charAt(0) == '/' || name.charAt(0) == '\\';
         }
         return false;
@@ -79,7 +79,6 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
     public void copyFromPopulateAdditional(GenericFile<T> source, GenericFile<T> result) {
         RemoteFile<?> remoteSource = (RemoteFile<?>) source;
         RemoteFile<?> remoteResult = (RemoteFile<?>) result;
-
         remoteResult.setHostname(remoteSource.getHostname());
     }
 

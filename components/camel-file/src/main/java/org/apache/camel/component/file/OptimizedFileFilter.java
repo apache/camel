@@ -17,18 +17,24 @@
 package org.apache.camel.component.file;
 
 /**
- * A filter for {@link GenericFile}.
+ * A filter for filtering file that is optimized for matching by name only.
  *
- * @see OptimizedFileFilter
+ * @see GenericFileFilter
  */
-public interface GenericFileFilter<T> {
+public interface OptimizedFileFilter extends GenericFileFilter {
+
+    @Override
+    default boolean accept(GenericFile file) {
+        return false;
+    }
 
     /**
-     * Tests whether the specified generic file should be included
+     * Tests whether the specified file should be included (quick test using only file name)
      *
-     * @param  file the generic file to be tested
-     * @return      <code>true</code> if and only if <code>file</code> should be included
+     * @param  name the file name
+     * @return      <code>true</code> if and only if <code>file</code> should be included, <tt>null</tt> to use the
+     *              {@link #accept(GenericFile)} method.
      */
-    boolean accept(GenericFile<T> file);
+    Boolean accept(String name);
 
 }
