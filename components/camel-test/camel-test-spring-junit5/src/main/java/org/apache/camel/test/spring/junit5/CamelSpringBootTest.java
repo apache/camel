@@ -34,10 +34,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Target({ ElementType.TYPE })
 @ExtendWith(SpringExtension.class)
 @TestExecutionListeners(value = {
-                                CamelSpringTestContextLoaderTestExecutionListener.class,
-                                CamelSpringBootExecutionListener.class,
-                                StopWatchTestExecutionListener.class
-                        },
+        CamelSpringTestContextLoaderTestExecutionListener.class,
+        CamelSpringBootExecutionListener.class,
+        StopWatchTestExecutionListener.class
+},
                         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public @interface CamelSpringBootTest {
 

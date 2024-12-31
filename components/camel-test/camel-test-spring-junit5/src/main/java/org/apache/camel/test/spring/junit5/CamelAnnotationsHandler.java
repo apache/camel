@@ -37,7 +37,6 @@ import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -45,6 +44,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+import static org.apache.camel.test.junit5.util.CamelContextTestHelper.getRouteDump;
 import static org.apache.camel.test.junit5.util.CamelContextTestHelper.isRouteCoverageEnabled;
 
 public final class CamelAnnotationsHandler {
@@ -56,7 +56,6 @@ public final class CamelAnnotationsHandler {
 
     /**
      * Cleanup/restore global state to defaults / pre-test values after the test setup is complete.
-     *
      */
     public static void cleanup() {
         DefaultCamelContext.clearOptions();
@@ -130,7 +129,7 @@ public final class CamelAnnotationsHandler {
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
-                    LOGGER.info("Enabling RouteCoverage");
+                    LOGGER.info("Enabling @RouteCoverage");
                     EventNotifier notifier = new RouteCoverageEventNotifier(testClass.getName(), testMethod);
                     camelContext.addService(notifier, true);
                     camelContext.getManagementStrategy().addEventNotifier(notifier);
@@ -147,26 +146,23 @@ public final class CamelAnnotationsHandler {
      */
     public static void handleRouteDumpEnable(ConfigurableApplicationContext context, Class<?> testClass, Function testMethod)
             throws Exception {
+        String format = null;
         if (testClass.isAnnotationPresent(EnableRouteDump.class)) {
-            String format = testClass.getAnnotation(EnableRouteDump.class).format();
-            if ("false".equals(format)) {
-                format = null;
-            }
-            if (format != null) {
-                final String dump = format.toLowerCase();
-                CamelSpringTestHelper.doToSpringCamelContexts(context,
-                        new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
-
-                            @Override
-                            public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
-                                LOGGER.info("Enabling EnableRouteDump");
-                                RouteDumpEventNotifier notifier
-                                        = new RouteDumpEventNotifier(testClass.getName(), testMethod, dump);
-                                camelContext.addService(notifier, true);
-                                camelContext.getManagementStrategy().addEventNotifier(notifier);
-                            }
-                        });
-            }
+            format = testClass.getAnnotation(EnableRouteDump.class).format();
+        }
+        format = getRouteDump(format);
+        if (format != null && !"false".equals(format) && !format.isBlank()) {
+            final String dump = format.toLowerCase();
+            CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
+                @Override
+                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                    LOGGER.info("Enabling @EnableRouteDump");
+                    RouteDumpEventNotifier notifier
+                            = new RouteDumpEventNotifier(testClass.getName(), testMethod, dump);
+                    camelContext.addService(notifier, true);
+                    camelContext.getManagementStrategy().addEventNotifier(notifier);
+                }
+            });
         }
     }
 
@@ -220,13 +216,10 @@ public final class CamelAnnotationsHandler {
         if (testClass.isAnnotationPresent(EnableRouteDump.class)) {
             format = testClass.getAnnotation(EnableRouteDump.class).format();
         }
-        if ("false".equals(format)) {
-            format = null;
-        }
-        if (format != null) {
+        format = getRouteDump(format);
+        if (format != null && !"false".equals(format) && !format.isBlank()) {
             final String dump = format.toLowerCase();
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
-
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
                     LOGGER.debug("Dumping Route");
@@ -251,7 +244,6 @@ public final class CamelAnnotationsHandler {
                         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
                         camelContext.removeService(eventNotifier);
                     }
-
                 }
             });
         }
