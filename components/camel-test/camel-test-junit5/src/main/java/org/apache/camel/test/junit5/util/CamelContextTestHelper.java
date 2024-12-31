@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5.util;
 
 import java.util.Map;
@@ -52,6 +51,11 @@ public final class CamelContextTestHelper {
      * JVM system property which can be set to true to turn on dumping route coverage statistics.
      */
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
+
+    /**
+     * JVM system property which can be set to true to turn on dumping routes as xml or yaml
+     */
+    public static final String ROUTE_DUMP_ENABLED = "CamelTestRouteDump";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTestHelper.class);
 
@@ -246,6 +250,35 @@ public final class CamelContextTestHelper {
     }
 
     public static boolean isRouteCoverageEnabled(boolean legacyDumpCoverage) {
-        return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || legacyDumpCoverage;
+        // JVM system property take precedence
+        String p = System.getProperty(ROUTE_COVERAGE_ENABLED);
+        if (p != null) {
+            p = p.trim().toLowerCase();
+            boolean valid = "true".equals(p) || "false".equals(p);
+            if (!valid) {
+                throw new IllegalArgumentException("RouteCoverage must be: true or false");
+            }
+            return Boolean.parseBoolean(p);
+        }
+        return legacyDumpCoverage;
+    }
+
+    public static String getRouteDump(String legacyDumpRoute) {
+        // JVM system property take precedence
+        String p = System.getProperty(ROUTE_DUMP_ENABLED);
+        if (p == null || p.isBlank()) {
+            p = legacyDumpRoute;
+        }
+        if (p != null) {
+            p = p.trim().toLowerCase();
+            if ("true".equals(p)) {
+                p = "xml"; // xml is default
+            }
+            boolean valid = "xml".equals(p) || "yaml".equals(p) || "false".equals(p);
+            if (!valid) {
+                throw new IllegalArgumentException("RouteDump must be: xml, yaml, true, or false");
+            }
+        }
+        return p;
     }
 }

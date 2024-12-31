@@ -62,8 +62,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
 
-        // Post CamelContext(s) instantiation but pre CamelContext(s) start
-        // setup
+        // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
         CamelAnnotationsHandler.handleProvidesBreakpoint(context, testClass);
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
@@ -98,8 +97,9 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         // mark Camel to be startable again and start Camel
         System.clearProperty(PROPERTY_SKIP_STARTING_CAMEL_CONTEXT);
 
-        // route coverage need to know the test method
-        CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> testName);
+        // route coverage/dump need to know the test method
+        CamelAnnotationsHandler.handleRouteCoverageEnable(context, testClass, s -> testName);
+        CamelAnnotationsHandler.handleRouteDumpEnable(context, testClass, s -> testName);
 
         LOG.info("Initialized CamelSpringBootExecutionListener now ready to start CamelContext");
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);
@@ -120,6 +120,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
             // even if spring application context is running (i.e. its not
             // dirtied per test method)
             CamelAnnotationsHandler.handleRouteCoverageDump(context, testClass, s -> testName);
+            // also dump route as either xml or yaml
+            CamelAnnotationsHandler.handleRouteDump(context, testClass, s -> testName);
         }
     }
 }

@@ -18,27 +18,29 @@ package org.apache.camel.test.spring.junit5;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 /**
- * Camel Spring Boot unit test.
+ * Whether to dump the routes loaded into Camel for each test (dumped into files in target/camel-route-dump).
+ * <p/>
+ * The routes can either be dumped into XML or YAML format.
+ * <p/>
+ * This allows tooling or manual inspection of the routes.
+ * <p/>
+ * You can also turn on route dump globally via setting JVM system property <tt>CamelTestRouteDump=xml</tt>.
  */
 @Documented
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
-@ExtendWith(SpringExtension.class)
-@TestExecutionListeners(value = {
-        CamelSpringTestContextLoaderTestExecutionListener.class,
-        CamelSpringBootExecutionListener.class,
-        StopWatchTestExecutionListener.class
-},
-                        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public @interface CamelSpringBootTest {
+public @interface EnableRouteDump {
+
+    /**
+     * The format to dump as either xml or yaml. You can use false to turn of route dump. Uses xml as default.
+     */
+    String format() default "xml";
 
 }

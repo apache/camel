@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.ConsumerTemplate;
@@ -117,11 +116,11 @@ public interface CamelContextManager {
 
     /**
      * Dumps the route coverage information
-     *
-     * @param  clazz
-     * @param  currentTestName
-     * @param  time
-     * @throws Exception
      */
     void dumpRouteCoverage(Class<?> clazz, String currentTestName, long time) throws Exception;
+
+    /**
+     * Dumps the route
+     */
+    void dumpRoute(Class<?> clazz, String currentTestName, String format) throws Exception;
 }
