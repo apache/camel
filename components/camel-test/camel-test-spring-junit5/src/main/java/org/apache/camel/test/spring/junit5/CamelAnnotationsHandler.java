@@ -148,18 +148,25 @@ public final class CamelAnnotationsHandler {
     public static void handleRouteDumpEnable(ConfigurableApplicationContext context, Class<?> testClass, Function testMethod)
             throws Exception {
         if (testClass.isAnnotationPresent(EnableRouteDump.class)) {
-            final String format = testClass.getAnnotation(EnableRouteDump.class).format();
+            String format = testClass.getAnnotation(EnableRouteDump.class).format();
+            if ("false".equals(format)) {
+                format = null;
+            }
+            if (format != null) {
+                final String dump = format.toLowerCase();
+                CamelSpringTestHelper.doToSpringCamelContexts(context,
+                        new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
 
-            CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
-
-                @Override
-                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
-                    LOGGER.info("Enabling EnableRouteDump");
-                    RouteDumpEventNotifier notifier = new RouteDumpEventNotifier(testClass.getName(), testMethod, format);
-                    camelContext.addService(notifier, true);
-                    camelContext.getManagementStrategy().addEventNotifier(notifier);
-                }
-            });
+                            @Override
+                            public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                                LOGGER.info("Enabling EnableRouteDump");
+                                RouteDumpEventNotifier notifier
+                                        = new RouteDumpEventNotifier(testClass.getName(), testMethod, dump);
+                                camelContext.addService(notifier, true);
+                                camelContext.getManagementStrategy().addEventNotifier(notifier);
+                            }
+                        });
+            }
         }
     }
 

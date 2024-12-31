@@ -39,8 +39,8 @@ import java.lang.annotation.Target;
 public @interface EnableRouteDump {
 
     /**
-     * The format to dump as either xml or yaml. You can use false to turn of route dump.
+     * The format to dump as either xml or yaml. You can use false to turn of route dump. Uses xml as default.
      */
-    String format() default "yaml";
+    String format() default "xml";
 
 }
