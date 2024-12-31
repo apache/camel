@@ -27,6 +27,7 @@ import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 public class TestExecutionConfiguration {
     private boolean jmx;
     private boolean dumpRouteCoverage = false;
+    private String dumpRoute;
     private boolean useAdviceWith = false;
     private boolean createCamelContextPerClass = false;
     private boolean useRouteBuilder = true;
@@ -55,6 +56,42 @@ public class TestExecutionConfiguration {
         return this;
     }
 
+    public String getDumpRoute() {
+        return dumpRoute;
+    }
+
+    /**
+     * Whether to dump the routes loaded into Camel for each test (dumped into files in target/camel-route-dump).
+     * <p/>
+     * The routes can either be dumped into XML or YAML format.
+     * <p/>
+     * This allows tooling or manual inspection of the routes.
+     * <p/>
+     * You can also turn on route dump globally via setting JVM system property <tt>CamelTestRouteDump=xml</tt>.
+     *
+     * @param dumpRoute <tt>xml</tt> or <tt>yaml</tt> format. The dumped routes are stored in
+     *                  <tt>target/camel-route-dump</tt> directory after the test has finished.
+     */
+    public TestExecutionConfiguration withDumpRoute(String dumpRoute) {
+        this.dumpRoute = dumpRoute;
+        return this;
+    }
+
+    /**
+     * Whether route dump is enabled
+     *
+     * @return true if enabled or false otherwise
+     */
+    public boolean isRouteDumpEnabled() {
+        String dump = CamelContextTestHelper.getRouteDump(getDumpRoute());
+        return dump == null || dump.isBlank();
+    }
+
+    /**
+     * Whether route coverage is enabled
+     *
+     * @return true if enabled or false otherwise
+     */
     public boolean isDumpRouteCoverage() {
         return dumpRouteCoverage;
     }
@@ -87,8 +124,6 @@ public class TestExecutionConfiguration {
 
     /**
      * Whether to use advice with
-     *
-     * @return
      */
     public boolean isUseAdviceWith() {
         return useAdviceWith;

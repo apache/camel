@@ -102,6 +102,21 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     }
 
     /**
+     * Whether to dump route as XML or YAML
+     * <p/>
+     * This allows tooling or manual inspection of the tested routes.
+     * <p/>
+     * You can also turn on route dump globally via setting JVM system property <tt>CamelTestRouteDump=xml</tt>.
+     *
+     * @deprecated Use the accessors from {@link #testConfiguration()} method
+     * @return     <tt>xml</tt> or <tt>yaml</tt> to write route dump to the log
+     */
+    @Deprecated(since = "4.10.0")
+    public String getDumpRoute() {
+        return testConfigurationBuilder.getDumpRoute();
+    }
+
+    /**
      * Override when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>.
      * This helps to know advice with is to be used, and {@link CamelContext} will not be started before the advice with
      * takes place. This helps by ensuring the advice with has been property setup before the {@link CamelContext} is

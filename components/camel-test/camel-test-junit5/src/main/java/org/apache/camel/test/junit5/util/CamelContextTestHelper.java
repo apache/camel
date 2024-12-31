@@ -53,6 +53,11 @@ public final class CamelContextTestHelper {
      */
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
 
+    /**
+     * JVM system property which can be set to true to turn on dumping routes as xml or yaml
+     */
+    public static final String ROUTE_DUMP_ENABLED = "CamelTestRouteDump";
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTestHelper.class);
 
     public static CamelContext createCamelContext(Registry registry) throws Exception {
@@ -247,5 +252,9 @@ public final class CamelContextTestHelper {
 
     public static boolean isRouteCoverageEnabled(boolean legacyDumpCoverage) {
         return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || legacyDumpCoverage;
+    }
+
+    public static String getRouteDump(String legacyDumpRoute) {
+        return System.getProperty(ROUTE_DUMP_ENABLED, legacyDumpRoute);
     }
 }

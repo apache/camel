@@ -18,29 +18,20 @@ package org.apache.camel.test.spring;
 
 import java.io.File;
 
-import org.apache.camel.management.JmxManagementStrategy;
 import org.apache.camel.test.junit5.TestSupport;
-import org.apache.camel.test.spring.junit5.EnableRouteCoverage;
+import org.apache.camel.test.spring.junit5.EnableRouteDump;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnableRouteCoverage
-public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringPlainTest {
+@EnableRouteDump(format = "xml")
+public class CamelSpringRouteProcessorDumpRouteTest extends CamelSpringPlainTest {
 
     @BeforeAll
     public static void prepareFiles() throws Exception {
-        TestSupport.deleteDirectory("target/camel-route-coverage");
-    }
-
-    @Override
-    @Test
-    public void testJmx() {
-        // JMX is enabled with route coverage
-        assertEquals(JmxManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+        TestSupport.deleteDirectory("target/camel-route-dump");
     }
 
     @Test
@@ -49,7 +40,7 @@ public class CamelSpringRouteProcessorDumpRouteCoverageTest extends CamelSpringP
         camelContext.stop();
 
         // there should be files
-        String[] names = new File("target/camel-route-coverage").list();
+        String[] names = new File("target/camel-route-dump").list();
         assertNotNull(names);
         assertTrue(names.length > 0);
     }

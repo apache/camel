@@ -204,6 +204,7 @@ The following annotations can be used with `camel-spring-junit5` unit testing.
 | `@CamelSpringTest` | Used for testing Camel with classic Spring XML (not Spring Boot)
 | `@DisableJmx` | Used for disabling JMX
 | `@EnableRouteCoverage` | Enables dumping route coverage statistics. The route coverage status is written as xml files in the `target/camel-route-coverage` directory after the test has finished. See more information at xref:manual::camel-report-maven-plugin.adoc[Camel Maven Report Plugin].
+| `@EnableRouteDump` | Enables dumping route. The route dump is written as xml or yaml files in the `target/camel-route-dump` directory after the test has finished.
 | `@ExcludeRoutes` | Indicates if certain route builder classes should be excluded from package scan discovery
 | `@MockEndpoints` | Auto-mocking of endpoints whose URIs match the provided filter. For more information, see xref:manual::advice-with.adoc[Advice With].
 | `@MockEndpointsAndSkip` | Auto-mocking of endpoints whose URIs match the provided filter with the added provision that the endpoints are also skipped. For more information, see xref:manual::advice-with.adoc[Advice With].
