@@ -15,7 +15,8 @@ both the classic Spring XML files or Spring Boot.
 == Testing Spring Boot
 
 The recommended approach is to annotate the test class with `org.apache.camel.test.spring.junit5.CamelSpringBootTest`.
-This replaces the Junit4 `@RunWith` annotation using `SpringRunner.class` or `CamelSpringBootRunner.class`.
+This replaces the Junit4 `@RunWith` annotation using `SpringBootTest`.
+
 To enable autoconfiguration of the Camel context and other Spring boot auto-configurable components,
 use the annotation `org.springframework.boot.autoconfigure.EnableAutoConfiguration`.
 The Spring test context may be specified in one of three ways:
@@ -23,7 +24,6 @@ The Spring test context may be specified in one of three ways:
 * a nested class annotated with `org.springframework.context.annotation.Configuration`. This may define one or more Beans such as a `RouteBuilder`.
 * a `SpringBootTest` annotation with a classes parameter to specify the configuration class or classes. The `@SpringBootTest` annotation may also specify custom properties as shown in the example below.
 * a class annotated with `SpringBootConfiguration` accessible in the package of the test class or a parent package.
-
 
 
 [source,java]
