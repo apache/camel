@@ -265,7 +265,7 @@ annotation to the test class if you are testing using `camel-test-spring-junit5`
 
 [source,java]
 ----
-@RunWith(CamelSpringBootRunner.class)
+@CamelSpringBootTest
 @SpringBootTest(classes = SampleCamelApplication.class)
 @EnableRouteCoverage
 public class FooApplicationTest {
