@@ -92,6 +92,7 @@ public final class CamelAnnotationsHandler {
      * @param testClass the test class being executed
      */
     public static void handleDisableJmx(Class<?> testClass) {
+        boolean coverage = isRouteCoverageEnabled(testClass.isAnnotationPresent(EnableRouteCoverage.class));
         if (isCamelDebugPresent()) {
             LOGGER.info("Enabling Camel JMX as camel-debug has been found in the classpath.");
             DefaultCamelContext.setDisableJmx(false);
@@ -103,7 +104,7 @@ public final class CamelAnnotationsHandler {
                 LOGGER.info("Enabling Camel JMX as DisableJmx annotation was found and disableJmx is set to false.");
                 DefaultCamelContext.setDisableJmx(false);
             }
-        } else if (!testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
+        } else if (!coverage) {
             // route coverage need JMX so do not disable it by default
             LOGGER.info(
                     "Disabling Camel JMX globally for tests by default. Use the DisableJMX annotation to override the default setting.");
@@ -229,7 +230,6 @@ public final class CamelAnnotationsHandler {
                     String name = String.format("%s-%s.%s", testClass.getName(), testMethodName, dump);
 
                     DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
-
                     drs.setOutput(dir + "/" + name);
                     drs.setInclude("*");
                     drs.setLog(false);

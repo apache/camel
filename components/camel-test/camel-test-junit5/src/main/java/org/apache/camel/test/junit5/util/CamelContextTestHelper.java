@@ -255,6 +255,10 @@ public final class CamelContextTestHelper {
         String p = System.getProperty(ROUTE_COVERAGE_ENABLED);
         if (p != null) {
             p = p.trim().toLowerCase();
+            boolean valid = "true".equals(p) || "false".equals(p);
+            if (!valid) {
+                throw new IllegalArgumentException("RouteCoverage must be: true or false");
+            }
             return Boolean.parseBoolean(p);
         }
         return legacyDumpCoverage;
@@ -273,7 +277,7 @@ public final class CamelContextTestHelper {
             }
             boolean valid = "xml".equals(p) || "yaml".equals(p) || "false".equals(p);
             if (!valid) {
-                throw new IllegalArgumentException("RouteDump must be: xml, yaml, true, false");
+                throw new IllegalArgumentException("RouteDump must be: xml, yaml, true, or false");
             }
         }
         return p;
