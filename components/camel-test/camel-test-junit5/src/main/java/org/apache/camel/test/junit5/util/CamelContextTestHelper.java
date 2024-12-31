@@ -268,10 +268,12 @@ public final class CamelContextTestHelper {
         }
         if (p != null) {
             p = p.trim().toLowerCase();
-            if ("false".equals(p)) {
-                p = null;
-            } else if ("true".equals(p)) {
+            if ("true".equals(p)) {
                 p = "xml"; // xml is default
+            }
+            boolean valid = "xml".equals(p) || "yaml".equals(p) || "false".equals(p);
+            if (!valid) {
+                throw new IllegalArgumentException("RouteDump must be: xml, yaml, true, false");
             }
         }
         return p;
