@@ -39,11 +39,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Various tests used to validate the behaviour of Java Sockets.
- *
+ * <p>
  * The tests were for experimentation and don't have any assertions in them - JUnit provided a convenient framework to
  * explore this behaviour. These tests shouldn't be run with a normal build since they don't have any assertions and
  * don't validate any results.
- *
+ * <p>
  * NOTE: This class may be deleted in the future
  */
 @Disabled(value = "Tests validating Java Socket behaviours")

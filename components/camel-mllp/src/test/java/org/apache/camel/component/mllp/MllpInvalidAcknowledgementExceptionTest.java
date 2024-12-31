@@ -33,7 +33,6 @@ public class MllpInvalidAcknowledgementExceptionTest extends MllpExceptionTestSu
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -48,7 +47,6 @@ public class MllpInvalidAcknowledgementExceptionTest extends MllpExceptionTestSu
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {

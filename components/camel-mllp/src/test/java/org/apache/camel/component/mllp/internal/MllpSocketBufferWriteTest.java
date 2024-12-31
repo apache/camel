@@ -38,7 +38,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteIntWithStartOfBlock() {
@@ -51,7 +50,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteIntWithEndOfBlock() {
@@ -64,7 +62,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteIntWithEndOfData() {
@@ -77,7 +74,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteBytesWithNullArray() {
@@ -90,7 +86,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteBytesWithEmptyArray() {
@@ -117,7 +112,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteBytesWithoutEnvelope() {
@@ -186,7 +180,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteByteArraySliceWithNullArray() {
@@ -199,7 +192,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteByteArraySliceWithEmptyArray() {
@@ -212,7 +204,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteByteArraySliceWithNegativeOffset() {
@@ -228,7 +219,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testWriteByteArraySliceWithOffsetGreaterThanLength() {
@@ -290,7 +280,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testEnsureCapacityWithNegativeRequiredAvailability() {
@@ -303,7 +292,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testEnsureCapacityWithOutOfRangeRequiredAvailability() {
@@ -340,7 +328,6 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testEnsureCapacityWithAlreadyAllocateMaxBufferSize() {

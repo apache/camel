@@ -487,7 +487,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
     /**
      * NOTE: Set expectation variables BEFORE calling this method.
-     *
      */
     protected void runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() {
         final String badAcknowledgement = EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + MllpProtocolConstants.END_OF_BLOCK);

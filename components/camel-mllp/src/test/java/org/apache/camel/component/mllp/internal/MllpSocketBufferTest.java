@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class MllpSocketBufferTest extends SocketBufferTestSupport {
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorWithNullEndpoing() {
@@ -287,7 +286,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testGetStartOfBlockIndex() {
@@ -305,7 +303,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void tesGgetEndOfBlockIndex() {
@@ -323,7 +320,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testHasCompleteEnvelopeWithRequiredEndOfData() {
@@ -348,7 +344,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testHasCompleteEnvelopeWithOptionalEndOfData() {
@@ -373,7 +368,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testHasStartOfBlock() {
@@ -397,7 +391,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testHasEndOfBlock() {
@@ -439,7 +432,6 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testHasEndOfData() {

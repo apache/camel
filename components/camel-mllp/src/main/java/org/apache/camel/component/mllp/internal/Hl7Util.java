@@ -106,7 +106,6 @@ public final class Hl7Util {
      * allowed (and expected) because it is also the segment delimiter for an HL7 message
      *
      * @param  hl7Bytes the HL7 payload to validate
-     *
      * @return          If the payload is invalid, an error message suitable for inclusion in an exception is returned.
      *                  If the payload is valid, null is returned;
      */
@@ -156,12 +155,11 @@ public final class Hl7Util {
 
     /**
      * Find the field separator indices in the Segment.
-     *
+     * <p>
      * NOTE: The last element of the list will be the index of the end of the segment.
      *
      * @param  hl7MessageBytes the HL7 binary message
      * @param  startingIndex   index of the beginning of the HL7 Segment
-     *
      * @return                 List of the field separator indices, which may be empty.
      */
     public static List<Integer> findFieldSeparatorIndicesInSegment(byte[] hl7MessageBytes, int startingIndex) {
@@ -187,7 +185,6 @@ public final class Hl7Util {
      * Find the String value of MSH-18 (Character set).
      *
      * @param  hl7Message the HL7 binary data to search
-     *
      * @return            the String value of MSH-18, or an empty String if not found.
      */
     public String findMsh18(byte[] hl7Message, Charset charset) {
@@ -332,13 +329,12 @@ public final class Hl7Util {
 
     /**
      * Convert a PHI byte[] to a String, replacing specific non-printable characters with readable strings.
-     *
+     * <p>
      * NOTE: this conversion uses the default character set, so not all characters my convert correctly.
      *
      * @param  phiBytes      the PHI byte[] to log
      * @param  startPosition the starting position/index of the data
      * @param  endPosition   the ending position/index of the data - will not be included in String
-     *
      * @return               a String representation of the byte[]
      */
     public String convertToPrintFriendlyString(byte[] phiBytes, int startPosition, int endPosition) {
@@ -347,11 +343,10 @@ public final class Hl7Util {
 
     /**
      * Convert a PHI byte[] to a StringBuilder, replacing specific non-printable characters with readable strings.
-     *
+     * <p>
      * NOTE: this conversion uses the default character set, so not all characters my convert correctly.
      *
      * @param  phiBytes the PHI byte[] to log
-     *
      * @return
      */
     public StringBuilder bytesToPrintFriendlyStringBuilder(byte[] phiBytes) {
@@ -360,13 +355,12 @@ public final class Hl7Util {
 
     /**
      * Convert a PHI byte[] to a StringBuilder, replacing specific non-printable characters with readable strings.
-     *
+     * <p>
      * NOTE: this conversion uses the default character set, so not all characters my convert correctly.
      *
      * @param  phiBytes      the PHI byte[] to log
      * @param  startPosition the starting position/index of the data
      * @param  endPosition   the ending position/index of the data - will not be included in StringBuilder
-     *
      * @return               a String representation of the byte[]
      */
     public StringBuilder bytesToPrintFriendlyStringBuilder(
@@ -384,7 +378,7 @@ public final class Hl7Util {
 
     /**
      * Append a PHI byte[] to a StringBuilder, replacing specific non-printable characters with readable strings.
-     *
+     * <p>
      * NOTE: this conversion uses the default character set, so not all characters my convert correctly.
      *
      * @param phiBytes      the PHI byte[] to log
@@ -445,7 +439,7 @@ public final class Hl7Util {
 
     /**
      * Copy a field from the HL7 Message Bytes to the supplied MllpSocketBuffer.
-     *
+     * <p>
      * NOTE: Internal function - no error checking
      *
      * @param mllpSocketBuffer      the destination for the field

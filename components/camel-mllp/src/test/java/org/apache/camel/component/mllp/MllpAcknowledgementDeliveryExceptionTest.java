@@ -32,7 +32,6 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -45,7 +44,6 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {
@@ -59,7 +57,6 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorThree() {
@@ -75,7 +72,6 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorFour() {

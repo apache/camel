@@ -121,5 +121,4 @@ The state of the TCP Socket can be controlled by these properties on the Camel e
 |`CamelMllpResetConnectionAfterSend` | `Boolean` | If true, the Socket will be reset immediately after sending any data
 |====================================
 
-
 include::spring-boot:partial$starter.adoc[]

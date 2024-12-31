@@ -221,7 +221,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testGenerateAcknowledgementPayloadFromNullMessage() {
@@ -232,7 +231,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testGenerateAcknowledgementPayloadFromEmptyMessage() {
@@ -243,7 +241,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testGenerateAcknowledgementPayloadWithoutEnoughFields() {
@@ -278,7 +275,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConvertStringToPrintFriendlyString() {
@@ -289,7 +285,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConvertBytesToPrintFriendlyString() {
@@ -300,7 +295,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConvertBytesToPrintFriendlyStringWithStartAndEndPositions() {
@@ -351,7 +345,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testBytesToPrintFriendlyStringBuilder() {
@@ -362,7 +355,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testBytesToPrintFriendlyStringBuilderWithStartAndEndPositions() {
@@ -432,7 +424,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testAppendBytesAsPrintFriendlyString() {
@@ -460,7 +451,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testAppendBytesAsPrintFriendlyStringWithStartAndEndPositions() {
@@ -600,7 +590,6 @@ public class Hl7UtilTest {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testAppendCharacterAsPrintFriendlyString() {

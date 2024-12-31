@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * MLLP Test Server packaged as a JUnit Rule
- *
+ * <p>
  * The server can be configured to simulate a large number of error conditions.
  */
 public class MllpServerResource implements BeforeEachCallback, AfterEachCallback {
@@ -541,7 +541,6 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
      *
      * @param  hl7Message          HL7 message that is being acknowledged
      * @param  acknowledgementCode AA, AE or AR
-     *
      * @return                     a HL7 Application Acknowledgement
      */
     protected String generateAcknowledgement(String hl7Message, String acknowledgementCode) {
@@ -935,9 +934,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
          * Read a MLLP-Framed message
          *
          * @param  anInputStream source input stream
-         *
          * @return               the MLLP payload
-         *
          * @throws IOException   when the underlying Java Socket calls raise these exceptions
          */
         public String getMessage(InputStream anInputStream) throws IOException {
@@ -1007,7 +1004,6 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
          * Generates a HL7 Application Accept Acknowledgement
          *
          * @param  hl7Message HL7 message that is being acknowledged
-         *
          * @return            a HL7 Application Accept Acknowlegdement
          */
         private String generateAcknowledgementMessage(String hl7Message) {
@@ -1019,7 +1015,6 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
          *
          * @param  hl7Message          HL7 message that is being acknowledged
          * @param  acknowledgementCode AA, AE or AR
-         *
          * @return                     a HL7 Application Acknowledgement
          */
         private String generateAcknowledgementMessage(String hl7Message, String acknowledgementCode) {
@@ -1037,7 +1032,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
 
         /**
          * Receives HL7 messages and replies with HL7 Acknowledgements.
-         *
+         * <p>
          * The exact behaviour of this method is very configurable, allowing simulation of varies error conditions.
          */
         @Override

@@ -33,7 +33,6 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -48,7 +47,6 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {
@@ -63,7 +61,6 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testGetAcknowledgmentType() {

@@ -33,7 +33,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -47,7 +46,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {
@@ -61,7 +59,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorThree() {
@@ -75,7 +72,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorFour() {
@@ -90,7 +86,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorFive() {
@@ -104,7 +99,6 @@ public class MllpAcknowledgementExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorSix() {

@@ -33,7 +33,6 @@ public class MllpInvalidMessageExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -47,7 +46,6 @@ public class MllpInvalidMessageExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {

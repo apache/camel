@@ -21,6 +21,7 @@ import java.util.Objects;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +111,9 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "" + 0x40000000)
     int maxBufferSize = 0x40000000;
 
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+
     public MllpConfiguration() {
     }
 
@@ -145,6 +149,7 @@ public class MllpConfiguration implements Cloneable {
             target.validatePayload = source.validatePayload;
             target.charsetName = source.charsetName;
             target.maxConcurrentConsumers = source.maxConcurrentConsumers;
+            target.sslContextParameters = source.sslContextParameters;
         }
     }
 
@@ -168,7 +173,7 @@ public class MllpConfiguration implements Cloneable {
      * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the
      * consumer is trying to receive incoming messages, or the likes, will now be processed as a message and handled by
      * the routing Error Handler.
-     *
+     * <p>
      * If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging
      * them at WARN or ERROR level and ignored.
      */
@@ -250,7 +255,7 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound.
-     *
+     * <p>
      * In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound.
      *
      * @param lenientBind if true, the ServerSocket will be bound asynchronously; otherwise the ServerSocket will be
@@ -323,7 +328,7 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * The approximate idle time allowed before the Client TCP Connection will be reset.
-     *
+     * <p>
      * A null value or a value less than or equal to zero will disable the idle timeout.
      *
      * @param idleTimeout timeout in milliseconds
@@ -436,7 +441,7 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Enable/Disable the automatic generation of a MLLP Acknowledgement
-     *
+     * <p>
      * MLLP Consumers only
      *
      * @param autoAck enabled if true, otherwise disabled
@@ -455,7 +460,7 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Enable/Disable the automatic generation of message headers from the HL7 Message
-     *
+     * <p>
      * MLLP Consumers only
      *
      * @param hl7Headers enabled if true, otherwise disabled
@@ -470,7 +475,7 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Enable/Disable strict compliance to the MLLP standard.
-     *
+     * <p>
      * The MLLP standard specifies [START_OF_BLOCK]hl7 payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not
      * send the final END_OF_DATA byte. This setting controls whether or not the final END_OF_DATA byte is required or
      * optional.
@@ -487,9 +492,9 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Enable/Disable converting the payload to a String.
-     *
+     * <p>
      * If enabled, HL7 Payloads received from external systems will be validated converted to a String.
-     *
+     * <p>
      * If the charsetName property is set, that character set will be used for the conversion. If the charsetName
      * property is not set, the value of MSH-18 will be used to determine th appropriate character set. If MSH-18 is not
      * set, then the default ISO-8859-1 character set will be use.
@@ -506,7 +511,7 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * Enable/Disable the validation of HL7 Payloads
-     *
+     * <p>
      * If enabled, HL7 Payloads received from external systems will be validated (see
      * Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation). If and invalid payload is
      * detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown.
@@ -523,9 +528,9 @@ public class MllpConfiguration implements Cloneable {
 
     /**
      * decide what action to take when idle timeout occurs. Possible values are :
-     *
+     * <p>
      * RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the socket gracefully
-     *
+     * <p>
      * default is RESET.
      *
      * @param idleTimeoutStrategy the strategy to take if idle timeout occurs
@@ -556,6 +561,31 @@ public class MllpConfiguration implements Cloneable {
         this.maxBufferSize = maxBufferSize;
     }
 
+    /**
+     * Gets the SSLContextParameters for securing TCP connections.
+     * <p>
+     * Returns the SSLContextParameters that configure SSL/TLS settings for the MLLP component. If null, plain TCP
+     * communication will be used.
+     *
+     * @return the configured SSLContextParameters, or null if not set.
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * Sets the SSLContextParameters for securing TCP connections.
+     * <p>
+     * If set, the MLLP component will use SSL/TLS for securing both producer and consumer TCP connections. This allows
+     * the configuration of trust stores, key stores, protocols, and other SSL/TLS settings. If not set, the MLLP
+     * component will use plain TCP communication.
+     *
+     * @param sslContextParameters the SSLContextParameters to use for secure connections.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(bridgeErrorHandler,
@@ -582,7 +612,8 @@ public class MllpConfiguration implements Cloneable {
                 validatePayload,
                 charsetName,
                 minBufferSize,
-                maxBufferSize);
+                maxBufferSize,
+                sslContextParameters);
     }
 
     @Override
@@ -621,7 +652,8 @@ public class MllpConfiguration implements Cloneable {
                 && Objects.equals(reuseAddress, rhs.reuseAddress)
                 && Objects.equals(receiveBufferSize, rhs.receiveBufferSize)
                 && Objects.equals(sendBufferSize, rhs.sendBufferSize)
-                && Objects.equals(charsetName, rhs.charsetName);
+                && Objects.equals(charsetName, rhs.charsetName)
+                && Objects.equals(sslContextParameters, rhs.sslContextParameters);
     }
 
     @Override
@@ -652,6 +684,7 @@ public class MllpConfiguration implements Cloneable {
                + ", minBufferSize=" + minBufferSize
                + ", maxBufferSize=" + maxBufferSize
                + ", charsetName='" + charsetName + '\''
+               + ", sslContextParameters=" + sslContextParameters
                + '}';
     }
 }

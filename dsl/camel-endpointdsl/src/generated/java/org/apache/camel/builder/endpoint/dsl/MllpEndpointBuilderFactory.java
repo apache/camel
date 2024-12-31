@@ -281,6 +281,44 @@ public interface MllpEndpointBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
+        /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointConsumerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointConsumerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
     }
 
     /**
@@ -1024,6 +1062,44 @@ public interface MllpEndpointBuilderFactory {
             doSetProperty("validatePayload", validatePayload);
             return this;
         }
+        /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointProducerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointProducerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
     }
 
     /**
@@ -1644,6 +1720,44 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointBuilder validatePayload(String validatePayload) {
             doSetProperty("validatePayload", validatePayload);
+            return this;
+        }
+        /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the SSLContextParameters for securing TCP connections. If set,
+         * the MLLP component will use SSL/TLS for securing both producer and
+         * consumer TCP connections. This allows the configuration of trust
+         * stores, key stores, protocols, and other SSL/TLS settings. If not
+         * set, the MLLP component will use plain TCP communication.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }

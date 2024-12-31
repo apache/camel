@@ -46,43 +46,69 @@ public final class MllpConstants {
     public static final String MLLP_CLOSE_CONNECTION_AFTER_SEND = "CamelMllpCloseConnectionAfterSend";
     public static final String MLLP_RESET_CONNECTION_AFTER_SEND = "CamelMllpResetConnectionAfterSend";
 
-    /** MSH-3 value */
+    /**
+     * MSH-3 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_SENDING_APPLICATION = "CamelMllpSendingApplication";
-    /** MSH-4 value */
+    /**
+     * MSH-4 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_SENDING_FACILITY = "CamelMllpSendingFacility";
-    /** MSH-5 value */
+    /**
+     * MSH-5 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_RECEIVING_APPLICATION = "CamelMllpReceivingApplication";
-    /** MSH-6 value */
+    /**
+     * MSH-6 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_RECEIVING_FACILITY = "CamelMllpReceivingFacility";
-    /** MSH-7 value */
+    /**
+     * MSH-7 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_TIMESTAMP = "CamelMllpTimestamp";
-    /** MSH-8 value */
+    /**
+     * MSH-8 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_SECURITY = "CamelMllpSecurity";
-    /** MSH-9 value */
+    /**
+     * MSH-9 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_MESSAGE_TYPE = "CamelMllpMessageType";
-    /** MSH-9.1 value */
+    /**
+     * MSH-9.1 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_EVENT_TYPE = "CamelMllpEventType";
-    /** MSH-9.2 value */
+    /**
+     * MSH-9.2 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_TRIGGER_EVENT = "CamelMllpTriggerEvent";
-    /** MSH-10 value */
+    /**
+     * MSH-10 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_MESSAGE_CONTROL = "CamelMllpMessageControlId";
-    /** MSH-11 value */
+    /**
+     * MSH-11 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_PROCESSING_ID = "CamelMllpProcessingId";
-    /** MSH-12 value */
+    /**
+     * MSH-12 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_VERSION_ID = "CamelMllpVersionId";
-    /** MSH-18 value */
+    /**
+     * MSH-18 value
+     */
     @Metadata(label = "consumer", javaType = "String")
     public static final String MLLP_CHARSET = "CamelMllpCharset";
 

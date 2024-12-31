@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * MLLP Test Client packaged as a JUnit Rule
- *
+ * <p>
  * The client can be configured to simulate a large number of error conditions.
  */
 public class MllpClientResource implements BeforeEachCallback, AfterEachCallback {

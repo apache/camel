@@ -32,7 +32,6 @@ public class MllpApplicationErrorAcknowledgementExceptionTest extends MllpExcept
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -46,7 +45,6 @@ public class MllpApplicationErrorAcknowledgementExceptionTest extends MllpExcept
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {
@@ -61,7 +59,6 @@ public class MllpApplicationErrorAcknowledgementExceptionTest extends MllpExcept
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testGetAcknowledgmentType() {

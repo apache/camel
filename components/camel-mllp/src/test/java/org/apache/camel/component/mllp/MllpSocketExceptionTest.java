@@ -32,7 +32,6 @@ public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorOne() {
@@ -44,7 +43,6 @@ public class MllpSocketExceptionTest extends MllpExceptionTestSupport {
 
     /**
      * Description of test.
-     *
      */
     @Test
     public void testConstructorTwo() {
