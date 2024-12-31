@@ -23,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RouteDumperExtension {
+
     private static final Logger LOG = LoggerFactory.getLogger(RouteDumperExtension.class);
+
     private final ModelCamelContext context;
 
     public RouteDumperExtension(ModelCamelContext context) {

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.lang.reflect.Method;
@@ -46,6 +45,7 @@ import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
  * Camel 4.7.0
  */
 public class LegacyCamelContextManager implements CamelContextManager {
+
     private static final Logger LOG = LoggerFactory.getLogger(LegacyCamelContextManager.class);
 
     private static final ThreadLocal<LegacyCamelContextManager> INSTANCE = new ThreadLocal<>();

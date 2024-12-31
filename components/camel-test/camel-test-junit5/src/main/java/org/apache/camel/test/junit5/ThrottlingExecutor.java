@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public final class ThrottlingExecutor {
     private TimeUnit timeUnit;
 
     private ThrottlingExecutor() {
-
     }
 
     public static ThrottlingExecutor slowly() {
@@ -41,32 +39,27 @@ public final class ThrottlingExecutor {
 
     public ThrottlingExecutor repeat(int repetitions) {
         this.repetitions = repetitions;
-
         return this;
     }
 
     public ThrottlingExecutor beforeWait() throws InterruptedException {
         Thread.sleep(timeUnit.toMillis(awaiting));
-
         return this;
     }
 
     public ThrottlingExecutor awaiting(long awaiting, TimeUnit timeUnit) {
         this.awaiting = awaiting;
         this.timeUnit = timeUnit;
-
         return this;
     }
 
     public ThrottlingExecutor beforeEach(IntConsumer beforeTask) {
         beforeTasks.add(beforeTask);
-
         return this;
     }
 
     public ThrottlingExecutor afterEach(IntConsumer afterTask) {
         afterTasks.add(afterTask);
-
         return this;
     }
 
@@ -79,11 +72,9 @@ public final class ThrottlingExecutor {
     public void execute() throws InterruptedException {
         for (int i = 0; i < repetitions; i++) {
             runTasks(beforeTasks, i);
-
             Thread.sleep(timeUnit.toMillis(awaiting));
-
             runTasks(afterTasks, i);
         }
-
     }
+
 }

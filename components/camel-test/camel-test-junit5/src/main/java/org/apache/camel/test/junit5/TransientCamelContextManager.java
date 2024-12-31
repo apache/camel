@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.lang.reflect.Method;
@@ -40,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 
 public class TransientCamelContextManager implements CamelContextManager {
+
     private static final Logger LOG = LoggerFactory.getLogger(TransientCamelContextManager.class);
 
     private final TestExecutionConfiguration testConfigurationBuilder;
