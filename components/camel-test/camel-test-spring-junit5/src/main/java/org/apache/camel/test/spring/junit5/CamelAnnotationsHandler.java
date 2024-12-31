@@ -45,6 +45,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+import static org.apache.camel.test.junit5.util.CamelContextTestHelper.isRouteCoverageEnabled;
 
 public final class CamelAnnotationsHandler {
 
@@ -123,11 +124,10 @@ public final class CamelAnnotationsHandler {
     public static void handleRouteCoverageEnable(
             ConfigurableApplicationContext context, Class<?> testClass, Function testMethod)
             throws Exception {
-        if (testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
-            System.setProperty(CamelContextTestHelper.ROUTE_COVERAGE_ENABLED, "true");
 
+        boolean enabled = isRouteCoverageEnabled(testClass.isAnnotationPresent(EnableRouteCoverage.class));
+        if (enabled) {
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
-
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
                     LOGGER.info("Enabling RouteCoverage");
@@ -177,9 +177,9 @@ public final class CamelAnnotationsHandler {
             ConfigurableApplicationContext context, Class<?> testClass,
             Function<CamelSpringTestHelper.DoToSpringCamelContextsStrategy, String> testMethod)
             throws Exception {
-        if (testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
+        boolean enabled = isRouteCoverageEnabled(testClass.isAnnotationPresent(EnableRouteCoverage.class));
+        if (enabled) {
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
-
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
                     LOGGER.debug("Dumping RouteCoverage");

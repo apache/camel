@@ -251,10 +251,20 @@ public final class CamelContextTestHelper {
     }
 
     public static boolean isRouteCoverageEnabled(boolean legacyDumpCoverage) {
-        return Boolean.parseBoolean(System.getProperty(ROUTE_COVERAGE_ENABLED, "false")) || legacyDumpCoverage;
+        String p = System.getProperty(ROUTE_COVERAGE_ENABLED);
+        if (p != null) {
+            // JVM system property take precedence
+            return Boolean.parseBoolean(p);
+        }
+        return legacyDumpCoverage;
     }
 
     public static String getRouteDump(String legacyDumpRoute) {
-        return System.getProperty(ROUTE_DUMP_ENABLED, legacyDumpRoute);
+        String p = System.getProperty(ROUTE_DUMP_ENABLED);
+        if (p != null) {
+            // JVM system property take precedence
+            return p;
+        }
+        return legacyDumpRoute;
     }
 }
