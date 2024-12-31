@@ -515,7 +515,6 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         return socketAddress;
     }
 
-
     private Socket createNewSocket(final SSLContextParameters sslContextParameters) throws Exception {
 
         Socket newSocket;
