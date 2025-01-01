@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Configuration for startup conditions
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class StartupConditionConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

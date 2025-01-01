@@ -31,7 +31,6 @@ public class KubernetesVaultConfigurationPropertiesConfigurer extends org.apache
         map.put("RefreshEnabled", boolean.class);
         map.put("Secrets", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(KubernetesVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +59,6 @@ public class KubernetesVaultConfigurationPropertiesConfigurer extends org.apache
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

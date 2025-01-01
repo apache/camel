@@ -145,7 +145,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("UseMdcLogging", boolean.class);
         map.put("UuidGenerator", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MainConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -396,10 +395,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -33,7 +33,6 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         map.put("Scheme", java.lang.String.class);
         map.put("Token", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HashicorpVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -63,10 +62,6 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

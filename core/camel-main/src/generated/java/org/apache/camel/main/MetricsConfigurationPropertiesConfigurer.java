@@ -34,7 +34,6 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("RoutePolicyLevel", java.lang.String.class);
         map.put("TextFormatVersion", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MetricsConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -67,10 +66,6 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

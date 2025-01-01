@@ -25,7 +25,6 @@ public class TraceDevConsoleConfigurer extends org.apache.camel.support.componen
         map.put("CamelContext", org.apache.camel.CamelContext.class);
         map.put("Capacity", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(TraceDevConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -42,10 +41,6 @@ public class TraceDevConsoleConfigurer extends org.apache.camel.support.componen
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

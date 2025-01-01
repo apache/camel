@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class ThreadPoolProfileConfigurationProperties {
 
     private String id;

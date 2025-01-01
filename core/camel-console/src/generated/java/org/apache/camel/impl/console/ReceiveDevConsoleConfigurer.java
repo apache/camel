@@ -27,7 +27,6 @@ public class ReceiveDevConsoleConfigurer extends org.apache.camel.support.compon
         map.put("Capacity", int.class);
         map.put("RemoveOnDump", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ReceiveDevConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -48,10 +47,6 @@ public class ReceiveDevConsoleConfigurer extends org.apache.camel.support.compon
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

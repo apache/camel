@@ -23,7 +23,7 @@ import org.apache.camel.vault.AzureVaultConfiguration;
 /**
  * Configuration for access to Azure Key Vault Secret.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class AzureVaultConfigurationProperties extends AzureVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

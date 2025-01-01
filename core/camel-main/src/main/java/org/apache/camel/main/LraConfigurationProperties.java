@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Saga LRA
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class LraConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

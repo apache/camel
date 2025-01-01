@@ -23,7 +23,7 @@ import org.apache.camel.vault.KubernetesConfigMapVaultConfiguration;
 /**
  * Configuration for access to Kubernetes Configmaps.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class KubernetesConfigmapsVaultConfigurationProperties extends KubernetesConfigMapVaultConfiguration
         implements BootstrapCloseable {
 
