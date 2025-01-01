@@ -58,7 +58,6 @@ public class RouteDumpEventNotifier extends EventNotifierSupport {
         drs.setOutput(dir + "/" + name);
         drs.setInclude("*");
         drs.setLog(false);
-        drs.setResolvePlaceholders(false);
         drs.setUriAsParameters(true);
         drs.dumpRoutes(format);
     }
