@@ -20,13 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("mllp")
-public class MllpComponent extends DefaultComponent {
+public class MllpComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean logPhi = true;
@@ -36,6 +37,8 @@ public class MllpComponent extends DefaultComponent {
     private String defaultCharset = "ISO_8859_1";
     @Metadata
     private MllpConfiguration configuration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public MllpComponent() {
         // bridge error handler by default
@@ -52,6 +55,10 @@ public class MllpComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uriString, String remaining, Map<String, Object> parameters) throws Exception {
         MllpEndpoint endpoint
                 = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
+
+        if (endpoint.getConfiguration().getSslContextParameters() == null) {
+            endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         endpoint.setCharsetName(getDefaultCharset());
 
@@ -115,5 +122,18 @@ public class MllpComponent extends DefaultComponent {
      */
     public void setConfiguration(MllpConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }
