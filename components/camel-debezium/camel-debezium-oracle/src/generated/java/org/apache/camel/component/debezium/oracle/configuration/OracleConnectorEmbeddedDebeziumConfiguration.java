@@ -946,7 +946,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Specifies how the filter configuration is applied to the LogMiner
-     * database query. 
+     * database query.
      * none - The query does not apply any schema or table filters, all
      * filtering is at runtime by the connector.
      * in - The query uses SQL in-clause expressions to specify the schema or
