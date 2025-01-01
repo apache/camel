@@ -377,7 +377,7 @@
         <msal4j-version>1.18.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
-        <mybatis-version>3.5.17</mybatis-version>
+        <mybatis-version>3.5.18</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty-version>4.1.116.Final</netty-version>
