@@ -63,8 +63,8 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
     /**
      * Get the base uri part before the options as they can be non URI valid such as the expression using $ chars and
-     * the URI constructor will regard $ as an illegal character and we don't want to enforce end users to to escape the
-     * $ for the expression (file language)
+     * the URI constructor will regard $ as an illegal character, and we don't want to enforce end users to escape the $
+     * for the expression (file language)
      */
     protected String getBaseUri(String uri) {
         return StringHelper.before(uri, "?", uri);
