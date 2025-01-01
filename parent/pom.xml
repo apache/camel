@@ -234,7 +234,7 @@
         <influx-client-java-driver-version>7.2.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
-        <ivy-version>2.5.2</ivy-version>
+        <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.2.0</jackson-jq-version>
         <jackson2-version>2.18.2</jackson2-version>
