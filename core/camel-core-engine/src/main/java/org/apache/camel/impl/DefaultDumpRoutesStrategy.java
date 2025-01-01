@@ -133,7 +133,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 this.output = ".";
             }
         } else {
-            this.output = name;
+            this.output = output;
         }
     }
 
