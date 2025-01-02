@@ -43,6 +43,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 public class HashicorpVaultLocalContainerService implements HashicorpVaultService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "hashicorp-vault";
@@ -55,7 +56,15 @@ public class HashicorpVaultLocalContainerService implements HashicorpVaultServic
     public HashicorpVaultLocalContainerService() {
         this(LocalPropertyResolver.getProperty(
                 HashicorpVaultLocalContainerService.class,
-                HashicorpVaultProperties.HASHICORP_VAULT_CONTAINER));
+                getPropertyKeyForContainerImage()));
+    }
+
+    private static String getPropertyKeyForContainerImage() {
+        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+            return HashicorpVaultProperties.HASHICORP_VAULT_CONTAINER_PPC64LE;
+        } else {
+            return HashicorpVaultProperties.HASHICORP_VAULT_CONTAINER;
+        }
     }
 
     public HashicorpVaultLocalContainerService(String containerImage) {
