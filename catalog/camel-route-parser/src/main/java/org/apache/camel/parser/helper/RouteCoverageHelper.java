@@ -81,6 +81,55 @@ public final class RouteCoverageHelper {
         return answer;
     }
 
+    /**
+     * Parses the dumped route coverage data and creates a line by line coverage data
+     *
+     * @param  directory      the directory with the dumped route coverage data
+     * @param  sourceLocation the location of the route (filename:line)
+     * @return                line by line coverage data
+     */
+    public static List<CoverageData> parseDumpRouteCoverageByLineNumber(String directory, String sourceLocation)
+            throws Exception {
+        List<CoverageData> answer = new ArrayList<>();
+
+        if (sourceLocation == null) {
+            return answer;
+        }
+
+        File[] files = new File(directory).listFiles(f -> f.getName().endsWith(".xml"));
+        if (files == null) {
+            return answer;
+        }
+
+        CamelCatalog catalog = new DefaultCamelCatalog(true);
+
+        for (File file : files) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                Document dom = XmlLineNumberParser.parseXml(fis);
+                NodeList routes = dom.getElementsByTagName("route");
+                for (int i = 0; i < routes.getLength(); i++) {
+                    Node route = routes.item(i);
+                    Node n = route.getAttributes().getNamedItem("id");
+                    String id = n != null ? n.getNodeValue() : null;
+                    n = route.getAttributes().getNamedItem("sourceLocation");
+                    String loc = n != null ? n.getNodeValue() : null;
+                    if (sourceLocation.equals(loc)) {
+                        // parse each route and build a List<CoverageData> for line by line coverage data
+                        AtomicInteger counter = new AtomicInteger();
+                        List<CoverageData> list = new ArrayList<>();
+                        parseRouteData(catalog, route, list, counter);
+                        if (id != null && !list.isEmpty()) {
+                            list.get(0).setRouteId(id);
+                        }
+                        answer.addAll(list);
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
     public static Map<String, List<CoverageData>> parseDumpRouteCoverageByClassAndTestMethod(String directory)
             throws Exception {
         Map<String, List<CoverageData>> answer = new LinkedHashMap<>();
