@@ -36,7 +36,6 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
         map.put("TimeoutPoolSize", java.lang.Integer.class);
         map.put("TimeoutScheduledExecutorService", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(FaultToleranceConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -75,10 +74,6 @@ public class FaultToleranceConfigurationPropertiesConfigurer extends org.apache.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

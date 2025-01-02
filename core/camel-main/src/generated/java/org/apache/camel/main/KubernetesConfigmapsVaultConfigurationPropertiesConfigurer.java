@@ -31,7 +31,6 @@ public class KubernetesConfigmapsVaultConfigurationPropertiesConfigurer extends 
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("RefreshEnabled", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(KubernetesConfigmapsVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -60,10 +59,6 @@ public class KubernetesConfigmapsVaultConfigurationPropertiesConfigurer extends 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

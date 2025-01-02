@@ -36,7 +36,6 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("SubscriptionName", java.lang.String.class);
         map.put("UseDefaultInstance", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(GcpVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -75,10 +74,6 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -37,7 +37,6 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
         map.put("TraceRests", boolean.class);
         map.put("TraceTemplates", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(TracerConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -77,10 +76,6 @@ public class TracerConfigurationPropertiesConfigurer extends org.apache.camel.su
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Global configuration for Micrometer Metrics.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class MetricsConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

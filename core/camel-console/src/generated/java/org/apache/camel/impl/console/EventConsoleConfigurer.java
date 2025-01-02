@@ -25,7 +25,6 @@ public class EventConsoleConfigurer extends org.apache.camel.support.component.P
         map.put("CamelContext", org.apache.camel.CamelContext.class);
         map.put("Capacity", int.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(EventConsoleConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -42,10 +41,6 @@ public class EventConsoleConfigurer extends org.apache.camel.support.component.P
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

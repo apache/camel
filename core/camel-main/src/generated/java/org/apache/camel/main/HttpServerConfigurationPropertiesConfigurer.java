@@ -47,7 +47,6 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("UploadSourceDir", java.lang.String.class);
         map.put("UseGlobalSslContextParameters", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HttpServerConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -105,10 +104,6 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

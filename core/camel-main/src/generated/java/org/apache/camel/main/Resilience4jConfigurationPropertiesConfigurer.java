@@ -43,7 +43,6 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         map.put("WaitDurationInOpenState", java.lang.Integer.class);
         map.put("WritableStackTraceEnabled", java.lang.Boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(Resilience4jConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -96,10 +95,6 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

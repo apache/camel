@@ -42,7 +42,6 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("UriEndpointOverride", java.lang.String.class);
         map.put("UseSqsNotification", boolean.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AwsVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -92,10 +91,6 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

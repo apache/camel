@@ -41,7 +41,6 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         map.put("TenantId", java.lang.String.class);
         map.put("VaultName", java.lang.String.class);
         ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(AzureVaultConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
     }
 
     @Override
@@ -90,10 +89,6 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
     }
 
     @Override

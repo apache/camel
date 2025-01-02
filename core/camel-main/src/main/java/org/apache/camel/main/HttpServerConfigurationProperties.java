@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Configuration for embedded HTTP server for standalone Camel applications (not Spring Boot / Quarkus).
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;

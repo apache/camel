@@ -23,7 +23,7 @@ import org.apache.camel.vault.HashicorpVaultConfiguration;
 /**
  * Configuration for access to AWS Secret.
  */
-@Configurer(bootstrap = true, extended = true)
+@Configurer(extended = true)
 public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfiguration implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
