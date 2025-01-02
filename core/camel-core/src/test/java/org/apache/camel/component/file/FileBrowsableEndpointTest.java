@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class FileBrowsableEndpointTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_PREFIX = UUID.randomUUID().toString();
 
     @Test
     public void testBrowsableNoFiles() {
@@ -47,7 +50,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     @Test
     public void testBrowsableOneFile() {
-        template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "a.txt");
 
         FileEndpoint endpoint = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), FileEndpoint.class);
         assertNotNull(endpoint);
@@ -59,19 +62,19 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         assertNotNull(list);
         assertEquals(1, list.size());
 
-        assertEquals("a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
+        assertEquals(TEST_FILE_NAME_PREFIX + "a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
 
         // the in progress repo should not leak
         assertEquals(0, repo.getCacheSize());
 
         // and the file is still there
-        assertTrue(Files.exists(testFile("a.txt")), "File should exist a.txt");
+        assertTrue(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "a.txt")), "File should exist a.txt");
     }
 
     @Test
     public void testBrowsableTwoFiles() {
-        template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "a.txt");
+        template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "b.txt");
 
         FileEndpoint endpoint
                 = context.getEndpoint(fileUri("?initialDelay=0&delay=10&sortBy=file:name"), FileEndpoint.class);
@@ -84,22 +87,24 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         assertNotNull(list);
         assertEquals(2, list.size());
 
-        assertEquals("a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
-        assertEquals("b.txt", list.get(1).getIn().getHeader(Exchange.FILE_NAME));
+        assertEquals(TEST_FILE_NAME_PREFIX + "a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
+        assertEquals(TEST_FILE_NAME_PREFIX + "b.txt", list.get(1).getIn().getHeader(Exchange.FILE_NAME));
 
         // the in progress repo should not leak
         assertEquals(0, repo.getCacheSize());
 
         // and the files is still there
-        assertTrue(Files.exists(testFile("a.txt")), "File should exist a.txt");
-        assertTrue(Files.exists(testFile("b.txt")), "File should exist b.txt");
+        assertTrue(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "a.txt")), "File should exist a.txt");
+        assertTrue(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "b.txt")), "File should exist b.txt");
     }
 
     @Test
     public void testBrowsableThreeFilesRecursive() {
-        template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, "foo/b.txt");
-        template.sendBodyAndHeader(fileUri(), "C", Exchange.FILE_NAME, "bar/c.txt");
+        template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "a.txt");
+        template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME,
+                "foo" + File.separator + TEST_FILE_NAME_PREFIX + "b.txt");
+        template.sendBodyAndHeader(fileUri(), "C", Exchange.FILE_NAME,
+                "bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt");
 
         FileEndpoint endpoint = context.getEndpoint(
                 fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name"), FileEndpoint.class);
@@ -112,16 +117,18 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         assertNotNull(list);
         assertEquals(3, list.size());
 
-        assertEquals("a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
-        assertEquals("c.txt", list.get(1).getIn().getHeader(Exchange.FILE_NAME_ONLY));
-        assertEquals("b.txt", list.get(2).getIn().getHeader(Exchange.FILE_NAME_ONLY));
+        assertEquals(TEST_FILE_NAME_PREFIX + "a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
+        assertEquals(TEST_FILE_NAME_PREFIX + "c.txt", list.get(1).getIn().getHeader(Exchange.FILE_NAME_ONLY));
+        assertEquals(TEST_FILE_NAME_PREFIX + "b.txt", list.get(2).getIn().getHeader(Exchange.FILE_NAME_ONLY));
 
         // the in progress repo should not leak
         assertEquals(0, repo.getCacheSize());
 
         // and the files is still there
-        assertTrue(Files.exists(testFile("a.txt")), "File should exist a.txt");
-        assertTrue(Files.exists(testFile("foo/b.txt")), "File should exist foo/b.txt");
-        assertTrue(Files.exists(testFile("bar/c.txt")), "File should exist bar/c.txt");
+        assertTrue(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "a.txt")), "File should exist a.txt");
+        assertTrue(Files.exists(testFile("foo" + File.separator + TEST_FILE_NAME_PREFIX + "b.txt")),
+                "File should exist foo/b.txt");
+        assertTrue(Files.exists(testFile("bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt")),
+                "File should exist bar/c.txt");
     }
 }

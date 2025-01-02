@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.nio.file.Files;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -31,20 +32,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This class tests an issue where an input file is not picked up due to a dynamic doneFileName containing two dots.
  */
 public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_PREFIX = UUID.randomUUID().toString();
 
     @Test
     public void testDynamicDoneFileNameContainingTwoDots() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("input-body");
 
-        template.sendBodyAndHeader(fileUri(), "input-body", Exchange.FILE_NAME, "test.twodot.txt");
-        template.sendBodyAndHeader(fileUri(), "done-body", Exchange.FILE_NAME, "test.twodot.done");
+        template.sendBodyAndHeader(fileUri(), "input-body", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "test.twodot.txt");
+        template.sendBodyAndHeader(fileUri(), "done-body", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "test.twodot.done");
 
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesWaitTime());
 
-        assertFalse(Files.exists(testFile("test.twodot.txt")), "Input file should be deleted");
-        assertFalse(Files.exists(testFile("test.twodot.done")), "Done file should be deleted");
+        assertFalse(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "test.twodot.txt")), "Input file should be deleted");
+        assertFalse(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "test.twodot.txt")), "Done file should be deleted");
     }
 
     @Override

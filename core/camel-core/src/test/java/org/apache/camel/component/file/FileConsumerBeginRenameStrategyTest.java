@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for the FileRenameStrategy using preMove options
  */
 public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME_1 = "paris" + UUID.randomUUID() + ".txt";
+    private static final String TEST_FILE_NAME_2 = "london" + UUID.randomUUID() + ".txt";
 
     @Test
     public void testRenameSuccess() throws Exception {
@@ -40,7 +43,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, TEST_FILE_NAME_1);
 
         mock.assertIsSatisfied();
     }
@@ -50,7 +53,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         // create a file in inprogress to let there be a duplicate file
         testDirectory("inprogress", true);
 
-        try (FileWriter fw = new FileWriter(testFile("inprogress/london.txt").toFile())) {
+        try (FileWriter fw = new FileWriter(testFile("inprogress/" + TEST_FILE_NAME_2).toFile())) {
             fw.write("I was there once in London");
             fw.flush();
         }
@@ -58,7 +61,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader(fileUri("reports"), "Hello London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(fileUri("reports"), "Hello London", Exchange.FILE_NAME, TEST_FILE_NAME_2);
 
         mock.assertIsSatisfied();
     }
