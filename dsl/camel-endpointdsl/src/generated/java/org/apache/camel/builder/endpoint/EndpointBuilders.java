@@ -303,6 +303,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.Smb2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SmbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SmooksEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory,

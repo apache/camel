@@ -3912,6 +3912,19 @@ public interface ComponentsBuilderFactory {
         return SmbComponentBuilderFactory.smb();
     }
     /**
+     * SMB2 (camel-smb)
+     * Server Message Block (SMB) file shares
+     * 
+     * Category: file
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * @return the dsl builder
+     */
+    static Smb2ComponentBuilderFactory.Smb2ComponentBuilder smb2() {
+        return Smb2ComponentBuilderFactory.smb2();
+    }
+    /**
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
      * including EDI, CSV, JSON, and YAML.

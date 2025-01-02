@@ -13205,6 +13205,60 @@ public class StaticEndpointBuilders {
         return SmbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * SMB2 (camel-smb)
+     * Server Message Block (SMB) file shares
+     * 
+     * Category: file
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * Syntax: <code>smb2:hostname:port/shareName</code>
+     * 
+     * Path parameter: hostname (required)
+     * The share hostname or IP address
+     * 
+     * Path parameter: port
+     * The share port number
+     * Default value: 445
+     * 
+     * Path parameter: shareName (required)
+     * The name of the samba share
+     * 
+     * @param path hostname:port/shareName
+     * @return the dsl builder
+     */
+    public static Smb2EndpointBuilderFactory.Smb2EndpointBuilder smb2(String path) {
+        return smb2("smb2", path);
+    }
+    /**
+     * SMB2 (camel-smb)
+     * Server Message Block (SMB) file shares
+     * 
+     * Category: file
+     * Since: 4.3
+     * Maven coordinates: org.apache.camel:camel-smb
+     * 
+     * Syntax: <code>smb2:hostname:port/shareName</code>
+     * 
+     * Path parameter: hostname (required)
+     * The share hostname or IP address
+     * 
+     * Path parameter: port
+     * The share port number
+     * Default value: 445
+     * 
+     * Path parameter: shareName (required)
+     * The name of the samba share
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path hostname:port/shareName
+     * @return the dsl builder
+     */
+    public static Smb2EndpointBuilderFactory.Smb2EndpointBuilder smb2(String componentName, String path) {
+        return Smb2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
      * including EDI, CSV, JSON, and YAML.
