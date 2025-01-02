@@ -34,7 +34,7 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
             super(DockerImageName.parse(System.getProperty(
                     KafkaProperties.KAFKA_CONTAINER,
                     ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
-                    .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
+                    .asCompatibleSubstituteFor("apache/kafka"));
 
             final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);
             LOG.debug("Using mountable file at: {}", mountableFile.getFilesystemPath());

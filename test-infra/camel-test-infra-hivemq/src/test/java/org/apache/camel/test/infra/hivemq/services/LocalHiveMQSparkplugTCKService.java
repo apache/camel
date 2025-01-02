@@ -31,9 +31,6 @@ public final class LocalHiveMQSparkplugTCKService extends AbstractLocalHiveMQSer
 
     @Override
     protected HiveMQContainer initContainer(String imageName) {
-        String hivemqContainerName
-                = LocalPropertyResolver.getProperty(LocalHiveMQSparkplugTCKService.class, HiveMQProperties.HIVEMQ_CONTAINER);
-
         String dockerfileResourcePath = LocalPropertyResolver.getProperty(LocalHiveMQSparkplugTCKService.class,
                 HiveMQProperties.HIVEMQ_RESOURCE_PATH);
 
@@ -42,7 +39,7 @@ public final class LocalHiveMQSparkplugTCKService extends AbstractLocalHiveMQSer
         String newImageName = newImage.get();
 
         HiveMQContainer newContainer
-                = new HiveMQContainer(DockerImageName.parse(newImageName).asCompatibleSubstituteFor(hivemqContainerName));
+                = new HiveMQContainer(DockerImageName.parse(newImageName).asCompatibleSubstituteFor("hivemq/hivemq-ce"));
 
         return newContainer;
     }

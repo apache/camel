@@ -36,7 +36,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     private static final String KEEP_RUNNING_ARG = "KEEP_RUNNING";
     private static final String MOUNT_POINT = "/deployments/data";
     private static final String SSH_PASSWORD_ARG = "SSH_PASSWORD_ARG";
-    private static final String FROM_IMAGE_NAME = "fedora:40";
+    private static final String FROM_IMAGE_NAME = "mirror.gcr.io/fedora:40";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
     protected static final int DEV_CONSOLE_PORT = 8080;
     protected static final int SSH_PORT = 22;

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM fedora:40 as samba
+FROM mirror.gcr.io/fedora:40 as samba
 LABEL maintainer="orpiske@apache.org"
 ENV SAMBA_ROOT /opt/camel/samba
 EXPOSE 139 445
