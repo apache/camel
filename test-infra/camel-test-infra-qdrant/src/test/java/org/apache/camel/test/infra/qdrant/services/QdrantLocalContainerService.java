@@ -38,7 +38,7 @@ public class QdrantLocalContainerService implements QdrantService, ContainerServ
     }
 
     public QdrantLocalContainerService(String imageName) {
-        this(new QdrantContainer(DockerImageName.parse(imageName)));
+        this(new QdrantContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("qdrant/qdrant")));
     }
 
     public QdrantLocalContainerService(QdrantContainer container) {

@@ -43,7 +43,8 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
 
     protected KafkaContainer initContainer() {
         return new KafkaContainer(
-                DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME)));
+                DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+                        .asCompatibleSubstituteFor("apache/kafka"));
     }
 
     public String getBootstrapServers() {
@@ -78,7 +79,7 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
         KafkaContainer container
                 = new KafkaContainer(
                         DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
-                                .asCompatibleSubstituteFor(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
+                                .asCompatibleSubstituteFor("apache/kafka"));
 
         return new ContainerLocalKafkaService(container);
     }
