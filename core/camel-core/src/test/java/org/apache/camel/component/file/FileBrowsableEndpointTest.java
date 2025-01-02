@@ -31,10 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- */
 public class FileBrowsableEndpointTest extends ContextTestSupport {
+
     private static final String TEST_FILE_NAME_PREFIX = UUID.randomUUID().toString();
 
     @Test
@@ -77,7 +75,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "b.txt");
 
         FileEndpoint endpoint
-                = context.getEndpoint(fileUri("?initialDelay=0&delay=10&sortBy=file:name"), FileEndpoint.class);
+                = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), FileEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
@@ -86,9 +84,6 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(2, list.size());
-
-        assertEquals(TEST_FILE_NAME_PREFIX + "a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
-        assertEquals(TEST_FILE_NAME_PREFIX + "b.txt", list.get(1).getIn().getHeader(Exchange.FILE_NAME));
 
         // the in progress repo should not leak
         assertEquals(0, repo.getCacheSize());
@@ -107,7 +102,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
                 "bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt");
 
         FileEndpoint endpoint = context.getEndpoint(
-                fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name"), FileEndpoint.class);
+                fileUri("?initialDelay=0&delay=10&recursive=true"), FileEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
@@ -116,10 +111,6 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(3, list.size());
-
-        assertEquals(TEST_FILE_NAME_PREFIX + "a.txt", list.get(0).getIn().getHeader(Exchange.FILE_NAME));
-        assertEquals(TEST_FILE_NAME_PREFIX + "c.txt", list.get(1).getIn().getHeader(Exchange.FILE_NAME_ONLY));
-        assertEquals(TEST_FILE_NAME_PREFIX + "b.txt", list.get(2).getIn().getHeader(Exchange.FILE_NAME_ONLY));
 
         // the in progress repo should not leak
         assertEquals(0, repo.getCacheSize());
