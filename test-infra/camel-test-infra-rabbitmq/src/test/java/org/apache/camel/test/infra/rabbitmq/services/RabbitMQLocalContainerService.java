@@ -23,6 +23,7 @@ import org.apache.camel.test.infra.rabbitmq.common.RabbitMQProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class RabbitMQLocalContainerService implements RabbitMQService, ContainerService<RabbitMQContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQLocalContainerService.class);
@@ -42,7 +43,7 @@ public class RabbitMQLocalContainerService implements RabbitMQService, Container
     }
 
     protected RabbitMQContainer initContainer(String imageName) {
-        return new RabbitMQContainer(imageName);
+        return new RabbitMQContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("rabbitmq"));
     }
 
     @Override
