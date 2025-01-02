@@ -17,7 +17,7 @@
 
 ARG HIVEMQ_VERSION=2024.6
 
-FROM hivemq/hivemq-ce:$HIVEMQ_VERSION as hivemq-ce-sparkplug-tck
+FROM mirror.gcr.io/hivemq/hivemq-ce:$HIVEMQ_VERSION as hivemq-ce-sparkplug-tck
 
 ARG SPARKPLUG_TCK_VERSION=3.0.0
 
