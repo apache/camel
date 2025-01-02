@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
  * Unit tests for {@link AntPathMatcherGenericFileFilter}.
  */
 public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
+    private static final String TEST_DIR_NAME = "test" + UUID.randomUUID();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -53,7 +55,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-1?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=true"))
+                        TEST_DIR_NAME
+                             + "/ant-path-1?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=true"))
                         .convertBodyTo(String.class)
                         .to("mock:result1");
             }
@@ -63,7 +66,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result1");
         mock.expectedBodiesReceivedInAnyOrder("Hello World");
 
-        String endpointUri = fileUri("files/ant-path-1/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-1/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World", Exchange.FILE_NAME, "report.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "b.TXT");
 
@@ -78,7 +81,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("files/ant-path-2?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak"))
+                from(fileUri(TEST_DIR_NAME + "/ant-path-2?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak"))
                         .convertBodyTo(String.class).to("mock:result2");
             }
         });
@@ -87,7 +90,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 3", "Hello World 4");
 
-        String endpointUri = fileUri("files/ant-path-2/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-2/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World 1", Exchange.FILE_NAME, "report.bak");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "report.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 3", Exchange.FILE_NAME, "b.BAK");
@@ -105,7 +108,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-3?initialDelay=0&delay=10&recursive=true&antInclude=**/*.pdf,**/*.txt&antExclude=**/a*,**/b*"))
+                        TEST_DIR_NAME
+                             + "/ant-path-3?initialDelay=0&delay=10&recursive=true&antInclude=**/*.pdf,**/*.txt&antExclude=**/a*,**/b*"))
                         .convertBodyTo(String.class)
                         .to("mock:result3");
             }
@@ -115,7 +119,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result3");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4");
 
-        String endpointUri = fileUri("files/ant-path-3/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-3/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World 1", Exchange.FILE_NAME, "a.pdf");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "m.pdf");
         template.sendBodyAndHeader(endpointUri, "Hello World 3", Exchange.FILE_NAME, "b.txt");
@@ -141,7 +145,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-4?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter"))
+                        TEST_DIR_NAME
+                             + "/ant-path-4?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter"))
                         .convertBodyTo(String.class)
                         .to("mock:result4");
             }
@@ -151,7 +156,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result4");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 3");
 
-        String endpointUri = fileUri("files/ant-path-4/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-4/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World 1", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 3", Exchange.FILE_NAME, "c.txt");
@@ -169,7 +174,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-5?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=false"))
+                        TEST_DIR_NAME
+                             + "/ant-path-5?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class)
                         .to("mock:result5");
             }
@@ -179,7 +185,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result5");
         mock.expectedBodiesReceivedInAnyOrder("Hello World");
 
-        String endpointUri = fileUri("files/ant-path-5/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-5/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World", Exchange.FILE_NAME,
                 "report.TXT");
 
@@ -195,7 +201,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-6?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak&antFilterCaseSensitive=false"))
+                        TEST_DIR_NAME
+                             + "/ant-path-6?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class)
                         .to("mock:result6");
 
@@ -206,7 +213,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result6");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4");
 
-        String endpointUri = fileUri("files/ant-path-6/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-6/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World 1", Exchange.FILE_NAME, "report.bak");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "report.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 3", Exchange.FILE_NAME, "b.BAK");
@@ -224,7 +231,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-7?initialDelay=0&delay=10&recursive=true&antInclude=**/*.Pdf,**/*.txt&antExclude=**/a*,**/b*&antFilterCaseSensitive=false"))
+                        TEST_DIR_NAME
+                             + "/ant-path-7?initialDelay=0&delay=10&recursive=true&antInclude=**/*.Pdf,**/*.txt&antExclude=**/a*,**/b*&antFilterCaseSensitive=false"))
                         .convertBodyTo(String.class).to("mock:result7");
 
             }
@@ -234,7 +242,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result7");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4", "Hello World 8", "Hello World 10");
 
-        String endpointUri = fileUri("files/ant-path-7/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-7/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World 1", Exchange.FILE_NAME, "a.pdf");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "m.pdf");
         template.sendBodyAndHeader(endpointUri, "Hello World 3", Exchange.FILE_NAME, "b.txt");
@@ -260,7 +268,8 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "files/ant-path-8?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter"))
+                        TEST_DIR_NAME
+                             + "/ant-path-8?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter"))
                         .convertBodyTo(String.class).to("mock:result8");
             }
         });
@@ -269,7 +278,7 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result8");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 3", "Hello World 4");
 
-        String endpointUri = fileUri("files/ant-path-8/x/y/z");
+        String endpointUri = fileUri(TEST_DIR_NAME + "/ant-path-8/x/y/z");
         template.sendBodyAndHeader(endpointUri, "Hello World 1", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 2", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(endpointUri, "Hello World 3", Exchange.FILE_NAME, "c.txt");

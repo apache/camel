@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.UUID;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,12 +29,13 @@ import org.junit.jupiter.api.Test;
  *
  */
 public class FileConsumeBackoffMultiplierTest extends ContextTestSupport {
+    private static final String TEST_FILE_NAME = "report" + UUID.randomUUID() + ".txt";
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
     }
 
     @Test
