@@ -17,7 +17,10 @@
 
 package org.apache.camel.test.infra.smb.services;
 
+import java.io.InputStream;
+
 import org.apache.camel.test.infra.smb.common.SmbProperties;
+import org.testcontainers.utility.ThrowingFunction;
 
 public class SmbRemoteService implements SmbService {
     @Override
@@ -38,6 +41,11 @@ public class SmbRemoteService implements SmbService {
     @Override
     public String password() {
         return System.getProperty(SmbProperties.SMB_PASSWORD);
+    }
+
+    @Override
+    public <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function) {
+        return null;
     }
 
     @Override
