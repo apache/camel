@@ -23,19 +23,20 @@ import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.CouchbaseContainer;
+import org.testcontainers.utility.DockerImageName;
 
 public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
     // Please check CAMEL-19228 before upgrading
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
-     * used in the Camel component tries to use that port by default and it seems
+     * used in the Camel component tries to use that port by default, and it seems
      * we cannot configure it. Therefore, we override the default container and
      * force the default KV port to be used.
      */
     private class CustomCouchbaseContainer extends CouchbaseContainer {
         public CustomCouchbaseContainer(String imageName) {
-            super(imageName);
+            super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("couchbase/server"));
 
             final int kvPort = 11210;
             addFixedExposedPort(kvPort, kvPort);

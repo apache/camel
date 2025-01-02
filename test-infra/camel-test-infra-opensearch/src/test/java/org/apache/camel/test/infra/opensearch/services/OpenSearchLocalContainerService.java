@@ -51,7 +51,10 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
     }
 
     protected OpensearchContainer initContainer(String imageName) {
-        OpensearchContainer opensearchContainer = new OpensearchContainer(DockerImageName.parse(imageName));
+        DockerImageName customImage = DockerImageName.parse(imageName)
+                .asCompatibleSubstituteFor("opensearchproject/opensearch");
+
+        OpensearchContainer opensearchContainer = new OpensearchContainer(customImage);
         // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
         // on the build pipeline
         opensearchContainer.setWaitStrategy(

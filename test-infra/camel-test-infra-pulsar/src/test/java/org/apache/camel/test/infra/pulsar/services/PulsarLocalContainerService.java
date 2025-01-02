@@ -45,7 +45,7 @@ public class PulsarLocalContainerService implements PulsarService, ContainerServ
     }
 
     protected PulsarContainer initContainer(String imageName) {
-        return new PulsarContainer(DockerImageName.parse(imageName))
+        return new PulsarContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("apachepulsar/pulsar"))
                 .withStartupTimeout(Duration.ofMinutes(3L));
     }
 
