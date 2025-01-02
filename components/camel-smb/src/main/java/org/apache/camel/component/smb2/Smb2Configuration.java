@@ -51,7 +51,7 @@ public class Smb2Configuration extends GenericFileConfiguration {
     private String password;
     @UriParam(label = "security", description = "The user domain")
     private String domain;
-    @UriParam(defaultValue = "*.txt", description = "The search pattern used to list the files")
+    @UriParam(defaultValue = "*", description = "The search pattern used to list the files")
     private String searchPattern;
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
