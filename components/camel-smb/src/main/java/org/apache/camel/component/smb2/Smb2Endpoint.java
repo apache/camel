@@ -18,16 +18,37 @@ package org.apache.camel.component.smb2;
 
 import java.util.Map;
 
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.GenericFilePollingConsumer;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.component.smb2.strategy.SmbProcessStrategyFactory;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Smb2Endpoint extends GenericFileEndpoint<File> implements EndpointServiceLocation {
+@UriEndpoint(firstVersion = "4.3.0", scheme = "smb2", title = "SMB2", syntax = "smb2:hostname:port/shareName",
+             category = { Category.FILE })
+@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                              + "renameUsingCopy,synchronous")
+public class Smb2Endpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(Smb2Endpoint.class);
 
@@ -62,6 +83,20 @@ public class Smb2Endpoint extends GenericFileEndpoint<File> implements EndpointS
     }
 
     @Override
+    protected GenericFileProcessStrategy<FileIdBothDirectoryInformation> createGenericFileStrategy() {
+        return new SmbProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
+    }
+
+    @Override
+    public GenericFileProducer<FileIdBothDirectoryInformation> createProducer() throws Exception {
+        try {
+            return new Smb2Producer(this, createOperations());
+        } catch (Exception e) {
+            throw new FailedToCreateProducerException(this, e);
+        }
+    }
+
+    @Override
     public String getServiceUrl() {
         return configuration.getProtocol() + ":" + configuration.getHostname() + ":" + configuration.getPort();
     }
@@ -80,12 +115,66 @@ public class Smb2Endpoint extends GenericFileEndpoint<File> implements EndpointS
     }
 
     @Override
-    public Exchange createExchange(GenericFile<File> file) {
+    public Smb2Configuration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public GenericFileConsumer<FileIdBothDirectoryInformation> createConsumer(Processor processor) {
+        // if noop=true then idempotent should also be configured
+        if (isNoop() && !isIdempotentSet()) {
+            LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
+            setIdempotent(true);
+        }
+
+        // if idempotent and no repository set then create a default one
+        if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
+            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+        }
+
+        Smb2Consumer consumer = new Smb2Consumer(
+                this, processor, createOperations(),
+                processStrategy != null ? processStrategy : createGenericFileStrategy());
+        consumer.setMaxMessagesPerPoll(this.getMaxMessagesPerPoll());
+        consumer.setEagerLimitMaxMessagesPerPoll(this.isEagerMaxMessagesPerPoll());
+        return consumer;
+    }
+
+    public GenericFileOperations<FileIdBothDirectoryInformation> createOperations() {
+        Smb2Operations operations = new Smb2Operations(configuration);
+        operations.setEndpoint(this);
+        return operations;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+                    getPollingConsumerBlockTimeout());
+        }
+        GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
+        result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        result.setBlockTimeout(getPollingConsumerBlockTimeout());
+        return result;
+    }
+
+    @Override
+    public void setConfiguration(GenericFileConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("SmbConfiguration expected");
+        }
+        this.configuration = (Smb2Configuration) configuration;
+        super.setConfiguration(configuration);
+    }
+
+    @Override
+    public Exchange createExchange(GenericFile<FileIdBothDirectoryInformation> file) {
         Exchange answer = super.createExchange();
         if (file != null) {
             file.bindToExchange(answer);
         }
         return answer;
     }
-
 }

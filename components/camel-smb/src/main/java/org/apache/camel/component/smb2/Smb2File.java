@@ -16,20 +16,26 @@
  */
 package org.apache.camel.component.smb2;
 
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 
-public class Smb2File extends GenericFile<File> implements Cloneable {
+public class Smb2File extends GenericFile<FileIdBothDirectoryInformation> implements Cloneable {
 
     private String hostname;
+
+    private final Smb2Operations operations;
+
+    public Smb2File(Smb2Operations operations) {
+        this.operations = operations;
+    }
 
     /**
      * Populates the {@link GenericFileMessage} relevant headers
      *
      * @param message the message to populate with headers
      */
-    public void populateHeaders(GenericFileMessage message) {
+    public void populateHeaders(GenericFileMessage<FileIdBothDirectoryInformation> message) {
         if (message != null) {
             // because there is not probeContentType option
             // in other file based components, false may be passed
@@ -40,7 +46,8 @@ public class Smb2File extends GenericFile<File> implements Cloneable {
     }
 
     @Override
-    public void populateHeaders(GenericFileMessage message, boolean isProbeContentTypeFromEndpoint) {
+    public void populateHeaders(
+            GenericFileMessage<FileIdBothDirectoryInformation> message, boolean isProbeContentTypeFromEndpoint) {
         populateHeaders(message);
     }
 
@@ -81,5 +88,11 @@ public class Smb2File extends GenericFile<File> implements Cloneable {
     @Override
     public String toString() {
         return "Smb2File[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
+    }
+
+    @Override
+    public Object getBody() {
+        // use operations so smb file can be closed
+        return operations.getBody(this.getAbsoluteFilePath());
     }
 }

@@ -19,7 +19,7 @@ package org.apache.camel.component.smb2;
 import java.net.URI;
 import java.util.Map;
 
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileComponent;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -27,7 +27,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.StringHelper;
 
 @Component("smb2")
-public class Smb2Component extends GenericFileComponent<File> {
+public class Smb2Component extends GenericFileComponent<FileIdBothDirectoryInformation> {
 
     public Smb2Component() {
     }
@@ -37,7 +37,8 @@ public class Smb2Component extends GenericFileComponent<File> {
     }
 
     @Override
-    protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+    protected GenericFileEndpoint<FileIdBothDirectoryInformation> buildFileEndpoint(
+            String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         String baseUri = getBaseUri(uri);
 
@@ -51,7 +52,7 @@ public class Smb2Component extends GenericFileComponent<File> {
     }
 
     @Override
-    protected void afterPropertiesSet(GenericFileEndpoint<File> endpoint) throws Exception {
+    protected void afterPropertiesSet(GenericFileEndpoint<FileIdBothDirectoryInformation> endpoint) throws Exception {
         // noop
     }
 

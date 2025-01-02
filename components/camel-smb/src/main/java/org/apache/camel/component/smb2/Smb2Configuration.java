@@ -18,11 +18,13 @@ package org.apache.camel.component.smb2;
 
 import java.net.URI;
 
+import com.hierynomus.smbj.SmbConfig;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.FileUtil;
 
 @UriParams
 public class Smb2Configuration extends GenericFileConfiguration {
@@ -30,12 +32,17 @@ public class Smb2Configuration extends GenericFileConfiguration {
     // component name is implied as the protocol
     private String protocol;
 
+    @UriParam(description = "The path, within the share, to consume the files from")
+    private String path;
+    @Metadata(defaultValue = "2048")
+    @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
+    private int readBufferSize;
     @UriPath
     @Metadata(required = true)
     private String hostname;
     @UriPath(defaultValue = "445")
-    private int port;
-    @UriPath
+    private int port = 445;
+    @UriPath(description = "The name of the share directory")
     @Metadata(required = true)
     private String shareName;
     @UriParam(label = "security", description = "The username required to access the share", secret = true)
@@ -44,18 +51,26 @@ public class Smb2Configuration extends GenericFileConfiguration {
     private String password;
     @UriParam(label = "security", description = "The user domain")
     private String domain;
+    @UriParam(defaultValue = "*.txt", description = "The search pattern used to list the files")
+    private String searchPattern;
+    @Metadata(autowired = true)
+    @UriParam(label = "advanced",
+              description = "An optional SMB client configuration, can be used to configure client specific "
+                            + " configurations, like timeouts")
+    private SmbConfig smbConfig;
 
     public Smb2Configuration() {
-        setProtocol("smb");
+        setProtocol("smb2");
     }
 
     public Smb2Configuration(URI uri) {
-        super.configure(uri);
+        super.setDirectory("");
         setProtocol(uri.getScheme());
         setHostname(uri.getHost());
         if (uri.getPort() > 0) {
             setPort(uri.getPort());
         }
+        setShareName(FileUtil.stripLeadingSeparator(uri.getPath()));
     }
 
     public String getProtocol() {
@@ -67,6 +82,20 @@ public class Smb2Configuration extends GenericFileConfiguration {
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+        super.setDirectory(path);
+    }
+
+    @Override
+    public String getDirectory() {
+        return super.getDirectory() == null ? "" : super.getDirectory();
     }
 
     public String getHostname() {
@@ -124,5 +153,29 @@ public class Smb2Configuration extends GenericFileConfiguration {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
+    }
+
+    public void setReadBufferSize(int readBufferSize) {
+        this.readBufferSize = readBufferSize;
+    }
+
+    public int getReadBufferSize() {
+        return readBufferSize;
+    }
+
+    public SmbConfig getSmbConfig() {
+        return smbConfig;
+    }
+
+    public void setSmbConfig(SmbConfig smbConfig) {
+        this.smbConfig = smbConfig;
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smb2;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
 public class Smb2Constants {
@@ -23,4 +24,11 @@ public class Smb2Constants {
     @Metadata(description = "The remote hostname.", javaType = "String")
     public static final String FILE_HOST = "CamelFileHost";
 
+    @Metadata(description = "Path to the local work file, if local work directory is used.", javaType = "String")
+    public static final String FILE_LOCAL_WORK_PATH = Exchange.FILE_LOCAL_WORK_PATH;
+
+    // for backwards compatibility with existing 'file-exists' that uses a header
+    @Metadata(label = "producer", description = "The expected behavior if the file already exists.",
+              javaType = "org.apache.camel.component.file.GenericFileExist")
+    public static final String SMB_FILE_EXISTS = "CamelSmbFileExists";
 }

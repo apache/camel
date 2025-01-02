@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.smb2;
 
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
-public interface Smb2FileOperations extends GenericFileOperations<File> {
+public interface Smb2FileOperations extends GenericFileOperations<FileIdBothDirectoryInformation> {
 
     /**
      * Connects to the remote server
