@@ -14,28 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.langchain4j.chat.tool;
+package org.apache.camel.component.file;
 
-import java.util.List;
+/**
+ * A filter for filtering file that is optimized for matching by name only.
+ *
+ * @see GenericFileFilter
+ */
+public interface OptimizedFileFilter extends GenericFileFilter {
 
-import dev.langchain4j.agent.tool.JsonSchemaProperty;
-
-@Deprecated(since = "4.8.0")
-public class NamedJsonSchemaProperty {
-
-    private final String name;
-    private final List<JsonSchemaProperty> properties;
-
-    public NamedJsonSchemaProperty(String name, List<JsonSchemaProperty> properties) {
-        this.name = name;
-        this.properties = properties;
+    @Override
+    default boolean accept(GenericFile file) {
+        return false;
     }
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * Tests whether the specified file should be included (quick test using only file name)
+     *
+     * @param  name the file name
+     * @return      <code>true</code> if and only if <code>file</code> should be included, <tt>null</tt> to use the
+     *              {@link #accept(GenericFile)} method.
+     */
+    Boolean accept(String name);
 
-    public List<JsonSchemaProperty> getProperties() {
-        return properties;
-    }
 }

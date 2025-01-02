@@ -6,6 +6,17 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.9 to 4.10
 
+=== camel-file
+
+The `camel-file` consumer has been optimized when filtering file names using name matching only,
+to avoid creating an `GenericFile` object that represent the file. This is unnessasary if the file
+is to be excluded due the filtering.
+
+This optimization has changed APIs in the `camel-file` component to let methods that accept
+`GenericFile` as parameter, has been changed to use a `Supplier<GenericFile>` to lazy create the wrapper.
+
+Camel users who have created 3rd party component extending `camel-file` may need to migrate your components.
+
 === camel-jgroups
 
 The cluster lock has been removed as it has been removed in JGroups 5.4 onwards, and it was
@@ -18,6 +29,10 @@ The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been remove
 
 The camel-jbang commands for `camel-k` has been removed.
 
+=== camel-mina
+
+If using object codec, then you should configure the `objectCodecPattern` configuration to specify
+which java classes (FQN) to allow for Object serialization. You can use `*` to accept all patterns.
 
 === camel-google-pubsub-lite
 
@@ -32,3 +47,7 @@ The `camel-k-starter` has been removed.
 === camel-tracing
 
 We have deprecated the setting of MDC `trace_id` and `span_id` in favour of implementation specific feature. You need to check the specific tracing/telemetry component configuration to learn how to switch from the deprecated configuration to the new one. Most of the time you will need to remove the `camel.main.use-mdc-logging` Camel property (or set it to `false`) and add dependencies and configuration settings to enable the specific component instrumentation.
+
+=== camel-langchain4j-chat
+
+The function calling feature was removed. Please use the `camel-langchain4j-tools` component for function calling.

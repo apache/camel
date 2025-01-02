@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.lang.reflect.Method;
@@ -32,6 +31,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.util.CamelContextTestHelper;
 import org.apache.camel.test.junit5.util.ExtensionHelper;
 import org.apache.camel.test.junit5.util.RouteCoverageDumperExtension;
+import org.apache.camel.test.junit5.util.RouteDumperExtension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 
 public class TransientCamelContextManager implements CamelContextManager {
+
     private static final Logger LOG = LoggerFactory.getLogger(TransientCamelContextManager.class);
 
     private final TestExecutionConfiguration testConfigurationBuilder;
@@ -281,8 +282,16 @@ public class TransientCamelContextManager implements CamelContextManager {
     @Override
     public void dumpRouteCoverage(Class<?> clazz, String currentTestName, long time) throws Exception {
         if (testConfigurationBuilder.isRouteCoverageEnabled()) {
-            final RouteCoverageDumperExtension routeCoverageWrapper = new RouteCoverageDumperExtension(context);
-            routeCoverageWrapper.dumpRouteCoverage(clazz, currentTestName, time);
+            RouteCoverageDumperExtension wrapper = new RouteCoverageDumperExtension(context);
+            wrapper.dumpRouteCoverage(clazz, currentTestName, time);
+        }
+    }
+
+    @Override
+    public void dumpRoute(Class<?> clazz, String currentTestName, String format) throws Exception {
+        if (format != null && !"false".equals(format)) {
+            RouteDumperExtension wrapper = new RouteDumperExtension(context);
+            wrapper.dumpRoute(clazz, currentTestName, format);
         }
     }
 }

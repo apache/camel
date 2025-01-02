@@ -24,11 +24,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.junit.jupiter.api.Test;
@@ -85,33 +83,6 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
                 return prop.getProperty(name);
             }
         });
-    }
-
-    @Test
-    public void testLoadAll() {
-        PropertiesComponent pc = context.getPropertiesComponent();
-        Properties properties = pc.loadProperties();
-
-        Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
-        Assertions.assertThat(properties.get("hi")).isEqualTo("World");
-        Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
-        Assertions.assertThat(properties.get("empty")).isNull();
-        Assertions.assertThat(properties.get("test-non-active-profile")).isNull();
-        Assertions.assertThat(properties.get("test-profile-a")).isEqualTo("Profile A");
-        Assertions.assertThat(properties.get("test-profile-b")).isEqualTo("Profile B");
-    }
-
-    @Test
-    public void testLoadFiltered() {
-        PropertiesComponent pc = context.getPropertiesComponent();
-        Properties properties = pc.loadProperties(k -> k.matches("^start$|.*mock$|.*-profile.*"));
-
-        Assertions.assertThat(properties).hasSize(4);
-        Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
-        Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
-        Assertions.assertThat(properties.get("test-non-active-profile")).isNull();
-        Assertions.assertThat(properties.get("test-profile-a")).isEqualTo("Profile A");
-        Assertions.assertThat(properties.get("test-profile-b")).isEqualTo("Profile B");
     }
 
     @Test

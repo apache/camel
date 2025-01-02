@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -39,6 +40,7 @@ import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,12 +111,11 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             }
 
             // creates a generic file
-            GenericFile<File> gf
-                    = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
+            Supplier<GenericFile<File>> gf = Suppliers.memorize(
+                    () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
 
             if (resumeStrategy != null) {
-                final ResumeAdapter adapter = setupResumeStrategy(gf);
-
+                final ResumeAdapter adapter = setupResumeStrategy(gf.get());
                 if (adapter instanceof DirectoryEntriesResumeAdapter directoryEntriesResumeAdapter) {
                     LOG.trace("Running the resume process for file {}", file);
                     if (directoryEntriesResumeAdapter.resume(file)) {
@@ -131,7 +132,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return false;
     }
 
-    private boolean processEntry(List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
+    private boolean processEntry(
+            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         if (file.isDirectory()) {
             return processDirectoryEntry(fileList, depth, file, gf, files);
         } else {
@@ -141,32 +143,40 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return false;
     }
 
-    private void processFileEntry(List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
+    private void processFileEntry(
+            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         // Windows can report false to a file on a share so regard it
         // always as a file (if it is not a directory)
-        if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
-            LOG.trace("Adding valid file: {}", file);
-            // matched file so add
-            if (extendedAttributes != null) {
-                Path path = file.toPath();
-                Map<String, Object> allAttributes = new HashMap<>();
-                for (String attribute : extendedAttributes) {
-                    readAttributes(file, path, allAttributes, attribute);
+        if (depth >= endpoint.minDepth) {
+            boolean valid
+                    = isValidFile(gf, file.getName(), file.getAbsolutePath(),
+                            getRelativeFilePath(endpointPath, null, null, file),
+                            false, files);
+            if (valid) {
+                LOG.trace("Adding valid file: {}", file);
+                if (extendedAttributes != null) {
+                    Path path = file.toPath();
+                    Map<String, Object> allAttributes = new HashMap<>();
+                    for (String attribute : extendedAttributes) {
+                        readAttributes(file, path, allAttributes, attribute);
+                    }
+                    gf.get().setExtendedAttributes(allAttributes);
                 }
-
-                gf.setExtendedAttributes(allAttributes);
+                fileList.add(gf.get());
             }
-
-            fileList.add(gf);
         }
     }
 
     private boolean processDirectoryEntry(
-            List<GenericFile<File>> fileList, int depth, File file, GenericFile<File> gf, File[] files) {
-        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
-            boolean canPollMore = pollDirectory(file, fileList, depth);
-            if (!canPollMore) {
-                return true;
+            List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            boolean valid
+                    = isValidFile(gf, file.getName(), file.getAbsolutePath(),
+                            getRelativeFilePath(endpointPath, null, null, file),
+                            true, files);
+            if (valid) {
+                boolean canPollMore = pollDirectory(file, fileList, depth);
+                return !canPollMore;
             }
         }
         return false;
@@ -250,7 +260,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
-    protected boolean isMatched(GenericFile<File> file, String doneFileName, File[] files) {
+    protected boolean isMatched(Supplier<GenericFile<File>> file, String doneFileName, File[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
         // the done file name must be among the files
         for (File f : files) {
@@ -320,6 +330,27 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
+    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, File file) {
+        return () -> {
+            File f;
+            String endpointNormalizedSep = FileUtil.normalizePath(endpointPath) + File.separator;
+            String p = file.getPath();
+            if (p.startsWith(endpointNormalizedSep)) {
+                p = p.substring(endpointNormalizedSep.length());
+            }
+            f = new File(p);
+
+            String answer;
+            if (f.getParent() != null) {
+                answer = f.getParent() + File.separator + file.getName();
+            } else {
+                answer = f.getName();
+            }
+            return answer;
+        };
+    }
+
+    @Override
     protected void updateFileHeaders(GenericFile<File> file, Message message) {
         File upToDateFile = file.getFile();
         if (fileHasMoved(file)) {
@@ -345,9 +376,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
-    protected boolean isMatchedHiddenFile(GenericFile<File> file, boolean isDirectory) {
+    protected boolean isMatchedHiddenFile(Supplier<GenericFile<File>> file, String name, boolean isDirectory) {
         if (isDirectory) {
-            String name = file.getFileNameOnly();
             if (!name.startsWith(".")) {
                 return true;
             }
@@ -357,7 +387,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         if (getEndpoint().isIncludeHiddenFiles()) {
             return true;
         } else {
-            return super.isMatchedHiddenFile(file, isDirectory);
+            return super.isMatchedHiddenFile(file, name, isDirectory);
         }
     }
 

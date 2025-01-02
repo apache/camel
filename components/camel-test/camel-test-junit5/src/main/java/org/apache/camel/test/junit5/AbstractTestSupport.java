@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.junit5;
 
 import java.util.Properties;
@@ -99,6 +98,21 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     @Deprecated(since = "4.7.0")
     public boolean isDumpRouteCoverage() {
         return testConfigurationBuilder.isDumpRouteCoverage();
+    }
+
+    /**
+     * Whether to dump route as XML or YAML
+     * <p/>
+     * This allows tooling or manual inspection of the tested routes.
+     * <p/>
+     * You can also turn on route dump globally via setting JVM system property <tt>CamelTestRouteDump=xml</tt>.
+     *
+     * @deprecated Use the accessors from {@link #testConfiguration()} method
+     * @return     <tt>xml</tt> or <tt>yaml</tt> to write route dump to the log
+     */
+    @Deprecated(since = "4.10.0")
+    public String getDumpRoute() {
+        return testConfigurationBuilder.getDumpRoute();
     }
 
     /**

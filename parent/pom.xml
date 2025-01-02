@@ -76,7 +76,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.29.39</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.29.43</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.30</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.27</azure-storage-blob-changefeed-version>
@@ -223,18 +223,18 @@
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
-        <huaweicloud-obs-version>3.24.9</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.128</huaweicloud-sdk-version>
+        <huaweicloud-obs-version>3.24.12</huaweicloud-obs-version>
+        <huaweicloud-sdk-version>3.1.129</huaweicloud-sdk-version>
         <ical4j-version>4.0.8</ical4j-version>
         <icu4j-version>76.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
-        <infinispan-version>15.1.1.Final</infinispan-version>
+        <infinispan-version>15.1.3.Final</infinispan-version>
         <influx-java-driver-version>2.24</influx-java-driver-version>
         <influx-client-java-driver-version>7.2.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
-        <ivy-version>2.5.2</ivy-version>
+        <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.2.0</jackson-jq-version>
         <jackson2-version>2.18.2</jackson2-version>
@@ -363,8 +363,8 @@
         <micrometer-tracing-version>1.4.1</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.1</microprofile-fault-tolerance-version>
-        <milvus-client-version>2.5.2</milvus-client-version>
-        <mina-version>2.2.3</mina-version>
+        <milvus-client-version>2.5.3</milvus-client-version>
+        <mina-version>2.2.4</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.14</minio-version>
@@ -377,7 +377,7 @@
         <msal4j-version>1.18.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
-        <mybatis-version>3.5.17</mybatis-version>
+        <mybatis-version>3.5.18</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <netty-version>4.1.116.Final</netty-version>
@@ -387,7 +387,7 @@
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
-        <ognl-version>3.4.3</ognl-version>
+        <ognl-version>3.4.4</ognl-version>
         <openapi-generator-version>7.10.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.18.0</opensearch-rest-client-version>
@@ -395,7 +395,7 @@
         <opensearch-testcontainers-version>2.1.2</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
         <opentelemetry-version>1.45.0</opentelemetry-version>
-        <opentelemetry-log4j2-version>2.10.0-alpha</opentelemetry-log4j2-version>
+        <opentelemetry-log4j2-version>2.11.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
         <opentelemetry-alpha-version>1.27.0-alpha</opentelemetry-alpha-version>
         <optaplanner-version>10.0.0</optaplanner-version>

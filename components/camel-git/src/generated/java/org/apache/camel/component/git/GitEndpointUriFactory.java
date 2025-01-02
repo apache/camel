@@ -23,26 +23,47 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(32);
         props.add("allowEmpty");
+        props.add("backoffErrorThreshold");
+        props.add("backoffIdleThreshold");
+        props.add("backoffMultiplier");
         props.add("branchName");
         props.add("bridgeErrorHandler");
+        props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("gitConfigFile");
+        props.add("greedy");
+        props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("localPath");
         props.add("operation");
         props.add("password");
+        props.add("pollStrategy");
         props.add("remoteName");
         props.add("remotePath");
+        props.add("repeatCount");
+        props.add("runLoggingLevel");
+        props.add("scheduledExecutorService");
+        props.add("scheduler");
+        props.add("schedulerProperties");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("startScheduler");
         props.add("tagName");
         props.add("targetBranchName");
+        props.add("timeUnit");
         props.add("type");
+        props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("scheduler.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override

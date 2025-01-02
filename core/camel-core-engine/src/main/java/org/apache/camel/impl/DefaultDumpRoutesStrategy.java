@@ -88,19 +88,6 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         this.camelContext = camelContext;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // output can be a filename, dir, or both
-        String name = FileUtil.stripPath(output);
-        if (name != null && name.contains(".")) {
-            outputFileName = name;
-            output = FileUtil.onlyPath(output);
-            if (output == null || output.isEmpty()) {
-                output = ".";
-            }
-        }
-    }
-
     public String getInclude() {
         return include;
     }
@@ -138,7 +125,16 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     }
 
     public void setOutput(String output) {
-        this.output = output;
+        String name = FileUtil.stripPath(output);
+        if (name != null && name.contains(".")) {
+            outputFileName = name;
+            this.output = FileUtil.onlyPath(output);
+            if (this.output == null || this.output.isEmpty()) {
+                this.output = ".";
+            }
+        } else {
+            this.output = output;
+        }
     }
 
     public boolean isUriAsParameters() {

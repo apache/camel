@@ -23,7 +23,7 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(31);
         props.add("acceptTimeout");
         props.add("autoAck");
         props.add("backlog");
@@ -51,6 +51,7 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("requireEndOfData");
         props.add("reuseAddress");
         props.add("sendBufferSize");
+        props.add("sslContextParameters");
         props.add("stringPayload");
         props.add("tcpNoDelay");
         props.add("validatePayload");

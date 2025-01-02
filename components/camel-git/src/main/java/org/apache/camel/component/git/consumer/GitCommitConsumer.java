@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.git.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -37,7 +39,8 @@ public class GitCommitConsumer extends AbstractGitConsumer {
 
     @Override
     protected int poll() throws Exception {
-        int count = 0;
+        Queue<Object> exchanges = new ArrayDeque<>();
+
         Iterable<RevCommit> commits;
         if (ObjectHelper.isNotEmpty(((GitEndpoint) getEndpoint()).getBranchName())) {
             commits = getGit().log().add(getGit().getRepository().resolve(((GitEndpoint) getEndpoint()).getBranchName()))
@@ -54,11 +57,21 @@ public class GitCommitConsumer extends AbstractGitConsumer {
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_COMMITTER_NAME, commit.getCommitterIdent().getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_TIME, commit.getCommitTime());
                 getProcessor().process(e);
-                commitsConsumed.add(commit.getId());
-                count++;
+                exchanges.add(e);
             }
         }
-        return count;
+        return processBatch(exchanges);
     }
 
+    @Override
+    public Object onPreProcessed(Exchange exchange) {
+        return exchange.getMessage().getHeader(GitConstants.GIT_COMMIT_ID);
+    }
+
+    @Override
+    public void onProcessed(Exchange exchange, Object value) {
+        if (value instanceof ObjectId oid) {
+            commitsConsumed.add(oid);
+        }
+    }
 }

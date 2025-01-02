@@ -62,6 +62,7 @@ import org.apache.camel.spi.RoutePolicy;
 public class RouteDefinition extends OutputDefinition<RouteDefinition>
         implements NamedRoute, PreconditionContainer, ResourceAware {
     private final AtomicBoolean prepared = new AtomicBoolean();
+    private final AtomicBoolean inlined = new AtomicBoolean();
     private FromDefinition input;
     private String routeConfigurationId;
     private transient Set<String> appliedRouteConfigurationIds;
@@ -145,6 +146,22 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      */
     public void markUnprepared() {
         prepared.set(false);
+    }
+
+    /**
+     * Check if the route has been inlined by rest-dsl
+     *
+     * @return whether the route has been inlined by rest-dsl or not
+     */
+    public boolean isInlined() {
+        return inlined.get();
+    }
+
+    /**
+     * Marks the route definition as inlined by rest-dsl
+     */
+    public void markInlined() {
+        inlined.set(true);
     }
 
     /**

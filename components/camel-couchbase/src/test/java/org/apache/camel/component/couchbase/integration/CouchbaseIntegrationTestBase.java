@@ -20,7 +20,6 @@ package org.apache.camel.component.couchbase.integration;
 import java.time.Duration;
 import java.util.Collections;
 
-import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.manager.bucket.BucketSettings;
 import com.couchbase.client.java.manager.bucket.BucketType;
@@ -51,7 +50,7 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
         cluster.buckets().createBucket(
                 BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE).flushEnabled(true));
 
-        Bucket bucket = cluster.bucket(bucketName);
+        cluster.bucket(bucketName);
         DesignDocument designDoc = new DesignDocument(
                 bucketName,
                 Collections.singletonMap(bucketName, new View("function (doc, meta) {  emit(meta.id, doc);}")));

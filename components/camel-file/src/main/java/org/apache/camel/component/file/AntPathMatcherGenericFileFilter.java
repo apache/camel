@@ -21,8 +21,10 @@ package org.apache.camel.component.file;
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  *
- * @param <T>
+ * @param      <T>
+ * @deprecated     use {@link AntFilter}
  */
+@Deprecated
 public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> {
 
     private final AntPathMatcherFileFilter filter;

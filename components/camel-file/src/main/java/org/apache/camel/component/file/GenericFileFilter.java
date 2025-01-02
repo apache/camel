@@ -18,6 +18,8 @@ package org.apache.camel.component.file;
 
 /**
  * A filter for {@link GenericFile}.
+ *
+ * @see OptimizedFileFilter
  */
 public interface GenericFileFilter<T> {
 

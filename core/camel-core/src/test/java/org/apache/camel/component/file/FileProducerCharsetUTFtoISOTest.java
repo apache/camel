@@ -19,9 +19,12 @@ package org.apache.camel.component.file;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,18 +37,26 @@ class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
-    @Test
-    void testFileProducerCharsetUTFtoISO() throws Exception {
+    @BeforeEach
+    void writeFile() throws Exception {
         try (OutputStream fos = Files.newOutputStream(testFile("input.FileProducerCharsetUTFtoISOTest.txt"))) {
             fos.write(DATA.getBytes(StandardCharsets.UTF_8));
         }
+    }
 
+    @Test
+    void testFileProducerCharsetUTFtoISO() throws Exception {
         assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertFileExists(testFile("output.FileProducerCharsetUTFtoISOTest.txt"));
-        byte[] data = Files.readAllBytes(testFile("output.FileProducerCharsetUTFtoISOTest.txt"));
 
-        assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
+        // The file may have been created, but hasn't fully flushed to disk, which means reading data will return nothing
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            byte[] data = Files.readAllBytes(testFile("output.FileProducerCharsetUTFtoISOTest.txt"));
+
+            assertEquals(DATA, new String(data, StandardCharsets.ISO_8859_1));
+        });
+
     }
 
     @Override

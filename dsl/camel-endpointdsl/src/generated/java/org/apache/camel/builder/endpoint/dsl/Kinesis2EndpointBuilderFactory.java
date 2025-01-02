@@ -1232,6 +1232,38 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Supply a pre-constructed Amazon Kinesis async client to use for the
+         * KCL Consumer.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.kinesis.KinesisAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder amazonKinesisAsyncClient(software.amazon.awssdk.services.kinesis.KinesisAsyncClient amazonKinesisAsyncClient) {
+            doSetProperty("amazonKinesisAsyncClient", amazonKinesisAsyncClient);
+            return this;
+        }
+        /**
+         * Supply a pre-constructed Amazon Kinesis async client to use for the
+         * KCL Consumer.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.kinesis.KinesisAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder amazonKinesisAsyncClient(String amazonKinesisAsyncClient) {
+            doSetProperty("amazonKinesisAsyncClient", amazonKinesisAsyncClient);
+            return this;
+        }
+        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -1261,6 +1293,20 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointConsumerBuilder amazonKinesisClient(String amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * Name of the KCL application. This defaults to the stream name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointConsumerBuilder applicationName(String applicationName) {
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -1847,6 +1893,38 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Supply a pre-constructed Amazon Kinesis async client to use for the
+         * KCL Consumer.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.kinesis.KinesisAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder amazonKinesisAsyncClient(software.amazon.awssdk.services.kinesis.KinesisAsyncClient amazonKinesisAsyncClient) {
+            doSetProperty("amazonKinesisAsyncClient", amazonKinesisAsyncClient);
+            return this;
+        }
+        /**
+         * Supply a pre-constructed Amazon Kinesis async client to use for the
+         * KCL Consumer.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.kinesis.KinesisAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder amazonKinesisAsyncClient(String amazonKinesisAsyncClient) {
+            doSetProperty("amazonKinesisAsyncClient", amazonKinesisAsyncClient);
+            return this;
+        }
+        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -1876,6 +1954,20 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointProducerBuilder amazonKinesisClient(String amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * Name of the KCL application. This defaults to the stream name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointProducerBuilder applicationName(String applicationName) {
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -2420,6 +2512,38 @@ public interface Kinesis2EndpointBuilderFactory {
         }
 
         /**
+         * Supply a pre-constructed Amazon Kinesis async client to use for the
+         * KCL Consumer.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.kinesis.KinesisAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder amazonKinesisAsyncClient(software.amazon.awssdk.services.kinesis.KinesisAsyncClient amazonKinesisAsyncClient) {
+            doSetProperty("amazonKinesisAsyncClient", amazonKinesisAsyncClient);
+            return this;
+        }
+        /**
+         * Supply a pre-constructed Amazon Kinesis async client to use for the
+         * KCL Consumer.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.kinesis.KinesisAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param amazonKinesisAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder amazonKinesisAsyncClient(String amazonKinesisAsyncClient) {
+            doSetProperty("amazonKinesisAsyncClient", amazonKinesisAsyncClient);
+            return this;
+        }
+        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -2449,6 +2573,20 @@ public interface Kinesis2EndpointBuilderFactory {
          */
         default AdvancedKinesis2EndpointBuilder amazonKinesisClient(String amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * Name of the KCL application. This defaults to the stream name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKinesis2EndpointBuilder applicationName(String applicationName) {
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**

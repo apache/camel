@@ -40,10 +40,10 @@ public interface GitConstants {
     String GIT_COMMIT_COMMITTER_NAME = "CamelGitCommiterName";
     @Metadata(label = "consumer", description = "The commit time", javaType = "int")
     String GIT_COMMIT_TIME = "CamelGitCommitTime";
+    @Metadata(label = "consumer", description = "The branch/tag name", javaType = "String")
+    String GIT_BRANCH_NAME = "CamelGitBranchName";
     @Metadata(label = "consumer", description = "The leaf", javaType = "String")
     String GIT_BRANCH_LEAF = "CamelGitBranchLeaf";
     @Metadata(label = "consumer", description = "The object id", javaType = "String")
     String GIT_BRANCH_OBJECT_ID = "CamelGitBranchObjectId";
-    String GIT_TAG_LEAF = "CamelGitTagLeaf";
-    String GIT_TAG_OBJECT_ID = "CamelGitTagObjectId";
 }

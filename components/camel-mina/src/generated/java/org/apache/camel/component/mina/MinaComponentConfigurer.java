@@ -61,6 +61,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "minaLogger": getOrCreateConfiguration(target).setMinaLogger(property(camelContext, boolean.class, value)); return true;
         case "noreplyloglevel":
         case "noReplyLogLevel": getOrCreateConfiguration(target).setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "objectcodecpattern":
+        case "objectCodecPattern": getOrCreateConfiguration(target).setObjectCodecPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "orderedthreadpoolexecutor":
         case "orderedThreadPoolExecutor": getOrCreateConfiguration(target).setOrderedThreadPoolExecutor(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -114,6 +116,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "minaLogger": return boolean.class;
         case "noreplyloglevel":
         case "noReplyLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "objectcodecpattern":
+        case "objectCodecPattern": return java.lang.String.class;
         case "orderedthreadpoolexecutor":
         case "orderedThreadPoolExecutor": return boolean.class;
         case "sslcontextparameters":
@@ -168,6 +172,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "minaLogger": return getOrCreateConfiguration(target).isMinaLogger();
         case "noreplyloglevel":
         case "noReplyLogLevel": return getOrCreateConfiguration(target).getNoReplyLogLevel();
+        case "objectcodecpattern":
+        case "objectCodecPattern": return getOrCreateConfiguration(target).getObjectCodecPattern();
         case "orderedthreadpoolexecutor":
         case "orderedThreadPoolExecutor": return getOrCreateConfiguration(target).isOrderedThreadPoolExecutor();
         case "sslcontextparameters":

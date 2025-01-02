@@ -26,16 +26,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+/**
+ * Camel Spring Boot unit test.
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners(
-                        value = {
-                                CamelSpringTestContextLoaderTestExecutionListener.class,
-                                CamelSpringBootExecutionListener.class,
-                                StopWatchTestExecutionListener.class
-                        },
+@TestExecutionListeners(value = {
+        CamelSpringTestContextLoaderTestExecutionListener.class,
+        CamelSpringBootExecutionListener.class,
+        StopWatchTestExecutionListener.class
+},
                         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public @interface CamelSpringBootTest {
 
