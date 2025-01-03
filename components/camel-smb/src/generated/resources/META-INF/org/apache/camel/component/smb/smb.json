@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "smb",
     "title": "SMB",
-    "description": "Server Message Block (SMB) file shares",
+    "description": "Read and write files to Server Message Block (SMB) file shares.",
     "deprecated": false,
     "firstVersion": "4.3.0",
     "label": "file",

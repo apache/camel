@@ -2,7 +2,7 @@
 :doctitle: SMB
 :shortname: smb
 :artifactid: camel-smb
-:description: Server Message Block (SMB) file shares
+:description: Read and write files to Server Message Block (SMB) file shares.
 :since: 4.3
 :supportlevel: Stable
 :tabs-sync-option:

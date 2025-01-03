@@ -3900,7 +3900,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SMB (camel-smb)
-     * Server Message Block (SMB) file shares
+     * Read and write files to Server Message Block (SMB) file shares.
      * 
      * Category: file
      * Since: 4.3
