@@ -75,7 +75,7 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
     @Override
     public String toString() {
-        return "Smb2File[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
+        return "SmbFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
     }
 
     @Override
