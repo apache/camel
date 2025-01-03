@@ -43,9 +43,8 @@ class ProducerTemplateResultProcessor implements Processor {
             return;
         }
 
-        Object newBody = exchange.getMessage().getBody(type);
-        if (newBody != null) {
-            exchange.getMessage().setBody(newBody);
-        }
+        // should be mandatory
+        Object newBody = exchange.getMessage().getMandatoryBody(type);
+        exchange.getMessage().setBody(newBody);
     }
 }
