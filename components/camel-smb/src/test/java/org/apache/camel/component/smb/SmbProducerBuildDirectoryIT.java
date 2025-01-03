@@ -14,19 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.smb;
 
-import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
-import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.component.file.GenericFileProducer;
+import java.util.concurrent.TimeUnit;
 
-/**
- * SMB file producer
- */
-public class SmbProducer extends GenericFileProducer<FileIdBothDirectoryInformation> {
+import org.junit.jupiter.api.Test;
 
-    protected SmbProducer(final SmbEndpoint endpoint, GenericFileOperations<FileIdBothDirectoryInformation> operations) {
-        super(endpoint, operations);
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SmbProducerBuildDirectoryIT extends SmbServerTestSupport {
+
+    protected String getSmbUrl() {
+        return String.format(
+                "smb:%s/%s?username=%s&password=%s&path=/buildDir/user/jono",
+                service.address(), service.shareName(), service.userName(), service.password());
+    }
+
+    @Test
+    public void testProduceAndBuildFullRemotFolderTest() {
+        sendFile(getSmbUrl(), "Hello World", "jono.txt");
+
+        await().atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Hello World",
+                        new String(copyFileContentFromContainer("/data/rw/buildDir/user/jono/jono.txt"))));
+
     }
 }

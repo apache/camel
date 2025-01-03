@@ -17,7 +17,6 @@
 package org.apache.camel.component.smb;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import com.hierynomus.smbj.SmbConfig;
@@ -65,11 +64,7 @@ public class SmbComponentIT extends CamelTestSupport {
         return new RouteBuilder() {
             private void process(Exchange exchange) throws IOException {
                 final SmbFile file = exchange.getMessage().getBody(SmbFile.class);
-                try (InputStream inputStream = file.getInputStream()) {
-
-                    LOG.debug("Read exchange: {}, with contents: {}", file.getPath(),
-                            new String(inputStream.readAllBytes()));
-                }
+                LOG.debug("Read exchange with contents: {}", new String((byte[]) file.getBody()));
             }
 
             public void configure() {
@@ -86,6 +81,7 @@ public class SmbComponentIT extends CamelTestSupport {
 
                 fromF("direct:smbSendFile")
                         .to("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig")
+                        .to("smb:%s/%s?username=%s&password=%s&path=/")
                         .to("mock:result");
 
             }
