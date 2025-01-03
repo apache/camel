@@ -52,6 +52,8 @@ public class PahoMqtt5EndpointConfigurer extends PropertyConfigurerSupport imple
         case "keepAliveInterval": target.getConfiguration().setKeepAliveInterval(property(camelContext, int.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "manualacksenabled":
+        case "manualAcksEnabled": target.getConfiguration().setManualAcksEnabled(property(camelContext, boolean.class, value)); return true;
         case "maxreconnectdelay":
         case "maxReconnectDelay": target.getConfiguration().setMaxReconnectDelay(property(camelContext, int.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
@@ -118,6 +120,8 @@ public class PahoMqtt5EndpointConfigurer extends PropertyConfigurerSupport imple
         case "keepAliveInterval": return int.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "manualacksenabled":
+        case "manualAcksEnabled": return boolean.class;
         case "maxreconnectdelay":
         case "maxReconnectDelay": return int.class;
         case "password": return java.lang.String.class;
@@ -185,6 +189,8 @@ public class PahoMqtt5EndpointConfigurer extends PropertyConfigurerSupport imple
         case "keepAliveInterval": return target.getConfiguration().getKeepAliveInterval();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "manualacksenabled":
+        case "manualAcksEnabled": return target.getConfiguration().isManualAcksEnabled();
         case "maxreconnectdelay":
         case "maxReconnectDelay": return target.getConfiguration().getMaxReconnectDelay();
         case "password": return target.getConfiguration().getPassword();
