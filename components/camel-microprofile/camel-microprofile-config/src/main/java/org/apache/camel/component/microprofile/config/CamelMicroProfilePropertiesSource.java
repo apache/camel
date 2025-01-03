@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.microprofile.config;
 
-import org.apache.camel.spi.PropertiesSource;
+import java.util.Properties;
+import java.util.function.Predicate;
+
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.util.OrderedProperties;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
@@ -25,7 +29,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
  * This allows using configuration management from MicroProfile with Camel.
  */
 @JdkService("properties-source-factory")
-public class CamelMicroProfilePropertiesSource implements PropertiesSource {
+public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
 
     @Override
     public String getName() {
@@ -35,6 +39,32 @@ public class CamelMicroProfilePropertiesSource implements PropertiesSource {
     @Override
     public String getProperty(String name) {
         return ConfigProvider.getConfig().getOptionalValue(name, String.class).orElse(null);
+    }
+
+    @Override
+    public Properties loadProperties() {
+        return loadProperties(s -> true);
+    }
+
+    @Override
+    public Properties loadProperties(Predicate<String> filter) {
+        Properties answer = new OrderedProperties();
+
+        for (String name : ConfigProvider.getConfig().getPropertyNames()) {
+            if (filter.test(name)) {
+                var value = getProperty(name);
+                if (value != null) {
+                    answer.put(name, getProperty(name));
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public void reloadProperties(String location) {
+        // noop
     }
 
     @Override
