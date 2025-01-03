@@ -20,7 +20,6 @@ public class TensorFlowServingProperties {
     public static final String TENSORFLOW_SERVING_GRPC_PORT = "tensorflow.serving.grpc.port";
     public static final String TENSORFLOW_SERVING_REST_PORT = "tensorflow.serving.rest.port";
     public static final String TENSORFLOW_SERVING_CONTAINER = "tensorflow.serving.container";
-    public static final String TENSORFLOW_SERVING_CONTAINER_ARM64 = "tensorflow.serving.container.arm64";
 
     private TensorFlowServingProperties() {
     }
