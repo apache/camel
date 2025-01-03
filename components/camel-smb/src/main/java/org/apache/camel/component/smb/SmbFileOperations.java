@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.smb2;
+package org.apache.camel.component.smb;
 
-import com.hierynomus.smbj.share.File;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
-public interface Smb2FileOperations extends GenericFileOperations<File> {
+public interface SmbFileOperations extends GenericFileOperations<FileIdBothDirectoryInformation> {
 
     /**
      * Connects to the remote server
@@ -31,7 +31,7 @@ public interface Smb2FileOperations extends GenericFileOperations<File> {
      * @return                                     <tt>true</tt> if connected
      * @throws GenericFileOperationFailedException can be thrown
      */
-    boolean connect(Smb2Configuration configuration, Exchange exchange) throws GenericFileOperationFailedException;
+    boolean connect(SmbConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException;
 
     /**
      * Returns whether we are connected to the remote server or not

@@ -17,11 +17,14 @@
 
 package org.apache.camel.test.infra.smb.services;
 
+import java.io.InputStream;
+
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.testcontainers.utility.ThrowingFunction;
 
 public interface SmbService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
     String address();
@@ -31,6 +34,8 @@ public interface SmbService extends TestService, BeforeTestExecutionCallback, Af
     String userName();
 
     String password();
+
+    <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function);
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) {

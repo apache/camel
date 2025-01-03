@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.smb2;
+package org.apache.camel.component.smb;
 
-import org.apache.camel.spi.Metadata;
+public class SmbChangedReadLockTimeoutIT extends SmbChangedReadLockIT {
 
-public class Smb2Constants {
-
-    @Metadata(description = "The remote hostname.", javaType = "String")
-    public static final String FILE_HOST = "CamelFileHost";
-
+    @Override
+    protected String getSmbUrl() {
+        // will timeout, but the scheduler will pickup the file later
+        return super.getSmbUrl() + "&readLockTimeout=2500";
+    }
 }

@@ -14,58 +14,73 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.smb;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileMessage;
 
-import com.hierynomus.smbj.share.File;
-import org.apache.camel.Exchange;
-import org.apache.camel.WrappedFile;
+public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
-public class SmbFile implements WrappedFile<File> {
+    private String hostname;
 
-    private final File file;
+    private final SmbOperations operations;
 
-    public SmbFile(File file) {
-        this.file = file;
+    public SmbFile(SmbOperations operations) {
+        this.operations = operations;
     }
 
-    void populateHeaders(Exchange exchange) {
-        exchange.getMessage().setHeader(SmbConstants.SMB_FILE_PATH, file.getPath());
-        exchange.getMessage().setHeader(SmbConstants.SMB_UNC_PATH, file.getUncPath());
-
-        exchange.getMessage().setHeader(Exchange.FILE_NAME, file.getFileInformation().getNameInformation().toString());
+    /**
+     * Populates the {@link GenericFileMessage} relevant headers
+     *
+     * @param message the message to populate with headers
+     */
+    public void populateHeaders(GenericFileMessage<FileIdBothDirectoryInformation> message) {
+        if (message != null) {
+            // because there is not probeContentType option
+            // in other file based components, false may be passed
+            // as the second argument.
+            super.populateHeaders(message, false);
+            message.setHeader(SmbConstants.FILE_HOST, getHostname());
+        }
     }
 
     @Override
-    public File getFile() {
-        return file;
+    public void populateHeaders(
+            GenericFileMessage<FileIdBothDirectoryInformation> message, boolean isProbeContentTypeFromEndpoint) {
+        populateHeaders(message);
     }
 
-    public String getPath() {
-        return getFile().getPath();
+    public String getHostname() {
+        return hostname;
     }
 
-    public String getUncPath() {
-        return getFile().getUncPath();
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
-    public InputStream getInputStream() {
-        return getFile().getInputStream();
+    @Override
+    public char getFileSeparator() {
+        // always use '/' as separator for SMB
+        return '/';
     }
 
-    public long getSize() {
-        return file.getFileInformation().getStandardInformation().getEndOfFile();
+    @Override
+    public void copyFromPopulateAdditional(
+            GenericFile<FileIdBothDirectoryInformation> source, GenericFile<FileIdBothDirectoryInformation> result) {
+        SmbFile remoteSource = (SmbFile) source;
+        SmbFile remoteResult = (SmbFile) result;
+        remoteResult.setHostname(remoteSource.getHostname());
+    }
+
+    @Override
+    public String toString() {
+        return "Smb2File[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
     }
 
     @Override
     public Object getBody() {
-        try (InputStream is = file.getInputStream()) {
-            return is.readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // use operations so smb file can be closed
+        return operations.getBody(this.getAbsoluteFilePath());
     }
 }

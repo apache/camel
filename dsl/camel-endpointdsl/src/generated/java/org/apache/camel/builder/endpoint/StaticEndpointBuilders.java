@@ -13152,7 +13152,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * SMB (camel-smb)
-     * Receive files from SMB (Server Message Block) shares.
+     * Server Message Block (SMB) file shares
      * 
      * Category: file
      * Since: 4.3
@@ -13168,7 +13168,7 @@ public class StaticEndpointBuilders {
      * Default value: 445
      * 
      * Path parameter: shareName (required)
-     * The name of the share to connect to.
+     * The name of the share directory
      * 
      * @param path hostname:port/shareName
      * @return the dsl builder
@@ -13178,7 +13178,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * SMB (camel-smb)
-     * Receive files from SMB (Server Message Block) shares.
+     * Server Message Block (SMB) file shares
      * 
      * Category: file
      * Since: 4.3
@@ -13194,7 +13194,7 @@ public class StaticEndpointBuilders {
      * Default value: 445
      * 
      * Path parameter: shareName (required)
-     * The name of the share to connect to.
+     * The name of the share directory
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
