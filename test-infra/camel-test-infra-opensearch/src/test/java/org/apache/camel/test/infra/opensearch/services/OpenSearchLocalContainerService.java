@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
-import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 import org.testcontainers.utility.DockerImageName;
 
 public class OpenSearchLocalContainerService implements OpenSearchService, ContainerService<OpensearchContainer> {
@@ -40,15 +39,7 @@ public class OpenSearchLocalContainerService implements OpenSearchService, Conta
 
     public OpenSearchLocalContainerService() {
         this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerService.class,
-                getPropertyKeyForContainerImage()));
-    }
-
-    private static String getPropertyKeyForContainerImage() {
-        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
-            return OpenSearchProperties.OPEN_SEARCH_CONTAINER_PPC64LE;
-        } else {
-            return OpenSearchProperties.OPEN_SEARCH_CONTAINER;
-        }
+                OpenSearchProperties.OPEN_SEARCH_CONTAINER));
     }
 
     public OpenSearchLocalContainerService(String imageName) {
