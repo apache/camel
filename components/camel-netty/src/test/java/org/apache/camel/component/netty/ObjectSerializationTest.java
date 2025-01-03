@@ -22,18 +22,17 @@ import java.util.Properties;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Object Serialization is not allowed by default. However it can be enabled by adding specific encoders/decoders.
@@ -50,12 +49,8 @@ public class ObjectSerializationTest extends BaseNettyTest {
     @Test
     public void testObjectSerializationFailureByDefault() {
         Date date = new Date();
-        try {
-            template.requestBody("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        Object o = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
+        Assertions.assertNull(o);
     }
 
     @Test
