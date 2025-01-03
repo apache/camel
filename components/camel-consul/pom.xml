@@ -157,31 +157,4 @@
         </dependency>
 
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>ppc64le</id>
-            <activation>
-                <os>
-                    <arch>ppc64le</arch>
-                </os>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <skipITs>${skipTests}</skipITs>
-                            <reuseForks>true</reuseForks>
-                            <systemPropertyVariables>
-                                 <consul.container>icr.io/ppc64le-oss/consul-ppc64le:1.9.4</consul.container>
-                           </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>
