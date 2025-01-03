@@ -34,7 +34,6 @@
     <description>To call Kamelets</description>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-reifier</artifactId>
@@ -52,6 +51,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-djl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-hugging-face</artifactId>
+            <version>${langchain4j-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
