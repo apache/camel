@@ -10,7 +10,6 @@ import org.apache.camel.spi.Synchronization;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
-
 public class PahoMqtt5ManualAcksIT extends PahoMqtt5ITSupport {
     @EndpointInject("mock:test")
     MockEndpoint mock;
@@ -20,8 +19,10 @@ public class PahoMqtt5ManualAcksIT extends PahoMqtt5ITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test").to("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true");
-                from("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true").to("mock:test");
+                from("direct:test")
+                        .to("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true");
+                from("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true")
+                        .to("mock:test");
             }
         };
     }

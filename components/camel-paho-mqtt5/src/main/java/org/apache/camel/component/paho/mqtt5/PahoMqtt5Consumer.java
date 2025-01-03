@@ -170,6 +170,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                         throw new RuntimeException(e);
                     }
                 }
+
                 @Override
                 public void onFailure(Exchange exchange) {
                     LOG.error("Error: " + exchange.getExchangeId(), exchange.getException());

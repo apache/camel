@@ -550,12 +550,12 @@ public class PahoMqtt5Configuration implements Cloneable {
         this.sessionExpiryInterval = sessionExpiryInterval;
     }
 
-
     /**
      * Sets whether to use manual acknowledgements for the client.
      *
-     * By default, this is false and message will be automatically acknowledged. If set to true, the acknowledgement is added in the exchange's completion callback.
-
+     * By default, this is false and message will be automatically acknowledged. If set to true, the acknowledgement is
+     * added in the exchange's completion callback.
+     *
      */
     public boolean isManualAcksEnabled() {
 
