@@ -19,12 +19,9 @@ package org.apache.camel.test.infra.milvus.common;
 
 public final class MilvusProperties {
     public static final String MILVUS_ENDPOINT_URL = "milvus.endpoint.url";
-
     public static final String MILVUS_ENDPOINT_HOST = "milvus.endpoint.host";
-
     public static final String MILVUS_ENDPOINT_PORT = "milvus.endpoint.port";
     public static final String MILVUS_CONTAINER = "milvus.container";
-    public static final String MILVUS_CONTAINER_PPC64LE = "milvus.container.ppc64le";
 
     private MilvusProperties() {
 

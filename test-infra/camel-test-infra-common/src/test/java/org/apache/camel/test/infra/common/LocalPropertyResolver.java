@@ -24,6 +24,12 @@ public class LocalPropertyResolver {
 
     public static final String CONTAINER_PROPERTIES_FILE_NAME = "container.properties";
 
+    /**
+     * Resolves the container to use. Platform-specific containers are resolved automatically
+     *
+     * @param  propertyName The property name pointing to the container
+     * @return
+     */
     public static String getProperty(Class<?> clazz, String propertyName) {
         return System.getProperty(propertyName, getPropertyFromContainersPropertiesFile(clazz, propertyName));
     }
@@ -37,6 +43,19 @@ public class LocalPropertyResolver {
             String errorMessage = "Error when reading file " + CONTAINER_PROPERTIES_FILE_NAME
                                   + " for class " + clazz.getCanonicalName();
             throw new RuntimeException(errorMessage, e);
+        }
+
+        return resolveProperty(properties, propertyName);
+    }
+
+    private static String resolveProperty(Properties properties, String propertyName) {
+        // This should append the 'os.arch' version to the property (typically, one of amd64, aarch64, ppc64le or s390x)
+        String platformProperty = String.format("%s.%s", propertyName, System.getProperty("os.arch"));
+
+        // Platform properties take precedence
+        String value = properties.getProperty(platformProperty);
+        if (value != null && !value.isEmpty()) {
+            return value;
         }
 
         return properties.getProperty(propertyName);

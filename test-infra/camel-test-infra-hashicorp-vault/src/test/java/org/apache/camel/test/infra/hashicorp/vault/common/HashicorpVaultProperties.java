@@ -19,7 +19,6 @@ package org.apache.camel.test.infra.hashicorp.vault.common;
 
 public final class HashicorpVaultProperties {
     public static final String HASHICORP_VAULT_CONTAINER = "hashicorp.vault.container";
-    public static final String HASHICORP_VAULT_CONTAINER_PPC64LE = "hashicorp.vault.container.ppc64le";
     public static final String HASHICORP_VAULT_ADDRESS = "hashicorp.vault.address";
     public static final String HASHICORP_VAULT_HOST = "hashicorp.vault.host";
     public static final String HASHICORP_VAULT_PORT = "hashicorp.vault.port";

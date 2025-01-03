@@ -41,10 +41,8 @@ public class TensorFlowServingLocalContainerService implements TensorFlowServing
     @SuppressWarnings("resource")
     protected GenericContainer<?> initContainer() {
         boolean isArm64 = System.getProperty("os.arch").equals("aarch64");
-        String containerProp = isArm64
-                ? TensorFlowServingProperties.TENSORFLOW_SERVING_CONTAINER_ARM64
-                : TensorFlowServingProperties.TENSORFLOW_SERVING_CONTAINER;
-        String imageName = LocalPropertyResolver.getProperty(TensorFlowServingLocalContainerService.class, containerProp);
+        String imageName = LocalPropertyResolver.getProperty(TensorFlowServingLocalContainerService.class,
+                TensorFlowServingProperties.TENSORFLOW_SERVING_CONTAINER);
         if (isArm64) {
             // Bitnami's TF Serving image supports ARM64
             return new GenericContainer<>(DockerImageName.parse(imageName))
