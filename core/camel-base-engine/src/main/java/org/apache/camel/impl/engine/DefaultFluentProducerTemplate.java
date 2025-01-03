@@ -34,7 +34,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -77,7 +76,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         this.resultProcessors = new ClassValue<>() {
             @Override
             protected Processor computeValue(Class<?> type) {
-                return new ConvertBodyProcessor(type);
+                return new ProducerTemplateResultProcessor(type);
             }
         };
     }
