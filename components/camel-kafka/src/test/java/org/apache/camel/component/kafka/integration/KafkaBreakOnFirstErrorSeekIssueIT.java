@@ -40,8 +40,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +53,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * mimics the reproduction of the problem in https://github.com/Krivda/camel-bug-reproduction
  */
 @Tags({ @Tag("breakOnFirstError") })
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64", "ppc64le" },
-             disabledReason = "This test does not run reliably on some platforms")
 
 class KafkaBreakOnFirstErrorSeekIssueIT extends BaseKafkaTestSupport {
 
