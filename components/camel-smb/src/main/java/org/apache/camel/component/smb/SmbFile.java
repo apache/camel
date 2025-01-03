@@ -61,25 +61,13 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
     @Override
     public char getFileSeparator() {
-        // always use / as separator for FTP
+        // always use '/' as separator for SMB
         return '/';
     }
 
     @Override
-    protected boolean isAbsolute(String name) {
-        if (!name.isEmpty()) {
-            return name.charAt(0) == '/' || name.charAt(0) == '\\';
-        }
-        return false;
-    }
-
-    @Override
-    protected String normalizePath(String name) {
-        return name;
-    }
-
-    @Override
-    public void copyFromPopulateAdditional(GenericFile source, GenericFile result) {
+    public void copyFromPopulateAdditional(
+            GenericFile<FileIdBothDirectoryInformation> source, GenericFile<FileIdBothDirectoryInformation> result) {
         SmbFile remoteSource = (SmbFile) source;
         SmbFile remoteResult = (SmbFile) result;
         remoteResult.setHostname(remoteSource.getHostname());
