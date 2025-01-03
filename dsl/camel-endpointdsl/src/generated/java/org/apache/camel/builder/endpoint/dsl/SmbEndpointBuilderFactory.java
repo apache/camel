@@ -119,35 +119,6 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The path, within the share, to consume the files from.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
-         * The search pattern used to list the files.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: *
-         * Group: common
-         * 
-         * @param searchPattern the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder searchPattern(String searchPattern) {
-            doSetProperty("searchPattern", searchPattern);
-            return this;
-        }
-        /**
          * If true, the file will be deleted after it is processed successfully.
          * 
          * The option is a: <code>boolean</code> type.
@@ -228,6 +199,20 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointConsumerBuilder noop(String noop) {
             doSetProperty("noop", noop);
+            return this;
+        }
+        /**
+         * The path, within the share, to consume the files from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param path the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder path(String path) {
+            doSetProperty("path", path);
             return this;
         }
         /**
@@ -316,6 +301,37 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
+            return this;
+        }
+        /**
+         * The search pattern used to list the files (server side on SMB). This
+         * parameter can contain the name of a file (or multiple files, if
+         * wildcards are used) within this directory. When it is null all files
+         * are included. Two wild card characters are supported in the search
+         * pattern. The (question mark) character matches a single character. If
+         * a search pattern contains one or more characters, then exactly that
+         * number of characters is matched by the wildcards. For example, the
+         * criterion x matches abx but not abcx or ax, because the two file
+         * names do not have enough characters preceding the literal. When a
+         * file name criterion has characters trailing a literal, then the match
+         * is made with specified number of characters or less. For example, the
+         * criterion x matches xab, xa, and x, but not xabc. If only characters
+         * are present in the file name selection criterion, then the match is
+         * made as if the criterion contained characters trailing a literal. The
+         * (asterisk) character matches an entire file name. A null or empty
+         * specification criterion also selects all file names. For example,
+         * .abc or .abc match any file with an extension of abc. ., , or empty
+         * string match all files in a directory.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param searchPattern the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder searchPattern(String searchPattern) {
+            doSetProperty("searchPattern", searchPattern);
             return this;
         }
         /**
@@ -2395,35 +2411,6 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The path, within the share, to consume the files from.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointProducerBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
-         * The search pattern used to list the files.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: *
-         * Group: common
-         * 
-         * @param searchPattern the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointProducerBuilder searchPattern(String searchPattern) {
-            doSetProperty("searchPattern", searchPattern);
-            return this;
-        }
-        /**
          * If provided, then Camel will write a checksum file when the original
          * file has been written. The checksum file will contain the checksum
          * created with the provided algorithm for the original file. The
@@ -3157,35 +3144,6 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
-            return this;
-        }
-        /**
-         * The path, within the share, to consume the files from.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointBuilder path(String path) {
-            doSetProperty("path", path);
-            return this;
-        }
-        /**
-         * The search pattern used to list the files.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: *
-         * Group: common
-         * 
-         * @param searchPattern the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointBuilder searchPattern(String searchPattern) {
-            doSetProperty("searchPattern", searchPattern);
             return this;
         }
         /**

@@ -32,11 +32,6 @@ public class SmbConfiguration extends GenericFileConfiguration {
     // component name is implied as the protocol
     private String protocol;
 
-    @UriParam(description = "The path, within the share, to consume the files from")
-    private String path;
-    @Metadata(defaultValue = "2048")
-    @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
-    private int readBufferSize;
     @UriPath
     @Metadata(required = true)
     private String hostname;
@@ -51,8 +46,18 @@ public class SmbConfiguration extends GenericFileConfiguration {
     private String password;
     @UriParam(label = "security", description = "The user domain")
     private String domain;
-    @UriParam(defaultValue = "*", description = "The search pattern used to list the files")
+    @UriParam(label = "consumer", description = "The path, within the share, to consume the files from")
+    private String path;
+    @UriParam(label = "consumer",
+              description = "The search pattern used to list the files (server side on SMB). This parameter can contain the name of a file (or multiple files, if wildcards are used) within this directory. When it is null all files are included."
+                            + " Two wild card characters are supported in the search pattern. The ? (question mark) character matches a single character. If a search pattern contains one or more ? characters, then exactly that number of characters is matched by the wildcards."
+                            + " For example, the criterion ??x matches abx but not abcx or ax, because the two file names do not have enough characters preceding the literal. When a file name criterion has ? characters trailing a literal, then the match is made with specified number of characters or less."
+                            + " For example, the criterion x?? matches xab, xa, and x, but not xabc. If only ? characters are present in the file name selection criterion, then the match is made as if the criterion contained ? characters trailing a literal."
+                            + " The * (asterisk) character matches an entire file name. A null or empty specification criterion also selects all file names. For example, *.abc or .abc match any file with an extension of abc. *.*, *, or empty string match all files in a directory.")
     private String searchPattern;
+    @Metadata(defaultValue = "2048")
+    @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
+    private int readBufferSize;
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
               description = "An optional SMB client configuration, can be used to configure client specific "
