@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
@@ -70,6 +71,10 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     clientId,
                     PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
             LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+                client.setManualAcks(true);
+
+            }
             client.connect(connectionOptions);
         }
 
@@ -155,6 +160,22 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         paho.setHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, mqttMessage.getProperties());
 
         exchange.setIn(paho);
+        if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
+                @Override
+                public void onComplete(Exchange exchange) {
+                    try {
+                        PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
+                    } catch (MqttException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                @Override
+                public void onFailure(Exchange exchange) {
+                    LOG.error("Error: " + exchange.getExchangeId(), exchange.getException());
+                }
+            });
+        }
         return exchange;
     }
 
