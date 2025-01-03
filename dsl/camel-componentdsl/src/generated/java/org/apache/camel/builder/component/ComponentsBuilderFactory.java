@@ -3900,7 +3900,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * SMB (camel-smb)
-     * Receive files from SMB (Server Message Block) shares.
+     * Server Message Block (SMB) file shares
      * 
      * Category: file
      * Since: 4.3
@@ -3910,19 +3910,6 @@ public interface ComponentsBuilderFactory {
      */
     static SmbComponentBuilderFactory.SmbComponentBuilder smb() {
         return SmbComponentBuilderFactory.smb();
-    }
-    /**
-     * SMB2 (camel-smb)
-     * Server Message Block (SMB) file shares
-     * 
-     * Category: file
-     * Since: 4.3
-     * Maven coordinates: org.apache.camel:camel-smb
-     * 
-     * @return the dsl builder
-     */
-    static Smb2ComponentBuilderFactory.Smb2ComponentBuilder smb2() {
-        return Smb2ComponentBuilderFactory.smb2();
     }
     /**
      * Smooks (camel-smooks)

@@ -23,7 +23,7 @@ public class SmbEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(89);
+        Set<String> props = new HashSet<>(90);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -105,6 +105,7 @@ public class SmbEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("sendEmptyMessageWhenIdle");
         props.add("shareName");
         props.add("shuffle");
+        props.add("smbConfig");
         props.add("sortBy");
         props.add("sorter");
         props.add("startScheduler");

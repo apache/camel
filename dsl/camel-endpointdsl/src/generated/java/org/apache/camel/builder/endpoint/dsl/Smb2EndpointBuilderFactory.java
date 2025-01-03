@@ -3385,7 +3385,7 @@ public interface Smb2EndpointBuilderFactory {
          * Since: 4.3
          * Maven coordinates: org.apache.camel:camel-smb
          * 
-         * Syntax: <code>smb2:hostname:port/shareName</code>
+         * Syntax: <code>smb:hostname:port/shareName</code>
          * 
          * Path parameter: hostname (required)
          * The share hostname or IP address
@@ -3411,7 +3411,7 @@ public interface Smb2EndpointBuilderFactory {
          * Since: 4.3
          * Maven coordinates: org.apache.camel:camel-smb
          * 
-         * Syntax: <code>smb2:hostname:port/shareName</code>
+         * Syntax: <code>smb:hostname:port/shareName</code>
          * 
          * Path parameter: hostname (required)
          * The share hostname or IP address

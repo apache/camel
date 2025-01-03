@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.smb2.Smb2Component;
+import org.apache.camel.component.smb.SmbComponent;
 
 /**
  * Server Message Block (SMB) file shares
@@ -48,7 +48,7 @@ public interface Smb2ComponentBuilderFactory {
     /**
      * Builder for the SMB2 component.
      */
-    interface Smb2ComponentBuilder extends ComponentBuilder<Smb2Component> {
+    interface Smb2ComponentBuilder extends ComponentBuilder<SmbComponent> {
     
         
         /**
@@ -165,11 +165,11 @@ public interface Smb2ComponentBuilderFactory {
     }
 
     class Smb2ComponentBuilderImpl
-            extends AbstractComponentBuilder<Smb2Component>
+            extends AbstractComponentBuilder<SmbComponent>
             implements Smb2ComponentBuilder {
         @Override
-        protected Smb2Component buildConcreteComponent() {
-            return new Smb2Component();
+        protected SmbComponent buildConcreteComponent() {
+            return new SmbComponent();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -177,11 +177,11 @@ public interface Smb2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((Smb2Component) component).setBridgeErrorHandler((boolean) value); return true;
-            case "lazyStartProducer": ((Smb2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "autowiredEnabled": ((Smb2Component) component).setAutowiredEnabled((boolean) value); return true;
-            case "healthCheckConsumerEnabled": ((Smb2Component) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckProducerEnabled": ((Smb2Component) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "bridgeErrorHandler": ((SmbComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((SmbComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autowiredEnabled": ((SmbComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((SmbComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((SmbComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }
