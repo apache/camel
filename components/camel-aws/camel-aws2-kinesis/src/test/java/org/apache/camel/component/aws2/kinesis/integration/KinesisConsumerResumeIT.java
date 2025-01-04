@@ -55,10 +55,10 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.deleteStream;
 import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.putRecords;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 /*
  * This test simulates resuming consumption from AWS Kinesis - consuming right at the middle of the batch of messages
