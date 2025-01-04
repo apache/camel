@@ -29,10 +29,10 @@ public final class FtpConstants {
     @Metadata(label = "consumer", description = "A `Long` value containing the last modified timestamp of the file.",
               javaType = "long")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
-    @Metadata(description = "Specifies the output file name (relative to the endpoint directory) to\n" +
-                            "be used for the output message when sending to the endpoint. If this is\n" +
-                            "not present and no expression either, then a generated message ID is\n" +
-                            "used as the filename instead.",
+    @Metadata(description = "Specifies the output file name (relative to the endpoint directory) to"
+                            + " be used for the output message when sending to the endpoint. If this is"
+                            + " not present and no expression either, then a generated message ID is"
+                            + " used as the filename instead.",
               javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(description = "Only the file name (the name with no leading paths).", javaType = "String")

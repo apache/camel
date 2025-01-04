@@ -3343,6 +3343,19 @@ public interface SmbEndpointBuilderFactory {
          * Since: 4.3
          * Maven coordinates: org.apache.camel:camel-smb
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SmbHeaderNameBuilder smb() {
+            return SmbHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * SMB (camel-smb)
+         * Read and write files to Server Message Block (SMB) file shares.
+         * 
+         * Category: file
+         * Since: 4.3
+         * Maven coordinates: org.apache.camel:camel-smb
+         * 
          * Syntax: <code>smb:hostname:port/shareName</code>
          * 
          * Path parameter: hostname (required)
@@ -3390,6 +3403,216 @@ public interface SmbEndpointBuilderFactory {
             return SmbEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the SMB component.
+     */
+    public static class SmbHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SmbHeaderNameBuilder INSTANCE = new SmbHeaderNameBuilder();
+
+        /**
+         * A long value containing the file size.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLength}.
+         */
+        public String fileLength() {
+            return "CamelFileLength";
+        }
+        /**
+         * A Long value containing the last modified timestamp of the file.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLastModified}.
+         */
+        public String fileLastModified() {
+            return "CamelFileLastModified";
+        }
+        /**
+         * Only the file name (the name with no leading paths).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileNameOnly}.
+         */
+        public String fileNameOnly() {
+            return "CamelFileNameOnly";
+        }
+        /**
+         * (producer) Specifies the name of the file to write (relative to the
+         * endpoint directory). This name can be a String; a String with a file
+         * or simple Language expression; or an Expression object. If it's null
+         * then Camel will auto-generate a filename based on the message unique
+         * ID. (consumer) Name of the consumed file as a relative file path with
+         * offset from the starting directory configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileName}.
+         */
+        public String fileName() {
+            return "CamelFileName";
+        }
+        /**
+         * The name of the file that has been consumed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileNameConsumed}.
+         */
+        public String fileNameConsumed() {
+            return "CamelFileNameConsumed";
+        }
+        /**
+         * A boolean option specifying whether the consumed file denotes an
+         * absolute path or not. Should normally be false for relative paths.
+         * Absolute paths should normally not be used but we added to the move
+         * option to allow moving files to absolute paths. But can be used
+         * elsewhere as well.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileAbsolute}.
+         */
+        public String fileAbsolute() {
+            return "CamelFileAbsolute";
+        }
+        /**
+         * The absolute path to the file. For relative files this path holds the
+         * relative path instead.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileAbsolutePath}.
+         */
+        public String fileAbsolutePath() {
+            return "CamelFileAbsolutePath";
+        }
+        /**
+         * The file path. For relative files this is the starting directory. For
+         * absolute files this is the absolute path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FilePath}.
+         */
+        public String filePath() {
+            return "CamelFilePath";
+        }
+        /**
+         * The relative path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileRelativePath}.
+         */
+        public String fileRelativePath() {
+            return "CamelFileRelativePath";
+        }
+        /**
+         * The parent path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileParent}.
+         */
+        public String fileParent() {
+            return "CamelFileParent";
+        }
+        /**
+         * The actual absolute filepath (path name) for the output file that was
+         * written. This header is set by Camel and its purpose is providing
+         * end-users with the name of the file that was written.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FileNameProduced}.
+         */
+        public String fileNameProduced() {
+            return "CamelFileNameProduced";
+        }
+        /**
+         * Is used for overruling CamelFileName header and use the value instead
+         * (but only once, as the producer will remove this header after writing
+         * the file). The value can be only be a String. Notice that if the
+         * option fileName has been configured, then this is still being
+         * evaluated.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OverruleFileName}.
+         */
+        public String overruleFileName() {
+            return "CamelOverruleFileName";
+        }
+        /**
+         * The remote hostname.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileHost}.
+         */
+        public String fileHost() {
+            return "CamelFileHost";
+        }
+        /**
+         * Path to the local work file, if local work directory is used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileLocalWorkPath}.
+         */
+        public String fileLocalWorkPath() {
+            return "CamelFileLocalWorkPath";
+        }
+        /**
+         * The expected behavior if the file already exists.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.file.GenericFileExist} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SmbFileExists}.
+         */
+        @Deprecated
+        public String smbFileExists() {
+            return "CamelSmbFileExists";
+        }
     }
     static SmbEndpointBuilder endpointBuilder(String componentName, String path) {
         class SmbEndpointBuilderImpl extends AbstractEndpointBuilder implements SmbEndpointBuilder, AdvancedSmbEndpointBuilder {

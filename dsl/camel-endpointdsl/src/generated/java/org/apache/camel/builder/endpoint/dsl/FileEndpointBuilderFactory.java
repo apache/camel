@@ -4025,7 +4025,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code FileNameOnly}.
          */
@@ -4034,13 +4034,11 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * (producer) Specifies the name of the file to write (relative to the
-         * endpoint directory). This name can be a String; a String with a
-         * xref:languages:file-language.adocFile Language or
-         * xref:languages:simple-language.adocSimple expression; or an
-         * Expression object. If it's null then Camel will auto-generate a
-         * filename based on the message unique ID. (consumer) Name of the
-         * consumed file as a relative file path with offset from the starting
-         * directory configured on the endpoint.
+         * endpoint directory). This name can be a String; a String with a file
+         * or simple Language expression; or an Expression object. If it's null
+         * then Camel will auto-generate a filename based on the message unique
+         * ID. (consumer) Name of the consumed file as a relative file path with
+         * offset from the starting directory configured on the endpoint.
          * 
          * The option is a: {@code String} type.
          * 
@@ -4117,8 +4115,8 @@ public interface FileEndpointBuilderFactory {
             return "CamelFileContentType";
         }
         /**
-         * The file path. For relative files this is the starting directory the
-         * relative filename. For absolute files this is the absolute path.
+         * The file path. For relative files this is the starting directory. For
+         * absolute files this is the absolute path.
          * 
          * The option is a: {@code String} type.
          * 

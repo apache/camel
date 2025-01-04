@@ -28,53 +28,51 @@ public final class FileConstants {
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
     @Metadata(label = "producer", description = "The local work path", javaType = "File")
     public static final String FILE_LOCAL_WORK_PATH = Exchange.FILE_LOCAL_WORK_PATH;
-    @Metadata(description = "Only the file name (the name with no leading paths).", javaType = "String")
+    @Metadata(label = "consumer", description = "Only the file name (the name with no leading paths).", javaType = "String")
     public static final String FILE_NAME_ONLY = Exchange.FILE_NAME_ONLY;
-    @Metadata(description = "(producer) Specifies the name of the file to write (relative to the endpoint\n" +
-                            "directory). This name can be a `String`; a `String` with a\n" +
-                            "xref:languages:file-language.adoc[File Language] or xref:languages:simple-language.adoc[Simple]\n"
-                            +
-                            "expression; or an Expression object. If it's\n" +
-                            "`null` then Camel will auto-generate a filename based on the message\n" +
-                            "unique ID. (consumer) Name of the consumed file as a relative file path with offset from the\n" +
-                            "starting directory configured on the endpoint.",
+    @Metadata(description = "(producer) Specifies the name of the file to write (relative to the endpoint"
+                            + " directory). This name can be a `String`; a `String` with a"
+                            + " file or simple Language expression; or an Expression object. If it's"
+                            + " `null` then Camel will auto-generate a filename based on the message"
+                            + " unique ID. (consumer) Name of the consumed file as a relative file path with offset from the"
+                            + " starting directory configured on the endpoint.",
               javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(label = "consumer", description = "The name of the file that has been consumed", javaType = "String")
     public static final String FILE_NAME_CONSUMED = Exchange.FILE_NAME_CONSUMED;
-    @Metadata(label = "consumer", description = "A `boolean` option specifying whether the consumed file denotes an\n" +
-                                                "absolute path or not. Should normally be `false` for relative paths.\n" +
-                                                "Absolute paths should normally not be used but we added to the move\n" +
-                                                "option to allow moving files to absolute paths. But can be used\n" +
-                                                "elsewhere as well.",
+    @Metadata(label = "consumer", description = "A `boolean` option specifying whether the consumed file denotes an"
+                                                + " absolute path or not. Should normally be `false` for relative paths."
+                                                + " Absolute paths should normally not be used but we added to the move"
+                                                + " option to allow moving files to absolute paths. But can be used"
+                                                + " elsewhere as well.",
               javaType = "Boolean")
     public static final String FILE_ABSOLUTE = "CamelFileAbsolute";
-    @Metadata(label = "consumer", description = "The absolute path to the file. For relative files this path holds the\n" +
-                                                "relative path instead.",
+    @Metadata(label = "consumer", description = "The absolute path to the file. For relative files this path holds the"
+                                                + " relative path instead.",
               javaType = "String")
     public static final String FILE_ABSOLUTE_PATH = "CamelFileAbsolutePath";
     @Metadata(label = "consumer", description = "The extended attributes of the file", javaType = "Map<String, Object>")
     public static final String FILE_EXTENDED_ATTRIBUTES = "CamelFileExtendedAttributes";
     @Metadata(label = "consumer", description = "The content type of the file", javaType = "String")
     public static final String FILE_CONTENT_TYPE = Exchange.FILE_CONTENT_TYPE;
-    @Metadata(label = "consumer", description = "The file path. For relative files this is the starting directory + the\n" +
-                                                "relative filename. For absolute files this is the absolute path.",
+    @Metadata(label = "consumer", description = "The file path. For relative files this is the starting directory."
+                                                + " For absolute files this is the absolute path.",
               javaType = "String")
     public static final String FILE_PATH = Exchange.FILE_PATH;
     @Metadata(label = "consumer", description = "The relative path.", javaType = "String")
     public static final String FILE_RELATIVE_PATH = "CamelFileRelativePath";
     @Metadata(description = "The parent path.", javaType = "String")
     public static final String FILE_PARENT = Exchange.FILE_PARENT;
-    @Metadata(label = "producer", description = "The actual absolute filepath (path + name) for the output file that was\n" +
-                                                "written. This header is set by Camel and its purpose is providing\n" +
-                                                "end-users with the name of the file that was written.",
+    @Metadata(label = "producer", description = "The actual absolute filepath (path + name) for the output file that was"
+                                                + " written. This header is set by Camel and its purpose is providing"
+                                                + " end-users with the name of the file that was written.",
               javaType = "String")
     public static final String FILE_NAME_PRODUCED = Exchange.FILE_NAME_PRODUCED;
-    @Metadata(label = "producer", description = "Is used for overruling `CamelFileName` header and use the\n" +
-                                                "value instead (but only once, as the producer will remove this header\n" +
-                                                "after writing the file). The value can be only be a String. Notice that\n" +
-                                                "if the option `fileName` has been configured, then this is still being\n" +
-                                                "evaluated.",
+    @Metadata(label = "producer", description = "Is used for overruling `CamelFileName` header and use the"
+                                                + " value instead (but only once, as the producer will remove this header"
+                                                + " after writing the file). The value can be only be a String. Notice that"
+                                                + " if the option `fileName` has been configured, then this is still being"
+                                                + " evaluated.",
               javaType = "Object")
     public static final String OVERRULE_FILE_NAME = Exchange.OVERRULE_FILE_NAME;
 
