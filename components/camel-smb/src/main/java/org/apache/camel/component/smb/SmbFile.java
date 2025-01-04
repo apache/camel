@@ -24,12 +24,6 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
     private String hostname;
 
-    private final SmbOperations operations;
-
-    public SmbFile(SmbOperations operations) {
-        this.operations = operations;
-    }
-
     /**
      * Populates the {@link GenericFileMessage} relevant headers
      *
@@ -78,9 +72,4 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
         return "SmbFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
     }
 
-    @Override
-    public Object getBody() {
-        // use operations so smb file can be closed
-        return operations.getBody(this.getAbsoluteFilePath());
-    }
 }

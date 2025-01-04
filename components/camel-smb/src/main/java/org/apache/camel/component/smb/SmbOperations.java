@@ -143,7 +143,7 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public GenericFile<FileIdBothDirectoryInformation> newGenericFile() {
-        return new SmbFile(this);
+        return new SmbFile();
     }
 
     @Override
@@ -221,11 +221,18 @@ public class SmbOperations implements SmbFileOperations {
         // read the entire file into memory in the byte array
         try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.GENERIC_READ), null,
                 SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
-            try (InputStream is = shareFile.getInputStream()) {
-                byte[] body = is.readAllBytes();
-                target.setBody(body);
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
+
+            if (configuration.isStreamDownload()) {
+                InputStream is = shareFile.getInputStream();
+                target.setBody(is);
+                exchange.getIn().setHeader(SmbConstants.SMB_FILE_INPUT_STREAM, is);
+            } else {
+                try (InputStream is = shareFile.getInputStream()) {
+                    byte[] body = is.readAllBytes();
+                    target.setBody(body);
+                } catch (IOException e) {
+                    throw new GenericFileOperationFailedException(e.getMessage(), e);
+                }
             }
         }
         return true;
@@ -307,7 +314,14 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
-        // noop
+        InputStream is = exchange.getIn().getHeader(SmbComponent.SMB_FILE_INPUT_STREAM, InputStream.class);
+        if (is != null) {
+            try {
+                IOHelper.close(is);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
     }
 
     @Override

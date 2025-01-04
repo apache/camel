@@ -367,6 +367,42 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param streamDownload the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder streamDownload(boolean streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
+            return this;
+        }
+        /**
+         * Sets the download method to use when not using a local working
+         * directory. If set to true, the remote files are streamed to the route
+         * as they are read. When set to false, the remote files are loaded into
+         * memory before being sent into the route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param streamDownload the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder streamDownload(String streamDownload) {
+            doSetProperty("streamDownload", streamDownload);
+            return this;
+        }
+        /**
          * Ant style filter exclusion. If both antInclude and antExclude are
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
@@ -3586,6 +3622,18 @@ public interface SmbEndpointBuilderFactory {
          */
         public String fileHost() {
             return "CamelFileHost";
+        }
+        /**
+         * The remote file input stream.
+         * 
+         * The option is a: {@code java.io.InputStream} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmbFileInputStream}.
+         */
+        public String smbFileInputStream() {
+            return "CamelSmbFileInputStream";
         }
         /**
          * Path to the local work file, if local work directory is used.

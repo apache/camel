@@ -169,6 +169,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sorter": target.setSorter(property(camelContext, java.util.Comparator.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "streamdownload":
+        case "streamDownload": target.getConfiguration().setStreamDownload(property(camelContext, boolean.class, value)); return true;
         case "tempfilename":
         case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "tempprefix":
@@ -336,6 +338,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sorter": return java.util.Comparator.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
+        case "streamdownload":
+        case "streamDownload": return boolean.class;
         case "tempfilename":
         case "tempFileName": return java.lang.String.class;
         case "tempprefix":
@@ -499,6 +503,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "sorter": return target.getSorter();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
+        case "streamdownload":
+        case "streamDownload": return target.getConfiguration().isStreamDownload();
         case "tempfilename":
         case "tempFileName": return target.getTempFileName();
         case "tempprefix":

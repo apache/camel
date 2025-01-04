@@ -29,6 +29,8 @@ import org.apache.camel.util.StringHelper;
 @Component("smb")
 public class SmbComponent extends GenericFileComponent<FileIdBothDirectoryInformation> {
 
+    public static final String SMB_FILE_INPUT_STREAM = "CamelSmbFileInputStream";
+
     public SmbComponent() {
     }
 

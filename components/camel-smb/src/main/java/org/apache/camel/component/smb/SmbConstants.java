@@ -72,6 +72,8 @@ public class SmbConstants {
 
     @Metadata(label = "consumer", description = "The remote hostname.", javaType = "String")
     public static final String FILE_HOST = "CamelFileHost";
+    @Metadata(label = "consumer", description = "The remote file input stream.", javaType = "java.io.InputStream")
+    public static final String SMB_FILE_INPUT_STREAM = SmbComponent.SMB_FILE_INPUT_STREAM;
     @Metadata(description = "Path to the local work file, if local work directory is used.", javaType = "String")
     public static final String FILE_LOCAL_WORK_PATH = Exchange.FILE_LOCAL_WORK_PATH;
     // for backwards compatibility with existing 'file-exists' that uses a header

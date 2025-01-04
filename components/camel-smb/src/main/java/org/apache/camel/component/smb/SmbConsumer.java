@@ -191,7 +191,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     private SmbFile asGenericFile(String path, FileIdBothDirectoryInformation file, String charset) {
-        SmbFile genericFile = new SmbFile(getOperations());
+        SmbFile genericFile = new SmbFile();
         genericFile.setHostname(configuration.getHostname());
         genericFile.setFile(file);
         genericFile.setEndpointPath(endpointPath);
