@@ -24,7 +24,7 @@ public class SmbConsumerDirectoriesNotMatchedIT extends SmbServerTestSupport {
 
     private String getSbmUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/dirnotmatched&recursive=true&delete=true&include=^.*txt$",
+                "smb:%s/%s?username=%s&password=%s&path=/dirnotmatched&recursive=true&delete=true&initialDelay=3000&include=^.*txt$",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

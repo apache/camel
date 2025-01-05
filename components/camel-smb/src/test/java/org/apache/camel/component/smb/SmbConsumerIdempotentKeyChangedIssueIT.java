@@ -51,7 +51,6 @@ public class SmbConsumerIdempotentKeyChangedIssueIT extends SmbServerTestSupport
         MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World Again");
 
-        // TODO remove 'file-exists'
         template.sendBodyAndHeaders(endpoint, "Hello World Again", Map.of(Exchange.FILE_NAME, "hello.txt",
                 SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Override.name()));
 

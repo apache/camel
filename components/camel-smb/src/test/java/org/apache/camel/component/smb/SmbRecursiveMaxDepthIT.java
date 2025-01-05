@@ -30,7 +30,7 @@ public class SmbRecursiveMaxDepthIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadmax&recursive=true&maxdepth=3",
+                "smb:%s/%s?username=%s&password=%s&path=/uploadmax&recursive=true&maxdepth=3&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

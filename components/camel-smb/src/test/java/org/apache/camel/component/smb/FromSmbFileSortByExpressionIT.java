@@ -24,7 +24,7 @@ public class FromSmbFileSortByExpressionIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/sortby&sortBy=file:ext",
+                "smb:%s/%s?username=%s&password=%s&path=/sortby&sortBy=file:ext&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
