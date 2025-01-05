@@ -31,7 +31,7 @@ public class FromSmbRemoteFileSorterIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/sorter&sorter=#mySorter",
+                "smb:%s/%s?username=%s&password=%s&path=/sorter&sorter=#mySorter&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

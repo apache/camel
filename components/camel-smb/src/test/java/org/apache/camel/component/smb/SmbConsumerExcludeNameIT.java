@@ -24,7 +24,7 @@ public class SmbConsumerExcludeNameIT extends SmbServerTestSupport {
 
     private String getSbmUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/dirnotmatched&recursive=true&delete=true&include=report.*&exclude=.*xml",
+                "smb:%s/%s?username=%s&password=%s&path=/dirnotmatched&recursive=true&delete=true&include=report.*&exclude=.*xml&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

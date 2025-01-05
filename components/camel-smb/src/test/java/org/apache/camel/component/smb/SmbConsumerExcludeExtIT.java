@@ -24,7 +24,7 @@ public class SmbConsumerExcludeExtIT extends SmbServerTestSupport {
 
     private String getSbmUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/excludeext&excludeExt=xml",
+                "smb:%s/%s?username=%s&password=%s&path=/excludeext&excludeExt=xml&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
