@@ -51,3 +51,9 @@ We have deprecated the setting of MDC `trace_id` and `span_id` in favour of impl
 === camel-langchain4j-chat
 
 The function calling feature was removed. Please use the `camel-langchain4j-tools` component for function calling.
+
+=== camel-smb
+
+The `camel-smb` component has been updated to extend `GenericFile` classes and now supports more consumer and producer options. 
+The Consumer includes options for filtering, pre and post processing, duplicate handling, directory traversal, polling, and readlocks.
+The Producer includes options for writing to temporary files, writing content, and handling existing files.
