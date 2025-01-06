@@ -382,7 +382,6 @@ public class SmbOperations implements SmbFileOperations {
             }
 
             final StopWatch watch = new StopWatch();
-            boolean answer;
             LOG.debug("About to store file: {} using stream: {}", name, is);
             if (existFile && gfe == GenericFileExist.Append) {
                 LOG.trace("Client appendFile: {}", name);
@@ -393,6 +392,7 @@ public class SmbOperations implements SmbFileOperations {
                     writeToFile(name, shareFile, is);
                 }
             } else if (existFile && gfe == GenericFileExist.Override) {
+                LOG.trace("Client overrideFile: {}", name);
                 try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                         SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OVERWRITE_IF,
@@ -400,7 +400,7 @@ public class SmbOperations implements SmbFileOperations {
                     writeToFile(name, shareFile, is);
                 }
             } else {
-                LOG.trace("Client storeFile: {}", name);
+                LOG.trace("Client createFile: {}", name);
                 createDirectory(share, name);
                 try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
@@ -414,9 +414,7 @@ public class SmbOperations implements SmbFileOperations {
                 LOG.debug("Took {} ({} millis) to store file: {}",
                         TimeUtils.printDuration(time, true), time, name);
             }
-
             return true;
-
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         } catch (InvalidPayloadException e) {
@@ -440,25 +438,18 @@ public class SmbOperations implements SmbFileOperations {
     }
 
     private void writeToFile(String fileName, File shareFile, InputStream is) throws IOException {
-
         // In order to provide append option, we need to use offset / write with shareFile rather
         // than with outputstream
-        int buffer = getReadBufferSize();
-        long fileOffset = 0;
+        int buffer = endpoint.getBufferSize();
+        long fileOffset;
 
         byte[] byteBuffer = new byte[buffer];
-        int length = 0;
+        int length;
         while ((length = is.read(byteBuffer)) > 0) {
             fileOffset = share.getFileInformation(fileName)
                     .getStandardInformation().getEndOfFile();
             shareFile.write(byteBuffer, fileOffset, 0, length);
         }
-    }
-
-    private int getReadBufferSize() {
-        int readBufferSize = endpoint.getConfiguration().getReadBufferSize();
-        readBufferSize = (readBufferSize <= 0) ? 2048 : readBufferSize;
-        return readBufferSize;
     }
 
     @Override

@@ -126,8 +126,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "preSort": target.setPreSort(property(camelContext, boolean.class, value)); return true;
         case "processstrategy":
         case "processStrategy": target.setProcessStrategy(property(camelContext, org.apache.camel.component.file.GenericFileProcessStrategy.class, value)); return true;
-        case "readbuffersize":
-        case "readBufferSize": target.getConfiguration().setReadBufferSize(property(camelContext, int.class, value)); return true;
         case "readlock":
         case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
         case "readlockcheckinterval":
@@ -296,8 +294,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "preSort": return boolean.class;
         case "processstrategy":
         case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
-        case "readbuffersize":
-        case "readBufferSize": return int.class;
         case "readlock":
         case "readLock": return java.lang.String.class;
         case "readlockcheckinterval":
@@ -462,8 +458,6 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "preSort": return target.isPreSort();
         case "processstrategy":
         case "processStrategy": return target.getProcessStrategy();
-        case "readbuffersize":
-        case "readBufferSize": return target.getConfiguration().getReadBufferSize();
         case "readlock":
         case "readLock": return target.getReadLock();
         case "readlockcheckinterval":

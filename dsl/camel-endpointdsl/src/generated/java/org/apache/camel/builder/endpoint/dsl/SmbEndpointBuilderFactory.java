@@ -2664,36 +2664,6 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read buffer size when for file being produced.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 2048
-         * Group: producer
-         * 
-         * @param readBufferSize the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointProducerBuilder readBufferSize(int readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
-         * Read buffer size when for file being produced.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 2048
-         * Group: producer
-         * 
-         * @param readBufferSize the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointProducerBuilder readBufferSize(String readBufferSize) {
-            doSetProperty("readBufferSize", readBufferSize);
-            return this;
-        }
-        /**
          * The same as tempPrefix option but offering a more fine grained
          * control on the naming of the temporary filename as it uses the File
          * Language. The location for tempFilename is relative to the final file

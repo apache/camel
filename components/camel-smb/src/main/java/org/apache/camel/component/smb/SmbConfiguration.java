@@ -65,9 +65,6 @@ public class SmbConfiguration extends GenericFileConfiguration {
                                                          + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
                                                          + "not be downloaded.")
     private boolean download = true;
-    @Metadata(defaultValue = "2048")
-    @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")
-    private int readBufferSize;
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
               description = "An optional SMB client configuration, can be used to configure client specific "
@@ -192,14 +189,6 @@ public class SmbConfiguration extends GenericFileConfiguration {
 
     public void setDownload(boolean download) {
         this.download = download;
-    }
-
-    public void setReadBufferSize(int readBufferSize) {
-        this.readBufferSize = readBufferSize;
-    }
-
-    public int getReadBufferSize() {
-        return readBufferSize;
     }
 
     public SmbConfig getSmbConfig() {
