@@ -100,6 +100,9 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
         // First talk to the model to get the tools to be called
         final Response<AiMessage> response = chatWithLLMForTools(chatMessages, toolPair, exchange);
+        if (response == null) {
+            return null;
+        }
 
         // Then, talk again to call the tools and compute the final response
         return chatWithLLMForToolCalling(chatMessages, exchange, response, toolPair);

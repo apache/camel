@@ -38,7 +38,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static java.time.Duration.ofSeconds;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
-public class LangChain4jTooNoToolsIT extends CamelTestSupport {
+public class LangChain4jToolNoToolsToBeCalledIT extends CamelTestSupport {
 
     public static final String MODEL_NAME = "llama3.1:latest";
     private ChatLanguageModel chatLanguageModel;
@@ -84,10 +84,13 @@ public class LangChain4jTooNoToolsIT extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:test")
-                        .to("langchain4j-tools:test1?tags=somethingElse")
+                        .to("langchain4j-tools:test1?tags=user")
                         .log("response is: ${body}");
 
                 from("langchain4j-tools:test1?tags=user&description=Query user database by number&parameter.number=integer")
+                        .setBody(simple("{\"name\": \"pippo\"}"));
+
+                from("langchain4j-tools:test1?tags=user&description=Does not do anything, really")
                         .setBody(simple("{\"name\": \"pippo\"}"));
 
                 from("direct:noResponse")
@@ -104,12 +107,11 @@ public class LangChain4jTooNoToolsIT extends CamelTestSupport {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
                 """
-                        You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
-                        If no tool matches the input, then don't invoke any of them.
+                        Your job is to help me test my code. When asked to call a tool you do not call anything.
                         """));
         messages.add(new UserMessage("""
-                What time is the breakfast tomorrow?
-                """));
+                How can you help?
+                 """));
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
