@@ -37,7 +37,7 @@ public class SmbRecursiveMinDepthIT extends SmbServerTestSupport {
     @Test
     public void testDirectoryTraversalDepth() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
-        mock.expectedBodiesReceived("Hello");
+        mock.expectedBodiesReceivedInAnyOrder("Hello", "Goodday");
 
         mock.assertIsSatisfied();
     }

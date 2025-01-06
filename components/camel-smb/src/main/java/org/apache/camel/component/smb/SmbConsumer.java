@@ -126,16 +126,16 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
             FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
 
-        SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
-        Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
-        Supplier<String> relativePath = smbFile::getRelativeFilePath;
-
-        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(genericFileSupplier, file.getFileName(),
-                smbFile.getAbsoluteFilePath(), relativePath, true, files)) {
-
-            // recursive scan and add the sub files and folders
-            boolean canPollMore = pollDirectory(fullFilePath, fileList, depth);
-            return !canPollMore;
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+            SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
+            Supplier<String> relativePath = smbFile::getRelativeFilePath;
+            if (isValidFile(genericFileSupplier, file.getFileName(),
+                    smbFile.getAbsoluteFilePath(), relativePath, true, files)) {
+                // recursive scan and add the sub files and folders
+                boolean canPollMore = pollDirectory(fullFilePath, fileList, depth);
+                return !canPollMore;
+            }
         }
         return false;
     }
@@ -144,14 +144,15 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
             FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
 
-        SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
-        Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
-        Supplier<String> relativePath = smbFile::getRelativeFilePath;
+        if (depth >= endpoint.getMinDepth()) {
+            SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
+            Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
+            Supplier<String> relativePath = smbFile::getRelativeFilePath;
 
-        if (depth >= endpoint.getMinDepth() && isValidFile(genericFileSupplier, file.getFileName(),
-                smbFile.getAbsoluteFilePath(), relativePath, false, files)) {
-
-            fileList.add(smbFile);
+            if (isValidFile(genericFileSupplier, file.getFileName(),
+                    smbFile.getAbsoluteFilePath(), relativePath, false, files)) {
+                fileList.add(smbFile);
+            }
         }
     }
 

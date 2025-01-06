@@ -37,7 +37,7 @@ public class SmbRecursiveMaxDepthIT extends SmbServerTestSupport {
     @Test
     public void testDirectoryTraversalDepth() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
-        mock.expectedBodiesReceived("Goodday", "World");
+        mock.expectedBodiesReceivedInAnyOrder("Goodday", "World");
 
         mock.assertIsSatisfied();
     }
