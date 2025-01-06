@@ -32,6 +32,8 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class PahoMqtt5Consumer extends DefaultConsumer {
 
@@ -167,13 +169,14 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     try {
                         PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        throw new RuntimeException(e);
+                        LOG.warn("Failed to commit message with ID {} due to MqttException.", mqttMessage.getId());
                     }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    LOG.error("Error: " + exchange.getExchangeId(), exchange.getException());
+                    Marker exchangeErrorMarker = MarkerFactory.getMarker("EXCHANGE_ERROR_MARKER");
+                    LOG.error(exchangeErrorMarker, "Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(), exchange.getException());
                 }
             });
         }

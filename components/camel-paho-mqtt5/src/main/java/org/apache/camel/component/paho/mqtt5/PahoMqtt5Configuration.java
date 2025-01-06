@@ -88,8 +88,8 @@ public class PahoMqtt5Configuration implements Cloneable {
     private int executorServiceTimeout = 1;
     @UriParam(defaultValue = "-1")
     private long sessionExpiryInterval = -1;
-    @UriParam(defaultValue = "false")
-    private boolean manualAcksEnabled = false;
+    @UriParam
+    private boolean manualAcksEnabled;
 
     public String getClientId() {
         return clientId;
@@ -558,7 +558,6 @@ public class PahoMqtt5Configuration implements Cloneable {
      *
      */
     public boolean isManualAcksEnabled() {
-
         return this.manualAcksEnabled;
     }
 
