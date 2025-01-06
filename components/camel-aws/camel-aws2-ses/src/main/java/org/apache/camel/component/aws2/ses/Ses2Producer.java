@@ -17,8 +17,6 @@
 package org.apache.camel.component.aws2.ses;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +37,7 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.ses.model.Body;
 import software.amazon.awssdk.services.ses.model.Content;
 import software.amazon.awssdk.services.ses.model.Destination;
+import software.amazon.awssdk.services.ses.model.RawMessage;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendEmailResponse;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
@@ -62,17 +61,19 @@ public class Ses2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (!(exchange.getIn().getBody() instanceof jakarta.mail.Message)) {
-            SendEmailRequest request = createMailRequest(exchange);
+        Object body = exchange.getIn().getBody();
+        boolean mail = body instanceof jakarta.mail.Message;
+        if (mail) {
+            SendRawEmailRequest request = createRawMailRequest(exchange);
             LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
-            SendEmailResponse result = getEndpoint().getSESClient().sendEmail(request);
+            SendRawEmailResponse result = getEndpoint().getSESClient().sendRawEmail(request);
             LOG.trace("Received result [{}]", result);
             Message message = getMessageForResponse(exchange);
             message.setHeader(Ses2Constants.MESSAGE_ID, result.messageId());
         } else {
-            SendRawEmailRequest request = createRawMailRequest(exchange);
+            SendEmailRequest request = createMailRequest(exchange);
             LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
-            SendRawEmailResponse result = getEndpoint().getSESClient().sendRawEmail(request);
+            SendEmailResponse result = getEndpoint().getSESClient().sendEmail(request);
             LOG.trace("Received result [{}]", result);
             Message message = getMessageForResponse(exchange);
             message.setHeader(Ses2Constants.MESSAGE_ID, result.messageId());
@@ -102,8 +103,13 @@ public class Ses2Producer extends DefaultProducer {
     private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange) {
         software.amazon.awssdk.services.ses.model.Message.Builder message
                 = software.amazon.awssdk.services.ses.model.Message.builder();
-        final boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
-        String content = exchange.getIn().getBody(String.class);
+        String content;
+        if (exchange.getIn().getBody() instanceof RawMessage raw) {
+            content = raw.data().toString();
+        } else {
+            content = exchange.getIn().getBody(String.class);
+        }
+        boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
         if (isHtmlEmail) {
             message.body(Body.builder().html(Content.builder().data(content).build()).build());
         } else {
@@ -117,15 +123,9 @@ public class Ses2Producer extends DefaultProducer {
         software.amazon.awssdk.services.ses.model.RawMessage.Builder message
                 = software.amazon.awssdk.services.ses.model.RawMessage.builder();
         jakarta.mail.Message content = exchange.getIn().getBody(jakarta.mail.Message.class);
-        OutputStream byteOutput = new ByteArrayOutputStream();
-        try {
-            content.writeTo(byteOutput);
-        } catch (Exception e) {
-            LOG.error("Cannot write to byte Array");
-            throw e;
-        }
-        byte[] messageByteArray = ((ByteArrayOutputStream) byteOutput).toByteArray();
-        message.data(SdkBytes.fromByteBuffer(ByteBuffer.wrap(messageByteArray)));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        content.writeTo(bos);
+        message.data(SdkBytes.fromByteArrayUnsafe(bos.toByteArray()));
         return message.build();
     }
 
