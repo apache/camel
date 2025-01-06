@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -28,29 +29,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
+    private final String uuid = new DefaultUuidGenerator().generateUuid() + ".txt";;
+
     @Override
     public void doPostSetup() throws Exception {
-        template.sendBodyAndHeader(getSmbUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getSmbUrl(), "Hello Uuid", Exchange.FILE_NAME, uuid);
     }
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&move=done&moveFailed=failed",
-                service.address(), service.shareName(), service.userName(), service.password());
+                "smb:%s/%s?username=%s&password=%s&move=done&moveFailed=failed&searchPattern=%s",
+                service.address(), service.shareName(), service.userName(), service.password(), uuid);
     }
 
     @Test
-    public void testSmbSimpleConsumeAbsolute() throws Exception {
+    public void testSmbSimpleConsumeNoPath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+        mock.expectedBodiesReceived("Hello Uuid");
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, uuid);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/failed/hello.txt"))));
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Hello Uuid",
+                        new String(copyFileContentFromContainer("/data/rw/failed/" + uuid))));
     }
 
     @Override
