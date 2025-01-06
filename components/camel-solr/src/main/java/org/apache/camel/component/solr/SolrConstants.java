@@ -19,36 +19,74 @@ package org.apache.camel.component.solr;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
-public final class SolrConstants {
+public interface SolrConstants {
 
-    @Metadata(description = "The client.", javaType = "org.apache.solr.client.solrj.SolrClient")
-    public static final String CLIENT = "CamelSolrClient";
-    @Metadata(description = "The collection to execute the request again.", javaType = "String")
-    public static final String COLLECTION = "CamelSolrCollection";
-    public static final String FIELD = "SolrField.";
     @Metadata(description = "The operation to perform.", javaType = "String")
-    public static final String OPERATION = "SolrOperation";
-    public static final String OPERATION_COMMIT = "COMMIT";
-    public static final String OPERATION_SOFT_COMMIT = "SOFT_COMMIT";
-    public static final String OPERATION_ROLLBACK = "ROLLBACK";
-    public static final String OPERATION_OPTIMIZE = "OPTIMIZE";
-    public static final String OPERATION_INSERT = "INSERT";
-    public static final String OPERATION_INSERT_STREAMING = "INSERT_STREAMING";
-    public static final String OPERATION_ADD_BEAN = "ADD_BEAN";
-    public static final String OPERATION_ADD_BEANS = "ADD_BEANS";
-    public static final String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
-    public static final String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
-    public static final String OPERATION_QUERY = "QUERY";
-    public static final String PARAM = "SolrParam.";
+    String PARAM_OPERATION = "operation";
+    @Deprecated
+    @Metadata(description = "The operation to perform.", javaType = "String",
+              deprecationNote = "Use header 'operation' instead")
+    String PARAM_OPERATION_DEPRECATED = "SolrOperation";
+    @Metadata(description = "The collection to execute the request against.", javaType = "String")
+    String PARAM_COLLECTION = "collection";
+    @Deprecated
+    @Metadata(description = "The collection to execute the request against.", javaType = "String",
+              deprecationNote = "Use header 'collection' instead")
+    String PARAM_COLLECTION_DEPRECATED = "CamelSolrCollection";
+    @Metadata(description = "The request handler to execute the solr request against.", javaType = "String")
+    String PARAM_REQUEST_HANDLER = "requestHandler";
     @Metadata(description = "The query to execute.", javaType = "String")
-    public static final String QUERY_STRING = "CamelSolrQueryString";
-    @Metadata(description = "The content type.", javaType = "String")
-    public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
+    String PARAM_QUERY_STRING = "queryString";
+    @Deprecated
+    @Metadata(description = "The query to execute.", javaType = "String", deprecationNote = "Use header 'queryString' instead")
+    String PARAM_QUERY_STRING_DEPRECATED = "CamelSolrQueryString";
+    @Metadata(description = "The size of the response.", javaType = "Integer")
+    String PARAM_SIZE = "size";
+    @Metadata(description = "The starting index of the response.", javaType = "Integer")
+    String PARAM_FROM = "from";
+    @Metadata(description = "The solr client to use for the request.", javaType = "String")
+    String PARAM_SOLR_CLIENT = "solrClient";
+    @Deprecated
+    @Metadata(description = "The solr client to use for the request.", javaType = "String",
+              deprecationNote = "Use header 'solrClient' instead")
+    String PARAM_SOLR_CLIENT_DEPRECATED = "CamelSolrClient";
+    @Metadata(description = "The solr parameters to use for the request.", javaType = "SolrParams")
+    String PARAM_SOLR_PARAMS = "solrParams";
+    @Metadata(description = "For the delete instruction, interprete body as query/queries instead of id/ids.",
+              javaType = "boolean", defaultValue = "false")
+    String PARAM_DELETE_BY_QUERY = "deleteByQuery";
+    @Metadata(description = "The content type is used to identify the type when inserting files.", javaType = "String")
+    String PARAM_CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
-    public static final int DEFUALT_STREAMING_QUEUE_SIZE = 10;
-    public static final int DEFAULT_STREAMING_THREAD_COUNT = 2;
+    String HEADER_FIELD_PREFIX = "SolrField.";
+    String HEADER_PARAM_PREFIX = "SolrParam.";
 
-    private SolrConstants() {
-        throw new AssertionError();
-    }
+    String PROPERTY_ACTION_CONTEXT = "SolrActionContext";
+
+    String OPERATION_COMMIT = "COMMIT";
+    String OPERATION_SOFT_COMMIT = "SOFT_COMMIT";
+    String OPERATION_ROLLBACK = "ROLLBACK";
+    String OPERATION_OPTIMIZE = "OPTIMIZE";
+    String OPERATION_INSERT = "INSERT";
+    String OPERATION_INSERT_STREAMING = "INSERT_STREAMING";
+    String OPERATION_ADD_BEAN = "ADD_BEAN";
+    String OPERATION_ADD_BEANS = "ADD_BEANS";
+    String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
+    String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
+    String OPERATION_QUERY = "QUERY";
+    String OPERATION_SEARCH = "SEARCH";
+
+    String HEADER_PARAM_OPERATION_COMMIT = "commit";
+    String HEADER_PARAM_OPERATION_SOFT_COMMIT = "softCommit";
+    String HEADER_PARAM_OPERATION_OPTIMIZE = "optimize";
+    String HEADER_PARAM_OPERATION_ROLLBACK = "rollback";
+
+    String DEFAULT_HOST = "localhost";
+    int DEFAULT_PORT = 8983;
+    String DEFAULT_BASE_PATH = "/solr";
+    String DEFAULT_COLLECTION = "collection1";
+
+    int DEFAULT_CONNECT_TIMEOUT = 60000;
+    int DEFAULT_REQUEST_TIMEOUT = 600000;
+
 }

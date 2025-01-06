@@ -18,9 +18,9 @@
 package org.apache.camel.test.infra.solr.common;
 
 public final class SolrProperties {
-    public static final String SERVICE_ADDRESS = "solr.service.address";
+    public static final String SOLR_HOST = "solr.host";
+    public static final String SOLR_PORT = "solr.port";
     public static final String SOLR_CONTAINER = "solr.container";
-    public static final String SOLR_MODE = "SOLR_MODE";
     public static final int DEFAULT_PORT = 8983;
 
     private SolrProperties() {
