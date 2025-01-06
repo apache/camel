@@ -16,18 +16,14 @@
  */
 package org.apache.camel.component.smb;
 
-import java.io.InputStream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class SmbStreamDownloadIT extends SmbServerTestSupport {
+public class SmbStreamDownloadFalseIT extends SmbServerTestSupport {
 
     @Override
     public void doPostSetup() throws Exception {
@@ -36,26 +32,24 @@ public class SmbStreamDownloadIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadstream&streamDownload=true",
+                "smb:%s/%s?username=%s&password=%s&path=/uploadstream2&streamDownload=false",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
     @Test
-    public void testStreamDownload() throws Exception {
+    public void testStreamDownloadFalse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
         mock.message(0).body().isInstanceOf(SmbFile.class);
         mock.message(0).predicate(e -> {
             Object b = e.getMessage().getBody(SmbFile.class).getBody();
-            return b instanceof InputStream;
+            return b.getClass().isArray();
         });
         mock.expectedMessageCount(1);
 
         mock.assertIsSatisfied();
 
-        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
-        assertNotNull(is);
-        String text = IOHelper.loadText(is);
-        Assertions.assertEquals("World\n", text);
+        byte[] arr = mock.getExchanges().get(0).getIn().getBody(byte[].class);
+        assertArrayEquals("World".getBytes(), arr);
     }
 
     private void prepareSmbServer() {

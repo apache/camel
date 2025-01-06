@@ -17,12 +17,27 @@
 package org.apache.camel.component.smb;
 
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 
 public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
+    private final SmbOperations operations;
+    private final boolean streamDownload;
+    private Exchange exchange;
     private String hostname;
+
+    public SmbFile(SmbOperations operations, boolean streamDownload) {
+        this.operations = operations;
+        this.streamDownload = streamDownload;
+    }
+
+    @Override
+    public void bindToExchange(Exchange exchange) {
+        this.exchange = exchange;
+        super.bindToExchange(exchange);
+    }
 
     /**
      * Populates the {@link GenericFileMessage} relevant headers
@@ -65,6 +80,16 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
         SmbFile remoteSource = (SmbFile) source;
         SmbFile remoteResult = (SmbFile) result;
         remoteResult.setHostname(remoteSource.getHostname());
+    }
+
+    @Override
+    public Object getBody() {
+        if (streamDownload) {
+            return operations.getBodyAsInputStream(exchange, this.getAbsoluteFilePath());
+        } else {
+            // use operations so smb file can be closed
+            return operations.getBody(this.getAbsoluteFilePath());
+        }
     }
 
     @Override

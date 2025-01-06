@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.smb;
 
-import java.io.InputStream;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-public class SmbStreamDownloadIT extends SmbServerTestSupport {
+public class SmbStreamDownloadStreamCacheIT extends SmbServerTestSupport {
 
     @Override
     public void doPostSetup() throws Exception {
@@ -36,26 +31,18 @@ public class SmbStreamDownloadIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadstream&streamDownload=true",
+                "smb:%s/%s?username=%s&password=%s&path=/uploadstream3&streamDownload=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
     @Test
     public void testStreamDownload() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
-        mock.message(0).body().isInstanceOf(SmbFile.class);
-        mock.message(0).predicate(e -> {
-            Object b = e.getMessage().getBody(SmbFile.class).getBody();
-            return b instanceof InputStream;
-        });
+        mock.message(0).body().isInstanceOf(StreamCache.class);
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("World");
 
         mock.assertIsSatisfied();
-
-        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
-        assertNotNull(is);
-        String text = IOHelper.loadText(is);
-        Assertions.assertEquals("World\n", text);
     }
 
     private void prepareSmbServer() {
@@ -66,7 +53,7 @@ public class SmbStreamDownloadIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).streamCache("false")
+                from(getSmbUrl())
                         .to("mock:received_send");
             }
         };

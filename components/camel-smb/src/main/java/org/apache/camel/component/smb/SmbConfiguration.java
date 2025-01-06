@@ -55,9 +55,10 @@ public class SmbConfiguration extends GenericFileConfiguration {
                             + " For example, the criterion x?? matches xab, xa, and x, but not xabc. If only ? characters are present in the file name selection criterion, then the match is made as if the criterion contained ? characters trailing a literal."
                             + " The * (asterisk) character matches an entire file name. A null or empty specification criterion also selects all file names. For example, *.abc or .abc match any file with an extension of abc. *.*, *, or empty string match all files in a directory.")
     private String searchPattern;
-    @UriParam(label = "consumer", description = "Sets the download method to use when not using a local working "
-                                                + "directory.  If set to true, the remote files are streamed to the route as they are read.  When set to "
-                                                + "false, the remote files are loaded into memory before being sent into the route.")
+    @UriParam(label = "consumer", description = "Sets the download method to use when not using a local working directory."
+                                                + " If set to true, the remote files are streamed to the route as they are read. When set to"
+                                                + " false, the remote files are loaded into memory before being sent into the route.")
+    @Metadata
     private boolean streamDownload;
     @Metadata(defaultValue = "2048")
     @UriParam(label = "producer", description = "Read buffer size when for file being produced", defaultValue = "2048")

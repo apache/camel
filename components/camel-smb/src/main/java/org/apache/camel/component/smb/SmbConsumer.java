@@ -63,7 +63,6 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     @Override
     protected boolean pollDirectory(String path, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth) {
-
         depth++;
         path = (path == null) ? "" : path;
         FileIdBothDirectoryInformation[] files = getSmbFiles(path);
@@ -191,7 +190,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     private SmbFile asGenericFile(String path, FileIdBothDirectoryInformation file, String charset) {
-        SmbFile genericFile = new SmbFile();
+        SmbFile genericFile = new SmbFile(getOperations(), configuration.isStreamDownload());
         genericFile.setHostname(configuration.getHostname());
         genericFile.setFile(file);
         genericFile.setEndpointPath(endpointPath);

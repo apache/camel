@@ -66,7 +66,7 @@ public class SmbOperations implements SmbFileOperations {
 
     public SmbOperations(SmbConfiguration configuration) {
         this.configuration = configuration;
-        smbClient = new SMBClient();
+        this.smbClient = new SMBClient();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public GenericFile<FileIdBothDirectoryInformation> newGenericFile() {
-        return new SmbFile();
+        return new SmbFile(this, configuration.isStreamDownload());
     }
 
     @Override
@@ -331,7 +331,6 @@ public class SmbOperations implements SmbFileOperations {
     }
 
     private boolean doStoreFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
-
         LOG.trace("doStoreFile({})", name);
 
         // for backwards compatibility for existing smb that uses a header to control 'file-exist'
@@ -341,18 +340,14 @@ public class SmbOperations implements SmbFileOperations {
         }
 
         boolean existFile = false;
-
         // if an existing file already exists what should we do?
         if (gfe == GenericFileExist.Ignore || gfe == GenericFileExist.Fail
                 || gfe == GenericFileExist.Move || gfe == GenericFileExist.Append
                 || gfe == GenericFileExist.Override) {
-
             existFile = share.fileExists(name);
-
             if (existFile && gfe == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
                 LOG.trace("An existing file already exists: {}. Ignore and do not override it.", name);
-
                 return true;
             } else if (existFile && gfe == GenericFileExist.Fail) {
                 throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
@@ -380,7 +375,6 @@ public class SmbOperations implements SmbFileOperations {
                     // charset configured so we must convert to the desired
                     // charset so we can write with encoding
                     is = new ByteArrayInputStream(exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
-
                     LOG.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -391,38 +385,27 @@ public class SmbOperations implements SmbFileOperations {
             boolean answer;
             LOG.debug("About to store file: {} using stream: {}", name, is);
             if (existFile && gfe == GenericFileExist.Append) {
-
                 LOG.trace("Client appendFile: {}", name);
-
                 try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                         SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN_IF,
                         EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
-
                     writeToFile(name, shareFile, is);
                 }
-
             } else if (existFile && gfe == GenericFileExist.Override) {
-
                 try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                         SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OVERWRITE_IF,
                         EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
-
                     writeToFile(name, shareFile, is);
                 }
-
             } else {
-
                 LOG.trace("Client storeFile: {}", name);
-
                 createDirectory(share, name);
-
                 try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                         SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE,
                         EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
-
                     writeToFile(name, shareFile, is);
                 }
             }
@@ -444,9 +427,7 @@ public class SmbOperations implements SmbFileOperations {
     }
 
     public void createDirectory(DiskShare share, String fileName) {
-
         String parentDir = FileUtil.onlyPath(fileName);
-
         boolean dirExists = share.folderExists(parentDir);
         if (!dirExists) {
             if (endpoint.isAutoCreate()) {
@@ -522,6 +503,15 @@ public class SmbOperations implements SmbFileOperations {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
+    }
+
+    public InputStream getBodyAsInputStream(Exchange exchange, String path) {
+        connectIfNecessary();
+        File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
+                SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
+        InputStream is = shareFile.getInputStream();
+        exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
+        return is;
     }
 
     /*

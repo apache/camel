@@ -14,59 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.smb;
-
-import java.io.InputStream;
+package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+public class FtpStreamDownloadStreamCacheIT extends FtpServerTestSupport {
 
-public class SmbStreamDownloadIT extends SmbServerTestSupport {
+    private String getFtpUrl() {
+        return "ftp://localhost:{{ftp.server.port}}/stream?username=admin&password=admin&stepwise=false&streamDownload=true";
+    }
 
     @Override
     public void doPostSetup() throws Exception {
-        prepareSmbServer();
+        prepareFtpServer();
     }
 
-    protected String getSmbUrl() {
-        return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadstream&streamDownload=true",
-                service.address(), service.shareName(), service.userName(), service.password());
+    private void prepareFtpServer() {
+        template.sendBodyAndHeader(getFtpUrl(), "World", Exchange.FILE_NAME,
+                "world.txt");
     }
 
     @Test
     public void testStreamDownload() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
-        mock.message(0).body().isInstanceOf(SmbFile.class);
-        mock.message(0).predicate(e -> {
-            Object b = e.getMessage().getBody(SmbFile.class).getBody();
-            return b instanceof InputStream;
-        });
+        mock.message(0).body().isInstanceOf(StreamCache.class);
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("World");
 
         mock.assertIsSatisfied();
-
-        InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
-        assertNotNull(is);
-        String text = IOHelper.loadText(is);
-        Assertions.assertEquals("World\n", text);
-    }
-
-    private void prepareSmbServer() {
-        template.sendBodyAndHeader(getSmbUrl(), "World", Exchange.FILE_NAME, "world.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @Override
             public void configure() {
-                from(getSmbUrl()).streamCache("false")
+                from(getFtpUrl())
                         .to("mock:received_send");
             }
         };
