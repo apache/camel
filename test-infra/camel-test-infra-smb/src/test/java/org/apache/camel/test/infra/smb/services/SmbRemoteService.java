@@ -49,6 +49,11 @@ public class SmbRemoteService implements SmbService {
     }
 
     @Override
+    public String smbFile(String file) {
+        return null;
+    }
+
+    @Override
     public void registerProperties() {
 
     }
@@ -62,4 +67,5 @@ public class SmbRemoteService implements SmbService {
     public void shutdown() {
 
     }
+
 }

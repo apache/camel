@@ -2450,6 +2450,44 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFilesEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFilesEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
          * Automatically create missing directories in the file's pathname. For
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
@@ -2609,44 +2647,6 @@ public interface FilesEndpointBuilderFactory {
          */
         default AdvancedFilesEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFilesEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFilesEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -3617,44 +3617,6 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFilesEndpointProducerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFilesEndpointProducerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
          * The option is a: <code>int</code> type.
@@ -4175,44 +4137,6 @@ public interface FilesEndpointBuilderFactory {
          */
         default AdvancedFilesEndpointBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFilesEndpointBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFilesEndpointBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**

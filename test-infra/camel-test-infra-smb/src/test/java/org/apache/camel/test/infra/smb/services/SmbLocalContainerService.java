@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.smb.services;
 
 import java.io.InputStream;
 
 import com.github.dockerjava.api.exception.NotFoundException;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.utility.ThrowingFunction;
@@ -63,7 +63,6 @@ public class SmbLocalContainerService implements SmbService {
 
     @Override
     public void registerProperties() {
-
     }
 
     @Override
@@ -76,6 +75,10 @@ public class SmbLocalContainerService implements SmbService {
 
     @Override
     public void shutdown() {
-
     }
+
+    public String smbFile(String file) {
+        return this.container.copyFileFromContainer("data/rw/" + file, IOHelper::loadText);
+    }
+
 }

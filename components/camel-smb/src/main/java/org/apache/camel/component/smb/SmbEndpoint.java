@@ -32,6 +32,7 @@ import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFilePollingConsumer;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.component.smb.strategy.SmbProcessStrategyFactory;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
@@ -93,6 +94,9 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
     @Override
     public GenericFileProducer<FileIdBothDirectoryInformation> createProducer() throws Exception {
         try {
+            if (this.getMoveExistingFileStrategy() == null) {
+                this.setMoveExistingFileStrategy(createDefaultFtpMoveExistingFileStrategy());
+            }
             return new SmbProducer(this, createOperations());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(this, e);
@@ -120,6 +124,15 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
     @Override
     public SmbConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Default Existing File Move Strategy
+     *
+     * @return the default implementation for SMB components
+     */
+    private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
+        return new SmbDefaultMoveExistingFileStrategy();
     }
 
     @Override

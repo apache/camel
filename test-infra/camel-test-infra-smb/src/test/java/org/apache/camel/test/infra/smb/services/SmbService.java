@@ -37,6 +37,8 @@ public interface SmbService extends TestService, BeforeTestExecutionCallback, Af
 
     <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function);
 
+    String smbFile(String file);
+
     @Override
     default void beforeAll(ExtensionContext extensionContext) {
         try {
