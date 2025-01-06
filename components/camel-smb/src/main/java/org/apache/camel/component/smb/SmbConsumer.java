@@ -25,13 +25,16 @@ import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.protocol.commons.EnumWithValue;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.Suppliers;
@@ -188,6 +191,55 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         }
         LOG.trace("Done file: {} does not exist", doneFileName);
         return false;
+    }
+
+    @Override
+    protected void postPollCheck(int polledMessages) {
+        // if we did not poll any messages, but are configured to disconnect
+        // then we need to do this now
+        // as there is no exchanges to be routed that otherwise will disconnect
+        // from the last UoW
+        if (polledMessages == 0) {
+            if (configuration.isDisconnect()) {
+                LOG.trace("postPollCheck disconnect from: {}", getEndpoint());
+                getOperations().disconnect();
+            }
+        }
+    }
+
+    @Override
+    protected boolean processExchange(Exchange exchange) {
+        // defer disconnect til the UoW is complete - but only the last exchange
+        // from the batch should do that
+        boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, true, Boolean.class);
+        if (isLast && configuration.isDisconnect()) {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    LOG.trace("processExchange disconnect from: {}", getEndpoint());
+                    getOperations().disconnect();
+                }
+
+                @Override
+                public boolean allowHandover() {
+                    // do not allow handover as we must execute the callbacks in
+                    // the same thread as this consumer
+                    return false;
+                }
+
+                @Override
+                public int getOrder() {
+                    // we want to disconnect last
+                    return Ordered.LOWEST;
+                }
+
+                public String toString() {
+                    return "Disconnect";
+                }
+            });
+        }
+
+        return super.processExchange(exchange);
     }
 
     private SmbFile asGenericFile(String path, FileIdBothDirectoryInformation file, String charset) {

@@ -18,15 +18,51 @@
 package org.apache.camel.component.smb;
 
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SMB file producer
  */
 public class SmbProducer extends GenericFileProducer<FileIdBothDirectoryInformation> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SmbProducer.class);
+
     protected SmbProducer(final SmbEndpoint endpoint, GenericFileOperations<FileIdBothDirectoryInformation> operations) {
         super(endpoint, operations);
     }
+
+    @Override
+    public SmbEndpoint getEndpoint() {
+        return (SmbEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    public void postWriteCheck(Exchange exchange) {
+        try {
+            boolean isLast = exchange.getProperty(ExchangePropertyKey.BATCH_COMPLETE, false, Boolean.class);
+            if (isLast && getEndpoint().getConfiguration().isDisconnectOnBatchComplete()) {
+                LOG.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
+                getOperations().disconnect();
+            }
+            if (getEndpoint().getConfiguration().isDisconnect()) {
+                LOG.trace("postWriteCheck disconnect from: {}", getEndpoint());
+                getOperations().disconnect();
+            }
+        } catch (GenericFileOperationFailedException e) {
+            // ignore just log a warning
+            LOG.warn("Exception occurred during disconnecting from: {} {}. This exception is ignored.", getEndpoint(),
+                    e.getMessage());
+        }
+    }
+
+    private SmbOperations getOperations() {
+        return (SmbOperations) operations;
+    }
+
 }

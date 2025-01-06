@@ -65,6 +65,14 @@ public class SmbConfiguration extends GenericFileConfiguration {
                                                          + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
                                                          + "not be downloaded.")
     private boolean download = true;
+    @UriParam(label = "common", description = "Whether or not to disconnect from remote SMB share right after use. "
+                                              + "Disconnect will only disconnect the current connection to the SMB share. If you have a consumer which "
+                                              + "you want to stop, then you need to stop the consumer/route instead.")
+    private boolean disconnect;
+    @UriParam(label = "producer,advanced", description = "Whether or not to disconnect from remote SMB share right "
+                                                         + "after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection "
+                                                         + "to the SMB share.")
+    private boolean disconnectOnBatchComplete;
     @Metadata(autowired = true)
     @UriParam(label = "advanced",
               description = "An optional SMB client configuration, can be used to configure client specific "
@@ -189,6 +197,22 @@ public class SmbConfiguration extends GenericFileConfiguration {
 
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnBatchComplete() {
+        return disconnectOnBatchComplete;
+    }
+
+    public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+        this.disconnectOnBatchComplete = disconnectOnBatchComplete;
     }
 
     public SmbConfig getSmbConfig() {

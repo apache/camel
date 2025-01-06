@@ -50,6 +50,9 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "delete": target.setDelete(property(camelContext, boolean.class, value)); return true;
+        case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": target.getConfiguration().setDisconnectOnBatchComplete(property(camelContext, boolean.class, value)); return true;
         case "domain": target.getConfiguration().setDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "donefilename":
         case "doneFileName": target.setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
@@ -218,6 +221,9 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "checksumFileAlgorithm": return java.lang.String.class;
         case "delay": return long.class;
         case "delete": return boolean.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": return boolean.class;
         case "domain": return java.lang.String.class;
         case "donefilename":
         case "doneFileName": return java.lang.String.class;
@@ -382,6 +388,9 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
         case "delay": return target.getDelay();
         case "delete": return target.isDelete();
+        case "disconnect": return target.getConfiguration().isDisconnect();
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": return target.getConfiguration().isDisconnectOnBatchComplete();
         case "domain": return target.getConfiguration().getDomain();
         case "donefilename":
         case "doneFileName": return target.getDoneFileName();

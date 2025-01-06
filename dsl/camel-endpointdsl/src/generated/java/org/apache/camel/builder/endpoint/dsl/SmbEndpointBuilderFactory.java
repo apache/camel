@@ -66,6 +66,42 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to disconnect from remote SMB share right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * share. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB share right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * share. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
          * Producer: If provided, then Camel will write a 2nd done file when the
          * original file has been written. The done file will be empty. This
          * option configures what file name to use. Either you can specify a
@@ -2432,6 +2468,42 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to disconnect from remote SMB share right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * share. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB share right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * share. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
          * Producer: If provided, then Camel will write a 2nd done file when the
          * original file has been written. The done file will be empty. This
          * option configures what file name to use. Either you can specify a
@@ -2796,6 +2868,40 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to disconnect from remote SMB share right after a
+         * Batch upload is complete. disconnectOnBatchComplete will only
+         * disconnect the current connection to the SMB share.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param disconnectOnBatchComplete the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder disconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB share right after a
+         * Batch upload is complete. disconnectOnBatchComplete will only
+         * disconnect the current connection to the SMB share.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param disconnectOnBatchComplete the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder disconnectOnBatchComplete(String disconnectOnBatchComplete) {
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            return this;
+        }
+        /**
          * Whether or not to eagerly delete any existing target file. This
          * option only applies when you use fileExists=Override and the
          * tempFileName option as well. You can use this to disable (set it to
@@ -3135,6 +3241,42 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointBuilder charset(String charset) {
             doSetProperty("charset", charset);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB share right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * share. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Whether or not to disconnect from remote SMB share right after use.
+         * Disconnect will only disconnect the current connection to the SMB
+         * share. If you have a consumer which you want to stop, then you need
+         * to stop the consumer/route instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder disconnect(String disconnect) {
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
