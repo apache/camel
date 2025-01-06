@@ -131,7 +131,7 @@
         <maven-invoker-plugin-version>3.9.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.11.2</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.1.1</maven-release-plugin-version>
-        <maven-remote-resources-plugin-version>3.2.0</maven-remote-resources-plugin-version>
+        <maven-remote-resources-plugin-version>3.3.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.5.2</maven-surefire-plugin-version>
         <versions-maven-plugin-version>2.18.0</versions-maven-plugin-version>
 
