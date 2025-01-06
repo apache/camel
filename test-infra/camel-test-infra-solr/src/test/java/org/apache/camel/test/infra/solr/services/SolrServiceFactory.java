@@ -36,4 +36,5 @@ public final class SolrServiceFactory {
 
     public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {
     }
+
 }

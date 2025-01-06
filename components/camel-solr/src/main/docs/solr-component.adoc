@@ -33,9 +33,7 @@ for this component:
 == URI format
 
 --------------------------------------
-solr://host[:port]/solr?[options]
-solrs://host[:port]/solr?[options]
-solrCloud://host[:port]/solr?[options]
+solr://host[:port]?[options]
 --------------------------------------
 
 // component-configure options: START
@@ -59,64 +57,52 @@ include::partial$component-endpoint-headers.adoc[]
 === Message Operations
 
 The following Solr operations are currently supported. Set an
-exchange header with a key of `SolrOperation` and a value set to one of
+exchange header with a key of "operation" and a value set to one of
 the following. Some operations also require the message body to be set.
 
 * `INSERT`
-* `INSERT_STREAMING`
+* `DELETE`
+* `SEARCH`
+* `PING`
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Operation |Message body |Description
 
-|`INSERT/INSERT_STREAMING` |n/a |adds an index using message headers (must be prefixed with "SolrField.")
+|`INSERT` | n/a |inserts/updates a document using message headers (solr fields must be prefixed with "SolrField.")
 
-|`INSERT/INSERT_STREAMING` |File |adds an index using the given File (using `ContentStreamUpdateRequest`)
+|`INSERT` | File |inserts/updates a document or documents using the given File (using ContentStreamUpdateRequest)
 
-|`INSERT/INSERT_STREAMING` |`SolrInputDocument` |updates index based on the given `SolrInputDocument`
+|`INSERT` | SolrInputDocument or Collection<SolrInputDocument>|inserts/updates a document or documents based on the given (collection of) SolrInputDocument
 
-|`INSERT/INSERT_STREAMING` |String XML |updates index based on the given XML (must follow
-`SolrInputDocument` format)
+|`INSERT` | bean or Collection<bean> |inserts/updates a document or documents based on values in an http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated bean]
 
-|`ADD_BEAN` |bean instance |adds an index based on values in an
-http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
-bean]
+|`INSERT` | String |inserts/updates a document or documents index based on the given XML or json as string (must follow SolrInputDocument format)
 
-|`ADD_BEANS` |`collection<bean>` |adds index based on a collection of
-http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
-bean]
+|`DELETE` | String or Collection<String> | delete a record by ID (or collection of ids) or by a query (or a collection of queries) when header "deleteByQuery=true"
 
-|`DELETE_BY_ID` |index id to delete |delete a record by ID
+|`PING` |n/a | Pings the solr instance
 
-|`DELETE_BY_QUERY` |query string |delete a record by a query
-
-|`COMMIT` |n/a |performs a commit on any pending index changes
-
-|`SOFT_COMMIT` |n/a |performs a `soft commit` (without guarantee that Lucene index files are written to stable storage; useful for Near Real Time operations) on any pending index changes
-
-|`ROLLBACK` |n/a |performs a rollback on any pending index changes
-
-|`OPTIMIZE` |n/a |performs a commit on any pending index changes and then runs the
-optimize command (This command reorganizes the Solr index and might be a heavy task)
+|`SEARCH` |n/a | Performs a search request to the solr instance
 |=======================================================================
 
 == Example
 
-Below is a simple `INSERT`, `DELETE` and `COMMIT` example
+Below is a simple `INSERT`, `DELETE` and `SEARCH` example
 
 [source,java]
 ---------------------------------------------------------------------------------------
 from("direct:insert")
-    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_INSERT))
+    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.INSERT))
     .setHeader(SolrConstants.FIELD + "id", body())
     .to("solr://localhost:8983/solr");
 
 from("direct:delete")
-    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_DELETE_BY_ID))
+    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.DELETE))
     .to("solr://localhost:8983/solr");
 
-from("direct:commit")
-    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
+from("direct:search")
+    .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.SEARCH))
     .to("solr://localhost:8983/solr");
 ---------------------------------------------------------------------------------------
 
@@ -124,7 +110,7 @@ from("direct:commit")
 ------------------------------------------
 <route>
     <from uri="direct:insert"/>
-    <setHeader name="SolrOperation">
+    <setHeader name="operation">
         <constant>INSERT</constant>
     </setHeader>
     <setHeader name="SolrField.id">
@@ -134,15 +120,15 @@ from("direct:commit")
 </route>
 <route>
     <from uri="direct:delete"/>
-    <setHeader name="SolrOperation">
-        <constant>DELETE_BY_ID</constant>
+    <setHeader name="operation">
+        <constant>DELETE</constant>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
 </route>
 <route>
-    <from uri="direct:commit"/>
-    <setHeader name="SolrOperation">
-        <constant>COMMIT</constant>
+    <from uri="direct:search"/>
+    <setHeader name="operation">
+        <constant>SEARCH</constant>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
 </route>
@@ -153,19 +139,14 @@ delete routes and then call the commit route.
 
 [source,java]
 -----------------------------------------------
-template.sendBody("direct:insert", "1234");
-template.sendBody("direct:commit", null);
-template.sendBody("direct:delete", "1234");
-template.sendBody("direct:commit", null);
+template.sendBodyAndHeader("direct:insert", "1234", "SolrParam.commit", true);
+template.sendBodyAndHeader("direct:delete", "1234", "SolrParam.commit", true);
+template.sendBody("direct:search", "id:1234");
 -----------------------------------------------
-
-=== Querying Solr
-
-The components provide a producer operation to query Solr.
 
 For more information:
 
-https://solr.apache.org/guide/solr/latest/query-guide/standard-query-parser.html[Solr Query Syntax]
+https://solr.apache.org/guide/solr/latest/[Apache Solr Reference Guide]
 
 
 

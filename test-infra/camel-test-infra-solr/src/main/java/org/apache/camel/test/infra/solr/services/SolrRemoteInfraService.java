@@ -21,13 +21,17 @@ import org.apache.camel.test.infra.solr.common.SolrProperties;
 public class SolrRemoteInfraService implements SolrInfraService {
 
     @Override
-    public String getSolrBaseUrl() {
-        return System.getProperty(SolrProperties.SERVICE_ADDRESS);
+    public String getSolrHost() {
+        return System.getProperty(SolrProperties.SOLR_HOST);
     }
 
     @Override
-    public boolean isCloudMode() {
-        return System.getProperty(SolrProperties.SOLR_MODE).equals("solrcloud");
+    public int getPort() {
+        String strPort = System.getProperty(SolrProperties.SOLR_PORT);
+        if (strPort != null) {
+            return Integer.parseInt(strPort);
+        }
+        return SolrProperties.DEFAULT_PORT;
     }
 
     @Override

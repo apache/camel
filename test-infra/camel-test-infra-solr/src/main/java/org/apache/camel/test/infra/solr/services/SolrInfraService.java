@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.solr.services;
 
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
-/**
- * Test infra service for Solr
- */
 public interface SolrInfraService extends InfrastructureService {
 
-    String getSolrBaseUrl();
+    int getPort();
 
-    boolean isCloudMode();
+    String getSolrHost();
+
+    default String getHttpHostAddress() {
+        return String.format("%s:%d", getSolrHost(), getPort());
+    }
 
 }

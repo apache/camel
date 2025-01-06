@@ -19,285 +19,249 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-import jakarta.activation.MimetypesFileTypeMap;
-
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.request.AbstractUpdateRequest.ACTION;
-import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
-import org.apache.solr.client.solrj.request.DirectXmlRequest;
+import org.apache.solr.client.solrj.impl.HttpSolrClientBase;
 import org.apache.solr.client.solrj.request.QueryRequest;
+import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.request.UpdateRequest;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrException;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Solr producer.
  */
-public class SolrProducer extends DefaultProducer {
+public class SolrProducer extends DefaultAsyncProducer {
 
-    public SolrProducer(SolrEndpoint endpoint) {
+    private static final Logger LOG = LoggerFactory.getLogger(SolrProducer.class);
+
+    protected final SolrConfiguration configuration;
+
+    public SolrProducer(SolrEndpoint endpoint, SolrConfiguration config) {
         super(endpoint);
+        this.configuration = config;
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        Message message = exchange.getMessage();
 
-        String operation = exchange.getIn().getHeader(SolrConstants.OPERATION, String.class);
-        if (operation == null) {
-            throw new NoSuchHeaderException(exchange, SolrConstants.OPERATION, String.class);
+        // Retrieve values from header or from config
+        SolrClient solrClient = Optional.ofNullable(message.getHeader(SolrConstants.PARAM_SOLR_CLIENT, SolrClient.class))
+                .orElse(getSolrClient());
+        String collection = Optional.ofNullable(message.getHeader(SolrConstants.PARAM_COLLECTION, String.class))
+                .orElse(configuration.getCollection());
+        String requestHandler = message.getHeaders().containsKey(SolrConstants.PARAM_REQUEST_HANDLER)
+                ? message.getHeader(SolrConstants.PARAM_REQUEST_HANDLER, String.class)
+                : configuration.getRequestHandler();
+
+        // Retrieve all SolrParams: SolrParams header and SolrParam.xxx headers
+        ModifiableSolrParams modifiableSolrParams = getAndGroupedSolrParams(message);
+        boolean hasSolrParams = modifiableSolrParams.size() > 0;
+
+        // add commit when autocommit is set
+        if (configuration.isAutoCommit()) {
+            SolrUtils.addHeadersForCommit(modifiableSolrParams);
         }
 
-        // solr configuration
-        SolrConfiguration solrConfiguration = getEndpoint().getSolrConfiguration(operation);
-
-        // solr client
-        SolrClient solrClient = exchange.getIn().getHeader(SolrConstants.CLIENT, SolrClient.class);
-        if (solrClient == null) {
-            solrClient = getEndpoint().getComponent().getSolrClient(this, solrConfiguration);
+        // SolrRequest<?> are generated via SolrRequestConverter when not provided in exchange body:
+        // The code below ensures the body is not null in order to ensure conversion via SolrRequestConverter is run
+        // if conversion is not valid, an InvalidPayloadException will be thrown by the converter
+        if (message.getBody() == null) {
+            message.setBody(new Object());
         }
 
-        // solr parameters
-        ModifiableSolrParams solrParams = new ModifiableSolrParams();
-        for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-            if (entry.getKey().startsWith(SolrConstants.PARAM)) {
-                String paramName = entry.getKey().substring(SolrConstants.PARAM.length());
-                solrParams.add(paramName, entry.getValue().toString());
-            }
-        }
+        // Determine solr operation
+        final SolrOperation operation = resolveSolrOperation(exchange, hasSolrParams);
 
-        // solr collection
-        String solrCollection = exchange.getIn().getHeader(SolrConstants.COLLECTION, String.class);
+        // set action context and add to message to be accessible for converter methods
+        ActionContext ctx = new ActionContext(
+                configuration, exchange, callback, solrClient, operation, collection, requestHandler, modifiableSolrParams);
+        exchange.setProperty(SolrConstants.PROPERTY_ACTION_CONTEXT, ctx);
 
-        // solr operations
-        if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT)) {
-            insert(exchange, solrClient, solrConfiguration, solrParams);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT_STREAMING)) {
-            insert(exchange, solrClient, solrConfiguration, solrParams);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_ID)) {
-            UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-            updateRequest.deleteById(exchange.getIn().getBody(String.class));
-            updateRequest.process(solrClient, solrCollection);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
-            UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-            updateRequest.deleteByQuery(exchange.getIn().getBody(String.class));
-            updateRequest.process(solrClient, solrCollection);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
-            UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-            updateRequest.add(solrClient.getBinder().toSolrInputDocument(exchange.getIn().getBody()));
-            updateRequest.process(solrClient, solrCollection);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEANS)) {
-            UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-            Collection<Object> body = exchange.getIn().getBody(Collection.class);
-            updateRequest.add(body.stream().map(solrClient.getBinder()::toSolrInputDocument).collect(Collectors.toList()));
-            updateRequest.process(solrClient, solrCollection);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
-            commit(exchange, solrClient, solrConfiguration, solrParams);
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_SOFT_COMMIT)) {
-            commit(exchange, solrClient, solrConfiguration, solrParams, true);
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
-            UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-            updateRequest.rollback();
-            updateRequest.process(solrClient, solrCollection);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_OPTIMIZE)) {
-            UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-            updateRequest.setAction(ACTION.OPTIMIZE, true, true, 1);
-            updateRequest.process(solrClient, solrCollection);
-            if (solrConfiguration.isAutoCommit()) {
-                commit(exchange, solrClient, solrConfiguration, solrParams);
-            }
-        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_QUERY)) {
-            query(exchange, solrClient, solrConfiguration, solrParams);
-        } else {
-            throw new IllegalArgumentException(
-                    SolrConstants.OPERATION + " header value '" + operation + "' is not supported");
+        // perform solr operation
+        boolean doneSync;
+        try {
+            SolrRequest<?> solrRequest = operation == null
+                    ? exchange.getMessage().getMandatoryBody(SolrRequest.class)
+                    : operation.getSolrRequest(ctx);
+            doneSync = SolrEndpoint.isProcessAsync(ctx.solrClient(), ctx.configuration())
+                    ? processSolrActionAsync(ctx, solrRequest)
+                    : processSolrAction(ctx, solrRequest);
+        } catch (Exception e) {
+            exchange.setException(e);
+            ctx.callback.done(true);
+            return true;
+        } finally {
+            exchange.removeProperty(SolrConstants.PROPERTY_ACTION_CONTEXT);
         }
+        return doneSync;
     }
 
-    private void commit(
-            Exchange exchange,
-            SolrClient solrClient,
-            SolrConfiguration solrConfiguration,
-            ModifiableSolrParams solrParams)
+    private boolean processSolrActionAsync(ActionContext ctx, final SolrRequest<?> solrRequest) {
+        onComplete(ctx.getAsyncSolrClient().requestAsync(solrRequest, ctx.collection()), ctx);
+        return false;
+    }
+
+    private boolean processSolrAction(ActionContext ctx, final SolrRequest<?> solrRequest)
             throws SolrServerException, IOException {
-        commit(exchange, solrClient, solrConfiguration, solrParams, false);
+        ctx.exchange().getMessage().setBody(ctx.solrClient().request(solrRequest, ctx.collection()));
+        ctx.callback.done(true);
+        return true;
     }
 
-    private void commit(
-            Exchange exchange,
-            SolrClient solrClient,
-            SolrConfiguration solrConfiguration,
-            ModifiableSolrParams solrParams,
-            boolean softCommit)
-            throws SolrServerException, IOException {
-        String solrCollection = exchange.getIn().getHeader(SolrConstants.COLLECTION, String.class);
-        UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-        updateRequest.setAction(
-                ACTION.COMMIT,
-                solrParams.getBool("waitFlush", true),
-                solrParams.getBool("waitSearcher", true),
-                softCommit);
-        updateRequest.process(solrClient, solrCollection);
+    private static ModifiableSolrParams getAndGroupedSolrParams(Message message) {
+        // use 'solrParams' header to initiate the ModifiableSolrParams
+        SolrParams solrParams = message.getHeader(SolrConstants.PARAM_SOLR_PARAMS, SolrParams.class);
+        ModifiableSolrParams modifiableSolrParams = solrParams instanceof ModifiableSolrParams
+                ? (ModifiableSolrParams) solrParams
+                : new ModifiableSolrParams(solrParams);
+        // add possible headers that start with "SolrParam." prefix
+        message.getHeaders().entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith(SolrConstants.HEADER_PARAM_PREFIX))
+                .forEach(entry -> {
+                    String paramName = entry.getKey().substring(SolrConstants.HEADER_PARAM_PREFIX.length());
+                    modifiableSolrParams.add(paramName, entry.getValue().toString());
+                });
+        return modifiableSolrParams;
     }
 
-    private void query(
-            Exchange exchange, SolrClient solrClient, SolrConfiguration solrConfiguration, ModifiableSolrParams solrParams)
-            throws SolrServerException, IOException, NoSuchHeaderException {
-        String solrCollection = exchange.getIn().getHeader(SolrConstants.COLLECTION, String.class);
-        SolrQuery solrQuery = new SolrQuery();
-        if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(SolrConstants.QUERY_STRING))) {
-            solrQuery.setQuery(exchange.getMessage().getHeader(SolrConstants.QUERY_STRING, String.class));
-        } else {
-            throw new NoSuchHeaderException(exchange, SolrConstants.QUERY_STRING, String.class);
+    /**
+     * Add actions to perform once the given future is complete.
+     *
+     * @param future the future to complete with specific actions.
+     * @param ctx    the context of the asynchronous task.
+     * @param <T>    the result type returned by the future.
+     */
+    private <T> void onComplete(CompletableFuture<T> future, ActionContext ctx) {
+        final Exchange exchange = ctx.exchange();
+        future.thenAccept(r -> exchange.getMessage().setBody(r))
+                .whenComplete(
+                        (r, e) -> {
+                            try {
+                                if (e != null) {
+                                    exchange.setException(new CamelExchangeException(
+                                            "An error occurred while executing the action", exchange, e));
+                                }
+                            } finally {
+                                ctx.callback().done(false);
+                            }
+                        });
+    }
+
+    public SolrClient getSolrClient() {
+        return ((SolrEndpoint) super.getEndpoint()).getSolrClient();
+    }
+
+    private SolrOperation resolveSolrOperation(Exchange exchange, boolean hasSolrParams) {
+        // Operation can be driven by either (in order of preference):
+        // a. If the body is a specific class (SolrQuery, QueryRequest, UpdateRequest, SolrInputDocument(=Map)).
+        // b. If the body is not one of the specific classes, the operation is set by the
+        // header if it exists.
+        // c. If neither the operation can not be derived from the body or
+        // header, the configuration is used.
+        // In the event we can't discover the operation from a, b or c we throw
+        // an error.
+
+        Object body = exchange.getMessage().getBody();
+        if (ObjectHelper.isNotEmpty(body)) {
+            LOG.debug("Operation request body: {}", body);
         }
-        solrQuery.add(solrParams);
-        QueryRequest queryRequest = new QueryRequest(solrQuery);
-        queryRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
-        QueryResponse p = queryRequest.process(solrClient, solrCollection);
-        exchange.getMessage().setBody(p.getResults());
-    }
-
-    private void insert(
-            Exchange exchange, SolrClient solrClient, SolrConfiguration solrConfiguration, ModifiableSolrParams solrParams)
-            throws Exception {
-        String solrCollection = exchange.getIn().getHeader(SolrConstants.COLLECTION, String.class);
-        Object body = exchange.getIn().getBody();
-        boolean invalid = false;
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile<?>) body).getFile();
+        if (body instanceof SolrPing) {
+            return SolrOperation.PING;
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SolrConstants.CONTENT_TYPE, String.class))) {
-            String mimeType = exchange.getIn().getHeader(SolrConstants.CONTENT_TYPE, String.class);
-            ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler(solrConfiguration));
-            updateRequest.setParams(solrParams);
-            updateRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
-            updateRequest.addFile((File) body, mimeType);
-            updateRequest.process(solrClient, solrCollection);
-        } else {
-            if (body instanceof File) {
-                MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-                String mimeType = mimeTypesMap.getContentType((File) body);
-                ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler(solrConfiguration));
-                updateRequest.setParams(solrParams);
-                updateRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
-                updateRequest.addFile((File) body, mimeType);
-                updateRequest.process(solrClient, solrCollection);
-            } else if (body instanceof SolrInputDocument) {
-                UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-                updateRequest.add((SolrInputDocument) body);
-                updateRequest.process(solrClient, solrCollection);
-            } else if (body instanceof List<?>) {
-                List<?> list = (List<?>) body;
-                if (!list.isEmpty() && list.get(0) instanceof SolrInputDocument) {
-                    UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-                    updateRequest.add((List<SolrInputDocument>) list);
-                    updateRequest.process(solrClient, solrCollection);
-                } else {
-                    invalid = true;
-                }
-            } else {
-                boolean hasSolrHeaders = false;
-                for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-                    if (entry.getKey().startsWith(SolrConstants.FIELD)) {
-                        hasSolrHeaders = true;
-                        break;
-                    }
-                }
-                if (hasSolrHeaders) {
-                    UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-                    SolrInputDocument doc = new SolrInputDocument();
-                    for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-                        if (entry.getKey().startsWith(SolrConstants.FIELD)) {
-                            String fieldName = entry.getKey().substring(SolrConstants.FIELD.length());
-                            doc.setField(fieldName, entry.getValue());
-                        }
-                    }
-                    updateRequest.add(doc);
-                    updateRequest.process(solrClient, solrCollection);
-                } else if (body instanceof String) {
-                    String bodyAsString = (String) body;
-                    if (!bodyAsString.startsWith("<add")) {
-                        bodyAsString = "<add>" + bodyAsString + "</add>";
-                    }
-                    DirectXmlRequest xmlRequest = new DirectXmlRequest(getRequestHandler(solrConfiguration), bodyAsString);
-                    xmlRequest.setParams(solrParams);
-                    xmlRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
-                    xmlRequest.process(solrClient, solrCollection);
-                } else if (body instanceof Map) {
-                    UpdateRequest updateRequest = createUpdateRequest(solrConfiguration, solrParams);
-                    SolrInputDocument doc = new SolrInputDocument();
-                    Map<String, Object> bodyMap = (Map<String, Object>) body;
-                    for (Map.Entry<String, Object> entry : bodyMap.entrySet()) {
-                        doc.setField(entry.getKey(), entry.getValue());
-                    }
-                    updateRequest.add(doc);
-                    updateRequest.process(solrClient, solrCollection);
-                } else {
-                    invalid = true;
-                }
+        if (body instanceof SolrQuery
+                || body instanceof QueryRequest
+                || exchange.getMessage().getHeader(SolrConstants.PARAM_QUERY_STRING) != null) {
+            return SolrOperation.SEARCH;
+        }
+        if (body instanceof Map
+                || body instanceof WrappedFile
+                || body instanceof File
+                || body instanceof UpdateRequest) {
+            return SolrOperation.INSERT;
+        }
+        if (body instanceof SolrRequest) {
+            return null;
+        }
+        // collection: if strings then delete else insert
+        if (body instanceof Collection<?> collection) {
+            return SolrUtils.isCollectionOfType(collection, String.class)
+                    ? SolrOperation.DELETE
+                    : SolrOperation.INSERT;
+        }
+
+        SolrOperation operation;
+        String actionString = exchange.getMessage().getHeader(SolrConstants.PARAM_OPERATION, String.class);
+        if (ObjectHelper.isNotEmpty(actionString)) {
+            operation = SolrOperation.getSolrOperationFrom(actionString);
+            if (operation != null && !operation.name().equalsIgnoreCase(actionString)) {
+                LOG.warn(operation.createFutureDeprecationMessage(actionString,
+                        operation.getActionParameter(actionString)));
             }
+            LOG.debug("Operation obtained from header '{}': {}", SolrConstants.PARAM_OPERATION, actionString);
+            return operation;
+        }
+        if (configuration.getOperation() != null) {
+            operation = configuration.getOperation();
+            LOG.debug("Operation obtained from config: {}", operation);
+            return operation;
+        }
+        // when "invalid" body with solr params (e.g. commit),
+        // assume insert request and allow processing without "body"
+        if (hasSolrParams) {
+            return SolrOperation.INSERT;
+        }
+        throw new IllegalArgumentException(
+                SolrConstants.PARAM_OPERATION + " value is mandatory");
+    }
+
+    /**
+     * An inner class providing all the information that an asynchronous action could need.
+     */
+    public record ActionContext(SolrConfiguration configuration,
+            Exchange exchange,
+            AsyncCallback callback,
+            SolrClient solrClient,
+            SolrOperation operation,
+            String collection,
+            String requestHandler,
+            ModifiableSolrParams solrParams) {
+
+        public ActionContext {
+            ObjectHelper.notNull(solrClient, SolrConstants.PARAM_SOLR_CLIENT);
+            ObjectHelper.notNull(collection, SolrConstants.PARAM_COLLECTION);
+            ObjectHelper.notNull(solrParams, SolrConstants.PARAM_SOLR_PARAMS);
         }
 
-        if (invalid) {
-            throw new SolrException(
-                    SolrException.ErrorCode.BAD_REQUEST,
-                    "unable to find data in Exchange to update Solr");
+        public HttpSolrClientBase getAsyncSolrClient() {
+            if (solrClient instanceof HttpSolrClientBase httpSolrClientBase) {
+                return httpSolrClientBase;
+            }
+            throw new UnsupportedOperationException(getAsyncProcessingErrorDetails(solrClient));
         }
-    }
 
-    private String getRequestHandler(SolrConfiguration solrConfiguration) {
-        String requestHandler = solrConfiguration.getRequestHandler();
-        return (requestHandler == null) ? "/update" : requestHandler;
-    }
+        private static String getAsyncProcessingErrorDetails(SolrClient solrClient) {
+            return String.format(
+                    "Async processing requires a solr client instance of HttpSolrClientBase. This solr client is of type %s.",
+                    solrClient.getClass().getCanonicalName());
+        }
 
-    private UpdateRequest createUpdateRequest(SolrConfiguration solrConfiguration, ModifiableSolrParams solrParams) {
-        UpdateRequest updateRequest = new UpdateRequest(getRequestHandler(solrConfiguration));
-        updateRequest.setParams(solrParams);
-        updateRequest.setBasicAuthCredentials(solrConfiguration.getUsername(), solrConfiguration.getPassword());
-        return updateRequest;
-    }
-
-    @Override
-    public SolrEndpoint getEndpoint() {
-        return (SolrEndpoint) super.getEndpoint();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        getEndpoint().onProducerShutdown(this);
     }
 
 }

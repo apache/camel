@@ -16,123 +16,86 @@
  */
 package org.apache.camel.component.solr;
 
-import java.util.stream.Stream;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.http.client.HttpClient;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.impl.CloudLegacySolrClient;
-import org.apache.solr.client.solrj.impl.HttpClientUtil;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
-import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class InitSolrEndpointTest extends SolrTestSupport {
+public class InitSolrEndpointTest extends CamelTestSupport {
 
-    private String solrUrl = "solr://localhost:" + getPort() + "/solr";
+    private final String dummyUri = "solr://localhost:8983";
+    private final SolrClient solrClient = new HttpJdkSolrClient.Builder(dummyUri).build();
 
     @Test
-    public void endpointCreatedCorrectlyWithAllOptions() {
-        HttpClient httpClient = HttpClientUtil.createClient(new ModifiableSolrParams());
-        context.getRegistry().bind("http", httpClient);
-        SolrClient httpSolrClient = new HttpSolrClient.Builder(solrUrl).build();
-        context.getRegistry().bind("client", httpSolrClient);
-        SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl + getFullOptions(), SolrEndpoint.class);
-        assertEquals(5, solrEndpoint.getSolrConfiguration().getStreamingQueueSize(), "queue size incorrect");
-        assertEquals(1, solrEndpoint.getSolrConfiguration().getStreamingThreadCount(), "thread count incorrect");
-        assertNotNull(solrEndpoint);
+    public void endpointCreatedCorrectlyWithAutoWireEnabled() throws Exception {
+        SolrEndpoint solrEndpoint;
+        try (CamelContext camelContext = context()) {
+            camelContext.getRegistry().bind("mySolrClient", solrClient);
+            solrEndpoint = camelContext.getEndpoint(dummyUri, SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertNotNull(solrEndpoint.getConfiguration().getSolrClient());
+            assertEquals(solrClient, solrEndpoint.getConfiguration().getSolrClient());
+        }
     }
 
     @Test
-    public void streamingEndpointCreatedCorrectly() {
-        SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl, SolrEndpoint.class);
-        assertNotNull(solrEndpoint);
-        assertEquals(SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getSolrConfiguration().getStreamingQueueSize(),
-                "queue size incorrect");
-        assertEquals(SolrConstants.DEFAULT_STREAMING_THREAD_COUNT,
-                solrEndpoint.getSolrConfiguration().getStreamingThreadCount(),
-                "thread count incorrect");
+    public void endpointCreatedCorrectlyWithAutoWireDisabled() throws Exception {
+        SolrEndpoint solrEndpoint;
+        SolrClient solrClient1 = new HttpJdkSolrClient.Builder(dummyUri.replace("solr://", "http://")).build();
+        try (CamelContext camelContext = context()) {
+            camelContext.setAutowiredEnabled(false);
+            camelContext.getRegistry().bind("client1", solrClient1);
+            solrEndpoint = camelContext.getEndpoint(dummyUri, SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertNull(solrEndpoint.getConfiguration().getSolrClient());
+            solrEndpoint
+                    = camelContext.getEndpoint(dummyUri + "?solrClient=#client1", SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertNotNull(solrEndpoint.getConfiguration().getSolrClient());
+            assertEquals(solrClient1, solrEndpoint.getConfiguration().getSolrClient());
+        }
     }
 
     @Test
-    public void wrongURLFormatFailsEndpointCreation() {
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> context.getEndpoint("solr://localhost:x99/solr"));
+    public void wrongURLFormatFailsEndpointCreation() throws Exception {
+        SolrEndpoint solrEndpoint;
+        String testUri = dummyUri.replace(":8983", ":89xx");
+        try (CamelContext camelContext = context()) {
+            // should fail as invalid uri
+            assertThrows(ResolveEndpointFailedException.class,
+                    () -> camelContext.getEndpoint(testUri));
+            // should not fail as valid uri
+            solrEndpoint = camelContext.getEndpoint(testUri.replace(":89xx", ""), SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+        }
     }
 
-    @ParameterizedTest
-    @EnumSource(SolrConfiguration.SolrScheme.class)
-    public void endpointWithSolrAndHttpClient(SolrConfiguration.SolrScheme solrScheme) throws Exception {
-        String solrClientBaseUrl = "http://localhost:8983/solr/collection1";
-        String solrEndpointUri = solrClientBaseUrl.replace("http://", solrScheme.getUri());
-        // httpClient
-        HttpClient httpClient = HttpClientUtil.createClient(new ModifiableSolrParams());
-        context.getRegistry().bind("http", httpClient);
-        SolrEndpoint solrEndpoint = context.getEndpoint(solrEndpointUri.concat("?httpClient=#http"), SolrEndpoint.class);
-        SolrClient solrClient = solrEndpoint.getComponent().getSolrClient(
-                (SolrProducer) solrEndpoint.createProducer(),
-                solrEndpoint.getSolrConfiguration());
-        HttpClient httpClient1 = solrClient instanceof CloudLegacySolrClient
-                ? ((CloudLegacySolrClient) solrClient).getHttpClient() : ((HttpSolrClient) solrClient).getHttpClient();
-        assertNotNull(httpClient1);
-        assertEquals(httpClient, httpClient1);
-        // solrClient
-        SolrClient httpSolrClient = new HttpSolrClient.Builder(solrClientBaseUrl).build();
-        context.getRegistry().bind("client", httpSolrClient);
-        solrEndpoint = context.getEndpoint(solrEndpointUri.concat("?solrClient=#client"), SolrEndpoint.class);
-        assertNotNull(solrEndpoint.getSolrConfiguration().getSolrClient());
-        assertEquals(httpSolrClient, solrEndpoint.getSolrConfiguration().getSolrClient());
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideSolrEndpointStringsWithExpectedSolrClientClass")
-    public void endpointCreatedMatchesExpectedSolrClient(
-            String endpointUri, Class expectedSolrClientClass, String expectedZkChroot)
-            throws Exception {
-        SolrComponent solrComponent = context.getComponent("solr", SolrComponent.class);
-        SolrEndpoint solrEndpoint = context.getEndpoint(endpointUri, SolrEndpoint.class);
-        SolrClient solrClient = solrComponent.getSolrClient((SolrProducer) solrEndpoint.createProducer(),
-                solrEndpoint.getSolrConfiguration());
-        assertNotNull(solrClient);
-        assertEquals(expectedSolrClientClass, solrClient.getClass());
-        assertEquals(expectedZkChroot, solrEndpoint.getSolrConfiguration().getZkChroot());
-    }
-
-    private static Stream<Arguments> provideSolrEndpointStringsWithExpectedSolrClientClass() {
-        return Stream.of(
-                Arguments.of("solr:localhost:8983/solr", HttpSolrClient.class, null),
-                Arguments.of("solr://localhost:8983/solr", HttpSolrClient.class, null),
-                // note: zkChroot will not be used but we can't get it from the client directly, so we need to set it
-                Arguments.of("solr://localhost:2181/solr?zkChroot=/mytest", CloudLegacySolrClient.class, "/mytest"),
-                Arguments.of("solr://localhost:8983/solr,localhost:8984/solr,localhost:8985/solr", LBHttpSolrClient.class,
-                        null),
-                Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181", CloudLegacySolrClient.class, null),
-                Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181,zk2:2181,zk3:2181/mytest", CloudLegacySolrClient.class,
-                        "/mytest"),
-                Arguments.of("solr://localhost:8983/solr?zkHost=zk1:2181,zk2:2181,zk3:2181/mytest&zkChroot=/myZkChroot",
-                        CloudLegacySolrClient.class, "/myZkChroot"),
-                Arguments.of("solrCloud:zk1:2181,zk2:2181,zk3:2181", CloudLegacySolrClient.class, null),
-                Arguments.of("solrCloud:zk1:2181,zk2:2181,zk3:2181/myZkChroot", CloudLegacySolrClient.class, "/myZkChroot"),
-                Arguments.of("solrCloud:zk1,zk2,zk3/myZkChroot", CloudLegacySolrClient.class, "/myZkChroot"));
-    }
-
-    private String getFullOptions() {
-        return "?streamingQueueSize=5&streamingThreadCount=1"
-               + "&maxRetries=1&soTimeout=100&connectionTimeout=100"
-               + "&defaultMaxConnectionsPerHost=100&maxTotalConnections=100"
-               + "&followRedirects=false&allowCompression=true"
-               + "&requestHandler=/update"
-               + "&solrClient=#client&httpClient=#http&zkChroot=/test"
-               + "&username=solr&password=SolrRocks";
+    @Test
+    public void endpointCreatedWithSolrUriPath() throws Exception {
+        SolrEndpoint solrEndpoint;
+        try (CamelContext camelContext = context()) {
+            solrEndpoint = camelContext.getEndpoint(dummyUri.concat("/solr/testcollection/update/xml"), SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertEquals("testcollection", solrEndpoint.getConfiguration().getCollection());
+            assertEquals("/update/xml", solrEndpoint.getConfiguration().getRequestHandler());
+            solrEndpoint = camelContext.getEndpoint(dummyUri.concat("/solr/testcollection/update/"), SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertEquals("testcollection", solrEndpoint.getConfiguration().getCollection());
+            assertEquals("/update", solrEndpoint.getConfiguration().getRequestHandler());
+            solrEndpoint = camelContext.getEndpoint(dummyUri.concat("/solr/testcollection"), SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertEquals("testcollection", solrEndpoint.getConfiguration().getCollection());
+            assertNull(solrEndpoint.getConfiguration().getRequestHandler());
+            solrEndpoint = camelContext.getEndpoint(dummyUri.concat("/sub-app/solr2/"), SolrEndpoint.class);
+            assertNotNull(solrEndpoint);
+            assertNull(solrEndpoint.getConfiguration().getCollection());
+            assertNull(solrEndpoint.getConfiguration().getRequestHandler());
+            assertEquals("/sub-app/solr2/", solrEndpoint.getConfiguration().getBasePath());
+        }
     }
 
 }
