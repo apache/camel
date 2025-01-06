@@ -154,7 +154,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Exception occurred during disconnecting from: {} {}. This exception is ignored.", getEndpoint(), e.getMessage());
+            LOG.warn("Exception occurred during disconnecting from: {} {}. This exception is ignored.", getEndpoint(),
+                    e.getMessage());
         }
     }
 
