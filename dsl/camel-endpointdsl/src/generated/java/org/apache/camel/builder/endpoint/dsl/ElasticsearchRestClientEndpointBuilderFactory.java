@@ -109,7 +109,6 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -125,7 +124,6 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -509,6 +507,19 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          */
         public String indexName() {
             return "INDEX_NAME";
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OPERATION}.
+         */
+        public String oPERATION() {
+            return "OPERATION";
         }
     }
     static ElasticsearchRestClientEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -22,13 +22,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestClientConstant;
+import org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -66,7 +69,8 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
                             .handled(true) // Marks the exception as handled
                             .to("direct:errorHandler")
                         .end()
-                        .to("elasticsearch-rest-client:my-cluster?operation=DELETE&restClient=#restClient&indexName=my_index");
+                        .setHeader(ElasticSearchRestClientConstant.OPERATION).constant(ElasticsearchRestClientOperation.DELETE)
+                        .to("elasticsearch-rest-client:my-cluster?restClient=#restClient&indexName=my_index");
 
                 from("direct:errorHandler")
                         .log("Handling exception: ${exception.message}")
@@ -251,4 +255,14 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
         assertTrue(ack.get());
     }
 
+    @Test
+    void operationUndefined() {
+        Exchange exchange = template.request("elasticsearch-rest-client:my-cluster?restClient=#restClient&indexName=my_index",
+                e -> e.getMessage().setBody("test"));
+        assertNotNull(exchange);
+
+        Exception exception = exchange.getException();
+        assertNotNull(exception);
+        assertInstanceOf(IllegalArgumentException.class, exception);
+    }
 }
