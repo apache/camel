@@ -24,12 +24,14 @@ import org.apache.camel.component.file.GenericFileMessage;
 public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
     private final SmbOperations operations;
+    private final boolean download;
     private final boolean streamDownload;
     private Exchange exchange;
     private String hostname;
 
-    public SmbFile(SmbOperations operations, boolean streamDownload) {
+    public SmbFile(SmbOperations operations, boolean download, boolean streamDownload) {
         this.operations = operations;
+        this.download = download;
         this.streamDownload = streamDownload;
     }
 
@@ -84,6 +86,9 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
 
     @Override
     public Object getBody() {
+        if (!download) {
+            return null;
+        }
         if (streamDownload) {
             return operations.getBodyAsInputStream(exchange, this.getAbsoluteFilePath());
         } else {

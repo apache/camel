@@ -53,6 +53,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "domain": target.getConfiguration().setDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "donefilename":
         case "doneFileName": target.setDoneFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "download": target.getConfiguration().setDownload(property(camelContext, boolean.class, value)); return true;
         case "eagerdeletetargetfile":
         case "eagerDeleteTargetFile": target.setEagerDeleteTargetFile(property(camelContext, boolean.class, value)); return true;
         case "eagermaxmessagesperpoll":
@@ -222,6 +223,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "domain": return java.lang.String.class;
         case "donefilename":
         case "doneFileName": return java.lang.String.class;
+        case "download": return boolean.class;
         case "eagerdeletetargetfile":
         case "eagerDeleteTargetFile": return boolean.class;
         case "eagermaxmessagesperpoll":
@@ -387,6 +389,7 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "domain": return target.getConfiguration().getDomain();
         case "donefilename":
         case "doneFileName": return target.getDoneFileName();
+        case "download": return target.getConfiguration().isDownload();
         case "eagerdeletetargetfile":
         case "eagerDeleteTargetFile": return target.isEagerDeleteTargetFile();
         case "eagermaxmessagesperpoll":

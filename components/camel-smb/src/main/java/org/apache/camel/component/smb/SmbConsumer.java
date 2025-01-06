@@ -53,6 +53,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
         this.endpointPath = this.configuration.getDirectory() == null ? "" : this.configuration.getDirectory();
+        this.setRetrieveFile(configuration.isDownload());
     }
 
     @Override
@@ -190,7 +191,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     private SmbFile asGenericFile(String path, FileIdBothDirectoryInformation file, String charset) {
-        SmbFile genericFile = new SmbFile(getOperations(), configuration.isStreamDownload());
+        SmbFile genericFile = new SmbFile(getOperations(), configuration.isDownload(), configuration.isStreamDownload());
         genericFile.setHostname(configuration.getHostname());
         genericFile.setFile(file);
         genericFile.setEndpointPath(endpointPath);

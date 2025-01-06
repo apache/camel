@@ -1999,6 +1999,44 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the SMB consumer should download the file. If this option is
+         * set to false, then the message body will be null, but the consumer
+         * will still trigger a Camel Exchange that has details about the file
+         * such as file name, file size, etc. It's just that the file will not
+         * be downloaded.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param download the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder download(boolean download) {
+            doSetProperty("download", download);
+            return this;
+        }
+        /**
+         * Whether the SMB consumer should download the file. If this option is
+         * set to false, then the message body will be null, but the consumer
+         * will still trigger a Camel Exchange that has details about the file
+         * such as file name, file size, etc. It's just that the file will not
+         * be downloaded.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param download the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder download(String download) {
+            doSetProperty("download", download);
+            return this;
+        }
+        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be

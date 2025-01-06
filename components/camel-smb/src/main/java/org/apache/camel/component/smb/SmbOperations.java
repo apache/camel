@@ -143,7 +143,7 @@ public class SmbOperations implements SmbFileOperations {
 
     @Override
     public GenericFile<FileIdBothDirectoryInformation> newGenericFile() {
-        return new SmbFile(this, configuration.isStreamDownload());
+        return new SmbFile(this, configuration.isDownload(), configuration.isStreamDownload());
     }
 
     @Override
