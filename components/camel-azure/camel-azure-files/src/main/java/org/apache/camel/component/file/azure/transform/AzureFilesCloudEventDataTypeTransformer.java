@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.Message;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.cloudevents.CloudEvents;
-import org.apache.camel.component.file.azure.FilesHeaders;
+import org.apache.camel.component.file.azure.FilesConstants;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
@@ -44,12 +44,12 @@ public class AzureFilesCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.storage.files.poll");
 
-        if (message.getHeaders().containsKey(FilesHeaders.FILE_HOST)) {
+        if (message.getHeaders().containsKey(FilesConstants.FILE_HOST)) {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
-                    "azure.storage.files." + message.getHeader(FilesHeaders.FILE_HOST, String.class));
+                    "azure.storage.files." + message.getHeader(FilesConstants.FILE_HOST, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(FilesHeaders.FILE_NAME, String.class));
+        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(FilesConstants.FILE_NAME, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }

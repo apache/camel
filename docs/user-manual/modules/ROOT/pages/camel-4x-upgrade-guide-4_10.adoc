@@ -6,6 +6,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.9 to 4.10
 
+=== camel-azure-files
+
+The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.
+
 === camel-file
 
 The `camel-file` consumer has been optimized when filtering file names using name matching only,

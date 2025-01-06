@@ -249,8 +249,8 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected void updateFileHeaders(GenericFile<ShareFileItem> file, Message message) {
-        message.setHeader(FilesHeaders.FILE_LENGTH, file.getFileLength());
-        message.setHeader(FilesHeaders.FILE_LAST_MODIFIED, file.getLastModified());
+        message.setHeader(FilesConstants.FILE_LENGTH, file.getFileLength());
+        message.setHeader(FilesConstants.FILE_LAST_MODIFIED, file.getLastModified());
     }
 
     @Override
