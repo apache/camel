@@ -84,7 +84,7 @@ public class SmbDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
             } else {
                 throw new GenericFileOperationFailedException(
                         "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
-                        + to);
+                                                              + to);
             }
         }
 

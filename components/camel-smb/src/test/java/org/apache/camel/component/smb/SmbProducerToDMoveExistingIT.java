@@ -25,28 +25,29 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SmbProducerToMoveExistingIT extends SmbServerTestSupport {
+public class SmbProducerToDMoveExistingIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/toMoveExisting&fileExist=Move&moveExisting=old-${file:onlyname}",
+                "smb:%s/%s?username=%s&password=%s&path=${header.myDir}&fileExist=Move&moveExisting=old-${file:onlyname}",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
     @Test
-    public void testToMoveExisting() throws Exception {
+    public void testToDMoveExisting() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         Map<String, Object> headers = new HashMap<>();
+        headers.put("myDir", "toDMoveExisting");
         headers.put(Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
         template.sendBodyAndHeaders("direct:start", "Bye World", headers);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        String data = service.smbFile("toMoveExisting/old-hello.txt");
+        String data = service.smbFile("toDMoveExisting/old-hello.txt");
         Assertions.assertEquals("Hello World\n", data);
-        data = service.smbFile("toMoveExisting/hello.txt");
+        data = service.smbFile("toDMoveExisting/hello.txt");
         Assertions.assertEquals("Bye World\n", data);
     }
 
@@ -55,7 +56,7 @@ public class SmbProducerToMoveExistingIT extends SmbServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(getSmbUrl()).to("mock:result");
+                from("direct:start").toD(getSmbUrl()).to("mock:result");
             }
         };
     }
