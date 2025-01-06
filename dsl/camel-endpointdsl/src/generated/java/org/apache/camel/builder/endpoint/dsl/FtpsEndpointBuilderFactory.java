@@ -2853,6 +2853,44 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
          * Whether to allow using LIST command when downloading a file. Default
          * is true. In some use cases you may want to download a specific file
          * and are not allowed to use the LIST command, and therefore you can
@@ -3333,44 +3371,6 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -5018,44 +5018,6 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
          * The option is a: <code>int</code> type.
@@ -6180,44 +6142,6 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
-            return this;
-        }
-        /**
-         * Should an exception be thrown if connection failed (exhausted)By
-         * default exception is not thrown and a WARN is logged. You can use
-         * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         * 
-         * @param throwExceptionOnConnectFailed the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
-            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**

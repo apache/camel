@@ -45,9 +45,11 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbConsumer.class);
 
-    protected String endpointPath;
     private final SmbEndpoint endpoint;
     private final SmbConfiguration configuration;
+    private final String endpointPath;
+    protected transient boolean loggedIn;
+    protected transient boolean loggedInWarning;
 
     public SmbConsumer(SmbEndpoint endpoint, Processor processor,
                        GenericFileOperations<FileIdBothDirectoryInformation> fileOperations,
@@ -194,6 +196,68 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     @Override
+    protected boolean prePollCheck() throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("prePollCheck on {}", getEndpoint());
+        }
+        try {
+            getOperations().connectIfNecessary();
+            loggedIn = true;
+        } catch (Exception e) {
+            loggedIn = false;
+
+            // login failed should we thrown exception
+            if (configuration.isThrowExceptionOnConnectFailed()) {
+                throw e;
+            }
+        }
+
+        if (!loggedIn) {
+            String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
+            if (!loggedInWarning) {
+                LOG.warn(message);
+                loggedInWarning = true;
+            }
+            return false;
+        } else {
+            // need to log the failed log again
+            loggedInWarning = false;
+        }
+
+        // we are logged in so lets mark the consumer as ready
+        forceConsumerAsReady();
+
+        return true;
+    }
+
+    /**
+     * Returns human-readable server information for logging purpose
+     */
+    protected String remoteServer() {
+        return configuration.remoteServerInformation();
+    }
+
+    protected void disconnect() {
+        // eager indicate we are no longer logged in
+        loggedIn = false;
+
+        // disconnect
+        try {
+            if (getOperations().isConnected()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Disconnecting from: {}", remoteServer());
+                }
+                getOperations().disconnect();
+            }
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(), e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
     protected void postPollCheck(int polledMessages) {
         // if we did not poll any messages, but are configured to disconnect
         // then we need to do this now
@@ -202,7 +266,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         if (polledMessages == 0) {
             if (configuration.isDisconnect()) {
                 LOG.trace("postPollCheck disconnect from: {}", getEndpoint());
-                getOperations().disconnect();
+                disconnect();
             }
         }
     }
@@ -217,7 +281,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
                 @Override
                 public void onDone(Exchange exchange) {
                     LOG.trace("processExchange disconnect from: {}", getEndpoint());
-                    getOperations().disconnect();
+                    disconnect();
                 }
 
                 @Override
@@ -288,7 +352,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        getOperations().disconnect();
+        disconnect();
     }
 
     private SmbOperations getOperations() {

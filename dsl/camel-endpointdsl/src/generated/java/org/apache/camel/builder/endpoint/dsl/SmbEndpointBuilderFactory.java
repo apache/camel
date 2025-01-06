@@ -2303,6 +2303,44 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder throwExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted)By
+         * default exception is not thrown and a WARN is logged. You can use
+         * this to enable exception being thrown and handle the thrown exception
+         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
+         * method.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder throwExceptionOnConnectFailed(String throwExceptionOnConnectFailed) {
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            return this;
+        }
+        /**
          * Automatically create missing directories in the file's pathname. For
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written

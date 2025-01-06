@@ -177,6 +177,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "tempFileName": target.setTempFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "tempprefix":
         case "tempPrefix": target.setTempPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptiononconnectfailed":
+        case "throwExceptionOnConnectFailed": target.getConfiguration().setThrowExceptionOnConnectFailed(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
@@ -348,6 +350,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "tempFileName": return java.lang.String.class;
         case "tempprefix":
         case "tempPrefix": return java.lang.String.class;
+        case "throwexceptiononconnectfailed":
+        case "throwExceptionOnConnectFailed": return boolean.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
@@ -515,6 +519,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "tempFileName": return target.getTempFileName();
         case "tempprefix":
         case "tempPrefix": return target.getTempPrefix();
+        case "throwexceptiononconnectfailed":
+        case "throwExceptionOnConnectFailed": return target.getConfiguration().isThrowExceptionOnConnectFailed();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
