@@ -21,7 +21,6 @@ on:
   pull_request:
     branches:
       - main
-      - camel-4.4.x
     paths-ignore:
       - .github/**
       - README.md
