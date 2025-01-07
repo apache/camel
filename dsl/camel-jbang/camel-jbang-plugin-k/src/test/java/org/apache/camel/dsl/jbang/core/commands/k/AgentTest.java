@@ -34,6 +34,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.hamcrest.Matchers.hasItems;
 
+@Disabled("Deprecated and resource intensive")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AgentTest {
 

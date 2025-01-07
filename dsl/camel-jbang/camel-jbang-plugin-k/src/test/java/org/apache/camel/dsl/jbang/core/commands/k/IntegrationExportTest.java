@@ -37,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Deprecated and resource intensive")
 class IntegrationExportTest extends CamelKBaseTest {
 
     private File workingDir;
