@@ -31,8 +31,8 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
     public static class TransientAuthenticatedKafkaContainer extends KafkaContainer {
         public TransientAuthenticatedKafkaContainer(String jaasConfigFile) {
             super(DockerImageName.parse(System.getProperty(
-                            KafkaProperties.KAFKA_CONTAINER,
-                            KafkaServiceFactory.ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
+                    KafkaProperties.KAFKA_CONTAINER,
+                    KafkaServiceFactory.ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
                     .asCompatibleSubstituteFor("apache/kafka"));
 
             final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);

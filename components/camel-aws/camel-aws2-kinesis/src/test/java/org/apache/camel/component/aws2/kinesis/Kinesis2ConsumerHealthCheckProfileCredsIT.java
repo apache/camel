@@ -34,9 +34,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
 import static org.awaitility.Awaitility.await;
 
 public class Kinesis2ConsumerHealthCheckProfileCredsIT extends CamelTestSupport {

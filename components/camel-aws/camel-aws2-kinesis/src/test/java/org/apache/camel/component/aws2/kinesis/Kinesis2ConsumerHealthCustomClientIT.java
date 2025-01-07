@@ -39,9 +39,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
 import static org.awaitility.Awaitility.await;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")

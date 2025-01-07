@@ -98,7 +98,7 @@ public final class KafkaServiceFactory {
             KafkaContainer container
                     = new KafkaContainer(
                             DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
-                                    .asCompatibleSubstituteFor(ContainerLocalKafkaInfraService.KAFKA3_IMAGE_NAME));
+                                    .asCompatibleSubstituteFor("apache/kafka"));
 
             return new ContainerLocalKafkaService(container);
         }
