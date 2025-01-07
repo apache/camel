@@ -28,8 +28,8 @@ updates:
       interval: "daily"
     ignore:
       # amazon-kinesis-client 3.x requires protobuf 4.x
+      # Quarkus forces protobuf to 3.25.5, therefore amazon-kinesis-client has to stay on 2.6.0
       - dependency-name: "software.amazon.kinesis:amazon-kinesis-client"
-        update-types: ["version-update:semver-major"]
       # Quarkus related
       - dependency-name: "io.vertx:*"
       - dependency-name: "io.smallrye:jandex:*"
