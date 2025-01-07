@@ -16,11 +16,16 @@
  */
 package org.apache.camel.test.infra.smb.services;
 
+import java.io.InputStream;
+
 import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
+import org.testcontainers.utility.ThrowingFunction;
 
 /**
  * Test infra service for Smb
  */
 public interface SmbService extends TestService, SmbInfraService, ContainerTestService {
+
+    <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function);
 }

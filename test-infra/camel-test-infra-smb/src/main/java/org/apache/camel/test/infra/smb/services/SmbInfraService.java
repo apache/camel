@@ -28,4 +28,5 @@ public interface SmbInfraService extends InfrastructureService {
 
     String password();
 
+    String smbFile(String file);
 }

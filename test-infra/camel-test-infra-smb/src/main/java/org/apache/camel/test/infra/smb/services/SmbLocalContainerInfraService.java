@@ -16,17 +16,13 @@
  */
 package org.apache.camel.test.infra.smb.services;
 
-import java.io.InputStream;
-
-import com.github.dockerjava.api.exception.NotFoundException;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.utility.ThrowingFunction;
 
 public class SmbLocalContainerInfraService implements SmbInfraService {
-    private static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
-    private final SmbContainer container = new SmbContainer();
+    protected static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
+    protected final SmbContainer container = new SmbContainer();
 
     public SmbLocalContainerInfraService() {
     }
@@ -51,14 +47,8 @@ public class SmbLocalContainerInfraService implements SmbInfraService {
         return container.getPassword();
     }
 
-    @Override
-    public <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function) {
-        try {
-            return container.copyFileFromContainer(fileName, function);
-        } catch (NotFoundException e) {
-            LOG.info("No file found with name {}:", fileName);
-            return null;
-        }
+    public String smbFile(String file) {
+        return this.container.copyFileFromContainer("data/rw/" + file, IOHelper::loadText);
     }
 
     @Override
@@ -76,9 +66,4 @@ public class SmbLocalContainerInfraService implements SmbInfraService {
     @Override
     public void shutdown() {
     }
-
-    public String smbFile(String file) {
-        return this.container.copyFileFromContainer("data/rw/" + file, IOHelper::loadText);
-    }
-
 }

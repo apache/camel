@@ -17,7 +17,11 @@
 
 package org.apache.camel.test.infra.smb.services;
 
+import java.io.InputStream;
+
+import com.github.dockerjava.api.exception.NotFoundException;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.testcontainers.utility.ThrowingFunction;
 
 public class SmbServiceFactory {
 
@@ -30,8 +34,43 @@ public class SmbServiceFactory {
     }
 
     public static class SmbRemoteService extends SmbRemoteInfraService implements SmbService {
+        @Override
+        public <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function) {
+            return null;
+        }
     }
 
     public static class SmbLocalContainerService extends SmbLocalContainerInfraService implements SmbService {
+
+        @Override
+        public <T> T copyFileFromContainer(String fileName, ThrowingFunction<InputStream, T> function) {
+            try {
+                return container.copyFileFromContainer(fileName, function);
+            } catch (NotFoundException e) {
+                LOG.info("No file found with name {}:", fileName);
+                return null;
+            }
+        }
+
+        @Override
+        public void registerProperties() {
+        }
+
+        @Override
+        public void initialize() {
+            container.start();
+            registerProperties();
+
+            LOG.info("SMB host running at address {}:", address());
+        }
+
+        @Override
+        public void shutdown() {
+        }
+
+        @Override
+        public void close() {
+
+        }
     }
 }

@@ -38,16 +38,8 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     private final OpensearchContainer container;
 
     public OpenSearchLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerService.class,
+        this(LocalPropertyResolver.getProperty(OpenSearchLocalContainerInfraService.class,
                 OpenSearchProperties.OPEN_SEARCH_CONTAINER));
-    }
-
-    private static String getPropertyKeyForContainerImage() {
-        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
-            return OpenSearchProperties.OPEN_SEARCH_CONTAINER_PPC64LE;
-        } else {
-            return OpenSearchProperties.OPEN_SEARCH_CONTAINER;
-        }
     }
 
     public OpenSearchLocalContainerInfraService(String imageName) {
