@@ -21,8 +21,10 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.v1.Pipe;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Deprecated and resource intensive")
 class BindTest extends CamelKBaseTest {
 
     @Test

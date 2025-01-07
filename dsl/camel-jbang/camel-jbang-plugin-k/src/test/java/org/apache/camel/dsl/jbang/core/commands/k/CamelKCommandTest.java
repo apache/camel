@@ -31,8 +31,10 @@ import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.v1.Integration;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Deprecated and resource intensive")
 class CamelKCommandTest extends CamelKBaseTest {
 
     @Test

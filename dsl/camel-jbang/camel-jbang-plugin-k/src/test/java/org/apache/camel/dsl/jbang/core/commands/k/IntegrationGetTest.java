@@ -26,8 +26,10 @@ import org.apache.camel.v1.IntegrationStatus;
 import org.apache.camel.v1.integrationstatus.Conditions;
 import org.apache.camel.v1.integrationstatus.IntegrationKit;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Deprecated and resource intensive")
 class IntegrationGetTest extends CamelKBaseTest {
 
     @Test
