@@ -102,7 +102,7 @@
         <cometd-java-client-version>8.0.6</cometd-java-client-version>
         <cometd-java-server-version>8.0.6</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
-        <commons-codec-version>1.17.1</commons-codec-version>
+        <commons-codec-version>1.17.2</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.4</commons-collections4-version>
         <commons-compress-version>1.27.1</commons-compress-version>
