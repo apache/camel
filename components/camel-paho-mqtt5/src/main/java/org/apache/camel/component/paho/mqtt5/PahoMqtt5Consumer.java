@@ -32,8 +32,6 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class PahoMqtt5Consumer extends DefaultConsumer {
 
@@ -175,8 +173,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    Marker exchangeErrorMarker = MarkerFactory.getMarker("EXCHANGE_ERROR_MARKER");
-                    LOG.error(exchangeErrorMarker, "Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(), exchange.getException());
+                    LOG.error("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(), exchange.getException());
                 }
             });
         }
