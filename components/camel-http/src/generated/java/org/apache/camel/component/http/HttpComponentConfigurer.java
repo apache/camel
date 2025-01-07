@@ -105,6 +105,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
+        case "usesystemproperties":
+        case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
         case "useragent":
         case "userAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "x509hostnameverifier":
@@ -203,6 +205,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
+        case "usesystemproperties":
+        case "useSystemProperties": return boolean.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
         case "x509hostnameverifier":
@@ -297,6 +301,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
+        case "usesystemproperties":
+        case "useSystemProperties": return target.isUseSystemProperties();
         case "useragent":
         case "userAgent": return target.getUserAgent();
         case "x509hostnameverifier":

@@ -101,6 +101,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "To use System Properties as fallback for configuration for configuring HTTP Client")
+    private boolean useSystemProperties;
     @Metadata(label = "producer,advanced", description = "To use a custom org.apache.hc.client5.http.cookie.CookieStore."
                                                          + " By default the org.apache.hc.client5.http.cookie.BasicCookieStore is used which is an in-memory only cookie store."
                                                          + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
@@ -507,11 +510,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
-        final boolean useSystemProperties = CamelContextHelper.mandatoryConvertTo(this.getCamelContext(), boolean.class,
-                parameters.get("useSystemProperties"));
+        // do not remove as we set this later again
+        final boolean sysProp = getParameter(parameters, "useSystemProperties", boolean.class, useSystemProperties);
 
         final Registry<ConnectionSocketFactory> connectionRegistry
-                = createConnectionRegistry(hostnameVerifier, sslContextParameters, useSystemProperties);
+                = createConnectionRegistry(hostnameVerifier, sslContextParameters, sysProp);
 
         // allow the builder pattern
         httpConnectionOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpConnection."));
@@ -749,6 +752,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
+    }
+
+    public boolean isUseSystemProperties() {
+        return useSystemProperties;
+    }
+
+    public void setUseSystemProperties(boolean useSystemProperties) {
+        this.useSystemProperties = useSystemProperties;
     }
 
     public int getMaxTotalConnections() {

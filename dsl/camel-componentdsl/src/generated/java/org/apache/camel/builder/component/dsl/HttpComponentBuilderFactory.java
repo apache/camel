@@ -542,6 +542,24 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * To use System Properties as fallback for configuration for
+         * configuring HTTP Client.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useSystemProperties the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder useSystemProperties(boolean useSystemProperties) {
+            doSetProperty("useSystemProperties", useSystemProperties);
+            return this;
+        }
+    
         /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
@@ -854,6 +872,7 @@ public interface HttpComponentBuilderFactory {
             case "httpContext": ((HttpComponent) component).setHttpContext((org.apache.hc.core5.http.protocol.HttpContext) value); return true;
             case "maxTotalConnections": ((HttpComponent) component).setMaxTotalConnections((int) value); return true;
             case "redirectHandlingDisabled": ((HttpComponent) component).setRedirectHandlingDisabled((boolean) value); return true;
+            case "useSystemProperties": ((HttpComponent) component).setUseSystemProperties((boolean) value); return true;
             case "headerFilterStrategy": ((HttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyAuthDomain": ((HttpComponent) component).setProxyAuthDomain((java.lang.String) value); return true;
             case "proxyAuthHost": ((HttpComponent) component).setProxyAuthHost((java.lang.String) value); return true;

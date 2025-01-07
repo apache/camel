@@ -106,7 +106,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @UriParam(label = "advanced", description = "Sets a custom HttpClient to be used by the producer")
     private HttpClient httpClient;
     @UriParam(label = "advanced", defaultValue = "false",
-              description = "To use System Properties as fallback for configuration")
+              description = "To use System Properties as fallback for configuration for configuring HTTP Client")
     private boolean useSystemProperties;
 
     // timeout

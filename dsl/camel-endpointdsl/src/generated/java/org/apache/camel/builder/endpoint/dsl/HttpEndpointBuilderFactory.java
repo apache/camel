@@ -1645,7 +1645,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use System Properties as fallback for configuration.
+         * To use System Properties as fallback for configuration for
+         * configuring HTTP Client.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1660,7 +1661,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use System Properties as fallback for configuration.
+         * To use System Properties as fallback for configuration for
+         * configuring HTTP Client.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
