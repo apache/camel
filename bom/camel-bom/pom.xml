@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.8.3-SNAPSHOT</version>
+    <version>4.8.3</version>
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>camel-bom</artifactId>
@@ -34,2278 +34,2278 @@
       <dependency>
         <groupId>org.apache.camel.maven</groupId>
         <artifactId>camel-debezium-maven-plugin</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel.maven</groupId>
         <artifactId>camel-salesforce-maven-plugin</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel.maven</groupId>
         <artifactId>camel-servicenow-maven-plugin</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-activemq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-activemq6</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-amqp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-arangodb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-asn1</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-asterisk</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-atmosphere-websocket</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-atom</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-attachments</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-avro</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-avro-rpc</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-avro-rpc-jetty</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-avro-rpc-spi</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-bedrock</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-cloudtrail</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-config</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-secrets-manager</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-xray</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-athena</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-cw</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-ddb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-ec2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-ecs</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-eks</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-eventbridge</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-iam</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-kinesis</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-kms</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-lambda</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-mq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-msk</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-redshift</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-s3</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-ses</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-sns</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-sqs</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-step-functions</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-sts</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-timestream</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-translate</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-cosmosdb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-eventhubs</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-files</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-key-vault</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-schema-registry</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-servicebus</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-storage-blob</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-storage-datalake</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-storage-queue</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-barcode</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-base</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-base-engine</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-base64</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bean</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bean-validator</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-beanio</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bindy</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bonita</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-box</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-box-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-braintree</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-browse</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-caffeine</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cassandraql</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-console</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-lucene</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-maven</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cbor</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-chatscript</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-chunk</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cli-connector</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cloud</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cloudevents</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cluster</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cm-sms</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-coap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cometd</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-componentdsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-console</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-consul</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-controlbus</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-all</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
         <type>pom</type>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-catalog</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-engine</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-languages</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-model</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-processor</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-reifier</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-xml</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-couchbase</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-couchdb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cron</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-crypto</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-crypto-pgp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-csimple-joor</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-csimple-maven-plugin</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-csv</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-rest</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-soap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-spring-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-spring-rest</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-spring-soap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-spring-transport</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-transport</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dataformat</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dataset</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-datasonnet</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-db2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-mongodb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-mysql</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-oracle</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-postgres</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-sqlserver</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-debug</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dhis2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dhis2-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-digitalocean</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-direct</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-disruptor</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-djl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dns</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-docker</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-drill</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dropbox</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dsl-modeline</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dsl-support</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-dynamic-router</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ehcache</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch-rest-client</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elytron</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-endpointdsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-endpointdsl-support</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-etcd3</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-exec</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fastjson</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-file</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-file-watch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-flatpack</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-flink</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fop</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-freemarker</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ftp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-geocoder</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-git</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-github</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-bigquery</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-calendar</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-drive</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-functions</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-mail</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-pubsub</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-pubsub-lite</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-secret-manager</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-sheets</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-storage</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grape</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-graphql</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grok</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy-dsl-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grpc</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-gson</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-guava-eventbus</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-hashicorp-vault</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-hazelcast</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-headersmap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-health</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-hl7</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-http</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-http-base</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-http-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-dms</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-frs</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-functiongraph</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-iam</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-imagerecognition</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-obs</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huaweicloud-smn</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ical</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-iec60870</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ignite</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-embedded</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-influxdb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-influxdb2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-irc</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ironmq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jackson</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jackson-avro</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jackson-protobuf</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jacksonxml</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jasypt</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-java-joor-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-javascript</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jaxb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-console</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-core</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-main</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-plugin-generate</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-plugin-k</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-plugin-kubernetes</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jcache</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jcr</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jdbc</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jetty</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jetty-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jfr</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jgroups</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jgroups-raft</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jira</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jms</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jmx</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jolt</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jooq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-joor</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jpa</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-js-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsh-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jslt</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-json-patch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-json-validator</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonapi</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonata</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonpath</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jt400</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jta</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jte</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kafka</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kamelet</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kamelet-main</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-knative</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-knative-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-knative-http</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kotlin-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kotlin-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kubernetes</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kudu</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-chat</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-core</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-embeddings</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-tokenizer</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-tools</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-langchain4j-web-search</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-language</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ldap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ldif</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-leveldb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-log</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-lra</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-lucene</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-lumberjack</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-lzf</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mail</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mail-microsoft-oauth</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-main</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-management</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-management-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mapstruct</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-master</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-metrics</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-micrometer</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-micrometer-prometheus</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-microprofile-config</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-microprofile-fault-tolerance</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-microprofile-health</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-milvus</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mina</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-minio</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mllp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mock</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb-gridfs</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mustache</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mvel</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mybatis</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-nats</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-http</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-nitrite</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-oaipmh</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-observation</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ognl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4-api</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-openapi-java</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-openapi-rest-dsl-generator</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-openapi-validator</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-opensearch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-openstack</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-opentelemetry</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-optaplanner</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-paho</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-paho-mqtt5</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parquet-avro</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pdf</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pg-replication-slot</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pgevent</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pinecone</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-platform-http</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-platform-http-jolokia</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-platform-http-main</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-platform-http-vertx</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-plc4x</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-printer</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-protobuf</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pubnub</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pulsar</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-python</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-qdrant</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-quartz</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-quickfix</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-reactive-executor-tomcat</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-reactive-executor-vertx</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-reactive-streams</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-reactor</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-redis</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ref</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-report-maven-plugin</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-resilience4j</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-resourceresolver-github</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest-openapi</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-robotframework</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rocketmq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-route-parser</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rss</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rxjava</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-saga</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-salesforce</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-salesforce-codegen</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sap-netweaver</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-saxon</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-scheduler</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-schematron</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-seda</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-service</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servlet</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-shiro</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sjms</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sjms2</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-slack</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-smb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-smooks</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-smpp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-snakeyaml</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-snmp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-soap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-solr</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk-hec</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-batch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-jdbc</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-ldap</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-main</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-rabbitmq</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-redis</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-security</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-ws</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-xml</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sql</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ssh</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stax</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stitch</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stomp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stream</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stringtemplate</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stub</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-support</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-swift</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-syslog</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tahu</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tarfile</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-telegram</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-junit5</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-main-junit5</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-spring-junit5</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-threadpoolfactory-vertx</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-thrift</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-thymeleaf</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tika</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-timer</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tooling-maven</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tooling-model</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tooling-util</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tracing</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-twilio</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-twitter</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-undertow</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-undertow-spring-security</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-univocity-parsers</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-util</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-util-json</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-validator</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-velocity</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-vertx</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-vertx-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-vertx-http</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-vertx-websocket</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-wal</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-wasm</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-weather</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-web3j</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-webhook</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-whatsapp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-wordpress</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-workday</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xchange</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xj</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-io</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-io-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-io-util</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-jaxb</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-jaxb-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-jaxp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-jaxp-util</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xmlsecurity</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xmpp</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xpath</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xslt</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xslt-saxon</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-common</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-deserializers</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-io</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zeebe</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zendesk</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zip-deflater</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zipfile</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zookeeper</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zookeeper-master</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>spi-annotations</artifactId>
-        <version>4.8.3-SNAPSHOT</version>
+        <version>4.8.3</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
