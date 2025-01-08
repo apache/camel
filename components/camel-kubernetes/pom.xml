@@ -34,23 +34,6 @@
     <properties>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.fabric8</groupId>
-                <artifactId>mockwebserver</artifactId>
-                <version>${mockwebserver-version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun</groupId>
-                        <artifactId>tools</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -87,14 +70,8 @@
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
-            <artifactId>openshift-server-mock</artifactId>
-            <version>${kubernetes-client-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.fabric8</groupId>
             <artifactId>mockwebserver</artifactId>
-            <version>${mockwebserver-version}</version>
+            <version>${kubernetes-client-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -126,13 +103,6 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${squareup-okhttp-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
