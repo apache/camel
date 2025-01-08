@@ -65,8 +65,8 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private BedrockOperations determineOperation(Exchange exchange) {
-        BedrockOperations operation = exchange.getIn().getHeader(BedrockConstants.OPERATION, BedrockOperations.class);
-        if (operation == null) {
+        BedrockOperations operation = exchange.getMessage().getHeader(BedrockConstants.OPERATION, BedrockOperations.class);
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
