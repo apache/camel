@@ -158,4 +158,4 @@ Multiple `SpanExporters` can be used at the same time.
 
 == MDC Logging
 
-You can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific [Opentelemetry Logger MDC auto instrumentation](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md). The configuration depends on the logging framework you're using.
+You can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. The configuration depends on the logging framework you're using.
