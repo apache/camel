@@ -1494,6 +1494,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-neo4j</artifactId>
+        <version>4.10.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty</artifactId>
         <version>4.10.0-SNAPSHOT</version>
       </dependency>

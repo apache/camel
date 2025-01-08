@@ -90,6 +90,7 @@
         <module>camel-test-infra-torchserve</module>
         <module>camel-test-infra-tensorflow-serving</module>
         <module>camel-test-infra-triton</module>
+        <module>camel-test-infra-neo4j</module>
         <module>camel-test-infra-all</module>
     </modules>
 
