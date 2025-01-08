@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.qdrant;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -35,6 +36,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultAsyncProducer;
+
+import static io.qdrant.client.QueryFactory.nearest;
+import static io.qdrant.client.WithPayloadSelectorFactory.enable;
 
 public class QdrantProducer extends DefaultAsyncProducer {
     private QdrantClient client;
@@ -80,22 +84,16 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 throw new NoSuchHeaderException("The action is a required header", exchange, Qdrant.Headers.ACTION);
             }
 
-            switch (action) {
-                case CREATE_COLLECTION:
-                    return createCollection(exchange, callback);
-                case DELETE_COLLECTION:
-                    return deleteCollection(exchange, callback);
-                case UPSERT:
-                    return upsert(exchange, callback);
-                case RETRIEVE:
-                    return retrieve(exchange, callback);
-                case DELETE:
-                    return delete(exchange, callback);
-                case COLLECTION_INFO:
-                    return collectionInfo(exchange, callback);
-                default:
-                    throw new UnsupportedOperationException("Unsupported action: " + action.name());
-            }
+            return switch (action) {
+                case CREATE_COLLECTION -> createCollection(exchange, callback);
+                case DELETE_COLLECTION -> deleteCollection(exchange, callback);
+                case UPSERT -> upsert(exchange, callback);
+                case RETRIEVE -> retrieve(exchange, callback);
+                case DELETE -> delete(exchange, callback);
+                case SIMILARITY_SEARCH -> similaritySearch(exchange, callback);
+                case COLLECTION_INFO -> collectionInfo(exchange, callback);
+                default -> throw new UnsupportedOperationException("Unsupported action: " + action.name());
+            };
         } catch (Exception e) {
             exchange.setException(e);
 
@@ -249,6 +247,48 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 (r, t) -> {
                     if (t != null) {
                         exchange.setException(new QdrantActionException(QdrantAction.DELETE_COLLECTION, t));
+                    }
+
+                    callback.done(false);
+                });
+
+        return false;
+    }
+
+    private boolean similaritySearch(Exchange exchange, AsyncCallback callback) throws Exception {
+        final String collection = getEndpoint().getCollection();
+        // Vector List
+        final Message in = exchange.getMessage();
+        final List<Float> vectors = in.getMandatoryBody(List.class);
+        final int maxResults = getEndpoint().getConfiguration().getMaxResults();
+        final Points.Filter filter = getEndpoint().getConfiguration().getFilter();
+        final Duration timeout = getEndpoint().getConfiguration().getTimeout();
+
+        var queryRequestBuilder = Points.QueryPoints.newBuilder()
+                .setCollectionName(collection)
+                .setQuery(nearest(vectors))
+                .setLimit(maxResults)
+                .setWithVectors(WithVectorsSelectorFactory.enable(in.getHeader(
+                        Qdrant.Headers.INCLUDE_VECTORS,
+                        Qdrant.Headers.DEFAULT_INCLUDE_VECTORS,
+                        boolean.class)))
+                .setWithPayload(enable(in.getHeader(
+                        Qdrant.Headers.INCLUDE_PAYLOAD,
+                        Qdrant.Headers.DEFAULT_INCLUDE_PAYLOAD,
+                        boolean.class)));
+
+        if (filter != null) {
+            queryRequestBuilder.setFilter(filter);
+        }
+
+        call(
+                this.client.queryAsync(queryRequestBuilder.build(), timeout),
+                (r, t) -> {
+                    if (t != null) {
+                        exchange.setException(new QdrantActionException(QdrantAction.SIMILARITY_SEARCH, t));
+                    } else {
+                        in.setBody(new ArrayList<>(r));
+                        in.setHeader(Qdrant.Headers.SIZE, r.size());
                     }
 
                     callback.done(false);

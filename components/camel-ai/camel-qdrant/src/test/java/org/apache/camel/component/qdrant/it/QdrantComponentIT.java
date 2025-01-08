@@ -37,6 +37,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -137,8 +139,50 @@ public class QdrantComponentIT extends QdrantTestSupport {
         });
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(TestData.class)
     @Order(5)
+    public void upsertOtherVectors(TestData testData) {
+        Exchange result = fluentTemplate.to("qdrant:testComponent")
+                .withHeader(Qdrant.Headers.ACTION, QdrantAction.UPSERT)
+                .withBody(
+                        Points.PointStruct.newBuilder()
+                                .setId(PointIdFactory.id(testData.getId()))
+                                .setVectors(VectorsFactory.vectors(testData.getVectors()))
+                                .build())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_ID, v -> assertThat(v).isNotNull());
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS,
+                v -> assertThat(v).isEqualTo(Points.UpdateStatus.Completed.name()));
+        assertThat(result.getIn().getHeaders()).hasEntrySatisfying(Qdrant.Headers.OPERATION_STATUS_VALUE,
+                v -> assertThat(v).isEqualTo(Points.UpdateStatus.Completed.getNumber()));
+    }
+
+    @Test
+    @Order(6)
+    public void similaritySeach() {
+        Exchange result = fluentTemplate.to("qdrant:testComponent")
+                .withHeader(Qdrant.Headers.ACTION, QdrantAction.SIMILARITY_SEARCH)
+                .withHeader(Qdrant.Headers.INCLUDE_VECTORS, true)
+                .withHeader(Qdrant.Headers.INCLUDE_PAYLOAD, true)
+                .withBody(List.of(0.75f, 0.65f))
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+
+        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> {
+            assertThat(c).hasSize(3);
+            assertThat(c).hasOnlyElementsOfType(Points.ScoredPoint.class);
+        });
+    }
+
+    @Test
+    @Order(7)
     public void delete() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(Qdrant.Headers.ACTION, QdrantAction.DELETE)
@@ -160,7 +204,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     }
 
     @Test
-    @Order(6)
+    @Order(8)
     public void retrieveAfterDelete() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
@@ -173,6 +217,31 @@ public class QdrantComponentIT extends QdrantTestSupport {
         assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> {
             assertThat(c).hasSize(0);
         });
+    }
+
+    // Enum to provide test data
+    public enum TestData {
+        VECTOR_1(9, List.of(0.8f, 0.6f)),
+        VECTOR_2(10, List.of(0.1f, 0.9f)),
+        VECTOR_3(11, List.of(0.7f, 0.7f)),
+        VECTOR_4(12, List.of(-0.3f, -0.9f)),
+        VECTOR_5(13, List.of(1.2f, 0.8f));
+
+        private final int id;
+        private final List<Float> vectors;
+
+        TestData(int id, List<Float> vectors) {
+            this.id = id;
+            this.vectors = vectors;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public List<Float> getVectors() {
+            return vectors;
+        }
     }
 
 }
