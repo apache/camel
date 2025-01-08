@@ -20,8 +20,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
 import org.eclipse.paho.mqttv5.client.MqttClient;
@@ -161,19 +161,19 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
         exchange.setIn(paho);
         if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
-            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     try {
                         PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        LOG.warn("Failed to commit message with ID {} due to MqttException.", mqttMessage.getId());
+                        LOG.warn("Failed to commit message with ID: {} due to {}", mqttMessage.getId(), e.getMessage(), e);
                     }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    LOG.error("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(), exchange.getException());
+                    LOG.debug("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId());
                 }
             });
         }

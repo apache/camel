@@ -17,16 +17,12 @@
 package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeExtension;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.Synchronization;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.*;
-
 public class PahoMqtt5ManualAcksIT extends PahoMqtt5ITSupport {
+
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
@@ -36,7 +32,8 @@ public class PahoMqtt5ManualAcksIT extends PahoMqtt5ITSupport {
             @Override
             public void configure() {
                 from("direct:test")
-                        .to("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true");
+                        .to("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2");
+
                 from("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort + "&qos=2&manualAcksEnabled=true")
                         .to("mock:test");
             }
@@ -44,15 +41,11 @@ public class PahoMqtt5ManualAcksIT extends PahoMqtt5ITSupport {
     }
 
     @Test
-    public void testSynchronizationCallbackForManualAcks() throws Exception {
-
-        Exchange exchange = mock(Exchange.class);
-        ExchangeExtension exchangeExtension = mock(ExchangeExtension.class);
-        when(exchange.getExchangeExtension()).thenReturn(exchangeExtension);
-
+    public void testManualAcks() throws Exception {
         mock.expectedMessageCount(1);
+
         template.sendBody("direct:test", "Test Message");
 
-        verify(exchangeExtension).addOnCompletion(any(Synchronization.class));
+        mock.assertIsSatisfied();
     }
 }
