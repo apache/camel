@@ -36,7 +36,8 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
 
         this.withNetworkAliases(CONTAINER_NAME)
                 .withExposedPorts(SolrProperties.DEFAULT_PORT)
-                .waitingFor(Wait.forListeningPort());
+                .waitingFor(Wait.forListeningPort())
+                .withEnv("SOLR_OPTS", "-Xss500k");
     }
 
     public SolrContainer(String imageName) {
