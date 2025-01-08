@@ -316,8 +316,7 @@
         <jython-version>2.7.4</jython-version>
         <jzlib-version>1.1.3</jzlib-version>
         <kafka-version>3.8.1</kafka-version>
-        <knative-client-version>6.13.4</knative-client-version>
-        <kubernetes-client-version>6.13.4</kubernetes-client-version>
+        <kubernetes-client-version>7.0.1</kubernetes-client-version>
         <kudu-version>1.17.1</kudu-version>
         <langchain4j-version>0.36.2</langchain4j-version>
         <leveldbjni-version>1.8</leveldbjni-version>
@@ -368,7 +367,6 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.15</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockwebserver-version>6.13.4</mockwebserver-version>
         <mockito-version>5.15.2</mockito-version>
         <mojo-executor-version>2.4.0</mojo-executor-version>
         <mongo-java-driver-version>5.2.1</mongo-java-driver-version>

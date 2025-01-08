@@ -33,9 +33,9 @@ import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.RequestConfig;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
+import io.fabric8.mockwebserver.http.Headers;
+import io.fabric8.mockwebserver.http.RecordedRequest;
 import io.fabric8.mockwebserver.utils.ResponseProvider;
-import okhttp3.Headers;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +132,7 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
 
                             boolean done = lockSimulator.setResource(resource, true);
                             if (done) {
-                                lockNames.put(request.getSequenceNumber(), lockSimulator.getResourceName());
+                                lockNames.put(LockTestServer.super.getRequestCount(), lockSimulator.getResourceName());
                                 return 201;
                             }
                             return 500;
@@ -142,8 +142,9 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                         public Object getBody(RecordedRequest recordedRequest) {
                             delayIfNecessary();
 
-                            if (lockNames.containsKey(recordedRequest.getSequenceNumber())) {
-                                T resource = simulators.get(lockNames.get(recordedRequest.getSequenceNumber())).getResource();
+                            if (lockNames.containsKey(LockTestServer.super.getRequestCount())) {
+                                T resource
+                                        = simulators.get(lockNames.get(LockTestServer.super.getRequestCount())).getResource();
                                 if (resource != null) {
                                     return resource;
                                 }

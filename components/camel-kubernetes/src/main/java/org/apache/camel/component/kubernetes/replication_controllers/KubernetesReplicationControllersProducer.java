@@ -229,7 +229,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             throw new IllegalArgumentException("Scale a specific replication controller require specify a replicas number");
         }
         ReplicationController rcScaled = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
-                .withName(rcName).scale(replicasNumber, false);
+                .withName(rcName).scale(replicasNumber);
 
         prepareOutboundMessage(exchange, rcScaled.getStatus().getReplicas());
     }

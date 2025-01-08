@@ -204,7 +204,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Scale a specific deployment require specify a replicas number");
         }
         Deployment deploymentScaled = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
-                .withName(deploymentName).scale(replicasNumber, false);
+                .withName(deploymentName).scale(replicasNumber);
 
         prepareOutboundMessage(exchange, deploymentScaled.getStatus().getReplicas());
     }
