@@ -3607,7 +3607,7 @@ camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT
 
 NOTE: This will export to the _current_ directory, meaning that files are moved into the needed folder structure.
 
-To export to another directly (copies the files), you execute:
+To export to another directory (copies the files), you execute:
 
 [source,bash]
 ----
@@ -3639,7 +3639,7 @@ camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT
 
 NOTE: This will export to the _current_ directory, meaning that files are moved into the necessary folder structure.
 
-To export to another directly (copies the files) you execute:
+To export to another directory (copies the files) you execute:
 
 [source,bash]
 ----
@@ -3665,7 +3665,7 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT
 
 NOTE: This will export to the _current_ directory, meaning that files are moved into the needed folder structure.
 
-To export to another directly (copies the files), you execute:
+To export to another directory (copies the files), you execute:
 
 [source,bash]
 ----
