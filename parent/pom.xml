@@ -386,7 +386,7 @@
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
-        <ognl-version>3.4.5</ognl-version>
+        <ognl-version>3.4.4</ognl-version>
         <openapi-generator-version>7.10.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.18.0</opensearch-rest-client-version>
