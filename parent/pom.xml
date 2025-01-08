@@ -432,7 +432,7 @@
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.7.1</reactor-version>
         <reactor-netty-version>1.2.1</reactor-netty-version>
-        <redisson-version>3.41.0</redisson-version>
+        <redisson-version>3.42.0</redisson-version>
         <resilience4j-version>2.3.0</resilience4j-version>
         <rest-assured-version>5.5.0</rest-assured-version>
         <roaster-version>2.30.1.Final</roaster-version>
