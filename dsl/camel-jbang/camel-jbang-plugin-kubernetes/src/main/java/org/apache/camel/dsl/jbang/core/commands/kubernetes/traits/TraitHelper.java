@@ -34,7 +34,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.MetadataHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Addons;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.AddonsBuilder;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Camel;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Environment;
@@ -140,7 +140,7 @@ public final class TraitHelper {
             for (Map.Entry<String, Map<String, Object>> traitConfig : traitConfigMap.entrySet()) {
                 if (!knownTraits.contains(traitConfig.getKey())) {
                     traitModel.getAddons().put(traitConfig.getKey(),
-                            new Addons(traitConfig.getValue()));
+                            new AddonsBuilder().withAdditionalProperties(traitConfig.getValue()).build());
                 }
             }
         }
