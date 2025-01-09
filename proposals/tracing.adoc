@@ -1,0 +1,119 @@
+---
+title: Tracing redesign
+authors:
+  - "@squakez"
+reviewers: []
+approvers: []
+creation-date: 2025-01-08
+last-updated: 2025-01-08
+status: draft
+see-also: []
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+Tracing and telemetry features are a pillar of application observability, above all when the applications are deployed in cloud environments and/or in distributed systems in general. During the last years we have observed an increasing demand in usage of telemetry components, above all, the usage of https://www.cncf.io/projects/opentelemetry/[CNCF project Opentelemetry] when running Camel application on cloud environments.
+
+== Motivation
+
+The increase of usage in these components is also opening questions and showing potential flaws in the actual design of this feature. Recently we needed to work on several issues in order to enhance the component or fix failing behaviors which resulted in a increasingly difficult maintenance of the code. Most of the time we had to change the implementation, the abstraction and even the core dependencies in order to make things work: this is a symptoms that we probably need to think on a new design in order to simplify long term maintenance.
+
+== Goals
+
+Goal of this proposal is to analyze the actual design, the challenges we are facing and provide any alternative design to have a simpler long term maintenance.
+
+== Context
+
+Camel framework had originally an abstract component, `camel-tracing`, whose goal was to create a generic tracing lifecycle to be implemented concretely by specific technologies, such as `camel-opentelemetry`. The abstraction should take care of generic concepts (like when to create a new span according Camel eventing model). The implementation should concretely take care to instantiate unique traces and provide the mechanics required to pull/push such traces to a trace collector system for future traces inspections.
+
+Any user that want to provide the tracing feature is required to include the component dependency and any specific configuration. The framework would take care to wire the Camel activity to a collection of traces.
+
+I've performed a deep analysis in the last weeks, trying to figure it out which are the major problems we need to tackle and I came to the conclusion that the actual design may require some review in order to set the base for a stronger longer term maintenance. It follows a list of points that I think require attention when planning any future development.
+
+=== Unclear tracing scope specification
+
+We have not a clear specification of what a **trace** or a **span** represents from Camel point of view. We are thinking of this as a generic unit of work, mostly, without a clear definition of how that is bound to any Camel resource. There is no documentation around that, requiring the user to intuitively understand how a trace maps to Camel domain model.
+
+=== Implementation details slipped in the abstraction
+
+During the past we introduced certain developments that required the abstraction to be aware of certain implementation details, such as `Autoclosable` Opentelemetry scopes. Also, we have certain developments that are missing the required abstraction, making them specific of the implementation (for example, Opentelemetry processor traces).
+
+=== Ad hoc "side" features implementations
+
+The implementations we are using are offering their specific way to expose certain "side" features, for example, set the traces ids into MDC. However we do have our own implementation that is either conflicting or not working properly as it relies on a context propagation which is generally part of the tracing/telemetry implementation.
+
+=== Inconsistent context storage
+
+The abstraction (in `camel-tracing`) is taking care to maintain a stack based structure for each created span which is stored in the *Exchange*. The data structure is also taking care to maintain a hierarchy relationship between the different spans created during an Exchange execution. However, the implementation we have in `camel-opentelemetry` is mixing up this mechanism with its own storing mechanism which is based on Java ThreadLocal context. Additionally we have implemented a context propagation mechanism based, again, on adding information on the Exchange header. This is creating certain inconsistency because it's hard to maintain synchronized both the Exchange and the specific implementation mechanism. Moreover we cannot really be confident of this mechanism as Camel cannot guarantee that the same thread that started an action is going to be the same that will close it (more on this point in the new design proposal).
+
+=== Async exchange boundaries
+
+With the actual design, Camel creates a new trace when it create an Exchange and later add span for each process. However, when we are creating an asynchronous Exchange (ie, wiretap EIP), this is considered as part of the original Exchange, and, with it, all the new Exchange execution. The result in the trace collector tool is that the new Exchange overflow the execution of the source Exchange.
+
+== Proposal
+
+Before digging deep in the new design, we need to make an important consideration related to how Camel works and how the major telemetry component we want to consider (Opentelemetry) would require certain transformations. As mentioned in the "Inconsistent context storage" section, the Opentelemetry works on the assumption that any application can easily propagate the context to the threading model of such application. This is not the case of Camel, above all because the system is very much event based for performances reasons. Mechanism like ThreadLocal are a real limitation in our case as it would require that the thread that is executing a giving process is wrapped by the logic of the Opentelemetry (which is: create span, execute, close span, all on the same thread).
+
+The new design should not change how the core of the application works. We must be implementation agnostic, so the design should be flexible enough to adapt to any future implementation and avoid any important future refactoring.
+
+I advocate to move back to the root of the original abstract component, first of all, defining the trace specification meaning for Camel (tracing **structure**). Later we should provide a clear and flexible **lifecycle** for the traces (creation, activation, ...): this is probably the abstract part we will need to delegate to **implementation specific ** components. In order to avoid depending on consistency problems, we should exclusively use the Exchange as a mean to store and define the hierarchy of spans (**tracing storage**). Any required activation/deactivation of a span during the lifecycle of the application must be done via the lifecycle abstract methods. Ideally we should also provide a **simple and basic implementation** that would work as a mocking system to prove the abstraction is solid.
+
+=== Tracing structure
+
+Right now we have two main span levels. The root span, which is created for each execution of a Route, and later a series of events spans, which are the various processes executed by the Route. We are missing the creation of a root span which should happen when a new Exchange is created. In this way we can easily trace the activity of each Exchange, identifying each trace by the Exchange ID. According to this proposal, the new trace structure will be composed of:
+
+1. a root trace for each Exchange (identified uniquely)
+2. one or more span for each Route of that Exchange execution
+3. one or more trace for each event executed in the Route
+
+With this structure we'd be able to capture also any asynchronous Exchange which may be generated asynchronously, being able to trace such execution separately from the original parent trace (IE, solving "Async exchange boundaries" problem) as the new generated Exchange has a different ID.
+
+=== Tracing lifecycle
+
+The `camel-tracing` component should be the one in charge to manage the trace lifecycle. Any implementation specific behavior has to adapt to this lifecycle, likely implementing the required logic in those abstract methods exposed by the component. At this stage of design, we can identify those function as:
+
+* Span creation
+* Span activation
+* Span deactivation
+* Span closure
+
+The **creation** method would be in charge to create a new root trace or a new span within an existing trace. The **activation** method is the one in charge to tell the tracing system a given span is the one active at any given moment. The **deactivation** should be the one used to turn a given span off. The **closure** method is finally the one in charge to finalize a given span and the trace when this is the case.
+
+The above definition may feel redundant as in this moment we may probably need only a creation/activation method and a deactivation/closure method. However, in order to give more flexibility to the abstraction, we must make sure to meet any future requirement by any tracing technology.
+
+This design is very similar to the original component design. However, we need to remove the implementation specific details from the abstraction entirely. What is also important is that we entirely leverage the component storage to retrieve the current span and do with it the needful action. With this proposal we will also need to remove from the core components certain logic we had introduced in the past in order to support some features (ie, `ExchangeAsyncProcessingStartedEvent` implementation). We would enhance the component decoupling and provide a higher cohesion.
+
+Beside the span lifecycle we will need to consider a few more aspects:
+
+* Span decoration
+* Context propagation
+
+The **span decoration** is a Camel specific way of decorating the different components we handle with specific traces information. As an example, when you're using Kafka component, you will get automatically in the trace useful configuration as the offset or the partition. We already have this mechanism in place and we should make sure to have a clear documentation stating about this particular feature.
+
+The **Context propagation** is a way to correlate distributed traces between each other. It works reading a `traceparent` header on the Exchange and using it to correlate to a chain of distributed requests. It's important to notice that the specific propagation mechanism belong to the implementation, so we will need to provide in the component the required level of abstraction.
+
+=== Tracing storage
+
+The Exchange stack storage already exists and it may suffice to this proposal goals. Again, we need to remove the implementation specific details from the abstraction and make sure that we don't slip any implementation detail in the future by design. Some concern we may have would be about the correct handling of opening and closure of spans which may be different according the each implementation specific. However, if the lifecycle we have in place takes care of consistency, this should not be a problem at all: each implementation should be in charge to do the needful when each lifecycle method is called. The Exchange stack storage can be used to store a span wrapper and maintain a state for it: this is something already available.
+
+In order to clarify this aspect, let's take `camel-opentelemetry` as an example. When we call the *activation* method, then, we must make sure that the span passed is correctly activated, calling therefore the `span.makeCurrent()` method. The generated scope has therefore to be kept in the same span wrapper in order to be later closed when the *closure* method is called via `scope.close()`. As each span wrapper is stored in the Exchange, then we can use this approach to maintain the state of each wrapper regardless how its specific implementation works.
+
+=== Tracing simple implementation (mock)
+
+If we move most of the logic into the abstraction, the implementation of a simple implementation should be straightforward. We can expect this implementation in charge to implement the abstraction methods provided in the "tracing lifecycle" section, which can be some simple UUID generation and the tracing into MDC variables in order to simply log them in the application log. No push/pull to any collector is expected and this implementation would serve more as a way to debug the abstraction, making sure that any implementation specific detail would not be the cause of any faulty behavior.
+
+=== Tracing specific implementations
+
+The feature specific implementation should be therefore limited to the implementation of the abstract methods, as it would happen in the simple implementation. With this approach we are limiting to the bare minimum the maintenance of each specific technology. With this proposal we will need to rework massively on the reduction of code in the existing implementations (`camel-opentelemetry`).
+
+== Backward compatibility
+
+This design proposals may introduce certain breaking compatibility changes, reason why we must clarify the scope and plan the work in order to avoid adding breaking compatibility within any non major version. If we agree with this design, then we can work on an iterative development which has to be compatible with the existing specification.
+
+What is surely going to be developed into a major release is the "Tracing structure" part. Here we need to introduce a different trace organization than the one we have today. However, deferring this development to a major release is not a blocker to the rest of the work. The rest of changes can be probably performed in within the regular minor release work.
+
+== Tracing refactoring POC
+
+In order to prove most of the above assumptions, I've developed a simple POC which I used as a https://github.com/squakez/camel/tree/feat/tracing_refactoring[base for this proposal]. Testing this against some application, we can see traces are managed correctly and in line with the structure proposed in this document.
