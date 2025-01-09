@@ -38,13 +38,22 @@ public class GitCommitConsumer extends AbstractGitConsumer {
     }
 
     @Override
+    public GitEndpoint getEndpoint() {
+        return (GitEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected int poll() throws Exception {
         Queue<Object> exchanges = new ArrayDeque<>();
 
+        String branch = getEndpoint().getBranchName();
         Iterable<RevCommit> commits;
-        if (ObjectHelper.isNotEmpty(((GitEndpoint) getEndpoint()).getBranchName())) {
-            commits = getGit().log().add(getGit().getRepository().resolve(((GitEndpoint) getEndpoint()).getBranchName()))
-                    .call();
+        ObjectId id = null;
+        if (ObjectHelper.isNotEmpty(branch)) {
+            id = getGit().getRepository().resolve(branch);
+        }
+        if (id != null) {
+            commits = getGit().log().add(id).call();
         } else {
             commits = getGit().log().all().call();
         }

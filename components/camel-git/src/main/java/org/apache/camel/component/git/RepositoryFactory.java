@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component;
+package org.apache.camel.component.git;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;

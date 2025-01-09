@@ -39,16 +39,17 @@ public class GitConsumerTest extends GitTestSupport {
         // Init
         MockEndpoint mockResultCommit = getMockEndpoint("mock:result-commit");
         mockResultCommit.expectedMessageCount(2);
+
         Git git = getGitTestRepository();
-        File gitDir = new File(gitLocalRepo, ".git");
+        File gitDir = new File(getGitDir(), ".git");
         assertEquals(true, gitDir.exists());
-        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
-        File fileToAdd1 = new File(gitLocalRepo, filenameBranchToAdd);
+        File fileToAdd1 = new File(getGitDir(), filenameBranchToAdd);
         fileToAdd1.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
         status = git.status().call();
@@ -72,15 +73,15 @@ public class GitConsumerTest extends GitTestSupport {
         MockEndpoint mockResultCommit = getMockEndpoint("mock:result-commit-notexistent");
         mockResultCommit.expectedMessageCount(0);
         Git git = getGitTestRepository();
-        File gitDir = new File(gitLocalRepo, ".git");
+        File gitDir = new File(getGitDir(), ".git");
         assertEquals(true, gitDir.exists());
-        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
-        File fileToAdd1 = new File(gitLocalRepo, filenameBranchToAdd);
+        File fileToAdd1 = new File(getGitDir(), filenameBranchToAdd);
         fileToAdd1.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
         status = git.status().call();
@@ -98,10 +99,10 @@ public class GitConsumerTest extends GitTestSupport {
         MockEndpoint mockResultTag = getMockEndpoint("mock:result-tag");
         mockResultTag.expectedMessageCount(1);
         Git git = getGitTestRepository();
-        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
-        File gitDir = new File(gitLocalRepo, ".git");
+        File gitDir = new File(getGitDir(), ".git");
         assertEquals(true, gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
@@ -132,10 +133,10 @@ public class GitConsumerTest extends GitTestSupport {
         MockEndpoint mockResultBranch = getMockEndpoint("mock:result-branch");
         mockResultBranch.expectedMessageCount(2);
         Git git = getGitTestRepository();
-        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
-        File gitDir = new File(gitLocalRepo, ".git");
+        File gitDir = new File(getGitDir(), ".git");
         assertEquals(true, gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
@@ -176,28 +177,32 @@ public class GitConsumerTest extends GitTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        // force create git repo before routes
+        getTestRepository();
+        final String dir = getGitDir().getPath();
+
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:clone").to("git://" + gitLocalRepo
+                from("direct:clone").to("git://" + dir
                                         + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
-                from("direct:init").to("git://" + gitLocalRepo + "?operation=init");
-                from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
-                from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");
-                from("direct:create-branch").to("git://" + gitLocalRepo + "?operation=createBranch&branchName=" + branchTest);
-                from("direct:create-tag").to("git://" + gitLocalRepo + "?operation=createTag&tagName=" + tagTest);
-                from("git://" + gitLocalRepo + "?type=commit&branchName=master").to("mock:result-commit");
-                from("git://" + gitLocalRepo + "?type=commit&branchName=notexisting").to("mock:result-commit-notexistent");
-                from("git://" + gitLocalRepo + "?type=tag").to("mock:result-tag");
-                from("git://" + gitLocalRepo + "?type=branch&gitConfigFile=classpath:git.config")
+                from("direct:init").to("git://" + dir + "?operation=init");
+                from("direct:add").to("git://" + dir + "?operation=add");
+                from("direct:commit").to("git://" + dir + "?operation=commit");
+                from("direct:create-branch").to("git://" + dir + "?operation=createBranch&branchName=" + branchTest);
+                from("direct:create-tag").to("git://" + dir + "?operation=createTag&tagName=" + tagTest);
+                from("git://" + dir + "?type=commit&branchName=master").to("mock:result-commit");
+                from("git://" + dir + "?type=commit&branchName=notexisting").to("mock:result-commit-notexistent");
+                from("git://" + dir + "?type=tag").to("mock:result-tag");
+                from("git://" + dir + "?type=branch&gitConfigFile=classpath:git.config")
                         .id("injectConfigFileFromClasspath")
                         .to("mock:result-branch-configfile");
-                from("git://" + gitLocalRepo
+                from("git://" + dir
                      + "?type=branch&gitConfigFile=https://gist.githubusercontent.com/gilvansfilho/a61f6ab811a5e8e9d46c4fba1235abc1/raw/a1f614c90e29f1cdd83534aa913f5d276beace2c/gitconfig")
                         .id("injectConfigFileFromHttp")
                         .to("mock:result-branch-configfile");
-                from("git://" + gitLocalRepo + "?type=branch").id("defaultBranchTest").to("mock:result-branch");
+                from("git://" + dir + "?type=branch").id("defaultBranchTest").to("mock:result-branch");
             }
         };
     }

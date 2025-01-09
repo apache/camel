@@ -40,7 +40,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
 
         Repository repository = getTestRepository();
 
-        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
 
         template.send("direct:add", new Processor() {
@@ -49,7 +49,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
                 exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
             }
         });
-        File gitDir = new File(gitLocalRepo, ".git");
+        File gitDir = new File(getGitDir(), ".git");
         assertEquals(true, gitDir.exists());
 
         Status status = new Git(repository).status().call();
@@ -68,14 +68,17 @@ public class GitRemoteProducerTest extends GitTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        // force create git repo before routes
+        getTestRepository();
+        final String dir = getGitDir().getPath();
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
-                from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");
+                from("direct:add").to("git://" + dir + "?operation=add");
+                from("direct:commit").to("git://" + dir + "?operation=commit");
                 from("direct:push")
-                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
+                        .to("git://" + dir + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
             }
         };
     }
