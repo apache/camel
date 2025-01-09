@@ -73,8 +73,8 @@ public class GitEndpoint extends ScheduledPollEndpoint {
     @Metadata(label = "producer")
     private boolean allowEmpty = true;
 
-    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick,remoteAdd,remoteList",
-              label = "producer")
+    @UriParam(label = "producer",
+              enums = "add,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,pull,push,remoteAdd,remoteList,remove,showBranches,showTags,status")
     private String operation;
 
     @UriParam(description = "A String with path to a .gitconfig file", label = "advanced")
