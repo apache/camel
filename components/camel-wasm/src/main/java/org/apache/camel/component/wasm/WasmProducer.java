@@ -18,7 +18,8 @@ package org.apache.camel.component.wasm;
 
 import java.io.InputStream;
 
-import com.dylibso.chicory.runtime.Module;
+import com.dylibso.chicory.wasm.Parser;
+import com.dylibso.chicory.wasm.WasmModule;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Resource;
@@ -33,7 +34,7 @@ public class WasmProducer extends DefaultProducer {
     private final String functionModule;
     private final String functionName;
 
-    private Module module;
+    private WasmModule module;
     private WasmFunction function;
 
     public WasmProducer(Endpoint endpoint, String functionModule, String functionName) throws Exception {
@@ -49,7 +50,7 @@ public class WasmProducer extends DefaultProducer {
         final Resource res = rl.resolveResource(this.functionModule);
 
         try (InputStream is = res.getInputStream()) {
-            this.module = Module.builder(is).build();
+            this.module = Parser.parse(is);
         }
     }
 

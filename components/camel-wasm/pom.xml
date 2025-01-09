@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.dylibso.chicory</groupId>
             <artifactId>runtime</artifactId>
-            <version>${chicocy-version}</version>
+            <version>${chicory-version}</version>
         </dependency>
 
         <dependency>
