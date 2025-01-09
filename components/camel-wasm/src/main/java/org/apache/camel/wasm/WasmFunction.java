@@ -20,13 +20,12 @@ import java.util.Objects;
 
 import com.dylibso.chicory.runtime.ExportFunction;
 import com.dylibso.chicory.runtime.Instance;
-import com.dylibso.chicory.runtime.Module;
-import com.dylibso.chicory.wasm.types.Value;
+import com.dylibso.chicory.wasm.WasmModule;
 
 public class WasmFunction implements AutoCloseable {
     private final Object lock;
 
-    private final Module module;
+    private final WasmModule module;
     private final String functionName;
 
     private final Instance instance;
@@ -34,13 +33,13 @@ public class WasmFunction implements AutoCloseable {
     private final ExportFunction alloc;
     private final ExportFunction dealloc;
 
-    public WasmFunction(Module module, String functionName) {
+    public WasmFunction(WasmModule module, String functionName) {
         this.lock = new Object();
 
         this.module = Objects.requireNonNull(module);
         this.functionName = Objects.requireNonNull(functionName);
 
-        this.instance = this.module.instantiate();
+        this.instance = Instance.builder(this.module).build();
         this.function = this.instance.export(this.functionName);
         this.alloc = this.instance.export(Wasm.FN_ALLOC);
         this.dealloc = this.instance.export(Wasm.FN_DEALLOC);
@@ -60,11 +59,11 @@ public class WasmFunction implements AutoCloseable {
         //
         synchronized (lock) {
             try {
-                inPtr = alloc.apply(Value.i32(inSize))[0].asInt();
+                inPtr = (int) alloc.apply(inSize)[0];
                 instance.memory().write(inPtr, in);
 
-                Value[] results = function.apply(Value.i32(inPtr), Value.i32(inSize));
-                long ptrAndSize = results[0].asLong();
+                long[] results = function.apply(inPtr, inSize);
+                long ptrAndSize = results[0];
 
                 outPtr = (int) (ptrAndSize >> 32);
                 outSize = (int) ptrAndSize;
@@ -81,10 +80,10 @@ public class WasmFunction implements AutoCloseable {
                 return instance.memory().readBytes(outPtr, outSize);
             } finally {
                 if (inPtr != -1) {
-                    dealloc.apply(Value.i32(inPtr), Value.i32(inSize));
+                    dealloc.apply(inPtr, inSize);
                 }
                 if (outPtr != -1) {
-                    dealloc.apply(Value.i32(outPtr), Value.i32(outSize));
+                    dealloc.apply(outPtr, outSize);
                 }
             }
         }
