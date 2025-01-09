@@ -33,4 +33,10 @@ public final class XmppServiceFactory {
                 .addRemoteMapping(XmppRemoteService::new)
                 .build();
     }
+
+    public static class XmppLocalContainerService extends XmppLocalContainerInfraService implements XmppService {
+    }
+
+    public static class XmppRemoteService extends XmppRemoteInfraService implements XmppService {
+    }
 }

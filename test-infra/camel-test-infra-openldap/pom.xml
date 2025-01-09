@@ -29,6 +29,10 @@
     <artifactId>camel-test-infra-openldap</artifactId>
     <name>Camel :: Test Infra :: Openladp</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

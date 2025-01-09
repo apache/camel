@@ -14,21 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.cassandra.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-/**
- * Represents an endpoint to a Cassandra instance
- */
-public interface CassandraService extends TestService {
-
-    int getCQL3Port();
-
-    default String getCQL3Endpoint() {
-        return String.format("%s:%d", getCassandraHost(), getCQL3Port());
-    }
-
-    String getCassandraHost();
+public interface CassandraService extends TestService, CassandraInfraService, ContainerTestService {
 }

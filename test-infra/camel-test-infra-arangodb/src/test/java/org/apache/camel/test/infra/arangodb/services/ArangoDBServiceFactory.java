@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.arangodb.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
@@ -66,4 +67,11 @@ public final class ArangoDBServiceFactory {
             INSTANCE = instance.build();
         }
     }
+}
+
+class ArangoDBLocalContainerService extends ArangoDBLocalContainerInfraService
+        implements ArangoDBService, ContainerTestService {
+}
+
+class ArangoDBRemoteService extends ArangoDBRemoteInfraService implements ArangoDBService {
 }

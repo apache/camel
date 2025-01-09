@@ -16,32 +16,11 @@
  */
 package org.apache.camel.test.infra.rocketmq.services;
 
-import java.io.IOException;
-
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
-import org.apache.camel.test.infra.common.services.TestServiceUtil;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface RocketMQService extends TestService, AfterAllCallback, BeforeAllCallback {
-    String nameserverAddress();
-
-    default String defaultCluster() {
-        return "DefaultCluster";
-    }
-
-    void createTopic(String topic);
-
-    void deleteTopic(String topic) throws IOException, InterruptedException;
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryInitialize(this, extensionContext);
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        TestServiceUtil.tryShutdown(this, extensionContext);
-    }
+/**
+ * Test infra service for RocketMQ
+ */
+public interface RocketMQService extends TestService, RocketMQInfraService, ContainerTestService {
 }

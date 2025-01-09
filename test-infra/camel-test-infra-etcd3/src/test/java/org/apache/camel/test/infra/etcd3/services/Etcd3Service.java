@@ -16,12 +16,11 @@
  */
 package org.apache.camel.test.infra.etcd3.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for EtcD
  */
-public interface Etcd3Service extends TestService {
-
-    String getServiceAddress();
+public interface Etcd3Service extends TestService, ContainerTestService, Etcd3InfraService {
 }

@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 
 public final class ArtemisServiceFactory {
 
-    public static class SingletonArtemisService extends SingletonService<ArtemisService> implements ArtemisService {
+    public static class SingletonArtemisService extends SingletonService<ArtemisService>
+            implements ArtemisService, ServiceAware<ArtemisService> {
         private static final Logger LOG = LoggerFactory.getLogger(SingletonArtemisService.class);
 
         public SingletonArtemisService(ArtemisService service, String name) {
@@ -123,7 +124,8 @@ public final class ArtemisServiceFactory {
     private static class SingletonVMServiceHolder {
         static final ArtemisService INSTANCE;
         static {
-            SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+            SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder
+                    = new SimpleTestServiceBuilder<>("artemis");
 
             nonPersistentInstanceBuilder
                     .addLocalMapping(() -> new SingletonArtemisService(new ArtemisVMService(), "artemis"));

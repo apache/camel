@@ -26,7 +26,8 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> The type of the service to be wrapped
  */
-public class SingletonService<T extends TestService> implements ExtensionContext.Store.CloseableResource, TestService {
+public class SingletonService<T extends InfrastructureService>
+        implements ExtensionContext.Store.CloseableResource, TestService {
     private static final Logger LOG = LoggerFactory.getLogger(SingletonService.class);
 
     private final T service;

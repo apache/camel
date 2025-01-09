@@ -30,6 +30,10 @@
     <name>Camel :: Test Infra :: EtcD v3</name>
     <description>EtcD v3 test infrastructure for Camel</description>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

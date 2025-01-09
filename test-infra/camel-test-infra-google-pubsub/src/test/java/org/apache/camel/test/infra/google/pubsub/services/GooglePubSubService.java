@@ -16,12 +16,11 @@
  */
 package org.apache.camel.test.infra.google.pubsub.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for GooglePubSub
  */
-public interface GooglePubSubService extends TestService {
-
-    String getServiceAddress();
+public interface GooglePubSubService extends TestService, GooglePubSubInfraService, ContainerTestService {
 }

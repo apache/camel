@@ -33,4 +33,7 @@ public final class SolrServiceFactory {
                 .addRemoteMapping(SolrRemoteService::new)
                 .build();
     }
+
+    public static class SolrRemoteService extends SolrRemoteInfraService implements SolrService {
+    }
 }

@@ -29,6 +29,10 @@
     <name>Camel :: Test Infra :: Messaging Common</name>
     <artifactId>camel-test-infra-messaging-common</artifactId>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

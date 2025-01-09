@@ -30,8 +30,14 @@ public final class Etcd3ServiceFactory {
 
     public static Etcd3Service createService() {
         return builder()
-                .addLocalMapping(Etcd3LocalContainerService::new)
-                .addRemoteMapping(Etcd3RemoteService::new)
+                .addLocalMapping(Etcd3LocalContainerTestService::new)
+                .addRemoteMapping(Etcd3RemoteTestService::new)
                 .build();
+    }
+
+    public static class Etcd3LocalContainerTestService extends Etcd3LocalContainerInfraService implements Etcd3Service {
+    }
+
+    public static class Etcd3RemoteTestService extends Etcd3RemoteInfraService implements Etcd3Service {
     }
 }

@@ -31,6 +31,10 @@
     <name>Camel :: Test Infra :: Common</name>
     <description>Common test infrastructure code for Camel</description>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.testcontainers</groupId>

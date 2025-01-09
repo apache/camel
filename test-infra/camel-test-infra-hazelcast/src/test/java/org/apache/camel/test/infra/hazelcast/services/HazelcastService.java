@@ -16,13 +16,11 @@
  */
 package org.apache.camel.test.infra.hazelcast.services;
 
-import com.hazelcast.config.Config;
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Hazelcast
  */
-public interface HazelcastService extends TestService {
-
-    Config createConfiguration(String name, int port, String instanceName, String componentName);
+public interface HazelcastService extends TestService, HazelcastInfraService, ContainerTestService {
 }

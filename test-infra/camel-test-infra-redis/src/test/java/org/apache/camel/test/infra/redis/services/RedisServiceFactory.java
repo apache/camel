@@ -33,4 +33,10 @@ public final class RedisServiceFactory {
                 .addRemoteMapping(RedisRemoteService::new)
                 .build();
     }
+
+    public static class RedisRemoteService extends RedisRemoteInfraService implements RedisService {
+    }
+
+    public static class RedisLocalContainerService extends RedisLocalContainerInfraService implements RedisService {
+    }
 }

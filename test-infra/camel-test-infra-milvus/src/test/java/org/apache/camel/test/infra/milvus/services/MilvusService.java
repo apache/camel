@@ -16,16 +16,11 @@
  */
 package org.apache.camel.test.infra.milvus.services;
 
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Milvus
  */
-public interface MilvusService extends TestService {
-
-    String getMilvusEndpointUrl();
-
-    String getMilvusHost();
-
-    int getMilvusPort();
+public interface MilvusService extends TestService, MilvusInfraService, ContainerTestService {
 }

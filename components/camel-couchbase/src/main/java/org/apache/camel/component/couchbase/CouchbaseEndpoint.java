@@ -193,6 +193,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CouchbaseConsumer consumer = new CouchbaseConsumer(this, createClient(), processor);
+        setPollStrategy(consumer.getPollStrategy());
         configureConsumer(consumer);
         return consumer;
     }

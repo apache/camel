@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-mosquitto</artifactId>
     <name>Camel :: Test Infra :: Mosquitto</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

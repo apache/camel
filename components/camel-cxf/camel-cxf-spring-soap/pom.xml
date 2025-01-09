@@ -97,7 +97,7 @@
         </dependency>
 
         <!-- test for the cxf jms transport -->
-        <dependency>
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-artemis</artifactId>
             <version>${project.version}</version>

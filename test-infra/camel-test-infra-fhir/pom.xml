@@ -31,6 +31,10 @@
     <name>Camel :: Test Infra :: FHIR</name>
     <description>FHIR test infrastructure for Camel</description>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

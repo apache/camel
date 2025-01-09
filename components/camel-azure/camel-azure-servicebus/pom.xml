@@ -75,7 +75,7 @@
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-core</artifactId>
             <version>${project.version}</version>

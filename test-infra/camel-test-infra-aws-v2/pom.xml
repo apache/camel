@@ -30,19 +30,15 @@
     <artifactId>camel-test-infra-aws-v2</artifactId>
     <name>Camel :: Test Infra :: AWS SDK v2</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-        </dependency>
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
 
+    <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-aws-common</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>

@@ -14,50 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.kafka.services;
 
-import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * Provides an interface for any type of Kafka service: remote instances, local container, etc
+ * Test infra service for Kafka
  */
-public interface KafkaService extends TestService, BeforeTestExecutionCallback, AfterTestExecutionCallback {
-
-    /**
-     * Gets the addresses of the bootstrap servers in the format host1:port,host2:port,etc
-     *
-     * @return
-     */
-    String getBootstrapServers();
-
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) {
-        try {
-            initialize();
-        } catch (Exception e) {
-            TestUtils.logInitializationFailure(extensionContext, KafkaService.class);
-
-            throw e;
-        }
-    }
-
-    @Override
-    default void beforeTestExecution(ExtensionContext extensionContext) {
-        //no op
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) {
-        shutdown();
-    }
-
-    @Override
-    default void afterTestExecution(ExtensionContext context) {
-        //no op
-    }
+public interface KafkaService extends TestService, KafkaInfraService, ContainerTestService {
 }

@@ -41,14 +41,14 @@ public class ArtemisEmbeddedServiceBuilder {
     }
 
     public ArtemisService build() {
-        AbstractArtemisEmbeddedService artemisService;
+        ArtemisService artemisService;
         if (isPersistent) {
             artemisService = new ArtemisPersistentVMService();
         } else {
             artemisService = new ArtemisVMService();
         }
 
-        artemisService.customConfiguration(customConfigurator);
+        ((AbstractArtemisEmbeddedService) artemisService).customConfiguration(customConfigurator);
 
         return artemisService;
     }

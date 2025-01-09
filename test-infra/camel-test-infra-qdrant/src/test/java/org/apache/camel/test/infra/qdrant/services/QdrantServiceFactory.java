@@ -76,4 +76,10 @@ public final class QdrantServiceFactory {
                         () -> new SingletonQdrantService(new QdrantLocalContainerService(), QdrantProperties.INFRA_TYPE))
                 .build();
     }
+
+    public static class QdrantLocalContainerService extends QdrantLocalContainerInfraService implements QdrantService {
+    }
+
+    public static class QdrantRemoteService extends QdrantRemoteInfraService implements QdrantService {
+    }
 }

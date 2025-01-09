@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-hazelcast</artifactId>
     <name>Camel :: Test Infra :: Hazelcast</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-zookeeper</artifactId>
     <name>Camel :: Test Infra :: ZooKeeper</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -44,6 +48,5 @@
             <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>
-
 
 </project>

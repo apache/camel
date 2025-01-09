@@ -54,7 +54,7 @@
         </dependency>
 
         <!-- test infra -->
-        <dependency>
+       <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-mosquitto</artifactId>
             <version>${project.version}</version>

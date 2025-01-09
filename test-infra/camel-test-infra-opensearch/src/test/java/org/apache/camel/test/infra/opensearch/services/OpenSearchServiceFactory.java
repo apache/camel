@@ -81,4 +81,11 @@ public final class OpenSearchServiceFactory {
             INSTANCE = instance.build();
         }
     }
+
+    public static class OpenSearchLocalContainerService extends OpenSearchLocalContainerInfraService
+            implements OpenSearchService {
+    }
+
+    public static class RemoteOpenSearchService extends RemoteOpenSearchInfraService implements OpenSearchService {
+    }
 }

@@ -62,8 +62,8 @@ public final class CouchbaseServiceFactory {
 
     public static CouchbaseService createService() {
         return builder()
-                .addLocalMapping(CouchbaseLocalContainerService::new)
-                .addRemoteMapping(CouchbaseRemoteService::new)
+                .addLocalMapping(CouchbaseLocalContainerTestService::new)
+                .addRemoteMapping(CouchbaseRemoteTestService::new)
                 .build();
     }
 
@@ -81,10 +81,17 @@ public final class CouchbaseServiceFactory {
         static {
             SimpleTestServiceBuilder<CouchbaseService> instance = builder();
 
-            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerService(), "couchbase"))
-                    .addRemoteMapping(CouchbaseRemoteService::new);
+            instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerTestService(), "couchbase"))
+                    .addRemoteMapping(CouchbaseRemoteTestService::new);
 
             INSTANCE = instance.build();
         }
+    }
+
+    public static class CouchbaseLocalContainerTestService extends CouchbaseLocalContainerInfraService
+            implements CouchbaseService {
+    }
+
+    public static class CouchbaseRemoteTestService extends CouchbaseRemoteInfraService implements CouchbaseService {
     }
 }

@@ -30,6 +30,10 @@
     <artifactId>camel-test-infra-ftp</artifactId>
     <name>Camel :: Test Infra :: Ftp</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>commons-io</groupId>

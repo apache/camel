@@ -29,6 +29,10 @@
     <name>Camel :: Test Infra :: Azure Storage Datalake</name>
     <artifactId>camel-test-infra-azure-storage-datalake</artifactId>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -42,13 +46,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-azure-common</artifactId>

@@ -29,6 +29,10 @@
     <artifactId>camel-test-infra-cassandra</artifactId>
     <name>Camel :: Test Infra :: Cassandra</name>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
