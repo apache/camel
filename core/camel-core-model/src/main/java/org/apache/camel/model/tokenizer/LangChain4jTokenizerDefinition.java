@@ -29,7 +29,7 @@ import org.apache.camel.spi.Tokenizer;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Tokenizer that uses LangChain4j for tokenization.
+ * Camel AI: Tokenizer.
  */
 @Metadata(firstVersion = "4.8.0", label = "eip,transformation,ai", title = "LangChain4J Tokenizer")
 @XmlAccessorType(XmlAccessType.FIELD)

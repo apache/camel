@@ -870,7 +870,7 @@ Deprecated: null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-null
+Camel AI: Tokenizer for splitting by character.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -879,7 +879,7 @@ null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-null
+Camel AI: Tokenizer for splitting line by line.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -888,7 +888,7 @@ null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-null
+Camel AI: Tokenizer for splitting by paragraphs.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -897,7 +897,7 @@ null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-null
+Camel AI: Tokenizer for splitting by sentences.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -906,7 +906,7 @@ null
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-null
+Camel AI: Tokenizer for splitting by word.
 ]]>
       </xs:documentation>
     </xs:annotation>

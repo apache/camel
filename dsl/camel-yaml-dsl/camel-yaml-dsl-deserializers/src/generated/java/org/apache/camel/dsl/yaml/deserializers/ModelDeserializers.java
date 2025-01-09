@@ -8932,6 +8932,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with character splitter",
+            description = "Camel AI: Tokenizer for splitting by character.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -8991,6 +8992,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with line splitter",
+            description = "Camel AI: Tokenizer for splitting line by line.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -9050,6 +9052,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with paragraph splitter",
+            description = "Camel AI: Tokenizer for splitting by paragraphs.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -9109,6 +9112,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with sentence splitter",
+            description = "Camel AI: Tokenizer for splitting by sentences.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -9221,6 +9225,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "LangChain4J Tokenizer with word splitter",
+            description = "Camel AI: Tokenizer for splitting by word.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),

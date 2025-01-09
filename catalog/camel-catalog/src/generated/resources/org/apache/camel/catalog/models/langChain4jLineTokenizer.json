@@ -3,6 +3,7 @@
     "kind": "model",
     "name": "langChain4jLineTokenizer",
     "title": "LangChain4J Tokenizer with line splitter",
+    "description": "Camel AI: Tokenizer for splitting line by line.",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",

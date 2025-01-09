@@ -3,6 +3,7 @@
     "kind": "model",
     "name": "langChain4jSentenceTokenizer",
     "title": "LangChain4J Tokenizer with sentence splitter",
+    "description": "Camel AI: Tokenizer for splitting by sentences.",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",

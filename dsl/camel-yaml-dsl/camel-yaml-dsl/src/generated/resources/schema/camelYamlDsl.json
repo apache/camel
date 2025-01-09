@@ -15997,6 +15997,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jCharacterTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with character splitter",
+        "description" : "Camel AI: Tokenizer for splitting by character.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16026,6 +16027,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jLineTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with line splitter",
+        "description" : "Camel AI: Tokenizer for splitting line by line.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16055,6 +16057,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jParagraphTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with paragraph splitter",
+        "description" : "Camel AI: Tokenizer for splitting by paragraphs.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16084,6 +16087,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jSentenceTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with sentence splitter",
+        "description" : "Camel AI: Tokenizer for splitting by sentences.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -16133,6 +16137,7 @@
       },
       "org.apache.camel.model.tokenizer.LangChain4jWordTokenizerDefinition" : {
         "title" : "LangChain4J Tokenizer with word splitter",
+        "description" : "Camel AI: Tokenizer for splitting by word.",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

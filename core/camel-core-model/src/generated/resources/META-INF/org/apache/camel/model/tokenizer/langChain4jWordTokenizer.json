@@ -3,6 +3,7 @@
     "kind": "model",
     "name": "langChain4jWordTokenizer",
     "title": "LangChain4J Tokenizer with word splitter",
+    "description": "Camel AI: Tokenizer for splitting by word.",
     "deprecated": false,
     "firstVersion": "4.8.0",
     "label": "eip,transformation,ai",
