@@ -170,13 +170,14 @@ public interface PropertiesComponent extends StaticService {
 
     /**
      * A list of locations to load properties. You can use comma to separate multiple locations. This option will
-     * override any default locations and only use the locations from this option.
+     * override any default locations and only use the locations from this option. Camel loads by default from
+     * classpath, so use file: as prefix to load from file system.
      */
     void setLocation(String location);
 
     /**
      * Adds the list of locations to the current locations, where to load properties. You can use comma to separate
-     * multiple locations.
+     * multiple locations. Camel loads by default from classpath, so use file: as prefix to load from file system.
      */
     void addLocation(String location);
 
