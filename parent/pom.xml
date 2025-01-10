@@ -426,7 +426,7 @@
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.6.1</qpid-jms-client-version>
         <quartz-version>2.5.0</quartz-version>
-        <quickfixj-version>2.3.1</quickfixj-version>
+        <quickfixj-version>2.3.2</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.7.1</reactor-version>
         <reactor-netty-version>1.2.1</reactor-netty-version>
