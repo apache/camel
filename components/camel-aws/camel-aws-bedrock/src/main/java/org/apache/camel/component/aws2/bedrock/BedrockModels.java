@@ -31,7 +31,10 @@ public enum BedrockModels {
     ANTROPHIC_CLAUDE_V2("anthropic.claude-v2"),
     ANTROPHIC_CLAUDE_V2_1("anthropic.claude-v2:1"),
     ANTROPHIC_CLAUDE_V3("anthropic.claude-3-sonnet-20240229-v1:0"),
+    ANTROPHIC_CLAUDE_V35("anthropic.claude-3-5-sonnet-20240620-v1:0"),
+    ANTROPHIC_CLAUDE_V35_2("anthropic.claude-3-5-sonnet-20241022-v2:0"),
     ANTROPHIC_CLAUDE_HAIKU_V3("anthropic.claude-3-haiku-20240307-v1:0"),
+    ANTROPHIC_CLAUDE_HAIKU_V35("anthropic.claude-3-5-haiku-20241022-v1:0"),
     MISTRAL_7B_INSTRUCT("mistral.mistral-7b-instruct-v0:2"),
     MISTRAL_8x7B_INSTRUCT("mistral.mixtral-8x7b-instruct-v0:1"),
     MISTRAL_LARGE("mistral.mistral-large-2402-v1:0");
