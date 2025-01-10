@@ -43,10 +43,6 @@ public final class CassandraServiceFactory {
                 .build();
     }
 
-    public static class CassandraLocalContainerService extends CassandraLocalContainerInfraService
-            implements CassandraService {
-    }
-
     public static class RemoteCassandraService extends RemoteCassandraInfraService implements CassandraService {
     }
 }

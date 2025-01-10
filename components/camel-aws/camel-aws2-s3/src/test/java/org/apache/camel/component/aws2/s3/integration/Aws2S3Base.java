@@ -21,8 +21,8 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.s3.AWS2S3Component;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
-import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;

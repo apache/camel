@@ -20,8 +20,8 @@ import java.net.URI;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerComponent;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
-import org.apache.camel.test.infra.aws2.services.AWSService;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;

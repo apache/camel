@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.aws2.services;
 
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+
 public class AWSTestServices {
 
     public static class AWSCloudWatchLocalContainerTestService extends AWSCloudWatchLocalContainerInfraService

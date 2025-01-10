@@ -30,6 +30,10 @@
     <name>Camel :: Test Infra :: AWS Common</name>
     <artifactId>camel-test-infra-aws-common</artifactId>
 
+    <properties>
+        <assembly.skipAssembly>false</assembly.skipAssembly>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
