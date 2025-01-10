@@ -6,7 +6,7 @@
     "description": "Marshall and unmarshall FHIR objects to\/from JSON.",
     "deprecated": false,
     "firstVersion": "2.21.0",
-    "label": "dataformat,transformation,hl7,json",
+    "label": "dataformat,transformation,health,json",
     "javaType": "org.apache.camel.model.dataformat.FhirJsonDataFormat",
     "abstract": false,
     "input": false,
