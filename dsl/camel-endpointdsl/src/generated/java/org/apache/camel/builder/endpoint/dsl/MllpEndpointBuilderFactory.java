@@ -2003,7 +2003,7 @@ public interface MllpEndpointBuilderFactory {
          * MLLP (camel-mllp)
          * Communicate with external systems using the MLLP protocol.
          * 
-         * Category: HEALTH
+         * Category: health
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-mllp
          * 
@@ -2016,7 +2016,7 @@ public interface MllpEndpointBuilderFactory {
          * MLLP (camel-mllp)
          * Communicate with external systems using the MLLP protocol.
          * 
-         * Category: HEALTH
+         * Category: health
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-mllp
          * 
@@ -2039,7 +2039,7 @@ public interface MllpEndpointBuilderFactory {
          * MLLP (camel-mllp)
          * Communicate with external systems using the MLLP protocol.
          * 
-         * Category: HEALTH
+         * Category: health
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-mllp
          * 
