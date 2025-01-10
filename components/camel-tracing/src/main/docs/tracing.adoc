@@ -9,13 +9,122 @@
 
 *Since Camel {since}*
 
-This module is a common interface and API for distributed tracing.
-
-This module is not intended to be used by end users. Instead, you should use one of:
+This module is a common interface and API for distributed tracing. It is not intended to be used directly by end users. Instead, you should use one of:
 
 * xref:opentelemetry.adoc[`camel-opentelemetry`]
 * xref:observation.adoc[`camel-observation`]
 
+Tracing an application in a distributed deployment is an important feature supported by Camel. As there are plenty of potential tracing implementation out there we have created an abstract component whose goal is to define the structure and lifecycle of a trace from Camel point of view. This component acts as a trace manager, making sure that regardless of the concrete technology used, the traces are consistently treated by Camel applications.
+
+Using any of the concrete implementations above will instrument your Camel application with the tooling required to generate and expose traces to be collected from an external system (typically a trace collector via an agent to be run when executing the application). However, this is hidden to the abstract implementation and must be delegated to the concrete implementation instead.
+
+== Tracing structure
+
+There are two important concept we are using in the abstraction. **Trace** and **Span**. A Trace is the resource we use to track the execution of a Route. It starts when the Route is fired and is closed when the Route execution ends. A Span is the unit of execution of any event fired by the Route execution. A Trace typically contains one or more Span, depending on the complexity ot the Route.
+
+In order to clarify these concepts, let's use the following Route as a reference:
+
+```java
+from("timer:mytimer")
+    .routeId("timer")
+    .log("in timer route")
+    .to("direct:anotherRoute")
+    .to("http://my-service");
+```
+
+When using any of the implementation, we should expect the generation of traces with a Span for the `timer` component which contains 2 Spans, one for `direct` and the other for `http` endpoints. Mind that the `log` is not considered as a span as indeed is an execution event of the `timer` endpoint. It's interesting to notice that the `direct` endpoint would contain as many Spans as its Route defines. All those spans are wrapped in a Trace and would look like as it follows:
+
+```
+timer
+├── direct
+│   ├── ...
+└── http
+```
+
+The above model is likely to be mapped one to one to the same related standard model (which is, Traces and Spans) in any of the concrete technology adopted. If the technology has a different or richer mapping, then, it will be the implementation that has to take care to do the mapping accordingly.
+
+== Tracing lifecycle
+
+The `camel-tracing` component takes care to hook into the Camel application lifecycle and capture those meaningful events we want to turn into traces. The component capture the following events:
+
+* RoutePolicySupport.onExchangeBegin()
+* RoutePolicySupport.onExchangeDone()
+* CamelEvent.ExchangeSendingEvent
+* CamelEvent.ExchangeSentEvent
+
+The first two are in charge to generate a new Trace (or a Span) when an Exchange begins and close it accordingly. The last two are in charge to create and close a Span for each of the events executed by the Route.
+
+Additionally we are also capturing:
+
+* CamelEvent.ExchangeAsyncProcessingStartedEvent
+* LogListener.onLog()
+
+The `ExchangeAsyncProcessingStartedEvent` is in charge to process events started asynchronously.
+
+NOTE: This part is subject to change in the future.
+
+The `LogListener.onLog()` is a special case which we use in order to capture any logging trace and store it as an event into the endpoint Span.
+
+Each concrete implementation is actually taking care of managing the consistency of the event execution, in order to make sure that an event started in a thread is correctly closed even if the closure event is executed by another thread. This is subject to change in future version of the project.
+
+== Main features
+
+The abstract component provides some important features. Here the most important ones.
+
+=== Component exclusions
+
+The component provide the possibility to exclude the trace of any component when using the `excludePatterns` parameter. This feature is not implementation specific.
+
+=== Component Span decoration
+
+The component automatically includes certain useful parameter out of the box for the different components you may use within Camel. As an example, if you're using the Kafka component (`camel-kafka`), then, it will include in the Kafka endpoint span a few useful information such as *partition* or *offset* which you will be able to verify later in the trace collector.
+
+NOTE: more information about each decorator in the https://github.com/apache/camel/tree/bfadc5d7c2dd904942cef247472bcc2793445f2b/components/camel-tracing/src/main/java/org/apache/camel/tracing/decorators[tracing component code repository].
+
+This feature is not implementation specific.
+
+=== Distributed Tracing
+
+Distributed tracing are required to be correlated between each other. This is quite important above all when you're running a microservice oriented architecture. When a Camel application calls another Camel applications, then, there must be in place a mechanism to correlate traces. This is done via *context propagation*.
+
+The upstream application must inject the context into the event sent (typically a `traceparent` header in the Exchange). The downstream application must extract the context from the event received (same `traceparent` header).
+
+The result will be a unique **distributed tracing** with the same Trace ID.
+
+This feature is implementation specific, the abstraction just provide the interface that must be implemented concretely in each of the implementation.
+
+=== Processor tracing
+
+This feature is available in certain implementation only (ie, `camel-opentelemetry`). When this is enabled, you will be able to collect a finer grain number of Spans into a Trace. Each of the different endpoint processors will be collected.
+
+NOTE: this feature is planned to be generic in future Camel releases.
+
+== Tracing storage
+
+The abstract component is storing the hierarchy of Span of a Trace serializing into an Exchange header. However, each implementation can provide its own specific way of storing this hierarchy. The implementation must make sure to maintain a synchronization between the two.
+
+NOTE: this part is subject to changes to future Camel releases.
+
 == MDC logging
 
 Mapped Diagnostic Context logging *trace_id* and *span_id* are included when you're setting the MDC configuration `camel.main.use-mdc-logging = true`. However this is a **deprecated** feature that may disappear in future version of the project. The feature can be enabled using the specific tracing/telemetry framework SDK. See more detail on the tracing component documentation page you're using.
+
+== Implementation specific abstraction
+
+In order to simplify the implementation of any tracing technology the abstraction provides the following methods to implement:
+
+```java
+protected abstract void initTracer();
+
+protected abstract SpanAdapter startSendingEventSpan(
+        String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter);
+
+protected abstract void initContextPropagators();
+
+protected abstract SpanAdapter startExchangeBeginSpan(
+        Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent);
+
+protected abstract void finishSpan(SpanAdapter span);
+
+protected abstract void inject(SpanAdapter span, InjectAdapter adapter);
+```
