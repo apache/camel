@@ -40,6 +40,9 @@ public interface Ses2Constants {
     String CC = "CamelAwsSesCc";
     @Metadata(description = "List of comma separated destination blind carbon copy (bcc) email address.", javaType = "String")
     String BCC = "CamelAwsSesBcc";
+    @Metadata(description = "A collection of name/value pairs to apply when sending the email. Tags are user-defined properties that are included in published email sending events.",
+              javaType = "Map<String, String>")
+    String TAGS = "CamelAwsSesTags";
     @Metadata(description = "The flag to show if email content is HTML.", javaType = "Boolean")
     String HTML_EMAIL = "CamelAwsSesHtmlEmail";
     @Metadata(description = "TThe configuration set to send.", javaType = "String")

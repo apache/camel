@@ -6,7 +6,7 @@
     "description": "Communicate with external systems using the MLLP protocol.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "HEALTH",
+    "label": "health",
     "javaType": "org.apache.camel.component.mllp.MllpComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
