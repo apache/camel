@@ -6,7 +6,7 @@
 
 # Target
 
-- [ ] I checked that the commit is targeting the correct branch (note that Camel 3 uses `camel-3.x`, whereas Camel 4 uses the `main` branch)
+- [ ] I checked that the commit is targeting the correct branch (Camel 4 uses the `main` branch)
 
 # Tracking
 - [ ] If this is a large change, bug fix, or code improvement, I checked there is a [JIRA issue](https://issues.apache.org/jira/browse/CAMEL) filed for the change (usually before you start working on it).
