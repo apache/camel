@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Supplier;
 
+import io.smallrye.faulttolerance.core.FaultToleranceContext;
 import io.smallrye.faulttolerance.core.FaultToleranceStrategy;
-import io.smallrye.faulttolerance.core.InvocationContext;
-import io.smallrye.faulttolerance.core.bulkhead.FutureThreadPoolBulkhead;
+import io.smallrye.faulttolerance.core.Future;
+import io.smallrye.faulttolerance.core.bulkhead.Bulkhead;
 import io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker;
 import io.smallrye.faulttolerance.core.fallback.Fallback;
 import io.smallrye.faulttolerance.core.stopwatch.SystemStopwatch;
@@ -262,9 +264,9 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
 
             // 1. bulkhead
             if (config.isBulkheadEnabled()) {
-                target = new FutureThreadPoolBulkhead(
+                target = new Bulkhead<>(
                         target, "bulkhead", config.getBulkheadMaxConcurrentCalls(),
-                        config.getBulkheadWaitingTaskQueue());
+                        config.getBulkheadWaitingTaskQueue(), true);
             }
             // 2. timeout
             if (config.isTimeoutEnabled()) {
@@ -277,7 +279,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 target = new Fallback<>(target, "fallback", fallbackContext -> {
                     exchange.setException(fallbackContext.failure);
                     try {
-                        return fFallbackTask.call();
+                        return Future.from(fFallbackTask);
                     } catch (Exception e) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Error occurred processing fallback task", e);
@@ -287,8 +289,13 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 }, ExceptionDecision.ALWAYS_FAILURE);
             }
 
-            target.apply(new InvocationContext<>(task));
-
+            target.apply(new FaultToleranceContext<>(task, true))
+                    .then((ex, exception) -> {
+                        if (exception instanceof CircuitBreakerOpenException) {
+                            throw (CircuitBreakerOpenException) exception;
+                        }
+                        exchange.setException(exception);
+                    });
         } catch (CircuitBreakerOpenException e) {
             // the circuit breaker triggered a call rejected
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
@@ -406,7 +413,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
     }
 
-    private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange> {
+    private final class CircuitBreakerTask implements PooledExchangeTask, Callable<Exchange>, Supplier<Future<Exchange>> {
 
         private Exchange exchange;
 
@@ -484,6 +491,11 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 throw RuntimeExchangeException.wrapRuntimeException(cause);
             }
             return exchange;
+        }
+
+        @Override
+        public Future<Exchange> get() {
+            return Future.from(this);
         }
     }
 
