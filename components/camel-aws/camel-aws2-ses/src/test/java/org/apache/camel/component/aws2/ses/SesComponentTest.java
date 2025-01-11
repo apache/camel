@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws2.ses;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,10 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.ses.model.MessageTag;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SesComponentTest extends CamelTestSupport {
 
@@ -55,6 +57,8 @@ public class SesComponentTest extends CamelTestSupport {
         assertTrue(sendEmailRequest.replyToAddresses().contains("replyTo1@example.com"));
         assertTrue(sendEmailRequest.replyToAddresses().contains("replyTo2@example.com"));
         assertEquals("Subject", getSubject(sendEmailRequest));
+        assertFalse(sendEmailRequest.hasTags());
+        assertEquals(0, sendEmailRequest.tags().size());
         assertEquals("This is my message text.", getBody(sendEmailRequest));
     }
 
@@ -81,6 +85,7 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
                         "anotherReplyTo1@example.com, anotherReplyTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
+                exchange.getIn().setHeader(Ses2Constants.TAGS, Map.of("tagName", "tagValue"));
             }
         });
 
@@ -97,6 +102,24 @@ public class SesComponentTest extends CamelTestSupport {
         assertTrue(sendEmailRequest.replyToAddresses().contains("anotherReplyTo2@example.com"));
         assertEquals("anotherSubject", getSubject(sendEmailRequest));
         assertEquals("This is my message text.", getBody(sendEmailRequest));
+        assertTrue(sendEmailRequest.hasTags());
+        assertEquals(List.of(MessageTag.builder().name("tagName").value("tagValue").build()), sendEmailRequest.tags());
+    }
+
+    @Test
+    public void sendMessageWithEmptyMessageTagsHeader() {
+        Exchange exchange = template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("This is my message text.");
+                exchange.getIn().setHeader(Ses2Constants.TAGS, new HashMap<String, String>());
+            }
+        });
+
+        assertEquals("1", exchange.getIn().getHeader(Ses2Constants.MESSAGE_ID));
+
+        SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
+        assertFalse(sendEmailRequest.hasTags());
+        assertEquals(0, sendEmailRequest.tags().size());
     }
 
     @Override
