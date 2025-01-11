@@ -53,16 +53,22 @@ public class Shell extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         // set up JLine built-in commands
-        Builtins builtins = new Builtins(workDir, new ConfigurationPath(workDir.get(), workDir.get()), null);
+        Builtins builtins = new Builtins(workDir, new ConfigurationPath(workDir.get(), workDir.get()), null) {
+            @Override
+            public String name() {
+                return "built-in";
+            }
+        };
 
         PicocliCommands.PicocliCommandsFactory factory = new PicocliCommands.PicocliCommandsFactory();
-        PicocliCommands picocliCommands = new PicocliCommands(CamelJBangMain.getCommandLine());
+        PicocliCommands commands = new PicocliCommands(CamelJBangMain.getCommandLine());
+        commands.name("Camel");
 
         Parser parser = new DefaultParser();
         try (Terminal terminal = TerminalBuilder.builder().build()) {
             SystemRegistry systemRegistry = new SystemRegistryImpl(parser, terminal, workDir, null);
-            systemRegistry.setCommandRegistries(builtins, picocliCommands);
-            systemRegistry.register("help", picocliCommands);
+            systemRegistry.setCommandRegistries(builtins, commands);
+            systemRegistry.register("help", commands);
 
             LineReader reader = LineReaderBuilder.builder()
                     .terminal(terminal)
@@ -95,7 +101,6 @@ public class Shell extends CamelCommand {
                     systemRegistry.trace(e);
                 }
             }
-
         }
         return 0;
     }
