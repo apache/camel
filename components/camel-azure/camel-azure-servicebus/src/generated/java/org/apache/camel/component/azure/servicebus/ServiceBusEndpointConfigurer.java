@@ -70,6 +70,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "serviceBusTransactionContext": target.getConfiguration().setServiceBusTransactionContext(property(camelContext, com.azure.messaging.servicebus.ServiceBusTransactionContext.class, value)); return true;
         case "servicebustype":
         case "serviceBusType": target.getConfiguration().setServiceBusType(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusType.class, value)); return true;
+        case "sessionid":
+        case "sessionId": target.getConfiguration().setSessionId(property(camelContext, java.lang.String.class, value)); return true;
         case "subqueue":
         case "subQueue": target.getConfiguration().setSubQueue(property(camelContext, com.azure.messaging.servicebus.models.SubQueue.class, value)); return true;
         case "subscriptionname":
@@ -135,6 +137,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "serviceBusTransactionContext": return com.azure.messaging.servicebus.ServiceBusTransactionContext.class;
         case "servicebustype":
         case "serviceBusType": return org.apache.camel.component.azure.servicebus.ServiceBusType.class;
+        case "sessionid":
+        case "sessionId": return java.lang.String.class;
         case "subqueue":
         case "subQueue": return com.azure.messaging.servicebus.models.SubQueue.class;
         case "subscriptionname":
@@ -196,6 +200,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "serviceBusTransactionContext": return target.getConfiguration().getServiceBusTransactionContext();
         case "servicebustype":
         case "serviceBusType": return target.getConfiguration().getServiceBusType();
+        case "sessionid":
+        case "sessionId": return target.getConfiguration().getSessionId();
         case "subqueue":
         case "subQueue": return target.getConfiguration().getSubQueue();
         case "subscriptionname":

@@ -42,6 +42,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final String DIRECT_SEND_TO_QUEUE_URI = "direct:sendToQueue";
     private static final String DIRECT_SEND_TO_TOPIC_URI = "direct:sendToTopic";
     private static final String DIRECT_SEND_SCHEDULED_URI = "direct:sendScheduled";
+    private static final String DIRECT_SEND_TO_TOPIC_SESSION_URI = "direct:sendToTopicSessions";
     private static final Map<String, Object> PROPAGATED_HEADERS = new HashMap<>();
     private static final Pattern MESSAGE_BODY_PATTERN = Pattern.compile("^message-[0-4]$");
 
@@ -80,6 +81,9 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
 
                 from(DIRECT_SEND_SCHEDULED_URI)
                         .to("azure-servicebus:" + QUEUE_NAME + "?producerOperation=scheduleMessages");
+
+                from(DIRECT_SEND_TO_TOPIC_SESSION_URI)
+                        .to("azure-servicebus:" + TOPIC_NAME + "?serviceBusType=topic&sessionId=123");
             }
         };
     }
@@ -213,6 +217,28 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
+            });
+        }
+    }
+
+    @Test
+    void camelSendsMessageWithSessionToServiceBusTopic() throws InterruptedException {
+        messageLatch = new CountDownLatch(5);
+        try (ServiceBusProcessorClient client = createTopicProcessorClient()) {
+            client.start();
+            for (int i = 0; i < 5; i++) {
+                String message = "message-" + i;
+                producerTemplate.sendBodyAndHeaders(DIRECT_SEND_TO_TOPIC_SESSION_URI, message, PROPAGATED_HEADERS);
+            }
+
+            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
+            assertEquals(2, receivedMessageContexts.size());
+            receivedMessageContexts.forEach(messageContext -> {
+                ServiceBusReceivedMessage message = messageContext.getMessage();
+                String messageBody = message.getBody().toString();
+                assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
+                Map<String, Object> applicationProperties = message.getApplicationProperties();
+                assertEquals(PROPAGATED_HEADERS, applicationProperties);
             });
         }
     }

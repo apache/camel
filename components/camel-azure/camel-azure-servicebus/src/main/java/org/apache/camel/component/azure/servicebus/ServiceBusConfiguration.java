@@ -90,6 +90,19 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
               defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType = CONNECTION_STRING;
+    @UriParam(label = "session", description = "Session ID for session-enabled queues or topics.")
+    private String sessionId;
+
+    /**
+     * SessionId for the message. To set this field, sessionEnabled should be set to true.
+     */
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     /**
      * Selected topic name or the queue name, that is depending on serviceBusType config. For example if

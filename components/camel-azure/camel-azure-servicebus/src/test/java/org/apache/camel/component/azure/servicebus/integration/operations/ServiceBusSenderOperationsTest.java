@@ -67,10 +67,10 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
         try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
             processorClient.start();
-            operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null);
+            operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null, null);
             //test bytes
             byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
-            operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null);
+            operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null, null);
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
@@ -85,7 +85,7 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.sendMessages(12345, null, null, null);
+            operations.sendMessages(12345, null, null, null, null);
         });
     }
 
@@ -102,14 +102,14 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             inputBatch.add("test batch 2");
             inputBatch.add("test batch 3");
 
-            operations.sendMessages(inputBatch, null, null, null);
+            operations.sendMessages(inputBatch, null, null, null, null);
             //test bytes
             final List<byte[]> inputBatch2 = new LinkedList<>();
             byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
             byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
             inputBatch2.add(byteBody1);
             inputBatch2.add(byteBody2);
-            operations.sendMessages(inputBatch2, null, null, null);
+            operations.sendMessages(inputBatch2, null, null, null, null);
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
@@ -142,10 +142,10 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
         try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
             processorClient.start();
 
-            operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null);
+            operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null, null);
             //test bytes
             byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
-            operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null);
+            operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null, null);
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
@@ -159,7 +159,7 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
         }
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.scheduleMessages(12345, OffsetDateTime.now(), null, null, null);
+            operations.scheduleMessages(12345, OffsetDateTime.now(), null, null, null, null);
         });
     }
 
@@ -175,14 +175,14 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             inputBatch.add("testSchedulingBatchMessages 1");
             inputBatch.add("testSchedulingBatchMessages 2");
             inputBatch.add("testSchedulingBatchMessages 3");
-            operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null);
+            operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null, null);
             //test bytes
             final List<byte[]> inputBatch2 = new LinkedList<>();
             byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
             byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
             inputBatch2.add(byteBody1);
             inputBatch2.add(byteBody2);
-            operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null, null);
+            operations.scheduleMessages(inputBatch2, OffsetDateTime.now(), null, null, null, null);
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
