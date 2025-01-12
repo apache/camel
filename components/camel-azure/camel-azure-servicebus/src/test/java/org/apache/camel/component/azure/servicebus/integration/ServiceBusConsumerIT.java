@@ -64,9 +64,9 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
                         .to(MOCK_RESULT);
 
                 from("azure-servicebus:" + TOPIC_NAME + "?connectionString=RAW(" + CONNECTION_STRING + ")"
-                        + "&serviceBusType=topic"
-                        + "&subscriptionName=" + SUBSCRIPTION_NAME
-                        + "&sessionEnabled=" + IS_SESSION_ENABLED)
+                     + "&serviceBusType=topic"
+                     + "&subscriptionName=" + SUBSCRIPTION_NAME
+                     + "&sessionEnabled=" + IS_SESSION_ENABLED)
                         .routeId("sessionTopicRoute")
                         .process(exchange -> messageLatch.countDown());
             }
