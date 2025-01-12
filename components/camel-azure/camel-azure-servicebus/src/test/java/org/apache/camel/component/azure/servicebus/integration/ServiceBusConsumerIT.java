@@ -19,6 +19,8 @@ package org.apache.camel.component.azure.servicebus.integration;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
@@ -32,8 +34,7 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
                          disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
@@ -61,6 +62,13 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
                 from("azure-servicebus:" + TOPIC_NAME + "?serviceBusType=topic&subscriptionName=" + SUBSCRIPTION_NAME)
                         .to(MOCK_RESULT);
+
+                from("azure-servicebus:" + TOPIC_NAME + "?connectionString=RAW(" + CONNECTION_STRING + ")"
+                        + "&serviceBusType=topic"
+                        + "&subscriptionName=" + SUBSCRIPTION_NAME
+                        + "&sessionEnabled=" + IS_SESSION_ENABLED)
+                        .routeId("sessionTopicRoute")
+                        .process(exchange -> messageLatch.countDown());
             }
         };
     }
@@ -118,6 +126,15 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
         assertBrokerPropertyHeadersPropagated(headers);
+    }
+
+    @Test
+    public void serviceBusTopicWithSessionIsConsumedByCamel() throws Exception {
+        // Stop all routes initially
+        contextExtension.getContext().getRouteController().stopAllRoutes();
+        contextExtension.getContext().getRouteController().startRoute("sessionTopicRoute");
+        messageLatch = new CountDownLatch(5); // Expecting 5 messages
+        assertTrue(messageLatch.await(50000, TimeUnit.MILLISECONDS), "Messages were not consumed in time");
     }
 
     private void assertBrokerPropertyHeadersPropagated(Map<String, Object> headers) {

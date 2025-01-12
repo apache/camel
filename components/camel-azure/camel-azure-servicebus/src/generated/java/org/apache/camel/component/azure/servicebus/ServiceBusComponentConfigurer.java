@@ -76,6 +76,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "serviceBusTransactionContext": getOrCreateConfiguration(target).setServiceBusTransactionContext(property(camelContext, com.azure.messaging.servicebus.ServiceBusTransactionContext.class, value)); return true;
         case "servicebustype":
         case "serviceBusType": getOrCreateConfiguration(target).setServiceBusType(property(camelContext, org.apache.camel.component.azure.servicebus.ServiceBusType.class, value)); return true;
+        case "sessionenabled":
+        case "sessionEnabled": getOrCreateConfiguration(target).setSessionEnabled(property(camelContext, boolean.class, value)); return true;
         case "sessionid":
         case "sessionId": getOrCreateConfiguration(target).setSessionId(property(camelContext, java.lang.String.class, value)); return true;
         case "subqueue":
@@ -142,6 +144,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "serviceBusTransactionContext": return com.azure.messaging.servicebus.ServiceBusTransactionContext.class;
         case "servicebustype":
         case "serviceBusType": return org.apache.camel.component.azure.servicebus.ServiceBusType.class;
+        case "sessionenabled":
+        case "sessionEnabled": return boolean.class;
         case "sessionid":
         case "sessionId": return java.lang.String.class;
         case "subqueue":
@@ -204,6 +208,8 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "serviceBusTransactionContext": return getOrCreateConfiguration(target).getServiceBusTransactionContext();
         case "servicebustype":
         case "serviceBusType": return getOrCreateConfiguration(target).getServiceBusType();
+        case "sessionenabled":
+        case "sessionEnabled": return getOrCreateConfiguration(target).isSessionEnabled();
         case "sessionid":
         case "sessionId": return getOrCreateConfiguration(target).getSessionId();
         case "subqueue":

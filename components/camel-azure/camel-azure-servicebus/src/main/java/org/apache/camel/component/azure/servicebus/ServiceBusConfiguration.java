@@ -90,8 +90,22 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
               defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType = CONNECTION_STRING;
-    @UriParam(label = "session", description = "Session ID for session-enabled queues or topics.")
+    // New fields for session support
+    @UriParam(label = "consumer", defaultValue = "false", description = "Enable session support")
+    private boolean sessionEnabled;
+    @UriParam(label = "producer", description = "Session ID for session-enabled queues or topics.")
     private String sessionId;
+
+    /**
+     * Flag to enable sessions. Default is false. Used to create processor client for message consumer
+     */
+    public boolean isSessionEnabled() {
+        return sessionEnabled;
+    }
+
+    public void setSessionEnabled(boolean sessionEnabled) {
+        this.sessionEnabled = sessionEnabled;
+    }
 
     /**
      * SessionId for the message. To set this field, sessionEnabled should be set to true.
