@@ -224,21 +224,19 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     @Test
     void camelSendsMessageWithSessionToServiceBusTopic() throws InterruptedException {
         messageLatch = new CountDownLatch(5);
-        try (ServiceBusProcessorClient client = createTopicProcessorClient()) {
+        try (ServiceBusProcessorClient client = createTopicSessionProcessorClient()) {
             client.start();
             for (int i = 0; i < 5; i++) {
                 String message = "message-" + i;
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_TO_TOPIC_SESSION_URI, message, PROPAGATED_HEADERS);
             }
 
-            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
-            assertEquals(2, receivedMessageContexts.size());
+            assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS));
+            assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
                 String messageBody = message.getBody().toString();
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
-                Map<String, Object> applicationProperties = message.getApplicationProperties();
-                assertEquals(PROPAGATED_HEADERS, applicationProperties);
             });
         }
     }

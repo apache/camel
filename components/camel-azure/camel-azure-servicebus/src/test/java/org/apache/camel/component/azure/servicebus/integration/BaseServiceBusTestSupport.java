@@ -122,6 +122,19 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
                 .buildProcessorClient();
     }
 
+    protected ServiceBusProcessorClient createTopicSessionProcessorClient() {
+        return new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .sessionProcessor()
+                .disableAutoComplete()
+                .topicName(TOPIC_NAME)
+                .subscriptionName(SUBSCRIPTION_NAME)
+                .processMessage(this::processMessage)
+                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
+                        serviceBusErrorContext.getException()))
+                .buildProcessorClient();
+    }
+
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
         receivedMessageContexts.add(messageContext);
         messageLatch.countDown();
