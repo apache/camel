@@ -90,6 +90,35 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
     }
 
     @Test
+    void testSendSingleMessageWithSession() throws InterruptedException {
+        final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(client);
+        messageLatch = new CountDownLatch(2);
+
+        try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
+            processorClient.start();
+            operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null, "session-1");
+            //test bytes
+            byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
+            operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null, "session-1");
+
+            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
+
+            final boolean exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test data"));
+            assertTrue(exists, "test message body");
+
+            final boolean exists2 = receivedMessageContexts.stream()
+                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
+            assertTrue(exists2, "test byte body");
+        }
+
+        // test if we have something other than string or byte[]
+        assertThrows(IllegalArgumentException.class, () -> {
+            operations.sendMessages(12345, null, null, null, "session-1");
+        });
+    }
+
+    @Test
     void testSendingBatchMessages() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(client);
         messageLatch = new CountDownLatch(5);
