@@ -2,11 +2,15 @@
 title: Tracing redesign
 authors:
   - "@squakez"
-reviewers: []
-approvers: []
+reviewers:
+  - "@zbendhiba"
+  - "@davsclaus"
+approvers: 
+  - "@zbendhiba"
+  - "@davsclaus"
 creation-date: 2025-01-08
-last-updated: 2025-01-08
-status: draft
+last-updated: 2025-01-13
+status: implementable
 see-also: []
 replaces: []
 superseded-by: []
