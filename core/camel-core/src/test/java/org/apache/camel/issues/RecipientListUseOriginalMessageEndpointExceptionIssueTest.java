@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,7 +42,7 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
         template.sendBodyAndHeader(fileUri("inbox"), "A",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied(100, TimeUnit.MILLISECONDS);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -55,7 +53,7 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
                 onException(Exception.class).handled(true).useOriginalMessage().to(fileUri("outbox"))
                         .to("mock:error");
 
-                from(fileUri("inbox?initialDelay=0&delay=10"))
+                from(fileUri("inbox?initialDelay=100&delay=10"))
                         .transform(constant("B"))
                         .setHeader("path", constant("mock:throwException"))
                         // must enable share uow to let the onException use
