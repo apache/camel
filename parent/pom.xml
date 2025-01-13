@@ -148,7 +148,7 @@
         <elasticsearch-java-client-sniffer-version>8.17.0</elasticsearch-java-client-sniffer-version>
         <elytron-web>4.1.0.Final</elytron-web>
         <exec-maven-plugin-version>3.5.0</exec-maven-plugin-version>
-        <fastjson-version>2.0.53</fastjson-version>
+        <fastjson-version>2.0.54</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
