@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "send",
+    "title": "Camel Send",
+    "description": "Send messages to endpoints",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.SendDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.10.0-SNAPSHOT"
+  }
+}
+

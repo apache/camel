@@ -127,7 +127,7 @@ public class CamelSendAction extends ActionBaseCommand {
         if (timeout < 5000) {
             timeout = 5000;
         }
-        root.put("pollTimeout", Math.min(1000, timeout - 1000)); // poll timeout should be shorter than jbang timeout
+        root.put("pollTimeout", timeout);
         String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
         root.put("exchangePattern", mep);
         if (body != null) {
@@ -279,7 +279,8 @@ public class CamelSendAction extends ActionBaseCommand {
 
     protected JsonObject waitForOutputFile(File outputFile) {
         StopWatch watch = new StopWatch();
-        while (watch.taken() < timeout) {
+        long wait = timeout + 10000; // wait longer than timeout
+        while (watch.taken() < wait) {
             try {
                 // give time for response to be ready
                 Thread.sleep(20);
