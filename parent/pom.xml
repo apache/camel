@@ -449,7 +449,7 @@
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.11.1</smallrye-config-version>
         <smallrye-health-version>4.1.1</smallrye-health-version>
-        <smallrye-fault-tolerance-version>6.7.2</smallrye-fault-tolerance-version>
+        <smallrye-fault-tolerance-version>6.7.3</smallrye-fault-tolerance-version>
         <smbj-version>0.14.0</smbj-version>
         <smooks-version>2.2.0</smooks-version>
         <snakeyaml-version>2.3</snakeyaml-version>
