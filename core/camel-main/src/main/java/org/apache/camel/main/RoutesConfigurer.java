@@ -38,7 +38,9 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -193,22 +195,41 @@ public class RoutesConfigurer {
 
         if (getBasePackageScan() != null) {
             step = recorder.beginStep(RoutesConfigurer.class, "packageScan", "Routes Configurer");
-            String[] pkgs = getBasePackageScan().split(",");
-            Set<Class<?>> set = PluginHelper.getPackageScanClassResolver(camelContext)
-                    .findImplementations(RoutesBuilder.class, pkgs);
-            for (Class<?> routeClazz : set) {
-                try {
-                    Object builder = camelContext.getInjector().newInstance(routeClazz);
-                    if (builder instanceof RoutesBuilder routesBuilder) {
-                        routes.add(routesBuilder);
-                    } else {
-                        LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+
+            boolean scan = true;
+            final String[] includes = javaRoutesIncludePattern != null ? javaRoutesIncludePattern.split(",") : null;
+            final String[] excludes = javaRoutesExcludePattern != null ? javaRoutesExcludePattern.split(",") : null;
+            if (includes != null && ObjectHelper.equal("false", javaRoutesIncludePattern)) {
+                scan = false;
+            }
+            if (scan) {
+                String[] pkgs = getBasePackageScan().split(",");
+                Set<Class<?>> set = PluginHelper.getPackageScanClassResolver(camelContext)
+                        .findImplementations(RoutesBuilder.class, pkgs);
+                for (Class<?> routeClazz : set) {
+                    // exclude take precedence over includes
+                    String path = routeClazz.getName().replace(".", "/");
+                    if (excludes != null && !"false".equals(javaRoutesExcludePattern)
+                            && AntPathMatcher.INSTANCE.anyMatch(excludes, path)) {
+                        continue;
                     }
-                } catch (Exception e) {
-                    if (isIgnoreLoadingError()) {
-                        LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
-                    } else {
-                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    if (includes != null && !"false".equals(javaRoutesIncludePattern)
+                            && !AntPathMatcher.INSTANCE.anyMatch(includes, path)) {
+                        continue;
+                    }
+                    try {
+                        Object builder = camelContext.getInjector().newInstance(routeClazz);
+                        if (builder instanceof RoutesBuilder routesBuilder) {
+                            routes.add(routesBuilder);
+                        } else {
+                            LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                        }
+                    } catch (Exception e) {
+                        if (isIgnoreLoadingError()) {
+                            LOG.warn("Ignore loading error due to: {}. This exception is ignored.", e.getMessage());
+                        } else {
+                            throw RuntimeCamelException.wrapRuntimeException(e);
+                        }
                     }
                 }
             }
