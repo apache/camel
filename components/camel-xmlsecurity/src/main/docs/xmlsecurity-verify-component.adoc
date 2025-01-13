@@ -420,7 +420,7 @@ accessor.setPassword("password");
 accessor.setAlias("cert_alias"); // signer key alias
  
 DefaultXAdESSignatureProperties props = new DefaultXAdESSignatureProperties();
-props.setNamespace("http://uri.etsi.org/01903/v1.3.2#"); // sets the namespace for the XAdES elements; the namspace is related to the XAdES version, default value is "http://uri.etsi.org/01903/v1.3.2#", other possible values are "http://uri.etsi.org/01903/v1.1.1#" and "http://uri.etsi.org/01903/v1.2.2#"
+props.setNamespace("http://uri.etsi.org/01903/v1.3.2#"); // sets the namespace for the XAdES elements; the namespace is related to the XAdES version, default value is "http://uri.etsi.org/01903/v1.3.2#", other possible values are "http://uri.etsi.org/01903/v1.1.1#" and "http://uri.etsi.org/01903/v1.2.2#"
 props.setPrefix("etsi"); // sets the prefix for the XAdES elements, default value is "etsi"
  
 // signing certificate
