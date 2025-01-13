@@ -1011,7 +1011,7 @@ public class Run extends CamelCommand {
             }
             eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
-        eq.dependencies.addAll(dependencies);
+        eq.dependencies.addAll(this.dependencies);
         if (!this.exportRun) {
             eq.addDependencies("camel:cli-connector");
         }

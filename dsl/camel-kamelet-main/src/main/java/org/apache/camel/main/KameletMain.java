@@ -146,12 +146,10 @@ public class KameletMain extends MainCommandLineSupport {
         configureInitialProperties(DEFAULT_KAMELETS_LOCATION);
     }
 
-    public KameletMain(String overrides, String instanceType) {
+    public KameletMain(String instanceType, String overrides) {
         this.instanceType = instanceType;
         Objects.requireNonNull(overrides);
-
         String locations = overrides + "," + DEFAULT_KAMELETS_LOCATION;
-
         configureInitialProperties(locations);
     }
 
