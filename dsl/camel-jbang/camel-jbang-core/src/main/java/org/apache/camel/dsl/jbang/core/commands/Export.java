@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
@@ -58,7 +57,12 @@ public class Export extends ExportBaseCommand {
         }
 
         if (gav == null) {
-            gav = "org.example.project:%s:%s".formatted(getProjectName(), getVersion());
+            String pn = getProjectName();
+            if (pn == null) {
+                System.err.println("Failed to resolve project name: Please provide --name, --gav or source file");
+                return 1;
+            }
+            gav = "org.example.project:%s:%s".formatted(pn, getVersion());
         }
 
         switch (runtime) {
@@ -161,7 +165,6 @@ public class Export extends ExportBaseCommand {
     }
 
     protected String getProjectName() {
-
         if (name != null) {
             return name;
         }
@@ -177,8 +180,7 @@ public class Export extends ExportBaseCommand {
             return FileUtil.onlyName(SourceScheme.onlyName(files.get(0)));
         }
 
-        throw new RuntimeCamelException(
-                "Failed to resolve project name - please provide --name, --gav or source file");
+        return null;
     }
 
     protected String getVersion() {
