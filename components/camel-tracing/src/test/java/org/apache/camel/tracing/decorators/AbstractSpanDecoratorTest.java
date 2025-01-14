@@ -74,12 +74,16 @@ public class AbstractSpanDecoratorTest {
 
         MockSpanAdapter span = new MockSpanAdapter();
 
-        decorator.pre(span, null, endpoint);
+        Exchange exchange = Mockito.mock(Exchange.class);
+        Mockito.when(exchange.getFromRouteId()).thenReturn("myRouteId");
+
+        decorator.pre(span, exchange, endpoint);
 
         assertEquals("camel-test", span.tags().get(TagConstants.COMPONENT));
         assertEquals("test", span.tags().get(TagConstants.URL_SCHEME));
         assertEquals("uri", span.tags().get(TagConstants.URL_PATH));
         assertEquals("query=hello", span.tags().get(TagConstants.URL_QUERY));
+        assertEquals("myRouteId", span.tags().get(TagConstants.ROUTE_ID));
     }
 
     @Test
