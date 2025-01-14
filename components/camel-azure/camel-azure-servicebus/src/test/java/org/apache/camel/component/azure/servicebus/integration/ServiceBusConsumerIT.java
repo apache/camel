@@ -47,10 +47,22 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
             .queueName(QUEUE_NAME)
             .buildClient();
 
+    private final ServiceBusSenderClient queueWithSessionsSenderClient = new ServiceBusClientBuilder()
+            .connectionString(CONNECTION_STRING)
+            .sender()
+            .queueName(QUEUE_WITH_SESSIONS_NAME)
+            .buildClient();
+
     private final ServiceBusSenderClient topicSenderClient = new ServiceBusClientBuilder()
             .connectionString(CONNECTION_STRING)
             .sender()
             .topicName(TOPIC_NAME)
+            .buildClient();
+
+    private final ServiceBusSenderClient topicWithSessionsSenderClient = new ServiceBusClientBuilder()
+            .connectionString(CONNECTION_STRING)
+            .sender()
+            .topicName(TOPIC_WITH_SESSIONS_NAME)
             .buildClient();
 
     protected RouteBuilder createRouteBuilder() {
@@ -60,15 +72,14 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
                 from("azure-servicebus:" + QUEUE_NAME)
                         .to(MOCK_RESULT);
 
+                from("azure-servicebus:" + QUEUE_WITH_SESSIONS_NAME + "?sessionEnabled=true")
+                        .to(MOCK_RESULT);
+
                 from("azure-servicebus:" + TOPIC_NAME + "?serviceBusType=topic&subscriptionName=" + SUBSCRIPTION_NAME)
                         .to(MOCK_RESULT);
 
-                from("azure-servicebus:" + TOPIC_NAME + "?connectionString=RAW(" + CONNECTION_STRING + ")"
-                     + "&serviceBusType=topic"
-                     + "&subscriptionName=" + SUBSCRIPTION_NAME
-                     + "&sessionEnabled=" + IS_SESSION_ENABLED)
-                        .routeId("sessionTopicRoute")
-                        .process(exchange -> messageLatch.countDown());
+                from("azure-servicebus:" + TOPIC_WITH_SESSIONS_NAME + "?serviceBusType=topic&subscriptionName=" + SUBSCRIPTION_WITH_SESSIONS_NAME + "?sessionEnabled=true")
+                        .to(MOCK_RESULT);
             }
         };
     }
@@ -128,13 +139,60 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
         assertBrokerPropertyHeadersPropagated(headers);
     }
 
+    /*
+        Tests for entities with session support
+    */
+
     @Test
-    public void serviceBusTopicWithSessionIsConsumedByCamel() throws Exception {
-        // Stop all routes initially
-        contextExtension.getContext().getRouteController().stopAllRoutes();
-        contextExtension.getContext().getRouteController().startRoute("sessionTopicRoute");
-        messageLatch = new CountDownLatch(5); // Expecting 5 messages
-        assertTrue(messageLatch.await(50000, TimeUnit.MILLISECONDS), "Messages were not consumed in time");
+    public void serviceBusSessionEnabledQueueIsConsumedByCamel() throws InterruptedException {
+        String propagatedHeaderKey = "PropagatedCustomHeader";
+        String propagatedHeaderValue = "propagated header value";
+
+        MockEndpoint to = contextExtension.getMockEndpoint(MOCK_RESULT);
+
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
+
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
+            ServiceBusMessage serviceBusMessage = new ServiceBusMessage(msg);
+            serviceBusMessage.setSessionId("session-1");
+            serviceBusMessage.getApplicationProperties().put(propagatedHeaderKey, propagatedHeaderValue);
+            queueWithSessionsSenderClient.sendMessage(serviceBusMessage);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
+        assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
+        assertBrokerPropertyHeadersPropagated(headers);
+    }
+
+    @Test
+    public void serviceBusSessionEnabledTopicIsConsumedByCamel() throws InterruptedException {
+        String propagatedHeaderKey = "PropagatedCustomHeader";
+        String propagatedHeaderValue = "propagated header value";
+
+        MockEndpoint to = contextExtension.getMockEndpoint(MOCK_RESULT);
+
+        to.expectedMessageCount(5);
+        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
+
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
+            ServiceBusMessage serviceBusMessage = new ServiceBusMessage(msg);
+            serviceBusMessage.setSessionId("session-1");
+            serviceBusMessage.getApplicationProperties().put(propagatedHeaderKey, propagatedHeaderValue);
+            topicSenderClient.sendMessage(serviceBusMessage);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
+        assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
+        assertBrokerPropertyHeadersPropagated(headers);
     }
 
     private void assertBrokerPropertyHeadersPropagated(Map<String, Object> headers) {
