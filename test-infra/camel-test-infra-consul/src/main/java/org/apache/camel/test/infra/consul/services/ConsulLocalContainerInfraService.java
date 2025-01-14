@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = ConsulInfraService.class, serviceAlias = { "consul" })
+@InfraService(service = ConsulInfraService.class,
+              description = "Consul is a service networking solution",
+              serviceAlias = { "consul" })
 public class ConsulLocalContainerInfraService implements ConsulInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "consul";
 

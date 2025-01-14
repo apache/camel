@@ -22,7 +22,9 @@ import org.apache.camel.test.infra.solr.common.SolrProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = SolrInfraService.class, serviceAlias = { "solr" })
+@InfraService(service = SolrInfraService.class,
+              description = "Apache Solr is a Search Platform",
+              serviceAlias = { "solr" })
 public class SolrLocalContainerInfraService implements SolrInfraService, ContainerService<SolrContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrLocalContainerInfraService.class);

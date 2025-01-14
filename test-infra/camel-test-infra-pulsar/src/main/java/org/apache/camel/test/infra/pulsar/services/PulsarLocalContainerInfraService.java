@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PulsarContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = PulsarInfraService.class, serviceAlias = { "pulsar" })
+@InfraService(service = PulsarInfraService.class,
+              description = "Distributed messaging and streaming platform",
+              serviceAlias = { "pulsar" })
 public class PulsarLocalContainerInfraService implements PulsarInfraService, ContainerService<PulsarContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PulsarLocalContainerInfraService.class);

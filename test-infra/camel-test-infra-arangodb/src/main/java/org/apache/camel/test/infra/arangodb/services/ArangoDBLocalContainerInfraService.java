@@ -24,7 +24,9 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = ArangoDBInfraService.class, serviceAlias = "arangodb")
+@InfraService(service = ArangoDBInfraService.class,
+              description = "ArangoDB is a multi-model database for high-performance applications.",
+              serviceAlias = "arangodb")
 public class ArangoDBLocalContainerInfraService implements ArangoDBInfraService, ContainerService<ArangoDbContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ArangoDBLocalContainerInfraService.class);
 

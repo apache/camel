@@ -46,7 +46,9 @@ import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = FtpInfraService.class, serviceAlias = { "ftp" })
+@InfraService(service = FtpInfraService.class,
+              description = "Embedded FTP Server",
+              serviceAlias = { "ftp" })
 public class FtpEmbeddedInfraService extends AbstractService implements FtpInfraService {
     protected static final String DEFAULT_LISTENER = "default";
     private static final Logger LOG = LoggerFactory.getLogger(FtpEmbeddedInfraService.class);

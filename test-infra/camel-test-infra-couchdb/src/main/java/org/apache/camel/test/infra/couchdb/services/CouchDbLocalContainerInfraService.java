@@ -26,7 +26,9 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = CouchDbInfraService.class, serviceAlias = { "couchdb" })
+@InfraService(service = CouchDbInfraService.class,
+              description = "SQL Clustered database CouchDB",
+              serviceAlias = { "couchdb" })
 public class CouchDbLocalContainerInfraService implements CouchDbInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "couchdb";
 

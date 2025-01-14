@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = PostgresInfraService.class, serviceAlias = { "postgres" })
+@InfraService(service = PostgresInfraService.class,
+              description = "Postgres SQL Database",
+              serviceAlias = { "postgres" })
 public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer> {
     public static final String DEFAULT_POSTGRES_CONTAINER
             = LocalPropertyResolver.getProperty(PostgresLocalContainerInfraService.class,

@@ -28,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = Etcd3InfraService.class, serviceAlias = { "etcd3" })
+@InfraService(service = Etcd3InfraService.class,
+              description = "Key Value store etcd3",
+              serviceAlias = { "etcd3" })
 public class Etcd3LocalContainerInfraService implements Etcd3InfraService, ContainerService<EtcdContainer> {
     public static final String CONTAINER_NAME = "etcd";
     public static final int ETCD_CLIENT_PORT = 2379;

@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = KafkaInfraService.class, serviceAlias = "kafka")
+@InfraService(service = KafkaInfraService.class,
+              description = "Apache Kafka, Distributed event streaming platform",
+              serviceAlias = "kafka")
 public class ContainerLocalKafkaInfraService implements KafkaInfraService, ContainerService<KafkaContainer> {
     public static final String KAFKA3_IMAGE_NAME = LocalPropertyResolver.getProperty(
             ContainerLocalKafkaInfraService.class,

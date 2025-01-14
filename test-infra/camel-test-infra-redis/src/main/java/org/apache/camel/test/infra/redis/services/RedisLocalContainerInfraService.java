@@ -22,7 +22,9 @@ import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = RedisInfraService.class, serviceAlias = { "redis" })
+@InfraService(service = RedisInfraService.class,
+              description = "In Memory Database",
+              serviceAlias = { "redis" })
 public class RedisLocalContainerInfraService implements RedisInfraService, ContainerService<RedisContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerInfraService.class);
 

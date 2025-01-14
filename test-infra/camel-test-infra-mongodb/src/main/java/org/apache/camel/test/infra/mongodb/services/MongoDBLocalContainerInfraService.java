@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = MongoDBInfraService.class, serviceAlias = { "mongodb" })
+@InfraService(service = MongoDBInfraService.class,
+              description = "MongoDB NoSql Database",
+              serviceAlias = { "mongodb" })
 public class MongoDBLocalContainerInfraService implements MongoDBInfraService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerInfraService.class);
     private static final int DEFAULT_MONGODB_PORT = 27017;

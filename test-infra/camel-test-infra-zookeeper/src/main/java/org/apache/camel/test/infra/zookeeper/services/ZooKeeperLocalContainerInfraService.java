@@ -23,7 +23,9 @@ import org.apache.camel.test.infra.zookeeper.common.ZooKeeperProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = ZooKeeperInfraService.class, serviceAlias = { "zookeeper" })
+@InfraService(service = ZooKeeperInfraService.class,
+              description = "Zookeeper is a server for highly reliable distributed coordination of cloud applications",
+              serviceAlias = { "zookeeper" })
 public class ZooKeeperLocalContainerInfraService implements ZooKeeperInfraService, ContainerService<ZooKeeperContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperLocalContainerInfraService.class);
 

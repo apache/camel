@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = GooglePubSubInfraService.class, serviceAlias = { "google", "google-pub-sub" },
+@InfraService(service = GooglePubSubInfraService.class,
+              description = "Google Cloud SDK Tool",
+              serviceAlias = "google",
               serviceImplementationAlias = "pub-sub")
 public class GooglePubSubLocalContainerInfraService
         implements GooglePubSubInfraService, ContainerService<PubSubEmulatorContainer> {

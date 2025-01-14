@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.CouchbaseContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = CouchbaseInfraService.class, serviceAlias = { "couchbase" })
+@InfraService(service = CouchbaseInfraService.class,
+              description = "NoSQL database Couchbase",
+              serviceAlias = { "couchbase" })
 public class CouchbaseLocalContainerInfraService implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
 
     /*

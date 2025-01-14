@@ -21,7 +21,9 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = SmbLocalContainerInfraService.class, serviceAlias = { "smb" })
+@InfraService(service = SmbLocalContainerInfraService.class,
+              description = "SAMBA File Server",
+              serviceAlias = "smb")
 public class SmbLocalContainerInfraService implements SmbInfraService {
     protected static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
     protected final SmbContainer container = new SmbContainer();

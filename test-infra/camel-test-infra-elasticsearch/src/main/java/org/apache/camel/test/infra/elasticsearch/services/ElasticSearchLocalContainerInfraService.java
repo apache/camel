@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
-@InfraService(service = ElasticSearchInfraService.class, serviceAlias = { "elasticsearch", "elastic-search" })
+@InfraService(service = ElasticSearchInfraService.class,
+              description = "NoSQL Database Elasticsearch",
+              serviceAlias = "elasticsearch")
 public class ElasticSearchLocalContainerInfraService
         implements ElasticSearchInfraService, ContainerService<ElasticsearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerInfraService.class);

@@ -24,8 +24,9 @@ import org.apache.camel.test.infra.azure.common.services.AzureInfraService;
 import org.apache.camel.test.infra.azure.common.services.AzureServices;
 import org.apache.camel.test.infra.azure.common.services.AzureStorageInfraService;
 
-@InfraService(service = AzureInfraService.class, serviceAlias = { "azure-storage-queue", "azure" },
-              serviceImplementationAlias = "storage-queue")
+@InfraService(service = AzureInfraService.class,
+              description = "Local Azure services with Azurite",
+              serviceAlias = "azure", serviceImplementationAlias = "storage-queue")
 public class AzureStorageQueueLocalContainerInfraService extends AzureStorageInfraService {
 
     @Override

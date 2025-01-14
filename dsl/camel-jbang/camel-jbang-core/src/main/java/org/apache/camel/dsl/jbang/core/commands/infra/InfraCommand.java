@@ -16,28 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "infra",
                      description = "List and Run external services for testing and prototyping")
-public class InfraCommand extends CamelCommand {
-
-    static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-
-    {
-        JSON_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        JSON_MAPPER.registerModule(new JavaTimeModule());
-        JSON_MAPPER.registerModule(new Jdk8Module());
-        JSON_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-    }
+public class InfraCommand extends InfraBaseCommand {
 
     public InfraCommand(CamelJBangMain main) {
         super(main);
@@ -48,8 +32,5 @@ public class InfraCommand extends CamelCommand {
         // defaults to list
         new CommandLine(new InfraList(getMain())).execute();
         return 0;
-    }
-
-    record TestInfraService(String service, String implementation, List<String> alias, List<String> aliasImplementation) {
     }
 }

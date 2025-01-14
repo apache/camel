@@ -30,7 +30,9 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = InfinispanInfraService.class, serviceAlias = { "infinispan" })
+@InfraService(service = InfinispanInfraService.class,
+              description = "Distributed Database For High‑Performance Applications With In‑Memory Speed",
+              serviceAlias = { "infinispan" })
 public class InfinispanLocalContainerInfraService implements InfinispanInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";

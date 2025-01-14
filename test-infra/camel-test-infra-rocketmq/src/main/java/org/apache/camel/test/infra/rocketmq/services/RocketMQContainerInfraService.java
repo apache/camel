@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.Network;
 
-@InfraService(service = RocketMQInfraService.class, serviceAlias = { "rocketmq" })
+@InfraService(service = RocketMQInfraService.class,
+              description = "Apache RocketMQ is a distributed messaging and streaming platform",
+              serviceAlias = { "rocketmq" })
 public class RocketMQContainerInfraService implements RocketMQInfraService, ContainerService<RocketMQNameserverContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainerInfraService.class);
     public static final String ROCKETMQ_VERSION = LocalPropertyResolver.getProperty(
