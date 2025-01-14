@@ -480,6 +480,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 processIdentified(classElement, eipOptions);
             } else if ("RouteDefinition".equals(classElement.getSimpleName())) {
                 processRoute(classElement, eipOptions);
+            } else if ("TryDefinition".equals(classElement.getSimpleName())) {
+                // special-case for doTry
+                processDoTry(classElement, eipOptions);
             }
 
             // check super classes which may also have fields
@@ -758,6 +761,21 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     false, false);
             eipOptions.add(ep);
         }
+    }
+
+    private void processDoTry(Class<?> classElement, Set<EipOptionModel> eipOptions) {
+        // include doCatch and doFinally
+        EipOptionModel ep = createOption("doCatch", "Do Catch", "element",
+                "java.util.List<org.apache.camel.model.CatchDefinition>", false, "",
+                "", "Catches exceptions as part of a try, catch, finally block", false,
+                null, false, null, Set.of("doCatch"), false, false);
+        eipOptions.add(ep);
+
+        ep = createOption("doFinally", "Do Finally", "element", "org.apache.camel.model.FinallyDefinition", false,
+                "",
+                "", "Path traversed when a try, catch, finally block exits", false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
     }
 
     private void processRoute(Class<?> classElement, Set<EipOptionModel> eipOptions) {
