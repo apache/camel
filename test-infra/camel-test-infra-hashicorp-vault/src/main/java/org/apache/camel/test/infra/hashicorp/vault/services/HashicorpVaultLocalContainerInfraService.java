@@ -45,7 +45,9 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = HashicorpVaultInfraService.class, serviceAlias = { "hashicorp-vault", "hashicorp" },
+@InfraService(service = HashicorpVaultInfraService.class,
+              description = "Vault is a tool for securely accessing secrets",
+              serviceAlias = "hashicorp",
               serviceImplementationAlias = "vault")
 public class HashicorpVaultLocalContainerInfraService
         implements HashicorpVaultInfraService, ContainerService<GenericContainer<?>> {

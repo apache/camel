@@ -28,6 +28,7 @@
     </parent>
 
     <artifactId>camel-test-infra-all</artifactId>
+    <name>Camel :: Test Infra :: Collection of all test services</name>
 
     <dependencies>
         <dependency>

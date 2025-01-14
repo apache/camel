@@ -16,30 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Strings;
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "run",
                      description = "Run an external service")
-public class InfraRun extends CamelCommand {
+public class InfraRun extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "1")
     private List<String> serviceName;
-
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
-    boolean jsonOutput;
 
     public InfraRun(CamelJBangMain main) {
         super(main);
@@ -60,19 +52,9 @@ public class InfraRun extends CamelCommand {
     }
 
     private void run(String testService, String testServiceImplementation) throws Exception {
-        List<InfraCommand.TestInfraService> metadata;
+        List<TestInfraService> services = getMetadata();
 
-        try (InputStream is
-                = this.getClass().getClassLoader().getResourceAsStream("META-INF/test-infra-metadata.json")) {
-            String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-
-            metadata = InfraCommand.JSON_MAPPER.readValue(json, new TypeReference<List<InfraCommand.TestInfraService>>() {
-            });
-        }
-
-        List<InfraCommand.TestInfraService> services = metadata;
-
-        InfraCommand.TestInfraService testInfraService = services
+        TestInfraService testInfraService = services
                 .stream()
                 .filter(service -> {
                     if (testServiceImplementation != null && !testServiceImplementation.isEmpty()
@@ -134,7 +116,7 @@ public class InfraRun extends CamelCommand {
             }
         }
 
-        printer().println(InfraCommand.JSON_MAPPER.writeValueAsString(properties));
+        printer().println(jsonMapper.writeValueAsString(properties));
 
         if (!jsonOutput) {
             printer().println("To stop the execution press q");

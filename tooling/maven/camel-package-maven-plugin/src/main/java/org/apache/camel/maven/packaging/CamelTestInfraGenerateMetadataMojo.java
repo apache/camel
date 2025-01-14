@@ -80,6 +80,8 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
                     infrastructureServiceModel.setAlias(Arrays.asList(av.asStringArray()));
                 } else if (av.name().equals("serviceImplementationAlias")) {
                     infrastructureServiceModel.getAliasImplementation().addAll(Arrays.asList(av.asStringArray()));
+                } else if (av.name().equals("description")) {
+                    infrastructureServiceModel.setDescription(av.asString());
                 }
             }
 
@@ -103,6 +105,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
     private class InfrastructureServiceModel {
         private String service;
+        private String description;
         private String implementation;
         private List<String> alias = new ArrayList<>();
         private List<String> aliasImplementation = new ArrayList<>();
@@ -137,6 +140,14 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
         public void setAliasImplementation(List<String> aliasImplementation) {
             this.aliasImplementation = aliasImplementation;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
     }
 }

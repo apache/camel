@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
-@InfraService(service = MinioInfraService.class, serviceAlias = { "minio" })
+@InfraService(service = MinioInfraService.class,
+              description = "MinIO Object Storage, S3 compatible",
+              serviceAlias = { "minio" })
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY;

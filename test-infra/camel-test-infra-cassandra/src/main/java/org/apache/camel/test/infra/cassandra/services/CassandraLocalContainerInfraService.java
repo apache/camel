@@ -28,7 +28,9 @@ import org.testcontainers.utility.DockerImageName;
 /**
  * A service for a local instance of Apache Cassandra running with TestContainers
  */
-@InfraService(service = CassandraInfraService.class, serviceAlias = { "cassandra" })
+@InfraService(service = CassandraInfraService.class,
+              description = "Apache Cassandra NoSQL Database",
+              serviceAlias = { "cassandra" })
 public class CassandraLocalContainerInfraService implements CassandraInfraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerInfraService.class);
 

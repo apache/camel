@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.milvus.MilvusContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = MilvusInfraService.class, serviceAlias = { "milvus" })
+@InfraService(service = MilvusInfraService.class,
+              description = "Milvus Vector Database",
+              serviceAlias = { "milvus" })
 public class MilvusLocalContainerInfraService implements MilvusInfraService, ContainerService<MilvusContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MilvusLocalContainerInfraService.class);

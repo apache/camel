@@ -33,7 +33,9 @@ import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
-@InfraService(service = ArtemisInfraService.class, serviceAlias = "artemis", serviceImplementationAlias = "amqp")
+@InfraService(service = ArtemisInfraService.class,
+              description = "Apache Artemis is an open source message broker",
+              serviceAlias = "artemis", serviceImplementationAlias = "amqp")
 public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;

@@ -23,7 +23,9 @@ import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = XmppInfraService.class, serviceAlias = { "xmpp" })
+@InfraService(service = XmppInfraService.class,
+              description = "Test XMPP Server",
+              serviceAlias = { "xmpp" })
 public class XmppLocalContainerInfraService implements XmppInfraService, ContainerService<XmppServerContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(XmppLocalContainerInfraService.class);
 

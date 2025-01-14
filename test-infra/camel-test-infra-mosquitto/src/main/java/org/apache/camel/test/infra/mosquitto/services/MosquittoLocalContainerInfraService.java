@@ -27,7 +27,9 @@ import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = MosquittoInfraService.class, serviceAlias = { "mosquitto" })
+@InfraService(service = MosquittoInfraService.class,
+              description = "Mosquitto is a message broker that implements MQTT protocol",
+              serviceAlias = { "mosquitto" })
 public class MosquittoLocalContainerInfraService implements MosquittoInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "mosquitto";
     public static final int CONTAINER_PORT = 1883;

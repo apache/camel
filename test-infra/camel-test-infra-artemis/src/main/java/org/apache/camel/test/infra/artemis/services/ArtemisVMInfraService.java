@@ -25,7 +25,9 @@ import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = ArtemisInfraService.class, serviceAlias = "artemis")
+@InfraService(service = ArtemisInfraService.class,
+              description = "Apache Artemis is an open source message broker",
+              serviceAlias = "artemis")
 public class ArtemisVMInfraService extends AbstractArtemisEmbeddedService {
     private static final Logger LOG = LoggerFactory.getLogger(ArtemisVMInfraService.class);
 

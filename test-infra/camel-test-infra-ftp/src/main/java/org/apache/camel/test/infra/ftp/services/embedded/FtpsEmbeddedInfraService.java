@@ -25,7 +25,9 @@ import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
 
-@InfraService(service = FtpInfraService.class, serviceAlias = { "ftps" })
+@InfraService(service = FtpInfraService.class,
+              description = "Embedded FTPS Server",
+              serviceAlias = { "ftps" })
 public class FtpsEmbeddedInfraService extends FtpEmbeddedInfraService {
 
     /**

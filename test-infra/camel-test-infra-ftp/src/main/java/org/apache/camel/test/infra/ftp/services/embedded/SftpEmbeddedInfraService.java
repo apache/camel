@@ -44,7 +44,9 @@ import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = FtpInfraService.class, serviceAlias = { "sftp" })
+@InfraService(service = FtpInfraService.class,
+              description = "Embedded SFTP Server",
+              serviceAlias = { "sftp" })
 public class SftpEmbeddedInfraService extends AbstractService implements FtpInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(SftpEmbeddedInfraService.class);
 

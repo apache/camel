@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = RabbitMQInfraService.class, serviceAlias = { "rabbitmq" })
+@InfraService(service = RabbitMQInfraService.class,
+              description = "Messaging and streaming broker",
+              serviceAlias = { "rabbitmq" })
 public class RabbitMQLocalContainerInfraService implements RabbitMQInfraService, ContainerService<RabbitMQContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQLocalContainerInfraService.class);
 

@@ -43,6 +43,15 @@ public @interface InfraService {
     Class service();
 
     /**
+     * Returns a description of this Service.
+     *
+     * This is used for documentation and tooling.
+     *
+     * @return
+     */
+    String description() default "";
+
+    /**
      * List of names that can be used to run the service
      *
      * @return

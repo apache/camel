@@ -22,7 +22,9 @@ import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = OpenldapInfraService.class, serviceAlias = { "openldap" })
+@InfraService(service = OpenldapInfraService.class,
+              description = "OpenLDAP is an implementation of the Lightweight Directory Access Protocol",
+              serviceAlias = { "openldap" })
 public class OpenldapLocalContainerInfraService implements OpenldapInfraService, ContainerService<OpenLdapContainer> {
     public static final int CONTAINER_PORT_LDAP = 389;
     public static final int CONTAINER_PORT_LDAP_OVER_SSL = 636;

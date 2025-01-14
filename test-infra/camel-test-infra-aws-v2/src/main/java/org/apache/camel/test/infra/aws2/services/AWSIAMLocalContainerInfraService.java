@@ -19,7 +19,9 @@ package org.apache.camel.test.infra.aws2.services;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 
-@InfraService(service = AWSInfraService.class, serviceAlias = { "aws-iam" })
+@InfraService(service = AWSInfraService.class,
+              description = "Local AWS Services with LocalStack",
+              serviceAlias = "aws", serviceImplementationAlias = "iam")
 public class AWSIAMLocalContainerInfraService extends AWSLocalContainerInfraService {
     public AWSIAMLocalContainerInfraService() {
         super(Service.IAM);

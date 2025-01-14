@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = NatsInfraService.class, serviceAlias = { "nats" })
+@InfraService(service = NatsInfraService.class,
+              description = "Messaging Platform NATS",
+              serviceAlias = { "nats" })
 public class NatsLocalContainerInfraService implements NatsInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "nats";
     private static final int PORT = 4222;

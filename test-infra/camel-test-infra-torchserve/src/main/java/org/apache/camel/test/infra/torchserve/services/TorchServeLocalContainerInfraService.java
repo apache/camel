@@ -27,7 +27,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-@InfraService(service = TorchServeInfraService.class, serviceAlias = { "torch-serve" })
+@InfraService(service = TorchServeInfraService.class,
+              description = "TorchServe is a flexible tool for serving PyTorch",
+              serviceAlias = { "torch-serve" })
 public class TorchServeLocalContainerInfraService implements TorchServeInfraService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(TorchServeLocalContainerInfraService.class);
 

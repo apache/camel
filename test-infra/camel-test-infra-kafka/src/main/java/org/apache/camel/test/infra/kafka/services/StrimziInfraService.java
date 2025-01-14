@@ -25,7 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
-@InfraService(service = KafkaInfraService.class, serviceAlias = "kafka", serviceImplementationAlias = "strimzi")
+@InfraService(service = KafkaInfraService.class,
+              description = "Apache Kafka, Distributed event streaming platform",
+              serviceAlias = "kafka", serviceImplementationAlias = "strimzi")
 public class StrimziInfraService implements KafkaInfraService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziInfraService.class);
 
