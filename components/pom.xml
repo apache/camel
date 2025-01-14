@@ -73,6 +73,10 @@
         <module>camel-master</module>
         <module>camel-service</module>
 
+        <!-- Abstract components -->
+        <module>camel-tracing</module>
+        <module>camel-telemetry</module>
+
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
         <module>camel-activemq6</module>
@@ -170,7 +174,6 @@
         <module>camel-javascript</module>
         <module>camel-jaxb</module>
         <module>camel-jcache</module>
-        <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
         <module>camel-jfr</module>
