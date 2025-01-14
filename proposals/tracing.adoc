@@ -5,12 +5,12 @@ authors:
 reviewers:
   - "@zbendhiba"
   - "@davsclaus"
-approvers: 
+approvers:
   - "@zbendhiba"
   - "@davsclaus"
 creation-date: 2025-01-08
-last-updated: 2025-01-13
-status: implementable
+last-updated: 2025-01-28
+status: partially implemented
 see-also: []
 replaces: []
 superseded-by: []
@@ -66,13 +66,9 @@ I advocate to move back to the root of the original abstract component, first of
 
 === Tracing structure
 
-Right now we have two main span levels. The root span, which is created for each execution of a Route, and later a series of events spans, which are the various processes executed by the Route. We are missing the creation of a root span which should happen when a new Exchange is created. In this way we can easily trace the activity of each Exchange, identifying each trace by the Exchange ID. According to this proposal, the new trace structure will be composed of:
+Each new Exchange will start the creation of a new Trace. For each event spanning the execution of the Route, then, it will be created a separate Span, which goal is to capture each component or step execution.
 
-1. a root trace for each Exchange (identified uniquely)
-2. one or more span for each Route of that Exchange execution
-3. one or more trace for each event executed in the Route
-
-With this structure we'd be able to capture also any asynchronous Exchange which may be generated asynchronously, being able to trace such execution separately from the original parent trace (IE, solving "Async exchange boundaries" problem) as the new generated Exchange has a different ID.
+During the execution of a route, a new Exchange could be created for each asynchronous event spin off from the main process. In such case a new Span with a different Exchange ID will be created. However, the Span will still belong to the same main Trace in order to correctly keep the trail of the execution.
 
 === Tracing lifecycle
 
@@ -112,12 +108,16 @@ If we move most of the logic into the abstraction, the implementation of a simpl
 
 The feature specific implementation should be therefore limited to the implementation of the abstract methods, as it would happen in the simple implementation. With this approach we are limiting to the bare minimum the maintenance of each specific technology. With this proposal we will need to rework massively on the reduction of code in the existing implementations (`camel-opentelemetry`).
 
-== Backward compatibility
-
-This design proposals may introduce certain breaking compatibility changes, reason why we must clarify the scope and plan the work in order to avoid adding breaking compatibility within any non major version. If we agree with this design, then we can work on an iterative development which has to be compatible with the existing specification.
-
-What is surely going to be developed into a major release is the "Tracing structure" part. Here we need to introduce a different trace organization than the one we have today. However, deferring this development to a major release is not a blocker to the rest of the work. The rest of changes can be probably performed in within the regular minor release work.
-
 == Tracing refactoring POC
 
 In order to prove most of the above assumptions, I've developed a simple POC which I used as a https://github.com/squakez/camel/tree/feat/tracing_refactoring[base for this proposal]. Testing this against some application, we can see traces are managed correctly and in line with the structure proposed in this document.
+
+== Development
+
+This design proposals may introduce certain breaking compatibility changes, reason why we must clarify the scope and plan the work in order to avoid adding breaking compatibility within any non major version. We may work by adding a new abstract component which will be compliant with this new specification and once the new development is stable enough, we can deprecate the older `camel-tracing` and let the user replace with the newer one.
+
+Here below we can keep track of the development iterations until completion:
+
+=== Abstract `camel-telemetry` component (2025-01-28)
+
+Developed first draft component which cover this document specification. We have a base set of test covering the main features and a mock tracing implementation used to validate such test case scenarios.

@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "telemetry",
+    "title": "Telemetry",
+    "description": "Distributed telemetry common interfaces",
+    "deprecated": false,
+    "firstVersion": "4.11.0",
+    "label": "monitoring,microservice",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-telemetry",
+    "version": "4.11.0-SNAPSHOT"
+  }
+}
