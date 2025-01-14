@@ -76,6 +76,9 @@
           "onFallback" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
           },
+          "onWhen" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
+          },
           "otherwise" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
           },
@@ -687,7 +690,7 @@
           "onWhen" : {
             "title" : "On When",
             "description" : "Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "steps" : {
             "type" : "array",
@@ -2372,6 +2375,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "onWhen" : {
+            "title" : "On When",
+            "description" : "Applies this interceptor only if the given predicate is true",
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2403,6 +2411,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "onWhen" : {
+              "title" : "On When",
+              "description" : "Applies this interceptor only if the given predicate is true",
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
             },
             "steps" : {
               "type" : "array",
@@ -2446,6 +2459,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "onWhen" : {
+              "title" : "On When",
+              "description" : "Applies this interceptor only if the given predicate is true",
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
             },
             "skipSendToOriginalEndpoint" : {
               "type" : "string",
@@ -3462,7 +3480,7 @@
           "onWhen" : {
             "title" : "On When",
             "description" : "Sets an additional predicate that should be true before the onCompletion is triggered. To be used for fine grained controlling whether a completion callback should be invoked or not",
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "parallelProcessing" : {
             "type" : "boolean",
@@ -3534,7 +3552,7 @@
           "onWhen" : {
             "title" : "On When",
             "description" : "Sets an additional predicate that should be true before the onException is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
-            "$ref" : "#/items/definitions/org.apache.camel.model.WhenDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "redeliveryPolicy" : {
             "title" : "Redelivery Policy",
@@ -3601,6 +3619,129 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
           }
+        }
+      },
+      "org.apache.camel.model.OnWhenDefinition" : {
+        "title" : "On When",
+        "description" : "Used for triggering doCatch in specific situations.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "expression" ]
+              }, {
+                "required" : [ "constant" ]
+              }, {
+                "required" : [ "csimple" ]
+              }, {
+                "required" : [ "datasonnet" ]
+              }, {
+                "required" : [ "exchangeProperty" ]
+              }, {
+                "required" : [ "groovy" ]
+              }, {
+                "required" : [ "header" ]
+              }, {
+                "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "java" ]
+              }, {
+                "required" : [ "joor" ]
+              }, {
+                "required" : [ "jq" ]
+              }, {
+                "required" : [ "js" ]
+              }, {
+                "required" : [ "jsonpath" ]
+              }, {
+                "required" : [ "language" ]
+              }, {
+                "required" : [ "method" ]
+              }, {
+                "required" : [ "mvel" ]
+              }, {
+                "required" : [ "ognl" ]
+              }, {
+                "required" : [ "python" ]
+              }, {
+                "required" : [ "ref" ]
+              }, {
+                "required" : [ "simple" ]
+              }, {
+                "required" : [ "spel" ]
+              }, {
+                "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
+              }, {
+                "required" : [ "wasm" ]
+              }, {
+                "required" : [ "xpath" ]
+              }, {
+                "required" : [ "xquery" ]
+              }, {
+                "required" : [ "xtokenize" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "expression" ],
+            "properties" : {
+              "expression" : {
+                "title" : "Expression",
+                "description" : "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.",
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+              }
+            }
+          } ]
+        } ],
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "constant" : { },
+          "csimple" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "variable" : { },
+          "wasm" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { },
+          "expression" : { }
         }
       },
       "org.apache.camel.model.OptimisticLockRetryPolicyDefinition" : {
@@ -8489,12 +8630,6 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
           },
           "constant" : { },
           "csimple" : { },

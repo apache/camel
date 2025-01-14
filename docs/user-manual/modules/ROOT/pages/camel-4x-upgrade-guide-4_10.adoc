@@ -6,6 +6,13 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.9 to 4.10
 
+=== DSL changes
+
+Then `when` in XML DSL for the following EIPs has been renamed to `onWhen`
+
+- intercept
+- interceptSendToEndpoint
+
 === camel-azure-files
 
 The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.

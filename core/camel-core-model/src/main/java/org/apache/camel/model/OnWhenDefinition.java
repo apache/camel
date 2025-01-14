@@ -24,40 +24,36 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Triggers a route when the expression evaluates to true
+ * Used for triggering doCatch in specific situations.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "error")
 @AsPredicate
-@XmlRootElement(name = "when")
-public class WhenDefinition extends OutputExpressionNode {
+@XmlRootElement(name = "onWhen")
+public class OnWhenDefinition extends ExpressionNode {
 
-    public WhenDefinition() {
+    public OnWhenDefinition() {
     }
 
-    protected WhenDefinition(WhenDefinition source) {
+    protected OnWhenDefinition(OnWhenDefinition source) {
         super(source);
     }
 
-    protected WhenDefinition(OnWhenDefinition source) {
-        super(source);
-    }
-
-    public WhenDefinition(Predicate predicate) {
+    public OnWhenDefinition(Predicate predicate) {
         super(predicate);
     }
 
-    public WhenDefinition(ExpressionDefinition expression) {
+    public OnWhenDefinition(ExpressionDefinition expression) {
         super(expression);
     }
 
     @Override
-    public WhenDefinition copyDefinition() {
-        return new WhenDefinition(this);
+    public OnWhenDefinition copyDefinition() {
+        return new OnWhenDefinition(this);
     }
 
     @Override
     public String toString() {
-        return "When[" + description() + " -> " + getOutputs() + "]";
+        return "OnWhen[" + description() + " -> " + getOutputs() + "]";
     }
 
     protected String description() {
@@ -77,12 +73,12 @@ public class WhenDefinition extends OutputExpressionNode {
 
     @Override
     public String getShortName() {
-        return "when";
+        return "onWhen";
     }
 
     @Override
     public String getLabel() {
-        return "when[" + description() + "]";
+        return "onWhen[" + description() + "]";
     }
 
     /**

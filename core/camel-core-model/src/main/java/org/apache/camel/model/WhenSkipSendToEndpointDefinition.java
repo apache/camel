@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @AsPredicate
 @XmlRootElement(name = "whenSkipSendToEndpoint")
 @XmlTransient // do not output in XSD as this is only used in a special "hack" for intercept
-public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
+public class WhenSkipSendToEndpointDefinition extends OnWhenDefinition {
 
     public WhenSkipSendToEndpointDefinition() {
     }

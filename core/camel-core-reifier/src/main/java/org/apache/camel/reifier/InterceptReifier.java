@@ -37,7 +37,7 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
         // create the output processor
         Processor output = this.createChildProcessor(true);
 
-        // add the output as a intercept strategy to the route context so its
+        // add the output as an intercept strategy to the route context so its
         // invoked on each processing step
         route.getInterceptStrategies().add(new InterceptStrategy() {
             private Processor interceptedTarget;
@@ -66,7 +66,7 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
             }
         });
 
-        // remove me from the route so I am not invoked in a regular route path
+        // remove me from the route, so I am not invoked in a regular route path
         ((RouteDefinition) route.getRoute()).getOutputs().remove(definition);
         // and return no processor to invoke next from me
         return null;
