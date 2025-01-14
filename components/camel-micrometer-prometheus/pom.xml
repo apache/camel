@@ -96,6 +96,7 @@
             </plugin>
 
             <!-- generate a list of known binders -->
+            <!-- mvn exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
