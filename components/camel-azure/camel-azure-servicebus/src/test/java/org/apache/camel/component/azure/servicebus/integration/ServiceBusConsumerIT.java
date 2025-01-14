@@ -151,7 +151,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
         MockEndpoint to = contextExtension.getMockEndpoint(MOCK_RESULT);
 
         to.expectedMessageCount(5);
-        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        to.expectedBodiesReceived("message-0", "message-1", "message-2", "message-3", "message-4");
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
         for (int k = 0; k < 5; k++) {
@@ -177,7 +177,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
         MockEndpoint to = contextExtension.getMockEndpoint(MOCK_RESULT);
 
         to.expectedMessageCount(5);
-        to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        to.expectedBodiesReceived("message-0", "message-1", "message-2", "message-3", "message-4");
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
         for (int k = 0; k < 5; k++) {
