@@ -33,7 +33,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 public class CamelJBang {
 
     public static void main(String... args) {
-        CamelJBangMain.run("infra", "run", "kafka");
+        CamelJBangMain.run(args);
     }
 
 }
