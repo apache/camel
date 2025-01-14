@@ -417,7 +417,7 @@
         <protobuf-version>3.25.5</protobuf-version>
         <protobuf-maven-plugin-version>2.7.3</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
-        <protostream-version>5.0.12.Final</protostream-version>
+        <protostream-version>6.0.0.Dev02</protostream-version>
         <prowide-version>SRU2024-10.2.6</prowide-version>
         <pubnub-version>10.3.3</pubnub-version>
         <pulsar-version>3.3.3</pulsar-version>
