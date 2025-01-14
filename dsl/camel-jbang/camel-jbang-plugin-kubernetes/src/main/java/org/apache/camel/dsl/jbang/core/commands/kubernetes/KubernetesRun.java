@@ -501,13 +501,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private void installShutdownHook(String projectName, String workingDir) {
-        KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
-        deleteCommand.clusterType = clusterType;
-        deleteCommand.workingDir = workingDir;
-        deleteCommand.name = projectName;
-
         devModeShutdownTask = new Thread(() -> {
-            try {
+            KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
+            deleteCommand.clusterType = clusterType;
+            deleteCommand.workingDir = workingDir;
+            deleteCommand.name = projectName;
+            try (var client = KubernetesHelper.createKubernetesClientForShutdownHook()) {
+                KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
                 CommandHelper.cleanExportDir(deleteCommand.workingDir, false);
             } catch (Exception e) {
