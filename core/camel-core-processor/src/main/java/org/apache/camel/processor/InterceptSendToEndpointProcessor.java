@@ -96,13 +96,13 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         // determine if we should skip or not
         boolean shouldSkip = skip;
 
-        // if then interceptor had a when predicate, then we should only skip if it matched
+        // if then interceptor has predicate, then we should only skip if matched
         Boolean whenMatches;
         if (endpoint.getAfter() != null) {
             // only get the property as after also needs to check this property
             whenMatches = (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         } else {
-            // remove property as its not longer needed
+            // remove property as it's no longer needed
             whenMatches = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         }
         if (whenMatches != null) {
@@ -119,7 +119,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             return doneSync && s;
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}",
+                LOG.debug("Skip sending exchange to original intended destination: {} for exchange: {}",
                         getEndpoint(), exchange);
             }
             callback.done(doneSync);
