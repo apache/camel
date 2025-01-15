@@ -138,7 +138,7 @@ public class ServiceBusConsumerTest {
 
     @Test
     void consumerSubmitsExchangeToSessionProcessor() throws Exception {
-        when(configuration.getSessionId()).thenReturn("sessionIdValue"); // Simulate session ID presence
+        when(configuration.isSessionEnabled()).thenReturn(true); // Simulate session ID presence
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             consumer.doStart();
             verify(client).start();

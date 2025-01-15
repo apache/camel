@@ -19,8 +19,6 @@ package org.apache.camel.component.azure.servicebus.integration;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
@@ -59,12 +57,6 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
             .topicName(TOPIC_NAME)
             .buildClient();
 
-    private final ServiceBusSenderClient topicWithSessionsSenderClient = new ServiceBusClientBuilder()
-            .connectionString(CONNECTION_STRING)
-            .sender()
-            .topicName(TOPIC_WITH_SESSIONS_NAME)
-            .buildClient();
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -78,7 +70,8 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
                 from("azure-servicebus:" + TOPIC_NAME + "?serviceBusType=topic&subscriptionName=" + SUBSCRIPTION_NAME)
                         .to(MOCK_RESULT);
 
-                from("azure-servicebus:" + TOPIC_WITH_SESSIONS_NAME + "?serviceBusType=topic&subscriptionName=" + SUBSCRIPTION_WITH_SESSIONS_NAME + "?sessionEnabled=true")
+                from("azure-servicebus:" + TOPIC_WITH_SESSIONS_NAME + "?serviceBusType=topic&subscriptionName="
+                     + SUBSCRIPTION_WITH_SESSIONS_NAME + "?sessionEnabled=true")
                         .to(MOCK_RESULT);
             }
         };

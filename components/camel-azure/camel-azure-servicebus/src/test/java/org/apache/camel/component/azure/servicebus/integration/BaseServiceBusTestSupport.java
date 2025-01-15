@@ -61,40 +61,41 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     protected CountDownLatch messageLatch;
     protected List<ServiceBusReceivedMessageContext> receivedMessageContexts;
 
-        @BeforeAll
-        static void baseBeforeAll() {
-            serviceBusAdminClient = new ServiceBusAdministrationClientBuilder()
-                    .connectionString(CONNECTION_STRING)
-                    .buildClient();
-            try {
-                serviceBusAdminClient.createQueue(QUEUE_NAME);
-                serviceBusAdminClient.createQueue(QUEUE_WITH_SESSIONS_NAME, new CreateQueueOptions().setSessionRequired(true));
-            } catch (ResourceExistsException e) {
-                LOGGER.warn("Test queue already existed", e);
-            }
-            try {
-                serviceBusAdminClient.createTopic(TOPIC_NAME);
-                serviceBusAdminClient.createTopic(TOPIC_WITH_SESSIONS_NAME, new CreateTopicOptions().setSessionRequired(true));
-            } catch (ResourceExistsException e) {
-                LOGGER.warn("Test topic already existed", e);
-            }
-            try {
-                serviceBusAdminClient.createSubscription(TOPIC_NAME, SUBSCRIPTION_NAME);
-                serviceBusAdminClient.createSubscription(TOPIC_WITH_SESSIONS_NAME, SUBSCRIPTION_WITH_SESSIONS_NAME, new CreateSubscriptionOptions().setSessionRequired(true));
-            } catch (ResourceExistsException e) {
-                LOGGER.warn("Test subscription already existed", e);
-            }
+    @BeforeAll
+    static void baseBeforeAll() {
+        serviceBusAdminClient = new ServiceBusAdministrationClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .buildClient();
+        try {
+            serviceBusAdminClient.createQueue(QUEUE_NAME);
+            serviceBusAdminClient.createQueue(QUEUE_WITH_SESSIONS_NAME, new CreateQueueOptions().setSessionRequired(true));
+        } catch (ResourceExistsException e) {
+            LOGGER.warn("Test queue already existed", e);
         }
+        try {
+            serviceBusAdminClient.createTopic(TOPIC_NAME);
+            serviceBusAdminClient.createTopic(TOPIC_WITH_SESSIONS_NAME, new CreateTopicOptions().setSessionRequired(true));
+        } catch (ResourceExistsException e) {
+            LOGGER.warn("Test topic already existed", e);
+        }
+        try {
+            serviceBusAdminClient.createSubscription(TOPIC_NAME, SUBSCRIPTION_NAME);
+            serviceBusAdminClient.createSubscription(TOPIC_WITH_SESSIONS_NAME, SUBSCRIPTION_WITH_SESSIONS_NAME,
+                    new CreateSubscriptionOptions().setSessionRequired(true));
+        } catch (ResourceExistsException e) {
+            LOGGER.warn("Test subscription already existed", e);
+        }
+    }
 
-        @AfterAll
-        static void baseAfterAll() {
-            serviceBusAdminClient.deleteSubscription(TOPIC_NAME, SUBSCRIPTION_NAME);
-            serviceBusAdminClient.deleteSubscription(TOPIC_WITH_SESSIONS_NAME, SUBSCRIPTION_WITH_SESSIONS_NAME);
-            serviceBusAdminClient.deleteTopic(TOPIC_NAME);
-            serviceBusAdminClient.deleteTopic(TOPIC_WITH_SESSIONS_NAME);
-            serviceBusAdminClient.deleteQueue(QUEUE_NAME);
-            serviceBusAdminClient.deleteQueue(QUEUE_WITH_SESSIONS_NAME);
-        }
+    @AfterAll
+    static void baseAfterAll() {
+        serviceBusAdminClient.deleteSubscription(TOPIC_NAME, SUBSCRIPTION_NAME);
+        serviceBusAdminClient.deleteSubscription(TOPIC_WITH_SESSIONS_NAME, SUBSCRIPTION_WITH_SESSIONS_NAME);
+        serviceBusAdminClient.deleteTopic(TOPIC_NAME);
+        serviceBusAdminClient.deleteTopic(TOPIC_WITH_SESSIONS_NAME);
+        serviceBusAdminClient.deleteQueue(QUEUE_NAME);
+        serviceBusAdminClient.deleteQueue(QUEUE_WITH_SESSIONS_NAME);
+    }
 
     @ContextFixture
     public void configureServiceBus(CamelContext context) {

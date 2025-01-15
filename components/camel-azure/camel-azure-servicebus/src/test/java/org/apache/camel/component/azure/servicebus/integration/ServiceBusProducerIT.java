@@ -91,7 +91,8 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                         .to("azure-servicebus:" + QUEUE_NAME + "?producerOperation=scheduleMessages");
 
                 from(DIRECT_SEND_SCHEDULED_URI_WITH_SESSIONS)
-                        .to("azure-servicebus:" + QUEUE_WITH_SESSIONS_NAME + "?producerOperation=scheduleMessages&sessionId=123");
+                        .to("azure-servicebus:" + QUEUE_WITH_SESSIONS_NAME
+                            + "?producerOperation=scheduleMessages&sessionId=123");
             }
         };
     }
@@ -139,7 +140,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 exchange.getIn().setBody(messageBatch);
             });
 
-            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
+            assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
             assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
@@ -243,7 +244,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_TO_SESSION_QUEUE_URI, message, PROPAGATED_HEADERS);
             }
 
-            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
+            assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
             assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
@@ -271,7 +272,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 exchange.getIn().setBody(messageBatch);
             });
 
-            assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
+            assertTrue(messageLatch.await(10000, TimeUnit.MILLISECONDS));
             assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
@@ -293,7 +294,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_TO_TOPIC_SESSION_URI, message, PROPAGATED_HEADERS);
             }
 
-            assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS));
+            assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
             assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
@@ -315,7 +316,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 producerTemplate.sendBodyAndHeaders(DIRECT_SEND_SCHEDULED_URI_WITH_SESSIONS, message, headers);
             }
 
-            assertTrue(messageLatch.await(4000, TimeUnit.MILLISECONDS));
+            assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
             assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
@@ -346,7 +347,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 exchange.getIn().setBody(messageBatch);
             });
 
-            assertTrue(messageLatch.await(10000, TimeUnit.MILLISECONDS));
+            assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
             assertEquals(5, receivedMessageContexts.size());
             receivedMessageContexts.forEach(messageContext -> {
                 ServiceBusReceivedMessage message = messageContext.getMessage();
