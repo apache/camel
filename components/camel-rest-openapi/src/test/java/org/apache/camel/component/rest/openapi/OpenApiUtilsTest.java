@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi;
 import java.util.Map;
 
 import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.IntegerSchema;
@@ -29,6 +30,7 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +38,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpenApiUtilsTest {
+
+    private static final String TAG_OPENAPI_YAML = """
+            ---
+            openapi: <openapi_version>
+            info:
+                title: Tag API
+                version: v1
+            paths:
+              /tag:
+                get:
+                  summary: Get a tag
+                  operationId: getTag
+                  responses:
+                    '200':
+                      description: Successful operation
+                      content:
+                        application/json:
+                          schema:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/TagResponseDto'
+            components:
+              schemas:
+                TagResponseDto:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the tag
+                    name:
+                      type: string
+                      description: The name of the tag
+                  required:
+                    - id
+                    - name
+                    """;
+
     @Test
     public void shouldReturnAllProduces() {
         Operation operation = new Operation();
@@ -124,6 +163,26 @@ public class OpenApiUtilsTest {
 
         OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, components);
         assertEquals(TagResponseDto.class.getName(), utils.manageResponseBody(operation));
+    }
+
+    @Test
+    public void shouldManageResponseFromOpenApi31Parser() throws Exception {
+        String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        OpenAPI openApi = parser.readContents(TAG_OPENAPI_YAML.replace("<openapi_version>", "3.1.0")).getOpenAPI();
+        Operation operation = openApi.getPaths().get("/tag").getGet();
+        OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
+        assertEquals(TagResponseDto.class.getName() + "[]", utils.manageResponseBody(operation));
+    }
+
+    @Test
+    public void shouldManageRequestFromOpenApi30Parser() throws Exception {
+        String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        OpenAPI openApi = parser.readContents(TAG_OPENAPI_YAML.replace("<openapi_version>", "3.0.0")).getOpenAPI();
+        Operation operation = openApi.getPaths().get("/tag").getGet();
+        OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
+        assertEquals(TagResponseDto.class.getName() + "[]", utils.manageResponseBody(operation));
     }
 
     private ApiResponse createResponse(String... contentTypes) {
