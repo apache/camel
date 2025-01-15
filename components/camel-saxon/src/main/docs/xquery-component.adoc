@@ -120,7 +120,7 @@ attribute:
 
 === Using XQuery as an endpoint
 
-Sometimes an XQuery expression can be quite large; it can essentally be
+Sometimes an XQuery expression can be quite large; it can essentially be
 used for Templating. So you may want to use an
 XQuery Endpoint, so you can route using XQuery
 templates.
