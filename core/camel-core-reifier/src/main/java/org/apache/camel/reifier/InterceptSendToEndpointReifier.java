@@ -28,7 +28,6 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.InterceptSendToEndpointCallback;
 import org.apache.camel.support.PluginHelper;
 
@@ -77,7 +76,8 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(definition);
 
-        return new InterceptEndpointProcessor(matchURI, before);
+        // and return no processor to invoke next from me
+        return null;
     }
 
     /**
