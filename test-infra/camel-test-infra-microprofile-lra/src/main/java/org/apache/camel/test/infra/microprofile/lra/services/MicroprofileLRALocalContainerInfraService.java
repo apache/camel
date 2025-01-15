@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import com.github.dockerjava.api.model.Network;
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.microprofile.lra.common.MicroprofileLRAProperties;
@@ -26,6 +27,12 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = MicroprofileLRAInfraService.class,
+              description = "MicroProfile LRA provides a simple, " +
+                            "loosely coupled transaction model for microservices that is based on the SAGA pattern" +
+                            " for distributed transaction.",
+              serviceAlias = { "microprofile" },
+              serviceImplementationAlias = "lra")
 public class MicroprofileLRALocalContainerInfraService
         implements MicroprofileLRAInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "microprofile-lra";

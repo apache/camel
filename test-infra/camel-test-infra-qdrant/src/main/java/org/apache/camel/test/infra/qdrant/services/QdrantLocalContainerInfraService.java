@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.qdrant.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.qdrant.common.QdrantProperties;
@@ -25,6 +26,9 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.qdrant.QdrantContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = QdrantInfraService.class,
+              description = "Vector Database and Vector Search Engine",
+              serviceAlias = { "qdrant" })
 public class QdrantLocalContainerInfraService implements QdrantInfraService, ContainerService<QdrantContainer> {
     public static final int HTTP_PORT = 6333;
     public static final int GRPC_PORT = 6334;

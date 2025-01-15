@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.nats.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.nats.common.NatsProperties;
@@ -24,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@InfraService(service = NatsInfraService.class,
+              description = "Messaging Platform NATS",
+              serviceAlias = { "nats" })
 public class NatsLocalContainerInfraService implements NatsInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "nats";
     private static final int PORT = 4222;

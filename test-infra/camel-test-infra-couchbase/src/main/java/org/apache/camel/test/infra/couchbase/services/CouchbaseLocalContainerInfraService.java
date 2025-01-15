@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
@@ -25,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.CouchbaseContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = CouchbaseInfraService.class,
+              description = "NoSQL database Couchbase",
+              serviceAlias = { "couchbase" })
 public class CouchbaseLocalContainerInfraService implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
 
     /*

@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.milvus.common.MilvusProperties;
@@ -28,6 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.milvus.MilvusContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = MilvusInfraService.class,
+              description = "Milvus Vector Database",
+              serviceAlias = { "milvus" })
 public class MilvusLocalContainerInfraService implements MilvusInfraService, ContainerService<MilvusContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MilvusLocalContainerInfraService.class);

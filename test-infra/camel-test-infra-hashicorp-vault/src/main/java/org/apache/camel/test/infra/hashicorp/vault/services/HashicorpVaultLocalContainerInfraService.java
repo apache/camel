@@ -34,6 +34,7 @@ package org.apache.camel.test.infra.hashicorp.vault.services;
 
 import java.util.function.Consumer;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.hashicorp.vault.common.HashicorpVaultProperties;
@@ -44,6 +45,10 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@InfraService(service = HashicorpVaultInfraService.class,
+              description = "Vault is a tool for securely accessing secrets",
+              serviceAlias = "hashicorp",
+              serviceImplementationAlias = "vault")
 public class HashicorpVaultLocalContainerInfraService
         implements HashicorpVaultInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "hashicorp-vault";

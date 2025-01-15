@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import io.etcd.jetcd.launcher.EtcdContainer;
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.etcd3.common.Etcd3Properties;
@@ -27,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@InfraService(service = Etcd3InfraService.class,
+              description = "Key Value store etcd3",
+              serviceAlias = { "etcd3" })
 public class Etcd3LocalContainerInfraService implements Etcd3InfraService, ContainerService<EtcdContainer> {
     public static final String CONTAINER_NAME = "etcd";
     public static final int ETCD_CLIENT_PORT = 2379;

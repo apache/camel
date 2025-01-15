@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
@@ -25,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = KafkaInfraService.class,
+              description = "Apache Kafka, Distributed event streaming platform",
+              serviceAlias = "kafka")
 public class ContainerLocalKafkaInfraService implements KafkaInfraService, ContainerService<KafkaContainer> {
     public static final String KAFKA3_IMAGE_NAME = LocalPropertyResolver.getProperty(
             ContainerLocalKafkaInfraService.class,

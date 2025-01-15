@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.infinispan.services;
 
 import java.util.function.Consumer;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
@@ -29,6 +30,9 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@InfraService(service = InfinispanInfraService.class,
+              description = "Distributed Database For High‑Performance Applications With In‑Memory Speed",
+              serviceAlias = { "infinispan" })
 public class InfinispanLocalContainerInfraService implements InfinispanInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";

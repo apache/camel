@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -35,6 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
+@InfraService(service = ElasticSearchInfraService.class,
+              description = "NoSQL Database Elasticsearch",
+              serviceAlias = "elasticsearch")
 public class ElasticSearchLocalContainerInfraService
         implements ElasticSearchInfraService, ContainerService<ElasticsearchContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerInfraService.class);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.consul.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.consul.common.ConsulProperties;
@@ -25,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@InfraService(service = ConsulInfraService.class,
+              description = "Consul is a service networking solution",
+              serviceAlias = { "consul" })
 public class ConsulLocalContainerInfraService implements ConsulInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "consul";
 

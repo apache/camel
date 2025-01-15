@@ -17,10 +17,15 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
+@InfraService(service = AWSInfraService.class,
+              description = "Local AWS Services with LocalStack",
+              serviceAlias = "aws", serviceImplementationAlias = "kinesis")
 public class AWSKinesisLocalContainerInfraService extends AWSLocalContainerInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(AWSKinesisLocalContainerInfraService.class);
 

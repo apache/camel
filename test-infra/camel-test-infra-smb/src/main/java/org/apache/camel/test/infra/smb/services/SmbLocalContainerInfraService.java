@@ -16,10 +16,14 @@
  */
 package org.apache.camel.test.infra.smb.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = SmbLocalContainerInfraService.class,
+              description = "SAMBA File Server",
+              serviceAlias = "smb")
 public class SmbLocalContainerInfraService implements SmbInfraService {
     protected static final Logger LOG = LoggerFactory.getLogger(SmbLocalContainerInfraService.class);
     protected final SmbContainer container = new SmbContainer();

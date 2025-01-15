@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.mosquitto.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.mosquitto.common.MosquittoProperties;
@@ -26,6 +27,9 @@ import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+@InfraService(service = MosquittoInfraService.class,
+              description = "Mosquitto is a message broker that implements MQTT protocol",
+              serviceAlias = { "mosquitto" })
 public class MosquittoLocalContainerInfraService implements MosquittoInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "mosquitto";
     public static final int CONTAINER_PORT = 1883;

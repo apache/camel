@@ -16,11 +16,15 @@
  */
 package org.apache.camel.test.infra.solr.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.solr.common.SolrProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = SolrInfraService.class,
+              description = "Apache Solr is a Search Platform",
+              serviceAlias = { "solr" })
 public class SolrLocalContainerInfraService implements SolrInfraService, ContainerService<SolrContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrLocalContainerInfraService.class);

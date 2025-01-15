@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.services.AbstractService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpInfraService;
@@ -43,6 +44,9 @@ import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = FtpInfraService.class,
+              description = "Embedded SFTP Server",
+              serviceAlias = { "sftp" })
 public class SftpEmbeddedInfraService extends AbstractService implements FtpInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(SftpEmbeddedInfraService.class);
 

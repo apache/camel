@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.chatscript.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.chatscript.common.ChatScriptProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -23,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
+@InfraService(service = ChatScriptInfraService.class,
+              description = "ChatBot Engine",
+              serviceAlias = { "chatscript", "chat-script" })
 public class ChatScriptLocalContainerInfraService implements ChatScriptInfraService, ContainerService<GenericContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptLocalContainerInfraService.class);
     private static final int SERVICE_PORT = 1024;

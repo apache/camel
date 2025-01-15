@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.torchserve.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.torchserve.common.TorchServeProperties;
@@ -26,6 +27,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
+@InfraService(service = TorchServeInfraService.class,
+              description = "TorchServe is a flexible tool for serving PyTorch",
+              serviceAlias = { "torch-serve" })
 public class TorchServeLocalContainerInfraService implements TorchServeInfraService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(TorchServeLocalContainerInfraService.class);
 

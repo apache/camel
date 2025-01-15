@@ -16,12 +16,17 @@
  */
 package org.apache.camel.test.infra.hivemq.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.hivemq.common.HiveMQProperties;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = HiveMQInfraService.class,
+              description = "MQTT Platform HiveMQ",
+              serviceAlias = { "hivemq", "hive-mq" },
+              serviceImplementationAlias = "sparkplug")
 public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQService<LocalHiveMQSparkplugTCKInfraService> {
 
     LocalHiveMQSparkplugTCKInfraService() {

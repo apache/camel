@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.arangodb.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.arangodb.common.ArangoDBProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
@@ -23,6 +24,9 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = ArangoDBInfraService.class,
+              description = "ArangoDB is a multi-model database for high-performance applications.",
+              serviceAlias = "arangodb")
 public class ArangoDBLocalContainerInfraService implements ArangoDBInfraService, ContainerService<ArangoDbContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ArangoDBLocalContainerInfraService.class);
 

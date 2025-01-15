@@ -20,10 +20,14 @@ import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InfraService(service = ArtemisInfraService.class,
+              description = "Apache Artemis is an open source message broker",
+              serviceAlias = "artemis")
 public class ArtemisVMInfraService extends AbstractArtemisEmbeddedService {
     private static final Logger LOG = LoggerFactory.getLogger(ArtemisVMInfraService.class);
 

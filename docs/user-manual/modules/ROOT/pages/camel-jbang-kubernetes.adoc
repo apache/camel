@@ -1354,10 +1354,19 @@ The delete operation will remove all resources defined in the Kubernetes manifes
 To run a local Kubernetes cluster with Minikube for development purposes.
 Here are some tips from users that have been using this.
 
-The following steps have been known to be working (Camel 4.9):
+The following steps have been known to be working with Camel 4.8.1+:
 
 1. `minikube start --addons registry --driver=docker`
 2. `eval $(minikube -p minikube docker-env)`
 3. `camel kubernetes run 'demo.camel.yaml' --cluster-type=minikube --build-property=quarkus.kubernetes.image-pull-policy=Never`
 
 Most important `--build-property=quarkus.kubernetes.image-pull-policy=Never` without that it is not working, which is not clear from the current Minikube docs.
+
+The following steps have been known to be working with Camel 4.9+:
+
+1. `minikube start --addons registry --driver=docker`
+2. `eval $(minikube -p minikube docker-env)`
+3. `camel kubernetes run demo.camel.yaml '--cluster-type=minikube' '--build-property=quarkus.kubernetes.image-pull-policy=Never' '--trait container.image-push=true' '--image-registry' '$(kubectl -n kube-system get service registry -o jsonpath='{.spec.clusterIP}')' '--image-builder=docker'`
+
+Note that Docker multi-platform build is used. It requires to have followed these https://docs.docker.com/build/building/multi-platform/#build-multi-platform-images[Docker requirements].
+

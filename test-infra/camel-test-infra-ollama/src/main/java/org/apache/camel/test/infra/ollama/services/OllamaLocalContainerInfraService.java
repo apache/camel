@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.ollama.services;
 
 import java.io.IOException;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.ollama.commons.OllamaProperties;
@@ -26,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.ollama.OllamaContainer;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = OllamaInfraService.class,
+              description = "Build and run LLMs with Ollama",
+              serviceAlias = { "ollama" })
 public class OllamaLocalContainerInfraService implements OllamaInfraService, ContainerService<OllamaContainer> {
     private static class DefaultServiceConfiguration implements OllamaServiceConfiguration {
 

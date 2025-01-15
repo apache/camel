@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.couchdb.services;
 
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
@@ -26,6 +27,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 import org.testcontainers.utility.DockerImageName;
 
+@InfraService(service = CouchDbInfraService.class,
+              description = "SQL Clustered database CouchDB",
+              serviceAlias = { "couchdb" })
 public class CouchDbLocalContainerInfraService implements CouchDbInfraService, ContainerService<GenericContainer> {
     public static final String CONTAINER_NAME = "couchdb";
 

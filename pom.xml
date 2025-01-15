@@ -346,6 +346,7 @@
                                     <exclude>**/FileSplitXPathCharsetTest-input.xml</exclude>
                                     <exclude>**/.camel-jbang-run/**</exclude>
                                     <exclude>**/camel-jbang-run.properties</exclude>
+                                    <exclude>**/javax.annotations.processing.Processor</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>

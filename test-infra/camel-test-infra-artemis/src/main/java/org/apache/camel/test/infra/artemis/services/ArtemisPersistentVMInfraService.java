@@ -21,8 +21,12 @@ import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.server.JournalType;
 import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
 
+@InfraService(service = ArtemisInfraService.class,
+              description = "Apache Artemis is an open source message broker",
+              serviceAlias = "artemis", serviceImplementationAlias = "persistent")
 public class ArtemisPersistentVMInfraService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
