@@ -153,6 +153,8 @@
                             <goal>update-sensitive-helper</goal>
                             <!-- update names in camel-main -->
                             <goal>update-main-helper</goal>
+                            <!-- update test-infra metadata -->
+                            <goal>update-test-infra-metadata</goal>
                         </goals>
                         <phase>generate-resources</phase>
                     </execution>

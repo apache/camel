@@ -1,0 +1,532 @@
+[ {
+  "service" : "org.apache.camel.test.infra.milvus.services.MilvusInfraService",
+  "description" : "Milvus Vector Database",
+  "implementation" : "org.apache.camel.test.infra.milvus.services.MilvusLocalContainerInfraService",
+  "alias" : [ "milvus" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-milvus",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSKinesisLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "kinesis" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSConfigLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "config" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSCloudWatchLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "cloud-watch" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSEventBridgeLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "event-bridge" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSQSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "sqs" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSecretsManagerLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "secrets-manager" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.zookeeper.services.ZooKeeperInfraService",
+  "description" : "Zookeeper is a server for highly reliable distributed coordination of cloud applications",
+  "implementation" : "org.apache.camel.test.infra.zookeeper.services.ZooKeeperLocalContainerInfraService",
+  "alias" : [ "zookeeper" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-zookeeper",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.cassandra.services.CassandraInfraService",
+  "description" : "Apache Cassandra NoSQL Database",
+  "implementation" : "org.apache.camel.test.infra.cassandra.services.CassandraLocalContainerInfraService",
+  "alias" : [ "cassandra" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-cassandra",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSTSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "sts" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.redis.services.RedisInfraService",
+  "description" : "In Memory Database",
+  "implementation" : "org.apache.camel.test.infra.redis.services.RedisLocalContainerInfraService",
+  "alias" : [ "redis" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-redis",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.elasticsearch.services.ElasticSearchInfraService",
+  "description" : "NoSQL Database Elasticsearch",
+  "implementation" : "org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerInfraService",
+  "alias" : [ "elasticsearch" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-elasticsearch",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSEC2LocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "ec2" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
+  "description" : "Apache Kafka, Distributed event streaming platform",
+  "implementation" : "org.apache.camel.test.infra.kafka.services.StrimziInfraService",
+  "alias" : [ "kafka" ],
+  "aliasImplementation" : [ "strimzi" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-kafka",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
+  "description" : "Messaging Platform NATS",
+  "implementation" : "org.apache.camel.test.infra.nats.services.NatsLocalContainerInfraService",
+  "alias" : [ "nats" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-nats",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSKMSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "kms" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.hazelcast.services.HazelcastInfraService",
+  "description" : "In Memory Database Hazelcast",
+  "implementation" : "org.apache.camel.test.infra.hazelcast.services.HazelcastEmbeddedInfraService",
+  "alias" : [ "hazelcast" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-hazelcast",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
+  "description" : "Postgres SQL Database",
+  "implementation" : "org.apache.camel.test.infra.postgres.services.PostgresLocalContainerInfraService",
+  "alias" : [ "postgres" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-postgres",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
+  "description" : "MQTT Platform HiveMQ",
+  "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQSparkplugTCKInfraService",
+  "alias" : [ "hive-mq" ],
+  "aliasImplementation" : [ "sparkplug" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-hivemq",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
+  "description" : "Apache Kafka, Distributed event streaming platform",
+  "implementation" : "org.apache.camel.test.infra.kafka.services.RedpandaInfraService",
+  "alias" : [ "kafka" ],
+  "aliasImplementation" : [ "redpanda" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-kafka",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
+  "description" : "Vault is a tool for securely accessing secrets",
+  "implementation" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultLocalContainerInfraService",
+  "alias" : [ "hashicorp" ],
+  "aliasImplementation" : [ "vault" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-hashicorp-vault",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSNSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "sns" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
+  "description" : "Apache Artemis is an open source message broker",
+  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisAMQPInfraService",
+  "alias" : [ "artemis" ],
+  "aliasImplementation" : [ "amqp" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-artemis",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRAInfraService",
+  "description" : "MicroProfile LRA provides a simple, loosely coupled transaction model for microservices that is based on the SAGA pattern for distributed transaction.",
+  "implementation" : "org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRALocalContainerInfraService",
+  "alias" : [ "microprofile" ],
+  "aliasImplementation" : [ "lra" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-microprofile-lra",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.minio.services.MinioInfraService",
+  "description" : "MinIO Object Storage, S3 compatible",
+  "implementation" : "org.apache.camel.test.infra.minio.services.MinioLocalContainerInfraService",
+  "alias" : [ "minio" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-minio",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.solr.services.SolrInfraService",
+  "description" : "Apache Solr is a Search Platform",
+  "implementation" : "org.apache.camel.test.infra.solr.services.SolrLocalContainerInfraService",
+  "alias" : [ "solr" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-solr",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.couchbase.services.CouchbaseInfraService",
+  "description" : "NoSQL database Couchbase",
+  "implementation" : "org.apache.camel.test.infra.couchbase.services.CouchbaseLocalContainerInfraService",
+  "alias" : [ "couchbase" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-couchbase",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
+  "description" : "Apache Kafka, Distributed event streaming platform",
+  "implementation" : "org.apache.camel.test.infra.kafka.services.ContainerLocalKafkaInfraService",
+  "alias" : [ "kafka" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-kafka",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
+  "description" : "Local Azure services with Azurite",
+  "implementation" : "org.apache.camel.test.infra.azure.storage.queue.services.AzureStorageQueueLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "storage-queue" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-storage-queue",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.etcd3.services.Etcd3InfraService",
+  "description" : "Key Value store etcd3",
+  "implementation" : "org.apache.camel.test.infra.etcd3.services.Etcd3LocalContainerInfraService",
+  "alias" : [ "etcd3" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-etcd3",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
+  "description" : "Embedded SFTP Server",
+  "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedInfraService",
+  "alias" : [ "sftp" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ftp",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSDynamodbLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "dynamodb", "dynamo-db" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.couchdb.services.CouchDbInfraService",
+  "description" : "SQL Clustered database CouchDB",
+  "implementation" : "org.apache.camel.test.infra.couchdb.services.CouchDbLocalContainerInfraService",
+  "alias" : [ "couchdb" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-couchdb",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
+  "description" : "Apache Artemis is an open source message broker",
+  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisVMInfraService",
+  "alias" : [ "artemis" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-artemis",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
+  "description" : "MQTT Platform HiveMQ",
+  "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQInfraService",
+  "alias" : [ "hive-mq" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-hivemq",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
+  "description" : "Distributed Database For High‑Performance Applications With In‑Memory Speed",
+  "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
+  "alias" : [ "infinispan" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-infinispan",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSS3LocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "s3" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
+  "description" : "SAMBA File Server",
+  "implementation" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
+  "alias" : [ "smb" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-smb",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.openldap.services.OpenldapInfraService",
+  "description" : "OpenLDAP is an implementation of the Lightweight Directory Access Protocol",
+  "implementation" : "org.apache.camel.test.infra.openldap.services.OpenldapLocalContainerInfraService",
+  "alias" : [ "openldap" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-openldap",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
+  "description" : "Apache Artemis is an open source message broker",
+  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisPersistentVMInfraService",
+  "alias" : [ "artemis" ],
+  "aliasImplementation" : [ "persistent" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-artemis",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.xmpp.services.XmppInfraService",
+  "description" : "Test XMPP Server",
+  "implementation" : "org.apache.camel.test.infra.xmpp.services.XmppLocalContainerInfraService",
+  "alias" : [ "xmpp" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-xmpp",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
+  "description" : "Apache Artemis is an open source message broker",
+  "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisMQTTInfraService",
+  "alias" : [ "artemis" ],
+  "aliasImplementation" : [ "mqtt" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-artemis",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
+  "description" : "Distributed messaging and streaming platform",
+  "implementation" : "org.apache.camel.test.infra.pulsar.services.PulsarLocalContainerInfraService",
+  "alias" : [ "pulsar" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-pulsar",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.qdrant.services.QdrantInfraService",
+  "description" : "Vector Database and Vector Search Engine",
+  "implementation" : "org.apache.camel.test.infra.qdrant.services.QdrantLocalContainerInfraService",
+  "alias" : [ "qdrant" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-qdrant",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
+  "description" : "Embedded FTPS Server",
+  "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedInfraService",
+  "alias" : [ "ftps" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ftp",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
+  "description" : "Build and run LLMs with Ollama",
+  "implementation" : "org.apache.camel.test.infra.ollama.services.OllamaLocalContainerInfraService",
+  "alias" : [ "ollama" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ollama",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
+  "description" : "Local Azure services with Azurite",
+  "implementation" : "org.apache.camel.test.infra.azure.storage.blob.services.AzureStorageBlobLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "storage-blob" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-storage-blob",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.torchserve.services.TorchServeInfraService",
+  "description" : "TorchServe is a flexible tool for serving PyTorch",
+  "implementation" : "org.apache.camel.test.infra.torchserve.services.TorchServeLocalContainerInfraService",
+  "alias" : [ "torch-serve" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-torchserve",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSIAMLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "iam" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.fhir.services.FhirInfraService",
+  "description" : "HAPI FHIR RESTful test server",
+  "implementation" : "org.apache.camel.test.infra.fhir.services.FhirLocalContainerInfraService",
+  "alias" : [ "fhir" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-fhir",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSLambdaLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "lambda" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubInfraService",
+  "description" : "Google Cloud SDK Tool",
+  "implementation" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubLocalContainerInfraService",
+  "alias" : [ "google" ],
+  "aliasImplementation" : [ "pub-sub" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-google-pubsub",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.chatscript.services.ChatScriptInfraService",
+  "description" : "ChatBot Engine",
+  "implementation" : "org.apache.camel.test.infra.chatscript.services.ChatScriptLocalContainerInfraService",
+  "alias" : [ "chat-script" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-chatscript",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.arangodb.services.ArangoDBInfraService",
+  "description" : "ArangoDB is a multi-model database for high-performance applications.",
+  "implementation" : "org.apache.camel.test.infra.arangodb.services.ArangoDBLocalContainerInfraService",
+  "alias" : [ "arangodb" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-arangodb",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
+  "description" : "Embedded FTP Server",
+  "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedInfraService",
+  "alias" : [ "ftp" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ftp",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQInfraService",
+  "description" : "Messaging and streaming broker",
+  "implementation" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQLocalContainerInfraService",
+  "alias" : [ "rabbitmq" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-rabbitmq",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.mosquitto.services.MosquittoInfraService",
+  "description" : "Mosquitto is a message broker that implements MQTT protocol",
+  "implementation" : "org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerInfraService",
+  "alias" : [ "mosquitto" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-mosquitto",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",
+  "description" : "Apache RocketMQ is a distributed messaging and streaming platform",
+  "implementation" : "org.apache.camel.test.infra.rocketmq.services.RocketMQContainerInfraService",
+  "alias" : [ "rocketmq" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-rocketmq",
+  "version" : "4.10.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.mongodb.services.MongoDBInfraService",
+  "description" : "MongoDB NoSql Database",
+  "implementation" : "org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerInfraService",
+  "alias" : [ "mongodb" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-mongodb",
+  "version" : "4.10.0-SNAPSHOT"
+} ]

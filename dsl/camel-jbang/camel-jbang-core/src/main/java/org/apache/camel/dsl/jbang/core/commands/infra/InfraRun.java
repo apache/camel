@@ -21,9 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import com.google.common.base.Strings;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.test.infra.common.services.InfrastructureService;
+import org.apache.camel.main.download.DependencyDownloaderClassLoader;
+import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "run",
@@ -80,34 +81,66 @@ public class InfraRun extends InfraBaseCommand {
                     return new IllegalArgumentException("service " + testService + " not found" + message);
                 });
 
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(InfraRun.class.getClassLoader());
+
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setClassLoader(cl);
+        downloader.start();
+        // download required camel-test-infra-* dependency
+        downloader.downloadDependency(testInfraService.groupId(),
+                testInfraService.artifactId(),
+                testInfraService.version(), true);
+
+        MavenArtifact ma = downloader.downloadArtifact(testInfraService.groupId(),
+                testInfraService.artifactId(),
+                testInfraService.version());
+        cl.addFile(ma.getFile());
+
+        // Update the class loader
+        Thread.currentThread().setContextClassLoader(cl);
+
         String serviceInterface = testInfraService.service();
         String serviceImpl = testInfraService.implementation();
 
         if (!jsonOutput) {
             String prefix = "";
-            if (!Strings.isNullOrEmpty(testServiceImplementation)) {
+            if (testServiceImplementation != null && !testServiceImplementation.isEmpty()) {
                 prefix = " with implementation " + testServiceImplementation;
             }
             printer().println("Starting service " + testService + prefix);
         }
 
-        InfrastructureService actualService = (InfrastructureService) Class.forName(serviceImpl)
-                .getDeclaredConstructor(null)
-                .newInstance(null);
+        Object actualService = cl.loadClass(serviceImpl).newInstance();
+
+        // Make sure the actualService can be run with initialize method
+        boolean actualServiceIsAnInfrastructureService = false;
+
+        for (Method method : actualService.getClass().getMethods()) {
+            if (method.getName().contains("initialize")) {
+                actualServiceIsAnInfrastructureService = true;
+                break;
+            }
+        }
+
+        if (!actualServiceIsAnInfrastructureService) {
+            System.err.println("Service " + serviceImpl + " is not an InfrastructureService");
+
+            return;
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (actualService != null) {
                 try {
-                    actualService.shutdown();
+                    actualService.getClass().getMethod("shutdown").invoke(actualService);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         }));
 
-        actualService.initialize();
+        actualService.getClass().getMethod("initialize").invoke(actualService);
 
-        Method[] serviceMethods = Class.forName(serviceInterface).getDeclaredMethods();
+        Method[] serviceMethods = cl.loadClass(serviceInterface).getDeclaredMethods();
         HashMap properties = new HashMap();
         for (Method method : serviceMethods) {
             if (method.getParameterCount() == 0 && !method.getName().contains("registerProperties")) {
@@ -123,7 +156,7 @@ public class InfraRun extends InfraBaseCommand {
         Scanner sc = new Scanner(System.in).useDelimiter("\n");
 
         if (sc.nextLine().equals("q")) {
-            actualService.shutdown();
+            actualService.getClass().getMethod("shutdown").invoke(actualService);
             sc.close();
         }
     }

@@ -25,8 +25,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
@@ -43,8 +43,6 @@ public abstract class InfraBaseCommand extends CamelCommand {
         super(main);
 
         jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        jsonMapper.registerModule(new JavaTimeModule());
-        jsonMapper.registerModule(new Jdk8Module());
         jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
         jsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
         jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
@@ -53,8 +51,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
     protected List<TestInfraService> getMetadata() throws IOException {
         List<TestInfraService> metadata;
 
+        CamelCatalog catalog = new DefaultCamelCatalog();
         try (InputStream is
-                = this.getClass().getClassLoader().getResourceAsStream("META-INF/test-infra-metadata.json")) {
+                = catalog.loadResource("test-infra", "metadata.json")) {
             String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
             metadata = jsonMapper.readValue(json, new TypeReference<List<TestInfraService>>() {
@@ -69,6 +68,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
             String implementation,
             String description,
             List<String> alias,
-            List<String> aliasImplementation) {
+            List<String> aliasImplementation,
+            String groupId,
+            String artifactId,
+            String version) {
     }
 }
