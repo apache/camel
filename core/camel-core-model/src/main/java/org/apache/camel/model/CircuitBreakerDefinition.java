@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Iterator;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;

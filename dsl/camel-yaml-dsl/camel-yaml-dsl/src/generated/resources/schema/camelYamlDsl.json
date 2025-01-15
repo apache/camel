@@ -73,9 +73,6 @@
           "multicast" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.MulticastDefinition"
           },
-          "onFallback" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
-          },
           "otherwise" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
           },
@@ -3592,11 +3589,6 @@
             "title" : "Description",
             "description" : "Sets the description of this node"
           },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
-          },
           "fallbackViaNetwork" : {
             "type" : "boolean",
             "title" : "Fallback Via Network",
@@ -3687,7 +3679,6 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
-                "description" : "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
