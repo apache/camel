@@ -35,6 +35,11 @@ updates:
       - dependency-name: "io.smallrye:jandex:*"
       # Spring Boot Dependencies related
       - dependency-name: "org.apache.logging.log4j:*"
+    groups:
+      Micrometer:
+        patterns: ["micrometer*"]
+      Opentelemetry:
+        patterns: ["opentelemetry*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"
