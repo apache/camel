@@ -323,12 +323,6 @@
   "alias" : [ "arangodb" ],
   "aliasImplementation" : [ ]
 }, {
-  "service" : "org.apache.camel.test.infra.ignite.services.IgniteInfraService",
-  "description" : "Distribuited Database Apache Ignite",
-  "implementation" : "org.apache.camel.test.infra.ignite.services.IgniteEmbeddedInfraService",
-  "alias" : [ "ignite" ],
-  "aliasImplementation" : [ ]
-}, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded FTP Server",
   "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedInfraService",
