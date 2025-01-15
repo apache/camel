@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 
 /**
@@ -29,6 +30,16 @@ public interface InterceptSendToEndpoint extends Endpoint {
      * The original endpoint which was intercepted.
      */
     Endpoint getOriginalEndpoint();
+
+    /**
+     * Optional predicate that must match to trigger this interceptor.
+     */
+    Predicate getOnWhen();
+
+    /**
+     * Optional predicate that must match to trigger this interceptor.
+     */
+    void setOnWhen(Predicate onWhen);
 
     /**
      * The processor for routing in a detour before sending to the original endpoint.

@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.processor.FilterProcessor;
 
+@Deprecated
 public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSendToEndpointDefinition> {
 
     public WhenSkipSendToEndpointReifier(Route route, ProcessorDefinition<?> definition) {

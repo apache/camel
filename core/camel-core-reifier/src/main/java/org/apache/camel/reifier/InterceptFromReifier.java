@@ -19,10 +19,12 @@ package org.apache.camel.reifier;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
@@ -33,9 +35,10 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
 
     @Override
     public Processor createProcessor() throws Exception {
-        final Processor child = this.createChildProcessor(true);
+        Processor child = this.createChildProcessor(true);
 
-        return new DelegateAsyncProcessor(child) {
+        // TODO: Pipeline with set property and true filter if onWhen is empty
+        child = new DelegateAsyncProcessor(child) {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
                 if (exchange.getFromEndpoint() != null) {
@@ -44,6 +47,15 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
                 return super.process(exchange, callback);
             }
         };
+
+        Predicate when = null;
+        if (definition.getOnWhen() != null) {
+            when = createPredicate(definition.getOnWhen().getExpression());
+        }
+        if (when != null) {
+            child = new FilterProcessor(getCamelContext(), when, child);
+        }
+        return child;
     }
 
 }

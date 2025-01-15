@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
@@ -29,10 +30,12 @@ public class DefaultInterceptEndpointFactory implements InterceptEndpointFactory
 
     @Override
     public Endpoint createInterceptSendToEndpoint(
-            CamelContext camelContext, Endpoint endpoint, boolean skip, Processor before, Processor after) {
+            CamelContext camelContext, Endpoint endpoint, boolean skip, Predicate onWhen, Processor before, Processor after) {
         DefaultInterceptSendToEndpoint answer = new DefaultInterceptSendToEndpoint(endpoint, skip);
+        answer.setOnWhen(onWhen);
         answer.setBefore(before);
         answer.setAfter(after);
         return answer;
     }
+
 }

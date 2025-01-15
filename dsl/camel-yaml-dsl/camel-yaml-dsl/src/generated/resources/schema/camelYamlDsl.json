@@ -8540,6 +8540,7 @@
       "org.apache.camel.model.WhenSkipSendToEndpointDefinition" : {
         "title" : "When Skip Send To Endpoint",
         "description" : "Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.",
+        "deprecated" : true,
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {

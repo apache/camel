@@ -21,6 +21,7 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
@@ -60,8 +61,8 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     }
 
     public AsyncProducer createInterceptSendToEndpointProcessor(
-            InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip) {
-        return new InterceptSendToEndpointProcessor(endpoint, delegate, producer, skip);
+            InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip, Predicate onWhen) {
+        return new InterceptSendToEndpointProcessor(endpoint, delegate, producer, skip, onWhen);
     }
 
     public AsyncProcessor createWrapProcessor(Processor processor, Processor wrapped) {

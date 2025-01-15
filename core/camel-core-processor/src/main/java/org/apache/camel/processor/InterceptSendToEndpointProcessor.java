@@ -50,15 +50,17 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final Endpoint delegate;
     private final AsyncProducer producer;
     private final boolean skip;
+    private final Predicate onWhen;
     private AsyncProcessor pipeline;
 
     public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
-                                            boolean skip) {
+                                            boolean skip, Predicate onWhen) {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
         this.producer = producer;
         this.skip = skip;
+        this.onWhen = onWhen != null ? onWhen : p -> true;
     }
 
     @Override
@@ -156,6 +158,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
     private FilterProcessor createFilterProcessor() {
         Predicate predicate = exchange -> {
+            onWhen.matches(exchange);
             Boolean whenMatches
                     = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
             return whenMatches == null || whenMatches;

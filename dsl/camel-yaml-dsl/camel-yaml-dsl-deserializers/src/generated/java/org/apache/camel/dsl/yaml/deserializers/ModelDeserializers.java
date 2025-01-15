@@ -21233,7 +21233,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "When Skip Send To Endpoint",
             description = "Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.",
-            deprecated = false,
+            deprecated = true,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),

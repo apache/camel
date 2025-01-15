@@ -24,7 +24,7 @@ public class InterceptFromWithPredicateRouteTest extends InterceptFromRouteTestS
         return new RouteBuilder() {
             public void configure() {
                 // no stop so the message will proceed in its normal route also
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b");
+                interceptFrom().onWhen(header("foo").isEqualTo("bar")).to("mock:b");
 
                 from("direct:start").to("mock:a");
             }

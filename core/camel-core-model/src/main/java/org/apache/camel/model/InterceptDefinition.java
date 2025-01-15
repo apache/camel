@@ -126,37 +126,6 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         return this;
     }
 
-    /**
-     * This method is <b>only</b> for handling some post configuration that is needed since this is an interceptor, and
-     * we have to do a bit of magic logic to fixup to handle predicates with or without proceed/stop set as well.
-     */
-    public void afterPropertiesSet() {
-        System.out.println("A");
-        if (getOutputs().isEmpty()) {
-            // no outputs
-            return;
-        }
-
-        // TODO: Make special reifier so we do not manipulate model here
-
-        System.out.println("B");
-
-        if (onWhen != null) {
-            System.out.println("C");
-            // change onWhen to when that also includes the outputs
-            // so they are only triggered if the predicate matches at runtime
-            WhenDefinition copy = new WhenDefinition(onWhen);
-            copy.setParent(this);
-            for (ProcessorDefinition<?> out : outputs) {
-                copy.addOutput(out);
-            }
-            clearOutput();
-            outputs.add(copy);
-            System.out.println("D");
-        }
-        System.out.println("E");
-    }
-
     public List<Processor> getIntercepted() {
         return intercepted;
     }
