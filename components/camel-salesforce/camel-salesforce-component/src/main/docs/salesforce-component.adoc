@@ -32,7 +32,7 @@ Follow these steps to get started with the Salesforce component.
 . *Create a salesforce org*. If you don't already have access to a salesforce org, you can create a https://developer.salesforce.com/signup[free developer org].
 . *Create a Connected App*. In salesforce, go to Setup > Apps > App Manager, then click on *New Connected App*. Make sure to check *Enable OAuth Settings* and include relevant OAuth Scopes, including the scope called *Perform requests at any time*. Click *Save*.
 . *Get the Consumer Key and Consumer Secret*. You'll need these to configure salesforce authentication. View your new connected app, then copy the key and secret and save in a safe place.
-. *Add Maven depdendency*.
+. *Add Maven dependency*.
 +
 [source,xml]
 ----
@@ -227,7 +227,7 @@ request as the input to a subsequent request.
 * <<compositeUpdateSObjectCollections,compositeUpdateSObjectCollections>> - Update up to 200 records.
 * <<compositeUpsertSObjectCollections,compositeUpsertSObjectCollections>> - Creates or updates up to 200 records based on an External Id field.
 * <<compositeDeleteSObjectCollections,compositeDeleteSObjectCollections>> - Deletes up to 200 records.
-* <<getEventSchema, getEventSchema>> - Gets the event schema for Plaform Events, Change Data Capture events, etc.
+* <<getEventSchema, getEventSchema>> - Gets the event schema for Platform Events, Change Data Capture events, etc.
 
 Unless otherwise specified, DTO types for the following options are from  `org.apache.camel.component.salesforce.api.dto` or one if its sub-packages.
 

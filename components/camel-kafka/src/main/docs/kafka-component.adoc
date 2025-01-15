@@ -282,7 +282,7 @@ When the `CommitManager` is changed to either the synchronous or asynchronous ma
 message with an error is retried. This message will be continually retried until it can be processed without an error.
 
 *Note 1*: records from a partition must be processed and committed by the same thread as the consumer. This means that certain EIPs, async or concurrent operations
-in the DSL may cause the commit to fail. In such circumstances, tyring to commit the transaction will cause the Kafka client to throw a `java.util.ConcurrentModificationException`
+in the DSL may cause the commit to fail. In such circumstances, trying to commit the transaction will cause the Kafka client to throw a `java.util.ConcurrentModificationException`
 exception with the message `KafkaConsumer is not safe for multi-threaded access`. To prevent this from happening, redesign your route to avoid those operations.
 
 *Note 2: this is mostly useful with aggregation's completion timeout strategies.
@@ -539,7 +539,7 @@ When interoperating Kafka and JMS, it may be necessary to coerce the JMS headers
 For instance, when consuming messages from Kafka carrying JMS headers and then sending them to a JMS broker, those headers are
 first deserialized into a byte array. Then, the `camel-jms` component tries to coerce this byte array into the
 specific type used by.
-However, both the origin endpoint as well as how this was setup on the code itsef may affect how the data is serialized and
+However, both the origin endpoint as well as how this was setup on the code itself may affect how the data is serialized and
 deserialized. As such, it is not feasible to naively assume the data type of the byte array.
 
 To address this issue, we provide a custom header deserializer to force Kafka to de-serialize the JMS data according to

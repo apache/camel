@@ -67,7 +67,7 @@ For most of the interesting stuff, however, you'd need an account with the excha
 These API access keys need to be guarded tightly, especially so when they also allow for the withdraw functionality. 
 In which case, anyone who can get hold of your API keys can easily transfer funds from your account to some other address i.e. steal your money.   
 
-Your API access keys can be strored in an exchange specific properties file in your SSH directory.
+Your API access keys can be stored in an exchange specific properties file in your SSH directory.
 For Binance, for example, this would be: `~/.ssh/binance-secret.keys`
 
 ----
