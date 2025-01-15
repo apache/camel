@@ -112,7 +112,6 @@ import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.WhenDefinition;
-import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
@@ -360,8 +359,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new UnmarshalReifier(route, definition);
         } else if (definition instanceof ValidateDefinition) {
             return new ValidateReifier(route, definition);
-        } else if (definition instanceof WhenSkipSendToEndpointDefinition) {
-            return new WhenSkipSendToEndpointReifier(route, definition);
         } else if (definition instanceof WhenDefinition) {
             return new WhenReifier(route, definition);
         } else if (definition instanceof OnWhenDefinition) {
