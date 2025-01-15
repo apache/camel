@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -49,6 +51,10 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
      * The flag indicating that an eviction process is in progress.
      */
     private final AtomicBoolean eviction = new AtomicBoolean();
+    /**
+     * The lock to prevent the addition of changes during the swap of queue of changes.
+     */
+    private final ReadWriteLock swapLock = new ReentrantReadWriteLock();
     /**
      * The maximum cache size.
      */
@@ -84,7 +90,13 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
         if (value == null) {
             return null;
         }
-        lastChanges.get().add(Map.entry(key, value));
+        Entry<K, V> entry = Map.entry(key, value);
+        swapLock.readLock().lock();
+        try {
+            lastChanges.get().add(entry);
+        } finally {
+            swapLock.readLock().unlock();
+        }
         return value;
     }
 
@@ -269,7 +281,13 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
      */
     private void compressChanges() {
         Deque<Entry<K, V>> newChanges = new ConcurrentLinkedDeque<>();
-        Deque<Entry<K, V>> currentChanges = lastChanges.getAndSet(newChanges);
+        Deque<Entry<K, V>> currentChanges;
+        swapLock.writeLock().lock();
+        try {
+            currentChanges = lastChanges.getAndSet(newChanges);
+        } finally {
+            swapLock.writeLock().unlock();
+        }
         Set<K> keys = new HashSet<>();
         Entry<K, V> entry;
         while ((entry = currentChanges.pollLast()) != null) {
