@@ -1031,7 +1031,7 @@ XML (Spring)::
     <cxf:properties>
         <!--  enable mtom by setting this property to true -->
         <entry key="mtom-enabled" value="true"/>
-        <!--  set the Camel CXF endpoint data fromat to PAYLOAD mode -->
+        <!--  set the Camel CXF endpoint data format to PAYLOAD mode -->
         <entry key="dataFormat" value="PAYLOAD"/>
     </cxf:properties>
 </cxf:cxfEndpoint>
