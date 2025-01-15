@@ -26,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -34,8 +35,11 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "onFallback")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefinition> implements OutputNode {
+public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbackDefinition>
+        implements CopyableDefinition<OnFallbackDefinition>, Block, OutputNode {
 
+    @XmlTransient
+    private ProcessorDefinition<?> parent;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String fallbackViaNetwork;
@@ -47,6 +51,7 @@ public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefiniti
 
     protected OnFallbackDefinition(OnFallbackDefinition source) {
         super(source);
+        this.parent = source.parent;
         this.fallbackViaNetwork = source.fallbackViaNetwork;
         this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
@@ -56,7 +61,6 @@ public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefiniti
         return new OnFallbackDefinition(this);
     }
 
-    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
@@ -108,6 +112,20 @@ public class OnFallbackDefinition extends ProcessorDefinition<OnFallbackDefiniti
      */
     public void setFallbackViaNetwork(String fallbackViaNetwork) {
         this.fallbackViaNetwork = fallbackViaNetwork;
+    }
+
+    @Override
+    public ProcessorDefinition<?> getParent() {
+        return parent;
+    }
+
+    public void setParent(ProcessorDefinition<?> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
+        outputs.add(output);
     }
 
 }

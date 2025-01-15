@@ -251,7 +251,7 @@ public class ModelParser extends BaseParser {
     protected OnFallbackDefinition doParseOnFallbackDefinition() throws IOException, XmlPullParserException {
         return doParse(new OnFallbackDefinition(), (def, key, val) -> switch (key) {
                 case "fallbackViaNetwork": def.setFallbackViaNetwork(val); yield true;
-                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+                default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> {
                 ProcessorDefinition v = doParseProcessorDefinitionRef(key);
                 if (v != null) {
@@ -2819,7 +2819,6 @@ public class ModelParser extends BaseParser {
             case "when": return doParseWhenDefinition();
             case "otherwise": return doParseOtherwiseDefinition();
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
-            case "onFallback": return doParseOnFallbackDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();
             case "convertHeaderTo": return doParseConvertHeaderDefinition();

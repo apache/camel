@@ -1253,7 +1253,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteOnFallbackDefinition(String name, OnFallbackDefinition def) throws IOException {
         startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("fallbackViaNetwork", def.getFallbackViaNetwork(), "false");
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
@@ -3866,7 +3866,6 @@ public class ModelWriter extends BaseWriter {
                 case "MulticastDefinition" -> doWriteMulticastDefinition("multicast", (MulticastDefinition) v);
                 case "OnCompletionDefinition" -> doWriteOnCompletionDefinition("onCompletion", (OnCompletionDefinition) v);
                 case "OnExceptionDefinition" -> doWriteOnExceptionDefinition("onException", (OnExceptionDefinition) v);
-                case "OnFallbackDefinition" -> doWriteOnFallbackDefinition("onFallback", (OnFallbackDefinition) v);
                 case "OtherwiseDefinition" -> doWriteOtherwiseDefinition("otherwise", (OtherwiseDefinition) v);
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
