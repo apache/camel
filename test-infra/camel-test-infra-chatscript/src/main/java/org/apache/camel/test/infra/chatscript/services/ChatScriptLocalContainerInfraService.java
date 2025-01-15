@@ -26,7 +26,7 @@ import org.testcontainers.containers.GenericContainer;
 
 @InfraService(service = ChatScriptInfraService.class,
               description = "ChatBot Engine",
-              serviceAlias = { "chatscript", "chat-script" })
+              serviceAlias = "chat-script")
 public class ChatScriptLocalContainerInfraService implements ChatScriptInfraService, ContainerService<GenericContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptLocalContainerInfraService.class);
     private static final int SERVICE_PORT = 1024;

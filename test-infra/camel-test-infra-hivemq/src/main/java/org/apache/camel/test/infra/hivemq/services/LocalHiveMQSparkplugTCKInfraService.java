@@ -25,7 +25,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = HiveMQInfraService.class,
               description = "MQTT Platform HiveMQ",
-              serviceAlias = { "hivemq", "hive-mq" },
+              serviceAlias = "hive-mq",
               serviceImplementationAlias = "sparkplug")
 public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQService<LocalHiveMQSparkplugTCKInfraService> {
 

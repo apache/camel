@@ -111,7 +111,6 @@ public class InfraRun extends InfraBaseCommand {
         HashMap properties = new HashMap();
         for (Method method : serviceMethods) {
             if (method.getParameterCount() == 0 && !method.getName().contains("registerProperties")) {
-                Object value = method.invoke(actualService);
                 properties.put(method.getName(), method.invoke(actualService));
             }
         }
