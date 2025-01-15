@@ -10,6 +10,6 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kamelet-main",
-    "version": "4.8.3-SNAPSHOT"
+    "version": "4.8.4-SNAPSHOT"
   }
 }

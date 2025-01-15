@@ -9,6 +9,6 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel.maven",
     "artifactId": "camel-debezium-maven-plugin",
-    "version": "4.8.3-SNAPSHOT"
+    "version": "4.8.4-SNAPSHOT"
   }
 }
