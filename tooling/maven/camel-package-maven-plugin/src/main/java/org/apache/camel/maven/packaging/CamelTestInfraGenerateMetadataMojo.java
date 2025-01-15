@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.tooling.util.FileUtil;
@@ -89,7 +90,9 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
 
         try {
-            String modelsAsJson = new ObjectMapper().writeValueAsString(models);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            String modelsAsJson = mapper.writeValueAsString(models);
 
             if (generatedResourcesOutputDir == null) {
                 generatedResourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
