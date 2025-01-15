@@ -596,9 +596,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "when": return new ModelDeserializers.WhenDefinitionDeserializer();
             case "org.apache.camel.model.WhenDefinition": return new ModelDeserializers.WhenDefinitionDeserializer();
-            case "when-skip-send-to-endpoint": return new ModelDeserializers.WhenSkipSendToEndpointDefinitionDeserializer();
-            case "whenSkipSendToEndpoint": return new ModelDeserializers.WhenSkipSendToEndpointDefinitionDeserializer();
-            case "org.apache.camel.model.WhenSkipSendToEndpointDefinition": return new ModelDeserializers.WhenSkipSendToEndpointDefinitionDeserializer();
             case "wire-tap": return new ModelDeserializers.WireTapDefinitionDeserializer();
             case "wireTap": return new ModelDeserializers.WireTapDefinitionDeserializer();
             case "org.apache.camel.model.WireTapDefinition": return new ModelDeserializers.WireTapDefinitionDeserializer();

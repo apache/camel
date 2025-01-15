@@ -107,7 +107,6 @@ import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.WhenDefinition;
-import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.app.BeanConstructorDefinition;
 import org.apache.camel.model.app.BeanConstructorsDefinition;
@@ -21205,82 +21204,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = {
-                    "when-skip-send-to-endpoint",
-                    "whenSkipSendToEndpoint"
-            },
-            types = org.apache.camel.model.WhenSkipSendToEndpointDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "When Skip Send To Endpoint",
-            description = "Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.",
-            deprecated = true,
-            properties = {
-                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
-                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
-                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression used as the predicate to evaluate whether the message should be sent or not to the endpoint", displayName = "Expression", oneOf = "expression"),
-                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "inheritErrorHandler", type = "boolean")
-            }
-    )
-    public static class WhenSkipSendToEndpointDefinitionDeserializer extends YamlDeserializerBase<WhenSkipSendToEndpointDefinition> {
-        public WhenSkipSendToEndpointDefinitionDeserializer() {
-            super(WhenSkipSendToEndpointDefinition.class);
-        }
-
-        @Override
-        protected WhenSkipSendToEndpointDefinition newInstance() {
-            return new WhenSkipSendToEndpointDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(WhenSkipSendToEndpointDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "disabled": {
-                    String val = asText(node);
-                    target.setDisabled(val);
-                    break;
-                }
-                case "expression": {
-                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
-                    target.setExpression(val);
-                    break;
-                }
-                case "inheritErrorHandler": {
-                    String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "description": {
-                    String val = asText(node);
-                    target.setDescription(val);
                     break;
                 }
                 default: {
