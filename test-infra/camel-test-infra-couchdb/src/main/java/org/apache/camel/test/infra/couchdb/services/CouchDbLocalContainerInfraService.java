@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = CouchDbInfraService.class,
@@ -40,15 +39,7 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
     public CouchDbLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
                 CouchDbLocalContainerInfraService.class,
-                getPropertyKeyForContainerImage()));
-    }
-
-    private static String getPropertyKeyForContainerImage() {
-        if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
-            return CouchDbProperties.COUCHDB_CONTAINER_PPC64LE;
-        } else {
-            return CouchDbProperties.COUCHDB_CONTAINER;
-        }
+                CouchDbProperties.COUCHDB_CONTAINER));
     }
 
     public CouchDbLocalContainerInfraService(String imageName) {
