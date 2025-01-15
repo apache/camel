@@ -76,9 +76,6 @@
           "onFallback" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OnFallbackDefinition"
           },
-          "onWhen" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
-          },
           "otherwise" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OtherwiseDefinition"
           },
@@ -3701,11 +3698,6 @@
             "type" : "string",
             "title" : "Description",
             "description" : "Sets the description of this node"
-          },
-          "disabled" : {
-            "type" : "boolean",
-            "title" : "Disabled",
-            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime."
           },
           "id" : {
             "type" : "string",

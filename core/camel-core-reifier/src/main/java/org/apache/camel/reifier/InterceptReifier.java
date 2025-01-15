@@ -41,6 +41,7 @@ public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
+            definition.getOnWhen().preCreateProcessor();
             when = createPredicate(definition.getOnWhen().getExpression());
         }
         if (when != null) {

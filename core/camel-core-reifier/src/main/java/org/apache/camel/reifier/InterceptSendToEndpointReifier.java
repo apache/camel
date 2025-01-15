@@ -59,6 +59,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
+            definition.getOnWhen().preCreateProcessor();
             when = new OnWhenPredicate(createPredicate(definition.getOnWhen().getExpression()));
         }
 

@@ -206,7 +206,14 @@ public class ModelParser extends BaseParser {
             }, noValueHandler());
     }
     protected OnWhenDefinition doParseOnWhenDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OnWhenDefinition(), processorDefinitionAttributeHandler(), expressionNodeElementHandler(), noValueHandler());
+        return doParse(new OnWhenDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+                if (v != null) {
+                    def.setExpression(v);
+                    return true;
+                }
+                return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
     }
     protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
         return doParse(new ChoiceDefinition(), (def, key, val) -> switch (key) {
@@ -2808,7 +2815,6 @@ public class ModelParser extends BaseParser {
             case "aggregate": return doParseAggregateDefinition();
             case "bean": return doParseBeanDefinition();
             case "doCatch": return doParseCatchDefinition();
-            case "onWhen": return doParseOnWhenDefinition();
             case "choice": return doParseChoiceDefinition();
             case "when": return doParseWhenDefinition();
             case "otherwise": return doParseOtherwiseDefinition();

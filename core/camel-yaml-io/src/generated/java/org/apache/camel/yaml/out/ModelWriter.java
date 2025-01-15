@@ -1260,8 +1260,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteOnWhenDefinition(String name, OnWhenDefinition def) throws IOException {
         startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
-        doWriteExpressionNodeElements(def);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         endElement(name);
     }
     protected void doWriteOptimisticLockRetryPolicyDefinition(String name, OptimisticLockRetryPolicyDefinition def) throws IOException {
@@ -3867,7 +3867,6 @@ public class ModelWriter extends BaseWriter {
                 case "OnCompletionDefinition" -> doWriteOnCompletionDefinition("onCompletion", (OnCompletionDefinition) v);
                 case "OnExceptionDefinition" -> doWriteOnExceptionDefinition("onException", (OnExceptionDefinition) v);
                 case "OnFallbackDefinition" -> doWriteOnFallbackDefinition("onFallback", (OnFallbackDefinition) v);
-                case "OnWhenDefinition" -> doWriteOnWhenDefinition("onWhen", (OnWhenDefinition) v);
                 case "OtherwiseDefinition" -> doWriteOtherwiseDefinition("otherwise", (OtherwiseDefinition) v);
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);

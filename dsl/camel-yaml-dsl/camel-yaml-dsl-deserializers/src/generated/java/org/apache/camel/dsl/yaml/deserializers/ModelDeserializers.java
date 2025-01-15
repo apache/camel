@@ -10998,10 +10998,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
-                    @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.", displayName = "Expression", oneOf = "expression"),
-                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "inheritErrorHandler", type = "boolean")
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id")
             }
     )
     public static class OnWhenDefinitionDeserializer extends YamlDeserializerBase<OnWhenDefinition> {
@@ -11019,19 +11017,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
-                case "disabled": {
-                    String val = asText(node);
-                    target.setDisabled(val);
-                    break;
-                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
-                    break;
-                }
-                case "inheritErrorHandler": {
-                    String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "id": {
