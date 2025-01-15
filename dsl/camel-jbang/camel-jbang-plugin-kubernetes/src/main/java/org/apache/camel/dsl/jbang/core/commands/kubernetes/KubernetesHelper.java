@@ -34,10 +34,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
-import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
@@ -154,21 +150,6 @@ public final class KubernetesHelper {
         KubernetesHelper.kubernetesClient = kubernetesClient;
     }
 
-    // KubernetesClientVertx can no longer be used in ShutdownHook
-    // https://issues.apache.org/jira/browse/CAMEL-21621
-    public static KubernetesClient createKubernetesClientForShutdownHook() {
-        System.setProperty("vertx.disableDnsResolver", "true");
-        var vertx = Vertx.vertx((new VertxOptions())
-                .setFileSystemOptions((new FileSystemOptions())
-                        .setFileCachingEnabled(false)
-                        .setClassPathResolvingEnabled(false))
-                .setUseDaemonThread(true));
-        var client = new KubernetesClientBuilder()
-                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
-                .build();
-        return client;
-    }
-
     /**
      * Dump given domain model object as YAML. Uses Json conversion to generic map as intermediate step. This makes sure
      * to properly write Json additional properties.
@@ -220,13 +201,12 @@ public final class KubernetesHelper {
     }
 
     public static File getKubernetesManifest(String clusterType, File workingDir, String extension) {
-        ClusterType cs = ClusterType
-                .valueOf(Optional.ofNullable(clusterType).map(String::toUpperCase).orElse(ClusterType.KUBERNETES.name()));
-        String manifestFile = switch (cs) {
-            case KIND, MINIKUBE -> "kubernetes";
-            case OPENSHIFT -> "_openshift";
-            default -> cs.name().toLowerCase();
-        };
+        String manifestFile;
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            manifestFile = "kubernetes";
+        } else {
+            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+        }
         return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
     }
 }

@@ -27,6 +27,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
+import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
@@ -506,7 +512,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             deleteCommand.clusterType = clusterType;
             deleteCommand.workingDir = workingDir;
             deleteCommand.name = projectName;
-            try (var client = KubernetesHelper.createKubernetesClientForShutdownHook()) {
+            try (var client = createKubernetesClientForShutdownHook()) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
                 CommandHelper.cleanExportDir(deleteCommand.workingDir, false);
@@ -516,6 +522,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
         });
         devModeShutdownTask.setName(ThreadHelper.resolveThreadName(null, "CamelShutdownInterceptor"));
         Runtime.getRuntime().addShutdownHook(devModeShutdownTask);
+    }
+
+    // KubernetesClientVertx can no longer be used in ShutdownHook
+    // https://issues.apache.org/jira/browse/CAMEL-21621
+    private KubernetesClient createKubernetesClientForShutdownHook() {
+        System.setProperty("vertx.disableDnsResolver", "true");
+        var vertx = Vertx.vertx((new VertxOptions())
+                .setFileSystemOptions((new FileSystemOptions())
+                        .setFileCachingEnabled(false)
+                        .setClassPathResolvingEnabled(false))
+                .setUseDaemonThread(true));
+        var client = new KubernetesClientBuilder()
+                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
+                .build();
+        return client;
     }
 
     private Integer buildProject(String workingDir) throws IOException, InterruptedException {
