@@ -34,6 +34,10 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
+import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
+import io.vertx.core.file.FileSystemOptions;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
@@ -148,6 +152,21 @@ public final class KubernetesHelper {
      */
     public static void setKubernetesClient(KubernetesClient kubernetesClient) {
         KubernetesHelper.kubernetesClient = kubernetesClient;
+    }
+
+    // KubernetesClientVertx can no longer be used in ShutdownHook
+    // https://issues.apache.org/jira/browse/CAMEL-21621
+    public static KubernetesClient createKubernetesClientForShutdownHook() {
+        System.setProperty("vertx.disableDnsResolver", "true");
+        var vertx = Vertx.vertx((new VertxOptions())
+                .setFileSystemOptions((new FileSystemOptions())
+                        .setFileCachingEnabled(false)
+                        .setClassPathResolvingEnabled(false))
+                .setUseDaemonThread(true));
+        var client = new KubernetesClientBuilder()
+                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
+                .build();
+        return client;
     }
 
     /**
