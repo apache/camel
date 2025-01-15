@@ -34,6 +34,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Timeout(30)
 public class JpaWithNamedQueryTest {
 
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
@@ -102,7 +104,7 @@ public class JpaWithNamedQueryTest {
         });
         consumer.start();
 
-        assertTrue(latch.await(50, TimeUnit.SECONDS));
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertReceivedResult(receivedExchange);
 
