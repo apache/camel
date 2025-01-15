@@ -20,9 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.inject.Inject;
 
@@ -31,6 +34,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.tooling.util.FileUtil;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -72,8 +76,25 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         for (AnnotationInstance ai : PackagePluginUtils.readJandexIndexQuietly(project).getAnnotations(INFRA_SERVICE)) {
 
             InfrastructureServiceModel infrastructureServiceModel = new InfrastructureServiceModel();
+            String targetClass = ai.target().toString();
 
-            infrastructureServiceModel.setImplementation(ai.target().toString());
+            infrastructureServiceModel.setImplementation(targetClass);
+
+            try {
+                // Search for target class in the project transitive artifacts to retrieve maven coordinates
+                for (Artifact artifact : project.getArtifacts()) {
+                    if (classExistsInJarFile(
+                            targetClass.substring(targetClass.lastIndexOf(".") + 1),
+                            artifact.getFile())) {
+                        infrastructureServiceModel.setVersion(artifact.getVersion());
+                        infrastructureServiceModel.setGroupId(artifact.getGroupId());
+                        infrastructureServiceModel.setArtifactId(artifact.getArtifactId());
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading jar file", e);
+            }
+
             for (AnnotationValue av : ai.values()) {
                 if (av.name().equals("service")) {
                     infrastructureServiceModel.setService(av.asString());
@@ -100,9 +121,22 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
             FileUtil.updateFile(generatedResourcesOutputDir.toPath()
                     .resolve("META-INF")
-                    .resolve("test-infra-metadata.json"), modelsAsJson);
+                    .resolve("metadata.json"), modelsAsJson);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private boolean classExistsInJarFile(String className, File dependency) throws IOException {
+        try (JarFile jarFile = new JarFile(dependency)) {
+            Enumeration<JarEntry> e = jarFile.entries();
+            while (e.hasMoreElements()) {
+                JarEntry jarEntry = e.nextElement();
+                if (jarEntry.getName().contains(className)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -112,6 +146,9 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         private String implementation;
         private List<String> alias = new ArrayList<>();
         private List<String> aliasImplementation = new ArrayList<>();
+        private String groupId;
+        private String artifactId;
+        private String version;
 
         public String getService() {
             return service;
@@ -151,6 +188,30 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
         }
     }
 }
