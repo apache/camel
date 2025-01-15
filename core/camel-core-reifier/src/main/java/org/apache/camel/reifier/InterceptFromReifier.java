@@ -25,10 +25,10 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.Pipeline;
 
-public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
+public class InterceptFromReifier extends ProcessorReifier<InterceptFromDefinition> {
 
     public InterceptFromReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, definition);
+        super(route, (InterceptFromDefinition) definition);
     }
 
     @Override

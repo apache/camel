@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -24,10 +23,8 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
@@ -39,8 +36,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
-    @XmlTransient
-    protected List<Processor> intercepted = new ArrayList<>();
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;
@@ -50,7 +45,6 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
     protected InterceptDefinition(InterceptDefinition source) {
         super(source);
-        this.intercepted = new ArrayList<>(source.intercepted);
         this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
     }
 
@@ -124,10 +118,6 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     public InterceptDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new OnWhenDefinition(predicate));
         return this;
-    }
-
-    public List<Processor> getIntercepted() {
-        return intercepted;
     }
 
 }

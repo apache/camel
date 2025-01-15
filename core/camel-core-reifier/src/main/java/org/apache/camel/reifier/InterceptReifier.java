@@ -28,10 +28,10 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.InterceptStrategy;
 
-public class InterceptReifier<T extends InterceptDefinition> extends ProcessorReifier<T> {
+public class InterceptReifier extends ProcessorReifier<InterceptDefinition> {
 
     public InterceptReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (T) definition);
+        super(route, (InterceptDefinition) definition);
     }
 
     @Override
@@ -59,9 +59,6 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
 
                 // store the target we are intercepting
                 this.interceptedTarget = target;
-
-                // remember the target that was intercepted // TODO: Remove me
-                InterceptReifier.this.definition.getIntercepted().add(interceptedTarget);
 
                 if (interceptedTarget != null) {
                     // wrap in a pipeline so we continue routing to the next

@@ -257,7 +257,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         } else if (definition instanceof InterceptFromDefinition) {
             return new InterceptFromReifier(route, definition);
         } else if (definition instanceof InterceptDefinition) {
-            return new InterceptReifier<>(route, definition);
+            return new InterceptReifier(route, definition);
         } else if (definition instanceof InterceptSendToEndpointDefinition) {
             return new InterceptSendToEndpointReifier(route, definition);
         } else if (definition instanceof KameletDefinition) {
