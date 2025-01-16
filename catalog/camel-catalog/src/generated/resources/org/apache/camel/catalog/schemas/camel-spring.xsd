@@ -4617,7 +4617,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:resilience4jConfiguration"/>
           <xs:element minOccurs="0" ref="tns:faultToleranceConfiguration"/>
-          <xs:element minOccurs="0" ref="tns:onFallback"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
@@ -4692,6 +4691,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
+          <xs:element minOccurs="0" ref="tns:onFallback"/>
         </xs:sequence>
         <xs:attribute name="configuration" type="xs:string">
           <xs:annotation>

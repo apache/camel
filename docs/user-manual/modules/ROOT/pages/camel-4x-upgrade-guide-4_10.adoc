@@ -6,12 +6,64 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.9 to 4.10
 
-=== DSL changes
+=== XML DSL changes
 
-Then `when` in XML DSL for the following EIPs has been renamed to `onWhen`
+In `<intercept`> and `<interceptSendToEndpoint>` then `<when>` has been
+renamed to `<onWhen>`.
 
-- intercept
-- interceptSendToEndpoint
+For example:
+
+[source,xml]
+----
+<intercept>
+  <when>...</when>
+  ...
+</intercept>
+----
+
+Should now be:
+
+[source,xml]
+----
+<intercept>
+  <onWhen>...</onWhen>
+  ...
+</intercept>
+----
+
+In `<circuitBreaker` the `<onFallback>` section must be configured last.
+
+For example:
+
+[source,xml]
+----
+  <circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+    <onFallback>
+      <transform>
+        <constant>Fallback message</constant>
+      </transform>
+    </onFallback>
+    <to uri="direct:foo"/>
+    ...
+  </circuitBreaker>
+----
+
+Should now be:
+
+[source,xml]
+----
+  <circuitBreaker>
+    <resilience4jConfiguration timeoutEnabled="true" timeoutDuration="2000"/>
+    <to uri="direct:foo"/>
+    ...
+    <onFallback>
+      <transform>
+        <constant>Fallback message</constant>
+      </transform>
+    </onFallback>
+  </circuitBreaker>
+----
 
 === camel-azure-files
 
