@@ -92,7 +92,7 @@ on the component level, which allows controlling which of the strategies to use 
 By default, Camel will poll using the *ERROR_HANDLER* to process exceptions.
 How Camel handles a message that results in an exception can be altered using the `breakOnFirstError` attribute in the configuration.
 Instead of continuing to poll the next message, Camel will instead commit the offset so that the message that caused the exception will be retried.
-This is similar to the *RETRY* polling strategy above. 
+This is similar to the *RETRY* polling strategy above.
 
 [source,java]
 ----
@@ -260,7 +260,7 @@ Then the commit will be done in the next consumer loop using the kafka asynchron
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
-When configuring a consumer to use manual commit and a specific `CommitManager` it is important to understand how these influence the behavior 
+When configuring a consumer to use manual commit and a specific `CommitManager` it is important to understand how these influence the behavior
 of `breakOnFirstError`
 
 [source,java]
@@ -274,7 +274,7 @@ kafka.setKafkaManualCommitFactory(new DefaultKafkaManualCommitFactory());
 camelContext.addComponent("kafka", kafka);
 ----
 
-When the `CommitManager` is left to the default `NoopCommitManager` then `breakOnFirstError` will not automatically commit the offset so that the 
+When the `CommitManager` is left to the default `NoopCommitManager` then `breakOnFirstError` will not automatically commit the offset so that the
 message with an error is retried. The consumer must manage that in the route using `KafkaManualCommit`.
 
 
@@ -360,6 +360,58 @@ Configure the 'krb5.conf' file directly through the API:
 static {
     KafkaComponent.setKerberosConfigLocation("path/to/config/file");
 }
+----
+
+=== Authentication to Kafka
+
+Kafka supports several ways to authenticate the clients to the server, including plain text, PKI (certificates) over TLS, you can refer to the https://kafka.apache.org/documentation/#security_sasl[Kafka documentation] for a detailed view of the supported mechanisms. The kafka authentication and authorization is based on JAAS, so you must use a JAAS Login Module implementation on the client side.
+
+This section will outline the main points for the authentication using https://github.com/strimzi/strimzi-kafka-oauth/blob/main/README.md[Strimzi JAAS Login Module] and plain text. The Strimzi OAuth contains several properties to fine tune, the authentication mechanism, so you can set them into the `OAuthBearerLoginModule` section.
+
+The most basic way to authenticate is using the plain text login module with username and password. Beware that this is unsafe and and we suggest the OAuth over TLS for a fully secure mechanism.
+
+*Username and Password over TLS*
+[source]
+----
+camel.component.kafka.security-protocol = SASL_SSL
+camel.component.kafka.sasl-mechanism=PLAIN
+camel.component.kafka.sasl-jaas-config=org.apache.kafka.common.security.plain.PlainLoginModule required \
+  username="my_username" \
+  password="my_password";
+----
+
+There is the Strimzi OAuth Login Module that supports the more secure OAuth mechanisms, where you can set a refresh token, username/password and client secret. You must understand the Kafka Broker security settings to adequately configure the client security configuration.
+
+*OAuth Bearer Token with client secret*
+[source]
+----
+camel.component.kafka.security-protocol = SASL_PLAINTEXT
+camel.component.kafka.sasl-mechanism = OAUTHBEARER
+camel.component.kafka.sasl-jaas-config = org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required \
+  oauth.client.id="kafka-producer-client" \
+  oauth.client.secret="kafka-producer-client-secret" \
+  oauth.username.claim="preferred_username" \
+  oauth.ssl.truststore.location="docker/certificates/ca-truststore.p12" \
+  oauth.ssl.truststore.type="pkcs12" \
+  oauth.ssl.truststore.password="changeit" \
+  oauth.token.endpoint.uri="https://keycloak:8443/realms/demo/protocol/openid-connect/token" ;
+camel.component.kafka.additional-properties[sasl.login.callback.handler.class]=io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler
+----
+
+*OAuth Bearer Token with refresh token*
+[source]
+----
+camel.component.kafka.security-protocol = SASL_PLAINTEXT
+camel.component.kafka.sasl-mechanism = OAUTHBEARER
+camel.component.kafka.sasl-jaas-config = org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required \
+  oauth.client.id="kafka-producer-client" \
+  oauth.refresh.token="my_refresh_token"
+  oauth.username.claim="preferred_username" \
+  oauth.ssl.truststore.location="docker/certificates/ca-truststore.p12" \
+  oauth.ssl.truststore.type="pkcs12" \
+  oauth.ssl.truststore.password="changeit" \
+  oauth.token.endpoint.uri="https://keycloak:8443/realms/demo/protocol/openid-connect/token" ;
+camel.component.kafka.additional-properties[sasl.login.callback.handler.class]=io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler
 ----
 
 === Batching Consumer

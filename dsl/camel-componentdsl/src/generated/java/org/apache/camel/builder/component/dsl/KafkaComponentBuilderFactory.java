@@ -56,7 +56,7 @@ public interface KafkaComponentBuilderFactory {
          * configurations (e.g.: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.., e.g.:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro. If the properties are set in the application.properties file, they must be prefixed with camel.component.kafka.additional-properties and the property enclosed in square brackets, like this example: camel.component.kafka.additional-propertiesdelivery.timeout.ms=15000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
