@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import jakarta.xml.bind.annotation.XmlType;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,6 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute
