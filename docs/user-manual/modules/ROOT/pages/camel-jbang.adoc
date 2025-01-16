@@ -2497,7 +2497,7 @@ Camel JBang makes it easy to do _Java debugging_ when you run your integration w
 
 [source,bash]
 ----
-camel run hello.yaml --jmv-debug
+camel run hello.yaml --jvm-debug
 Listening for transport dt_socket at address: 4004
 ----
 
