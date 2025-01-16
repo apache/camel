@@ -98,7 +98,7 @@
         <chicory-version>1.0.0</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.179</classgraph-version>
-        <cloudant-version>0.9.3</cloudant-version>
+        <cloudant-version>0.10.0</cloudant-version>
         <cometd-java-client-version>8.0.6</cometd-java-client-version>
         <cometd-java-server-version>8.0.6</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
