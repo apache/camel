@@ -1510,6 +1510,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doStart() throws Exception {
+        CamelContextAware.trySetCamelContext(aggregationRepository, camelContext);
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         if (aggregationStrategy.canPreComplete()) {
             preCompletion = true;
