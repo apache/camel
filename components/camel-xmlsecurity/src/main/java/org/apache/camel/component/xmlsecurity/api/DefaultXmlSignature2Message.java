@@ -104,11 +104,11 @@ import org.slf4j.LoggerFactory;
  *            ...
  *         </SignedInfo>
  *
- *         <Object >
+ *         <Object>
  *            <Manifest Id="manifest">
  *               <Reference URI=#object/>
  *            </Manifest>
- *         </Objet>
+ *         </Object>
  *         <Object Id="object">
  *             <!-- contains the DOM node which should be extracted to the message body -->
  *         </Object>

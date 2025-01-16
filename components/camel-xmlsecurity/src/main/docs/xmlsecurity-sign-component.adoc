@@ -302,11 +302,11 @@ or the structure:
          ...
       </SignedInfo>
 
-      <Object >
+      <Object>
          <Manifest Id="manifest">
             <Reference URI=#object/>
          </Manifest>
-      </Objet>
+      </Object>
       <Object Id="object">
           <!-- contains the DOM node which is extracted to the message body -->
       </Object>

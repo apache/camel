@@ -361,7 +361,7 @@ The following variables support OGNL:
 |bodyAs(type)
 |messageAs(type)
 |header.foo
-|exchangePropety.foo
+|exchangeProperty.foo
 |variable.foo
 |=======================================================================
 
