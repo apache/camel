@@ -36,6 +36,7 @@
     <modules>
         <module>camel-chatscript</module>
         <module>camel-djl</module>
+        <module>camel-kserve</module>
         <module>camel-langchain4j-chat</module>
         <module>camel-langchain4j-core</module>
         <module>camel-langchain4j-embeddings</module>

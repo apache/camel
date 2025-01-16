@@ -260,6 +260,7 @@
                                     <exclude>**/*.event</exclude>
                                     <exclude>**/*.gif</exclude>
                                     <exclude>**/*.gpg</exclude>
+                                    <exclude>**/*.graphdef</exclude>
                                     <exclude>**/*.graphql*</exclude>
                                     <exclude>**/*.ics</exclude>
                                     <exclude>**/*.joor</exclude>
@@ -276,6 +277,7 @@
                                     <exclude>**/*.params</exclude>
                                     <exclude>**/*.parquet</exclude>
                                     <exclude>**/*.pb</exclude>
+                                    <exclude>**/*.pbtxt</exclude>
                                     <exclude>**/*.pem</exclude>
                                     <exclude>**/*.pfx</exclude>
                                     <exclude>**/*.pgp</exclude>

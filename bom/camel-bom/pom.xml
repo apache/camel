@@ -1289,6 +1289,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-kserve</artifactId>
+        <version>4.10.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-kubernetes</artifactId>
         <version>4.10.0-SNAPSHOT</version>
       </dependency>

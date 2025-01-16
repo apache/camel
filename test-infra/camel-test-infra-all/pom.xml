@@ -246,6 +246,11 @@
             <artifactId>camel-test-infra-tensorflow-serving</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-triton</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
