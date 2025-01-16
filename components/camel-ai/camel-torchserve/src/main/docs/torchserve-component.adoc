@@ -162,7 +162,7 @@ from("direct:ping")
 ----
 from("file:data/kitten.jpg")
     .to("torchserve:inference/predictions?modelName=squeezenet1_1")
-    .log("Result: ${body}");;
+    .log("Result: ${body}");
 ----
 
 === Management API

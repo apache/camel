@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
  */
 public interface TensorFlowServingConstants {
 
-    @Metadata(description = "The target of the client. See: https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder(java.lang.String,io.grpc.ChannelCredentials)",
+    @Metadata(description = "The target of the client. See: https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder%28java.lang.String,io.grpc.ChannelCredentials%29",
               javaType = "String")
     String TARGET = "CamelTensorFlowServingTarget";
 
