@@ -303,7 +303,7 @@ public interface XmlVerifierEndpointBuilderFactory {
         }
         /**
          * Indicator whether the XML signature elements (elements with local
-         * name Signature and namesapce http://www.w3.org/2000/09/xmldsig#)
+         * name Signature and namespace http://www.w3.org/2000/09/xmldsig#)
          * shall be removed from the document set to the output message.
          * Normally, this is only necessary, if the XML signature is enveloped.
          * The default value is Boolean#FALSE. This parameter is forwarded to
@@ -325,7 +325,7 @@ public interface XmlVerifierEndpointBuilderFactory {
         }
         /**
          * Indicator whether the XML signature elements (elements with local
-         * name Signature and namesapce http://www.w3.org/2000/09/xmldsig#)
+         * name Signature and namespace http://www.w3.org/2000/09/xmldsig#)
          * shall be removed from the document set to the output message.
          * Normally, this is only necessary, if the XML signature is enveloped.
          * The default value is Boolean#FALSE. This parameter is forwarded to
