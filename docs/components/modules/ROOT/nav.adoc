@@ -7,6 +7,7 @@
 ** xref:ai-summary.adoc[AI]
 *** xref:chatscript-component.adoc[ChatScript]
 *** xref:djl-component.adoc[Deep Java Library]
+*** xref:kserve-component.adoc[KServe]
 *** xref:langchain4j-chat-component.adoc[LangChain4j Chat]
 *** xref:langchain4j-embeddings-component.adoc[LangChain4j Embeddings]
 *** xref:langchain4j-tools-component.adoc[LangChain4j Tools]

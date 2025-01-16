@@ -1,0 +1,243 @@
+= KServe Component
+:doctitle: KServe
+:shortname: kserve
+:artifactid: camel-kserve
+:description: Provide access to AI model servers with the KServe standard to run inference with remote models
+:since: 4.10
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: kserve
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The KServe component provides the ability to access various AI model servers using the https://kserve.github.io/website/latest/modelserving/data_plane/v2_protocol/[KServe Open Inference Protocl V2]. This allows Camel to remotely perform inference with AI models on various model servers that support the KServe V2 protocol.
+
+NOTE: Currently, this component only supports https://kserve.github.io/website/latest/reference/swagger-ui/#grpc[GRPC API].
+
+To use the KServe component, Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kserve</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+kserve:api[?options]
+----
+
+Where `api` represents one of the https://kserve.github.io/website/latest/reference/swagger-ui/#grpc[KServe Open Inference Protocol GRPC API].
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+The component supports the following APIs.
+
+----
+kserve:<api>[?options]
+----
+
+[width="100%",cols="2,5,1,2,2",options="header"]
+|===
+| API | Description | Options | Input (Message Body) | Result (Message Body)
+
+| `infer`
+| Performs inference using the specified model.
+| `modelName` +
+  `modelVersion`
+| `ModelInferRequest` footnote:[`inference.GrpcPredictV2.ModelInferRequest`]
+| `ModelInferResponse` footnote:[`inference.GrpcPredictV2.ModelInferResponse`]
+
+| `model/ready`
+| Indicates if a specific model is ready for inferencing.
+| `modelName` +
+  `modelVersion`
+| `ModelReadyRequest` footnote:[`inference.GrpcPredictV2.ModelReadyRequest`] +
+  (optional)
+| `ModelReadyResponse` footnote:[`inference.GrpcPredictV2.ModelReadyResponse`]
+
+| `model/metadata`
+| Provides information about a model.
+| `modelName` +
+  `modelVersion`
+| `ModelMetadataRequest` footnote:[`inference.GrpcPredictV2.ModelMetadataRequest`] +
+  (optional)
+| `ModelMetadataResponse` footnote:[`inference.GrpcPredictV2.ModelMetadataResponse`]
+
+| `server/ready`
+| Indicates if the server is ready for inferencing.
+|
+|
+| `ServerReadyResponse` footnote:[`inference.GrpcPredictV2.ServerReadyResponse`]
+
+| `server/live`
+| Indicates if the inference server is able to receive and respond to metadata and inference requests.
+|
+|
+| `ServerLiveResponse` footnote:[`inference.GrpcPredictV2.ServerLiveResponse`]
+
+| `server/metadata`
+| Provides information about the server.
+|
+|
+| `ServerMetadataResponse` footnote:[`inference.GrpcPredictV2.ServerMetadataResponse`]
+|===
+
+== Examples
+
+=== Infer (ModelInfer) API
+
+.Perform inference
+[source,java]
+----
+from("direct:infer")
+    .setBody(constant(createRequest()))
+    .to("kserve:infer?modelName=simple&modelVersion=1")
+    .process(this::postprocess)
+    .log("Result: ${body}");
+
+// Helper methods
+
+ModelInferRequest createRequest() {
+    // How to create a request differs depending on the input types of the model.
+    var ints0 = IntStream.range(1, 17).boxed().collect(Collectors.toList());
+    var content0 = InferTensorContents.newBuilder().addAllIntContents(ints0);
+    var input0 = ModelInferRequest.InferInputTensor.newBuilder()
+            .setName("INPUT0").setDatatype("INT32").addShape(1).addShape(16)
+            .setContents(content0);
+    var ints1 = IntStream.range(0, 16).boxed().collect(Collectors.toList());
+    var content1 = InferTensorContents.newBuilder().addAllIntContents(ints1);
+    var input1 = ModelInferRequest.InferInputTensor.newBuilder()
+            .setName("INPUT1").setDatatype("INT32").addShape(1).addShape(16)
+            .setContents(content1);
+    return ModelInferRequest.newBuilder()
+            .addInputs(0, input0).addInputs(1, input1)
+            .build();
+}
+
+void postprocess(Exchange exchange) {
+    // How to post-process the response differs depending on the output types
+    // of the model.
+    var response = exchange.getMessage().getBody(ModelInferResponse.class);
+    var content = response.getRawOutputContents(0);
+    var buffer = content.asReadOnlyByteBuffer().order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
+    var ints = new ArrayList<Integer>(buffer.remaining());
+    while (buffer.hasRemaining()) {
+        ints.add(buffer.get());
+    }
+    exchange.getMessage().setBody(ints);
+}
+----
+
+.Specify the model name and version with headers
+[source,java]
+----
+from("direct:infer-with-headers")
+    .setBody(constant(createRequest()))
+    .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
+    .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
+    .to("kserve:infer")
+    .process(this::postprocess)
+    .log("Result: ${body}");
+
+// ... Same as the previous example
+----
+
+=== ModelReady API
+
+.Check if a model is ready
+[source,java]
+----
+from("direct:model-ready")
+    .to("kserve:model-ready?modelName=simple&modelVersion=1")
+    .log("Status: ${body.ready}");
+----
+
+.Specify the model name and version with headers
+[source,java]
+----
+from("direct:model-ready-with-headers")
+    .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
+    .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
+    .to("kserve:model-ready")
+    .log("Status: ${body.ready}");
+----
+
+=== ModelMetadata API
+
+.Fetch model metadata
+[source,java]
+----
+from("direct:model-metadata")
+    .to("kserve:model-metadata?modelName=simple&modelVersion=1")
+    .log("Metadata: ${body}");
+----
+
+.Specify the model name and version with headers
+[source,java]
+----
+from("direct:model-metadata-with-headers")
+    .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
+    .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
+    .to("kserve:model-metadata")
+    .log("Metadata: ${body}");
+----
+
+=== ServerReady API
+
+.Check if the server is ready
+[source,java]
+----
+from("direct:server-ready")
+    .to("kserve:server-ready")
+    .log("Status: ${body.ready}");
+----
+
+=== ServerLive API
+
+.Check if the server is live
+[source,java]
+----
+from("direct:server-live")
+    .to("kserve:server-live")
+    .log("Status: ${body.live}");
+----
+
+=== ServerMetadata API
+
+.Fetch server metadata
+[source,java]
+----
+from("direct:server-metadata")
+    .to("kserve:server-metadata")
+    .log("Metadata: ${body}");
+----
+
+include::spring-boot:partial$starter.adoc[]
