@@ -149,14 +149,14 @@ public final class ProcessorDefinitionHelper {
             return null;
         }
 
-        ProcessorDefinition<?> def = (ProcessorDefinition) node;
+        NamedNode def = node;
         // drill to the top
         while (def != null && def.getParent() != null) {
             def = def.getParent();
         }
 
-        if (def instanceof RouteDefinition routeDefinition) {
-            return routeDefinition;
+        if (def instanceof RouteDefinition rd) {
+            return rd;
         } else {
             // not found
             return null;

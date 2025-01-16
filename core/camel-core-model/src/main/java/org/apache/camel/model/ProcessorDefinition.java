@@ -664,10 +664,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type id(String id) {
         // special for choice otherwise
         if (this instanceof ChoiceDefinition cbr) {
-            if (cbr.getOtherwise() != null && cbr.getOtherwise().getOutputs().isEmpty()) {
-                cbr.getOtherwise().id(id);
-                return asType();
+            if (cbr.getOtherwise() != null) {
+                if (cbr.getOtherwise().getOutputs().isEmpty()) {
+                    cbr.getOtherwise().id(id);
+                } else {
+                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    last.id(id);
+                }
+            } else if (!cbr.getWhenClauses().isEmpty()) {
+                var last = cbr.getWhenClauses().get(cbr.getWhenClauses().size() - 1);
+                if (last.getOutputs().isEmpty()) {
+                    last.setId(id);
+                } else {
+                    var p = last.getOutputs().get(last.getOutputs().size() - 1);
+                    p.id(id);
+                }
+            } else {
+                cbr.setId(id);
             }
+            return asType();
         }
 
         if (this instanceof OutputNode && getOutputs().isEmpty()) {

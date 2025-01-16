@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -193,7 +192,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         }
     }
 
-    // TODO: Remove me as we should avoid having this
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         // backwards compatible where choice would fake outputs to include when/otherwise as a single list
@@ -218,8 +216,16 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @Override
     public String getLabel() {
-        return getOutputs().stream().map(ProcessorDefinition::getLabel)
-                .collect(Collectors.joining(",", getShortName() + "[", "]"));
+        StringBuilder sb = new StringBuilder();
+        sb.append("choice[");
+        for (WhenDefinition when : whenClauses) {
+            sb.append(when.getLabel());
+        }
+        if (otherwise != null) {
+            sb.append(otherwise.getLabel());
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     public List<WhenDefinition> getWhenClauses() {
