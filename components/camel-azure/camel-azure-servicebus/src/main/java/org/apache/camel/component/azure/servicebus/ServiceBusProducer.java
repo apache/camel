@@ -130,11 +130,13 @@ public class ServiceBusProducer extends DefaultProducer {
             }
             propagateHeaders(exchange, applicationProperties);
             final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
+            final String sessionId = getConfiguration().getSessionId();
 
             if (inputBody instanceof Iterable<?>) {
                 serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<?>) inputBody),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
-                        correlationId);
+                        correlationId,
+                        sessionId);
             } else {
                 Object convertedBody = inputBody instanceof BinaryData ? inputBody
                         : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
@@ -142,7 +144,8 @@ public class ServiceBusProducer extends DefaultProducer {
 
                 serviceBusSenderOperations.sendMessages(convertedBody,
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties,
-                        correlationId);
+                        correlationId,
+                        sessionId);
             }
         };
     }
@@ -158,13 +161,15 @@ public class ServiceBusProducer extends DefaultProducer {
             }
             propagateHeaders(exchange, applicationProperties);
             final String correlationId = exchange.getMessage().getHeader(ServiceBusConstants.CORRELATION_ID, String.class);
+            final String sessionId = getConfiguration().getSessionId();
 
             if (inputBody instanceof Iterable<?>) {
                 serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<?>) inputBody),
                         configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                         applicationProperties,
-                        correlationId);
+                        correlationId,
+                        sessionId);
             } else {
                 Object convertedBody = inputBody instanceof BinaryData ? inputBody
                         : getConfiguration().isBinary() ? convertBodyToBinary(exchange)
@@ -173,7 +178,8 @@ public class ServiceBusProducer extends DefaultProducer {
                         configurationOptionsProxy.getScheduledEnqueueTime(exchange),
                         configurationOptionsProxy.getServiceBusTransactionContext(exchange),
                         applicationProperties,
-                        correlationId);
+                        correlationId,
+                        sessionId);
             }
         };
     }

@@ -25,9 +25,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ServiceBusEndpointTest extends CamelTestSupport {
 
@@ -63,6 +61,29 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
         assertEquals("testString", endpoint.getConfiguration().getConnectionString());
         assertEquals(true, endpoint.getConfiguration().isBinary());
+    }
+
+    @Test
+    void testCreateEndpointWithConfigAndSession() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final Map<String, Object> params = new HashMap<>();
+        params.put("serviceBusType", ServiceBusType.topic);
+        params.put("prefetchCount", 10);
+        params.put("connectionString", "testString");
+        params.put("binary", "true");
+        params.put("sessionId", "session-1");
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                        .createEndpoint(uri, remaining, params);
+
+        assertEquals(ServiceBusType.topic, endpoint.getConfiguration().getServiceBusType());
+        assertEquals("testTopicOrQueue", endpoint.getConfiguration().getTopicOrQueueName());
+        assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals("testString", endpoint.getConfiguration().getConnectionString());
+        assertEquals(true, endpoint.getConfiguration().isBinary());
+        assertEquals("session-1", endpoint.getConfiguration().getSessionId());
     }
 
     @Test

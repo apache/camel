@@ -73,6 +73,24 @@ public final class ServiceBusClientFactory {
         return processorClientBuilder;
     }
 
+    private static ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder createBaseServiceBusSessionProcessorClient(
+            final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
+        final ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder processorClientBuilder
+                = busClientBuilder.sessionProcessor();
+
+        // We handle auto-complete in the consumer, since we have no way to propagate errors back to the reactive
+        // pipeline messages are published on so the message would be completed even if an error occurs during Exchange
+        // processing.
+        processorClientBuilder.disableAutoComplete();
+
+        switch (configuration.getServiceBusType()) {
+            case queue -> processorClientBuilder.queueName(configuration.getTopicOrQueueName());
+            case topic -> processorClientBuilder.topicName(configuration.getTopicOrQueueName());
+        }
+
+        return processorClientBuilder;
+    }
+
     public ServiceBusSenderClient createServiceBusSenderClient(final ServiceBusConfiguration configuration) {
         return createBaseServiceBusSenderClient(createBaseServiceBusClient(configuration), configuration)
                 .buildClient();
@@ -83,6 +101,26 @@ public final class ServiceBusClientFactory {
             Consumer<ServiceBusErrorContext> processError) {
         ServiceBusClientBuilder.ServiceBusProcessorClientBuilder clientBuilder
                 = createBaseServiceBusProcessorClient(createBaseServiceBusClient(configuration), configuration);
+
+        clientBuilder
+                .subscriptionName(configuration.getSubscriptionName())
+                .receiveMode(configuration.getServiceBusReceiveMode())
+                .maxAutoLockRenewDuration(configuration.getMaxAutoLockRenewDuration())
+                .prefetchCount(configuration.getPrefetchCount())
+                .subQueue(configuration.getSubQueue())
+                .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
+                .processMessage(processMessage)
+                .processError(processError);
+
+        return clientBuilder.buildProcessorClient();
+    }
+
+    public ServiceBusProcessorClient createServiceBusSessionProcessorClient(
+            ServiceBusConfiguration configuration, Consumer<ServiceBusReceivedMessageContext> processMessage,
+            Consumer<ServiceBusErrorContext> processError) {
+
+        ServiceBusClientBuilder.ServiceBusSessionProcessorClientBuilder clientBuilder
+                = createBaseServiceBusSessionProcessorClient(createBaseServiceBusClient(configuration), configuration);
 
         clientBuilder
                 .subscriptionName(configuration.getSubscriptionName())

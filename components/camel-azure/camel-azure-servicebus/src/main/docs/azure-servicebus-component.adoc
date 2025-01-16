@@ -125,6 +125,22 @@ from("direct:start")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+         final List<Object> inputBatch = new LinkedList<>();
+            inputBatch.add("test batch 1");
+            inputBatch.add("test batch 2");
+            inputBatch.add("test batch 3");
+            inputBatch.add(123456);
+
+            exchange.getIn().setBody(inputBatch);
+       })
+  .to("azure-servicebus:test//?connectionString=test&sessionId=123")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
 
 - `scheduleMessages`
 
@@ -150,6 +166,13 @@ from("direct:start")
 [source,java]
 --------------------------------------------------------------------------------
 from("azure-servicebus:test//?connectionString=test")
+  .log("${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-servicebus:test//?connectionString=test&sessionEnabled=true")
   .log("${body}")
   .to("mock:result");
 --------------------------------------------------------------------------------

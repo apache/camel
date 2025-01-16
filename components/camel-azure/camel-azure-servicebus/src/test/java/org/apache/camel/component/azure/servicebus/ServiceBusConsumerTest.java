@@ -105,6 +105,9 @@ public class ServiceBusConsumerTest {
         when(endpoint.getServiceBusClientFactory()).thenReturn(clientFactory);
         when(clientFactory.createServiceBusProcessorClient(any(), processMessageCaptor.capture(), processErrorCaptor.capture()))
                 .thenReturn(client);
+        when(clientFactory.createServiceBusSessionProcessorClient(any(), processMessageCaptor.capture(),
+                processErrorCaptor.capture()))
+                .thenReturn(client);
         when(processor.process(exchangeCaptor.capture(), asyncCallbackCaptor.capture())).thenReturn(true);
         when(configuration.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
     }
@@ -115,6 +118,31 @@ public class ServiceBusConsumerTest {
             consumer.doStart();
             verify(client).start();
             verify(clientFactory).createServiceBusProcessorClient(any(), any(), any());
+
+            when(messageContext.getMessage()).thenReturn(message);
+            configureMockMessage();
+
+            processMessageCaptor.getValue().accept(messageContext);
+
+            verify(processor).process(any(Exchange.class), any(AsyncCallback.class));
+            Exchange exchange = exchangeCaptor.getValue();
+            assertThat(exchange).isNotNull();
+
+            Message inMessage = exchange.getIn();
+            assertThat(inMessage).isNotNull();
+            assertThat(inMessage.getBody()).isInstanceOf(BinaryData.class);
+            assertThat(inMessage.getBody(BinaryData.class).toString()).isEqualTo(MESSAGE_BODY);
+            assertThat(inMessage.getHeaders()).isEqualTo(createExpectedMessageHeaders());
+        }
+    }
+
+    @Test
+    void consumerSubmitsExchangeToSessionProcessor() throws Exception {
+        when(configuration.isSessionEnabled()).thenReturn(true); // Simulate session ID presence
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+            verify(client).start();
+            verify(clientFactory).createServiceBusSessionProcessorClient(any(), any(), any());
 
             when(messageContext.getMessage()).thenReturn(message);
             configureMockMessage();
