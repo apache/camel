@@ -144,7 +144,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // set the onWhen predicate on all the catch definitions
         Collection<CatchDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
         for (CatchDefinition doCatch : col) {
-            doCatch.setOnWhen(new WhenDefinition(predicate));
+            doCatch.setOnWhen(new OnWhenDefinition(predicate));
         }
         return this;
     }

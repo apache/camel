@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.InterceptSendToEndpoint;
@@ -31,18 +32,20 @@ import org.apache.camel.util.URISupport;
 public class InterceptSendToEndpointCallback implements EndpointStrategy {
 
     private final CamelContext camelContext;
+    private final Predicate onWhen;
     private final Processor before;
     private final Processor after;
     private final String matchURI;
     private final boolean skip;
 
-    public InterceptSendToEndpointCallback(CamelContext camelContext, Processor before, Processor after, String matchURI,
-                                           boolean skip) {
+    public InterceptSendToEndpointCallback(CamelContext camelContext, Processor before, Processor after,
+                                           String matchURI, boolean skip, Predicate onWhen) {
         this.camelContext = camelContext;
         this.before = before;
         this.after = after;
         this.matchURI = matchURI;
         this.skip = skip;
+        this.onWhen = onWhen;
     }
 
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
@@ -53,7 +56,7 @@ public class InterceptSendToEndpointCallback implements EndpointStrategy {
             // only proxy if the uri is matched decorate endpoint with
             // our proxy should be false by default
             return PluginHelper.getInterceptEndpointFactory(camelContext)
-                    .createInterceptSendToEndpoint(camelContext, endpoint, skip, before, after);
+                    .createInterceptSendToEndpoint(camelContext, endpoint, skip, onWhen, before, after);
         } else {
             // no proxy so return regular endpoint
             return endpoint;

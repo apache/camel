@@ -24,7 +24,7 @@ public class InterceptFromWithPredicateAndStopRouteTest extends InterceptFromRou
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
+                interceptFrom().onWhen(header("foo").isEqualTo("bar")).to("mock:b").stop();
 
                 from("direct:start").to("mock:a");
             }

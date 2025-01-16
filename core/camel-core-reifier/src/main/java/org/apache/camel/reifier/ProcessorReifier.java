@@ -62,7 +62,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.OnFallbackDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.PausableDefinition;
@@ -111,7 +110,6 @@ import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.WhenDefinition;
-import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
@@ -256,7 +254,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         } else if (definition instanceof InterceptFromDefinition) {
             return new InterceptFromReifier(route, definition);
         } else if (definition instanceof InterceptDefinition) {
-            return new InterceptReifier<>(route, definition);
+            return new InterceptReifier(route, definition);
         } else if (definition instanceof InterceptSendToEndpointDefinition) {
             return new InterceptSendToEndpointReifier(route, definition);
         } else if (definition instanceof KameletDefinition) {
@@ -275,8 +273,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new OnCompletionReifier(route, definition);
         } else if (definition instanceof OnExceptionDefinition) {
             return new OnExceptionReifier(route, definition);
-        } else if (definition instanceof OnFallbackDefinition) {
-            return new OnFallbackReifier(route, definition);
         } else if (definition instanceof OtherwiseDefinition) {
             return new OtherwiseReifier(route, definition);
         } else if (definition instanceof PipelineDefinition) {
@@ -359,8 +355,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new UnmarshalReifier(route, definition);
         } else if (definition instanceof ValidateDefinition) {
             return new ValidateReifier(route, definition);
-        } else if (definition instanceof WhenSkipSendToEndpointDefinition) {
-            return new WhenSkipSendToEndpointReifier(route, definition);
         } else if (definition instanceof WhenDefinition) {
             return new WhenReifier(route, definition);
         } else if (definition instanceof ResumableDefinition) {

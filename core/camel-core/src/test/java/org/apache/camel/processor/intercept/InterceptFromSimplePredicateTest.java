@@ -52,7 +52,7 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                interceptFrom().when(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor())
+                interceptFrom().onWhen(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor())
                         .to("mock:intercepted");
 
                 // and here is our route

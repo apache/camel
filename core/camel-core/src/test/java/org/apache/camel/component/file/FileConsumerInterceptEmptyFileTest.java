@@ -51,7 +51,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
+                interceptFrom().onWhen(simple("${file:length} == 0")).to("mock:skip").stop();
 
                 from(fileUri("?initialDelay=10&delay=10"))
                         .convertBodyTo(String.class).to("log:test")

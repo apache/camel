@@ -55,6 +55,7 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
+            definition.preCreateProcessor();
             when = createPredicate(definition.getOnWhen().getExpression());
         }
 

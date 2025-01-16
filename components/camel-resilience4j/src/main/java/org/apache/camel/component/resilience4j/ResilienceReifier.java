@@ -54,8 +54,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // create the regular and fallback processors
         Processor processor = createChildProcessor(true);
         Processor fallback = null;
-        if (definition.getOnFallback() != null) {
-            fallback = createProcessor(definition.getOnFallback());
+        if (definition.getOnFallback() != null && !definition.getOnFallback().getOutputs().isEmpty()) {
+            fallback = createOutputsProcessor(definition.getOnFallback().getOutputs());
         }
         boolean fallbackViaNetwork
                 = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);

@@ -32,9 +32,9 @@
              We have applied a when predicate so the interceptor only applies
              if the message body contains the string word 'Hello' -->
         <intercept>
-            <when>
+            <onWhen>
                 <simple>${in.body} contains 'Hello'</simple>
-            </when>
+            </onWhen>
             <to uri="mock:intercepted"/>
         </intercept>
 

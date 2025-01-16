@@ -60,9 +60,9 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<>();
-    @XmlElement(name = "onWhen")
+    @XmlElement
     @AsPredicate
-    private WhenDefinition onWhen;
+    private OnWhenDefinition onWhen;
     @XmlElement(name = "retryWhile")
     @AsPredicate
     @Metadata(label = "advanced")
@@ -296,7 +296,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return           the builder
      */
     public OnExceptionDefinition onWhen(@AsPredicate Predicate predicate) {
-        setOnWhen(new WhenDefinition(predicate));
+        setOnWhen(new OnWhenDefinition(predicate));
         return this;
     }
 
@@ -886,11 +886,11 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         this.continuedPolicy = continuedPolicy;
     }
 
-    public WhenDefinition getOnWhen() {
+    public OnWhenDefinition getOnWhen() {
         return onWhen;
     }
 
-    public void setOnWhen(WhenDefinition onWhen) {
+    public void setOnWhen(OnWhenDefinition onWhen) {
         this.onWhen = onWhen;
     }
 

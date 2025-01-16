@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Iterator;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -25,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
 
@@ -34,6 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,error")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
 public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlAttribute
@@ -91,37 +92,10 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (output instanceof OnFallbackDefinition onFallbackDefinition) {
-            onFallback = onFallbackDefinition;
-        } else {
-            if (onFallback != null) {
-                onFallback.addOutput(output);
-            } else {
-                super.addOutput(output);
-            }
-        }
-    }
-
-    @Override
-    public ProcessorDefinition<?> end() {
         if (onFallback != null) {
-            // end fallback as well
-            onFallback.end();
-        }
-        return super.end();
-    }
-
-    @Override
-    public void preCreateProcessor() {
-        // move the fallback from outputs to fallback which we need to ensure
-        // such as when using the XML DSL
-        Iterator<ProcessorDefinition<?>> it = outputs.iterator();
-        while (it.hasNext()) {
-            ProcessorDefinition<?> out = it.next();
-            if (out instanceof OnFallbackDefinition onFallbackDefinition) {
-                onFallback = onFallbackDefinition;
-                it.remove();
-            }
+            onFallback.addOutput(output);
+        } else {
+            super.addOutput(output);
         }
     }
 

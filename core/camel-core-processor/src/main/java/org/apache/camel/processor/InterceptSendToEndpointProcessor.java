@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Arrays;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
@@ -26,9 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
 import org.apache.camel.support.ExchangeHelper;
@@ -50,15 +48,18 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final Endpoint delegate;
     private final AsyncProducer producer;
     private final boolean skip;
+    private final Predicate onWhen;
     private AsyncProcessor pipeline;
+    private AsyncProcessor after;
 
     public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
-                                            boolean skip) {
+                                            boolean skip, Predicate onWhen) {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
         this.producer = producer;
         this.skip = skip;
+        this.onWhen = onWhen != null ? onWhen : p -> true;
     }
 
     @Override
@@ -74,13 +75,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
                     endpoint.getBefore(), exchange);
         }
         exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
-
-        if (pipeline != null) {
-            // detour the exchange with the pipeline that has before and after included
-            return pipeline.process(exchange, callback);
-        }
-
-        return callback(exchange, callback, true);
+        return pipeline.process(exchange, doneSync -> callback(exchange, callback, doneSync));
     }
 
     private boolean callback(Exchange exchange, AsyncCallback callback, boolean doneSync) {
@@ -94,15 +89,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         // determine if we should skip or not
         boolean shouldSkip = skip;
 
-        // if then interceptor had a when predicate, then we should only skip if it matched
-        Boolean whenMatches;
-        if (endpoint.getAfter() != null) {
-            // only get the property as after also needs to check this property
-            whenMatches = (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-        } else {
-            // remove property as its not longer needed
-            whenMatches = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-        }
+        // if then interceptor has predicate, then we should only skip if matched
+        Boolean whenMatches = (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         if (whenMatches != null) {
             shouldSkip = skip && whenMatches;
         }
@@ -110,14 +98,22 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         if (!shouldSkip) {
             ExchangeHelper.prepareOutToIn(exchange);
 
-            // route to original destination leveraging the asynchronous routing engine if possible
-            boolean s = producer.process(exchange, ds -> {
-                callback.done(doneSync && ds);
-            });
+            AsyncCallback ac1 = doneSync1 -> {
+                exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+                callback.done(doneSync1);
+            };
+            AsyncCallback ac2 = null;
+            if (after != null && (whenMatches == null || whenMatches)) {
+                ac2 = doneSync2 -> after.process(exchange, ac1);
+            }
+
+            // route to original destination (using producer) and when done, then
+            // optional route to the after processor
+            boolean s = producer.process(exchange, ac2 != null ? ac2 : ac1);
             return doneSync && s;
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}",
+                LOG.debug("Skip sending exchange to original intended destination: {} for exchange: {}",
                         getEndpoint(), exchange);
             }
             callback.done(doneSync);
@@ -133,48 +129,22 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     @Override
     protected void doBuild() throws Exception {
         CamelContextAware.trySetCamelContext(producer, endpoint.getCamelContext());
-        // build pipeline with before/after processors
-        if (endpoint.getBefore() != null || endpoint.getAfter() != null) {
-            // detour the exchange using synchronous processing
-            AsyncProcessor before = null;
-            if (endpoint.getBefore() != null) {
-                before = AsyncProcessorConverterHelper.convert(endpoint.getBefore());
-            }
-            AsyncProcessor ascb = new AsyncProcessorSupport() {
-                @Override
-                public boolean process(Exchange exchange, AsyncCallback callback) {
-                    return callback(exchange, callback, true);
-                }
-            };
-            // only execute the after if the intercept when predicate matches
-            final FilterProcessor filter = createFilterProcessor();
-            pipeline = new Pipeline(getEndpoint().getCamelContext(), Arrays.asList(before, ascb, filter));
-        }
 
-        ServiceHelper.buildService(producer, pipeline);
-    }
-
-    private FilterProcessor createFilterProcessor() {
-        Predicate predicate = exchange -> {
-            Boolean whenMatches
-                    = (Boolean) exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-            return whenMatches == null || whenMatches;
-        };
-        AsyncProcessor after = null;
+        pipeline = new FilterProcessor(getEndpoint().getCamelContext(), onWhen, endpoint.getBefore());
         if (endpoint.getAfter() != null) {
             after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
         }
-        return new FilterProcessor(getEndpoint().getCamelContext(), predicate, after);
+        ServiceHelper.buildService(producer, pipeline, after);
     }
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(producer, pipeline);
+        ServiceHelper.initService(producer, pipeline, after);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(producer, pipeline);
+        ServiceHelper.startService(producer, pipeline, after);
     }
 
     @Override

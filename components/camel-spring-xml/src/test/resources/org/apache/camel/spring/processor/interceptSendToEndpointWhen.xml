@@ -29,7 +29,7 @@
     <jmxAgent id="jmx" disabled="true"/>
 
         <interceptSendToEndpoint uri="mock:foo">
-            <when><simple>${body} == 'Hello World'</simple></when>
+            <onWhen><simple>${body} == 'Hello World'</simple></onWhen>
             <to uri="mock:detour"/>
             <transform>
                 <constant>Bye World</constant>

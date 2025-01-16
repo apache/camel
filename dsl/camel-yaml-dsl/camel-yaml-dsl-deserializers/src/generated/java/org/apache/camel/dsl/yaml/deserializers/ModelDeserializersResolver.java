@@ -292,6 +292,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "on-fallback": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
             case "onFallback": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
             case "org.apache.camel.model.OnFallbackDefinition": return new ModelDeserializers.OnFallbackDefinitionDeserializer();
+            case "on-when": return new ModelDeserializers.OnWhenDefinitionDeserializer();
+            case "onWhen": return new ModelDeserializers.OnWhenDefinitionDeserializer();
+            case "org.apache.camel.model.OnWhenDefinition": return new ModelDeserializers.OnWhenDefinitionDeserializer();
             case "open-api": return new ModelDeserializers.OpenApiDefinitionDeserializer();
             case "openApi": return new ModelDeserializers.OpenApiDefinitionDeserializer();
             case "org.apache.camel.model.rest.OpenApiDefinition": return new ModelDeserializers.OpenApiDefinitionDeserializer();
@@ -593,9 +596,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "when": return new ModelDeserializers.WhenDefinitionDeserializer();
             case "org.apache.camel.model.WhenDefinition": return new ModelDeserializers.WhenDefinitionDeserializer();
-            case "when-skip-send-to-endpoint": return new ModelDeserializers.WhenSkipSendToEndpointDefinitionDeserializer();
-            case "whenSkipSendToEndpoint": return new ModelDeserializers.WhenSkipSendToEndpointDefinitionDeserializer();
-            case "org.apache.camel.model.WhenSkipSendToEndpointDefinition": return new ModelDeserializers.WhenSkipSendToEndpointDefinitionDeserializer();
             case "wire-tap": return new ModelDeserializers.WireTapDefinitionDeserializer();
             case "wireTap": return new ModelDeserializers.WireTapDefinitionDeserializer();
             case "org.apache.camel.model.WireTapDefinition": return new ModelDeserializers.WireTapDefinitionDeserializer();

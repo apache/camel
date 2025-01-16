@@ -201,12 +201,19 @@ public class ModelParser extends BaseParser {
     protected CatchDefinition doParseCatchDefinition() throws IOException, XmlPullParserException {
         return doParse(new CatchDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "exception": doAdd(doParseText(), def.getExceptions(), def::setExceptions); yield true;
-                case "onWhen": def.setOnWhen(doParseWhenDefinition()); yield true;
+                case "onWhen": def.setOnWhen(doParseOnWhenDefinition()); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
     }
-    protected WhenDefinition doParseWhenDefinition() throws IOException, XmlPullParserException {
-        return doParse(new WhenDefinition(), processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
+    protected OnWhenDefinition doParseOnWhenDefinition() throws IOException, XmlPullParserException {
+        return doParse(new OnWhenDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+                if (v != null) {
+                    def.setExpression(v);
+                    return true;
+                }
+                return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
     }
     protected ChoiceDefinition doParseChoiceDefinition() throws IOException, XmlPullParserException {
         return doParse(new ChoiceDefinition(), (def, key, val) -> switch (key) {
@@ -217,6 +224,9 @@ public class ModelParser extends BaseParser {
                 case "when": doAdd(doParseWhenDefinition(), def.getWhenClauses(), def::setWhenClauses); yield true;
                 default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
+    }
+    protected WhenDefinition doParseWhenDefinition() throws IOException, XmlPullParserException {
+        return doParse(new WhenDefinition(), processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
         return doParse(new OtherwiseDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
@@ -241,7 +251,7 @@ public class ModelParser extends BaseParser {
     protected OnFallbackDefinition doParseOnFallbackDefinition() throws IOException, XmlPullParserException {
         return doParse(new OnFallbackDefinition(), (def, key, val) -> switch (key) {
                 case "fallbackViaNetwork": def.setFallbackViaNetwork(val); yield true;
-                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+                default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> {
                 ProcessorDefinition v = doParseProcessorDefinitionRef(key);
                 if (v != null) {
@@ -448,14 +458,20 @@ public class ModelParser extends BaseParser {
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
+    protected <T extends InterceptDefinition> ElementHandler<T> interceptDefinitionElementHandler() {
+        return (def, key) -> switch (key) {
+            case "onWhen": def.setOnWhen(doParseOnWhenDefinition()); yield true;
+            default: yield outputDefinitionElementHandler().accept(def, key);
+        };
+    }
     protected InterceptDefinition doParseInterceptDefinition() throws IOException, XmlPullParserException {
-        return doParse(new InterceptDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
+        return doParse(new InterceptDefinition(), processorDefinitionAttributeHandler(), interceptDefinitionElementHandler(), noValueHandler());
     }
     protected InterceptFromDefinition doParseInterceptFromDefinition() throws IOException, XmlPullParserException {
         return doParse(new InterceptFromDefinition(), (def, key, val) -> switch (key) {
                 case "uri": def.setUri(sanitizeUri(val)); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, outputDefinitionElementHandler(), noValueHandler());
+            }, interceptDefinitionElementHandler(), noValueHandler());
     }
     protected InterceptSendToEndpointDefinition doParseInterceptSendToEndpointDefinition() throws IOException, XmlPullParserException {
         return doParse(new InterceptSendToEndpointDefinition(), (def, key, val) -> switch (key) {
@@ -463,7 +479,10 @@ public class ModelParser extends BaseParser {
                 case "skipSendToOriginalEndpoint": def.setSkipSendToOriginalEndpoint(val); yield true;
                 case "uri": def.setUri(sanitizeUri(val)); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, outputDefinitionElementHandler(), noValueHandler());
+            }, (def, key) -> switch (key) {
+                case "onWhen": def.setOnWhen(doParseOnWhenDefinition()); yield true;
+                default: yield outputDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
     }
     protected KameletDefinition doParseKameletDefinition() throws IOException, XmlPullParserException {
         return doParse(new KameletDefinition(), (def, key, val) -> switch (key) {
@@ -543,7 +562,7 @@ public class ModelParser extends BaseParser {
                 case "useOriginalMessage": def.setUseOriginalMessage(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> switch (key) {
-                case "onWhen": def.setOnWhen(doParseWhenDefinition()); yield true;
+                case "onWhen": def.setOnWhen(doParseOnWhenDefinition()); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
     }
@@ -559,7 +578,7 @@ public class ModelParser extends BaseParser {
                 case "continued": def.setContinued(doParseExpressionSubElementDefinition()); yield true;
                 case "exception": doAdd(doParseText(), def.getExceptions(), def::setExceptions); yield true;
                 case "handled": def.setHandled(doParseExpressionSubElementDefinition()); yield true;
-                case "onWhen": def.setOnWhen(doParseWhenDefinition()); yield true;
+                case "onWhen": def.setOnWhen(doParseOnWhenDefinition()); yield true;
                 case "redeliveryPolicy": def.setRedeliveryPolicyType(doParseRedeliveryPolicyDefinition()); yield true;
                 case "retryWhile": def.setRetryWhile(doParseExpressionSubElementDefinition()); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
@@ -2796,11 +2815,10 @@ public class ModelParser extends BaseParser {
             case "aggregate": return doParseAggregateDefinition();
             case "bean": return doParseBeanDefinition();
             case "doCatch": return doParseCatchDefinition();
-            case "when": return doParseWhenDefinition();
             case "choice": return doParseChoiceDefinition();
+            case "when": return doParseWhenDefinition();
             case "otherwise": return doParseOtherwiseDefinition();
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
-            case "onFallback": return doParseOnFallbackDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();
             case "convertHeaderTo": return doParseConvertHeaderDefinition();

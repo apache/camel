@@ -31,6 +31,8 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "when")
 public class WhenDefinition extends OutputExpressionNode {
 
+    // TODO: Make special for <choice>
+
     public WhenDefinition() {
     }
 

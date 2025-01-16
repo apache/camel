@@ -1073,6 +1073,15 @@ Route to be executed when Circuit Breaker EIP executes fallback
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="onWhen" type="tns:onWhenDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Used for triggering doCatch in specific situations.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="openApi" type="tns:openApiDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3647,11 +3656,10 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -4276,25 +4284,15 @@ The exception(s) to catch.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained
-controlling whether a thrown exception should be intercepted by this exception type or not.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" ref="tns:onWhen"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -4362,6 +4360,61 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="onWhenDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:choice>
+          <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
+          <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
+          <xs:element ref="tns:exchangeProperty"/>
+          <xs:element ref="tns:groovy"/>
+          <xs:element ref="tns:header"/>
+          <xs:element ref="tns:hl7terser"/>
+          <xs:element ref="tns:java"/>
+          <xs:element ref="tns:js"/>
+          <xs:element ref="tns:joor"/>
+          <xs:element ref="tns:jq"/>
+          <xs:element ref="tns:jsonpath"/>
+          <xs:element ref="tns:language"/>
+          <xs:element ref="tns:method"/>
+          <xs:element ref="tns:mvel"/>
+          <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python"/>
+          <xs:element ref="tns:ref"/>
+          <xs:element ref="tns:simple"/>
+          <xs:element ref="tns:spel"/>
+          <xs:element ref="tns:tokenize"/>
+          <xs:element ref="tns:variable"/>
+          <xs:element ref="tns:wasm"/>
+          <xs:element ref="tns:xtokenize"/>
+          <xs:element ref="tns:xpath"/>
+          <xs:element ref="tns:xquery"/>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="choiceDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:when"/>
+          <xs:element minOccurs="0" ref="tns:otherwise"/>
+        </xs:sequence>
+        <xs:attribute name="precondition" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are evaluated
+during startup to keep at runtime only the branch that matched. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -4402,11 +4455,10 @@ controlling whether a thrown exception should be intercepted by this exception t
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -4477,26 +4529,6 @@ controlling whether a thrown exception should be intercepted by this exception t
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="choiceDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:processorDefinition">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:when"/>
-          <xs:element minOccurs="0" ref="tns:otherwise"/>
-        </xs:sequence>
-        <xs:attribute name="precondition" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Indicates whether this Choice EIP is in precondition mode or not. If so its branches (when/otherwise) are evaluated
-during startup to keep at runtime only the branch that matched. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:complexType name="otherwiseDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -4505,11 +4537,10 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -4586,16 +4617,14 @@ during startup to keep at runtime only the branch that matched. Default value: f
         <xs:sequence>
           <xs:element minOccurs="0" ref="tns:resilience4jConfiguration"/>
           <xs:element minOccurs="0" ref="tns:faultToleranceConfiguration"/>
-          <xs:element minOccurs="0" ref="tns:onFallback"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -4662,6 +4691,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:wireTap"/>
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
+          <xs:element minOccurs="0" ref="tns:onFallback"/>
         </xs:sequence>
         <xs:attribute name="configuration" type="xs:string">
           <xs:annotation>
@@ -5060,17 +5090,16 @@ References to a custom thread pool to use when bulkhead is enabled.
   </xs:complexType>
   <xs:complexType name="onFallbackDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:processorDefinition">
+      <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6238,11 +6267,10 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6331,11 +6359,10 @@ predicate evaluated as true or false.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6495,11 +6522,10 @@ Global option value.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6654,15 +6680,15 @@ Whether if validation is required for this input type. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
+          <xs:element minOccurs="0" ref="tns:onWhen"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6754,15 +6780,15 @@ intercepted.
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
+          <xs:element minOccurs="0" ref="tns:onWhen"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6869,11 +6895,10 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -6971,11 +6996,10 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -7302,11 +7326,10 @@ such as groovy.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -10784,11 +10807,10 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -10996,25 +11018,15 @@ individual unit of work. Default value: false
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Sets an additional predicate that should be true before the onCompletion is triggered. To be used for fine grained
-controlling whether a completion callback should be invoked or not.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" ref="tns:onWhen"/>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -11168,16 +11180,7 @@ A set of exceptions to react upon.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element minOccurs="0" name="onWhen" type="tns:whenDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Sets an additional predicate that should be true before the onException is triggered. To be used for fine grained
-controlling whether a thrown exception should be intercepted by this exception type or not.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+          <xs:element minOccurs="0" ref="tns:onWhen"/>
           <xs:element minOccurs="0" name="retryWhile" type="tns:expressionSubElementDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en">
@@ -11211,11 +11214,10 @@ its considered handled as well.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -11472,11 +11474,10 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -11555,11 +11556,10 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -12231,11 +12231,10 @@ Name of variable to remove.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -12583,11 +12582,10 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -13023,11 +13021,10 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -13483,11 +13480,10 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -13716,11 +13712,10 @@ individual unit of work. Default value: false
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -14419,11 +14414,10 @@ Sets the maximum number of tokens that can overlap in each segment.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>
@@ -14564,11 +14558,10 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:when"/>
             <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:onFallback"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
             <xs:element ref="tns:convertHeaderTo"/>

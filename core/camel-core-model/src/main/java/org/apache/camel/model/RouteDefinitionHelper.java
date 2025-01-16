@@ -578,7 +578,6 @@ public final class RouteDefinitionHelper {
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
             for (InterceptDefinition intercept : intercepts) {
-                intercept.afterPropertiesSet();
                 // init the parent
                 initParent(intercept);
                 // add as first output so intercept is handled before the actual
@@ -643,7 +642,6 @@ public final class RouteDefinitionHelper {
                 }
 
                 if (match) {
-                    intercept.afterPropertiesSet();
                     // init the parent
                     initParent(intercept);
                     // add as first output so intercept is handled before the

@@ -160,6 +160,9 @@ public class ModelWriter extends BaseWriter {
     public void writeOnFallbackDefinition(OnFallbackDefinition def) throws IOException {
         doWriteOnFallbackDefinition("onFallback", def);
     }
+    public void writeOnWhenDefinition(OnWhenDefinition def) throws IOException {
+        doWriteOnWhenDefinition("onWhen", def);
+    }
     public void writeOptimisticLockRetryPolicyDefinition(OptimisticLockRetryPolicyDefinition def) throws IOException {
         doWriteOptimisticLockRetryPolicyDefinition("optimisticLockRetryPolicy", def);
     }
@@ -850,7 +853,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCatchDefinition(String name, CatchDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteElement("onWhen", def.getOnWhen(), this::doWriteWhenDefinition);
+        doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, "exception", def.getExceptions(), this::doWriteString);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
@@ -867,9 +870,9 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("configuration", def.getConfiguration(), null);
-        doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteElement("onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
+        doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
@@ -1071,6 +1074,7 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteInterceptDefinitionElements(InterceptDefinition def) throws IOException {
+        doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
     }
     protected void doWriteInterceptDefinition(String name, InterceptDefinition def) throws IOException {
@@ -1092,6 +1096,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("afterUri", def.getAfterUri(), null);
         doWriteAttribute("uri", def.getUri(), null);
         doWriteAttribute("skipSendToOriginalEndpoint", def.getSkipSendToOriginalEndpoint(), null);
+        doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
@@ -1225,7 +1230,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("onCompleteOnly", def.getOnCompleteOnly(), null);
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("onFailureOnly", def.getOnFailureOnly(), null);
-        doWriteElement("onWhen", def.getOnWhen(), this::doWriteWhenDefinition);
+        doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
@@ -1242,15 +1247,21 @@ public class ModelWriter extends BaseWriter {
         doWriteElement("retryWhile", def.getRetryWhile(), this::doWriteExpressionSubElementDefinition);
         doWriteElement("redeliveryPolicy", def.getRedeliveryPolicyType(), this::doWriteRedeliveryPolicyDefinition);
         doWriteElement("handled", def.getHandled(), this::doWriteExpressionSubElementDefinition);
-        doWriteElement("onWhen", def.getOnWhen(), this::doWriteWhenDefinition);
+        doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
     protected void doWriteOnFallbackDefinition(String name, OnFallbackDefinition def) throws IOException {
         startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("fallbackViaNetwork", def.getFallbackViaNetwork(), "false");
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        endElement(name);
+    }
+    protected void doWriteOnWhenDefinition(String name, OnWhenDefinition def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         endElement(name);
     }
     protected void doWriteOptimisticLockRetryPolicyDefinition(String name, OptimisticLockRetryPolicyDefinition def) throws IOException {
@@ -3751,6 +3762,7 @@ public class ModelWriter extends BaseWriter {
                 case "OnCompletionDefinition" -> doWriteOnCompletionDefinition("onCompletion", (OnCompletionDefinition) v);
                 case "OnExceptionDefinition" -> doWriteOnExceptionDefinition("onException", (OnExceptionDefinition) v);
                 case "OnFallbackDefinition" -> doWriteOnFallbackDefinition("onFallback", (OnFallbackDefinition) v);
+                case "OnWhenDefinition" -> doWriteOnWhenDefinition("onWhen", (OnWhenDefinition) v);
                 case "OtherwiseDefinition" -> doWriteOtherwiseDefinition("otherwise", (OtherwiseDefinition) v);
                 case "OutputTypeDefinition" -> doWriteOutputTypeDefinition("outputType", (OutputTypeDefinition) v);
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
@@ -3854,7 +3866,6 @@ public class ModelWriter extends BaseWriter {
                 case "MulticastDefinition" -> doWriteMulticastDefinition("multicast", (MulticastDefinition) v);
                 case "OnCompletionDefinition" -> doWriteOnCompletionDefinition("onCompletion", (OnCompletionDefinition) v);
                 case "OnExceptionDefinition" -> doWriteOnExceptionDefinition("onException", (OnExceptionDefinition) v);
-                case "OnFallbackDefinition" -> doWriteOnFallbackDefinition("onFallback", (OnFallbackDefinition) v);
                 case "OtherwiseDefinition" -> doWriteOtherwiseDefinition("otherwise", (OtherwiseDefinition) v);
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);

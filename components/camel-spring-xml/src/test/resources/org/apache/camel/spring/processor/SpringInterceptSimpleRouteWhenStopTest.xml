@@ -29,9 +29,9 @@
     <jmxAgent id="jmx" disabled="true"/>
         <intercept>
             <!-- only trigger this interceptor if the message body contains the word Hello -->
-            <when>
+            <onWhen>
                 <simple>${in.body} contains 'Hello'</simple>
-            </when>
+            </onWhen>
             <to uri="mock:intercepted"/>
             <!-- stop continue routing -->
             <stop/>

@@ -42,7 +42,7 @@ public class InterceptSimpleRouteWhenTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                intercept().when(body().contains("Hello")).to("mock:intercepted");
+                intercept().onWhen(body().contains("Hello")).to("mock:intercepted");
 
                 from("direct:start").to("mock:foo", "mock:bar", "mock:result");
                 // END SNIPPET: e1

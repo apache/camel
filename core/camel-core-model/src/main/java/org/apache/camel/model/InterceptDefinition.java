@@ -16,17 +16,15 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
@@ -38,15 +36,16 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
-    @XmlTransient
-    protected List<Processor> intercepted = new ArrayList<>();
+    @XmlElement
+    @AsPredicate
+    private OnWhenDefinition onWhen;
 
     public InterceptDefinition() {
     }
 
     protected InterceptDefinition(InterceptDefinition source) {
         super(source);
-        this.intercepted = new ArrayList<>(source.intercepted);
+        this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
     }
 
     @Override
@@ -90,46 +89,35 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         super.setOutputs(outputs);
     }
 
+    public OnWhenDefinition getOnWhen() {
+        return onWhen;
+    }
+
+    public void setOnWhen(OnWhenDefinition onWhen) {
+        this.onWhen = onWhen;
+    }
+
+    /**
+     * Applies this interceptor only if the given predicate is true
+     *
+     * @param      predicate the predicate
+     * @return               the builder
+     * @deprecated           use {@link #onWhen(Predicate)}
+     */
+    @Deprecated
+    public InterceptDefinition when(@AsPredicate Predicate predicate) {
+        return onWhen(predicate);
+    }
+
     /**
      * Applies this interceptor only if the given predicate is true
      *
      * @param  predicate the predicate
      * @return           the builder
      */
-    public InterceptDefinition when(@AsPredicate Predicate predicate) {
-        WhenDefinition when = new WhenDefinition(predicate);
-        addOutput(when);
+    public InterceptDefinition onWhen(@AsPredicate Predicate predicate) {
+        setOnWhen(new OnWhenDefinition(predicate));
         return this;
-    }
-
-    /**
-     * This method is <b>only</b> for handling some post configuration that is needed since this is an interceptor, and
-     * we have to do a bit of magic logic to fixup to handle predicates with or without proceed/stop set as well.
-     */
-    public void afterPropertiesSet() {
-        if (getOutputs().isEmpty()) {
-            // no outputs
-            return;
-        }
-
-        ProcessorDefinition<?> first = getOutputs().get(0);
-        if (first instanceof WhenDefinition when) {
-            // move this outputs to the when, expect the first one
-            // as the first one is the interceptor itself
-            for (int i = 1; i < outputs.size(); i++) {
-                ProcessorDefinition<?> out = outputs.get(i);
-                when.addOutput(out);
-            }
-            // remove the moved from the original output, by just keeping the
-            // first one
-            ProcessorDefinition<?> keep = outputs.get(0);
-            clearOutput();
-            outputs.add(keep);
-        }
-    }
-
-    public List<Processor> getIntercepted() {
-        return intercepted;
     }
 
 }
