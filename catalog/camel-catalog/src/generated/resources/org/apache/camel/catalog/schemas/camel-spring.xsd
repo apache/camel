@@ -3658,7 +3658,6 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4291,7 +4290,6 @@ The exception(s) to catch.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4400,7 +4398,7 @@ The exception(s) to catch.
   </xs:complexType>
   <xs:complexType name="choiceDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:processorDefinition">
+      <xs:extension base="tns:noOutputDefinition">
         <xs:sequence>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:when"/>
           <xs:element minOccurs="0" ref="tns:otherwise"/>
@@ -4457,7 +4455,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4531,7 +4528,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
   </xs:complexType>
   <xs:complexType name="otherwiseDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:output">
+      <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element ref="tns:aggregate"/>
@@ -4539,7 +4536,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4623,7 +4619,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -5098,7 +5093,6 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6269,7 +6263,6 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6361,7 +6354,6 @@ predicate evaluated as true or false.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6524,7 +6516,6 @@ Global option value.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6687,7 +6678,6 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6787,7 +6777,6 @@ intercepted.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6897,7 +6886,6 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6998,7 +6986,6 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -7328,7 +7315,6 @@ such as groovy.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -10809,7 +10795,6 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11025,7 +11010,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11216,7 +11200,6 @@ its considered handled as well.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11476,7 +11459,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11558,7 +11540,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -12233,7 +12214,6 @@ Name of variable to remove.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -12584,7 +12564,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -13023,7 +13002,6 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -13482,7 +13460,6 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -13714,7 +13691,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -14416,7 +14392,6 @@ Sets the maximum number of tokens that can overlap in each segment.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -14560,7 +14535,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:when"/>
-            <xs:element ref="tns:otherwise"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
