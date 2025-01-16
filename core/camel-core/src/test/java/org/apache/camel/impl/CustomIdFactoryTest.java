@@ -103,7 +103,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should take the otherwise path
-        assertEquals("#choice3##log7##to8#", ids);
+        assertEquals("#choice3##log6##to7#", ids);
     }
 
     private static class MyDebuggerCheckingId implements InterceptStrategy {

@@ -20,35 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class ChoiceEndOrEndChoiceIssueTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Test
-    public void testEndChoiceInvalid() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start")
-                            .choice()
-                            .when(header("number").isEqualTo("one")).to("mock:one")
-                            .when(header("number").isEqualTo("two")).to("mock:two")
-                            .when(header("number").isEqualTo("three")).to("mock:three").endChoice()
-                            .to("mock:finally");
-                }
-            });
-        }, "Should have thrown exception");
-
-        assertEquals("A new choice clause should start with a when() or otherwise()."
-                     + " If you intend to end the entire choice and are using endChoice() then use end() instead.",
-                e.getMessage());
     }
 
     @Test

@@ -99,4 +99,14 @@ public class WhenDefinition extends OutputExpressionNode {
         // the parent of this, so return the parent
         return this.getParent();
     }
+
+    @Override
+    public void setId(String id) {
+        if (!getOutputs().isEmpty()) {
+            var last = getOutputs().get(getOutputs().size() - 1);
+            last.setId(id);
+        } else {
+            super.setId(id);
+        }
+    }
 }

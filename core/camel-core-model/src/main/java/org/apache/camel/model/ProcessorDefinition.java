@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DataFormatClause;
@@ -197,7 +198,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         CamelContextAware.trySetCamelContext(output, context);
 
         if (!(this instanceof OutputNode)) {
-            getParent().addOutput(output);
+            ProcessorDefinition p = getParent();
+            p.addOutput(output);
             return;
         }
 
@@ -660,6 +662,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Override
     public Type id(String id) {
+        // special for choice otherwise
+        if (this instanceof ChoiceDefinition cbr) {
+            if (cbr.getOtherwise() != null && cbr.getOtherwise().getOutputs().isEmpty()) {
+                cbr.getOtherwise().id(id);
+                return asType();
+            }
+        }
+
         if (this instanceof OutputNode && getOutputs().isEmpty()) {
             // set id on this
             setId(id);
@@ -1059,10 +1069,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // okay end this and get back to the choice
         def = end();
-        if (def instanceof WhenDefinition) {
-            return (ChoiceDefinition) def.getParent();
-        } else if (def instanceof OtherwiseDefinition) {
-            return (ChoiceDefinition) def.getParent();
+        NamedNode p = def.getParent();
+        if ("when".equals(p.getShortName())) {
+            return (ChoiceDefinition) p;
+        } else if ("otherwise".equals(p.getShortName())) {
+            return (ChoiceDefinition) p;
         } else {
             return (ChoiceDefinition) def;
         }

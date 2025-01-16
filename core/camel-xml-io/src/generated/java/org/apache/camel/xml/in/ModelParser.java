@@ -229,7 +229,14 @@ public class ModelParser extends BaseParser {
         return doParse(new WhenDefinition(), processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OtherwiseDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
+        return doParse(new OtherwiseDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+                ProcessorDefinition v = doParseProcessorDefinitionRef(key);
+                if (v != null) {
+                    doAdd(v, def.getOutputs(), def::setOutputs);
+                    return true;
+                }
+                return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+            }, noValueHandler());
     }
     protected CircuitBreakerDefinition doParseCircuitBreakerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CircuitBreakerDefinition(), (def, key, val) -> switch (key) {
@@ -2817,7 +2824,6 @@ public class ModelParser extends BaseParser {
             case "doCatch": return doParseCatchDefinition();
             case "choice": return doParseChoiceDefinition();
             case "when": return doParseWhenDefinition();
-            case "otherwise": return doParseOtherwiseDefinition();
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();

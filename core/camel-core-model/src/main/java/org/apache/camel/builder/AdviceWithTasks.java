@@ -475,8 +475,13 @@ public final class AdviceWithTasks {
         }
         // for CBR then use the outputs from the node itself
         // so we work on the right branch in the CBR (when/otherwise)
-        if (parent instanceof ChoiceDefinition) {
-            return node.getOutputs();
+        if (parent instanceof ChoiceDefinition choice) {
+            if (choice.getOtherwise() != null) {
+                return choice.getOtherwise().getOutputs();
+            } else if (!choice.getWhenClauses().isEmpty()) {
+                var last = choice.getWhenClauses().get(choice.getWhenClauses().size() - 1);
+                return last.getOutputs();
+            }
         }
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();
         boolean allAbstract = true;

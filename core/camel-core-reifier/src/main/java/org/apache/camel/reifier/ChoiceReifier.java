@@ -31,6 +31,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.ExpressionFactoryAware;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,9 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         }
         Processor otherwiseProcessor = null;
         if (definition.getOtherwise() != null) {
-            otherwiseProcessor = createProcessor(definition.getOtherwise());
+            // ensure id is assigned on otherwise
+            definition.getOtherwise().idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+            otherwiseProcessor = createOutputsProcessor(definition.getOtherwise().getOutputs());
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
@@ -116,7 +119,7 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
         if (definition.getOtherwise() != null) {
             LOG.debug("doSwitch selected: otherwise");
-            return createProcessor(definition.getOtherwise());
+            return createOutputsProcessor(definition.getOtherwise().getOutputs());
         }
 
         // no cases were selected

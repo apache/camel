@@ -16,12 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -31,13 +33,21 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
+public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseDefinition>
+        implements CopyableDefinition<OtherwiseDefinition>, Block, OutputNode {
+
+    @XmlTransient
+    private ProcessorDefinition<?> parent;
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public OtherwiseDefinition() {
     }
 
     protected OtherwiseDefinition(OtherwiseDefinition source) {
         super(source);
+        this.parent = source.parent;
+        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
     @Override
@@ -45,15 +55,37 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
         return new OtherwiseDefinition(this);
     }
 
-    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    @XmlElementRef
-    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        super.setOutputs(outputs);
+        this.outputs = outputs;
+    }
+
+    @Override
+    public ProcessorDefinition<?> getParent() {
+        return parent;
+    }
+
+    public void setParent(ProcessorDefinition<?> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
+        output.setParent(parent);
+        outputs.add(output);
+    }
+
+    @Override
+    public void setId(String id) {
+        if (outputs.isEmpty()) {
+            super.setId(id);
+        } else {
+            var last = outputs.get(outputs.size() - 1);
+            last.setId(id);
+        }
     }
 
     @Override
