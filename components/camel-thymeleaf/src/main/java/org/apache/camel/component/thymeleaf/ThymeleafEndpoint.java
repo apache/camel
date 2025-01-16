@@ -241,39 +241,44 @@ public class ThymeleafEndpoint extends ResourceEndpoint {
         this.cacheable = cacheable;
     }
 
-    protected synchronized TemplateEngine getTemplateEngine() {
-        if (templateEngine == null) {
-            ITemplateResolver templateResolver;
+    protected TemplateEngine getTemplateEngine() {
+        getInternalLock().lock();
+        try {
+            if (templateEngine == null) {
+                ITemplateResolver templateResolver;
 
-            switch (resolver) {
-                case CLASS_LOADER -> {
-                    templateResolver = classLoaderTemplateResolver();
+                switch (resolver) {
+                    case CLASS_LOADER -> {
+                        templateResolver = classLoaderTemplateResolver();
+                    }
+                    case DEFAULT -> {
+                        templateResolver = defaultTemplateResolver();
+                    }
+                    case FILE -> {
+                        templateResolver = fileTemplateResolver();
+                    }
+                    case STRING -> {
+                        templateResolver = stringTemplateResolver();
+                    }
+                    case URL -> {
+                        templateResolver = urlTemplateResolver();
+                    }
+                    case WEB_APP -> {
+                        templateResolver = webApplicationTemplateResolver();
+                    }
+                    default -> {
+                        throw new RuntimeCamelException("cannot determine TemplateResolver for type " + resolver);
+                    }
                 }
-                case DEFAULT -> {
-                    templateResolver = defaultTemplateResolver();
-                }
-                case FILE -> {
-                    templateResolver = fileTemplateResolver();
-                }
-                case STRING -> {
-                    templateResolver = stringTemplateResolver();
-                }
-                case URL -> {
-                    templateResolver = urlTemplateResolver();
-                }
-                case WEB_APP -> {
-                    templateResolver = webApplicationTemplateResolver();
-                }
-                default -> {
-                    throw new RuntimeCamelException("cannot determine TemplateResolver for type " + resolver);
-                }
+
+                templateEngine = new TemplateEngine();
+                templateEngine.setTemplateResolver(templateResolver);
             }
 
-            templateEngine = new TemplateEngine();
-            templateEngine.setTemplateResolver(templateResolver);
+            return templateEngine;
+        } finally {
+            getInternalLock().unlock();
         }
-
-        return templateEngine;
     }
 
     /**

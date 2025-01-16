@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.univocity.parsers.common.AbstractWriter;
 import org.apache.camel.Exchange;
@@ -35,6 +37,7 @@ import static org.apache.camel.support.ExchangeHelper.convertToType;
  * @param <W> Writer class
  */
 final class Marshaller<W extends AbstractWriter<?>> {
+    private final Lock headersLock = new ReentrantLock();
     private final LinkedHashSet<String> headers = new LinkedHashSet<>();
     private final boolean adaptHeaders;
 
@@ -85,11 +88,14 @@ final class Marshaller<W extends AbstractWriter<?>> {
     private void writeRow(Exchange exchange, Object row, W writer) throws NoTypeConversionAvailableException {
         Map<?, ?> map = convertToMandatoryType(exchange, Map.class, row);
         if (adaptHeaders) {
-            synchronized (headers) {
+            headersLock.lock();
+            try {
                 for (Object key : map.keySet()) {
                     headers.add(convertToMandatoryType(exchange, String.class, key));
                 }
                 writeRow(map, writer);
+            } finally {
+                headersLock.unlock();
             }
         } else {
             writeRow(map, writer);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,15 +75,16 @@ public class SmppSplitter {
     protected static final int MAX_SEG_COUNT = 255;
 
     private static final Logger LOG = LoggerFactory.getLogger(SmppSplitter.class);
+    private static final Lock LOCK = new ReentrantLock();
 
     /**
      * Current reference number.
      */
     private static int refNum;
 
-    private int messageLength;
-    private int segmentLength;
-    private int currentLength;
+    private final int messageLength;
+    private final int segmentLength;
+    private final int currentLength;
 
     protected SmppSplitter(int messageLength, int segmentLength, int currentLength) {
         this.messageLength = messageLength;
@@ -93,23 +97,38 @@ public class SmppSplitter {
      *
      * @return the reference number of the multipart message
      */
-    protected static synchronized byte getReferenceNumber() {
-        refNum++;
-        if (refNum == 256) {
-            refNum = 1;
+    protected static byte getReferenceNumber() {
+        LOCK.lock();
+        try {
+            refNum++;
+            if (refNum == 256) {
+                refNum = 1;
+            }
+            return (byte) refNum;
+        } finally {
+            LOCK.unlock();
         }
-        return (byte) refNum;
     }
 
-    protected static synchronized byte getCurrentReferenceNumber() {
-        return (byte) refNum;
+    protected static byte getCurrentReferenceNumber() {
+        LOCK.lock();
+        try {
+            return (byte) refNum;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**
      * only needed for the unit tests
      */
-    protected static synchronized void resetCurrentReferenceNumber() {
-        SmppSplitter.refNum = 0;
+    protected static void resetCurrentReferenceNumber() {
+        LOCK.lock();
+        try {
+            SmppSplitter.refNum = 0;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     public byte[][] split(byte[] message) {

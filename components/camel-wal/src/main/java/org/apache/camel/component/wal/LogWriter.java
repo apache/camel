@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +41,7 @@ public final class LogWriter implements AutoCloseable {
     public static final int DEFAULT_CAPACITY = 1024 * 512;
     private static final Logger LOG = LoggerFactory.getLogger(LogWriter.class);
 
+    private final Lock lock = new ReentrantLock();
     private final FileChannel fileChannel;
 
     private final LogSupervisor flushPolicy;
@@ -89,12 +92,15 @@ public final class LogWriter implements AutoCloseable {
         fileChannel.force(true);
     }
 
-    private synchronized void tryFlush() {
+    private void tryFlush() {
+        lock.lock();
         try {
             flush();
         } catch (IOException e) {
             LOG.error("Unable to save record: {}", e.getMessage(), e);
             throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
         }
     }
 

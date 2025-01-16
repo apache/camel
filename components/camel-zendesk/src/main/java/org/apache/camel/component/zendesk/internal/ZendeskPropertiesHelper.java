@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.zendesk.internal;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.zendesk.ZendeskConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -25,16 +28,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  */
 public final class ZendeskPropertiesHelper extends ApiMethodPropertiesHelper<ZendeskConfiguration> {
 
+    private static final Lock LOCK = new ReentrantLock();
     private static ZendeskPropertiesHelper helper;
 
     private ZendeskPropertiesHelper(CamelContext context) {
         super(context, ZendeskConfiguration.class, ZendeskConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized ZendeskPropertiesHelper getHelper(CamelContext context) {
-        if (helper == null) {
-            helper = new ZendeskPropertiesHelper(context);
+    public static ZendeskPropertiesHelper getHelper(CamelContext context) {
+        LOCK.lock();
+        try {
+            if (helper == null) {
+                helper = new ZendeskPropertiesHelper(context);
+            }
+            return helper;
+        } finally {
+            LOCK.unlock();
         }
-        return helper;
     }
 }

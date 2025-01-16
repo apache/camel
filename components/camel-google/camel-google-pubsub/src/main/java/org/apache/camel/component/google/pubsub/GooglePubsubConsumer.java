@@ -18,11 +18,11 @@ package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
@@ -63,7 +63,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.processor = processor;
         this.subscribers = Collections.synchronizedList(new LinkedList<>());
-        this.pendingSynchronousPullResponses = Collections.synchronizedSet(new HashSet<>());
+        this.pendingSynchronousPullResponses = ConcurrentHashMap.newKeySet();
         String loggerId = endpoint.getLoggerId();
 
         if (Strings.isNullOrEmpty(loggerId)) {
@@ -108,16 +108,14 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     }
 
     private void safeCancelSynchronousPullResponses() {
-        synchronized (pendingSynchronousPullResponses) {
-            for (ApiFuture<PullResponse> pullResponseApiFuture : pendingSynchronousPullResponses) {
-                try {
-                    pullResponseApiFuture.cancel(true);
-                } catch (Exception e) {
-                    localLog.warn("Exception while cancelling pending synchronous pull response", e);
-                }
+        for (ApiFuture<PullResponse> pullResponseApiFuture : pendingSynchronousPullResponses) {
+            try {
+                pullResponseApiFuture.cancel(true);
+            } catch (Exception e) {
+                localLog.warn("Exception while cancelling pending synchronous pull response", e);
             }
-            pendingSynchronousPullResponses.clear();
         }
+        pendingSynchronousPullResponses.clear();
     }
 
     private class SubscriberWrapper implements Runnable {

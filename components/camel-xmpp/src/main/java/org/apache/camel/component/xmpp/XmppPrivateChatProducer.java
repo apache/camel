@@ -110,12 +110,17 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         return chatManager.chatWith(JidCreate.entityBareFrom(participant));
     }
 
-    private synchronized void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
-        if (!connection.isConnected()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+    private void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
+        lock.lock();
+        try {
+            if (!connection.isConnected()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+                }
+                connection.connect();
             }
-            connection.connect();
+        } finally {
+            lock.unlock();
         }
     }
 
