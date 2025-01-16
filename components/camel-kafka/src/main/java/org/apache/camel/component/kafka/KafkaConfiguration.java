@@ -1909,7 +1909,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * Sets additional properties for either kafka consumer or kafka producer in case they can't be set directly on the
      * camel configurations (e.g.: new Kafka properties that are not reflected yet in Camel configurations), the
      * properties have to be prefixed with `additionalProperties.`., e.g.:
-     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`.
+     * If the properties are set in the `application.properties` file, they must be prefixed with
+     * `camel.component.kafka.additional-properties` and the property enclosed in square brackets, like this example:
+     * `camel.component.kafka.additional-properties[delivery.timeout.ms]=15000`.
      */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
