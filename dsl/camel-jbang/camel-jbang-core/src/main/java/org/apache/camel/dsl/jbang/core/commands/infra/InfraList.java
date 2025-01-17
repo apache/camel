@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -31,12 +32,17 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list", description = "Displays available external services", sortOptions = false,
                      showDefaultValues = true)
 public class InfraList extends InfraBaseCommand {
+
+    @CommandLine.Option(names = { "--running" },
+                        description = "Display running services")
+    boolean running;
 
     public InfraList(CamelJBangMain main) {
         super(main);
@@ -76,6 +82,19 @@ public class InfraList extends InfraBaseCommand {
         }
 
         rows.sort(Comparator.comparing(Row::alias));
+
+        if (running) {
+            // Filter out non-running services from list
+            List<String> runningAliases = new ArrayList<>();
+            for (File pidFile : CommandLineHelper.getCamelDir().listFiles(
+                    (dir, name) -> name.startsWith("infra-"))) {
+                String runningServiceName = pidFile.getName().split("-")[1];
+                runningAliases.add(runningServiceName);
+            }
+
+            rows.removeIf(row -> !runningAliases.contains(row.alias()));
+        }
+
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
