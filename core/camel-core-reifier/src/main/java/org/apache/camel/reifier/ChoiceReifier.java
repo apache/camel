@@ -28,7 +28,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
-import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ExchangeHelper;
@@ -53,16 +52,17 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         for (WhenDefinition whenClause : definition.getWhenClauses()) {
             if (filters != null) {
                 whenClause.preCreateProcessor();
-                Predicate when;
-                Processor output;
-                if (isDisabled(camelContext, whenClause)) {
-                    when = e -> false;
-                    output = new DisabledProcessor();
-                } else {
+                Predicate when = null;
+                Processor output = null;
+                if (!isDisabled(camelContext, whenClause)) {
+                    // ensure id is assigned on when
+                    whenClause.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
                     when = createPredicate(whenClause.getExpression());
                     output = createOutputsProcessor(whenClause.getOutputs());
                 }
-                filters.add(new FilterProcessor(camelContext, when, output));
+                if (when != null && output != null) {
+                    filters.add(new FilterProcessor(camelContext, when, output));
+                }
             }
         }
         if (isPrecondition) {
@@ -70,9 +70,7 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         }
         Processor otherwiseProcessor = null;
         if (definition.getOtherwise() != null) {
-            if (isDisabled(camelContext, definition.getOtherwise())) {
-                otherwiseProcessor = new DisabledProcessor();
-            } else {
+            if (!isDisabled(camelContext, definition.getOtherwise())) {
                 // ensure id is assigned on otherwise
                 definition.getOtherwise()
                         .idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
