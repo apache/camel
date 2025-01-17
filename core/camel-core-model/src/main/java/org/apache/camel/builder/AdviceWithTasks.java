@@ -38,6 +38,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -475,8 +476,16 @@ public final class AdviceWithTasks {
         }
         // for CBR then use the outputs from the node itself
         // so we work on the right branch in the CBR (when/otherwise)
-        if (parent instanceof ChoiceDefinition) {
-            return node.getOutputs();
+        if (parent instanceof ChoiceDefinition choice) {
+            // look in which branch the node is from
+            for (WhenDefinition when : choice.getWhenClauses()) {
+                if (when.getOutputs().contains(node)) {
+                    return when.getOutputs();
+                }
+            }
+            if (choice.getOtherwise() != null) {
+                return choice.getOtherwise().getOutputs();
+            }
         }
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();
         boolean allAbstract = true;

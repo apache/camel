@@ -825,6 +825,25 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
+    protected void doWriteBasicExpressionNodeElements(BasicExpressionNode<?> def) throws IOException {
+        doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
+    }
+    protected void doWriteBasicExpressionNode(String name, BasicExpressionNode<?> def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteBasicExpressionNodeElements(def);
+        endElement(name);
+    }
+    protected void doWriteBasicOutputExpressionNodeElements(BasicOutputExpressionNode def) throws IOException {
+        doWriteBasicExpressionNodeElements(def);
+        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+    }
+    protected void doWriteBasicOutputExpressionNode(String name, BasicOutputExpressionNode def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteBasicOutputExpressionNodeElements(def);
+        endElement(name);
+    }
     protected void doWriteBeanDefinition(String name, BeanDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -1285,7 +1304,8 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteOtherwiseDefinition(String name, OtherwiseDefinition def) throws IOException {
         startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("disabled", def.getDisabled(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
@@ -1974,8 +1994,9 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteWhenDefinition(String name, WhenDefinition def) throws IOException {
         startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
-        doWriteOutputExpressionNodeElements(def);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("disabled", def.getDisabled(), null);
+        doWriteBasicOutputExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteWireTapDefinition(String name, WireTapDefinition<?> def) throws IOException {
@@ -3866,7 +3887,6 @@ public class ModelWriter extends BaseWriter {
                 case "MulticastDefinition" -> doWriteMulticastDefinition("multicast", (MulticastDefinition) v);
                 case "OnCompletionDefinition" -> doWriteOnCompletionDefinition("onCompletion", (OnCompletionDefinition) v);
                 case "OnExceptionDefinition" -> doWriteOnExceptionDefinition("onException", (OnExceptionDefinition) v);
-                case "OtherwiseDefinition" -> doWriteOtherwiseDefinition("otherwise", (OtherwiseDefinition) v);
                 case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
                 case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
                 case "PolicyDefinition" -> doWritePolicyDefinition("policy", (PolicyDefinition) v);
@@ -3909,7 +3929,6 @@ public class ModelWriter extends BaseWriter {
                 case "TryDefinition" -> doWriteTryDefinition("doTry", (TryDefinition) v);
                 case "UnmarshalDefinition" -> doWriteUnmarshalDefinition("unmarshal", (UnmarshalDefinition) v);
                 case "ValidateDefinition" -> doWriteValidateDefinition("validate", (ValidateDefinition) v);
-                case "WhenDefinition" -> doWriteWhenDefinition("when", (WhenDefinition) v);
                 case "WireTapDefinition" -> doWriteWireTapDefinition("wireTap", (WireTapDefinition) v);
                 case "ServiceCallDefinition" -> doWriteServiceCallDefinition("serviceCall", (ServiceCallDefinition) v);
             }

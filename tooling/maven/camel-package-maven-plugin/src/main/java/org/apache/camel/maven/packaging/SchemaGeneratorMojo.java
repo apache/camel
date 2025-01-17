@@ -103,7 +103,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             "org.apache.camel.model.language.NamespaceAwareExpression" };
     // special for inputs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_INPUTS
-            = new String[] { "org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.rest.VerbDefinition" };
+            = new String[] {
+                    "org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.rest.VerbDefinition",
+                    "org.apache.camel.model.OnFallbackDefinition",
+                    "org.apache.camel.model.WhenDefinition", "org.apache.camel.model.OtherwiseDefinition" };
     // special for outputs (these classes have sub classes, so we use this to
     // find all classes - and not in particular if they support outputs or not)
     private static final String[] ONE_OF_OUTPUTS = new String[] {
@@ -111,6 +114,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             "org.apache.camel.model.OutputDefinition", "org.apache.camel.model.OutputExpressionNode",
             "org.apache.camel.model.NoOutputExpressionNode", "org.apache.camel.model.SendDefinition",
             "org.apache.camel.model.InterceptDefinition", "org.apache.camel.model.WhenDefinition",
+            "org.apache.camel.model.OnFallbackDefinition", "org.apache.camel.model.OtherwiseDefinition",
             "org.apache.camel.model.ToDynamicDefinition" };
     // special for verbs (these classes have sub classes, so we use this to find all classes)
     private static final String[] ONE_OF_VERBS = new String[] { "org.apache.camel.model.rest.VerbDefinition" };

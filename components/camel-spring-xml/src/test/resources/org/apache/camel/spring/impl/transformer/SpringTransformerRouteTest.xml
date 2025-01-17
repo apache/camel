@@ -58,10 +58,10 @@
             <from uri="direct:abc"/>
             <inputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$AOrder"/>
             <outputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$AOrderResponse"/>
-            <when>
+            <filter>
                 <simple>${body} not is 'org.apache.camel.processor.transformer.TransformerRouteTest\\$AOrder'</simple>
                 <throwException exceptionType="java.lang.Exception" message="expected AOrder object but was '${body}'"/>
-            </when>
+            </filter>
             <to uri="direct:xyz" pattern="InOut"/>
             <to uri="mock:abcresult"/>
         </route>
@@ -70,10 +70,10 @@
             <from uri="direct:xyz"/>
             <inputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
             <outputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponse"/>
-            <when>
+            <filter>
                 <simple>${body} not is 'org.apache.camel.processor.transformer.TransformerRouteTest\\$XOrder'</simple>
                 <throwException exceptionType="java.lang.Exception" message="expected XOrder object but was '${body}'"/>
-            </when>
+            </filter>
             <setBody><constant>response</constant></setBody>
             <to uri="mock:xyzresult"/>
         </route>

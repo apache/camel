@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
@@ -23,4 +25,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
  */
 @XmlTransient
 public interface OutputNode {
+
+    /**
+     * Gets the outputs
+     */
+    List<ProcessorDefinition<?>> getOutputs();
 }

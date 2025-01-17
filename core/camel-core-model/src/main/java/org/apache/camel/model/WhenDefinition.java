@@ -16,8 +16,13 @@
  */
 package org.apache.camel.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
@@ -29,23 +34,45 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @AsPredicate
 @XmlRootElement(name = "when")
-public class WhenDefinition extends OutputExpressionNode {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class WhenDefinition extends BasicOutputExpressionNode
+        implements DisabledAwareDefinition {
 
-    // TODO: Make special for <choice>
+    @XmlTransient
+    private ProcessorDefinition<?> parent;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+              description = "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime.")
+    private String disabled;
 
     public WhenDefinition() {
     }
 
-    protected WhenDefinition(WhenDefinition source) {
+    public WhenDefinition(WhenDefinition source) {
         super(source);
+        this.parent = source.parent;
+        this.disabled = source.disabled;
     }
 
     public WhenDefinition(Predicate predicate) {
         super(predicate);
     }
 
+    public WhenDefinition(Expression expression) {
+        super(expression);
+    }
+
     public WhenDefinition(ExpressionDefinition expression) {
         super(expression);
+    }
+
+    @Override
+    public ProcessorDefinition<?> getParent() {
+        return parent;
+    }
+
+    public void setParent(ProcessorDefinition<?> parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -56,6 +83,16 @@ public class WhenDefinition extends OutputExpressionNode {
     @Override
     public String toString() {
         return "When[" + description() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "when";
+    }
+
+    @Override
+    public String getLabel() {
+        return "when[" + description() + "]";
     }
 
     protected String description() {
@@ -74,29 +111,23 @@ public class WhenDefinition extends OutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "when";
+    public void setId(String id) {
+        if (getOutputs().isEmpty()) {
+            super.setId(id);
+        } else {
+            var last = getOutputs().get(getOutputs().size() - 1);
+            last.setId(id);
+        }
     }
 
     @Override
-    public String getLabel() {
-        return "when[" + description() + "]";
-    }
-
-    /**
-     * Expression used as the predicate to evaluate whether this when should trigger and route the message or not.
-     */
-    @Override
-    public void setExpression(ExpressionDefinition expression) {
-        // override to include javadoc what the expression is used for
-        super.setExpression(expression);
+    public String getDisabled() {
+        return disabled;
     }
 
     @Override
-    public ProcessorDefinition<?> endParent() {
-        // when using when in the DSL we don't want to end back to this when,
-        // but instead
-        // the parent of this, so return the parent
-        return this.getParent();
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
+
 }

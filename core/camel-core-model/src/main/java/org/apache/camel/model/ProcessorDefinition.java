@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DataFormatClause;
@@ -78,7 +79,7 @@ import org.slf4j.Logger;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
-        implements Block, CopyableDefinition<ProcessorDefinition> {
+        implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlAttribute
@@ -197,7 +198,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         CamelContextAware.trySetCamelContext(output, context);
 
         if (!(this instanceof OutputNode)) {
-            getParent().addOutput(output);
+            ProcessorDefinition p = getParent();
+            p.addOutput(output);
             return;
         }
 
@@ -660,6 +662,29 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @Override
     public Type id(String id) {
+        // special for choice otherwise
+        if (this instanceof ChoiceDefinition cbr) {
+            if (cbr.getOtherwise() != null) {
+                if (cbr.getOtherwise().getOutputs().isEmpty()) {
+                    cbr.getOtherwise().id(id);
+                } else {
+                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    last.id(id);
+                }
+            } else if (!cbr.getWhenClauses().isEmpty()) {
+                var last = cbr.getWhenClauses().get(cbr.getWhenClauses().size() - 1);
+                if (last.getOutputs().isEmpty()) {
+                    last.setId(id);
+                } else {
+                    var p = last.getOutputs().get(last.getOutputs().size() - 1);
+                    p.id(id);
+                }
+            } else {
+                cbr.setId(id);
+            }
+            return asType();
+        }
+
         if (this instanceof OutputNode && getOutputs().isEmpty()) {
             // set id on this
             setId(id);
@@ -1046,23 +1071,25 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
-        // are we nested choice?
         ProcessorDefinition<?> def = this;
-        if (def.getParent() instanceof WhenDefinition) {
-            return (ChoiceDefinition) def.getParent().getParent();
+
+        // are we nested choice?
+        if (def.getParent() instanceof ChoiceDefinition cho) {
+            return cho;
         }
 
         // are we already a choice?
-        if (def instanceof ChoiceDefinition choiceDefinition) {
-            return choiceDefinition;
+        if (def instanceof ChoiceDefinition choice) {
+            return choice;
         }
 
         // okay end this and get back to the choice
         def = end();
-        if (def instanceof WhenDefinition) {
-            return (ChoiceDefinition) def.getParent();
-        } else if (def instanceof OtherwiseDefinition) {
-            return (ChoiceDefinition) def.getParent();
+        NamedNode p = def.getParent();
+        if ("when".equals(p.getShortName())) {
+            return (ChoiceDefinition) p;
+        } else if ("otherwise".equals(p.getShortName())) {
+            return (ChoiceDefinition) p;
         } else {
             return (ChoiceDefinition) def;
         }
@@ -4293,10 +4320,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
+    @Override
     public String getDisabled() {
         return disabled;
     }
 
+    @Override
     public void setDisabled(String disabled) {
         this.disabled = disabled;
     }

@@ -36,9 +36,7 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
         assertNotNull(it);
 
         assertThat(it.next().getId()).matches("choice[0-9]+");
-        assertEquals("whenfoo", it.next().getId());
         assertEquals("foo", it.next().getId());
-        assertEquals("whenbar", it.next().getId());
         assertEquals("bar", it.next().getId());
         assertEquals("baz", it.next().getId());
         assertFalse(it.hasNext());

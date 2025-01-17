@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier;
+package org.apache.camel.model;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.model.OtherwiseDefinition;
-import org.apache.camel.model.ProcessorDefinition;
+/**
+ * EIPs that can be disabled.
+ */
+public interface DisabledAwareDefinition {
 
-public class OtherwiseReifier extends ProcessorReifier<OtherwiseDefinition> {
+    /**
+     * Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later
+     * at runtime.
+     */
+    String getDisabled();
 
-    public OtherwiseReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, OtherwiseDefinition.class.cast(definition));
-    }
+    /**
+     * Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later
+     * at runtime.
+     */
+    void setDisabled(String disabled);
 
-    @Override
-    public Processor createProcessor() throws Exception {
-        return this.createChildProcessor(false);
-    }
 }
