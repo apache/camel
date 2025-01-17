@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
+            <artifactId>checksums</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
             <artifactId>apache-client</artifactId>
             <version>${aws-java-sdk2-version}</version>
         </dependency>
