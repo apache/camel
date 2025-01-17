@@ -16,12 +16,21 @@
  */
 package org.apache.camel.model;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import jakarta.xml.bind.annotation.XmlTransient;
+import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Triggers a route when the expression evaluates to true
@@ -29,23 +38,62 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @AsPredicate
 @XmlRootElement(name = "when")
-public class WhenDefinition extends OutputExpressionNode {
+public class WhenDefinition extends OptionalIdentifiedDefinition<WhenDefinition>
+        implements HasExpressionType, CopyableDefinition<WhenDefinition>, Block, DisabledAwareDefinition, OutputNode {
 
-    // TODO: Make special for <choice>
+    @XmlTransient
+    private ProcessorDefinition<?> parent;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+            description = "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime.")
+    private String disabled;
+    @XmlElementRef
+    private ExpressionDefinition expression;
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public WhenDefinition() {
     }
 
     protected WhenDefinition(WhenDefinition source) {
         super(source);
+        this.parent = source.parent;
+        this.expression = source.expression != null ? source.expression.copyDefinition() : null;
+        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
     public WhenDefinition(Predicate predicate) {
-        super(predicate);
+        if (predicate != null) {
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
+        }
     }
 
     public WhenDefinition(ExpressionDefinition expression) {
-        super(expression);
+        // favour using the helper to set the expression as it can unwrap some
+        // unwanted builders when using Java DSL
+        this.expression = expression;
+    }
+
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        this.outputs = outputs;
+    }
+
+    @Override
+    public ProcessorDefinition<?> getParent() {
+        return parent;
+    }
+
+    public void setParent(ProcessorDefinition<?> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
+        outputs.add(output);
     }
 
     @Override
@@ -56,6 +104,16 @@ public class WhenDefinition extends OutputExpressionNode {
     @Override
     public String toString() {
         return "When[" + description() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "when";
+    }
+
+    @Override
+    public String getLabel() {
+        return "when[" + description() + "]";
     }
 
     protected String description() {
@@ -74,33 +132,6 @@ public class WhenDefinition extends OutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "when";
-    }
-
-    @Override
-    public String getLabel() {
-        return "when[" + description() + "]";
-    }
-
-    /**
-     * Expression used as the predicate to evaluate whether this when should trigger and route the message or not.
-     */
-    @Override
-    public void setExpression(ExpressionDefinition expression) {
-        // override to include javadoc what the expression is used for
-        super.setExpression(expression);
-    }
-
-    @Override
-    public ProcessorDefinition<?> endParent() {
-        // when using when in the DSL we don't want to end back to this when,
-        // but instead
-        // the parent of this, so return the parent
-        return this.getParent();
-    }
-
-    @Override
     public void setId(String id) {
         if (!getOutputs().isEmpty()) {
             var last = getOutputs().get(getOutputs().size() - 1);
@@ -109,4 +140,69 @@ public class WhenDefinition extends OutputExpressionNode {
             super.setId(id);
         }
     }
+
+    public ExpressionDefinition getExpression() {
+        return expression;
+    }
+
+    public void setExpression(ExpressionDefinition expression) {
+        // favour using the helper to set the expression as it can unwrap some
+        // unwanted builders when using Java DSL
+        this.expression = expression;
+    }
+
+    @Override
+    public String getDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
+    public ExpressionDefinition getExpressionType() {
+        return getExpression();
+    }
+
+    @Override
+    public void setExpressionType(ExpressionDefinition expressionType) {
+        setExpression(expressionType);
+    }
+
+    public void preCreateProcessor() {
+        Expression exp = getExpression();
+        if (getExpression() != null && getExpression().getExpressionValue() != null) {
+            exp = getExpression().getExpressionValue();
+        }
+
+        if (exp instanceof ExpressionClause clause) {
+            if (clause.getExpressionType() != null) {
+                // if using the Java DSL then the expression may have been set
+                // using the
+                // ExpressionClause which is a fancy builder to define
+                // expressions and predicates
+                // using fluent builders in the DSL. However we need afterwards
+                // a callback to
+                // reset the expression to the expression type the
+                // ExpressionClause did build for us
+                ExpressionFactory model = clause.getExpressionType();
+                if (model instanceof ExpressionDefinition expressionDefinition) {
+                    setExpression(expressionDefinition);
+                }
+            }
+        }
+
+        if (getExpression() != null && getExpression().getExpression() == null) {
+            // use toString from predicate or expression so we have some
+            // information to show in the route model
+            if (getExpression().getPredicate() != null) {
+                getExpression().setExpression(getExpression().getPredicate().toString());
+            } else if (getExpression().getExpressionValue() != null) {
+                getExpression().setExpression(getExpression().getExpressionValue().toString());
+            }
+        }
+    }
+
 }

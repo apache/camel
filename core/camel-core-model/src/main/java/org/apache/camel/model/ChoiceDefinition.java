@@ -88,11 +88,7 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (output instanceof WhenDefinition when) {
-            // begin a new when block
-            whenClauses.add(when);
-            when.setParent(this);
-        } else if (otherwise != null) {
+        if (otherwise != null) {
             otherwise.addOutput(output);
         } else if (!whenClauses.isEmpty()) {
             WhenDefinition last = whenClauses.get(whenClauses.size() - 1);
@@ -100,6 +96,11 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         } else {
             super.addOutput(output);
         }
+    }
+
+    public void addOutput(WhenDefinition when) {
+        when.setParent(this);
+        whenClauses.add(when);
     }
 
     public void addOutput(OtherwiseDefinition other) {
@@ -113,8 +114,16 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
      */
     @Override
     public ChoiceDefinition disabled(String disabled) {
+        // special to disable when/otherwise
         if (otherwise != null && otherwise.getOutputs().isEmpty()) {
             otherwise.setDisabled(disabled);
+        } else if (!whenClauses.isEmpty()) {
+            WhenDefinition last = whenClauses.get(whenClauses.size() - 1);
+            if (last.getOutputs().isEmpty()) {
+                last.setDisabled(disabled);
+            } else {
+                super.disabled(disabled);
+            }
         } else {
             super.disabled(disabled);
         }
@@ -180,7 +189,7 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return this;
     }
 
-    private void addClause(ProcessorDefinition<?> when) {
+    private void addClause(WhenDefinition when) {
         popBlock();
         addOutput(when);
         pushBlock(when);
@@ -209,7 +218,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     public List<ProcessorDefinition<?>> getOutputs() {
         var answer = new ArrayList<ProcessorDefinition<?>>();
         for (WhenDefinition when : whenClauses) {
-            answer.add(when);
             answer.addAll(when.getOutputs());
         }
         if (otherwise != null) {

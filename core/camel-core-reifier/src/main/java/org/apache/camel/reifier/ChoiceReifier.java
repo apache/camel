@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -31,7 +30,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.ExpressionFactoryAware;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -53,9 +51,18 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         final boolean isPrecondition = Boolean.TRUE == parseBoolean(definition.getPrecondition());
         final List<FilterProcessor> filters = isPrecondition ? null : new ArrayList<>();
         for (WhenDefinition whenClause : definition.getWhenClauses()) {
-            initBranch(whenClause);
             if (filters != null) {
-                filters.add((FilterProcessor) createProcessor(whenClause));
+                whenClause.preCreateProcessor();
+                Predicate when;
+                Processor output;
+                if (isDisabled(camelContext, whenClause)) {
+                    when = e -> false;
+                    output = new DisabledProcessor();
+                } else {
+                    when = createPredicate(whenClause.getExpression());
+                    output = createOutputsProcessor(whenClause.getOutputs());
+                }
+                filters.add(new FilterProcessor(camelContext, when, output));
             }
         }
         if (isPrecondition) {
@@ -73,34 +80,6 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
             }
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
-    }
-
-    /**
-     * Initialize the given branch if needed.
-     */
-    private void initBranch(WhenDefinition whenClause) {
-        ExpressionDefinition exp = whenClause.getExpression();
-        if (exp.getExpressionType() != null) {
-            exp = exp.getExpressionType();
-        }
-        Predicate pre = exp.getPredicate();
-        if (pre instanceof ExpressionFactoryAware aware) {
-            if (aware.getExpressionFactory() != null) {
-                // if using the Java DSL then the expression may have been
-                // set using the
-                // ExpressionClause (implements ExpressionFactoryAware)
-                // which is a fancy builder to define
-                // expressions and predicates
-                // using fluent builders in the DSL. However we need
-                // afterwards a callback to
-                // reset the expression to the expression type the
-                // ExpressionClause did build for us
-                ExpressionFactory model = aware.getExpressionFactory();
-                if (model instanceof ExpressionDefinition expressionDefinition) {
-                    whenClause.setExpression(expressionDefinition);
-                }
-            }
-        }
     }
 
     /**
