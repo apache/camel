@@ -63,6 +63,10 @@ public abstract class InfraBaseCommand extends CamelCommand {
         return metadata;
     }
 
+    public String getLogFileName(String service, String pid) {
+        return String.format("infra-%s-%s.log", service, pid);
+    }
+
     record TestInfraService(
             String service,
             String implementation,
