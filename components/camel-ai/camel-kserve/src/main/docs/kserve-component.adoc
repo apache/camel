@@ -176,7 +176,7 @@ from("direct:infer-with-headers")
 [source,java]
 ----
 from("direct:model-ready")
-    .to("kserve:model-ready?modelName=simple&modelVersion=1")
+    .to("kserve:model/ready?modelName=simple&modelVersion=1")
     .log("Status: ${body.ready}");
 ----
 
@@ -186,7 +186,7 @@ from("direct:model-ready")
 from("direct:model-ready-with-headers")
     .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
     .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
-    .to("kserve:model-ready")
+    .to("kserve:model/ready")
     .log("Status: ${body.ready}");
 ----
 
@@ -196,7 +196,7 @@ from("direct:model-ready-with-headers")
 [source,java]
 ----
 from("direct:model-metadata")
-    .to("kserve:model-metadata?modelName=simple&modelVersion=1")
+    .to("kserve:model/metadata?modelName=simple&modelVersion=1")
     .log("Metadata: ${body}");
 ----
 
@@ -206,7 +206,7 @@ from("direct:model-metadata")
 from("direct:model-metadata-with-headers")
     .setHeader(KServeConstants.MODEL_NAME, constant("simple"))
     .setHeader(KServeConstants.MODEL_VERSION, constant("1"))
-    .to("kserve:model-metadata")
+    .to("kserve:model/metadata")
     .log("Metadata: ${body}");
 ----
 
@@ -216,7 +216,7 @@ from("direct:model-metadata-with-headers")
 [source,java]
 ----
 from("direct:server-ready")
-    .to("kserve:server-ready")
+    .to("kserve:server/ready")
     .log("Status: ${body.ready}");
 ----
 
@@ -226,7 +226,7 @@ from("direct:server-ready")
 [source,java]
 ----
 from("direct:server-live")
-    .to("kserve:server-live")
+    .to("kserve:server/live")
     .log("Status: ${body.live}");
 ----
 
@@ -236,7 +236,7 @@ from("direct:server-live")
 [source,java]
 ----
 from("direct:server-metadata")
-    .to("kserve:server-metadata")
+    .to("kserve:server/metadata")
     .log("Metadata: ${body}");
 ----
 
