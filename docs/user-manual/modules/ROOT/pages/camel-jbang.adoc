@@ -3980,7 +3980,7 @@ try to delete these directories or parts of it.
 
 == Infrastructure
 
-Camel JBang `infra` command can be used to `list` and `run` external services that can be used for fast prototyping and testing.
+Camel JBang `infra` command can be used to `list`, `run` and `stop` external services that can be used for fast prototyping and testing.
 Apache Camel test-infra Services are exposed via the `infra` command, in this way, the same infrastructure that is used to test
 Apache Camel itself, is exposed via Camel JBang, and services that are already proved to work with Apache Camel can be easily used.
 
@@ -4008,6 +4008,9 @@ ALIAS                   IMPLEMENTATION
  ...                     
 ----
 
+To show the services that are running, the flag --running can be used, this way, only the running processes are printed to the output
+in order to make it easier to gather the running service name and stop it.
+
 === Run Service
 
 Supported external services can be run with the following command (Docker or Podman is required for most of the service):
@@ -4029,7 +4032,6 @@ Starting service ftp
   "getPort" : 52472,
   "getFtpRootDir" : "file://path/to/current/directory/target/ftp/camel-test-infra-test-directory/camel-test-infra-configuration-test-directory"
 }
-To stop the execution press q               
 ----
 
 [source,bash]
@@ -4040,7 +4042,6 @@ Starting service kafka with implementation redpanda
 {
   "getBootstrapServers" : "localhost:32771"
 }
-To stop the execution press q
 ----
 
 [source,bash]
@@ -4053,5 +4054,21 @@ Starting service openldap
   "getSslPort" : 32775,
   "getHost" : "localhost"
 }
-To stop the execution press q
+----
+
+=== Stop Service
+
+Stop a running infrastructure service:
+
+[source,bash]
+----
+$ camel infra run arangodb
+...
+
+$ camel infra list --running
+ ALIAS             IMPLEMENTATION  DESCRIPTION
+ arangodb                          ArangoDB is a multi-model database for high-performance applications.
+
+$ camel infra stop arangodb
+Shutting down service arangodb (PID: {pidNumber})
 ----
