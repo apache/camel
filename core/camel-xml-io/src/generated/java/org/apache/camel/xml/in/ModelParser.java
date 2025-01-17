@@ -229,14 +229,7 @@ public class ModelParser extends BaseParser {
         return doParse(new WhenDefinition(), (def, key, val) -> switch (key) {
                 case "disabled": def.setDisabled(val); yield true;
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
-            }, (def, key) -> {
-                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-                if (v != null) {
-                    def.setExpression(v);
-                    return true;
-                }
-                return isolatedOutputNodeElementHandler().accept(def, key);
-            }, noValueHandler());
+            }, basicOutputExpressionNodeElementHandler(), noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
         return doParse(new OtherwiseDefinition(), (def, key, val) -> switch (key) {
@@ -1334,11 +1327,21 @@ public class ModelParser extends BaseParser {
     protected List<ValueDefinition> doParseValueDefinition() throws IOException, XmlPullParserException {
         return doParseValue(() -> new ValueDefinition(), (def, val) -> def.setValue(val));
     }
-    protected <T extends IsolatedOutputNode> ElementHandler<T> isolatedOutputNodeElementHandler() {
+    protected <T extends BasicOutputExpressionNode> ElementHandler<T> basicOutputExpressionNodeElementHandler() {
         return (def, key) -> {
             ProcessorDefinition v = doParseProcessorDefinitionRef(key);
             if (v != null) {
                 doAdd(v, def.getOutputs(), def::setOutputs);
+                return true;
+            }
+            return basicExpressionNodeElementHandler().accept(def, key);
+        };
+    }
+    protected <T extends BasicExpressionNode> ElementHandler<T> basicExpressionNodeElementHandler() {
+        return (def, key) -> {
+            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+            if (v != null) {
+                def.setExpression(v);
                 return true;
             }
             return optionalIdentifiedDefinitionElementHandler().accept(def, key);

@@ -28,19 +28,19 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
         <interceptFrom>
-            <when>
+            <onWhen>
                 <simple>${body} contains 'Goofy'</simple>
-                <choice>
-                    <when>
-                        <simple>${body} contains 'Hello'</simple>
-                        <to uri="mock:hello"/>
-                    </when>
-                    <otherwise>
-                        <to uri="mock:goofy"/>
-                    </otherwise>
-                </choice>
-                <stop/>
-            </when>
+            </onWhen>
+            <choice>
+                <when>
+                    <simple>${body} contains 'Hello'</simple>
+                    <to uri="mock:hello"/>
+                </when>
+                <otherwise>
+                    <to uri="mock:goofy"/>
+                </otherwise>
+            </choice>
+            <stop/>
         </interceptFrom>
         <route>
             <from uri="direct:start"/>

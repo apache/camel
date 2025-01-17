@@ -825,6 +825,25 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
+    protected void doWriteBasicExpressionNodeElements(BasicExpressionNode<?> def) throws IOException {
+        doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
+    }
+    protected void doWriteBasicExpressionNode(String name, BasicExpressionNode<?> def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteBasicExpressionNodeElements(def);
+        endElement(name);
+    }
+    protected void doWriteBasicOutputExpressionNodeElements(BasicOutputExpressionNode def) throws IOException {
+        doWriteBasicExpressionNodeElements(def);
+        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+    }
+    protected void doWriteBasicOutputExpressionNode(String name, BasicOutputExpressionNode def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteBasicOutputExpressionNodeElements(def);
+        endElement(name);
+    }
     protected void doWriteBeanDefinition(String name, BeanDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -1098,15 +1117,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("skipSendToOriginalEndpoint", def.getSkipSendToOriginalEndpoint(), null);
         doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
-        endElement(name);
-    }
-    protected void doWriteIsolatedOutputNodeElements(IsolatedOutputNode<?> def) throws IOException {
-        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
-    }
-    protected void doWriteIsolatedOutputNode(String name, IsolatedOutputNode<?> def) throws IOException {
-        startElement(name);
-        doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteIsolatedOutputNodeElements(def);
         endElement(name);
     }
     protected void doWriteKameletDefinition(String name, KameletDefinition def) throws IOException {
@@ -1986,8 +1996,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("disabled", def.getDisabled(), null);
-        doWriteIsolatedOutputNodeElements(def);
-        doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
+        doWriteBasicOutputExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteWireTapDefinition(String name, WireTapDefinition<?> def) throws IOException {

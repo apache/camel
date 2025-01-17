@@ -24,19 +24,42 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.model.language.ExpressionDefinition;
+
+/**
+ * A basic {@link BasicOutputExpressionNode} which support outputs.
+ * <p/>
+ * This node is to be extended by definitions which should have expression and outputs both should not be a processor,
+ * such as {@link WhenDefinition}.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class IsolatedOutputNode<T extends IsolatedOutputNode<T>> extends OptionalIdentifiedDefinition<T>
-        implements CopyableDefinition<T>, Block, OutputNode {
+public abstract class BasicOutputExpressionNode extends BasicExpressionNode<BasicOutputExpressionNode>
+        implements Block, OutputNode {
 
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public IsolatedOutputNode() {
+    public BasicOutputExpressionNode() {
     }
 
-    public IsolatedOutputNode(T source) {
-        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.getOutputs());
+    public BasicOutputExpressionNode(BasicOutputExpressionNode source) {
+        super(source);
+        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
+    }
+
+    public BasicOutputExpressionNode(ExpressionDefinition expression) {
+        super(expression);
+    }
+
+    public BasicOutputExpressionNode(Expression expression) {
+        super(expression);
+    }
+
+    public BasicOutputExpressionNode(Predicate predicate) {
+        super(predicate);
     }
 
     @Override
@@ -50,7 +73,6 @@ public abstract class IsolatedOutputNode<T extends IsolatedOutputNode<T>> extend
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        outputs.add(output);
+        this.outputs.add(output);
     }
-
 }

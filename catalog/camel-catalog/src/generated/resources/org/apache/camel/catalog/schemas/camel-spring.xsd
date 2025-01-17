@@ -3657,7 +3657,6 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4289,7 +4288,6 @@ The exception(s) to catch.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4418,7 +4416,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
   </xs:complexType>
   <xs:complexType name="whenDefinition">
     <xs:complexContent>
-      <xs:extension base="tns:processorDefinition">
+      <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
@@ -4454,88 +4452,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
-            <xs:element ref="tns:circuitBreaker"/>
-            <xs:element ref="tns:claimCheck"/>
-            <xs:element ref="tns:convertBodyTo"/>
-            <xs:element ref="tns:convertHeaderTo"/>
-            <xs:element ref="tns:convertVariableTo"/>
-            <xs:element ref="tns:delay"/>
-            <xs:element ref="tns:dynamicRouter"/>
-            <xs:element ref="tns:enrich"/>
-            <xs:element ref="tns:filter"/>
-            <xs:element ref="tns:doFinally"/>
-            <xs:element ref="tns:idempotentConsumer"/>
-            <xs:element ref="tns:intercept"/>
-            <xs:element ref="tns:interceptFrom"/>
-            <xs:element ref="tns:interceptSendToEndpoint"/>
-            <xs:element ref="tns:kamelet"/>
-            <xs:element ref="tns:loadBalance"/>
-            <xs:element ref="tns:log"/>
-            <xs:element ref="tns:loop"/>
-            <xs:element ref="tns:marshal"/>
-            <xs:element ref="tns:multicast"/>
-            <xs:element ref="tns:onCompletion"/>
-            <xs:element ref="tns:onException"/>
-            <xs:element ref="tns:pausable"/>
-            <xs:element ref="tns:pipeline"/>
-            <xs:element ref="tns:policy"/>
-            <xs:element ref="tns:poll"/>
-            <xs:element ref="tns:pollEnrich"/>
-            <xs:element ref="tns:process"/>
-            <xs:element ref="tns:recipientList"/>
-            <xs:element ref="tns:removeHeader"/>
-            <xs:element ref="tns:removeHeaders"/>
-            <xs:element ref="tns:removeProperties"/>
-            <xs:element ref="tns:removeProperty"/>
-            <xs:element ref="tns:removeVariable"/>
-            <xs:element ref="tns:resequence"/>
-            <xs:element ref="tns:resumable"/>
-            <xs:element ref="tns:rollback"/>
-            <xs:element ref="tns:route"/>
-            <xs:element ref="tns:routingSlip"/>
-            <xs:element ref="tns:saga"/>
-            <xs:element ref="tns:sample"/>
-            <xs:element ref="tns:script"/>
-            <xs:element ref="tns:setBody"/>
-            <xs:element ref="tns:setExchangePattern"/>
-            <xs:element ref="tns:setHeader"/>
-            <xs:element ref="tns:setHeaders"/>
-            <xs:element ref="tns:setProperty"/>
-            <xs:element ref="tns:setVariable"/>
-            <xs:element ref="tns:setVariables"/>
-            <xs:element ref="tns:sort"/>
-            <xs:element ref="tns:split"/>
-            <xs:element ref="tns:step"/>
-            <xs:element ref="tns:stop"/>
-            <xs:element ref="tns:threads"/>
-            <xs:element ref="tns:throttle"/>
-            <xs:element ref="tns:throwException"/>
-            <xs:element ref="tns:to"/>
-            <xs:element ref="tns:toD"/>
-            <xs:element ref="tns:tokenizer"/>
-            <xs:element ref="tns:transacted"/>
-            <xs:element ref="tns:transform"/>
-            <xs:element ref="tns:doTry"/>
-            <xs:element ref="tns:unmarshal"/>
-            <xs:element ref="tns:validate"/>
-            <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
-          </xs:choice>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="otherwiseDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:aggregate"/>
-            <xs:element ref="tns:bean"/>
-            <xs:element ref="tns:doCatch"/>
-            <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -4608,7 +4524,97 @@ during startup to keep at runtime only the branch that matched. Default value: f
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at
+Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at
+runtime. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="otherwiseDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:aggregate"/>
+            <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:doCatch"/>
+            <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:circuitBreaker"/>
+            <xs:element ref="tns:claimCheck"/>
+            <xs:element ref="tns:convertBodyTo"/>
+            <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
+            <xs:element ref="tns:delay"/>
+            <xs:element ref="tns:dynamicRouter"/>
+            <xs:element ref="tns:enrich"/>
+            <xs:element ref="tns:filter"/>
+            <xs:element ref="tns:doFinally"/>
+            <xs:element ref="tns:idempotentConsumer"/>
+            <xs:element ref="tns:intercept"/>
+            <xs:element ref="tns:interceptFrom"/>
+            <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
+            <xs:element ref="tns:loadBalance"/>
+            <xs:element ref="tns:log"/>
+            <xs:element ref="tns:loop"/>
+            <xs:element ref="tns:marshal"/>
+            <xs:element ref="tns:multicast"/>
+            <xs:element ref="tns:onCompletion"/>
+            <xs:element ref="tns:onException"/>
+            <xs:element ref="tns:pausable"/>
+            <xs:element ref="tns:pipeline"/>
+            <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
+            <xs:element ref="tns:pollEnrich"/>
+            <xs:element ref="tns:process"/>
+            <xs:element ref="tns:recipientList"/>
+            <xs:element ref="tns:removeHeader"/>
+            <xs:element ref="tns:removeHeaders"/>
+            <xs:element ref="tns:removeProperties"/>
+            <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
+            <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
+            <xs:element ref="tns:rollback"/>
+            <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routingSlip"/>
+            <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sample"/>
+            <xs:element ref="tns:script"/>
+            <xs:element ref="tns:setBody"/>
+            <xs:element ref="tns:setExchangePattern"/>
+            <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
+            <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
+            <xs:element ref="tns:setVariables"/>
+            <xs:element ref="tns:sort"/>
+            <xs:element ref="tns:split"/>
+            <xs:element ref="tns:step"/>
+            <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
+            <xs:element ref="tns:throwException"/>
+            <xs:element ref="tns:to"/>
+            <xs:element ref="tns:toD"/>
+            <xs:element ref="tns:tokenizer"/>
+            <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transform"/>
+            <xs:element ref="tns:doTry"/>
+            <xs:element ref="tns:unmarshal"/>
+            <xs:element ref="tns:validate"/>
+            <xs:element ref="tns:wireTap"/>
+            <xs:element ref="tns:serviceCall"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at
 runtime. Default value: false
 ]]>
             </xs:documentation>
@@ -4628,7 +4634,6 @@ runtime. Default value: false
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -5102,7 +5107,6 @@ References to a custom thread pool to use when bulkhead is enabled.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6272,7 +6276,6 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6363,7 +6366,6 @@ predicate evaluated as true or false.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6525,7 +6527,6 @@ Global option value.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6687,7 +6688,6 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6786,7 +6786,6 @@ intercepted.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6895,7 +6894,6 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -6995,7 +6993,6 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -7324,7 +7321,6 @@ such as groovy.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -10804,7 +10800,6 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11019,7 +11014,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11209,7 +11203,6 @@ its considered handled as well.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11468,7 +11461,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -11549,7 +11541,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -12223,7 +12214,6 @@ Name of variable to remove.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -12573,7 +12563,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -13011,7 +13000,6 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -13469,7 +13457,6 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -13700,7 +13687,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -14401,7 +14387,6 @@ Sets the maximum number of tokens that can overlap in each segment.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>
@@ -14544,7 +14529,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:bean"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
-            <xs:element ref="tns:when"/>
             <xs:element ref="tns:circuitBreaker"/>
             <xs:element ref="tns:claimCheck"/>
             <xs:element ref="tns:convertBodyTo"/>

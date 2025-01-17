@@ -176,7 +176,7 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     @AsPredicate
     public ExpressionClause<ChoiceDefinition> when() {
         ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<>(this);
-        addClause(new WhenDefinition(clause));
+        addClause(new WhenDefinition((Predicate) clause));
         return clause;
     }
 
