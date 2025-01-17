@@ -1100,6 +1100,15 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
+    protected void doWriteIsolatedOutputNodeElements(IsolatedOutputNode<?> def) throws IOException {
+        doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+    }
+    protected void doWriteIsolatedOutputNode(String name, IsolatedOutputNode<?> def) throws IOException {
+        startElement(name);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteIsolatedOutputNodeElements(def);
+        endElement(name);
+    }
     protected void doWriteKameletDefinition(String name, KameletDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -1975,8 +1984,10 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteWhenDefinition(String name, WhenDefinition def) throws IOException {
         startElement(name);
-        doWriteProcessorDefinitionAttributes(def);
-        doWriteOutputExpressionNodeElements(def);
+        doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("disabled", def.getDisabled(), null);
+        doWriteIsolatedOutputNodeElements(def);
+        doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         endElement(name);
     }
     protected void doWriteWireTapDefinition(String name, WireTapDefinition<?> def) throws IOException {
@@ -3909,7 +3920,6 @@ public class ModelWriter extends BaseWriter {
                 case "TryDefinition" -> doWriteTryDefinition("doTry", (TryDefinition) v);
                 case "UnmarshalDefinition" -> doWriteUnmarshalDefinition("unmarshal", (UnmarshalDefinition) v);
                 case "ValidateDefinition" -> doWriteValidateDefinition("validate", (ValidateDefinition) v);
-                case "WhenDefinition" -> doWriteWhenDefinition("when", (WhenDefinition) v);
                 case "WireTapDefinition" -> doWriteWireTapDefinition("wireTap", (WireTapDefinition) v);
                 case "ServiceCallDefinition" -> doWriteServiceCallDefinition("serviceCall", (ServiceCallDefinition) v);
             }

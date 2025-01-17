@@ -16,11 +16,14 @@
  */
 package org.apache.camel.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
 import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
@@ -29,37 +32,33 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Triggers a route when the expression evaluates to true
  */
 @Metadata(label = "eip,routing")
 @AsPredicate
 @XmlRootElement(name = "when")
-public class WhenDefinition extends OptionalIdentifiedDefinition<WhenDefinition>
-        implements HasExpressionType, CopyableDefinition<WhenDefinition>, Block, DisabledAwareDefinition, OutputNode {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "expression", "outputs" })
+public class WhenDefinition extends IsolatedOutputNode<WhenDefinition>
+        implements HasExpressionType, DisabledAwareDefinition {
 
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-            description = "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime.")
+              description = "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime.")
     private String disabled;
     @XmlElementRef
     private ExpressionDefinition expression;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public WhenDefinition() {
     }
 
-    protected WhenDefinition(WhenDefinition source) {
+    public WhenDefinition(WhenDefinition source) {
         super(source);
         this.parent = source.parent;
         this.expression = source.expression != null ? source.expression.copyDefinition() : null;
-        this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
     public WhenDefinition(Predicate predicate) {
@@ -74,14 +73,6 @@ public class WhenDefinition extends OptionalIdentifiedDefinition<WhenDefinition>
         this.expression = expression;
     }
 
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-    }
-
     @Override
     public ProcessorDefinition<?> getParent() {
         return parent;
@@ -89,11 +80,6 @@ public class WhenDefinition extends OptionalIdentifiedDefinition<WhenDefinition>
 
     public void setParent(ProcessorDefinition<?> parent) {
         this.parent = parent;
-    }
-
-    @Override
-    public void addOutput(ProcessorDefinition<?> output) {
-        outputs.add(output);
     }
 
     @Override
@@ -133,11 +119,11 @@ public class WhenDefinition extends OptionalIdentifiedDefinition<WhenDefinition>
 
     @Override
     public void setId(String id) {
-        if (!getOutputs().isEmpty()) {
+        if (getOutputs().isEmpty()) {
+            super.setId(id);
+        } else {
             var last = getOutputs().get(getOutputs().size() - 1);
             last.setId(id);
-        } else {
-            super.setId(id);
         }
     }
 

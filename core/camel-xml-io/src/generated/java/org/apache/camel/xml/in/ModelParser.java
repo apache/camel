@@ -226,7 +226,17 @@ public class ModelParser extends BaseParser {
             }, noValueHandler());
     }
     protected WhenDefinition doParseWhenDefinition() throws IOException, XmlPullParserException {
-        return doParse(new WhenDefinition(), processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
+        return doParse(new WhenDefinition(), (def, key, val) -> switch (key) {
+                case "disabled": def.setDisabled(val); yield true;
+                default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+            }, (def, key) -> {
+                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+                if (v != null) {
+                    def.setExpression(v);
+                    return true;
+                }
+                return isolatedOutputNodeElementHandler().accept(def, key);
+            }, noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
         return doParse(new OtherwiseDefinition(), (def, key, val) -> switch (key) {
@@ -1323,6 +1333,16 @@ public class ModelParser extends BaseParser {
     }
     protected List<ValueDefinition> doParseValueDefinition() throws IOException, XmlPullParserException {
         return doParseValue(() -> new ValueDefinition(), (def, val) -> def.setValue(val));
+    }
+    protected <T extends IsolatedOutputNode> ElementHandler<T> isolatedOutputNodeElementHandler() {
+        return (def, key) -> {
+            ProcessorDefinition v = doParseProcessorDefinitionRef(key);
+            if (v != null) {
+                doAdd(v, def.getOutputs(), def::setOutputs);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        };
     }
     protected WireTapDefinition doParseWireTapDefinition() throws IOException, XmlPullParserException {
         return doParse(new WireTapDefinition(), (def, key, val) -> switch (key) {
@@ -2826,7 +2846,6 @@ public class ModelParser extends BaseParser {
             case "bean": return doParseBeanDefinition();
             case "doCatch": return doParseCatchDefinition();
             case "choice": return doParseChoiceDefinition();
-            case "when": return doParseWhenDefinition();
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
             case "claimCheck": return doParseClaimCheckDefinition();
             case "convertBodyTo": return doParseConvertBodyDefinition();

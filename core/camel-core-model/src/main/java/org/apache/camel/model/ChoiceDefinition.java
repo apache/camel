@@ -89,8 +89,10 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
         if (otherwise != null) {
+            output.setParent(this);
             otherwise.addOutput(output);
         } else if (!whenClauses.isEmpty()) {
+            output.setParent(this);
             WhenDefinition last = whenClauses.get(whenClauses.size() - 1);
             last.addOutput(output);
         } else {
