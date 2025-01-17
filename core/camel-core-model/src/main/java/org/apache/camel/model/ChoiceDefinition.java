@@ -107,6 +107,20 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         this.otherwise = other;
     }
 
+    /**
+     * Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be
+     * enabled later at runtime.
+     */
+    @Override
+    public ChoiceDefinition disabled(String disabled) {
+        if (otherwise != null && otherwise.getOutputs().isEmpty()) {
+            otherwise.setDisabled(disabled);
+        } else {
+            super.disabled(disabled);
+        }
+        return this;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -180,8 +194,7 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @Override
     public void setId(String id) {
-        // when setting id, we should set it on the fine grained element, if
-        // possible
+        // when setting id, we should set it on the fine grained element, if possible
         if (otherwise != null) {
             otherwise.setId(id);
         } else if (!getWhenClauses().isEmpty()) {
@@ -194,7 +207,6 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
-        // backwards compatible where choice would fake outputs to include when/otherwise as a single list
         var answer = new ArrayList<ProcessorDefinition<?>>();
         for (WhenDefinition when : whenClauses) {
             answer.add(when);

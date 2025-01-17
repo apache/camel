@@ -4604,6 +4604,16 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at
+runtime. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

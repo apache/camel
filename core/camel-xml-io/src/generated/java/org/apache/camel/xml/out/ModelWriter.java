@@ -1286,6 +1286,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOtherwiseDefinition(String name, OtherwiseDefinition def) throws IOException {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
+        doWriteAttribute("disabled", def.getDisabled(), null);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }

@@ -229,7 +229,10 @@ public class ModelParser extends BaseParser {
         return doParse(new WhenDefinition(), processorDefinitionAttributeHandler(), outputExpressionNodeElementHandler(), noValueHandler());
     }
     protected OtherwiseDefinition doParseOtherwiseDefinition() throws IOException, XmlPullParserException {
-        return doParse(new OtherwiseDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> {
+        return doParse(new OtherwiseDefinition(), (def, key, val) -> switch (key) {
+                case "disabled": def.setDisabled(val); yield true;
+                default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+            }, (def, key) -> {
                 ProcessorDefinition v = doParseProcessorDefinitionRef(key);
                 if (v != null) {
                     doAdd(v, def.getOutputs(), def::setOutputs);

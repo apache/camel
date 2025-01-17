@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StartupStep;
@@ -44,6 +45,7 @@ import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ConvertHeaderDefinition;
 import org.apache.camel.model.ConvertVariableDefinition;
 import org.apache.camel.model.DelayDefinition;
+import org.apache.camel.model.DisabledAwareDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExecutorServiceAwareDefinition;
@@ -183,21 +185,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ProcessorReifier<? extends ProcessorDefinition<?>> answer = null;
 
         // special if the EIP is disabled
-        if (route != null && route.getCamelContext() != null) {
-            Boolean disabled = CamelContextHelper.parseBoolean(route.getCamelContext(), definition.getDisabled());
-            if (disabled == null) {
-                String sn = definition.getShortName();
-                if ("process".equals(sn) || "bean".equals(sn)) {
-                    disabled = "true"
-                            .equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
-                }
-            }
-            if (disabled == null) {
-                disabled = "true".equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_ALL_PROCESSORS));
-            }
-            if (disabled) {
-                return new DisabledReifier<>(route, definition);
-            }
+        if (route.getCamelContext() != null && isDisabled(route.getCamelContext(), definition)) {
+            return new DisabledReifier<>(route, definition);
         }
 
         if (!PROCESSORS.isEmpty()) {
@@ -983,6 +972,27 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
+    }
+
+    /**
+     * Is the given node marked as disabled
+     */
+    public static boolean isDisabled(CamelContext camelContext, NamedNode definition) {
+        Boolean disabled = null;
+        if (definition instanceof DisabledAwareDefinition def) {
+            disabled = CamelContextHelper.parseBoolean(camelContext, def.getDisabled());
+        }
+        if (disabled == null) {
+            String sn = definition.getShortName();
+            if ("process".equals(sn) || "bean".equals(sn)) {
+                disabled = "true"
+                        .equalsIgnoreCase(camelContext.getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
+            }
+        }
+        if (disabled == null) {
+            disabled = "true".equalsIgnoreCase(camelContext.getGlobalOption(DISABLE_ALL_PROCESSORS));
+        }
+        return disabled;
     }
 
 }

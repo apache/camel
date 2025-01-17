@@ -29,6 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.ExpressionFactoryAware;
 import org.apache.camel.spi.NodeIdFactory;
@@ -62,9 +63,14 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         }
         Processor otherwiseProcessor = null;
         if (definition.getOtherwise() != null) {
-            // ensure id is assigned on otherwise
-            definition.getOtherwise().idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-            otherwiseProcessor = createOutputsProcessor(definition.getOtherwise().getOutputs());
+            if (isDisabled(camelContext, definition.getOtherwise())) {
+                otherwiseProcessor = new DisabledProcessor();
+            } else {
+                // ensure id is assigned on otherwise
+                definition.getOtherwise()
+                        .idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+                otherwiseProcessor = createOutputsProcessor(definition.getOtherwise().getOutputs());
+            }
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }

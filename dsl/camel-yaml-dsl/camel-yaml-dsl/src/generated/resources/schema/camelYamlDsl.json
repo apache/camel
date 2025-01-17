@@ -3767,6 +3767,11 @@
             "title" : "Description",
             "description" : "Sets the description of this node"
           },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime."
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",

@@ -21,6 +21,7 @@ import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -34,10 +35,14 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseDefinition>
-        implements CopyableDefinition<OtherwiseDefinition>, Block, OutputNode {
+        implements CopyableDefinition<OtherwiseDefinition>, Block, DisabledAwareDefinition, OutputNode {
 
     @XmlTransient
     private ProcessorDefinition<?> parent;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
+            description = "Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled late at runtime.")
+    private String disabled;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
@@ -101,5 +106,15 @@ public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseD
     @Override
     public String getLabel() {
         return "otherwise";
+    }
+
+    @Override
+    public String getDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
 }
