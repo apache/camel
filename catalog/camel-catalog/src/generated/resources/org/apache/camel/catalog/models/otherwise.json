@@ -8,7 +8,7 @@
     "label": "eip,routing",
     "javaType": "org.apache.camel.model.OtherwiseDefinition",
     "abstract": false,
-    "input": false,
+    "input": true,
     "output": true
   },
   "properties": {
