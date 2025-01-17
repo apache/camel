@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
@@ -41,6 +43,7 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncInputStream.class);
     private static final int DEFAULT_BUFFER_SIZE = 4096;
 
+    private final Lock lock = new ReentrantLock();
     private final ReadableByteChannel channel;
     private final Vertx vertx;
     private final Context context;
@@ -68,43 +71,68 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     }
 
     @Override
-    public synchronized AsyncInputStream endHandler(Handler<Void> endHandler) {
-        checkStreamClosed();
-        this.endHandler = endHandler;
-        return this;
-    }
-
-    @Override
-    public synchronized AsyncInputStream exceptionHandler(Handler<Throwable> exceptionHandler) {
-        checkStreamClosed();
-        this.exceptionHandler = exceptionHandler;
-        return this;
-    }
-
-    @Override
-    public synchronized AsyncInputStream handler(Handler<Buffer> handler) {
-        checkStreamClosed();
-        this.dataHandler = handler;
-        if (this.dataHandler != null && !this.closed) {
-            this.doRead();
-        } else {
-            queue.clear();
+    public AsyncInputStream endHandler(Handler<Void> endHandler) {
+        lock.lock();
+        try {
+            checkStreamClosed();
+            this.endHandler = endHandler;
+            return this;
+        } finally {
+            lock.unlock();
         }
-        return this;
     }
 
     @Override
-    public synchronized AsyncInputStream pause() {
-        checkStreamClosed();
-        queue.pause();
-        return this;
+    public AsyncInputStream exceptionHandler(Handler<Throwable> exceptionHandler) {
+        lock.lock();
+        try {
+            checkStreamClosed();
+            this.exceptionHandler = exceptionHandler;
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized AsyncInputStream resume() {
-        checkStreamClosed();
-        queue.resume();
-        return this;
+    public AsyncInputStream handler(Handler<Buffer> handler) {
+        lock.lock();
+        try {
+            checkStreamClosed();
+            this.dataHandler = handler;
+            if (this.dataHandler != null && !this.closed) {
+                this.doRead();
+            } else {
+                queue.clear();
+            }
+            return this;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public AsyncInputStream pause() {
+        lock.lock();
+        try {
+            checkStreamClosed();
+            queue.pause();
+            return this;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public AsyncInputStream resume() {
+        lock.lock();
+        try {
+            checkStreamClosed();
+            queue.resume();
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -133,9 +161,14 @@ public class AsyncInputStream implements ReadStream<Buffer> {
         }
     }
 
-    private synchronized void closeInternal(Handler<AsyncResult<Void>> handler) {
-        closed = true;
-        doClose(handler);
+    private void closeInternal(Handler<AsyncResult<Void>> handler) {
+        lock.lock();
+        try {
+            closed = true;
+            doClose(handler);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void doClose(Handler<AsyncResult<Void>> handler) {
@@ -156,22 +189,27 @@ public class AsyncInputStream implements ReadStream<Buffer> {
         doRead(ByteBuffer.allocate(DEFAULT_BUFFER_SIZE));
     }
 
-    private synchronized void doRead(ByteBuffer buffer) {
-        if (!readInProgress) {
-            readInProgress = true;
-            Buffer buff = Buffer.buffer(DEFAULT_BUFFER_SIZE);
-            doRead(buff, 0, buffer, readPos, result -> {
-                if (result.succeeded()) {
-                    readInProgress = false;
-                    Buffer updatedBuffer = result.result();
-                    readPos += updatedBuffer.length();
-                    if (queue.write(updatedBuffer) && updatedBuffer.length() > 0) {
-                        doRead(buffer);
+    private void doRead(ByteBuffer buffer) {
+        lock.lock();
+        try {
+            if (!readInProgress) {
+                readInProgress = true;
+                Buffer buff = Buffer.buffer(DEFAULT_BUFFER_SIZE);
+                doRead(buff, 0, buffer, readPos, result -> {
+                    if (result.succeeded()) {
+                        readInProgress = false;
+                        Buffer updatedBuffer = result.result();
+                        readPos += updatedBuffer.length();
+                        if (queue.write(updatedBuffer) && updatedBuffer.length() > 0) {
+                            doRead(buffer);
+                        }
+                    } else {
+                        handleException(result.cause());
                     }
-                } else {
-                    handleException(result.cause());
-                }
-            });
+                });
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -210,8 +248,11 @@ public class AsyncInputStream implements ReadStream<Buffer> {
 
     private void handleData(Buffer buffer) {
         Handler<Buffer> handler;
-        synchronized (this) {
+        lock.lock();
+        try {
             handler = this.dataHandler;
+        } finally {
+            lock.unlock();
         }
         if (handler != null) {
             checkContext();
@@ -219,11 +260,14 @@ public class AsyncInputStream implements ReadStream<Buffer> {
         }
     }
 
-    private synchronized void handleEnd() {
+    private void handleEnd() {
         Handler<Void> endHandler;
-        synchronized (this) {
+        lock.lock();
+        try {
             dataHandler = null;
             endHandler = this.endHandler;
+        } finally {
+            lock.unlock();
         }
         if (endHandler != null) {
             checkContext();

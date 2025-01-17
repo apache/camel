@@ -17,13 +17,15 @@
 package org.apache.camel.wasm;
 
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.dylibso.chicory.runtime.ExportFunction;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasm.WasmModule;
 
 public class WasmFunction implements AutoCloseable {
-    private final Object lock;
+    private final Lock lock;
 
     private final WasmModule module;
     private final String functionName;
@@ -34,7 +36,7 @@ public class WasmFunction implements AutoCloseable {
     private final ExportFunction dealloc;
 
     public WasmFunction(WasmModule module, String functionName) {
-        this.lock = new Object();
+        this.lock = new ReentrantLock();
 
         this.module = Objects.requireNonNull(module);
         this.functionName = Objects.requireNonNull(functionName);
@@ -57,7 +59,8 @@ public class WasmFunction implements AutoCloseable {
         // Wasm execution is not thread safe so we must put a
         // synchronization guard around the function execution
         //
-        synchronized (lock) {
+        lock.lock();
+        try {
             try {
                 inPtr = (int) alloc.apply(inSize)[0];
                 instance.memory().write(inPtr, in);
@@ -86,6 +89,8 @@ public class WasmFunction implements AutoCloseable {
                     dealloc.apply(outPtr, outSize);
                 }
             }
+        } finally {
+            lock.unlock();
         }
     }
 

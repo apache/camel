@@ -98,12 +98,17 @@ public class XmppGroupChatProducer extends DefaultProducer {
         }
     }
 
-    private synchronized void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
-        if (!connection.isConnected()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+    private void reconnect() throws InterruptedException, IOException, SmackException, XMPPException {
+        lock.lock();
+        try {
+            if (!connection.isConnected()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
+                }
+                connection.connect();
             }
-            connection.connect();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -130,20 +135,26 @@ public class XmppGroupChatProducer extends DefaultProducer {
         super.doStart();
     }
 
-    protected synchronized void initializeChat()
+    protected void initializeChat()
             throws InterruptedException, SmackException, XMPPException, XmppStringprepException {
-        if (chat == null) {
-            room = endpoint.resolveRoom(connection);
-            String roomPassword = endpoint.getRoomPassword();
-            MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
-            chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
-            MucEnterConfiguration.Builder mucc = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
-                    .requestNoHistory();
-            if (roomPassword != null) {
-                mucc.withPassword(roomPassword);
+        lock.lock();
+        try {
+            if (chat == null) {
+                room = endpoint.resolveRoom(connection);
+                String roomPassword = endpoint.getRoomPassword();
+                MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
+                chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
+                MucEnterConfiguration.Builder mucc
+                        = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                                .requestNoHistory();
+                if (roomPassword != null) {
+                    mucc.withPassword(roomPassword);
+                }
+                chat.join(mucc.build());
+                LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
             }
-            chat.join(mucc.build());
-            LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
+        } finally {
+            lock.unlock();
         }
     }
 

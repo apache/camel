@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.sjms.reply;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.Destination;
 import jakarta.jms.ExceptionListener;
@@ -110,8 +112,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     private final class TemporaryReplyQueueDestinationResolver implements DestinationCreationStrategy {
+        private final Lock lock = new ReentrantLock();
+        private final Condition condition = lock.newCondition();
         private TemporaryQueue queue;
-        private final AtomicBoolean refreshWanted = new AtomicBoolean();
+        private volatile boolean refreshWanted;
 
         @Override
         public Destination createDestination(Session session, String name, boolean topic) throws JMSException {
@@ -120,32 +124,38 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         @Override
         public Destination createTemporaryDestination(Session session, boolean topic) throws JMSException {
-            synchronized (refreshWanted) {
-                if (queue == null || refreshWanted.get()) {
-                    refreshWanted.set(false);
+            lock.lock();
+            try {
+                if (queue == null || refreshWanted) {
+                    refreshWanted = false;
                     queue = session.createTemporaryQueue();
                     setReplyTo(queue);
                     if (log.isDebugEnabled()) {
                         log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
                     }
-                    refreshWanted.notifyAll();
+                    condition.signalAll();
                 }
+            } finally {
+                lock.unlock();
             }
             return queue;
         }
 
         public void scheduleRefresh() {
-            refreshWanted.set(true);
+            refreshWanted = true;
         }
 
         public void destinationReady() throws InterruptedException {
-            if (refreshWanted.get()) {
-                synchronized (refreshWanted) {
+            if (refreshWanted) {
+                lock.lock();
+                try {
                     //check if requestWanted is still true
-                    if (refreshWanted.get()) {
+                    if (refreshWanted) {
                         log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
-                        refreshWanted.wait();
+                        condition.await();
                     }
+                } finally {
+                    lock.unlock();
                 }
             }
         }

@@ -18,6 +18,8 @@ package org.apache.camel.component.undertow.handlers;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -38,6 +40,7 @@ public class CamelMethodHandler implements HttpHandler {
         DEFAULT_METHODS = new String[] { DEFAULT_HANDLER_KEY };
     }
 
+    private final Lock methodMapLock = new ReentrantLock();
     private final Map<String, MethodEntry> methodMap = new ConcurrentHashMap<>();
     private String handlerString;
 
@@ -66,11 +69,14 @@ public class CamelMethodHandler implements HttpHandler {
 
     public HttpHandler add(String methods, HttpHandler handler) {
         HttpHandler result = null;
-        synchronized (methodMap) { // we lock on methodMap to get a reliable sum of refCounts in remove(String)
+        methodMapLock.lock(); // we lock to get a reliable sum of refCounts in remove(String)
+        try {
             for (String method : splitMethods(methods)) {
                 MethodEntry en = methodMap.computeIfAbsent(method, m -> new MethodEntry());
                 result = en.addRef(handler, method);
             }
+        } finally {
+            methodMapLock.unlock();
         }
         handlerString = null;
         return result;
@@ -78,7 +84,8 @@ public class CamelMethodHandler implements HttpHandler {
 
     public boolean remove(String methods) {
         boolean result;
-        synchronized (methodMap) { // we lock on methodMap to get a reliable sum of refCounts
+        methodMapLock.lock(); // we lock to get a reliable sum of refCounts
+        try {
             for (String method : splitMethods(methods)) {
                 final MethodEntry en = methodMap.get(method);
                 if (en != null) {
@@ -86,6 +93,8 @@ public class CamelMethodHandler implements HttpHandler {
                 }
             }
             result = methodMap.values().stream().mapToInt(en -> en.refCount).sum() == 0;
+        } finally {
+            methodMapLock.unlock();
         }
         handlerString = null;
         return result;

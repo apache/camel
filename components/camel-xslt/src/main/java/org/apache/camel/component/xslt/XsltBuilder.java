@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -75,7 +77,7 @@ public class XsltBuilder implements Processor {
     private XsltMessageLogger xsltMessageLogger;
 
     private final XMLConverterHelper converter = new XMLConverterHelper();
-    private final Object sourceHandlerFactoryLock = new Object();
+    private final Lock sourceHandlerFactoryLock = new ReentrantLock();
 
     public XsltBuilder() {
     }
@@ -298,12 +300,15 @@ public class XsltBuilder implements Processor {
 
     public SourceHandlerFactory getSourceHandlerFactory() {
         if (this.sourceHandlerFactory == null) {
-            synchronized (this.sourceHandlerFactoryLock) {
+            sourceHandlerFactoryLock.lock();
+            try {
                 if (this.sourceHandlerFactory == null) {
                     final XmlSourceHandlerFactoryImpl xmlSourceHandlerFactory = createXmlSourceHandlerFactoryImpl();
                     xmlSourceHandlerFactory.setFailOnNullBody(isFailOnNullBody());
                     this.sourceHandlerFactory = xmlSourceHandlerFactory;
                 }
+            } finally {
+                sourceHandlerFactoryLock.unlock();
             }
         }
 

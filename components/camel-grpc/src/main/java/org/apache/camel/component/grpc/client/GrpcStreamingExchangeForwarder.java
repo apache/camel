@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.grpc.client;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -33,6 +36,7 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
 
     private final Object grpcStub;
 
+    private final Lock lock = new ReentrantLock();
     private volatile StreamObserver<Object> currentStream;
 
     private volatile StreamObserver<Object> currentResponseObserver;
@@ -75,13 +79,16 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
     private StreamObserver<Object> checkAndRecreateStreamObserver(StreamObserver<Object> responseObserver) {
         StreamObserver<Object> curStream = this.currentStream;
         if (curStream == null) {
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (this.currentStream == null) {
                     this.currentResponseObserver = responseObserver;
                     this.currentStream = doCreateStream(responseObserver);
                 }
 
                 curStream = this.currentStream;
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -93,9 +100,12 @@ class GrpcStreamingExchangeForwarder implements GrpcExchangeForwarder {
     }
 
     private void doCloseStream() {
-        synchronized (this) {
+        lock.lock();
+        try {
             this.currentStream = null;
             this.currentResponseObserver = null;
+        } finally {
+            lock.unlock();
         }
     }
 

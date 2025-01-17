@@ -82,46 +82,51 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return "velocity:" + getResourceUri();
     }
 
-    private synchronized VelocityEngine getVelocityEngine() throws Exception {
-        if (velocityEngine == null) {
-            velocityEngine = new VelocityEngine();
+    private VelocityEngine getVelocityEngine() throws Exception {
+        getInternalLock().lock();
+        try {
+            if (velocityEngine == null) {
+                velocityEngine = new VelocityEngine();
 
-            // set the class resolver as a property so we can access it from CamelVelocityClasspathResourceLoader
-            velocityEngine.addProperty("CamelClassResolver", getCamelContext().getClassResolver());
+                // set the class resolver as a property so we can access it from CamelVelocityClasspathResourceLoader
+                velocityEngine.addProperty("CamelClassResolver", getCamelContext().getClassResolver());
 
-            // set default properties
-            Properties properties = new Properties();
-            properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
-            properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file, class");
-            properties.setProperty("resource.loader.class.description", "Camel Velocity Classpath Resource Loader");
-            properties.setProperty("resource.loader.class.class", CamelVelocityClasspathResourceLoader.class.getName());
-            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
-            properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+                // set default properties
+                Properties properties = new Properties();
+                properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
+                properties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file, class");
+                properties.setProperty("resource.loader.class.description", "Camel Velocity Classpath Resource Loader");
+                properties.setProperty("resource.loader.class.class", CamelVelocityClasspathResourceLoader.class.getName());
+                final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+                properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
 
-            // load the velocity properties from property file which may overrides the default ones
-            if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                InputStream reader
-                        = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
+                // load the velocity properties from property file which may overrides the default ones
+                if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
+                    InputStream reader
+                            = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
+                    try {
+                        properties.load(reader);
+                        log.info("Loaded the velocity configuration file {}", getPropertiesFile());
+                    } finally {
+                        IOHelper.close(reader, getPropertiesFile(), log);
+                    }
+                }
+
+                log.debug("Initializing VelocityEngine with properties {}", properties);
+                // help the velocityEngine to load the CamelVelocityClasspathResourceLoader
+                ClassLoader old = Thread.currentThread().getContextClassLoader();
                 try {
-                    properties.load(reader);
-                    log.info("Loaded the velocity configuration file {}", getPropertiesFile());
+                    ClassLoader delegate = new CamelVelocityDelegateClassLoader(old);
+                    Thread.currentThread().setContextClassLoader(delegate);
+                    velocityEngine.init(properties);
                 } finally {
-                    IOHelper.close(reader, getPropertiesFile(), log);
+                    Thread.currentThread().setContextClassLoader(old);
                 }
             }
-
-            log.debug("Initializing VelocityEngine with properties {}", properties);
-            // help the velocityEngine to load the CamelVelocityClasspathResourceLoader
-            ClassLoader old = Thread.currentThread().getContextClassLoader();
-            try {
-                ClassLoader delegate = new CamelVelocityDelegateClassLoader(old);
-                Thread.currentThread().setContextClassLoader(delegate);
-                velocityEngine.init(properties);
-            } finally {
-                Thread.currentThread().setContextClassLoader(old);
-            }
+            return velocityEngine;
+        } finally {
+            getInternalLock().unlock();
         }
-        return velocityEngine;
     }
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {

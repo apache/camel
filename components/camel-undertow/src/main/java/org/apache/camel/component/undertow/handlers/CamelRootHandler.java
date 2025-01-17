@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.undertow.handlers;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.PathTemplate;
@@ -27,6 +30,7 @@ import io.undertow.util.URLUtils;
  * @see RestRootHandler
  */
 public class CamelRootHandler implements HttpHandler {
+    private final Lock lock = new ReentrantLock();
     private final CamelPathHandler pathHandler;
 
     public CamelRootHandler(HttpHandler defaultHandler) {
@@ -38,50 +42,56 @@ public class CamelRootHandler implements HttpHandler {
         pathHandler.handleRequest(exchange);
     }
 
-    public synchronized HttpHandler add(String path, String methods, boolean prefixMatch, HttpHandler handler) {
-        String basePath = getBasePath(path);
-        HttpHandler basePathHandler = pathHandler.getHandler(basePath);
+    public HttpHandler add(String path, String methods, boolean prefixMatch, HttpHandler handler) {
+        lock.lock();
+        try {
+            String basePath = getBasePath(path);
+            HttpHandler basePathHandler = pathHandler.getHandler(basePath);
 
-        CamelMethodHandler targetHandler;
-        if (path.contains("{")) {
-            // Adding a handler for the template path
-            String relativePath = path.substring(basePath.length());
-            if (basePathHandler instanceof CamelPathTemplateHandler) {
-                CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
-                targetHandler = templateHandler.get(relativePath);
-                if (targetHandler == null) {
-                    targetHandler = new CamelMethodHandler();
-                    templateHandler.add(relativePath, targetHandler);
-                }
-            } else {
-                targetHandler = add(basePathHandler, relativePath, basePath);
-            }
-
-        } else {
-            // Adding a handler for the static path
-            if (basePathHandler instanceof CamelPathTemplateHandler) {
-                CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
-                if (!prefixMatch) {
-                    targetHandler = templateHandler.getDefault();
-                } else {
-                    throw new IllegalArgumentException(String.format("Duplicate handlers on a path '%s'", path));
-                }
-            } else {
-                if (basePathHandler instanceof CamelMethodHandler) {
-                    targetHandler = (CamelMethodHandler) basePathHandler;
-                } else if (basePathHandler == null) {
-                    targetHandler = new CamelMethodHandler();
-                    if (prefixMatch) {
-                        pathHandler.addPrefixPath(basePath, targetHandler);
-                    } else {
-                        pathHandler.addExactPath(basePath, targetHandler);
+            CamelMethodHandler targetHandler;
+            if (path.contains("{")) {
+                // Adding a handler for the template path
+                String relativePath = path.substring(basePath.length());
+                if (basePathHandler instanceof CamelPathTemplateHandler) {
+                    CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
+                    targetHandler = templateHandler.get(relativePath);
+                    if (targetHandler == null) {
+                        targetHandler = new CamelMethodHandler();
+                        templateHandler.add(relativePath, targetHandler);
                     }
                 } else {
-                    throw new IllegalArgumentException(String.format("Unsupported handler '%s' was found", basePathHandler));
+                    targetHandler = add(basePathHandler, relativePath, basePath);
+                }
+
+            } else {
+                // Adding a handler for the static path
+                if (basePathHandler instanceof CamelPathTemplateHandler) {
+                    CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
+                    if (!prefixMatch) {
+                        targetHandler = templateHandler.getDefault();
+                    } else {
+                        throw new IllegalArgumentException(String.format("Duplicate handlers on a path '%s'", path));
+                    }
+                } else {
+                    if (basePathHandler instanceof CamelMethodHandler) {
+                        targetHandler = (CamelMethodHandler) basePathHandler;
+                    } else if (basePathHandler == null) {
+                        targetHandler = new CamelMethodHandler();
+                        if (prefixMatch) {
+                            pathHandler.addPrefixPath(basePath, targetHandler);
+                        } else {
+                            pathHandler.addExactPath(basePath, targetHandler);
+                        }
+                    } else {
+                        throw new IllegalArgumentException(
+                                String.format("Unsupported handler '%s' was found", basePathHandler));
+                    }
                 }
             }
+            return targetHandler.add(methods, handler);
+        } finally {
+            lock.unlock();
         }
-        return targetHandler.add(methods, handler);
     }
 
     private CamelMethodHandler add(HttpHandler basePathHandler, String relativePath, String basePath) {
@@ -101,52 +111,62 @@ public class CamelRootHandler implements HttpHandler {
         return targetHandler;
     }
 
-    public synchronized void remove(String path, String methods, boolean prefixMatch) {
-        String basePath = getBasePath(path);
-        HttpHandler basePathHandler = pathHandler.getHandler(basePath);
-        if (basePathHandler == null) {
-            return;
-        }
-
-        if (path.contains("{")) {
-            // Removing a handler for the template path
-            String relativePath = path.substring(basePath.length());
-            CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
-            CamelMethodHandler targetHandler = templateHandler.get(relativePath);
-            if (targetHandler.remove(methods)) {
-                templateHandler.remove(relativePath);
-                if (templateHandler.isEmpty()) {
-                    pathHandler.removePrefixPath(basePath);
-                }
+    public void remove(String path, String methods, boolean prefixMatch) {
+        lock.lock();
+        try {
+            String basePath = getBasePath(path);
+            HttpHandler basePathHandler = pathHandler.getHandler(basePath);
+            if (basePathHandler == null) {
+                return;
             }
 
-        } else {
-            // Removing a handler for the static path
-            if (basePathHandler instanceof CamelPathTemplateHandler) {
+            if (path.contains("{")) {
+                // Removing a handler for the template path
                 String relativePath = path.substring(basePath.length());
                 CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
-                CamelMethodHandler targetHandler = templateHandler.getDefault();
+                CamelMethodHandler targetHandler = templateHandler.get(relativePath);
                 if (targetHandler.remove(methods)) {
                     templateHandler.remove(relativePath);
                     if (templateHandler.isEmpty()) {
                         pathHandler.removePrefixPath(basePath);
                     }
                 }
+
             } else {
-                CamelMethodHandler targetHandler = (CamelMethodHandler) basePathHandler;
-                if (targetHandler.remove(methods)) {
-                    if (prefixMatch) {
-                        pathHandler.removePrefixPath(basePath);
-                    } else {
-                        pathHandler.removeExactPath(basePath);
+                // Removing a handler for the static path
+                if (basePathHandler instanceof CamelPathTemplateHandler) {
+                    String relativePath = path.substring(basePath.length());
+                    CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler) basePathHandler;
+                    CamelMethodHandler targetHandler = templateHandler.getDefault();
+                    if (targetHandler.remove(methods)) {
+                        templateHandler.remove(relativePath);
+                        if (templateHandler.isEmpty()) {
+                            pathHandler.removePrefixPath(basePath);
+                        }
+                    }
+                } else {
+                    CamelMethodHandler targetHandler = (CamelMethodHandler) basePathHandler;
+                    if (targetHandler.remove(methods)) {
+                        if (prefixMatch) {
+                            pathHandler.removePrefixPath(basePath);
+                        } else {
+                            pathHandler.removeExactPath(basePath);
+                        }
                     }
                 }
             }
+        } finally {
+            lock.unlock();
         }
     }
 
-    public synchronized boolean isEmpty() {
-        return pathHandler.isEmpty();
+    public boolean isEmpty() {
+        lock.lock();
+        try {
+            return pathHandler.isEmpty();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
