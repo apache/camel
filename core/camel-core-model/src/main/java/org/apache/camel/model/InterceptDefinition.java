@@ -36,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
+    @Metadata(description = "To use an expression to only trigger intercepting in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;

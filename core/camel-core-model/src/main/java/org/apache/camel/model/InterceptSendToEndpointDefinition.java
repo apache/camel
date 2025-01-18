@@ -44,6 +44,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @XmlAttribute
     @Metadata(label = "advanced")
     private String afterUri;
+    @Metadata(description = "To use an expression to only trigger intercepting sending to an endpoint in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;

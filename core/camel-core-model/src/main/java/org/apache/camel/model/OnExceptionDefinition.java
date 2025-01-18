@@ -60,6 +60,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<>();
+    @Metadata(description = "To use an expression to only trigger this in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;

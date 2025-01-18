@@ -30,9 +30,9 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Used for triggering doCatch in specific situations.
+ * To use a predicate to determine when to trigger this.
  */
-@Metadata(label = "error")
+@Metadata(label = "configuration")
 @AsPredicate
 @XmlRootElement(name = "onWhen")
 @XmlAccessorType(XmlAccessType.FIELD)

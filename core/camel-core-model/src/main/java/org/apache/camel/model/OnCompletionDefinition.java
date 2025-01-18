@@ -66,6 +66,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @XmlAttribute(name = "useOriginalMessage")
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalMessage;
+    @Metadata(description = "To use an expression to only trigger routing this completion steps in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;

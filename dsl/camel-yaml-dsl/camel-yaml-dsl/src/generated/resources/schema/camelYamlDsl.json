@@ -674,7 +674,7 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
+            "description" : "Used for triggering doCatch in specific situations",
             "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "steps" : {
@@ -2362,7 +2362,7 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Applies this interceptor only if the given predicate is true",
+            "description" : "To use an expression to only trigger intercepting in specific situations",
             "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "steps" : {
@@ -2399,7 +2399,7 @@
             },
             "onWhen" : {
               "title" : "On When",
-              "description" : "Applies this interceptor only if the given predicate is true",
+              "description" : "To use an expression to only trigger intercepting in specific situations",
               "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
             },
             "steps" : {
@@ -2447,7 +2447,7 @@
             },
             "onWhen" : {
               "title" : "On When",
-              "description" : "Applies this interceptor only if the given predicate is true",
+              "description" : "To use an expression to only trigger intercepting sending to an endpoint in specific situations",
               "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
             },
             "skipSendToOriginalEndpoint" : {
@@ -3464,7 +3464,7 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Sets an additional predicate that should be true before the onCompletion is triggered. To be used for fine grained controlling whether a completion callback should be invoked or not",
+            "description" : "To use an expression to only trigger routing this completion steps in specific situations",
             "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "parallelProcessing" : {
@@ -3536,7 +3536,7 @@
           },
           "onWhen" : {
             "title" : "On When",
-            "description" : "Sets an additional predicate that should be true before the onException is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.",
+            "description" : "To use an expression to only trigger this in specific situations",
             "$ref" : "#/items/definitions/org.apache.camel.model.OnWhenDefinition"
           },
           "redeliveryPolicy" : {
@@ -3603,7 +3603,7 @@
       },
       "org.apache.camel.model.OnWhenDefinition" : {
         "title" : "On When",
-        "description" : "Used for triggering doCatch in specific situations.",
+        "description" : "To use a predicate to determine when to trigger this.",
         "type" : "object",
         "additionalProperties" : false,
         "anyOf" : [ {

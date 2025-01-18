@@ -1914,7 +1914,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "exception", type = "array:string", description = "The exception(s) to catch.", displayName = "Exception"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.", displayName = "On When"),
+                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Used for triggering doCatch in specific situations", displayName = "On When"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
             }
     )
@@ -7415,7 +7415,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Applies this interceptor only if the given predicate is true", displayName = "On When"),
+                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "To use an expression to only trigger intercepting in specific situations", displayName = "On When"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
             }
     )
@@ -7488,7 +7488,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Applies this interceptor only if the given predicate is true", displayName = "On When"),
+                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "To use an expression to only trigger intercepting in specific situations", displayName = "On When"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "uri", type = "string", description = "Intercept incoming messages from the uri or uri pattern. If this option is not configured, then all incoming messages is intercepted.", displayName = "Uri")
             }
@@ -7573,7 +7573,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
-                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Applies this interceptor only if the given predicate is true", displayName = "On When"),
+                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "To use an expression to only trigger intercepting sending to an endpoint in specific situations", displayName = "On When"),
                     @YamlProperty(name = "skipSendToOriginalEndpoint", type = "string", description = "If set to true then the message is not sent to the original endpoint. By default (false) the message is both intercepted and then sent to the original endpoint.", displayName = "Skip Send To Original Endpoint"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "Intercept sending to the uri or uri pattern.", displayName = "Uri")
@@ -10694,7 +10694,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mode", type = "enum:AfterConsumer,BeforeConsumer", defaultValue = "AfterConsumer", description = "Sets the on completion mode. The default value is AfterConsumer", displayName = "Mode"),
                     @YamlProperty(name = "onCompleteOnly", type = "boolean", description = "Will only synchronize when the org.apache.camel.Exchange completed successfully (no errors).", displayName = "On Complete Only"),
                     @YamlProperty(name = "onFailureOnly", type = "boolean", description = "Will only synchronize when the org.apache.camel.Exchange ended with failure (exception or FAULT message).", displayName = "On Failure Only"),
-                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Sets an additional predicate that should be true before the onCompletion is triggered. To be used for fine grained controlling whether a completion callback should be invoked or not", displayName = "On When"),
+                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "To use an expression to only trigger routing this completion steps in specific situations", displayName = "On When"),
                     @YamlProperty(name = "parallelProcessing", type = "boolean", description = "If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By default this is false, meaning the on completion process will run synchronously using the same caller thread as from the route.", displayName = "Parallel Processing"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "useOriginalMessage", type = "boolean", description = "Will use the original input message body when an org.apache.camel.Exchange for this on completion. The original input message is defensively copied, and the copied message body is converted to org.apache.camel.StreamCache if possible (stream caching is enabled, can be disabled globally or on the original route), to ensure the body can be read when the original message is being used later. If the body is converted to org.apache.camel.StreamCache then the message body on the current org.apache.camel.Exchange is replaced with the org.apache.camel.StreamCache body. If the body is not converted to org.apache.camel.StreamCache then the body will not be able to re-read when accessed later. Important: The original input means the input message that are bounded by the current org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or multiple routes if they are connected using internal endpoints such as direct or seda. When messages is passed via external endpoints such as JMS or HTTP then the consumer will create a new unit of work, with the message it received as input as the original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work boundary for the messages in their sub-route (eg the split message); however these EIPs have an option named shareUnitOfWork which allows to combine with the parent unit of work in regard to error handling and therefore use the parent original message. By default this feature is off.", displayName = "Use Original Message")
@@ -10803,7 +10803,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inheritErrorHandler", type = "boolean"),
                     @YamlProperty(name = "onExceptionOccurredRef", type = "string", description = "Sets a reference to a processor that should be processed just after an exception occurred. Can be used to perform custom logging about the occurred exception at the exact time it happened. Important: Any exception thrown from this processor will be ignored.", displayName = "On Exception Occurred Ref"),
                     @YamlProperty(name = "onRedeliveryRef", type = "string", description = "Sets a reference to a processor that should be processed before a redelivery attempt. Can be used to change the org.apache.camel.Exchange before its being redelivered.", displayName = "On Redelivery Ref"),
-                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "Sets an additional predicate that should be true before the onException is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not.", displayName = "On When"),
+                    @YamlProperty(name = "onWhen", type = "object:org.apache.camel.model.OnWhenDefinition", description = "To use an expression to only trigger this in specific situations", displayName = "On When"),
                     @YamlProperty(name = "redeliveryPolicy", type = "object:org.apache.camel.model.RedeliveryPolicyDefinition", description = "Used for configuring redelivery options", displayName = "Redelivery Policy"),
                     @YamlProperty(name = "redeliveryPolicyRef", type = "string", description = "Sets a reference to a redelivery policy to lookup in the org.apache.camel.spi.Registry to be used.", displayName = "Redelivery Policy Ref"),
                     @YamlProperty(name = "retryWhile", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "Sets the retry while predicate. Will continue retrying until predicate returns false.", displayName = "Retry While"),
@@ -10981,7 +10981,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.OnWhenDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "On When",
-            description = "Used for triggering doCatch in specific situations.",
+            description = "To use a predicate to determine when to trigger this.",
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),

@@ -1077,7 +1077,7 @@ Route to be executed when Circuit Breaker EIP executes fallback
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Used for triggering doCatch in specific situations.
+To use a predicate to determine when to trigger this.
 ]]>
       </xs:documentation>
     </xs:annotation>

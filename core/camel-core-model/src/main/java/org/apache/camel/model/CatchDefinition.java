@@ -45,6 +45,7 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
+    @Metadata(description = "Used for triggering doCatch in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;
