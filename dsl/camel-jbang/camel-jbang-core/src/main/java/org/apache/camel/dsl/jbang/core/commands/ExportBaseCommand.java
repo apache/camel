@@ -886,7 +886,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "1.17.0";
+        return answer != null ? answer : "1.18.0";
     }
 
     protected void safeCopy(File source, File target, boolean override) throws Exception {

@@ -91,7 +91,7 @@ class ExportMainJkubeTest {
         p = model.getBuild().getPlugins().get(4);
         Assertions.assertEquals("org.eclipse.jkube", p.getGroupId());
         Assertions.assertEquals("kubernetes-maven-plugin", p.getArtifactId());
-        Assertions.assertEquals("1.17.0", p.getVersion());
+        Assertions.assertEquals("1.18.0", p.getVersion());
 
         command.printConfigurationValues("export command");
     }
