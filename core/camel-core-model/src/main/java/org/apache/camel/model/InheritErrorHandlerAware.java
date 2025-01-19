@@ -14,17 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.model;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.InheritErrorHandlerDefaultTest;
+/**
+ * Whether an EIP supports the special inherit error handler mode.
+ */
+public interface InheritErrorHandlerAware {
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+    /**
+     * To turn off inheriting Camel error handler in this EIP.
+     */
+    Boolean getInheritErrorHandler();
 
-public class SpringInheritErrorHandlerDefaultTest extends InheritErrorHandlerDefaultTest {
+    /**
+     * To turn off inheriting Camel error handler in this EIP.
+     */
+    void setInheritErrorHandler(Boolean inheritErrorHandler);
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/InheritErrorHandlerDefaultTest.xml");
-    }
 }

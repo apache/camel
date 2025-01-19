@@ -2591,11 +2591,6 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
-          "inheritErrorHandler" : {
-            "type" : "boolean",
-            "title" : "Inherit Error Handler",
-            "description" : "Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy."
-          },
           "steps" : {
             "type" : "array",
             "items" : {

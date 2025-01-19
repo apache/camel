@@ -79,15 +79,12 @@ import org.slf4j.Logger;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
-        implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition {
+        implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition, InheritErrorHandlerAware {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     protected String disabled;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    protected Boolean inheritErrorHandler;
     @XmlTransient
     private final Deque<Block> blocks = new LinkedList<>();
     @XmlTransient
@@ -98,6 +95,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     @XmlTransient
     private final int index;
+    @XmlTransient
+    private Boolean inheritErrorHandler; // used for camel-jta
 
     protected ProcessorDefinition() {
         // every time we create a definition we should inc the counter
@@ -107,7 +106,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     protected ProcessorDefinition(ProcessorDefinition source) {
         super(source);
         this.disabled = source.disabled;
-        this.inheritErrorHandler = source.inheritErrorHandler;
         this.blocks.addAll(source.blocks);
         this.parent = source.parent;
         this.routeConfiguration = source.routeConfiguration;
@@ -4142,32 +4140,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return asType();
     }
 
-    /**
-     * Sets whether or not to inherit the configured error handler. <br/>
-     * The default value is <tt>true</tt>.
-     * <p/>
-     * You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you
-     * want to use a custom error handler strategy.
-     *
-     * @param  inheritErrorHandler whether to not to inherit the error handler for this node
-     * @return                     the builder
-     */
-    public Type inheritErrorHandler(boolean inheritErrorHandler) {
-        // set on last output
-        int size = getOutputs().size();
-        if (size == 0) {
-            // if no outputs then configure this DSL
-            setInheritErrorHandler(inheritErrorHandler);
-        } else {
-            // configure on last output as its the intended
-            ProcessorDefinition<?> output = getOutputs().get(size - 1);
-            if (output != null) {
-                output.setInheritErrorHandler(inheritErrorHandler);
-            }
-        }
-        return asType();
-    }
-
     @SuppressWarnings("unchecked")
     Type asType() {
         return (Type) this;
@@ -4313,14 +4285,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.interceptStrategies.add(strategy);
     }
 
-    public Boolean isInheritErrorHandler() {
-        return inheritErrorHandler;
-    }
-
-    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
-        this.inheritErrorHandler = inheritErrorHandler;
-    }
-
     @Override
     public String getDisabled() {
         return disabled;
@@ -4329,6 +4293,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @Override
     public void setDisabled(String disabled) {
         this.disabled = disabled;
+    }
+
+    @Override
+    public Boolean getInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    @Override
+    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
     }
 
     /**

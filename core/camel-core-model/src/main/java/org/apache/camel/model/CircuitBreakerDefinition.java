@@ -35,10 +35,13 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "resilience4jConfiguration", "faultToleranceConfiguration", "outputs", "onFallback" })
-public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
+public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> implements InheritErrorHandlerAware {
 
     @XmlAttribute
     private String configuration;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private Boolean inheritErrorHandler;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
@@ -52,6 +55,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     protected CircuitBreakerDefinition(CircuitBreakerDefinition source) {
         super(source);
         this.configuration = source.configuration;
+        this.inheritErrorHandler = source.inheritErrorHandler;
         this.resilience4jConfiguration
                 = source.resilience4jConfiguration != null ? source.resilience4jConfiguration.copyDefinition() : null;
         this.faultToleranceConfiguration
@@ -127,6 +131,14 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         this.configuration = configuration;
     }
 
+    public Boolean getInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
+    }
+
     public OnFallbackDefinition getOnFallback() {
         return onFallback;
     }
@@ -180,6 +192,14 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      */
     public CircuitBreakerDefinition configuration(String ref) {
         configuration = ref;
+        return this;
+    }
+
+    /**
+     * To turn on or off Camel error handling during circuit breaker (only failover load balancer is supported).
+     */
+    public CircuitBreakerDefinition inheritErrorHandler(boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
         return this;
     }
 

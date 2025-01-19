@@ -3574,7 +3574,6 @@ later at runtime. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="inheritErrorHandler" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -4709,6 +4708,16 @@ runtime. Default value: false
 <![CDATA[
 Refers to a circuit breaker configuration (such as resillience4j, or microprofile-fault-tolerance) to use for
 configuring the circuit breaker EIP.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="inheritErrorHandler" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To turn on or off Camel error handling during circuit breaker (only failover load balancer is supported). Default value:
+false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7135,6 +7144,18 @@ balancing (instead of using the next when starting).
 A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and
 continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. This
 option can be used whether roundRobin is enabled or not. Default value: -1
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="inheritErrorHandler" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To turn off Camel error handling during load balancing. By default, Camel error handler will attempt calling a service,
+which means you can specify retires and other fine-grained settings. And only when Camel error handler have failed all
+attempts, then this load balancer will fail over to the next endpoint and try again. You can turn this off, and then
+this load balancer will fail over immediately on an error. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>

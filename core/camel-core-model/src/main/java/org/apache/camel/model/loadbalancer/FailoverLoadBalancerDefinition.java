@@ -26,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.InheritErrorHandlerAware;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -35,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "failoverLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
+public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition implements InheritErrorHandlerAware {
 
     @XmlTransient
     private List<Class<?>> exceptionTypes = new ArrayList<>();
@@ -49,6 +50,9 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "-1")
     private String maximumFailoverAttempts;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private Boolean inheritErrorHandler;
 
     public FailoverLoadBalancerDefinition() {
     }
@@ -60,6 +64,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         this.roundRobin = source.roundRobin;
         this.sticky = source.sticky;
         this.maximumFailoverAttempts = source.maximumFailoverAttempts;
+        this.inheritErrorHandler = source.inheritErrorHandler;
     }
 
     @Override
@@ -134,6 +139,24 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
      */
     public void setMaximumFailoverAttempts(String maximumFailoverAttempts) {
         this.maximumFailoverAttempts = maximumFailoverAttempts;
+    }
+
+    @Override
+    public Boolean getInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    /**
+     * To turn off Camel error handling during load balancing.
+     * <p/>
+     * By default, Camel error handler will attempt calling a service, which means you can specify retires and other
+     * fine-grained settings. And only when Camel error handler have failed all attempts, then this load balancer will
+     * fail over to the next endpoint and try again. You can turn this off, and then this load balancer will fail over
+     * immediately on an error.
+     */
+    @Override
+    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
     }
 
     @Override
