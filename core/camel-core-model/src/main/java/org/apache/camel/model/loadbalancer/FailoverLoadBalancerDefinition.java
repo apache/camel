@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.model.InheritErrorHandlerAware;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -36,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "failoverLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition implements InheritErrorHandlerAware {
+public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlTransient
     private List<Class<?>> exceptionTypes = new ArrayList<>();
@@ -51,7 +50,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition imple
     @Metadata(defaultValue = "-1")
     private String maximumFailoverAttempts;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private Boolean inheritErrorHandler;
 
     public FailoverLoadBalancerDefinition() {
@@ -141,7 +140,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition imple
         this.maximumFailoverAttempts = maximumFailoverAttempts;
     }
 
-    @Override
     public Boolean getInheritErrorHandler() {
         return inheritErrorHandler;
     }
@@ -154,7 +152,6 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition imple
      * fail over to the next endpoint and try again. You can turn this off, and then this load balancer will fail over
      * immediately on an error.
      */
-    @Override
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }

@@ -4716,8 +4716,10 @@ configuring the circuit breaker EIP.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To turn on or off Camel error handling during circuit breaker (only failover load balancer is supported). Default value:
-false
+To turn on or off Camel error handling during circuit breaker. If this is enabled then Camel error handler will first
+trigger if there is an error in the circuit breaker, which allows to let Camel handle redeliveries. If all attempts is
+failed, then after the circuit breaker is finished, then Camel error handler can handle the error as well such as the
+dead letter channel. By default, Camel error handler is turned off. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7155,7 +7157,7 @@ option can be used whether roundRobin is enabled or not. Default value: -1
 To turn off Camel error handling during load balancing. By default, Camel error handler will attempt calling a service,
 which means you can specify retires and other fine-grained settings. And only when Camel error handler have failed all
 attempts, then this load balancer will fail over to the next endpoint and try again. You can turn this off, and then
-this load balancer will fail over immediately on an error. Default value: false
+this load balancer will fail over immediately on an error. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>

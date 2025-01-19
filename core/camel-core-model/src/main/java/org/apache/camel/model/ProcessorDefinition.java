@@ -79,7 +79,7 @@ import org.slf4j.Logger;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
-        implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition, InheritErrorHandlerAware {
+        implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlAttribute
@@ -4295,12 +4295,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.disabled = disabled;
     }
 
-    @Override
     public Boolean getInheritErrorHandler() {
         return inheritErrorHandler;
     }
 
-    @Override
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }

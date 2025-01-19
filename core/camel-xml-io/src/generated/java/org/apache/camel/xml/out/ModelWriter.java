@@ -888,7 +888,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCircuitBreakerDefinition(String name, CircuitBreakerDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), null);
+        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
         doWriteAttribute("configuration", def.getConfiguration(), null);
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteElement("onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -3267,7 +3267,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteFailoverLoadBalancerDefinition(String name, FailoverLoadBalancerDefinition def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), null);
+        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
         doWriteAttribute("sticky", def.getSticky(), null);
         doWriteAttribute("maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
         doWriteAttribute("roundRobin", def.getRoundRobin(), null);
