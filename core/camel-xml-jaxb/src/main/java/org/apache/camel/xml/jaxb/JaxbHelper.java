@@ -42,6 +42,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -84,8 +85,16 @@ public final class JaxbHelper {
      * @param namespaces the map of namespaces to add discovered XML namespaces into
      */
     public static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
-        Collection<ExpressionNode> col = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
-        for (ExpressionNode en : col) {
+        for (ExpressionNode en : filterTypeInOutputs(route.getOutputs(), ExpressionNode.class)) {
+            NamespaceAware na = getNamespaceAwareFromExpression(en);
+            if (na != null) {
+                Map<String, String> map = na.getNamespaces();
+                if (map != null && !map.isEmpty()) {
+                    namespaces.putAll(map);
+                }
+            }
+        }
+        for (BasicExpressionNode<?> en : filterTypeInOutputs(route.getOutputs(), BasicExpressionNode.class)) {
             NamespaceAware na = getNamespaceAwareFromExpression(en);
             if (na != null) {
                 Map<String, String> map = na.getNamespaces();
@@ -147,7 +156,21 @@ public final class JaxbHelper {
         }
     }
 
-    public static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {
+    private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {
+        ExpressionDefinition ed = expressionNode.getExpression();
+
+        NamespaceAware na = null;
+        Expression exp = ed.getExpressionValue();
+        if (exp instanceof NamespaceAware namespaceAware) {
+            na = namespaceAware;
+        } else if (ed instanceof NamespaceAware namespaceAware) {
+            na = namespaceAware;
+        }
+
+        return na;
+    }
+
+    private static NamespaceAware getNamespaceAwareFromExpression(BasicExpressionNode expressionNode) {
         ExpressionDefinition ed = expressionNode.getExpression();
 
         NamespaceAware na = null;
@@ -240,6 +263,13 @@ public final class JaxbHelper {
                 na.setNamespaces(namespaces);
             }
         }
+        Collection<BasicExpressionNode> col2 = filterTypeInOutputs(route.getOutputs(), BasicExpressionNode.class);
+        for (BasicExpressionNode en : col2) {
+            NamespaceAware na = getNamespaceAwareFromExpression(en);
+            if (na != null) {
+                na.setNamespaces(namespaces);
+            }
+        }
     }
 
     public static void applyNamespaces(RouteConfigurationDefinition config, Map<String, String> namespaces) {
@@ -252,6 +282,13 @@ public final class JaxbHelper {
         for (OutputDefinition<?> def : defs) {
             Collection<ExpressionNode> col = filterTypeInOutputs(def.getOutputs(), ExpressionNode.class);
             for (ExpressionNode en : col) {
+                NamespaceAware na = getNamespaceAwareFromExpression(en);
+                if (na != null) {
+                    na.setNamespaces(namespaces);
+                }
+            }
+            Collection<BasicExpressionNode> col2 = filterTypeInOutputs(def.getOutputs(), BasicExpressionNode.class);
+            for (BasicExpressionNode en : col2) {
                 NamespaceAware na = getNamespaceAwareFromExpression(en);
                 if (na != null) {
                     na.setNamespaces(namespaces);
