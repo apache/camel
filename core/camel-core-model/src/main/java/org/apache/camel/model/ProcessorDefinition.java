@@ -86,6 +86,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     protected String disabled;
     @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     protected Boolean inheritErrorHandler;
     @XmlTransient
     private final Deque<Block> blocks = new LinkedList<>();
