@@ -18,8 +18,13 @@
 package org.apache.camel.test.infra.common.services;
 
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.BaseConsumer;
 
 public interface ContainerService<T extends GenericContainer> {
 
     T getContainer();
+
+    default void followLog(BaseConsumer logConsumer) {
+        getContainer().followOutput(logConsumer);
+    }
 }

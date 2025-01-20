@@ -16,21 +16,38 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays available external services", sortOptions = false,
+@CommandLine.Command(name = "ps", description = "Displays running services", sortOptions = false,
                      showDefaultValues = true)
-public class InfraList extends InfraBaseCommand {
+public class InfraPs extends InfraBaseCommand {
 
-    public InfraList(CamelJBangMain main) {
+    public InfraPs(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
+        // retrieve running services to filter output
+        Set<String> runningAliases = new HashSet<>();
+        for (File pidFile : CommandLineHelper.getCamelDir().listFiles(
+                (dir, name) -> name.startsWith("infra-"))) {
+            String runningServiceName = pidFile.getName().split("-")[1];
+            runningAliases.add(runningServiceName);
+        }
+
         return listServices(rows -> {
+            if (runningAliases.isEmpty()) {
+                rows.clear();
+            } else {
+                rows.removeIf(row -> !runningAliases.contains(row.alias()));
+            }
         });
     }
-
 }

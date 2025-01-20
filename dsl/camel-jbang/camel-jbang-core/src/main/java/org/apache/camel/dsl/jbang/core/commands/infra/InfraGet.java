@@ -16,21 +16,42 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.List;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays available external services", sortOptions = false,
+@CommandLine.Command(name = "get", description = "Displays running service information", sortOptions = false,
                      showDefaultValues = true)
-public class InfraList extends InfraBaseCommand {
+public class InfraGet extends InfraBaseCommand {
 
-    public InfraList(CamelJBangMain main) {
+    @CommandLine.Parameters(description = "Service name", arity = "1")
+    private List<String> serviceName;
+
+    public InfraGet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        return listServices(rows -> {
-        });
-    }
+        String serviceToGet = serviceName.get(0);
+        boolean found = false;
+        for (File jsonFile : CommandLineHelper.getCamelDir().listFiles(
+                (dir, name) -> name.startsWith("infra-" + serviceToGet + "-") && name.endsWith(".json"))) {
+            printer().println(Files.readString(jsonFile.toPath()));
+            found = true;
+            break;
+        }
 
+        if (!found) {
+            printer().println("No running service found with alias " + serviceToGet);
+
+            return -1;
+        }
+
+        return 0;
+    }
 }
