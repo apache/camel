@@ -313,6 +313,14 @@ ${indent}                    return true;
 ${indent}                }
 ${indent}                return false;
 ${indent}            }
+${indent}            if ("${external.namespace2()}".equals(parser.getNamespace())) {
+${indent}                Element el = doParseDOMElement("${external.documentElement2()}", "${external.namespace2()}", def.${member.getter}());
+${indent}                if (el != null) {
+${indent}                    doAddElement(el, def.${member.getter}(), def::${member.setter});
+${indent}                    return true;
+${indent}                }
+${indent}                return false;
+${indent}            }
                 #end
                 #if( $others.empty )
                     #if( $expressionHandlersDef )
