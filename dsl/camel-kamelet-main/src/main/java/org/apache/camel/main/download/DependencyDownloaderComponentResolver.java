@@ -93,6 +93,13 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
                 downloadLoader(oa.getGroupId(), oa.getArtifactId(), oa.getVersion());
             }
         }
+        if ("cron".equals(name)) {
+            // include camel-quartz when using cron
+            ComponentModel quartz = catalog.componentModel("quartz");
+            if (quartz != null) {
+                downloadLoader(quartz.getGroupId(), quartz.getArtifactId(), quartz.getVersion());
+            }
+        }
         if ("activemq".equals(name) || "activemq6".equals(name)) {
             // need to include JMS connection-pool (trigger class loader to download correct JAR)
             try {
