@@ -87,7 +87,7 @@
         <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
         <bytebuddy-version>1.15.11</bytebuddy-version>
         <c3p0-version>0.10.1</c3p0-version>
-        <caffeine-version>3.1.8</caffeine-version>
+        <caffeine-version>3.2.0</caffeine-version>
         <californium-version>3.13.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camunda-version>7.22.0</camunda-version>
