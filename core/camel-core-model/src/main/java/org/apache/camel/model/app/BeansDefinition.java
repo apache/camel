@@ -136,7 +136,8 @@ public class BeansDefinition {
     }
 
     /**
-     * Spring XML beans
+     * Support for legacy Spring beans and Blueprint bean files to be parsed and loaded for migration and tooling
+     * effort.
      */
     public void setSpringOrBlueprintBeans(List<Element> springOrBlueprintBeans) {
         this.springOrBlueprintBeans = springOrBlueprintBeans;
