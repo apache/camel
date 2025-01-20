@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "openapi-java",
     "title": "Openapi Java",
-    "description": "Rest-dsl support for using openapi doc",
+    "description": "Rest DSL support for using OpenApi doc",
     "deprecated": false,
     "firstVersion": "3.1.0",
     "label": "rest,api",

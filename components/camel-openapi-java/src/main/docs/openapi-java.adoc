@@ -2,7 +2,7 @@
 :doctitle: Openapi Java
 :shortname: openapi-java
 :artifactid: camel-openapi-java
-:description: Rest-dsl support for using openapi doc
+:description: Rest DSL support for using OpenApi doc
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
@@ -186,7 +186,7 @@ via the `host` field and in OpenAPI V3 it is part of the `servers` field.
 
 By default, the value for these fields is determined by `X-Forwarded` headers, `X-Forwarded-Host` & `X-Forwarded-Proto`.
 
-This can be overridden by disabling the lookup of `X-Forwarded` headers and by specifying your own host, port & scheme on the REST configuration.
+This can be overridden by specifying your own host, port & scheme on the REST configuration.
 
 [source,java]
 ----
@@ -196,11 +196,5 @@ restConfiguration().component("netty-http")
     .host("localhost")
     .port(8080);
 ----
-
-== Examples
-
-In the Apache Camel distribution we ship the `camel-example-openapi-cdi`
-and `camel-example-spring-boot-rest-openapi-simple` which demonstrates
-using this OpenApi component.
 
 include::spring-boot:partial$starter.adoc[]

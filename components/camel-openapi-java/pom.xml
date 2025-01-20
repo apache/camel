@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: OpenApi Java</name>
-    <description>Rest-dsl support for using openapi doc</description>
+    <description>Rest DSL support for using OpenApi doc</description>
 
     <properties>
         <firstVersion>3.1.0</firstVersion>
