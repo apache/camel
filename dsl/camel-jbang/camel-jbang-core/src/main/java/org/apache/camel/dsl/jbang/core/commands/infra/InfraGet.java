@@ -17,49 +17,40 @@
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "stop",
-                     description = "Stop an external service")
-public class InfraStop extends InfraBaseCommand {
+@CommandLine.Command(name = "get", description = "Displays running service information", sortOptions = false,
+                     showDefaultValues = true)
+public class InfraGet extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "1")
     private List<String> serviceName;
 
-    public InfraStop(CamelJBangMain main) {
+    public InfraGet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        String serviceToStop = serviceName.get(0);
-
-        boolean serviceStopped = false;
-        String pid = null;
-        for (File pidFile : CommandLineHelper.getCamelDir().listFiles(
-                (dir, name) -> name.startsWith("infra-" + serviceToStop + "-"))) {
-
-            String name = pidFile.getName();
-            pid = name.substring(name.lastIndexOf("-") + 1, name.lastIndexOf('.'));
-
-            FileUtil.deleteFile(pidFile);
-
-            serviceStopped = true;
+        String serviceToGet = serviceName.get(0);
+        boolean found = false;
+        for (File jsonFile : CommandLineHelper.getCamelDir().listFiles(
+                (dir, name) -> name.startsWith("infra-" + serviceToGet + "-") && name.endsWith(".json"))) {
+            printer().println(Files.readString(jsonFile.toPath()));
+            found = true;
+            break;
         }
 
-        if (!serviceStopped) {
-            printer().println("No Camel Infrastructure found with name " + serviceToStop + " found.");
+        if (!found) {
+            printer().println("No running service found with alias " + serviceToGet);
 
             return -1;
         }
-
-        printer().println("Shutting down service " + serviceToStop + " (PID: " + pid + ")");
-        ProcessHandle.of(Long.valueOf(pid)).ifPresent(ProcessHandle::destroy);
 
         return 0;
     }
