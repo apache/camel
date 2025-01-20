@@ -44,8 +44,9 @@ public class ElasticsearchRestClientITSupport extends CamelTestSupport {
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
+        String scheme = service.getSslContext().isPresent() ? "https" : "http";
         HttpHost host
-                = new HttpHost(service.getElasticSearchHost(), service.getPort(), "https");
+                = new HttpHost(service.getElasticSearchHost(), service.getPort(), scheme);
         final RestClientBuilder builder = RestClient.builder(host);
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY,
@@ -53,7 +54,9 @@ public class ElasticsearchRestClientITSupport extends CamelTestSupport {
         builder.setHttpClientConfigCallback(
                 httpClientBuilder -> {
                     httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    httpClientBuilder.setSSLContext(service.getSslContext().orElseThrow());
+                    service.getSslContext().ifPresent(sslContext -> {
+                        httpClientBuilder.setSSLContext(sslContext);
+                    });
                     return httpClientBuilder;
                 });
         restClient = builder.build();
