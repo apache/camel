@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = ElasticSearchInfraService.class,
               description = "NoSQL Database Elasticsearch",
@@ -64,7 +65,9 @@ public class ElasticSearchLocalContainerInfraService
     }
 
     protected ElasticsearchContainer initContainer(String imageName) {
-        ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(imageName)
+        DockerImageName customImage = DockerImageName.parse(imageName)
+                .asCompatibleSubstituteFor("docker.elastic.co/elasticsearch/elasticsearch");
+        ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(customImage)
                 .withPassword(PASSWORD);
         // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
         // on the build pipeline
