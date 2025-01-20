@@ -1368,18 +1368,18 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends BeansDefinition> ElementHandler<T> beansDefinitionElementHandler() {
         return (def, key) -> {
-            if ("http://www.osgi.org/xmlns/blueprint/v1.0.0".equals(parser.getNamespace())) {
-                Element el = doParseDOMElement("blueprint", "http://www.osgi.org/xmlns/blueprint/v1.0.0", def.getBlueprintBeans());
+            if ("http://www.springframework.org/schema/beans".equals(parser.getNamespace())) {
+                Element el = doParseDOMElement("beans", "http://www.springframework.org/schema/beans", def.getSpringOrBlueprintBeans());
                 if (el != null) {
-                    doAddElement(el, def.getBlueprintBeans(), def::setBlueprintBeans);
+                    doAddElement(el, def.getSpringOrBlueprintBeans(), def::setSpringOrBlueprintBeans);
                     return true;
                 }
                 return false;
             }
-            if ("http://www.springframework.org/schema/beans".equals(parser.getNamespace())) {
-                Element el = doParseDOMElement("beans", "http://www.springframework.org/schema/beans", def.getSpringBeans());
+            if ("http://www.osgi.org/xmlns/blueprint/v1.0.0".equals(parser.getNamespace())) {
+                Element el = doParseDOMElement("blueprint", "http://www.osgi.org/xmlns/blueprint/v1.0.0", def.getSpringOrBlueprintBeans());
                 if (el != null) {
-                    doAddElement(el, def.getSpringBeans(), def::setSpringBeans);
+                    doAddElement(el, def.getSpringOrBlueprintBeans(), def::setSpringOrBlueprintBeans);
                     return true;
                 }
                 return false;

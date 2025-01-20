@@ -14831,7 +14831,6 @@ List of bean.
         </xs:annotation>
       </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
-      <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:element minOccurs="0" name="dataFormats">
         <xs:complexType>
           <xs:sequence>

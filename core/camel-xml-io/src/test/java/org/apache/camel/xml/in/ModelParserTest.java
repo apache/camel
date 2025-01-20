@@ -246,7 +246,7 @@ public class ModelParserTest {
         BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
         assertNotNull(beans);
         assertTrue(beans.getBeans().isEmpty());
-        assertTrue(beans.getSpringBeans().isEmpty());
+        assertTrue(beans.getSpringOrBlueprintBeans().isEmpty());
     }
 
     @Test
@@ -257,7 +257,7 @@ public class ModelParserTest {
         BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
         assertNotNull(beans);
         assertEquals(2, beans.getBeans().size());
-        assertTrue(beans.getSpringBeans().isEmpty());
+        assertTrue(beans.getSpringOrBlueprintBeans().isEmpty());
 
         BeanFactoryDefinition b1 = beans.getBeans().get(0);
         BeanFactoryDefinition b2 = beans.getBeans().get(1);
@@ -287,7 +287,7 @@ public class ModelParserTest {
         BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
         assertNotNull(beans);
         assertEquals(2, beans.getBeans().size());
-        assertTrue(beans.getSpringBeans().isEmpty());
+        assertTrue(beans.getSpringOrBlueprintBeans().isEmpty());
 
         BeanFactoryDefinition b1 = beans.getBeans().get(0);
         BeanFactoryDefinition b2 = beans.getBeans().get(1);
@@ -314,7 +314,7 @@ public class ModelParserTest {
         BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
         assertNotNull(beans);
         assertEquals(2, beans.getBeans().size());
-        assertTrue(beans.getSpringBeans().isEmpty());
+        assertTrue(beans.getSpringOrBlueprintBeans().isEmpty());
 
         BeanFactoryDefinition b1 = beans.getBeans().get(0);
         BeanFactoryDefinition b2 = beans.getBeans().get(1);
@@ -343,16 +343,17 @@ public class ModelParserTest {
         BeansDefinition beans = parser.parseBeansDefinition().orElse(null);
         assertNotNull(beans);
         assertTrue(beans.getBeans().isEmpty());
-        assertEquals(2, beans.getSpringBeans().size());
-        Document dom = beans.getSpringBeans().get(0).getOwnerDocument();
+        assertEquals(2, beans.getSpringOrBlueprintBeans().size());
+        Document dom = beans.getSpringOrBlueprintBeans().get(0).getOwnerDocument();
         StringWriter sw = new StringWriter();
         TransformerFactory.newInstance().newTransformer().transform(new DOMSource(dom), new StreamResult(sw));
         String document = sw.toString();
         assertTrue(document.contains("class=\"java.lang.String\""));
 
-        assertSame(beans.getSpringBeans().get(0).getOwnerDocument(), beans.getSpringBeans().get(1).getOwnerDocument());
-        assertEquals("s1", beans.getSpringBeans().get(0).getAttribute("id"));
-        assertEquals("s2", beans.getSpringBeans().get(1).getAttribute("id"));
+        assertSame(beans.getSpringOrBlueprintBeans().get(0).getOwnerDocument(),
+                beans.getSpringOrBlueprintBeans().get(1).getOwnerDocument());
+        assertEquals("s1", beans.getSpringOrBlueprintBeans().get(0).getAttribute("id"));
+        assertEquals("s2", beans.getSpringOrBlueprintBeans().get(1).getAttribute("id"));
 
         assertEquals(1, beans.getComponentScanning().size());
         assertEquals("com.example", beans.getComponentScanning().get(0).getBasePackage());

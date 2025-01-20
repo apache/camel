@@ -33,25 +33,36 @@ public @interface ExternalSchemaElement {
 
     /**
      * Names of external XML element we expect
-     *
-     * @return
      */
     String[] names() default {};
 
     /**
+     * Names of external XML element we expect
+     */
+    String[] names2() default {};
+
+    /**
      * XSD namespace of XML elements expected
-     *
-     * @return
      */
     String namespace() default "";
+
+    /**
+     * XSD namespace of XML elements expected
+     */
+    String namespace2() default "";
 
     /**
      * In JAXB, when an element is annotated with {@code @XmlAnyElement}, the actual objects used are of
      * {@link org.w3c.dom.Element} class. These elements should be part of wrapping {@link org.w3c.dom.Document} and
      * this parameter allows to specify this root element name (in {@link #namespace()}).
-     *
-     * @return
      */
     String documentElement();
+
+    /**
+     * In JAXB, when an element is annotated with {@code @XmlAnyElement}, the actual objects used are of
+     * {@link org.w3c.dom.Element} class. These elements should be part of wrapping {@link org.w3c.dom.Document} and
+     * this parameter allows to specify this root element name (in {@link #namespace2()}).
+     */
+    String documentElement2();
 
 }

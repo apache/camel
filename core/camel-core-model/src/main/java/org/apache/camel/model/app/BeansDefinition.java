@@ -52,8 +52,7 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
 @XmlType(propOrder = {
         "componentScanning",
         "beans",
-        "springBeans",
-        "blueprintBeans",
+        "springOrBlueprintBeans",
         "dataFormats",
         "restConfigurations",
         "rests",
@@ -72,26 +71,19 @@ public class BeansDefinition {
 
     // this is a place for <bean> element definition, without conflicting with <bean> elements referring
     // to "bean processors"
-
     @XmlElement(name = "bean")
     private List<BeanFactoryDefinition> beans = new ArrayList<>();
 
-    // this is the only way I found to generate usable Schema without imports, while allowing elements
-    // from different namespaces
-    @ExternalSchemaElement(names = { "beans", "bean", "alias" },
+    // support for legacy spring <beans> and blueprint <bean> files to be parsed and loaded
+    // for migration and tooling effort (need to be in a single @XmlAnyElement as otherwise
+    // this causes camel-spring-xml to generate an invalid XSD
+    @ExternalSchemaElement(names = { "beans", "bean", "alias" }, names2 = "bean",
                            namespace = "http://www.springframework.org/schema/beans",
-                           documentElement = "beans")
+                           namespace2 = "http://www.osgi.org/xmlns/blueprint/v1.0.0",
+                           documentElement = "beans",
+                           documentElement2 = "blueprint")
     @XmlAnyElement
-    private List<Element> springBeans = new ArrayList<>();
-
-    // Blueprint XML is deprecated, but we need those so that Camel JBang can
-    // load the routes and transform them
-
-    @ExternalSchemaElement(names = { "bean" },
-                           namespace = "http://www.osgi.org/xmlns/blueprint/v1.0.0",
-                           documentElement = "blueprint")
-    @XmlAnyElement
-    private List<Element> blueprintBeans = new ArrayList<>();
+    private List<Element> springOrBlueprintBeans = new ArrayList<>();
 
     // the order comes from <camelContext> (org.apache.camel.spring.xml.CamelContextFactoryBean)
     // to make things less confusing, as it's not easy to simply tell JAXB to use <xsd:choice maxOccurs="unbounded">
@@ -139,26 +131,16 @@ public class BeansDefinition {
         this.beans = beans;
     }
 
-    public List<Element> getSpringBeans() {
-        return springBeans;
+    public List<Element> getSpringOrBlueprintBeans() {
+        return springOrBlueprintBeans;
     }
 
     /**
-     * Spring XML beans
+     * Support for legacy Spring beans and Blueprint bean files to be parsed and loaded for migration and tooling
+     * effort.
      */
-    public void setSpringBeans(List<Element> springBeans) {
-        this.springBeans = springBeans;
-    }
-
-    public List<Element> getBlueprintBeans() {
-        return blueprintBeans;
-    }
-
-    /**
-     * Blueprint XML beans
-     */
-    public void setBlueprintBeans(List<Element> blueprintBeans) {
-        this.blueprintBeans = blueprintBeans;
+    public void setSpringOrBlueprintBeans(List<Element> springOrBlueprintBeans) {
+        this.springOrBlueprintBeans = springOrBlueprintBeans;
     }
 
     public List<RestConfigurationDefinition> getRestConfigurations() {
