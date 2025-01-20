@@ -61,7 +61,7 @@ public class CamelLogConsumer extends BaseConsumer<CamelLogConsumer> {
 
     private void logToFile(String utf8String) {
         try {
-            Files.write(logFile, utf8String.getBytes(), StandardOpenOption.APPEND);
+            Files.write(logFile, (utf8String + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
             // It is just a container log, do nothing
         }
