@@ -68,7 +68,7 @@
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>9.7.1</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
-        <assertj-version>3.27.2</assertj-version>
+        <assertj-version>3.27.3</assertj-version>
         <asterisk-java-version>3.41.0</asterisk-java-version>
         <atlassian-fugue-version>6.1.0</atlassian-fugue-version>
         <atmosphere-version>3.0.13</atmosphere-version>
