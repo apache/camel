@@ -4008,9 +4008,6 @@ ALIAS                   IMPLEMENTATION
  ...                     
 ----
 
-To show the services that are running, the flag --running can be used, this way, only the running processes are printed to the output
-in order to make it easier to gather the running service name and stop it.
-
 === Run Service
 
 Supported external services can be run with the following command (Docker or Podman is required for most of the service):
@@ -4065,10 +4062,41 @@ Stop a running infrastructure service:
 $ camel infra run arangodb
 ...
 
-$ camel infra list --running
+$ camel infra ps
  ALIAS             IMPLEMENTATION  DESCRIPTION
  arangodb                          ArangoDB is a multi-model database for high-performance applications.
 
 $ camel infra stop arangodb
 Shutting down service arangodb (PID: {pidNumber})
 ----
+
+=== List running services
+
+Display running services, useful to retrieve the service ALIAS
+
+[source,bash]
+----
+$ camel infra run arangodb
+...
+
+$ camel infra ps
+ ALIAS             IMPLEMENTATION  DESCRIPTION
+ arangodb                          ArangoDB is a multi-model database for high-performance applications.
+---
+
+=== Get running service
+
+Display running service information, the command will print the json containing information about the running service (ex. host, port, username)
+
+[source,bash]
+----
+$ camel infra run openldap
+...
+
+$ camel infra get openldap
+{
+  "getPort" : 32774,
+  "getSslPort" : 32775,
+  "getHost" : "localhost"
+}
+---

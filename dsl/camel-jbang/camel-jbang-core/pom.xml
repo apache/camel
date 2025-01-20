@@ -151,12 +151,6 @@
             <artifactId>plexus-xml</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -169,7 +163,17 @@
             <version>${junit-pioneer-version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
