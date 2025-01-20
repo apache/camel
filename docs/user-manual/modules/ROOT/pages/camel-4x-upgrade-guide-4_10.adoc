@@ -65,6 +65,29 @@ Should now be:
   </circuitBreaker>
 ----
 
+And `inheritErrorHandler` has been moved from `<loadBalance>` to `<failoverLoadBalancer` which
+is the only load balancer support this option.
+
+For example:
+
+[source,xml]
+----
+  <loadBalance inheritErrorHandler="true">
+    <failoverLoadBalancer maximumFailoverAttempts="3" roundRobin="true"/>
+    ...
+  </loadBalance>
+----
+
+Should now be:
+
+[source,xml]
+----
+  <loadBalance>
+    <failoverLoadBalancer maximumFailoverAttempts="3" roundRobin="true" inheritErrorHandler="true"/>
+    ...
+  </loadBalance>
+----
+
 === camel-azure-files
 
 The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.

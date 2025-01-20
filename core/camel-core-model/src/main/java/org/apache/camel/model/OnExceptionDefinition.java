@@ -175,10 +175,6 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     public void validateConfiguration() {
-        if (isInheritErrorHandler() != null && isInheritErrorHandler()) {
-            throw new IllegalArgumentException(this + " cannot have the inheritErrorHandler option set to true");
-        }
-
         if (exceptions == null || exceptions.isEmpty()) {
             throw new IllegalArgumentException("At least one exception must be configured on " + this);
         }

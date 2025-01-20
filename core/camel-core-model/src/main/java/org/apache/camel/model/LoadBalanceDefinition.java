@@ -172,8 +172,8 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         def.setMaximumFailoverAttempts(Integer.toString(maximumFailoverAttempts));
         def.setRoundRobin(Boolean.toString(roundRobin));
         def.setSticky(Boolean.toString(sticky));
+        def.setInheritErrorHandler(inheritErrorHandler);
         setLoadBalancerType(def);
-        this.setInheritErrorHandler(inheritErrorHandler);
         return this;
     }
 

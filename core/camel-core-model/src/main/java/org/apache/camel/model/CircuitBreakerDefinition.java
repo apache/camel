@@ -39,6 +39,9 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     @XmlAttribute
     private String configuration;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+    private Boolean inheritErrorHandler;
     @XmlElement
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlElement
@@ -52,6 +55,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     protected CircuitBreakerDefinition(CircuitBreakerDefinition source) {
         super(source);
         this.configuration = source.configuration;
+        this.inheritErrorHandler = source.inheritErrorHandler;
         this.resilience4jConfiguration
                 = source.resilience4jConfiguration != null ? source.resilience4jConfiguration.copyDefinition() : null;
         this.faultToleranceConfiguration
@@ -127,6 +131,16 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         this.configuration = configuration;
     }
 
+    @Override
+    public Boolean getInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    @Override
+    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
+    }
+
     public OnFallbackDefinition getOnFallback() {
         return onFallback;
     }
@@ -180,6 +194,20 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      */
     public CircuitBreakerDefinition configuration(String ref) {
         configuration = ref;
+        return this;
+    }
+
+    /**
+     * To turn on or off Camel error handling during circuit breaker.
+     *
+     * If this is enabled then Camel error handler will first trigger if there is an error in the circuit breaker, which
+     * allows to let Camel handle redeliveries. If all attempts is failed, then after the circuit breaker is finished,
+     * then Camel error handler can handle the error as well such as the dead letter channel.
+     *
+     * By default, Camel error handler is turned off.
+     */
+    public CircuitBreakerDefinition inheritErrorHandler(boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
         return this;
     }
 

@@ -425,7 +425,6 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         copy.setAutoStartup(route.getAutoStartup());
         copy.setDelayer(route.getDelayer());
         copy.setGroup(route.getGroup());
-        copy.setInheritErrorHandler(route.isInheritErrorHandler());
         // make a defensive copy of the input as input can be adviced during testing or other changes
         copy.setInput(route.getInput().copy());
         copy.setInputType(route.getInputType());

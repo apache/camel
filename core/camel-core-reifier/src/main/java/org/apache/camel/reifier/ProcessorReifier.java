@@ -650,7 +650,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child) throws Exception {
-        return wrapChannel(processor, child, definition.isInheritErrorHandler());
+        return wrapChannel(processor, child, definition.getInheritErrorHandler());
     }
 
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
