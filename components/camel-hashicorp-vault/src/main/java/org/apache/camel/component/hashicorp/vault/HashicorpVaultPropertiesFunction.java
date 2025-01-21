@@ -103,6 +103,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String host = System.getenv(CAMEL_HASHICORP_VAULT_HOST_ENV);
         String port = System.getenv(CAMEL_HASHICORP_VAULT_PORT_ENV);
         String scheme = System.getenv(CAMEL_HASHICORP_VAULT_SCHEME_ENV);
+        if (System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV) != null) {
+            cloud = Boolean.parseBoolean(System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV));
+        }
         namespace = System.getenv(CAMEL_HASHICORP_VAULT_NAMESPACE_ENV);
         if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
                 && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme) && ObjectHelper.isEmpty(namespace)) {
