@@ -2003,8 +2003,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * In streaming mode, then a single kafka record is processed per Camel exchange in the message body.
      *
      * In batching mode, then Camel groups many kafka records together as a List<Exchange> objects in the message body.
-     * The option maxPollRecords is used to define the number of records to group together in batching mode. See also
-     * the batchingIntervalMs option.
+     * The option maxPollRecords is used to define the number of records to group together in batching mode.
      */
     public void setBatching(boolean batching) {
         this.batching = batching;

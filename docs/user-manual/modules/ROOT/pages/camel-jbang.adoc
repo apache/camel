@@ -4111,3 +4111,84 @@ $ camel infra log service
 [service] ...
 [service] ...
 ---
+
+== Update
+
+Apache Camel applications can be automatically updated using Camel JBang. The update command provides two main operations:
+
+- `list`: Shows available Apache Camel versions for updating
+- `run`: Executes the actual update process 
+
+The update process leverages the https://github.com/apache/camel-upgrade-recipes[Apache Camel Open Rewrite recipes] and supports three application types:
+
+- Plain Camel (camel-main)
+- Camel Quarkus
+- Camel Spring Boot
+
+While Camel and Camel Spring Boot updates primarily use camel-upgrade-recipes, 
+Camel Quarkus updates involve both the Quarkus runtime (via https://github.com/openrewrite/rewrite-quarkus[Rewrite Quarkus]) and Apache Camel recipes.
+
+=== Listing Available Updates
+
+To see which versions are available for updating, use:
+
+[source,bash]
+----
+$ camel update list
+
+ VERSION                       RUNTIME            RUNTIME VERSION  DESCRIPTION                                                                    
+ 4.4.4                         Camel Quarkus      3.8.x            Migrates `camel 4.0` quarkus application to `camel 4.4`.                       
+ 4.8.0                         Camel                               Migrates Apache Camel 4 application to Apache Camel 4.8.0                      
+ 4.8.3                         Camel Quarkus      3.15.x           Migrates `camel 4.4` quarkus application to `camel 4.8`.                       
+ 4.9.0                         Camel                               Migrates Apache Camel 4 application to Apache Camel 4.9.0                      
+ 4.9.0                         Camel Spring Boot  3.4.0            Migrates Apache Camel Spring Boot 4 application to Apache Camel Spring Boot 4.9.0
+----
+
+=== Running Updates
+
+To perform an update to a specific version:
+
+[source,bash]
+----
+$ camel update run $VERSION
+----
+
+NOTE: The update commands must be executed in the project directory containing the pom.xml file.
+
+==== Configuration Options
+
+The update process can be customized with several options:
+`--runtime`: Specifies the application type:
+
+- `camel-main` - Plain Camel applications
+- `spring-boot` - Camel Spring Boot applications
+- `quarkus` - Camel Quarkus applications
+
+`--repos`: Additional Maven repositories to use during the update
+`--dry-run`: Preview the changes without applying them
+`--extraActiveRecipes`: Comma-separated list of additional recipe names to apply
+`--extraRecipeArtifactCoordinates`: Comma-separated list of Maven coordinates for extra recipes (format: groupId:artifactId:version)
+Use `--help` to see all available options.
+
+==== Examples
+
+Update a Camel Quarkus application
+
+[source,bash]
+----
+$ camel update run 4.8.3 --runtime=quarkus --dryRun
+----
+
+Update a plain Camel application
+
+[source,bash]
+----
+$ camel update run 4.9.0 --runtime=camel-main --repos=https://myMaven/repo --extraActiveRecipes=my.first.Recipe,my.second.Recipe --extraRecipeArtifactCoordinates=ex.my.org:recipes:1.0.0
+----
+
+Update a Spring Boot application with and extra Spring Boot 3.3 upgrade recipe
+
+[source,bash]
+----
+$ camel update run 4.9.0 --runtime=spring-boot --extraActiveRecipes=org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3 --extraRecipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:6.0.2
+----
