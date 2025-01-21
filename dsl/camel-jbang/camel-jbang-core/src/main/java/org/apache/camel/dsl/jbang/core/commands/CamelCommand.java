@@ -123,7 +123,7 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     protected Printer printer() {
         var out = getMain().getOut();
-        CommandHelper.SetPrinter(out);
+        CommandHelper.setPrinter(out);
         return out;
     }
 

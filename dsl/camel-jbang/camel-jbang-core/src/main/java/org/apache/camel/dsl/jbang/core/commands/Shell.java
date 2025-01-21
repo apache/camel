@@ -42,7 +42,7 @@ import picocli.shell.jline3.PicocliCommands;
 
 @CommandLine.Command(name = "shell",
                      description = "Interactive Camel JBang shell. Hit @|magenta <TAB>|@ to see available commands.",
-                     footer = "Press Ctrl-D to exit.")
+                     footer = "Press Ctrl-C to exit.")
 public class Shell extends CamelCommand {
 
     public Shell(CamelJBangMain main) {
@@ -86,17 +86,22 @@ public class Shell extends CamelCommand {
             String prompt = "camel> ";
             String rightPrompt = null;
 
-            // start the shell and process input until the user quits with Ctrl-D
+            // start the shell and process input until the user quits with Ctrl-C or Ctrl-D
             String line;
-            while (true) {
+            boolean run = true;
+            while (run) {
                 try {
                     systemRegistry.cleanUp();
                     line = reader.readLine(prompt, rightPrompt, (MaskingCallback) null, null);
                     systemRegistry.execute(line);
+                } catch (SystemRegistryImpl.UnknownCommandException e) {
+                    // ignore
                 } catch (UserInterruptException e) {
-                    // Ignore
+                    // ctrl + c is pressed so exit
+                    run = false;
                 } catch (EndOfFileException e) {
-                    break;
+                    // ctrl + d is pressed so exit
+                    run = false;
                 } catch (Exception e) {
                     systemRegistry.trace(e);
                 }
