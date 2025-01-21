@@ -55,10 +55,10 @@ To use this function, you'll need to provide credentials for Hashicorp vault as 
 
 [source,bash]
 ----
-export $CAMEL_VAULT_HASHICORP_TOKEN=token
-export $CAMEL_VAULT_HASHICORP_HOST=host
-export $CAMEL_VAULT_HASHICORP_PORT=port
-export $CAMEL_VAULT_HASHICORP_SCHEME=http/https
+export CAMEL_VAULT_HASHICORP_TOKEN=token
+export CAMEL_VAULT_HASHICORP_HOST=host
+export CAMEL_VAULT_HASHICORP_PORT=port
+export CAMEL_VAULT_HASHICORP_SCHEME=http/https
 ----
 
 You can also configure the credentials in the `application.properties` file such as:
@@ -70,6 +70,32 @@ camel.vault.hashicorp.host = host
 camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
+
+In case the running Hashicorp Vault instance you're pointing is running on Hashicorp Cloud, the configuration will require two additional parameters:
+
+[source,bash]
+----
+export CAMEL_VAULT_HASHICORP_TOKEN=token
+export CAMEL_VAULT_HASHICORP_HOST=host
+export CAMEL_VAULT_HASHICORP_PORT=port
+export CAMEL_VAULT_HASHICORP_SCHEME=http/https
+export CAMEL_HASHICORP_VAULT_CLOUD=true
+export CAMEL_HASHICORP_VAULT_NAMESPACE=namespace
+----
+
+You can also set the same in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.hashicorp.token = token
+camel.vault.hashicorp.host = host
+camel.vault.hashicorp.port = port
+camel.vault.hashicorp.scheme = scheme
+camel.vault.hashicorp.cloud = true
+camel.vault.hashicorp.namespace = namespace
+----
+
+This will make the Properties function works even in the Hashicorp Cloud deployment option.
 
 NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
 
