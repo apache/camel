@@ -335,6 +335,34 @@ public class MainVaultTest {
         Assertions.assertEquals("localhost", cfg.getHost());
         Assertions.assertEquals("8200", cfg.getPort());
         Assertions.assertEquals("https", cfg.getScheme());
+        Assertions.assertFalse(cfg.isCloud());
+        Assertions.assertNull(cfg.getNamespace());
+        main.stop();
+    }
+
+    public void testMainHashicorpWithCloud() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.hashicorp.token", "1111");
+        main.addInitialProperty("camel.vault.hashicorp.host", "localhost");
+        main.addInitialProperty("camel.vault.hashicorp.port", "8200");
+        main.addInitialProperty("camel.vault.hashicorp.scheme", "https");
+        main.addInitialProperty("camel.vault.hashicorp.cloud", "true");
+        main.addInitialProperty("camel.vault.hashicorp.namespace", "admin");
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        HashicorpVaultConfiguration cfg = context.getVaultConfiguration().hashicorp();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("1111", cfg.getToken());
+        Assertions.assertEquals("localhost", cfg.getHost());
+        Assertions.assertEquals("8200", cfg.getPort());
+        Assertions.assertEquals("https", cfg.getScheme());
+        Assertions.assertTrue(cfg.isCloud());
+        Assertions.assertEquals("admin", cfg.getNamespace());
         main.stop();
     }
 

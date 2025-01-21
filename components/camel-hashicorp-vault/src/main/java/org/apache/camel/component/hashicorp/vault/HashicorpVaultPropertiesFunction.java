@@ -76,10 +76,16 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             = "CAMEL_HASHICORP_VAULT_PORT";
     private static final String CAMEL_HASHICORP_VAULT_SCHEME_ENV
             = "CAMEL_HASHICORP_VAULT_SCHEME";
+    private static final String CAMEL_HASHICORP_VAULT_CLOUD_ENV
+            = "CAMEL_HASHICORP_VAULT_CLOUD";
+    private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV
+            = "CAMEL_HASHICORP_VAULT_NAMESPACE";
     private CamelContext camelContext;
     private VaultTemplate client;
 
     private String engine;
+    private String namespace;
+    private boolean cloud;
 
     public HashicorpVaultPropertiesFunction() {
         super();
@@ -97,14 +103,19 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String host = System.getenv(CAMEL_HASHICORP_VAULT_HOST_ENV);
         String port = System.getenv(CAMEL_HASHICORP_VAULT_PORT_ENV);
         String scheme = System.getenv(CAMEL_HASHICORP_VAULT_SCHEME_ENV);
+        namespace = System.getenv(CAMEL_HASHICORP_VAULT_NAMESPACE_ENV);
         if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
-                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme)) {
+                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme) && ObjectHelper.isEmpty(namespace)) {
             HashicorpVaultConfiguration hashicorpVaultConfiguration = getCamelContext().getVaultConfiguration().hashicorp();
             if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
                 token = hashicorpVaultConfiguration.getToken();
                 host = hashicorpVaultConfiguration.getHost();
                 port = hashicorpVaultConfiguration.getPort();
                 scheme = hashicorpVaultConfiguration.getScheme();
+                cloud = hashicorpVaultConfiguration.isCloud();
+                if (hashicorpVaultConfiguration.isCloud()) {
+                    namespace = hashicorpVaultConfiguration.getNamespace();
+                }
             }
         }
         if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(host)
@@ -195,7 +206,14 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
         String returnValue = null;
         try {
-            String completePath = engine + "/" + "data" + "/" + key;
+            String completePath = "";
+            if (!cloud) {
+                completePath = engine + "/" + "data" + "/" + key;
+            } else {
+                if (ObjectHelper.isNotEmpty(namespace)) {
+                    completePath = namespace + "/" + engine + "/" + "data" + "/" + key;
+                }
+            }
             if (ObjectHelper.isNotEmpty(version)) {
                 completePath = completePath + "?version=" + version;
             }

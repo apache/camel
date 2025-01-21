@@ -451,12 +451,14 @@ The camel.vault.kubernetescm supports 2 options, which are listed below.
 
 
 === Camel Hashicorp Vault configurations
-The camel.vault.hashicorp supports 4 options, which are listed below.
+The camel.vault.hashicorp supports 6 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.vault.hashicorp.cloud* | Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or not | false | boolean
 | *camel.vault.hashicorp.host* | Host to access hashicorp vault |  | String
+| *camel.vault.hashicorp.namespace* | If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace |  | String
 | *camel.vault.hashicorp.port* | Port to access hashicorp vault |  | String
 | *camel.vault.hashicorp.scheme* | Scheme to access hashicorp vault |  | String
 | *camel.vault.hashicorp.token* | Token to access hashicorp vault |  | String
