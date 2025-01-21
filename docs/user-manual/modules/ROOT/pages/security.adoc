@@ -449,6 +449,30 @@ camel.vault.hashicorp.port = port
 camel.vault.hashicorp.scheme = scheme
 ----
 
+In case the running Hashicorp Vault instance you're pointing is running on Hashicorp Cloud, the configuration will require two additional parameters:
+
+[source,bash]
+----
+export CAMEL_VAULT_HASHICORP_TOKEN=token
+export CAMEL_VAULT_HASHICORP_HOST=host
+export CAMEL_VAULT_HASHICORP_PORT=port
+export CAMEL_VAULT_HASHICORP_SCHEME=http/https
+export CAMEL_HASHICORP_VAULT_CLOUD=true
+export CAMEL_HASHICORP_VAULT_NAMESPACE=namespace
+----
+
+You can also set the same in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.hashicorp.token = token
+camel.vault.hashicorp.host = host
+camel.vault.hashicorp.port = port
+camel.vault.hashicorp.scheme = scheme
+camel.vault.hashicorp.cloud = true
+camel.vault.hashicorp.namespace = namespace
+----
+
 At this point, you'll be able to reference a property in the following way:
 
 [source,xml]
