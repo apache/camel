@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -42,6 +43,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.IOHelper;
@@ -63,6 +65,8 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
+
+    private CommandHelper.ReadConsoleTask waitUserTask;
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -107,7 +111,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     boolean ago;
 
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new traces (use ctrl + c to exit).")
+                        description = "Keep following and outputting new traces (press enter to exit).")
     boolean follow = true;
 
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
@@ -376,7 +380,13 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         if (follow) {
             boolean waitMessage = true;
+            final AtomicBoolean running = new AtomicBoolean(true);
             StopWatch watch = new StopWatch();
+            Thread t = new Thread(() -> {
+                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                waitUserTask.run();
+            }, "WaitForUser");
+            t.start();
             boolean more = true;
             do {
                 if (pids.isEmpty()) {
@@ -402,7 +412,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                         break;
                     }
                 }
-            } while (more);
+            } while (more && running.get());
         }
 
         return 0;

@@ -23,16 +23,16 @@ import org.apache.camel.util.FileUtil;
 
 public final class CommandHelper {
 
-    private static ThreadLocal<Printer> printerAssociation = new ThreadLocal<>();
+    private static final ThreadLocal<Printer> printerAssociation = new ThreadLocal<>();
 
     private CommandHelper() {
     }
 
-    public static Printer GetPrinter() {
+    public static Printer getPrinter() {
         return printerAssociation.get();
     }
 
-    public static void SetPrinter(Printer out) {
+    public static void setPrinter(Printer out) {
         printerAssociation.set(out);
     }
 
@@ -51,6 +51,25 @@ public final class CommandHelper {
                     FileUtil.deleteFile(f);
                 }
             }
+        }
+    }
+
+    /**
+     * A background task that reads from console, and can be used to signal when user has entered or pressed ctrl + c /
+     * ctrl + d
+     */
+    public static class ReadConsoleTask implements Runnable {
+
+        private final Runnable listener;
+
+        public ReadConsoleTask(Runnable listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            System.console().readLine();
+            listener.run();
         }
     }
 }

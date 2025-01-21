@@ -34,10 +34,12 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
@@ -55,6 +57,8 @@ public class CamelLogAction extends ActionBaseCommand {
     private static final int NAME_MIN_WIDTH = 10;
 
     private static final String TIMESTAMP_MAIN = "yyyy-MM-dd HH:mm:ss.SSS";
+
+    private CommandHelper.ReadConsoleTask waitUserTask;
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -78,7 +82,7 @@ public class CamelLogAction extends ActionBaseCommand {
     boolean timestamp = true;
 
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new log lines (use ctrl + c to exit).")
+                        description = "Keep following and outputting new log lines (press enter to exit).")
     boolean follow = true;
 
     @CommandLine.Option(names = { "--startup" }, defaultValue = "false",
@@ -165,6 +169,12 @@ public class CamelLogAction extends ActionBaseCommand {
 
         if (follow) {
             boolean waitMessage = true;
+            final AtomicBoolean running = new AtomicBoolean(true);
+            Thread t = new Thread(() -> {
+                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                waitUserTask.run();
+            }, "WaitForUser");
+            t.start();
             StopWatch watch = new StopWatch();
             do {
                 if (rows.isEmpty()) {
@@ -188,7 +198,7 @@ public class CamelLogAction extends ActionBaseCommand {
                         Thread.sleep(100);
                     }
                 }
-            } while (true);
+            } while (running.get());
         }
 
         return 0;
