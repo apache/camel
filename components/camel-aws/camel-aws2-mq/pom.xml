@@ -68,11 +68,5 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>${awaitility-version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

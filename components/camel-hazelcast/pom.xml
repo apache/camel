@@ -73,12 +73,6 @@
             <artifactId>camel-spring-main</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>${awaitility-version}</version>
-            <scope>test</scope>
-        </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-hazelcast</artifactId>
