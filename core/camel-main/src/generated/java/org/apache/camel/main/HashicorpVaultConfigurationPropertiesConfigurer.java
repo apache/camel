@@ -24,11 +24,13 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AwsVaultConfiguration", org.apache.camel.vault.AwsVaultConfiguration.class);
         map.put("AzureVaultConfiguration", org.apache.camel.vault.AzureVaultConfiguration.class);
+        map.put("Cloud", boolean.class);
         map.put("GcpVaultConfiguration", org.apache.camel.vault.GcpVaultConfiguration.class);
         map.put("HashicorpVaultConfiguration", org.apache.camel.vault.HashicorpVaultConfiguration.class);
         map.put("Host", java.lang.String.class);
         map.put("KubernetesConfigMapVaultConfiguration", org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class);
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
+        map.put("Namespace", java.lang.String.class);
         map.put("Port", java.lang.String.class);
         map.put("Scheme", java.lang.String.class);
         map.put("Token", java.lang.String.class);
@@ -43,6 +45,7 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "cloud": target.setCloud(property(camelContext, boolean.class, value)); return true;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
@@ -52,6 +55,7 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
+        case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -71,6 +75,7 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "cloud": return boolean.class;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
@@ -80,6 +85,7 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
+        case "namespace": return java.lang.String.class;
         case "port": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
         case "token": return java.lang.String.class;
@@ -95,6 +101,7 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "cloud": return target.isCloud();
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
@@ -104,6 +111,7 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
+        case "namespace": return target.getNamespace();
         case "port": return target.getPort();
         case "scheme": return target.getScheme();
         case "token": return target.getToken();
