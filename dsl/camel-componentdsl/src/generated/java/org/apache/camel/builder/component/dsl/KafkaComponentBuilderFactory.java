@@ -313,7 +313,6 @@ public interface KafkaComponentBuilderFactory {
          * batching mode, then Camel groups many kafka records together as a
          * List objects in the message body. The option maxPollRecords is used
          * to define the number of records to group together in batching mode.
-         * See also the batchingIntervalMs option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
