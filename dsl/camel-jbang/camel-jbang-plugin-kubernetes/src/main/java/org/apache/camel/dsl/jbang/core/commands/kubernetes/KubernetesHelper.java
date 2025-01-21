@@ -96,7 +96,7 @@ public final class KubernetesHelper {
     }
 
     private static void printClientInfo(KubernetesClient client) {
-        var printer = CommandHelper.GetPrinter();
+        var printer = CommandHelper.getPrinter();
         if (printer != null) {
             var serverUrl = client.getConfiguration().getMasterUrl();
             var info = client.getKubernetesVersion();
