@@ -39,10 +39,8 @@
         <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:JettySpringFailoverRoundRobinTestStart"/>
-            <!-- load balance using failover in round robin mode.
-                 Also do not inherit error handler which means the failover LB will not fallback
-                 and use error handler but trigger failover to next endpoint immediately -->
-            <loadBalance inheritErrorHandler="false">
+            <!-- load balance using failover in round robin mode. -->
+            <loadBalance>
                 <failoverLoadBalancer roundRobin="true"/>
                 <!-- and this is the four endpoints we will load balance with failover -->
                 <to uri="ref:hbad"/>
