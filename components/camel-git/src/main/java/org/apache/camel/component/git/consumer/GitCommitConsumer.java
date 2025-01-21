@@ -65,7 +65,6 @@ public class GitCommitConsumer extends AbstractGitConsumer {
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_AUTHOR_NAME, commit.getAuthorIdent().getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_COMMITTER_NAME, commit.getCommitterIdent().getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_TIME, commit.getCommitTime());
-                getProcessor().process(e);
                 exchanges.add(e);
             }
         }

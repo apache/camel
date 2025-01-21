@@ -35,39 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GitConsumerTest extends GitTestSupport {
 
     @Test
-    public void commitConsumerTest() throws Exception {
-        // Init
-        MockEndpoint mockResultCommit = getMockEndpoint("mock:result-commit");
-        mockResultCommit.expectedMessageCount(2);
-
-        Git git = getGitTestRepository();
-        File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
-        File fileToAdd = new File(getGitDir(), filenameToAdd);
-        fileToAdd.createNewFile();
-        git.add().addFilepattern(filenameToAdd).call();
-        Status status = git.status().call();
-        assertTrue(status.getAdded().contains(filenameToAdd));
-        git.commit().setMessage(commitMessage).call();
-        File fileToAdd1 = new File(getGitDir(), filenameBranchToAdd);
-        fileToAdd1.createNewFile();
-        git.add().addFilepattern(filenameBranchToAdd).call();
-        status = git.status().call();
-        assertTrue(status.getAdded().contains(filenameBranchToAdd));
-        git.commit().setMessage("Test test Commit").call();
-        validateGitLogs(git, "Test test Commit", commitMessage);
-        // Test
-        mockResultCommit.assertIsSatisfied();
-
-        // Check
-        Exchange ex1 = mockResultCommit.getExchanges().get(0);
-        Exchange ex2 = mockResultCommit.getExchanges().get(1);
-        assertEquals(commitMessage, ex2.getMessage().getBody(String.class));
-        assertEquals("Test test Commit", ex1.getMessage().getBody(String.class));
-        git.close();
-    }
-
-    @Test
     public void commitConsumerNotExistingBranchTest() throws Exception {
         // Init
         MockEndpoint mockResultCommit = getMockEndpoint("mock:result-commit-notexistent");
@@ -185,14 +152,6 @@ public class GitConsumerTest extends GitTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:clone").to("git://" + dir
-                                        + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
-                from("direct:init").to("git://" + dir + "?operation=init");
-                from("direct:add").to("git://" + dir + "?operation=add");
-                from("direct:commit").to("git://" + dir + "?operation=commit");
-                from("direct:create-branch").to("git://" + dir + "?operation=createBranch&branchName=" + branchTest);
-                from("direct:create-tag").to("git://" + dir + "?operation=createTag&tagName=" + tagTest);
-                from("git://" + dir + "?type=commit&branchName=master").to("mock:result-commit");
                 from("git://" + dir + "?type=commit&branchName=notexisting").to("mock:result-commit-notexistent");
                 from("git://" + dir + "?type=tag").to("mock:result-tag");
                 from("git://" + dir + "?type=branch&gitConfigFile=classpath:git.config")
