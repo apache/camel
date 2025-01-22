@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
@@ -67,7 +68,15 @@ public class HashicorpVaultProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_VERSION))) {
             secretVersion = exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_VERSION, String.class);
         }
-        String completePath = getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
+        String completePath = "";
+        if (!getEndpoint().getConfiguration().isCloud()) {
+            completePath = getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
+        } else {
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getNamespace())) {
+                completePath = getEndpoint().getConfiguration().getNamespace() + "/"
+                               + getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
+            }
+        }
         if (ObjectHelper.isNotEmpty(secretVersion)) {
             completePath = completePath + "?version=" + secretVersion;
         }
@@ -88,8 +97,17 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     private void listSecrets(Exchange exchange) {
-        List<String> secretsList = getEndpoint().getVaultTemplate()
-                .list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+        List<String> secretsList = new ArrayList<>();
+        if (!getEndpoint().getConfiguration().isCloud()) {
+            secretsList = getEndpoint().getVaultTemplate()
+                    .list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+        } else {
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getNamespace())) {
+                secretsList = getEndpoint().getVaultTemplate()
+                        .list(getEndpoint().getConfiguration().getNamespace() + "/"
+                              + getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+            }
+        }
         exchange.getMessage().setBody(secretsList);
     }
 
