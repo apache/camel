@@ -209,12 +209,17 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
-     * To configure a given component / data format / language / service using Java lambda style
+     * To customize a given component / data format / language / service using Java lambda style. This is only intended
+     * for low-code integrations where you have a minimal set of code and files, to make it easy and quick to
+     * customize/configure components directly in a single {@link RouteBuilder} class.
      *
-     * @param type  the type such as a component FQN class name
-     * @param setup callback for configuring the component instance (if present)
+     * @param type the type such as a component FQN class name
+     * @param code callback for customizing the component instance (if present)
      */
-    public <T> void configure(Class<T> type, VoidFunction<T> setup) throws Exception {
+    public <T> void customize(Class<T> type, VoidFunction<T> code) throws Exception {
+        ObjectHelper.notNull(type, "type", this);
+        ObjectHelper.notNull(code, "code", this);
+
         // custom may be stored directly in registry so lookup first here
         T obj = getContext().getRegistry().findSingleByType(type);
         // try component / dataformat / language
@@ -259,18 +264,24 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             obj = getContext().hasService(type);
         }
         if (obj != null) {
-            setup.apply(obj);
+            code.apply(obj);
         }
     }
 
     /**
-     * To configure a given component / data format / language using Java lambda style
+     * To customize a given component / data format / language / service using Java lambda style. This is only intended
+     * for low-code integrations where you have a minimal set of code and files, to make it easy and quick to
+     * customize/configure components directly in a single {@link RouteBuilder} class.
      *
-     * @param name  the name of the component / service
-     * @param type  the type such as a component FQN class name
-     * @param setup callback for configuring the component instance (if present)
+     * @param name the name of the component / service
+     * @param type the type such as a component FQN class name
+     * @param code callback for customizing the component instance (if present)
      */
-    public <T> void configure(String name, Class<T> type, VoidFunction<T> setup) throws Exception {
+    public <T> void customize(String name, Class<T> type, VoidFunction<T> code) throws Exception {
+        ObjectHelper.notNull(name, "name", this);
+        ObjectHelper.notNull(type, "type", this);
+        ObjectHelper.notNull(code, "code", this);
+
         T obj = getContext().getRegistry().lookupByNameAndType(name, type);
         if (obj == null && Component.class.isAssignableFrom(type)) {
             // do not auto-start component as we need to configure it first
@@ -288,7 +299,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             obj = (T) getCamelContext().resolveLanguage(name);
         }
         if (obj != null) {
-            setup.apply(obj);
+            code.apply(obj);
         }
     }
 

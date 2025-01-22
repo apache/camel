@@ -17,23 +17,22 @@
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Handler;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.service.ServiceSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LogComponentConfigureThreeTest extends ContextTestSupport {
+public class LogComponentCustomizeTwoTest extends ContextTestSupport {
 
-    private final MyService myService = new MyService();
+    private final LogCustomFormatterTest.TestExchangeFormatter formatter = new LogCustomFormatterTest.TestExchangeFormatter();
 
     @Test
-    public void testConfigure() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+    public void testCustomize() throws Exception {
+        Assertions.assertEquals(0, formatter.getCounter());
 
-        template.sendBody("direct:start", "World");
+        template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        Assertions.assertEquals(1, formatter.getCounter());
     }
 
     @Override
@@ -41,34 +40,14 @@ public class LogComponentConfigureThreeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.addService(myService);
-
-                configure(MyService.class, s -> {
-                    s.setPrefix("Hello");
+                // customize the log component using java lambda style
+                customize("log", LogComponent.class, l -> {
+                    l.setExchangeFormatter(formatter);
                 });
 
                 from("direct:start")
-                        .bean(myService)
-                        .to("mock:result");
+                        .to("log:foo");
             }
         };
-    }
-
-    private static final class MyService extends ServiceSupport {
-
-        private String prefix;
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public void setPrefix(String prefix) {
-            this.prefix = prefix;
-        }
-
-        @Handler
-        public String hello(String body) {
-            return prefix + " " + body;
-        }
     }
 }

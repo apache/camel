@@ -22,12 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LogComponentConfigureTwoTest extends ContextTestSupport {
+public class LogComponentCustomizeTest extends ContextTestSupport {
 
     private final LogCustomFormatterTest.TestExchangeFormatter formatter = new LogCustomFormatterTest.TestExchangeFormatter();
 
     @Test
-    public void testConfigure() throws Exception {
+    public void testCustomize() throws Exception {
         Assertions.assertEquals(0, formatter.getCounter());
 
         template.sendBody("direct:start", "Hello World");
@@ -40,8 +40,8 @@ public class LogComponentConfigureTwoTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // configure the log component using java lambda style
-                configure("log", LogComponent.class, l -> {
+                // customize the log component using java lambda style (using the default name)
+                customize(LogComponent.class, l -> {
                     l.setExchangeFormatter(formatter);
                 });
 
