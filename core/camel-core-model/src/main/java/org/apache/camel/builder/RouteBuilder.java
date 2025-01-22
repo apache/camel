@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Ordered;
@@ -51,6 +52,8 @@ import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
@@ -62,6 +65,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
+import org.apache.camel.util.function.VoidFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,6 +206,90 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public void configuration() throws Exception {
         // noop
+    }
+
+    /**
+     * To configure a given component / data format / language / service using Java lambda style
+     *
+     * @param type  the type such as a component FQN class name
+     * @param setup callback for configuring the component instance (if present)
+     */
+    public <T> void configure(Class<T> type, VoidFunction<T> setup) throws Exception {
+        // custom may be stored directly in registry so lookup first here
+        T obj = getContext().getRegistry().findSingleByType(type);
+        // try component / dataformat / language
+        if (obj == null && Component.class.isAssignableFrom(type)) {
+            org.apache.camel.spi.annotations.Component ann
+                    = type.getAnnotation(org.apache.camel.spi.annotations.Component.class);
+            if (ann != null) {
+                String name = ann.value();
+                // just grab first scheme name if the component has scheme alias (eg http,https)
+                if (name.contains(",")) {
+                    name = StringHelper.before(name, ",");
+                }
+                // do not auto-start component as we need to configure it first
+                obj = (T) getCamelContext().getComponent(name, true, false);
+            }
+            if (obj != null && !type.getName().equals("org.apache.camel.component.stub.StubComponent")
+                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) {
+                // if we run in stub mode then we can't apply the configuration as we stubbed the actual component
+                obj = null;
+            }
+        }
+        if (obj == null && DataFormat.class.isAssignableFrom(type)) {
+            // it's maybe a dataformat
+            org.apache.camel.spi.annotations.Dataformat ann
+                    = type.getAnnotation(org.apache.camel.spi.annotations.Dataformat.class);
+            if (ann != null) {
+                String name = ann.value();
+                obj = (T) getCamelContext().resolveDataFormat(name);
+            }
+        }
+        if (obj == null && Language.class.isAssignableFrom(type)) {
+            // it's maybe a dataformat
+            org.apache.camel.spi.annotations.Language ann
+                    = type.getAnnotation(org.apache.camel.spi.annotations.Language.class);
+            if (ann != null) {
+                String name = ann.value();
+                obj = (T) getCamelContext().resolveLanguage(name);
+            }
+        }
+        // it may be a special service
+        if (obj == null) {
+            obj = getContext().hasService(type);
+        }
+        if (obj != null) {
+            setup.apply(obj);
+        }
+    }
+
+    /**
+     * To configure a given component / data format / language using Java lambda style
+     *
+     * @param name  the name of the component / service
+     * @param type  the type such as a component FQN class name
+     * @param setup callback for configuring the component instance (if present)
+     */
+    public <T> void configure(String name, Class<T> type, VoidFunction<T> setup) throws Exception {
+        T obj = getContext().getRegistry().lookupByNameAndType(name, type);
+        if (obj == null && Component.class.isAssignableFrom(type)) {
+            // do not auto-start component as we need to configure it first
+            obj = (T) getCamelContext().getComponent(name, true, false);
+            if (obj != null && !"stub".equals(name)
+                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) {
+                // if we run in stub mode then we can't apply the configuration as we stubbed the actual component
+                obj = null;
+            }
+        }
+        if (obj == null && DataFormat.class.isAssignableFrom(type)) {
+            obj = (T) getCamelContext().resolveDataFormat(name);
+        }
+        if (obj == null && Language.class.isAssignableFrom(type)) {
+            obj = (T) getCamelContext().resolveLanguage(name);
+        }
+        if (obj != null) {
+            setup.apply(obj);
+        }
     }
 
     /**

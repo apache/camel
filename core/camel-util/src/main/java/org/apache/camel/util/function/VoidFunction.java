@@ -17,22 +17,19 @@
 package org.apache.camel.util.function;
 
 /**
- * Represents a function that accepts a single arguments, produces a result and may throw an exception.
+ * Represents a void function that accepts a single arguments.
  *
  * @param <I> the type of the input of the function
- * @param <R> the type of the result of the function
- * @param <T> the type of the exception the accept method may throw
  *
  * @see       java.util.function.Function
  */
 @FunctionalInterface
-public interface ThrowingFunction<I, R, T extends Throwable> {
+public interface VoidFunction<I> {
+
     /**
-     * Applies this function to the given argument, potentially throwing an exception.
+     * Applies this function to the given argument.
      *
-     * @param  in the function argument
-     * @return    the function result
-     * @throws T  the exception that may be thrown
+     * @param in the function argument
      */
-    R apply(I in) throws T;
+    void apply(I in) throws Exception;
 }
