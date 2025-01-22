@@ -44,7 +44,7 @@ public interface SolrConstants {
     String PARAM_SIZE = "size";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_FROM = "from";
-    @Metadata(description = "The solr client to use for the request.", javaType = "String")
+    @Metadata(description = "The solr client to use for the request.", javaType = "SolrClient")
     String PARAM_SOLR_CLIENT = "solrClient";
     @Deprecated
     @Metadata(description = "The solr client to use for the request.", javaType = "String",
