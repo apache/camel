@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.4.5-SNAPSHOT</version>
+        <version>4.4.6-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 

@@ -24,7 +24,7 @@
         <groupId>org.apache.camel</groupId>
         <relativePath>../../pom.xml</relativePath>
         <artifactId>components</artifactId>
-        <version>4.4.5-SNAPSHOT</version>
+        <version>4.4.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws2-redshift</artifactId>
