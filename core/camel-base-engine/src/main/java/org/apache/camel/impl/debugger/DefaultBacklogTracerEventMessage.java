@@ -148,8 +148,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     @Override
     public String getMessageAsXml() {
+        return getMessageAsXml(4);
+    }
+
+    public String getMessageAsXml(int indent) {
         if (dataAsXml == null) {
-            dataAsXml = toXML(data, 4);
+            dataAsXml = toXML(data, indent);
         }
         return dataAsXml;
     }
@@ -192,8 +196,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     @Override
     public String getExceptionAsXml() {
+        return getExceptionAsXml(4);
+    }
+
+    public String getExceptionAsXml(int indent) {
         if (exceptionAsXml == null && exception != null) {
-            exceptionAsXml = MessageHelper.dumpExceptionAsXML(exception, 4);
+            exceptionAsXml = MessageHelper.dumpExceptionAsXML(exception, indent);
         }
         return exceptionAsXml;
     }
@@ -320,9 +328,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             }
             sb.append(prefix).append("  </endpointService>\n");
         }
-        sb.append(prefix).append(getMessageAsXml()).append("\n");
+        sb.append(getMessageAsXml(indent + 2)).append("\n");
         if (getExceptionAsXml() != null) {
-            sb.append(prefix).append(getExceptionAsXml()).append("\n");
+            sb.append(prefix).append(getExceptionAsXml(indent + 2)).append("\n");
         }
         sb.append(prefix).append("</").append(ROOT_TAG).append(">");
         return sb.toString();

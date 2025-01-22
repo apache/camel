@@ -93,7 +93,7 @@ public class DebugDevConsole extends AbstractDevConsole {
                 BacklogTracerEventMessage trace = backlog.getSuspendedBreakpointMessage(n);
                 if (trace != null) {
                     sb.append("\n");
-                    sb.append(trace.toXml(8));
+                    sb.append(trace.toXml(4));
                     sb.append("\n");
                 }
             }
