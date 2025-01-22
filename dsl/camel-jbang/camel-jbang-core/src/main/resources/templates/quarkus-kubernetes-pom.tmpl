@@ -98,11 +98,6 @@
                         <image>
                             <build>
                                 <from>eclipse-temurin:{{ .JavaVersion }}</from>
-                                <!-- Supported only when using the jib build strategy -->
-                                <createImageOptions>
-                                    <platform>linux/amd64</platform>
-                                    <platform>linux/arm64</platform>
-                                </createImageOptions>
                                 <assembly>
                                     <layers>
                                         <layer>
