@@ -132,7 +132,7 @@
         <cxf-xjc-utils-version>4.1.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>3.0.0</datasonnet-mapper-version>
         <debezium-version>3.0.7.Final</debezium-version>
-        <debezium-mysql-connector-version>9.1.0</debezium-mysql-connector-version>
+        <debezium-mysql-connector-version>9.2.0</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.18.0</directory-watcher-version>
