@@ -19,7 +19,6 @@ package org.apache.camel.component.solr;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +34,7 @@ public class SolrUtils {
     public static Map<String, Object> parseAsMap(SolrResponse solrResponse) {
         return solrResponse == null || solrResponse.getResponse() == null
                 ? Map.of()
-                : solrResponse.getResponse().asMap(new LinkedHashMap<>());
+                : solrResponse.getResponse().asShallowMap(true);
     }
 
     public static Map<String, Object> parseAsFlatMap(SolrResponse solrResponse) {
@@ -59,7 +58,7 @@ public class SolrUtils {
     public static Stream<Map.Entry<String, Object>> flatten(Map.Entry<String, Object> entry) {
         Map<String, Object> nestedMap = null;
         if (entry.getValue() instanceof final SimpleOrderedMap<?> nested) {
-            nestedMap = (Map<String, Object>) nested.asMap();
+            nestedMap = (Map<String, Object>) nested.asShallowMap(true);
         } else if (entry.getValue() instanceof final Map<?, ?> nested) {
             nestedMap = (Map<String, Object>) nested;
         }
