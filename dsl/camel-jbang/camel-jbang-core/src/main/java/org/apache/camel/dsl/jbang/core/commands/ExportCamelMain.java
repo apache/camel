@@ -390,7 +390,7 @@ class ExportCamelMain extends Export {
                 srcKameletsResourcesDir, packageName);
 
         // log4j configuration
-        InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2.properties");
+        InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2-main.properties");
         safeCopy(is, new File(srcResourcesDir, "log4j2.properties"));
         is = ExportCamelMain.class.getResourceAsStream("/log4j2.component.properties");
         safeCopy(is, new File(srcResourcesDir, "log4j2.component.properties"));
