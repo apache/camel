@@ -190,6 +190,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JteEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.KServeEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KameletEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KeyVaultEndpointBuilderFactory,

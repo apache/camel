@@ -8465,6 +8465,52 @@ public class StaticEndpointBuilders {
         return KnativeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * KServe (camel-kserve)
+     * Provide access to AI model servers with the KServe standard to run
+     * inference with remote models
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-kserve
+     * 
+     * Syntax: <code>kserve:api</code>
+     * 
+     * Path parameter: api (required)
+     * The KServe API
+     * There are 6 enums and the value can be one of: infer, model/ready,
+     * model/metadata, server/ready, server/live, server/metadata
+     * 
+     * @param path api
+     * @return the dsl builder
+     */
+    public static KServeEndpointBuilderFactory.KServeEndpointBuilder kserve(String path) {
+        return kserve("kserve", path);
+    }
+    /**
+     * KServe (camel-kserve)
+     * Provide access to AI model servers with the KServe standard to run
+     * inference with remote models
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-kserve
+     * 
+     * Syntax: <code>kserve:api</code>
+     * 
+     * Path parameter: api (required)
+     * The KServe API
+     * There are 6 enums and the value can be one of: infer, model/ready,
+     * model/metadata, server/ready, server/live, server/metadata
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path api
+     * @return the dsl builder
+     */
+    public static KServeEndpointBuilderFactory.KServeEndpointBuilder kserve(String componentName, String path) {
+        return KServeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.

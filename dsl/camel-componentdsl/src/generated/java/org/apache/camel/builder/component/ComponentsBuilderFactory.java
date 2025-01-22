@@ -2581,6 +2581,20 @@ public interface ComponentsBuilderFactory {
         return KnativeComponentBuilderFactory.knative();
     }
     /**
+     * KServe (camel-kserve)
+     * Provide access to AI model servers with the KServe standard to run
+     * inference with remote models
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-kserve
+     * 
+     * @return the dsl builder
+     */
+    static KserveComponentBuilderFactory.KserveComponentBuilder kserve() {
+        return KserveComponentBuilderFactory.kserve();
+    }
+    /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
