@@ -126,10 +126,6 @@ The component `camel-google-pubsub-lite` has been deprecated following the depre
 
 Google recommends migrating your Pub/Sub Lite service to either Google Cloud Managed Service for Apache Kafka or Google Cloud Pub/Sub. Depending on your choice, you should use `camel-kafka` or `camel-google-pubsub component`, respectively.
 
-== camel-spring-boot
-
-The `camel-k-starter` has been removed.
-
 === camel-tracing
 
 We have deprecated the setting of MDC `trace_id` and `span_id` in favour of implementation specific feature. You need to check the specific tracing/telemetry component configuration to learn how to switch from the deprecated configuration to the new one. Most of the time you will need to remove the `camel.main.use-mdc-logging` Camel property (or set it to `false`) and add dependencies and configuration settings to enable the specific component instrumentation.
@@ -143,3 +139,8 @@ The function calling feature was removed. Please use the `camel-langchain4j-tool
 The `camel-smb` component has been updated to extend `GenericFile` classes and now supports more consumer and producer options. 
 The Consumer includes options for filtering, pre and post processing, duplicate handling, directory traversal, polling, and readlocks.
 The Producer includes options for writing to temporary files, writing content, and handling existing files.
+
+== camel-spring-boot
+
+The `camel-k-starter` has been removed.
+
