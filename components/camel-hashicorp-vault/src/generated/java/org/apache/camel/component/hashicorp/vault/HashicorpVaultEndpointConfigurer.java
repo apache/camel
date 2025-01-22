@@ -23,9 +23,11 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HashicorpVaultEndpoint target = (HashicorpVaultEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cloud": target.getConfiguration().setCloud(property(camelContext, boolean.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "namespace": target.getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.getConfiguration().setScheme(property(camelContext, java.lang.String.class, value)); return true;
@@ -46,9 +48,11 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cloud": return boolean.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "namespace": return java.lang.String.class;
         case "operation": return org.apache.camel.component.hashicorp.vault.HashicorpVaultOperation.class;
         case "port": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
@@ -65,9 +69,11 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HashicorpVaultEndpoint target = (HashicorpVaultEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cloud": return target.getConfiguration().isCloud();
         case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "namespace": return target.getConfiguration().getNamespace();
         case "operation": return target.getConfiguration().getOperation();
         case "port": return target.getConfiguration().getPort();
         case "scheme": return target.getConfiguration().getScheme();
