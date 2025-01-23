@@ -611,6 +611,25 @@ from("kafka:topic?headerDeserializer=#class:org.apache.camel.component.kafka.con
     .to("...");
 ----
 
+=== Producer Performance
+
+If the producer is performing too slowly for your needs, you may want to aggregate the exchanges before sending.
+
+[source,java]
+.Route snippet
+----
+from("source")
+    // .other route stuff
+    .aggregate(constant(true), new GroupedExchangeAggregationStrategy())
+    .to("kafka:topic");
+----
+
+The reason for this is related to how the producer handles the two different cases:
+
+* with the `aggregrate` it should process the messages in a "batch-sized chunk" semi-asynchronously (that is, send all messages in the batch and then wait for their acknowledgements)
+* without that, it sends synchronously, eventually blocking on the record metadata fetch per exchange.
+
+NOTE: the downside of this approach is an increased number of in-flight exchanges and the potential risks (even though small and rare) associated with that.
 
 == Examples
 
