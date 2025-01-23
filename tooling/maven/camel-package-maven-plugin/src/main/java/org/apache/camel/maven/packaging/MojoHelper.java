@@ -42,7 +42,8 @@ public final class MojoHelper {
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-tokenizer"),
                         dir.resolve("camel-langchain4j-tools"), dir.resolve("camel-langchain4j-web-search"),
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"),
-                        dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"));
+                        dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
+                        dir.resolve("camel-torchserve"), dir.resolve("camel-tensorflow-serving"));
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
             case "camel-avro-rpc":
