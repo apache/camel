@@ -218,6 +218,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--property" },
+                        description = "Camel application properties, ex. --property=prop1=foo")
+    String[] applicationProperties;
+
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     protected boolean logging;
@@ -328,6 +332,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.localKameletDir = localKameletDir;
         run.ignoreLoadingError = ignoreLoadingError;
         run.lazyBean = lazyBean;
+        run.property = applicationProperties;
+
         return run.runExport(ignoreLoadingError);
     }
 
@@ -699,6 +705,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
             customize.apply(prop2);
         }
 
+        // User properties
+        Properties prop3 = new CamelCaseOrderedProperties();
+        prepareUserProperties(prop3);
+
         FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
         try {
             for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
@@ -727,6 +737,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         fos.write("\n".getBytes(StandardCharsets.UTF_8));
                     }
                 }
+                for (Map.Entry<Object, Object> entryUserProp : prop3.entrySet()) {
+                    String uK = entryUserProp.getKey().toString();
+                    String uV = entryUserProp.getValue().toString();
+                    String line = applicationPropertyLine(uK, uV);
+                    if (line != null && !line.isBlank()) {
+                        fos.write(line.getBytes(StandardCharsets.UTF_8));
+                        fos.write("\n".getBytes(StandardCharsets.UTF_8));
+                    }
+                }
             }
         } finally {
             IOHelper.close(fos);
@@ -734,7 +753,21 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void prepareApplicationProperties(Properties properties) {
-        // noop
+        // NOOP
+    }
+
+    protected void prepareUserProperties(Properties properties) {
+        if (this.applicationProperties != null) {
+            for (String s : this.applicationProperties) {
+                String[] kv = s.split("=");
+                if (kv.length != 2) {
+                    // likely a user mistake, we warn the user
+                    printer().println("WARN: property '" + s + "'' has a bad format (should be 'key=value'), skipping.");
+                } else {
+                    properties.put(kv[0], kv[1]);
+                }
+            }
+        }
     }
 
     // Returns true if it has either an openapi spec or it uses contract-first DSL

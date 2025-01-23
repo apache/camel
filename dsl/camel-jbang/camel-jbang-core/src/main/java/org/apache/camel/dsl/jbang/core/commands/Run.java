@@ -951,6 +951,7 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.applicationProperties = this.property;
 
         printer().println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
 
@@ -1026,6 +1027,7 @@ public class Run extends CamelCommand {
         eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
+        eq.applicationProperties = this.property;
 
         printer().println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
 

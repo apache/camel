@@ -160,6 +160,7 @@ public class Export extends ExportBaseCommand {
         cmd.excludes = this.excludes;
         cmd.ignoreLoadingError = this.ignoreLoadingError;
         cmd.lazyBean = this.lazyBean;
+        cmd.applicationProperties = this.applicationProperties;
         // run export
         return cmd.export();
     }
