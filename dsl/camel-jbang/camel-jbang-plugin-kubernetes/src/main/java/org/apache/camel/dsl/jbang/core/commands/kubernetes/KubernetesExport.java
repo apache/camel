@@ -178,15 +178,6 @@ public class KubernetesExport extends Export {
             printer().printf("--build-tool=%s is not yet supported%n", buildTool);
         }
 
-        String propPrefix;
-        if (runtime == RuntimeType.springBoot) {
-            propPrefix = "camel.springboot";
-        } else if (runtime == RuntimeType.main) {
-            propPrefix = "camel.main";
-        } else {
-            propPrefix = runtime.runtime();
-        }
-
         // Resolve image group and registry
         String resolvedImageGroup = resolveImageGroup();
         String resolvedImageRegistry = resolveImageRegistry();
@@ -270,9 +261,8 @@ public class KubernetesExport extends Export {
 
         buildProperties.add("jkube.container-image.name=%s".formatted(container.getImage()));
 
-        // Need to set quarkus.container properties, otherwise these settings get overwritten by Quarkus
         if (container.getName() != null && !container.getName().equals(projectName)) {
-            buildProperties.add("%s.kubernetes.container-name=%s".formatted(propPrefix, container.getName()));
+            printer().printf("Custom container name '%s' not supported%n".formatted(container.getName()));
         }
 
         if (container.getImagePullPolicy() != null) {
