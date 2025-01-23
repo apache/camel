@@ -47,6 +47,25 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Authentication and Hashicorp vault on-premise vs Hashicorp Cloud
+
+The component supports operations at the producer level. Specifically, it provides the following functionalities:
+
+* `createSecret`
+* `getSecret`
+* `deleteSecret`
+* `listSecrets`
+
+The component can interact with HashiCorp Vault, which may be deployed either as an on-premise/local instance or as a HashiCorp Vault Cloud instance (Enterprise version).
+
+=== Configuration for HashiCorp Vault Cloud
+
+When using a HashiCorp Vault Cloud instance, in addition to the standard parameters such as `host`, `port`, `scheme`, and `token`, you must configure the following additional parameters:
+
+* `cloud`:: A boolean flag that must be explicitly set to `true` to indicate that the HashiCorp Vault instance is hosted in the cloud.
+* `namespace`:: The namespace of your secrets engine.
+
+
 == Examples
 
 === Using Hashicorp Vault Property Function
