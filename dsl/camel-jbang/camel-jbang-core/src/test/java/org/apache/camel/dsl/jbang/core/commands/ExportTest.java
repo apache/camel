@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -483,4 +484,24 @@ class ExportTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportUserProperty(RuntimeType rt) throws Exception {
+        // We need a real file as we want to test the generated content
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--property", "hello=world");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        // In this test we can validate any generic resource that must be created along the export.
+        // Exporting once to reduce the time to execute the test and the resource required to test.
+
+        // Application properties
+        File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
+        Assertions.assertTrue(appProperties.exists(), "Missing application properties");
+        Properties appProps = new Properties();
+        appProps.load(new FileInputStream(appProperties));
+        Assertions.assertEquals("world", appProps.getProperty("hello"));
+    }
 }

@@ -148,6 +148,7 @@ class ExportQuarkus extends Export {
 
     @Override
     protected void prepareApplicationProperties(Properties properties) {
+        super.prepareApplicationProperties(properties);
         // quarkus native compilation only works if we specify each resource explicit
 
         StringJoiner sj = new StringJoiner(",");
