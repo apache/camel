@@ -51,6 +51,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     private String instrumentationName = "camel";
     private ContextPropagators contextPropagators;
     private boolean traceProcessors;
+    private SpanCustomizer spanCustomizer;
 
     public Tracer getTracer() {
         return tracer;
@@ -94,6 +95,17 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         this.contextPropagators = contextPropagators;
     }
 
+    public SpanCustomizer getSpanCustomizer() {
+        return spanCustomizer;
+    }
+
+    /**
+     * Enables the capability to apply customizations to Spans before they are started.
+     */
+    public void setSpanCustomizer(SpanCustomizer spanCustomizer) {
+        this.spanCustomizer = spanCustomizer;
+    }
+
     private SpanKind mapToSpanKind(org.apache.camel.tracing.SpanKind kind) {
         switch (kind) {
             case SPAN_KIND_CLIENT:
@@ -124,6 +136,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             tracingStrategy.setPropagateContext(true);
             setTracingStrategy(tracingStrategy);
         }
+        if (spanCustomizer == null) {
+            spanCustomizer = CamelContextHelper.findSingleByType(getCamelContext(), SpanCustomizer.class);
+        }
     }
 
     @Override
@@ -148,6 +163,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             Span parentSpan = oTelSpanWrapper.getOpenTelemetrySpan();
             baggage = oTelSpanWrapper.getBaggage();
             builder = builder.setParent(Context.current().with(parentSpan));
+        }
+        if (spanCustomizer != null && spanCustomizer.isEnabled(operationName, exchange)) {
+            spanCustomizer.customize(builder, operationName, exchange);
         }
         return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
     }
@@ -174,7 +192,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
                 builder.setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
             }
         }
-
+        if (spanCustomizer != null && spanCustomizer.isEnabled(operationName, exchange)) {
+            spanCustomizer.customize(builder, operationName, exchange);
+        }
         return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
     }
 
