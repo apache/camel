@@ -308,6 +308,13 @@ public abstract class BaseMainSupport extends BaseService {
         listeners.remove(listener);
     }
 
+    /**
+     * Gets the {@link MainListener}.
+     */
+    public List<MainListener> getMainListeners() {
+        return Collections.unmodifiableList(listeners);
+    }
+
     protected void loadCustomBeans(CamelContext camelContext) throws Exception {
         // auto-detect custom beans via base package scanning
         String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
