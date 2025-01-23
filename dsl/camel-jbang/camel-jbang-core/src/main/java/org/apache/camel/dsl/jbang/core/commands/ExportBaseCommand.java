@@ -579,8 +579,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     boolean web = "html".equals(ext) || "js".equals(ext) || "css".equals(ext) || "jpeg".equals(ext)
                             || "jpg".equals(ext) || "png".equals(ext) || "ico".equals(ext);
                     File srcWeb = new File(srcResourcesDir, "META-INF/resources");
-                    File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
+                    File targetDir = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
                             : web ? srcWeb : srcResourcesDir;
+                    targetDir.mkdirs();
 
                     File source;
                     if ("kamelet".equals(k) && localKameletDir != null) {
@@ -591,13 +592,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     File out;
                     if (source.isDirectory()) {
-                        out = target;
+                        out = targetDir;
                     } else {
-                        out = new File(target, source.getName());
+                        out = new File(targetDir, source.getName());
                     }
                     if (!java) {
                         if (kamelet) {
-                            out.getParentFile().mkdirs();
                             safeCopy(source, out, true);
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
@@ -928,7 +928,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (source.isDirectory()) {
-            // flattern files if they are from a directory
+            // flatten files if they are from a directory
             File[] children = source.listFiles();
             if (children != null) {
                 for (File child : children) {
