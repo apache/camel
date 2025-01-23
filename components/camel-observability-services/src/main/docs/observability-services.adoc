@@ -9,9 +9,7 @@
 
 *Since Camel {since}*
 
-The Camel Observability Services component is used to run Camel standalone (Camel Main) and provide a set of opinionated components and configuration which simplify operations such as observability on cloud environments. Although the component is mainly targeted for cloud, it can be used in any other environment, giving to the Camel application the capability to expose a set of observability features by default.
-
-NOTE: you may build your application using this component and only enable the consumption of the exposed metrics in upper environments.
+The Camel Observability Services component provides a set of opinionated components and configuration which simplify operations such as observability on cloud environments. Although the component is mainly targeted for cloud, it can be used in any other environment, giving to the Camel application the capability to expose a set of observability features by default.
 
 == Usage
 
@@ -21,7 +19,7 @@ All you need to do is to add the `camel-observability-services` dependency to th
 
 If you need to customize each of the different components provided within this service, then, you can specify in the `application.properties` each of the configuration as it would be done normally when you provide the individual component.
 
-WARNING: the customization of the configuration for this component is not available for Spring Boot runtime due to a https://github.com/spring-projects/spring-boot/issues/24688[known limitation]. You can use this component in Spring Boot runtime with the default settings only. If you need to provide any customization, you'll need to configure each component separately.
+WARNING: The customization of the configuration for this component is not available for Spring Boot runtime due to a https://github.com/spring-projects/spring-boot/issues/24688[known limitation]. You can use this component in Spring Boot runtime with the default settings only. If you need to provide any customization, you'll need to configure each component separately.
 
 == Components available
 
@@ -64,13 +62,13 @@ This service will expose the port `4318` to `localhost` which is the default set
 
 In order to collect the metrics exposed by the application, and, depending on the runtime of choice, you will need to start your Camel application with a Java agent, whose goal is to push those metrics to the OpenTelemetry compatible collector server. Follow the instructions provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[Opentelemetry Java Agent configuration].
 
-WARNING: due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work until the issue is fixed.
+WARNING: Due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work until the issue is fixed.
 
 == JMX configuration
 
 The presence of this component implies the presence of `camel-management` component. This is in charge to include information about Camel application status in JMX format.
 
-NOTE: the presence of this components automatically enable the collection of the JMX metrics. This should be negligible from performance point of view, however, you may want to disable that running the application with `-Dorg.apache.camel.jmx.disabled=true` JVM option.
+NOTE: The presence of this component automatically enable the collection of the JMX metrics. This should be negligible from performance point of view, however, you may want to disable that running the application with `-Dorg.apache.camel.jmx.disabled=true` JVM option.
 
 === Testing JMX
 
