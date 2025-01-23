@@ -14514,6 +14514,52 @@ public class StaticEndpointBuilders {
         return TelegramEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * TensorFlow Serving (camel-tensorflow-serving)
+     * Provide access to TensorFlow Serving model servers to run inference with
+     * TensorFlow saved models remotely
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-tensorflow-serving
+     * 
+     * Syntax: <code>tensorflow-serving:api</code>
+     * 
+     * Path parameter: api (required)
+     * The TensorFlow Serving API
+     * There are 5 enums and the value can be one of: model-status,
+     * model-metadata, classify, regress, predict
+     * 
+     * @param path api
+     * @return the dsl builder
+     */
+    public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingEndpointBuilder tensorflowServing(String path) {
+        return tensorflowServing("tensorflow-serving", path);
+    }
+    /**
+     * TensorFlow Serving (camel-tensorflow-serving)
+     * Provide access to TensorFlow Serving model servers to run inference with
+     * TensorFlow saved models remotely
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-tensorflow-serving
+     * 
+     * Syntax: <code>tensorflow-serving:api</code>
+     * 
+     * Path parameter: api (required)
+     * The TensorFlow Serving API
+     * There are 5 enums and the value can be one of: model-status,
+     * model-metadata, classify, regress, predict
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path api
+     * @return the dsl builder
+     */
+    public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingEndpointBuilder tensorflowServing(String componentName, String path) {
+        return TensorFlowServingEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
@@ -14706,6 +14752,64 @@ public class StaticEndpointBuilders {
      */
     public static TimerEndpointBuilderFactory.TimerEndpointBuilder timer(String componentName, String path) {
         return TimerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * TorchServe (camel-torchserve)
+     * Provide access to PyTorch TorchServe servers to run inference with
+     * PyTorch models remotely
+     * 
+     * Category: ai
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-torchserve
+     * 
+     * Syntax: <code>torchserve:api/operation</code>
+     * 
+     * Path parameter: api (required)
+     * The TorchServe API
+     * There are 3 enums and the value can be one of: inference, management,
+     * metrics
+     * 
+     * Path parameter: operation (required)
+     * The API operation
+     * There are 10 enums and the value can be one of: ping, predictions,
+     * explanations, register, scale-worker, describe, unregister, list,
+     * set-default, metrics
+     * 
+     * @param path api/operation
+     * @return the dsl builder
+     */
+    public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String path) {
+        return torchserve("torchserve", path);
+    }
+    /**
+     * TorchServe (camel-torchserve)
+     * Provide access to PyTorch TorchServe servers to run inference with
+     * PyTorch models remotely
+     * 
+     * Category: ai
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-torchserve
+     * 
+     * Syntax: <code>torchserve:api/operation</code>
+     * 
+     * Path parameter: api (required)
+     * The TorchServe API
+     * There are 3 enums and the value can be one of: inference, management,
+     * metrics
+     * 
+     * Path parameter: operation (required)
+     * The API operation
+     * There are 10 enums and the value can be one of: ping, predictions,
+     * explanations, register, scale-worker, describe, unregister, list,
+     * set-default, metrics
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path api/operation
+     * @return the dsl builder
+     */
+    public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String componentName, String path) {
+        return TorchServeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Twilio (camel-twilio)

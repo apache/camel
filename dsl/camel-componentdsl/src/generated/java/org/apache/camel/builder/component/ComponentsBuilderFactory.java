@@ -4323,6 +4323,20 @@ public interface ComponentsBuilderFactory {
         return TelegramComponentBuilderFactory.telegram();
     }
     /**
+     * TensorFlow Serving (camel-tensorflow-serving)
+     * Provide access to TensorFlow Serving model servers to run inference with
+     * TensorFlow saved models remotely
+     * 
+     * Category: ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-tensorflow-serving
+     * 
+     * @return the dsl builder
+     */
+    static TensorflowServingComponentBuilderFactory.TensorflowServingComponentBuilder tensorflowServing() {
+        return TensorflowServingComponentBuilderFactory.tensorflowServing();
+    }
+    /**
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
@@ -4374,6 +4388,20 @@ public interface ComponentsBuilderFactory {
      */
     static TimerComponentBuilderFactory.TimerComponentBuilder timer() {
         return TimerComponentBuilderFactory.timer();
+    }
+    /**
+     * TorchServe (camel-torchserve)
+     * Provide access to PyTorch TorchServe servers to run inference with
+     * PyTorch models remotely
+     * 
+     * Category: ai
+     * Since: 4.9
+     * Maven coordinates: org.apache.camel:camel-torchserve
+     * 
+     * @return the dsl builder
+     */
+    static TorchserveComponentBuilderFactory.TorchserveComponentBuilder torchserve() {
+        return TorchserveComponentBuilderFactory.torchserve();
     }
     /**
      * Twilio (camel-twilio)
