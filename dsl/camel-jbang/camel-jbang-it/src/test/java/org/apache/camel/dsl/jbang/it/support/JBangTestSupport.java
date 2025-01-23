@@ -158,6 +158,13 @@ public abstract class JBangTestSupport {
                 .isReadable();
     }
 
+    protected void assertFileInDataFolderContains(String file, String contains) throws IOException {
+        final Path toVerify = Path.of(containerDataFolder, file);
+        Assertions.assertThat(new String(Files.readAllBytes(toVerify)))
+                .as("file" + toVerify + " should contain" + contains)
+                .contains(contains);
+    }
+
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
                 .as("command camel" + command + "should output" + contains)
