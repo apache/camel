@@ -289,7 +289,7 @@
         <jline-version>3.28.0</jline-version>
         <libthrift-version>0.21.0</libthrift-version>
         <jodatime2-version>2.13.0</jodatime2-version>
-        <jolokia-version>2.1.2</jolokia-version>
+        <jolokia-version>2.2.1</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <jooq-version>3.19.18</jooq-version>

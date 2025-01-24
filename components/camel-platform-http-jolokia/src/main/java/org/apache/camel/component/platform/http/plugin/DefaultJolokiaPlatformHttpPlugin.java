@@ -69,7 +69,7 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
     public DefaultJolokiaPlatformHttpPlugin() {
         var config = new StaticConfiguration(ConfigKey.AGENT_ID, NetworkUtil.getAgentId(hashCode(), "vertx"));
         jolokiaLogHandler = new JolokiaLogHandler(LOG);
-        var restrictor = createRestrictor(NetworkUtil.replaceExpression(config.getConfig(ConfigKey.POLICY_LOCATION)));
+        var restrictor = createRestrictor(config.getConfig(ConfigKey.POLICY_LOCATION));
 
         serviceManager = JolokiaServiceManagerFactory.createJolokiaServiceManager(
                 config,
