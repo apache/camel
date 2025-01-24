@@ -480,7 +480,7 @@ The camel.opentelemetry supports 5 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 11 options, which are listed below.
+The camel.metrics supports 12 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -489,6 +489,7 @@ The camel.metrics supports 11 options, which are listed below.
 | *camel.metrics.clearOnReload* | Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang. | true | boolean
 | *camel.metrics.enabled* | To enable Micrometer metrics. | false | boolean
 | *camel.metrics.enableExchange{zwsp}EventNotifier* | Set whether to enable the MicrometerExchangeEventNotifier for capturing metrics on exchange processing times. | true | boolean
+| *camel.metrics.enable{zwsp}InstrumentedThreadPoolFactory* | Set whether to gather performance information about Camel Thread Pools by injecting an InstrumentedThreadPoolFactory. | false | boolean
 | *camel.metrics.enableMessage{zwsp}History* | Set whether to enable the MicrometerMessageHistoryFactory for capturing metrics on individual route node processing times. Depending on the number of configured route nodes, there is the potential to create a large volume of metrics. Therefore, this option is disabled by default. | false | boolean
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean

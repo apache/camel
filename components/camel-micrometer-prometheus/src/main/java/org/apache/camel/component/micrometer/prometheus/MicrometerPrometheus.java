@@ -47,6 +47,7 @@ import org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHis
 import org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHistoryNamingStrategy;
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFactory;
 import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyNamingStrategy;
+import org.apache.camel.component.micrometer.spi.InstrumentedThreadPoolFactory;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
@@ -95,6 +96,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "false")
+    private boolean enableInstrumentedThreadPoolFactory;
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
@@ -185,6 +188,18 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
      */
     public void setEnableRouteEventNotifier(boolean enableRouteEventNotifier) {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
+    }
+
+    public boolean isEnableInstrumentedThreadPoolFactory() {
+        return enableInstrumentedThreadPoolFactory;
+    }
+
+    /**
+     * Set whether to gather performance information about Camel Thread Pools by injecting an
+     * InstrumentedThreadPoolFactory.
+     */
+    public void setEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
+        this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
     }
 
     public boolean isClearOnReload() {
@@ -314,6 +329,13 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
             }
             factory.setMeterRegistry(meterRegistry);
             camelContext.setMessageHistoryFactory(factory);
+        }
+
+        if (isEnableInstrumentedThreadPoolFactory()) {
+            InstrumentedThreadPoolFactory instrumentedThreadPoolFactory = new InstrumentedThreadPoolFactory(
+                    meterRegistry,
+                    camelContext.getExecutorServiceManager().getThreadPoolFactory());
+            camelContext.getExecutorServiceManager().setThreadPoolFactory(instrumentedThreadPoolFactory);
         }
 
         if (clearOnReload) {

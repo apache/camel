@@ -40,6 +40,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+    @Metadata(defaultValue = "false")
+    private boolean enableInstrumentedThreadPoolFactory;
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
@@ -139,6 +141,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnableRouteEventNotifier(boolean enableRouteEventNotifier) {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
+    }
+
+    public boolean isEnableInstrumentedThreadPoolFactory() {
+        return enableInstrumentedThreadPoolFactory;
+    }
+
+    /**
+     * Set whether to gather performance information about Camel Thread Pools by injecting an InstrumentedThreadPoolFactory.
+     */
+    public void setEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
+        this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
     }
 
     public boolean isClearOnReload() {
@@ -258,6 +271,14 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties witheEnableRouteEventNotifier(boolean enableRouteEventNotifier) {
         this.enableRouteEventNotifier = enableRouteEventNotifier;
+        return this;
+    }
+
+    /**
+     * Set whether to gather performance information about Camel Thread Pools by injecting an InstrumentedThreadPoolFactory.
+     */
+    public MetricsConfigurationProperties withEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
+        this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
         return this;
     }
 

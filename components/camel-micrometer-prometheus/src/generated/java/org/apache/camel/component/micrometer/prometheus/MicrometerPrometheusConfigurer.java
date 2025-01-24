@@ -30,6 +30,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "clearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": target.setEnableExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": target.setEnableInstrumentedThreadPoolFactory(property(camelContext, boolean.class, value)); return true;
         case "enablemessagehistory":
         case "enableMessageHistory": target.setEnableMessageHistory(property(camelContext, boolean.class, value)); return true;
         case "enablerouteeventnotifier":
@@ -57,6 +59,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "clearOnReload": return boolean.class;
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": return boolean.class;
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": return boolean.class;
         case "enablemessagehistory":
         case "enableMessageHistory": return boolean.class;
         case "enablerouteeventnotifier":
@@ -85,6 +89,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "clearOnReload": return target.isClearOnReload();
         case "enableexchangeeventnotifier":
         case "enableExchangeEventNotifier": return target.isEnableExchangeEventNotifier();
+        case "enableinstrumentedthreadpoolfactory":
+        case "enableInstrumentedThreadPoolFactory": return target.isEnableInstrumentedThreadPoolFactory();
         case "enablemessagehistory":
         case "enableMessageHistory": return target.isEnableMessageHistory();
         case "enablerouteeventnotifier":
