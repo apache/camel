@@ -134,6 +134,10 @@ public class Run extends CamelCommand {
     @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
+    @Option(names = { "--camel-spring-boot-version" },
+            description = "To run using a different Camel Spring Boot version than the default version.")
+    String camelSpringBootVersion;
+
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
@@ -962,7 +966,7 @@ public class Run extends CamelCommand {
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = this.camelVersion;
+        eq.camelSpringBootVersion = this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDir.toString();
         eq.localKameletDir = this.localKameletDir;
@@ -971,6 +975,7 @@ public class Run extends CamelCommand {
         eq.files = this.files;
         eq.name = this.name;
         eq.gav = this.gav;
+        eq.repositories = this.repositories;
         if (eq.gav == null) {
             if (eq.name == null) {
                 eq.name = "jbang-run-dummy";
