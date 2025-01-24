@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.Pod;
@@ -213,8 +214,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
-    String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
+                        defaultValue = "${sys:camel.jbang.springBootVersion:-" + RuntimeType.SPRING_BOOT_VERSION + "}")
+    String springBootVersion = Objects.requireNonNullElse(System.getProperty("camel.jbang.springBootVersion"), RuntimeType.SPRING_BOOT_VERSION);
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     String camelSpringBootVersion;
@@ -228,8 +229,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String quarkusArtifactId = "quarkus-bom";
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+                        defaultValue = "${sys:camel.jbang.quarkusVersion:-" + RuntimeType.QUARKUS_VERSION + "}")
+    String quarkusVersion = Objects.requireNonNullElse(System.getProperty("camel.jbang.quarkusVersion"), RuntimeType.QUARKUS_VERSION);
 
     @CommandLine.Option(names = { "--package-name" },
                         description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "

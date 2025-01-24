@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -63,6 +64,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 public abstract class ExportBaseCommand extends CamelCommand {
 
@@ -157,8 +159,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
-    protected String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
+                        defaultValue = "${sys:camel.jbang.springBootVersion:-" + RuntimeType.SPRING_BOOT_VERSION + "}")
+    protected String springBootVersion = Objects.requireNonNullElse(System.getProperty("camel.jbang.springBootVersion"), RuntimeType.SPRING_BOOT_VERSION);
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
@@ -172,8 +174,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId = "quarkus-bom";
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    protected String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+                        defaultValue = "${sys:camel.jbang.quarkusVersion:-" + RuntimeType.QUARKUS_VERSION + "}")
+    protected String quarkusVersion = Objects.requireNonNullElse(System.getProperty("camel.jbang.quarkusVersion"), RuntimeType.QUARKUS_VERSION);
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")

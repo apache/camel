@@ -146,12 +146,12 @@ public class Run extends CamelCommand {
     String quarkusArtifactId = "quarkus-bom";
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-            defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion = RuntimeType.QUARKUS_VERSION;
+            defaultValue = "${sys:camel.jbang.quarkusVersion:-" + RuntimeType.QUARKUS_VERSION + "}")
+    String quarkusVersion = Objects.requireNonNullElse(System.getProperty("camel.jbang.quarkusVersion"), RuntimeType.QUARKUS_VERSION);
 
     @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-            defaultValue = RuntimeType.SPRING_BOOT_VERSION)
-    String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
+            defaultValue = "${sys:camel.jbang.springBootVersion:-" + RuntimeType.SPRING_BOOT_VERSION + "}")
+    String springBootVersion = Objects.requireNonNullElse(System.getProperty("camel.jbang.springBootVersion"), RuntimeType.SPRING_BOOT_VERSION);
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
             description = "Profile to run (dev, test, or prod).")
