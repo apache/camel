@@ -119,7 +119,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
         meeting.add(new Summary("Progress Meeting"));
 
         // add timezone info..
-        meeting.add(tz.getTimeZoneId().get());
+        meeting.add(tz.getTimeZoneId());
 
         // generate unique identifier..
         meeting.add(new Uid("00000000"));
