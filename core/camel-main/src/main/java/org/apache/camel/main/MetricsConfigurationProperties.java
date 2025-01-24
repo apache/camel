@@ -148,7 +148,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Set whether to gather performance information about Camel Thread Pools by injecting an InstrumentedThreadPoolFactory.
+     * Set whether to gather performance information about Camel Thread Pools by injecting an
+     * InstrumentedThreadPoolFactory.
      */
     public void setEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
         this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
@@ -275,7 +276,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Set whether to gather performance information about Camel Thread Pools by injecting an InstrumentedThreadPoolFactory.
+     * Set whether to gather performance information about Camel Thread Pools by injecting an
+     * InstrumentedThreadPoolFactory.
      */
     public MetricsConfigurationProperties withEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
         this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
