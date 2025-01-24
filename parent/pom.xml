@@ -400,7 +400,7 @@
         <parson-version>1.1.7</parson-version>
         <parquet-common-version>1.15.0</parquet-common-version>
         <parquet-avro-version>1.15.0</parquet-avro-version>
-        <pdfbox-version>3.0.3</pdfbox-version>
+        <pdfbox-version>3.0.4</pdfbox-version>
         <pgjdbc-driver-version>42.7.5</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.6</picocli-version>
