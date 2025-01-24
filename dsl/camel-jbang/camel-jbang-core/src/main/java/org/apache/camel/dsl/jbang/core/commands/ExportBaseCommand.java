@@ -314,11 +314,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.download = download;
         run.runtime = runtime;
         run.camelVersion = camelVersion;
+        run.camelSpringBootVersion = camelSpringBootVersion;
         run.quarkusVersion = quarkusVersion;
         run.springBootVersion = springBootVersion;
         run.kameletsVersion = kameletsVersion;
         run.localKameletDir = localKameletDir;
         run.ignoreLoadingError = ignoreLoadingError;
+        run.repositories = repositories;
+
         return run.runExport(ignoreLoadingError);
     }
 
