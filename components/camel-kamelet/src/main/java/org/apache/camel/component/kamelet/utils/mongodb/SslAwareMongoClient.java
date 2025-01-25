@@ -30,6 +30,9 @@ import javax.net.ssl.X509TrustManager;
 
 import com.mongodb.*;
 import com.mongodb.client.*;
+import com.mongodb.client.model.bulk.ClientBulkWriteOptions;
+import com.mongodb.client.model.bulk.ClientBulkWriteResult;
+import com.mongodb.client.model.bulk.ClientNamespacedWriteModel;
 import com.mongodb.connection.ClusterDescription;
 import org.apache.camel.util.function.Suppliers;
 import org.bson.Document;
@@ -192,6 +195,32 @@ public class SslAwareMongoClient implements MongoClient {
             ClientSession clientSession, List<? extends Bson> list,
             Class<TResult> aClass) {
         return getWrappedMongoClient().watch(clientSession, list, aClass);
+    }
+
+    @Override
+    public ClientBulkWriteResult bulkWrite(List<? extends ClientNamespacedWriteModel> list) throws ClientBulkWriteException {
+        return getWrappedMongoClient().bulkWrite(list);
+    }
+
+    @Override
+    public ClientBulkWriteResult bulkWrite(
+            List<? extends ClientNamespacedWriteModel> list, ClientBulkWriteOptions clientBulkWriteOptions)
+            throws ClientBulkWriteException {
+        return getWrappedMongoClient().bulkWrite(list, clientBulkWriteOptions);
+    }
+
+    @Override
+    public ClientBulkWriteResult bulkWrite(ClientSession clientSession, List<? extends ClientNamespacedWriteModel> list)
+            throws ClientBulkWriteException {
+        return getWrappedMongoClient().bulkWrite(clientSession, list);
+    }
+
+    @Override
+    public ClientBulkWriteResult bulkWrite(
+            ClientSession clientSession, List<? extends ClientNamespacedWriteModel> list,
+            ClientBulkWriteOptions clientBulkWriteOptions)
+            throws ClientBulkWriteException {
+        return getWrappedMongoClient().bulkWrite(clientSession, list, clientBulkWriteOptions);
     }
 
     @Override
