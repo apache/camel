@@ -31,12 +31,13 @@ public class SolrLocalContainerInfraService implements SolrInfraService, Contain
     private final SolrContainer container;
 
     public SolrLocalContainerInfraService() {
-        container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME, isCloudMode());
+        container = SolrContainer.initContainer(SolrContainer.CONTAINER_NAME);
     }
 
     @Override
     public void registerProperties() {
-        System.setProperty(SolrProperties.SERVICE_ADDRESS, getSolrBaseUrl());
+        System.setProperty(SolrProperties.SOLR_HOST, getSolrHost());
+        System.setProperty(SolrProperties.SOLR_PORT, String.valueOf(getPort()));
     }
 
     @Override
@@ -47,6 +48,10 @@ public class SolrLocalContainerInfraService implements SolrInfraService, Contain
 
         registerProperties();
         LOG.info("Solr instance running at {}", getSolrBaseUrl());
+    }
+
+    private String getSolrBaseUrl() {
+        return String.format("http://%s/solr", getHttpHostAddress());
     }
 
     @Override
@@ -60,21 +65,12 @@ public class SolrLocalContainerInfraService implements SolrInfraService, Contain
         return container;
     }
 
-    protected String getHost() {
+    public String getSolrHost() {
         return container.getHost();
     }
 
-    protected int getPort() {
+    public int getPort() {
         return container.getMappedPort(SolrProperties.DEFAULT_PORT);
     }
 
-    @Override
-    public String getSolrBaseUrl() {
-        return String.format("http://%s:%d/solr", getHost(), getPort());
-    }
-
-    @Override
-    public boolean isCloudMode() {
-        return false;
-    }
 }

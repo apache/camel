@@ -27,30 +27,37 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class SolrContainer extends GenericContainer<SolrContainer> {
+
     private static final Logger LOG = LoggerFactory.getLogger(SolrContainer.class);
 
     public static final String CONTAINER_NAME = "solr";
+
+    public static final String SOLR_DFT_COLLECTION = "collection1";
+    public static final String[] SOLR_CONTAINER_COMMANDS = new String[] { "solr-precreate", SOLR_DFT_COLLECTION };
 
     public SolrContainer() {
         super(LocalPropertyResolver.getProperty(SolrLocalContainerInfraService.class, SolrProperties.SOLR_CONTAINER));
 
         this.withNetworkAliases(CONTAINER_NAME)
+                .withEnv("SOLR_OPTS", "-Xss500k")
                 .withExposedPorts(SolrProperties.DEFAULT_PORT)
-                .waitingFor(Wait.forListeningPort())
-                .withEnv("SOLR_OPTS", "-Xss500k");
+                .waitingFor(Wait.forHttp("/solr/admin/info/health"));
     }
 
     public SolrContainer(String imageName) {
         super(DockerImageName.parse(imageName));
     }
 
-    public static SolrContainer initContainer(String networkAlias, boolean cloudMode) {
+    public static SolrContainer initContainer(String networkAlias) {
         return new SolrContainer()
                 .withNetworkAliases(networkAlias)
-                .withExposedPorts(SolrProperties.DEFAULT_PORT)
+                .withEnv("SOLR_OPTS", "-Dsolr.environment=test,label=camel-solr-test-infra,color=sandybrown")
+                .withEnv("GC_LOG_OPTS", "-verbose:")
+                .withAccessToHost(true)
                 .withLogConsumer(new Slf4jLogConsumer(LOG).withPrefix(CONTAINER_NAME))
-                .waitingFor(Wait.forLogMessage(".*Server.*Started.*", 1))
-                .withCommand(cloudMode ? "-c" : "");
+                .withExposedPorts(SolrProperties.DEFAULT_PORT)
+                .withCommand(SOLR_CONTAINER_COMMANDS)
+                .waitingFor(Wait.forHttp("/solr/" + SOLR_DFT_COLLECTION + "/admin/ping?docker-ping"));
     }
 
 }
