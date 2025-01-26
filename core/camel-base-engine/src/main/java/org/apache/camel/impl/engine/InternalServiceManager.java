@@ -98,17 +98,17 @@ final class InternalServiceManager {
         if (object instanceof Service service) {
             if (useLifecycleStrategies) {
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                    Route route;
+                    if (service instanceof RouteAware routeAware) {
+                        route = routeAware.getRoute();
+                    } else {
+                        // if the service is added while creating a new route then grab the route from the startup manager
+                        route = internalRouteStartupManager.getSetupRoute();
+                    }
                     if (service instanceof Endpoint endpoint) {
                         // use specialized endpoint add
-                        strategy.onEndpointAdd(endpoint);
+                        strategy.onEndpointAdd(endpoint, route);
                     } else {
-                        Route route;
-                        if (service instanceof RouteAware routeAware) {
-                            route = routeAware.getRoute();
-                        } else {
-                            // if the service is added while creating a new route then grab the route from the startup manager
-                            route = internalRouteStartupManager.getSetupRoute();
-                        }
                         strategy.onServiceAdd(camelContext, service, route);
                     }
                 }

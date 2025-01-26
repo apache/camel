@@ -171,7 +171,8 @@ public class KameletComponent extends DefaultComponent {
                     // since this is the real kamelet, then we need to hand it
                     // over to the tracker.
                     //
-                    lifecycleHandler.track(this);
+                    String routeId = getCamelContext().getCamelContextExtension().getCreateRoutes();
+                    lifecycleHandler.track(this, routeId);
                 }
             };
 
@@ -431,7 +432,11 @@ public class KameletComponent extends DefaultComponent {
      * be used to create routes from templates.
      */
     private class LifecycleHandler extends LifecycleStrategySupport {
-        private final List<KameletEndpoint> endpoints;
+
+        record Tuple(KameletEndpoint endpoint, String parentRouteId) {
+        }
+
+        private final List<Tuple> endpoints;
         private final AtomicBoolean initialized;
 
         public LifecycleHandler() {
@@ -439,7 +444,7 @@ public class KameletComponent extends DefaultComponent {
             this.initialized = new AtomicBoolean();
         }
 
-        public void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
+        public void createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId) throws Exception {
             final ModelCamelContext context = (ModelCamelContext) getCamelContext();
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
@@ -470,15 +475,23 @@ public class KameletComponent extends DefaultComponent {
             }
         }
 
+        //        @Override
+        //        public void onEndpointAdd(Endpoint endpoint, Route route) {
+        //            if (endpoint instanceof KameletEndpoint ke) {
+        //                String parentRouteId = getCamelContext().getCamelContextExtension().getCreateRoutes();
+        //                track(ke, parentRouteId);
+        //            }
+        //        }
+
         @Override
         public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
             if (this.initialized.compareAndSet(false, true)) {
-                for (KameletEndpoint endpoint : endpoints) {
+                for (Tuple tuple : endpoints) {
                     try {
-                        createRouteForEndpoint(endpoint);
+                        createRouteForEndpoint(tuple.endpoint, tuple.parentRouteId);
                     } catch (Exception e) {
                         throw new VetoCamelContextStartException(
-                                "Failure creating route from template: " + endpoint.getTemplateId(), e, context);
+                                "Failure creating route from template: " + tuple.endpoint.getTemplateId(), e, context);
                     }
                 }
 
@@ -490,16 +503,16 @@ public class KameletComponent extends DefaultComponent {
             this.initialized.set(initialized);
         }
 
-        public void track(KameletEndpoint endpoint) {
+        public void track(KameletEndpoint endpoint, String parentRouteId) {
             if (this.initialized.get()) {
                 try {
-                    createRouteForEndpoint(endpoint);
+                    createRouteForEndpoint(endpoint, parentRouteId);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
                 LOG.debug("Tracking route template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
-                this.endpoints.add(endpoint);
+                this.endpoints.add(new Tuple(endpoint, parentRouteId));
             }
         }
     }
