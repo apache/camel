@@ -37,7 +37,11 @@ public class KameletNoErrorHandlerTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() {
+            public void configure() throws Exception {
+
+                // enable no error handler
+                customize(KameletComponent.class, k -> k.setNoErrorHandler(true));
+
                 routeTemplate("echo")
                         .templateParameter("prefix")
                         .from("kamelet:source")

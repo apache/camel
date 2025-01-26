@@ -429,6 +429,8 @@ public class DefaultModel implements Model {
             RouteTemplateContext routeTemplateContext)
             throws Exception {
 
+        String parentRouteId = (String) routeTemplateContext.getParameters().remove("_parentRouteId");
+
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
             if (routeTemplateId.equals(def.getId())) {
@@ -515,6 +517,9 @@ public class DefaultModel implements Model {
             }
         }
 
+        if (parentRouteId != null) {
+            prop.put("parentRouteId", parentRouteId);
+        }
         RouteDefinition def = converter.apply(target, prop);
         if (routeId != null) {
             def.setId(routeId);

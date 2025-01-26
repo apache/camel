@@ -54,6 +54,7 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_UUID;
+import static org.apache.camel.component.kamelet.Kamelet.PARENT_ROUTE_ID;
 
 /**
  * Materialize route templates
@@ -85,8 +86,8 @@ public class KameletComponent extends DefaultComponent {
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
-    @Metadata(label = "advanced", defaultValue = "true")
-    private boolean noErrorHandler = true;
+    @Metadata(label = "advanced")
+    private boolean noErrorHandler;
 
     @Metadata
     private Map<String, Properties> templateProperties;
@@ -272,8 +273,13 @@ public class KameletComponent extends DefaultComponent {
     }
 
     /**
-     * Kamelets, by default, will not do fine-grained error handling, but works in no-error-handler mode. This can be
-     * turned off, to use old behaviour in earlier versions of Camel.
+     * Whether kamelets should use error handling or not. By default, the Kamelet uses the same error handler as from
+     * the calling route. This means that if the calling route has error handling that performs retries, or routing to a
+     * dead letter channel, then the kamelet route will use this also.
+     * <p>
+     * This can be turned off by setting this option to true. If off then the kamelet route is not using error handling,
+     * and any exception thrown will for source kamelets be logged by the consumer, and the sink/action kamelets will
+     * fail processing.
      */
     public void setNoErrorHandler(boolean noErrorHandler) {
         this.noErrorHandler = noErrorHandler;
@@ -459,6 +465,10 @@ public class KameletComponent extends DefaultComponent {
 
             LOG.debug("Creating route from template={} and id={}", templateId, routeId);
             try {
+                // TODO: Nicer API
+                if (parentRouteId != null) {
+                    endpoint.getKameletProperties().put(PARENT_ROUTE_ID, parentRouteId);
+                }
                 String id = context.addRouteFromTemplate(routeId, templateId, uuid, endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
@@ -474,14 +484,6 @@ public class KameletComponent extends DefaultComponent {
                 throw new FailedToCreateKameletException(templateId, loc, e);
             }
         }
-
-        //        @Override
-        //        public void onEndpointAdd(Endpoint endpoint, Route route) {
-        //            if (endpoint instanceof KameletEndpoint ke) {
-        //                String parentRouteId = getCamelContext().getCamelContextExtension().getCreateRoutes();
-        //                track(ke, parentRouteId);
-        //            }
-        //        }
 
         @Override
         public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {

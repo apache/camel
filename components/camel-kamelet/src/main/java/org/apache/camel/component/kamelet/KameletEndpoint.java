@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,8 +55,8 @@ public class KameletEndpoint extends DefaultEndpoint {
     private long timeout = 30000L;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean failIfNoConsumers = true;
-    @UriParam(label = "advanced", defaultValue = "true")
-    private boolean noErrorHandler = true;
+    @UriParam(label = "advanced")
+    private boolean noErrorHandler;
 
     public KameletEndpoint(String uri,
                            KameletComponent component,
@@ -80,8 +79,13 @@ public class KameletEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Kamelets, by default, will not do fine-grained error handling, but works in no-error-handler mode. This can be
-     * turned off, to use old behaviour in earlier versions of Camel.
+     * Whether kamelets should use error handling or not. By default, the Kamelet uses the same error handler as from
+     * the calling route. This means that if the calling route has error handling that performs retries, or routing to a
+     * dead letter channel, then the kamelet route will use this also.
+     *
+     * This can be turned off by setting this option to true. If off then the kamelet route is not using error handling,
+     * and any exception thrown will for source kamelets be logged by the consumer, and the sink/action kamelets will
+     * fail processing.
      */
     public void setNoErrorHandler(boolean noErrorHandler) {
         this.noErrorHandler = noErrorHandler;
@@ -156,7 +160,8 @@ public class KameletEndpoint extends DefaultEndpoint {
     }
 
     public Map<String, Object> getKameletProperties() {
-        return Collections.unmodifiableMap(kameletProperties);
+        return kameletProperties;
+        //        return Collections.unmodifiableMap(kameletProperties);
     }
 
     /**

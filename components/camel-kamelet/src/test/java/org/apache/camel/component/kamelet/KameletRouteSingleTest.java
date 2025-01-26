@@ -16,47 +16,42 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.net.UnknownHostException;
+import java.util.UUID;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class KameletHttpSinkNoErrorHandlerFalseTest extends CamelTestSupport {
-
+public class KameletRouteSingleTest extends CamelTestSupport {
     @Test
-    public void testHttpSink() throws Exception {
-        getMockEndpoint("mock:dead").expectedMessageCount(0);
+    public void testSingle() {
+        String body = UUID.randomUUID().toString();
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertInstanceOf(UnknownHostException.class, e.getCause());
-        }
-
-        MockEndpoint.assertIsSatisfied(context);
+        assertThat(
+                fluentTemplate.toF("direct:single").withBody(body).request(String.class)).isEqualTo("a-" + body);
     }
+
+    // **********************************************
+    //
+    // test set-up
+    //
+    // **********************************************
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myhttp")
-                        .templateParameter("url")
+                routeTemplate("echo")
+                        .templateParameter("prefix")
                         .from("kamelet:source")
-                        .removeHeaders("*")
-                        .to("{{url}}");
+                        .setBody().simple("{{prefix}}-${body}");
 
-                from("direct:start").routeId("test")
-                        .errorHandler(deadLetterChannel("mock:dead"))
-                        .kamelet("myhttp?noErrorHandler=false&url=https://webhook.unknownhost.sitessss/")
+                from("direct:single").routeId("test")
+                        .to("kamelet:echo?prefix=a")
                         .log("${body}");
             }
         };

@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -48,6 +49,7 @@ public final class Kamelet {
     public static final String PARAM_LOCATION = "location";
     public static final String PARAM_UUID = "uuid";
     public static final String DEFAULT_LOCATION = "classpath:kamelets";
+    public static final String PARENT_ROUTE_ID = "parentRouteId";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
 
     // use a running counter as uuid
@@ -182,6 +184,7 @@ public final class Kamelet {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
         final boolean noErrorHandler = (boolean) parameters.get(NO_ERROR_HANDLER);
         final String uuid = (String) parameters.get(PARAM_UUID);
+        final String pid = (String) parameters.get(PARENT_ROUTE_ID);
 
         ObjectHelper.notNull(rid, PARAM_ROUTE_ID);
         ObjectHelper.notNull(uuid, PARAM_UUID);
@@ -195,6 +198,12 @@ public final class Kamelet {
         def.setNodePrefixId(uuid);
         if (noErrorHandler) {
             def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
+        } else if (pid != null) {
+            ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
+            RouteDefinition parent = mcc.getRouteDefinition(pid);
+            if (parent != null) {
+                def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
+            }
         }
 
         if (def.getInput() == null) {
