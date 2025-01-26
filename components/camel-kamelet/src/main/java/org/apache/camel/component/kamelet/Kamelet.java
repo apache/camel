@@ -208,7 +208,8 @@ public final class Kamelet {
             // has any error handler or not (if not then we should also not use error handler in the kamelet)
             ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
             ProcessorDefinition<?> proc = mcc.getProcessorDefinition(ppid);
-            // TODO: should this be wrapped or not
+            // TODO: Make API in ProcessorDefinitionHelper we can reuse that
+            // checks for this like in ProcessorReifer.wrapChannel
             boolean tryBlock = proc != null && ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, proc, true);
             if (tryBlock) {
                 def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
