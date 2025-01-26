@@ -30,7 +30,6 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.TryDefinition;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
@@ -204,23 +203,19 @@ public final class Kamelet {
         if (noErrorHandler) {
             def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
         } else if (prid != null && ppid != null) {
+            ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
             // the kamelet are used from a processor, and we need to check if this processor
             // has any error handler or not (if not then we should also not use error handler in the kamelet)
-            ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
-            ProcessorDefinition<?> proc = mcc.getProcessorDefinition(ppid);
-            // TODO: Make API in ProcessorDefinitionHelper we can reuse that
-            // checks for this like in ProcessorReifer.wrapChannel
-            boolean tryBlock = proc != null && ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, proc, true);
-            if (tryBlock) {
+            ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
+            boolean wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(def.getCamelContext(), pro, null,
+                    pro.getInheritErrorHandler());
+            if (wrap) {
+                RouteDefinition parent = mcc.getRouteDefinition(prid);
+                if (parent != null) {
+                    def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
+                }
+            } else {
                 def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
-            }
-        }
-        if (!def.isErrorHandlerFactorySet() && prid != null) {
-            // inherit the error handler from the parent route
-            ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
-            RouteDefinition parent = mcc.getRouteDefinition(prid);
-            if (parent != null) {
-                def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
             }
         }
 

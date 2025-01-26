@@ -694,54 +694,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // initialize the channel
         channel.initChannel(this.route, definition, child, interceptors, processor, route, first);
 
-        boolean wrap = false;
         // set the error handler, must be done after init as we can set the
         // error handler as first in the chain
-        if (definition instanceof TryDefinition || definition instanceof CatchDefinition
-                || definition instanceof FinallyDefinition) {
-            // do not use error handler for try .. catch .. finally blocks as it
-            // will handle errors itself
-            LOG.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
-        } else if (ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, definition, true)
-                || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, definition, true)
-                || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, definition, true)) {
-            // do not use error handler for try .. catch .. finally blocks as it
-            // will handle errors itself
-            // by checking that any of our parent(s) is not a try .. catch or
-            // finally type
-            LOG.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
-        } else if (definition instanceof OnExceptionDefinition
-                || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, definition, true)) {
-            LOG.trace("{} is part of OnException so no error handler is applied", definition);
-            // do not use error handler for onExceptions blocks as it will
-            // handle errors itself
-        } else if (definition instanceof CircuitBreakerDefinition
-                || ProcessorDefinitionHelper.isParentOfType(CircuitBreakerDefinition.class, definition, true)) {
-            // do not use error handler for circuit breaker
-            // however if inherit error handler is enabled, we need to wrap an error handler on the parent
-            if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
-                // only wrap the parent (not the children of the circuit breaker)
-                wrap = true;
-            } else {
-                LOG.trace("{} is part of CircuitBreaker so no error handler is applied", definition);
-            }
-        } else if (definition instanceof MulticastDefinition def) {
-            // do not use error handler for multicast as it offers fine-grained
-            // error handlers for its outputs
-            // however if share unit of work is enabled, we need to wrap an
-            // error handler on the multicast parent
-            boolean isShareUnitOfWork = parseBoolean(def.getShareUnitOfWork(), false);
-            if (isShareUnitOfWork && child == null) {
-                // only wrap the parent (not the children of the multicast)
-                wrap = true;
-            } else {
-                LOG.trace("{} is part of multicast which have special error handling so no error handler is applied",
-                        definition);
-            }
-        } else {
-            // use error handler by default or if configured to do so
-            wrap = true;
-        }
+        boolean wrap = ProcessorDefinitionHelper.shouldWrapInErrorHandler(camelContext, definition, child, inheritErrorHandler);
         if (wrap) {
             wrapChannelInErrorHandler(channel, inheritErrorHandler);
         }
