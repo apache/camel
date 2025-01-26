@@ -112,16 +112,6 @@ public interface LifecycleStrategy {
     void onEndpointAdd(Endpoint endpoint);
 
     /**
-     * Notification on adding an {@link Endpoint}.
-     *
-     * @param endpoint the added endpoint
-     * @param route    the route the endpoint belongs to if any possible to determine
-     */
-    default void onEndpointAdd(Endpoint endpoint, Route route) {
-        onEndpointAdd(endpoint);
-    }
-
-    /**
      * Notification on removing an {@link Endpoint}.
      *
      * @param endpoint the removed endpoint

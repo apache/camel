@@ -107,7 +107,7 @@ final class InternalServiceManager {
                     }
                     if (service instanceof Endpoint endpoint) {
                         // use specialized endpoint add
-                        strategy.onEndpointAdd(endpoint, route);
+                        strategy.onEndpointAdd(endpoint);
                     } else {
                         strategy.onServiceAdd(camelContext, service, route);
                     }
