@@ -724,7 +724,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                             = getCamelContextReference().getCamelContextExtension().getStartupStepRecorder();
                     StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Create Route");
 
-                    getCamelContextExtension().createRoutes(routeDefinition.getRouteId());
+                    getCamelContextExtension().createRoute(routeDefinition.getRouteId());
 
                     Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
                     recorder.endStep(step);
@@ -753,7 +753,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             if (!alreadyStartingRoutes) {
                 setStartingRoutes(false);
             }
-            getCamelContextExtension().createRoutes(null);
+            getCamelContextExtension().createRoute(null);
             pc.setLocalProperties(null);
             if (localBeans != null) {
                 localBeans.setLocalBeanRepository(null);

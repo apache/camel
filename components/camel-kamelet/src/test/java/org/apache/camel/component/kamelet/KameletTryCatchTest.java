@@ -22,10 +22,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletNoErrorHandlerDirectTest extends CamelTestSupport {
+public class KameletTryCatchTest extends CamelTestSupport {
 
     @Test
-    public void testNoErrorHandler() throws Exception {
+    public void testTryCatch() throws Exception {
         getMockEndpoint("mock:catch").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 

@@ -25,9 +25,12 @@ import java.util.function.Predicate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
@@ -50,6 +53,7 @@ public final class Kamelet {
     public static final String PARAM_UUID = "uuid";
     public static final String DEFAULT_LOCATION = "classpath:kamelets";
     public static final String PARENT_ROUTE_ID = "parentRouteId";
+    public static final String PARENT_PROCESSOR_ID = "parentProcessorId";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
 
     // use a running counter as uuid
@@ -184,7 +188,8 @@ public final class Kamelet {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
         final boolean noErrorHandler = (boolean) parameters.get(NO_ERROR_HANDLER);
         final String uuid = (String) parameters.get(PARAM_UUID);
-        final String pid = (String) parameters.get(PARENT_ROUTE_ID);
+        final String prid = (String) parameters.get(PARENT_ROUTE_ID);
+        final String ppid = (String) parameters.get(PARENT_PROCESSOR_ID);
 
         ObjectHelper.notNull(rid, PARAM_ROUTE_ID);
         ObjectHelper.notNull(uuid, PARAM_UUID);
@@ -198,9 +203,21 @@ public final class Kamelet {
         def.setNodePrefixId(uuid);
         if (noErrorHandler) {
             def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
-        } else if (pid != null) {
+        } else if (prid != null && ppid != null) {
+            // the kamelet are used from a processor, and we need to check if this processor
+            // has any error handler or not (if not then we should also not use error handler in the kamelet)
             ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
-            RouteDefinition parent = mcc.getRouteDefinition(pid);
+            ProcessorDefinition<?> proc = mcc.getProcessorDefinition(ppid);
+            // TODO: should this be wrapped or not
+            boolean tryBlock = proc != null && ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, proc, true);
+            if (tryBlock) {
+                def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
+            }
+        }
+        if (!def.isErrorHandlerFactorySet() && prid != null) {
+            // inherit the error handler from the parent route
+            ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
+            RouteDefinition parent = mcc.getRouteDefinition(prid);
             if (parent != null) {
                 def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
             }

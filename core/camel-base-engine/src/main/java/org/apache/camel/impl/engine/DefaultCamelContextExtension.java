@@ -91,7 +91,8 @@ import org.slf4j.LoggerFactory;
 class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     private final AbstractCamelContext camelContext;
-    private final ThreadLocal<String> isCreateRoutes = new ThreadLocal<>();
+    private final ThreadLocal<String> isCreateRoute = new ThreadLocal<>();
+    private final ThreadLocal<String> isCreateProcessor = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
@@ -309,8 +310,13 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public String getCreateRoutes() {
-        return isCreateRoutes.get();
+    public String getCreateRoute() {
+        return isCreateRoute.get();
+    }
+
+    @Override
+    public String getCreateProcessor() {
+        return isCreateProcessor.get();
     }
 
     @Override
@@ -400,11 +406,20 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public void createRoutes(String routeId) {
+    public void createRoute(String routeId) {
         if (routeId != null) {
-            isCreateRoutes.set(routeId);
+            isCreateRoute.set(routeId);
         } else {
             isSetupRoutes.remove();
+        }
+    }
+
+    @Override
+    public void createProcessor(String processorId) {
+        if (processorId != null) {
+            isCreateProcessor.set(processorId);
+        } else {
+            isCreateProcessor.remove();
         }
     }
 

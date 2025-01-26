@@ -430,6 +430,7 @@ public class DefaultModel implements Model {
             throws Exception {
 
         String parentRouteId = (String) routeTemplateContext.getParameters().remove("_parentRouteId");
+        String parentProcessorId = (String) routeTemplateContext.getParameters().remove("_parentProcessorId");
 
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -519,6 +520,9 @@ public class DefaultModel implements Model {
 
         if (parentRouteId != null) {
             prop.put("parentRouteId", parentRouteId);
+        }
+        if (parentProcessorId != null) {
+            prop.put("parentProcessorId", parentProcessorId);
         }
         RouteDefinition def = converter.apply(target, prop);
         if (routeId != null) {

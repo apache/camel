@@ -54,6 +54,7 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_UUID;
+import static org.apache.camel.component.kamelet.Kamelet.PARENT_PROCESSOR_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARENT_ROUTE_ID;
 
 /**
@@ -172,8 +173,9 @@ public class KameletComponent extends DefaultComponent {
                     // since this is the real kamelet, then we need to hand it
                     // over to the tracker.
                     //
-                    String routeId = getCamelContext().getCamelContextExtension().getCreateRoutes();
-                    lifecycleHandler.track(this, routeId);
+                    String routeId = getCamelContext().getCamelContextExtension().getCreateRoute();
+                    String processorId = getCamelContext().getCamelContextExtension().getCreateProcessor();
+                    lifecycleHandler.track(this, routeId, processorId);
                 }
             };
 
@@ -439,7 +441,7 @@ public class KameletComponent extends DefaultComponent {
      */
     private class LifecycleHandler extends LifecycleStrategySupport {
 
-        record Tuple(KameletEndpoint endpoint, String parentRouteId) {
+        record Tuple(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId) {
         }
 
         private final List<Tuple> endpoints;
@@ -450,7 +452,8 @@ public class KameletComponent extends DefaultComponent {
             this.initialized = new AtomicBoolean();
         }
 
-        public void createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId) throws Exception {
+        public void createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
+                throws Exception {
             final ModelCamelContext context = (ModelCamelContext) getCamelContext();
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
@@ -468,6 +471,9 @@ public class KameletComponent extends DefaultComponent {
                 // TODO: Nicer API
                 if (parentRouteId != null) {
                     endpoint.getKameletProperties().put(PARENT_ROUTE_ID, parentRouteId);
+                }
+                if (parentProcessorId != null) {
+                    endpoint.getKameletProperties().put(PARENT_PROCESSOR_ID, parentProcessorId);
                 }
                 String id = context.addRouteFromTemplate(routeId, templateId, uuid, endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
@@ -490,7 +496,7 @@ public class KameletComponent extends DefaultComponent {
             if (this.initialized.compareAndSet(false, true)) {
                 for (Tuple tuple : endpoints) {
                     try {
-                        createRouteForEndpoint(tuple.endpoint, tuple.parentRouteId);
+                        createRouteForEndpoint(tuple.endpoint, tuple.parentRouteId, tuple.parentProcessorId);
                     } catch (Exception e) {
                         throw new VetoCamelContextStartException(
                                 "Failure creating route from template: " + tuple.endpoint.getTemplateId(), e, context);
@@ -505,16 +511,16 @@ public class KameletComponent extends DefaultComponent {
             this.initialized.set(initialized);
         }
 
-        public void track(KameletEndpoint endpoint, String parentRouteId) {
+        public void track(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId) {
             if (this.initialized.get()) {
                 try {
-                    createRouteForEndpoint(endpoint, parentRouteId);
+                    createRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
                 LOG.debug("Tracking route template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
-                this.endpoints.add(new Tuple(endpoint, parentRouteId));
+                this.endpoints.add(new Tuple(endpoint, parentRouteId, parentProcessorId));
             }
         }
     }

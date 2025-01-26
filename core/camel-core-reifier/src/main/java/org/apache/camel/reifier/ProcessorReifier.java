@@ -851,17 +851,22 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(ProcessorReifier.class,
                 outputId, "Create processor");
 
+        camelContext.getCamelContextExtension().createProcessor(outputId);
         Processor processor = null;
-        // at first use custom factory
-        final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
-        if (processorFactory != null) {
-            processor = processorFactory.createProcessor(route, output);
+        try {
+            // at first use custom factory
+            final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
+            if (processorFactory != null) {
+                processor = processorFactory.createProcessor(route, output);
+            }
+            // fallback to default implementation if factory did not create the processor
+            if (processor == null) {
+                processor = reifier(route, output).createProcessor();
+            }
+            camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
+        } finally {
+            camelContext.getCamelContextExtension().createProcessor(null);
         }
-        // fallback to default implementation if factory did not create the processor
-        if (processor == null) {
-            processor = reifier(route, output).createProcessor();
-        }
-        camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
         return processor;
     }
 
