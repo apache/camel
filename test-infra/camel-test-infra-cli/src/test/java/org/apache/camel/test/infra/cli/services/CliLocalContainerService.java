@@ -43,15 +43,21 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     private String mavenRepos;
 
     public CliLocalContainerService() {
-        this(System.getProperty(CliProperties.VERSION, "main"), true, System.getProperty(CliProperties.DATA_FOLDER),
-             System.getProperty(CliProperties.SSH_PASSWORD, "jbang"), System.getProperty(CliProperties.FORCE_RUN_VERSION, ""),
-             System.getProperty(CliProperties.MVN_REPOS), getHostsMap(), getCertPaths());
+        this(new CliBuiltContainer.CliBuiltContainerParams()
+                .setCamelRepo(System.getProperty(CliProperties.REPO, "apache/camel"))
+                .setCamelRef(System.getProperty(CliProperties.BRANCH, "main"))
+                .setCamelJBangVersion(System.getProperty(CliProperties.VERSION, "default"))
+                .setKeepContainerRunning(true)
+                .setDataFolder(System.getProperty(CliProperties.DATA_FOLDER))
+                .setSshPassword(System.getProperty(CliProperties.SSH_PASSWORD, "jbang"))
+                .setExtraHosts(getHostsMap())
+                .setTrustedCertPaths(getCertPaths()),
+             System.getProperty(CliProperties.FORCE_RUN_VERSION, ""), System.getProperty(CliProperties.MVN_REPOS));
     }
 
-    protected CliLocalContainerService(String camelRef, Boolean keepRunning, String dataFolder, String sshPassword,
-                                       String forceToRunVersion, String mavenRepos, Map<String, String> extraHosts,
-                                       List<String> trustedCertPaths) {
-        container = new CliBuiltContainer(camelRef, keepRunning, dataFolder, sshPassword, extraHosts, trustedCertPaths);
+    protected CliLocalContainerService(CliBuiltContainer.CliBuiltContainerParams containerParams,
+                                       String forceToRunVersion, String mavenRepos) {
+        container = new CliBuiltContainer(containerParams);
         this.forceToRunVersion = forceToRunVersion;
         this.mavenRepos = mavenRepos;
     }

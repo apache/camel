@@ -29,6 +29,10 @@
     
     <artifactId>camel-test-infra-cli</artifactId>
     <name>Camel :: Test Infra :: Cli (Camel JBang)</name>
+
+    <properties>
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
     
     <dependencies>
         <dependency>
@@ -48,12 +52,57 @@
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <version>${junit-pioneer-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <cli.service.data.folder>target/data</cli.service.data.folder>
+                        <currentProjectVersion>${project.version}</currentProjectVersion>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -18,6 +18,11 @@
 package org.apache.camel.test.infra.cli.common;
 
 public final class CliProperties {
+
+    public static final String REPO = "cli.service.repo";
+
+    public static final String BRANCH = "cli.service.branch";
+
     public static final String VERSION = "cli.service.version";
 
     public static final String DATA_FOLDER = "cli.service.data.folder";
