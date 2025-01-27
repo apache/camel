@@ -829,6 +829,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Channel makeProcessor() throws Exception {
+        // TODO: capture processor id
+
         Processor processor = null;
 
         // allow any custom logic before we create the processor
