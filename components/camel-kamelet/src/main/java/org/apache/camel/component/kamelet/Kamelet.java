@@ -202,18 +202,21 @@ public final class Kamelet {
         def.setNodePrefixId(uuid);
         if (noErrorHandler) {
             def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
-        } else if (prid != null && ppid != null) {
+        } else if (prid != null) {
             ModelCamelContext mcc = (ModelCamelContext) in.getCamelContext();
+            RouteDefinition parent = mcc.getRouteDefinition(prid);
+            boolean wrap = true;
+
             // the kamelet are used from a processor, and we need to check if this processor
             // has any error handler or not (if not then we should also not use error handler in the kamelet)
-            ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
-            boolean wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(def.getCamelContext(), pro, null,
-                    pro.getInheritErrorHandler());
-            if (wrap) {
-                RouteDefinition parent = mcc.getRouteDefinition(prid);
-                if (parent != null) {
-                    def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
-                }
+            // (if ppid is null then it is a source kamelet)
+            if (ppid != null) {
+                ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
+                wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(def.getCamelContext(), pro, null,
+                        pro.getInheritErrorHandler());
+            }
+            if (wrap && parent != null) {
+                def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
             } else {
                 def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
             }

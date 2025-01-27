@@ -829,38 +829,42 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
     protected Channel makeProcessor() throws Exception {
-        // TODO: capture processor id
+        String outputId = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        camelContext.getCamelContextExtension().createProcessor(outputId);
+        try {
+            Processor processor = null;
 
-        Processor processor = null;
+            // allow any custom logic before we create the processor
+            preCreateProcessor();
 
-        // allow any custom logic before we create the processor
-        preCreateProcessor();
+            // at first use custom factory
+            final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
+            if (processorFactory != null) {
+                processor = processorFactory.createProcessor(route, definition);
+            }
+            // fallback to default implementation if factory did not create the
+            // processor
+            if (processor == null) {
+                processor = createProcessor();
+            }
 
-        // at first use custom factory
-        final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
-        if (processorFactory != null) {
-            processor = processorFactory.createProcessor(route, definition);
-        }
-        // fallback to default implementation if factory did not create the
-        // processor
-        if (processor == null) {
-            processor = createProcessor();
-        }
+            // inject id
+            if (processor instanceof IdAware idAware) {
+                String id = getId(definition);
+                idAware.setId(id);
+            }
+            if (processor instanceof RouteIdAware routeIdAware) {
+                routeIdAware.setRouteId(route.getRouteId());
+            }
 
-        // inject id
-        if (processor instanceof IdAware idAware) {
-            String id = getId(definition);
-            idAware.setId(id);
+            if (processor == null) {
+                // no processor to make
+                return null;
+            }
+            return wrapProcessor(processor);
+        } finally {
+            camelContext.getCamelContextExtension().createProcessor(null);
         }
-        if (processor instanceof RouteIdAware routeIdAware) {
-            routeIdAware.setRouteId(route.getRouteId());
-        }
-
-        if (processor == null) {
-            // no processor to make
-            return null;
-        }
-        return wrapProcessor(processor);
     }
 
     /**
