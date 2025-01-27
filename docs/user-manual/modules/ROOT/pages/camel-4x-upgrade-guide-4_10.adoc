@@ -120,7 +120,7 @@ Now the kamelets are _first class_ and gives users the full power to handle erro
 
 This change has most an effect on source Kamelets. For sink or action Kamelets,
 then any error would be propagated back to the route, that could still handle the error.
-However, if the erro handler is configured to perform retries, then the retry would be
+However, if the error handler is configured to perform retries, then the retry would be
 starting all over again calling the sink Kamelet. This change will let the error handler
 perform retries at the original of the error (also inside the Kamelet), the same as
 regular Camel routes.
@@ -146,7 +146,7 @@ So suppose you have the following route:
 ----
 
 Then notice the error handler has been configured to do redeliveries up till 5 times with 5 sec delay between.
-Suppose the sink kamelet is throwing an exception, then Camel will now perform the redeliver attempt
+Suppose the sink kamelet is throwing an exception, then Camel will now perform the redelivery attempt
 at the point of origin, which means inside the Kamelet. Previously the redelivery will
 only happen at the route level, calling the kamelet all over again.
 
