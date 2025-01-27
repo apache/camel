@@ -49,6 +49,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kamelet.Kamelet.BRIDGE_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.NO_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
@@ -247,6 +248,7 @@ public class KameletComponent extends DefaultComponent {
             kameletProperties.put(PARAM_ROUTE_ID, routeId);
             kameletProperties.put(PARAM_UUID, uuid);
             kameletProperties.put(NO_ERROR_HANDLER, endpoint.isNoErrorHandler());
+            kameletProperties.put(BRIDGE_ERROR_HANDLER, endpoint.isBridgeErrorHandler());
 
             // set kamelet specific properties
             endpoint.setKameletProperties(kameletProperties);

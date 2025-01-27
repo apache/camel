@@ -54,6 +54,7 @@ public final class Kamelet {
     public static final String PARENT_ROUTE_ID = "parentRouteId";
     public static final String PARENT_PROCESSOR_ID = "parentProcessorId";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
+    public static final String BRIDGE_ERROR_HANDLER = "bridgeErrorHandler";
 
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
@@ -186,6 +187,7 @@ public final class Kamelet {
     public static RouteDefinition templateToRoute(RouteTemplateDefinition in, Map<String, Object> parameters) {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
         final boolean noErrorHandler = (boolean) parameters.get(NO_ERROR_HANDLER);
+        final boolean bridgeErrorHandler = (boolean) parameters.get(BRIDGE_ERROR_HANDLER);
         final String uuid = (String) parameters.get(PARAM_UUID);
         final String prid = (String) parameters.get(PARENT_ROUTE_ID);
         final String ppid = (String) parameters.get(PARENT_PROCESSOR_ID);
@@ -230,6 +232,18 @@ public final class Kamelet {
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
             def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
+        }
+
+        if (bridgeErrorHandler) {
+            String uri = def.getInput().getUri();
+            if (!uri.contains("bridgeErrorHandler=")) {
+                if (uri.contains("?")) {
+                    uri = uri + "&bridgeErrorHandler=true";
+                } else {
+                    uri = uri + "?bridgeErrorHandler=true";
+                }
+                def.getInput().setUri(uri);
+            }
         }
 
         // there must be at least one sink

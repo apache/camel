@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
              lenientProperties = true, category = Category.CORE)
-public class KameletEndpoint extends DefaultEndpoint {
+public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesConfigured {
     private final String key;
     private final Map<String, Object> kameletProperties;
 
@@ -184,6 +186,11 @@ public class KameletEndpoint extends DefaultEndpoint {
         Consumer answer = new KameletConsumer(this, processor, key);
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        kameletProperties.put(Kamelet.BRIDGE_ERROR_HANDLER, isBridgeErrorHandler());
     }
 
     @Override
