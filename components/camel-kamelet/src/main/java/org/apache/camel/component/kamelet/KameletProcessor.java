@@ -53,8 +53,6 @@ public class KameletProcessor extends AsyncProcessorSupport
         this.camelContext = camelContext;
         this.name = name;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
-        this.component = camelContext.getComponent("kamelet", KameletComponent.class);
-        this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
     }
 
     @ManagedAttribute(description = "Kamelet name (templateId/routeId?options)")
@@ -119,6 +117,9 @@ public class KameletProcessor extends AsyncProcessorSupport
 
     @Override
     protected void doInit() throws Exception {
+        this.component = camelContext.getComponent("kamelet", KameletComponent.class);
+        this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+
         ServiceHelper.initService(processor, producer);
 
         // we use the kamelet component (producer) to call the kamelet
