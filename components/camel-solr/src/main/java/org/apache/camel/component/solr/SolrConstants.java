@@ -46,10 +46,6 @@ public interface SolrConstants {
     String PARAM_FROM = "from";
     @Metadata(description = "The solr client to use for the request.", javaType = "SolrClient")
     String PARAM_SOLR_CLIENT = "solrClient";
-    @Deprecated
-    @Metadata(description = "The solr client to use for the request.", javaType = "String",
-              deprecationNote = "Use header 'solrClient' instead")
-    String PARAM_SOLR_CLIENT_DEPRECATED = "CamelSolrClient";
     @Metadata(description = "The solr parameters to use for the request.", javaType = "SolrParams")
     String PARAM_SOLR_PARAMS = "solrParams";
     @Metadata(description = "For the delete instruction, interprete body as query/queries instead of id/ids.",
