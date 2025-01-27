@@ -12686,7 +12686,7 @@ Sets the bean ref name of the error handler builder to use on this route.
             <xs:documentation xml:lang="en">
 <![CDATA[
 The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in the
-XML. May be null.
+Route definition. May be null.
 ]]>
             </xs:documentation>
           </xs:annotation>

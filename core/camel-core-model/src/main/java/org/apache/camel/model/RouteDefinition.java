@@ -957,7 +957,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in
-     * the XML.
+     * the Route definition.
      * <p/>
      * May be null.
      */
@@ -967,7 +967,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     /**
      * The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in
-     * the XML.
+     * the Route definition.
      * <p/>
      * May be null.
      */
