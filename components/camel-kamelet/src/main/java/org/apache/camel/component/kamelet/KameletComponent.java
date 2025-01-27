@@ -54,8 +54,6 @@ import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_ROUTE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_TEMPLATE_ID;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_UUID;
-import static org.apache.camel.component.kamelet.Kamelet.PARENT_PROCESSOR_ID;
-import static org.apache.camel.component.kamelet.Kamelet.PARENT_ROUTE_ID;
 
 /**
  * Materialize route templates
@@ -468,14 +466,8 @@ public class KameletComponent extends DefaultComponent {
 
             LOG.debug("Creating route from template={} and id={}", templateId, routeId);
             try {
-                // TODO: Nicer API
-                if (parentRouteId != null) {
-                    endpoint.getKameletProperties().put(PARENT_ROUTE_ID, parentRouteId);
-                }
-                if (parentProcessorId != null) {
-                    endpoint.getKameletProperties().put(PARENT_PROCESSOR_ID, parentProcessorId);
-                }
-                String id = context.addRouteFromTemplate(routeId, templateId, uuid, endpoint.getKameletProperties());
+                String id = context.addRouteFromKamelet(routeId, templateId, uuid, parentRouteId, parentProcessorId,
+                        endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
                 // start the route if not already started

@@ -428,9 +428,26 @@ public class DefaultModel implements Model {
             String routeId, String routeTemplateId, String prefixId,
             RouteTemplateContext routeTemplateContext)
             throws Exception {
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, null, null, routeTemplateContext);
+    }
 
-        String parentRouteId = (String) routeTemplateContext.getParameters().remove("_parentRouteId");
-        String parentProcessorId = (String) routeTemplateContext.getParameters().remove("_parentProcessorId");
+    @Override
+    public String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId, Map<String, Object> parameters)
+            throws Exception {
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
+        if (parameters != null) {
+            parameters.forEach(rtc::setParameter);
+        }
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, parentRouteId, parentProcessorId, rtc);
+    }
+
+    protected String doAddRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId,
+            RouteTemplateContext routeTemplateContext)
+            throws Exception {
 
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -519,10 +536,10 @@ public class DefaultModel implements Model {
         }
 
         if (parentRouteId != null) {
-            prop.put("parentRouteId", parentRouteId);
+            addProperty(prop, "parentRouteId", parentRouteId);
         }
         if (parentProcessorId != null) {
-            prop.put("parentProcessorId", parentProcessorId);
+            addProperty(prop, "parentProcessorId", parentProcessorId);
         }
         RouteDefinition def = converter.apply(target, prop);
         if (routeId != null) {
