@@ -279,7 +279,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Set the group name for this route
+     * The group name for this route. Multiple routes can belong to the same group.
      *
      * @param  name the group name
      * @return      the builder
@@ -290,7 +290,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Set the route group for this route
+     * The group name for this route. Multiple routes can belong to the same group.
      *
      * @param  group the route group
      * @return       the builder
@@ -956,20 +956,14 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in
-     * the Route definition.
-     * <p/>
-     * May be null.
+     * The group name for this route. Multiple routes can belong to the same group.
      */
     public String getGroup() {
         return group;
     }
 
     /**
-     * The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in
-     * the Route definition.
-     * <p/>
-     * May be null.
+     * The group name for this route. Multiple routes can belong to the same group.
      */
     @XmlAttribute
     @Metadata(label = "advanced")
