@@ -150,6 +150,10 @@ Suppose the sink kamelet is throwing an exception, then Camel will now perform t
 at the point of origin, which means inside the Kamelet. Previously the redelivery will
 only happen at the route level, calling the kamelet all over again.
 
+The option `noErrorHandler` has changed default from `true` to `false`. You should only
+use this option if you want to turn on error handling inside Kamelets all together. However,
+this should only be used in advanced/rare use-cases. This option may in the future be deprecated and removed.
+
 === camel-azure-files
 
 The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.
