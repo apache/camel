@@ -19,7 +19,9 @@ ARG FROMIMAGE
 
 FROM $FROMIMAGE
 
+ARG CAMEL_JBANG_VERSION=default
 ARG CAMEL_REF=main
+ARG CAMEL_REPO=apache/camel
 ARG KEEP_RUNNING=true
 ARG SSH_PASSWORD=jbang
 
@@ -50,8 +52,16 @@ RUN echo "Installing JBang..."
 RUN curl -Ls https://sh.jbang.dev | bash -s - app setup \
     && source ~/.bashrc \
     && jbang version --update \
-    && jbang trust add https://github.com/apache/camel/ \
-    && jbang app install camel@apache/camel/$CAMEL_REF
+    && jbang trust add https://github.com/$CAMEL_REPO/ \
+
+RUN echo "Using JBang $CAMEL_JBANG_VERSION version from $CAMEL_REPO/$CAMEL_REF"
+RUN source ~/.bashrc \
+    && if [[ "$CAMEL_JBANG_VERSION" == "default" ]] ; \
+    then jbang app install camel@$CAMEL_REPO/$CAMEL_REF ; \
+    else jbang app install \
+    -Dcamel.jbang.version=$CAMEL_JBANG_VERSION \
+    -Dcamel-kamelets.version=$CAMEL_JBANG_VERSION \
+    camel@$CAMEL_REPO/$CAMEL_REF ; fi
 
 LABEL "camel.ref"=$CAMEL_REF
 LABEL "keep.container.running"=$KEEP_RUNNING

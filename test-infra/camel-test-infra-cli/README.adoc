@@ -11,10 +11,12 @@ This module is used to build a container based on {image-name} image and Camel J
 
 System variables are defined in link:{config-class}[CliProperties]
 
- - `cli.service.version` : name of the branch of the repo `https://github.com/apache/camel/` used to install Camel JBang, default `main`
+ - `cli.service.repo` : the repo on github, default `apache/camel`
+ - `cli.service.branch` : the branch of the repo on github, default `main`
+ - `cli.service.version` : the version of the `camel.jbang.version` and the `camel-kamelets.version` defined in the `CamelJBang.java` file, default value is `default`, it means it uses the default values in the file
  - `cli.service.data.folder` : mandatory - path to local folder to bind as volume in the container
  - `cli.service.ssh.password` : ssh password set to access to the container via ssh, default `jbang`
- - `cli.service.execute.version` : version set just after container start, default is empty so the version is the one in the branch defined in `cli.service.version`
+ - `cli.service.execute.version` : Camel version set just after container start, default is empty so the version is the one in the branch
  - `cli.service.mvn.repos` : comma separated list of custom Maven repositories, default empty
  - `cli.service.extra.hosts` : comma separated host=ip pairs to add in the hosts file
  - `cli.service.trusted.paths` : commas separated paths, relative to the host, of the files containing PEM trusted certificates
