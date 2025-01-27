@@ -88,6 +88,68 @@ Should now be:
   </loadBalance>
 ----
 
+=== camel-kamelet
+
+The error handling when using kamelets has been refactored to let Kamelets re-use the same error handling
+that are from the route where the kamelets are being used. Previously Kamelets did not have
+any error handling.
+
+Suppose you have kamelets that would cause an exception during processing, such
+as the source below. Now because the route has been configured with a _dead letter channel_
+as the error handler, then the exception from the kamelet will be handled by the route error handler.
+Which means you will se a WARN being logged.
+
+Previously the exception would **not** be handled by the route error handler, and the kamelet source
+would always fail internally and cause a WARN being logged. Meaning that you did not have
+any power to handle these errors.
+
+Now the kamelets are _first class_ and gives users the full power to handle errors as they see fit.
+
+[source,yaml]
+----
+- route:
+    errorHandler:
+      deadLetterChannel:
+        deadLetterUri: log:dead?level=WARN
+    id: myRoute
+    from:
+      uri: "kamelet:my-error-source/source"
+      steps:
+        - log: "${body}"
+----
+
+This change has most an effect on source Kamelets. For sink or action Kamelets,
+then any error would be propagated back to the route, that could still handle the error.
+However, if the erro handler is configured to perform retries, then the retry would be
+starting all over again calling the sink Kamelet. This change will let the error handler
+perform retries at the original of the error (also inside the Kamelet), the same as
+regular Camel routes.
+
+So suppose you have the following route:
+
+[source,yaml]
+----
+- route:
+    errorHandler:
+      deadLetterChannel:
+        deadLetterUri: log:dead?level=WARN
+        redeliveryPolicy:
+          maximumRedeliveries: 5
+          redeliveryDelay: "5000"
+    id: myRoute
+    from:
+      uri: "direct:start"
+      steps:
+        - to:
+            uri: "kamelet:my-error-sink/sink"
+        - log: "${body}"
+----
+
+Then notice the error handler has been configured to do redeliveries up till 5 times with 5 sec delay between.
+Suppose the sink kamelet is throwing an exception, then Camel will now perform the redeliver attempt
+at the point of origin, which means inside the Kamelet. Previously the redelivery will
+only happen at the route level, calling the kamelet all over again.
+
 === camel-azure-files
 
 The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.
