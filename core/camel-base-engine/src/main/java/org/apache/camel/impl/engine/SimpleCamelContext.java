@@ -774,6 +774,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    public String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId, String parentRouteId, String parentProcessorId,
+            Map<String, Object> parameters)
+            throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void removeRouteTemplates(String pattern) throws Exception {
         throw new UnsupportedOperationException();
     }

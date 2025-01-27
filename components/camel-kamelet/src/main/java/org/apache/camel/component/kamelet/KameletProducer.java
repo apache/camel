@@ -141,6 +141,7 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
 
     @Override
     protected void doInit() throws Exception {
+        super.doInit();
         ManagementStrategy ms = getEndpoint().getCamelContext().getManagementStrategy();
         if (ms != null && ms.getManagementAgent() != null) {
             registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();

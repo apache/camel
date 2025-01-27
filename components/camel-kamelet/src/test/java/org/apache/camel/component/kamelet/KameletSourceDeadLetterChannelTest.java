@@ -22,14 +22,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletNoErrorHandlerDirectTest extends CamelTestSupport {
+public class KameletSourceDeadLetterChannelTest extends CamelTestSupport {
 
     @Test
-    public void testNoErrorHandler() throws Exception {
-        getMockEndpoint("mock:catch").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").expectedMessageCount(0);
-
-        template.sendBody("direct:start", "Hello World");
+    public void testDeadLetterChannel() throws Exception {
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -39,21 +37,16 @@ public class KameletNoErrorHandlerDirectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("echo")
-                        .templateParameter("prefix")
-                        .from("kamelet:source")
+                routeTemplate("fail")
+                        .from("timer:fail?delay=0&repeatCount=1")
                         .throwException(new IllegalArgumentException("Forced"));
 
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").routeId("test")
-                        .doTry()
-                            .to("kamelet:echo?prefix=a")
-                        .doCatch(Exception.class)
-                            .to("mock:catch")
-                        .end()
-                        .log("${body}");
+                from("kamelet:fail").routeId("start")
+                        .to("mock:result");
             }
         };
     }
+
 }

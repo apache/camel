@@ -316,13 +316,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
-
         model.addRouteTemplateDefinition(routeTemplateDefinition);
     }
 
     @Override
     public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
-
         if (!isLockModel()) {
             model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
         }
@@ -344,21 +342,18 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
-
         model.addRouteTemplateDefinitionConverter(templateIdPattern, converter);
     }
 
     @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
-
         return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
     @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
             throws Exception {
-
         return model.addRouteFromTemplate(routeId, routeTemplateId, prefixId, parameters);
     }
 
@@ -366,20 +361,30 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     public String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
             throws Exception {
-
         return model.addRouteFromTemplate(routeId, routeTemplateId, prefixId, routeTemplateContext);
+    }
+
+    @Override
+    public String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId, Map<String, Object> parameters)
+            throws Exception {
+        return model.addRouteFromKamelet(routeId, routeTemplateId, prefixId, parentRouteId, parentProcessorId, parameters);
+    }
+
+    @Override
+    public void addRouteFromTemplatedRoutes(Collection<TemplatedRouteDefinition> templatedRouteDefinitions) throws Exception {
+        model.addRouteFromTemplatedRoutes(templatedRouteDefinitions);
     }
 
     @Override
     public void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition)
             throws Exception {
-
         model.addRouteFromTemplatedRoute(templatedRouteDefinition);
     }
 
     @Override
     public void removeRouteTemplates(String pattern) throws Exception {
-
         if (!isLockModel()) {
             model.removeRouteTemplateDefinitions(pattern);
         }
@@ -723,6 +728,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     StartupStepRecorder recorder
                             = getCamelContextReference().getCamelContextExtension().getStartupStepRecorder();
                     StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Create Route");
+
+                    getCamelContextExtension().createRoute(routeDefinition.getRouteId());
+
                     Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
                     recorder.endStep(step);
 
@@ -750,6 +758,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             if (!alreadyStartingRoutes) {
                 setStartingRoutes(false);
             }
+            getCamelContextExtension().createRoute(null);
             pc.setLocalProperties(null);
             if (localBeans != null) {
                 localBeans.setLocalBeanRepository(null);
@@ -852,7 +861,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 this.getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelReifierFactory.FACTORY,
                 ModelReifierFactory.class);
-
         return result.orElseGet(DefaultModelReifierFactory::new);
     }
 

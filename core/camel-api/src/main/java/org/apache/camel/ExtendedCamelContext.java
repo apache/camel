@@ -122,8 +122,45 @@ public interface ExtendedCamelContext {
      * {@link CamelContext} itself is in started state.
      *
      * @return <tt>true</tt> if current thread is setting up route(s), or <tt>false</tt> if not.
+     * @see    #setupRoutes(boolean)
      */
     boolean isSetupRoutes();
+
+    /**
+     * Method to signal to {@link CamelContext} that the process to create routes is in progress.
+     *
+     * @param routeId the current id of the route being created
+     * @see           #getCreateRoute()
+     */
+    void createRoute(String routeId);
+
+    /**
+     * Indicates whether current thread is creating a route as part of starting Camel.
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
+     *
+     * @return the route id currently being created/started, or <tt>null</tt> if not.
+     * @see    #createRoute(String)
+     */
+    String getCreateRoute();
+
+    /**
+     * Method to signal to {@link CamelContext} that creation of a given processor is in progress.
+     *
+     * @param processorId the current id of the processor being created
+     * @see               #getCreateProcessor()
+     */
+    void createProcessor(String processorId);
+
+    /**
+     * Indicates whether current thread is creating a processor as part of starting Camel.
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
+     *
+     * @return the current id of the processor being created
+     * @see    #createProcessor(String)
+     */
+    String getCreateProcessor();
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom logic when an

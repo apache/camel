@@ -647,6 +647,24 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
             throws Exception;
 
     /**
+     * Adds a new route from a given kamelet
+     *
+     * @param  routeId           the id of the new route to add (optional)
+     * @param  routeTemplateId   the id of the kamelet route template (mandatory)
+     * @param  prefixId          prefix to use for all node ids (not route id). Use null for no prefix. (optional)
+     * @param  parentRouteId     the id of the route which is using the kamelet (such as from / to)
+     * @param  parentProcessorId the id of the processor which is using the kamelet (such as to)
+     * @param  parameters        parameters to use for the route template when creating the new route
+     * @return                   the id of the route added (for example when an id was auto assigned)
+     * @throws Exception         is thrown if error creating and adding the new route
+     */
+    String addRouteFromKamelet(
+            String routeId, String routeTemplateId, String prefixId,
+            String parentRouteId, String parentProcessorId,
+            Map<String, Object> parameters)
+            throws Exception;
+
+    /**
      * Removes the route templates matching the pattern
      *
      * @param  pattern   pattern, such as * for all, or foo* to remove all foo templates

@@ -85,8 +85,8 @@ public class KameletComponent extends DefaultComponent {
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
-    @Metadata(label = "advanced", defaultValue = "true")
-    private boolean noErrorHandler = true;
+    @Metadata(label = "advanced")
+    private boolean noErrorHandler;
 
     @Metadata
     private Map<String, Properties> templateProperties;
@@ -171,7 +171,9 @@ public class KameletComponent extends DefaultComponent {
                     // since this is the real kamelet, then we need to hand it
                     // over to the tracker.
                     //
-                    lifecycleHandler.track(this);
+                    String routeId = getCamelContext().getCamelContextExtension().getCreateRoute();
+                    String processorId = getCamelContext().getCamelContextExtension().getCreateProcessor();
+                    lifecycleHandler.track(this, routeId, processorId);
                 }
             };
 
@@ -271,8 +273,13 @@ public class KameletComponent extends DefaultComponent {
     }
 
     /**
-     * Kamelets, by default, will not do fine-grained error handling, but works in no-error-handler mode. This can be
-     * turned off, to use old behaviour in earlier versions of Camel.
+     * Whether kamelets should use error handling or not. By default, the Kamelet uses the same error handler as from
+     * the calling route. This means that if the calling route has error handling that performs retries, or routing to a
+     * dead letter channel, then the kamelet route will use this also.
+     * <p>
+     * This can be turned off by setting this option to true. If off then the kamelet route is not using error handling,
+     * and any exception thrown will for source kamelets be logged by the consumer, and the sink/action kamelets will
+     * fail processing.
      */
     public void setNoErrorHandler(boolean noErrorHandler) {
         this.noErrorHandler = noErrorHandler;
@@ -431,7 +438,11 @@ public class KameletComponent extends DefaultComponent {
      * be used to create routes from templates.
      */
     private class LifecycleHandler extends LifecycleStrategySupport {
-        private final List<KameletEndpoint> endpoints;
+
+        record Tuple(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId) {
+        }
+
+        private final List<Tuple> endpoints;
         private final AtomicBoolean initialized;
 
         public LifecycleHandler() {
@@ -439,7 +450,8 @@ public class KameletComponent extends DefaultComponent {
             this.initialized = new AtomicBoolean();
         }
 
-        public void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
+        public void createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
+                throws Exception {
             final ModelCamelContext context = (ModelCamelContext) getCamelContext();
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
@@ -454,7 +466,8 @@ public class KameletComponent extends DefaultComponent {
 
             LOG.debug("Creating route from template={} and id={}", templateId, routeId);
             try {
-                String id = context.addRouteFromTemplate(routeId, templateId, uuid, endpoint.getKameletProperties());
+                String id = context.addRouteFromKamelet(routeId, templateId, uuid, parentRouteId, parentProcessorId,
+                        endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
                 // start the route if not already started
@@ -473,12 +486,12 @@ public class KameletComponent extends DefaultComponent {
         @Override
         public void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
             if (this.initialized.compareAndSet(false, true)) {
-                for (KameletEndpoint endpoint : endpoints) {
+                for (Tuple tuple : endpoints) {
                     try {
-                        createRouteForEndpoint(endpoint);
+                        createRouteForEndpoint(tuple.endpoint, tuple.parentRouteId, tuple.parentProcessorId);
                     } catch (Exception e) {
                         throw new VetoCamelContextStartException(
-                                "Failure creating route from template: " + endpoint.getTemplateId(), e, context);
+                                "Failure creating route from template: " + tuple.endpoint.getTemplateId(), e, context);
                     }
                 }
 
@@ -490,16 +503,16 @@ public class KameletComponent extends DefaultComponent {
             this.initialized.set(initialized);
         }
 
-        public void track(KameletEndpoint endpoint) {
+        public void track(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId) {
             if (this.initialized.get()) {
                 try {
-                    createRouteForEndpoint(endpoint);
+                    createRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
                 LOG.debug("Tracking route template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
-                this.endpoints.add(endpoint);
+                this.endpoints.add(new Tuple(endpoint, parentRouteId, parentProcessorId));
             }
         }
     }
