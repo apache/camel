@@ -307,7 +307,7 @@
         <jsonata-version>0.9.8</jsonata-version>
         <json-unit-version>4.1.0</json-unit-version>
         <jsoup-version>1.18.3</jsoup-version>
-        <jt400-version>20.0.8</jt400-version>
+        <jt400-version>21.0.0</jt400-version>
         <jte-version>3.1.16</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.11.4</junit-jupiter-version>
