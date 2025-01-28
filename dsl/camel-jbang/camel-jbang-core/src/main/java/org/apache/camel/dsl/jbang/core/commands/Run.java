@@ -1617,7 +1617,9 @@ public class Run extends CamelCommand {
             if (!scriptRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
-                logFile = new File(CommandLineHelper.getCamelDir(), name);
+                final File logDir = CommandLineHelper.getCamelDir();
+                logDir.mkdirs(); //make sure the parent dir exists
+                logFile = new File(logDir, name);
                 logFile.deleteOnExit();
             }
         } else {
