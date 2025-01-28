@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.sqs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,7 +67,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.*;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName;
+import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
+import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -98,7 +107,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         pendingExchanges = 0;
 
         List<software.amazon.awssdk.services.sqs.model.Message> messages = pollingTask.call();
-        // okay we have some response from aws so lets mark the consumer as ready
+        // okay we have some response from aws so lets mark the consumer as
+        // ready
         forceConsumerAsReady();
 
         Queue<Exchange> exchanges = createExchanges(messages);
@@ -301,18 +311,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
 
             if (visibilityTimeout != null && visibilityTimeout > 0) {
-                int initialDelay = visibilityTimeout / 2;
-                int period = visibilityTimeout;
-                int repeatSeconds = (int) (visibilityTimeout.doubleValue() * 1.5);
-                this.timeoutExtender = new TimeoutExtender(repeatSeconds);
+                int delay = Math.max(1, visibilityTimeout / 2);
+                this.timeoutExtender = new TimeoutExtender(visibilityTimeout, delay);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
-                            "Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds)",
-                            initialDelay, period, repeatSeconds);
+                            "Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} delay/repeat (seconds)",
+                            delay, delay, visibilityTimeout);
                 }
                 this.scheduledFuture
-                        = scheduledExecutor.scheduleAtFixedRate(this.timeoutExtender, initialDelay, period, TimeUnit.SECONDS);
+                        = scheduledExecutor.scheduleAtFixedRate(this.timeoutExtender, delay, delay, TimeUnit.SECONDS);
             }
         }
 
@@ -345,13 +353,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     private class TimeoutExtender implements Runnable {
 
+        private static final String RECEIPT_HANDLE_IS_INVALID = "ReceiptHandleIsInvalid";
         private static final int MAX_REQUESTS = 10;
-        private final int repeatSeconds;
+        private final int visibilityTimeout;
+        private final int delayBetweenExecutions;
         private final AtomicBoolean run = new AtomicBoolean(true);
-        private final Map<String, ChangeMessageVisibilityBatchRequestEntry> entries = new ConcurrentHashMap<>();
+        private final Map<String, TimeoutExtenderEntry> entries = new ConcurrentHashMap<>();
 
-        TimeoutExtender(int repeatSeconds) {
-            this.repeatSeconds = repeatSeconds;
+        TimeoutExtender(int visibilityTimeout, int delayBetweenExecutions) {
+            this.visibilityTimeout = visibilityTimeout;
+            this.delayBetweenExecutions = delayBetweenExecutions;
         }
 
         public void add(Exchange exchange) {
@@ -367,19 +378,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 }
 
                 private void remove(Exchange exchange) {
-                    LOG.trace("Removing exchangeId {} from the TimeoutExtender, processing done",
-                            exchange.getExchangeId());
+                    LOG.trace("Removing exchangeId {} from the TimeoutExtender, processing done", exchange.getExchangeId());
                     entries.remove(exchange.getExchangeId());
                 }
             });
 
-            ChangeMessageVisibilityBatchRequestEntry entry
-                    = ChangeMessageVisibilityBatchRequestEntry.builder()
-                            .id(exchange.getExchangeId()).visibilityTimeout(repeatSeconds)
-                            .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class))
-                            .build();
+            ChangeMessageVisibilityBatchRequestEntry entry = ChangeMessageVisibilityBatchRequestEntry.builder()
+                    .id(exchange.getExchangeId()).visibilityTimeout(visibilityTimeout)
+                    .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class)).build();
 
-            entries.put(exchange.getExchangeId(), entry);
+            entries.put(exchange.getExchangeId(), new TimeoutExtenderEntry(entry));
         }
 
         public void cancel() {
@@ -390,60 +398,106 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         @Override
         public void run() {
             if (run.get()) {
-                Queue<ChangeMessageVisibilityBatchRequestEntry> entryQueue = new LinkedList<>(entries.values());
+                final Instant nextExpectedExecution = Instant.now().plusSeconds(Math.max(1, delayBetweenExecutions));
+
+                final Queue<TimeoutExtenderEntry> entryQueue = new LinkedList<>(entries.values());
 
                 while (!entryQueue.isEmpty()) {
-                    List<ChangeMessageVisibilityBatchRequestEntry> batchEntries = new LinkedList<>();
-                    // up to 10 requests can be sent with each ChangeMessageVisibilityBatch action
+                    List<ChangeMessageVisibilityBatchRequestEntry> batchEntries = new ArrayList<>();
+                    // up to 10 requests can be sent with each
+                    // ChangeMessageVisibilityBatch action
                     while (!entryQueue.isEmpty() && batchEntries.size() < MAX_REQUESTS) {
-                        batchEntries.add(entryQueue.poll());
-                    }
-
-                    ChangeMessageVisibilityBatchRequest request
-                            = ChangeMessageVisibilityBatchRequest.builder().queueUrl(getQueueUrl()).entries(batchEntries)
-                                    .build();
-
-                    try {
-                        LOG.trace("Extending visibility window by {} seconds for request entries: {}", repeatSeconds,
-                                batchEntries);
-                        ChangeMessageVisibilityBatchResponse br
-                                = getEndpoint().getClient().changeMessageVisibilityBatch(request);
-                        if (br.hasFailed()) {
-                            LOG.warn("Extended visibility window for request entries failed: {}", br.failed());
-                        } else {
-                            LOG.debug("Extended visibility window for request entries successful: {}", br.successful());
+                        TimeoutExtenderEntry nextEntry = entryQueue.poll();
+                        if (nextEntry.isDeadlineReachedAt(nextExpectedExecution)) {
+                            batchEntries.add(nextEntry.extendRequest);
                         }
-                    } catch (SdkException e) {
-                        logException(e, batchEntries);
+                    }
+                    if (!batchEntries.isEmpty()) {
+                        ChangeMessageVisibilityBatchRequest request = ChangeMessageVisibilityBatchRequest.builder()
+                                .queueUrl(getQueueUrl()).entries(batchEntries).build();
+
+                        try {
+                            LOG.trace("Extending visibility window by {} seconds for request entries: {}", visibilityTimeout,
+                                    batchEntries);
+                            ChangeMessageVisibilityBatchResponse br
+                                    = getEndpoint().getClient().changeMessageVisibilityBatch(request);
+                            if (br.hasFailed()) {
+                                br.failed().forEach(failedEntry -> {
+                                    if (failedEntry.code().equals(RECEIPT_HANDLE_IS_INVALID)) {
+                                        LOG.debug("Extended visibility window for request entry failed with invalid handle.",
+                                                br.failed());
+                                    } else {
+                                        LOG.warn("Extended visibility window for request entry failed: {}", br.failed());
+                                    }
+                                });
+                            }
+                            if (br.hasSuccessful()) {
+                                br.successful().forEach(successEntry -> {
+                                    LOG.debug("Extended visibility window for request entry: {}", successEntry.id());
+                                    entries.computeIfPresent(successEntry.id(), (t, u) -> u.extendDeadline());
+                                });
+                            }
+                        } catch (SdkException e) {
+                            logException(e, batchEntries);
+                        }
                     }
                 }
             }
         }
 
         private void logException(Exception e, List<ChangeMessageVisibilityBatchRequestEntry> entries) {
-            LOG.warn("Extending visibility window failed for entries {}"
-                     + ". Will not attempt to extend visibility further. This exception will be ignored.",
+            LOG.warn(
+                    "Extending visibility window failed for entries {}. Will not attempt to extend visibility further. This exception will be ignored.",
                     entries, e);
+        }
+
+        private final class TimeoutExtenderEntry {
+
+            /**
+             * Should be extended before this deadline is reached
+             */
+            private final Instant deadline;
+
+            /**
+             * The entry send to AWS for extending the message visibility
+             */
+            private final ChangeMessageVisibilityBatchRequestEntry extendRequest;
+
+            TimeoutExtenderEntry(ChangeMessageVisibilityBatchRequestEntry extendRequest) {
+
+                // setting deadline to 80% of now until expected visibility
+                // timeout, this is for taking into account processing time
+                this.deadline = Instant.now().plusMillis(extendRequest.visibilityTimeout() * 800);
+                this.extendRequest = extendRequest;
+            }
+
+            TimeoutExtenderEntry extendDeadline() {
+                return new TimeoutExtenderEntry(extendRequest);
+            }
+
+            boolean isDeadlineReachedAt(Instant time) {
+                return deadline.isBefore(time);
+            }
         }
     }
 
     /**
      * Task responsible for polling the messages from Amazon SQS server.
-     *
+     * <p />
      * Depending on the configuration, the polling may involve sending one or more receive requests in a single task
      * call. The number of send requests depends on the {@link Sqs2Endpoint#getMaxMessagesPerPoll()} configuration. The
      * Amazon SQS receive API has upper limit of maximum 10 messages that can be fetched with a single request. To
      * enable handling greater number of messages fetched per poll, multiple requests are being send asynchronously and
      * then joined together.
-     *
+     * <p />
      * To preserver the ordering, an optional {@link Sqs2Configuration#getSortAttributeName()} can be configured. When
      * specified, all messages collected from the concurrent requests are being sorted using this attribute.
-     *
+     * <p />
      * In addition to that, the task is also responsible for handling auto-creation of the SQS queue, when its missing.
      * The queue is created when receive request returns an error about the missing queue and the
      * {@link Sqs2Configuration#isAutoCreateQueue()} is enabled. In such case, the queue will be created and the task
      * will return empty list of messages.
-     *
+     * <p />
      * If the queue creation fails with an error related to recently deleted queue, the queue creation will be postponed
      * for at least 30 seconds. To prevent task from blocking the consumer thread, the 30 second timeout is being
      * checked in each task call. If the scheduled time for queue auto-creation was not reached yet, the task will
@@ -536,7 +590,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 }
                 throw new IOException(
                         ("Error while polling - all %s requests resulted in an error, "
-                         + "please check the logs for more details").formatted(numberOfRequestsPerPoll));
+                         + "please check the logs for more details")
+                                .formatted(numberOfRequestsPerPoll));
             }
             return messages;
         }
@@ -568,8 +623,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         private List<software.amazon.awssdk.services.sqs.model.Message> poll(int maxNumberOfMessages, PollingContext context) {
             if (context.isQueueMissing()) {
-                // if one of the request encountered a missing queue error the remaining requests
-                // should be ignored, even if the queue is automatically created it will be empty
+                // if one of the request encountered a missing queue error the
+                // remaining requests
+                // should be ignored, even if the queue is automatically created
+                // it will be empty
                 // so there is no reason for immediate polling after creation
                 return emptyList();
             }
@@ -603,11 +660,9 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         private ReceiveMessageRequest createReceiveRequest(int maxNumberOfMessages) {
-            ReceiveMessageRequest.Builder requestBuilder = ReceiveMessageRequest.builder()
-                    .queueUrl(queueUrl)
-                    .maxNumberOfMessages(maxNumberOfMessages)
-                    .visibilityTimeout(visibilityTimeout)
-                    .waitTimeSeconds(waitTimeSeconds);
+            ReceiveMessageRequest.Builder requestBuilder
+                    = ReceiveMessageRequest.builder().queueUrl(queueUrl).maxNumberOfMessages(maxNumberOfMessages)
+                            .visibilityTimeout(visibilityTimeout).waitTimeSeconds(waitTimeSeconds);
             if (!attributeNames.isEmpty()) {
                 requestBuilder.messageSystemAttributeNames(attributeNames);
             }
@@ -623,9 +678,11 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             try {
                 if (isClosed() || context.isMissingQueueHandledInAnotherRequest(requestId)) {
                     // the missing queue error can be thrown by multiple threads
-                    // the first thread that is handling the error should prevent other threads
+                    // the first thread that is handling the error should
+                    // prevent other threads
                     // from repeating the logic
-                    // as the operation is synchronized, the other threads should wait and then
+                    // as the operation is synchronized, the other threads
+                    // should wait and then
                     // check if it wasn't handled already
                     return;
                 }
@@ -696,25 +753,21 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         private static MessageSystemAttributeName getSortAttributeName(Sqs2Configuration configuration) {
-            return parseMessageSystemAttributeName(configuration.getSortAttributeName())
-                    .filter(attribute -> {
-                        if (attribute == MessageSystemAttributeName.ALL) {
-                            LOG.warn("The {} attribute cannot be used for sorting the received messages",
-                                    MessageSystemAttributeName.ALL);
-                            return false;
-                        }
-                        return true;
-                    })
-                    .orElse(null);
+            return parseMessageSystemAttributeName(configuration.getSortAttributeName()).filter(attribute -> {
+                if (attribute == MessageSystemAttributeName.ALL) {
+                    LOG.warn("The {} attribute cannot be used for sorting the received messages",
+                            MessageSystemAttributeName.ALL);
+                    return false;
+                }
+                return true;
+            }).orElse(null);
         }
 
         private static List<MessageSystemAttributeName> getAttributeNames(
                 Sqs2Configuration configuration, MessageSystemAttributeName sortAttributeName) {
             List<MessageSystemAttributeName> result = new ArrayList<>();
             for (String attributeName : splitCommaSeparatedValues(configuration.getAttributeNames())) {
-                parseMessageSystemAttributeName(attributeName)
-                        .filter(it -> !result.contains(it))
-                        .ifPresent(result::add);
+                parseMessageSystemAttributeName(attributeName).filter(it -> !result.contains(it)).ifPresent(result::add);
             }
             if (sortAttributeName != null && !result.contains(MessageSystemAttributeName.ALL)
                     && !result.contains(sortAttributeName)) {
@@ -742,8 +795,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Received {} messages in {} requests", messages.size(), numberOfRequestsPerPoll);
             }
             if (sortAttributeName != null) {
-                return messages.stream()
-                        .sorted(comparing(message -> message.attributes().getOrDefault(sortAttributeName, "")))
+                return messages.stream().sorted(comparing(message -> message.attributes().getOrDefault(sortAttributeName, "")))
                         .toList();
             }
             return messages;

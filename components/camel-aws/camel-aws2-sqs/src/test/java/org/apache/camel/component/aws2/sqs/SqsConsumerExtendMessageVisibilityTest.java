@@ -26,11 +26,11 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.Message;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
 
-    private static final int TIMEOUT = 2; // 2 seconds.
+    private static final int TIMEOUT_IN_SECONDS = 2; // 2 seconds.
     private static final String RECEIPT_HANDLE = "0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5";
 
     @EndpointInject("mock:result")
@@ -46,7 +46,7 @@ public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 // Simulate message that takes a while to receive.
-                Thread.sleep(TIMEOUT * 3000L); // 150% of TIMEOUT.
+                Thread.sleep(TIMEOUT_IN_SECONDS * 1500L); // 150% of TIMEOUT.
             }
         });
 
@@ -60,8 +60,7 @@ public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
         // Wait for message to arrive.
         MockEndpoint.assertIsSatisfied(context);
 
-        assertTrue(this.client.getChangeMessageVisibilityBatchRequests().size() >= 1);
-        assertTrue(this.client.getChangeMessageVisibilityBatchRequests().size() <= 3);
+        assertThat(this.client.getChangeMessageVisibilityBatchRequests()).hasSizeBetween(1, 3);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&visibilityTimeout=" + TIMEOUT
+                from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&visibilityTimeout=" + TIMEOUT_IN_SECONDS
                      + "&extendMessageVisibility=true").to("mock:result");
             }
         };
