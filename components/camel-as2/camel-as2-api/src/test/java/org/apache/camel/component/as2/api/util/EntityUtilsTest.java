@@ -33,7 +33,8 @@ public class EntityUtilsTest {
         ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, (String) null);
         String ediMessage = "whatever";
         ApplicationEntity applicationEntity
-                = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, null, false, "sample.txt");
+                = EntityUtils.createEDIEntity(ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null,
+                        false, "sample.txt");
         String actualContentType = applicationEntity.getContentType();
         Assertions.assertEquals("application/edifact", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);
@@ -47,7 +48,8 @@ public class EntityUtilsTest {
         ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII);
         String ediMessage = "whatever";
         ApplicationEntity applicationEntity
-                = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, null, false, "sample.txt");
+                = EntityUtils.createEDIEntity(ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null,
+                        false, "sample.txt");
         String actualContentType = applicationEntity.getContentType();
         Assertions.assertEquals("application/edifact; charset=US-ASCII", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);
@@ -61,7 +63,8 @@ public class EntityUtilsTest {
         ContentType ediMessageContentType = ContentType.create(AS2MediaType.APPLICATION_EDIFACT, (String) null);
         String ediMessage = "whatever";
         ApplicationEntity applicationEntity
-                = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, null, false, "");
+                = EntityUtils.createEDIEntity(ediMessage.getBytes(StandardCharsets.US_ASCII), ediMessageContentType, null,
+                        false, "");
         String actualContentType = applicationEntity.getContentType();
         Assertions.assertEquals("application/edifact", actualContentType, "content type matches");
         Header[] actualContentDisposition = applicationEntity.getHeaders(AS2Header.CONTENT_DISPOSITION);

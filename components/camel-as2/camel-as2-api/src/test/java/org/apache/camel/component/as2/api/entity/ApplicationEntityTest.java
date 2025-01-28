@@ -30,10 +30,10 @@ public class ApplicationEntityTest {
 
     @Test
     void checkWriteToWithMultiByteCharacter() throws IOException {
-        String message = "Test message with special char ó";
+        byte[] messageBytes = "Test message with special char ó".getBytes(StandardCharsets.UTF_8);
 
         ContentType contentType = ContentType.create("text/plain", StandardCharsets.UTF_8);
-        ApplicationEntity applicationEntity = new ApplicationEntity(message, contentType, "binary", true, null) {
+        ApplicationEntity applicationEntity = new ApplicationEntity(messageBytes, contentType, "binary", true, null) {
             @Override
             public void close() throws IOException {
             }
@@ -41,11 +41,10 @@ public class ApplicationEntityTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         applicationEntity.writeTo(outputStream);
 
-        byte[] expectedBytes = message.getBytes(StandardCharsets.UTF_8);
         byte[] actualBytes = outputStream.toByteArray();
 
-        assertArrayEquals(expectedBytes, actualBytes, "The output bytes should match the expected UTF-8 encoded bytes.");
-        assertEquals(expectedBytes.length, actualBytes.length,
+        assertArrayEquals(messageBytes, actualBytes, "The output bytes should match the expected UTF-8 encoded bytes.");
+        assertEquals(messageBytes.length, actualBytes.length,
                 "The byte length should match the length of the UTF-8 encoded message.");
     }
 }
