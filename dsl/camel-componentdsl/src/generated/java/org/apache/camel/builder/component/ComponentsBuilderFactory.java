@@ -4021,32 +4021,6 @@ public interface ComponentsBuilderFactory {
         return SolrComponentBuilderFactory.solr();
     }
     /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static SolrcloudComponentBuilderFactory.SolrcloudComponentBuilder solrcloud() {
-        return SolrcloudComponentBuilderFactory.solrcloud();
-    }
-    /**
-     * Solr (Secure) (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static SolrsComponentBuilderFactory.SolrsComponentBuilder solrs() {
-        return SolrsComponentBuilderFactory.solrs();
-    }
-    /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 

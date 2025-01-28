@@ -43,7 +43,6 @@ The following components have been removed:
 | camel-rest-swagger                   | camel-openapi-rest
 | camel-restdsl-swagger-plugin         | camel-restdsl-openapi-plugin
 | camel-resteasy                       | camel-cxf, camel-rest
-| camel-solr                           | none
 | camel-spark                          | none
 | camel-spring-integration             | none
 | camel-swagger-java                   | camel-openapi-java
