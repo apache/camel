@@ -380,7 +380,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageBuilder = imageBuilder;
         export.clusterType = clusterType;
         export.serviceAccount = serviceAccount;
-        export.properties = properties;
+        export.setApplicationProperties(properties);
         export.configs = configs;
         export.resources = resources;
         export.envVars = envVars;

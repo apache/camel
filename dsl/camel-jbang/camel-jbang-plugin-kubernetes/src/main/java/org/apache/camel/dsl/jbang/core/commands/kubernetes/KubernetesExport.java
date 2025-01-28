@@ -56,10 +56,6 @@ public class KubernetesExport extends Export {
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     protected String serviceAccount;
 
-    @CommandLine.Option(names = { "--property" },
-                        description = "Add a runtime property or properties file from a path, a config map or a secret (syntax: [my-key=my-value|file:/path/to/my-conf.properties|[configmap|secret]:name]).")
-    protected String[] properties;
-
     @CommandLine.Option(names = { "--config" },
                         description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
     protected String[] configs;
@@ -251,7 +247,7 @@ public class KubernetesExport extends Export {
             // Remove OpenAPI spec option to avoid duplicate handling by parent export command
             openapi = null;
         }
-        TraitHelper.configureProperties(traitsSpec, properties);
+        TraitHelper.configureProperties(traitsSpec, applicationProperties);
         TraitHelper.configureContainerImage(traitsSpec, image,
                 resolvedImageRegistry, resolvedImageGroup, projectName, getVersion());
         TraitHelper.configureEnvVars(traitsSpec, envVars);
@@ -474,6 +470,10 @@ public class KubernetesExport extends Export {
         }
 
         return super.getVersion();
+    }
+
+    protected void setApplicationProperties(String[] props) {
+        this.applicationProperties = props;
     }
 
     /**
