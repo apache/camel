@@ -220,7 +220,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--property" },
                         description = "Camel application properties, ex. --property=prop1=foo")
-    String[] applicationProperties;
+    protected String[] applicationProperties;
 
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
