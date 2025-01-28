@@ -17,8 +17,10 @@
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class TransformMessageITCase extends JBangTestSupport {
@@ -27,25 +29,38 @@ public class TransformMessageITCase extends JBangTestSupport {
     public void testTransformFromSrc() throws IOException {
         copyResourceInDataFolder(TestResources.SRC_MAPPING_DATA);
         copyResourceInDataFolder(TestResources.SRC_MAPPING_TEMPLATE);
-        checkCommandOutputs(
-                String.format("transform message --body=file:%s/data.json --source=%s/transform.yaml --pretty", mountPoint(),
-                        mountPoint()),
-                "Pabst Blue Ribbon");
+        runTransformation(String.format(
+                "transform message --output=%s/out.json --body=file:%s/data.json --source=%s/transform.yaml --pretty",
+                mountPoint(), mountPoint(), mountPoint()));
+        checkOutputFile("Pabst Blue Ribbon");
     }
 
     @Test
     public void testTransformUsingComponents() throws IOException {
         copyResourceInDataFolder(TestResources.COMP_MAPPING_DATA);
         copyResourceInDataFolder(TestResources.COMP_MAPPING_TEMPLATE);
-        checkCommandOutputs(String.format(
-                "transform message --body=file:%s/data.xml --component=xslt --template=file:%s/transform.xml --pretty",
-                mountPoint(), mountPoint()), "ABN AMRO MEZZANINE (UK) LIMITED");
+        runTransformation(String.format(
+                "transform message --output=%s/out.json --body=file:%s/data.xml --component=xslt --template=file:%s/transform.xml --pretty",
+                mountPoint(), mountPoint(), mountPoint()));
+        checkOutputFile("ABN AMRO MEZZANINE (UK) LIMITED");
     }
 
     @Test
     public void testTransformUsingDataFormats() throws IOException {
         copyResourceInDataFolder(TestResources.FORMATS_MAPPING_DATA);
-        checkCommandOutputs(String.format("transform message --body=file:%s/data.csv --dataformat=csv", mountPoint()),
-                "[[Jack Dalton,  115,  mad at Averell]");
+        runTransformation(String.format("transform message --output=%s/out.json --body=file:%s/data.csv --dataformat=csv",
+                mountPoint(), mountPoint()));
+        checkOutputFile("[[Jack Dalton,  115,  mad at Averell]");
+    }
+
+    private void runTransformation(String command) {
+        checkCommandOutputs(command, "Camel Main: transform (state: Running)");
+    }
+
+    private void checkOutputFile(String contains) throws IOException {
+        Awaitility.await("wait for output file")
+                .atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFileInContainerExists(String.format("%s/out.json", mountPoint())));
+        assertFileInDataFolderContains("out.json", contains);
     }
 }
