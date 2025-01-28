@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "client", producerOnly = true,
            description = "Sends EDI Messages over HTTP",
-           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(String ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.hc.core5.http.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(Object ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.hc.core5.http.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
@@ -39,7 +39,7 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     private String dispositionNotificationTo;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="EDI message to transport")})
-    private String ediMessage;
+    private Object ediMessage;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="The content type of EDI message")})
     private org.apache.hc.core5.http.ContentType ediMessageContentType;
@@ -125,11 +125,11 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
         this.dispositionNotificationTo = dispositionNotificationTo;
     }
 
-    public String getEdiMessage() {
+    public Object getEdiMessage() {
         return ediMessage;
     }
 
-    public void setEdiMessage(String ediMessage) {
+    public void setEdiMessage(Object ediMessage) {
         this.ediMessage = ediMessage;
     }
 
