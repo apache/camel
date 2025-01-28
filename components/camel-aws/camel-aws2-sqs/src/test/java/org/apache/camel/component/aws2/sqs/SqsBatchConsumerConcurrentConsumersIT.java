@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,21 +33,21 @@ public class SqsBatchConsumerConcurrentConsumersIT extends CamelTestSupport {
 
     @Test
     public void receiveBatch() throws Exception {
-        mock.expectedMinimumMessageCount(5);
-        MockEndpoint.assertIsSatisfied(context);
+        mock.expectedMessageCount(6);
+        MockEndpoint.assertIsSatisfied(context, 3, TimeUnit.SECONDS);
     }
 
     @BindToRegistry("amazonSQSClient")
     public AmazonSQSClientMock addClient() {
 
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
-        // add 6 messages, one more we will poll
+        // add 6 messages, one more than we will poll
         for (int counter = 0; counter < 6; counter++) {
             Message.Builder message = Message.builder();
             message.body("Message " + counter);
-            message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
-            message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
-            message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5");
+            message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee" + counter);
+            message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458" + counter);
+            message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5" + counter);
 
             clientMock.addMessage(message.build());
         }
