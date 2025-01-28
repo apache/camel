@@ -461,6 +461,25 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
+         * The solr client to connect to solr. When solrClient bean is provided,
+         * all connection properties will be used from that solrClient (host,
+         * port, username, password, connectionTimeout, requestTimeout,
+         * enableSSL, ...). When not explicitly configured, camel uses the
+         * HttpJdkSolrClient.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.solr.client.solrj.SolrClient</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param solrClient the value to set
+         * @return the dsl builder
+         */
+        default SolrEndpointBuilder solrClient(String solrClient) {
+            doSetProperty("solrClient", solrClient);
+            return this;
+        }
+        /**
          * The time in ms to wait before the request will time out (former
          * soTimeout).
          * 
@@ -979,7 +998,7 @@ public interface SolrEndpointBuilderFactory {
         /**
          * The solr client to use for the request.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code SolrClient} type.
          * 
          * Group: producer
          * 

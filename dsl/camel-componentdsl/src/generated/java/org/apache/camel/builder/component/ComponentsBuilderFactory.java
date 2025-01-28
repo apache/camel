@@ -4011,7 +4011,7 @@ public interface ComponentsBuilderFactory {
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
      * 
-     * Category: monitoring,search
+     * Category: search,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
      * 
