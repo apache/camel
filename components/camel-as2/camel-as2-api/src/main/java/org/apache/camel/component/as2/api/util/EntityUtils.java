@@ -183,7 +183,7 @@ public final class EntityUtils {
     }
 
     public static ApplicationEntity createEDIEntity(
-            String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
+            byte[] ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
             String filename)
             throws CamelException {
         ObjectHelper.notNull(ediMessage, "EDI Message");
