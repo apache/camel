@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -200,7 +201,7 @@ public class AS2ClientManager {
      * @throws HttpException              when things go wrong.
      */
     public HttpCoreContext send(
-            String ediMessage,
+            Object ediMessage,
             String requestUri,
             String subject,
             String from,
@@ -257,8 +258,18 @@ public class AS2ClientManager {
         // Create Message Body
         ApplicationEntity applicationEntity;
         try {
+            byte[] msgBytes;
+            if (ediMessage instanceof InputStream isMsg) {
+                msgBytes = isMsg.readAllBytes();
+            } else if (ediMessage instanceof String strMsg) {
+                msgBytes = strMsg.getBytes(ediMessageContentType.getCharset() == null
+                        ? StandardCharsets.US_ASCII : ediMessageContentType.getCharset());
+            } else {
+                throw new IllegalArgumentException(
+                        "Message type not supported. Must be InputStream or String");
+            }
             applicationEntity
-                    = EntityUtils.createEDIEntity(ediMessage, ediMessageContentType, ediMessageTransferEncoding, false,
+                    = EntityUtils.createEDIEntity(msgBytes, ediMessageContentType, ediMessageTransferEncoding, false,
                             attachedFileName);
         } catch (Exception e) {
             throw new HttpException("Failed to create EDI message entity", e);
