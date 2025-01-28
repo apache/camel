@@ -124,7 +124,8 @@ public class MicUtilsTest {
 
         ApplicationEDIFACTEntity edifactEntity
                 = new ApplicationEDIFACTEntity(
-                        EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
+                        EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII.name(),
+                        AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);
@@ -148,7 +149,8 @@ public class MicUtilsTest {
         request.addHeader(AS2Header.CONTENT_TYPE, "application/edifact;charset=UTF-8");
 
         InputStream is = new ApplicationEDIFACTEntity(
-                EDI_MESSAGE_WITH_NON_ASCII, StandardCharsets.UTF_8.name(), AS2TransferEncoding.NONE, true, "filename.txt")
+                EDI_MESSAGE_WITH_NON_ASCII.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8.name(),
+                AS2TransferEncoding.NONE, true, "filename.txt")
                 .getContent();
         request.setEntity(new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE, StandardCharsets.UTF_8)));
         ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null, null);
@@ -178,7 +180,8 @@ public class MicUtilsTest {
 
         ApplicationEDIFACTEntity edifactEntity
                 = new ApplicationEDIFACTEntity(
-                        EDI_MESSAGE, StandardCharsets.US_ASCII.name(), AS2TransferEncoding.NONE, true, "filename.txt");
+                        EDI_MESSAGE.getBytes(StandardCharsets.US_ASCII), StandardCharsets.US_ASCII.name(),
+                        AS2TransferEncoding.NONE, true, "filename.txt");
         InputStream is = edifactEntity.getContent();
         BasicHttpEntity basicEntity = new BasicHttpEntity(is, ContentType.create(CONTENT_TYPE_VALUE));
         request.setEntity(basicEntity);
