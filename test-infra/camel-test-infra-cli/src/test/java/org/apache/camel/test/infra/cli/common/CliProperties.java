@@ -33,6 +33,8 @@ public final class CliProperties {
 
     public static final String MVN_REPOS = "cli.service.mvn.repos";
 
+    public static final String MVN_LOCAL_REPO = "cli.service.mvn.local";
+
     public static final String EXTRA_HOSTS = "cli.service.extra.hosts";
 
     public static final String TRUSTED_CERT_PATHS = "cli.service.trusted.paths";
