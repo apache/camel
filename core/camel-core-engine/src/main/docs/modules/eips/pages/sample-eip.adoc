@@ -47,9 +47,8 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample>
-        <to uri="direct:sampled"/>
-    </sample>
+    <sample/>
+    <to uri="direct:sampled"/>
 </route>
 ----
 ====
@@ -76,9 +75,8 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample samplePeriod="5000">
-        <to uri="direct:sampled"/>
-    </sample>
+    <sample samplePeriod="5000"/>
+    <to uri="direct:sampled"/>
 </route>
 ----
 ====
@@ -106,9 +104,8 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample messageFrequency="10">
-        <to uri="direct:sampled"/>
-    </sample>
+    <sample messageFrequency="10"/>
+    <to uri="direct:sampled"/>
 </route>
 ----
 ====
