@@ -22,6 +22,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("BaseEndpointURIExchangeEventNotifier", boolean.class);
         map.put("Binders", java.lang.String.class);
         map.put("ClearOnReload", boolean.class);
         map.put("EnableExchangeEventNotifier", boolean.class);
@@ -41,6 +42,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "clearonreload":
         case "clearOnReload": target.setClearOnReload(property(camelContext, boolean.class, value)); return true;
@@ -74,6 +77,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
         case "clearonreload":
         case "clearOnReload": return boolean.class;
@@ -103,6 +108,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.MetricsConfigurationProperties target = (org.apache.camel.main.MetricsConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();
         case "clearonreload":
         case "clearOnReload": return target.isClearOnReload();

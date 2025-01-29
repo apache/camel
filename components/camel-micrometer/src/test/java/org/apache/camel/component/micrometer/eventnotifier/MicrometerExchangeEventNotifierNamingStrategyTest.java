@@ -27,18 +27,18 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
 
     @Test
     void testDefaultFormatName() {
-        MicrometerExchangeEventNotifierNamingStrategy defaultStrategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+        MicrometerExchangeEventNotifierNamingStrategy strategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
 
-        String result = defaultStrategy.formatName("some.metric.name");
+        String result = strategy.formatName("some.metric.name");
 
         assertEquals("some.metric.name", result);
     }
 
     @Test
     void testLegacyFormatName() {
-        MicrometerExchangeEventNotifierNamingStrategy legacyStrategy = MicrometerExchangeEventNotifierNamingStrategy.LEGACY;
+        MicrometerExchangeEventNotifierNamingStrategy strategy = MicrometerExchangeEventNotifierNamingStrategy.LEGACY;
 
-        String result = legacyStrategy.formatName("some.metric.name");
+        String result = strategy.formatName("some.metric.name");
 
         assertEquals("SomeMetricName", result);
     }
@@ -47,8 +47,8 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
     void getDefaultInflightExchangesName() {
         Exchange exchange = mock(Exchange.class);
         Endpoint endpoint = mock(Endpoint.class);
-        MicrometerExchangeEventNotifierNamingStrategy defaultStrategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
-        String result = defaultStrategy.getInflightExchangesName(exchange, endpoint);
+        MicrometerExchangeEventNotifierNamingStrategy strategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+        String result = strategy.getInflightExchangesName(exchange, endpoint);
 
         assertEquals("camel.exchanges.inflight", result);
     }
@@ -57,8 +57,8 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
     void getLegacyInflightExchangesName() {
         Exchange exchange = mock(Exchange.class);
         Endpoint endpoint = mock(Endpoint.class);
-        MicrometerExchangeEventNotifierNamingStrategy defaultStrategy = MicrometerExchangeEventNotifierNamingStrategy.LEGACY;
-        String result = defaultStrategy.getInflightExchangesName(exchange, endpoint);
+        MicrometerExchangeEventNotifierNamingStrategy strategy = MicrometerExchangeEventNotifierNamingStrategy.LEGACY;
+        String result = strategy.getInflightExchangesName(exchange, endpoint);
 
         assertEquals("CamelExchangesInflight", result);
     }

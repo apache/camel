@@ -43,13 +43,21 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
     private final Map<String, Meter> meterMap = new HashMap<>();
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
-    private MicrometerExchangeEventNotifierNamingStrategy namingStrategy
-            = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+    private MicrometerExchangeEventNotifierNamingStrategy namingStrategy;
     boolean registerKamelets;
     boolean registerTemplates = true;
+    boolean baseEndpointURI;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
+    }
+
+    public void setBaseEndpointURI(boolean baseEndpointURI) {
+        this.baseEndpointURI = baseEndpointURI;
+    }
+
+    public boolean isBaseEndpointURI() {
+        return baseEndpointURI;
     }
 
     public void setIgnoreExchanges(Predicate<Exchange> ignoreExchanges) {
@@ -61,6 +69,10 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     public MicrometerExchangeEventNotifierNamingStrategy getNamingStrategy() {
+        if (namingStrategy == null) {
+            // Fallback to default if none is provided
+            this.namingStrategy = new MicrometerExchangeEventNotifierNamingStrategyDefault(baseEndpointURI);
+        }
         return namingStrategy;
     }
 
@@ -143,8 +155,8 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     private void handleExchangeEvent(ExchangeEvent exchangeEvent) {
         Exchange exchange = exchangeEvent.getExchange();
         if (exchange.getFromRouteId() != null && exchange.getFromEndpoint() != null) {
-            String name = namingStrategy.getInflightExchangesName(exchange, exchange.getFromEndpoint());
-            Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
+            String name = getNamingStrategy().getInflightExchangesName(exchange, exchange.getFromEndpoint());
+            Tags tags = getNamingStrategy().getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
             Meter meter = Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
                     .description("Route inflight messages")
                     .tags(tags)
@@ -154,21 +166,21 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
-        String name = namingStrategy.getName(sentEvent.getExchange(), sentEvent.getEndpoint());
-        Tags tags = namingStrategy.getTags(sentEvent, sentEvent.getEndpoint());
+        String name = getNamingStrategy().getName(sentEvent.getExchange(), sentEvent.getEndpoint());
+        Tags tags = getNamingStrategy().getTags(sentEvent, sentEvent.getEndpoint());
         Timer timer = Timer.builder(name).tags(tags).description("Time taken to send message to the endpoint")
                 .register(getMeterRegistry());
         timer.record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {
-        String name = namingStrategy.getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
+        String name = getNamingStrategy().getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
         createdEvent.getExchange().setProperty("eventTimer:" + name, Timer.start(getMeterRegistry()));
     }
 
     protected void handleDoneEvent(ExchangeEvent doneEvent) {
-        String name = namingStrategy.getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
-        Tags tags = namingStrategy.getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
+        String name = getNamingStrategy().getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
+        Tags tags = getNamingStrategy().getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
         // Would have preferred LongTaskTimer, but you cannot set the FAILED_TAG once it is registered
         Timer.Sample sample = (Timer.Sample) doneEvent.getExchange().removeProperty("eventTimer:" + name);
         if (sample != null) {

@@ -480,11 +480,12 @@ The camel.opentelemetry supports 5 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 12 options, which are listed below.
+The camel.metrics supports 13 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.metrics.baseEndpointURI{zwsp}ExchangeEventNotifier* | Set whether to use base endpoint URI when capturing metrics on exchange processing times. | true | boolean
 | *camel.metrics.binders* | Additional Micrometer binders to include such as jvm-memory, processor, jvm-thread, and so forth. Multiple binders can be separated by comma. The following binders currently is available from Micrometer: class-loader, commons-object-pool2, file-descriptor, hystrix-metrics-binder, jvm-compilation, jvm-gc, jvm-heap-pressure, jvm-info, jvm-memory, jvm-thread, log4j2, logback, processor, uptime |  | String
 | *camel.metrics.clearOnReload* | Clear the captured metrics data when Camel is reloading routes such as when using Camel JBang. | true | boolean
 | *camel.metrics.enabled* | To enable Micrometer metrics. | false | boolean

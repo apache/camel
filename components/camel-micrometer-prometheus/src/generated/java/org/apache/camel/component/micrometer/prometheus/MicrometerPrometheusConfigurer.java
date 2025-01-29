@@ -23,6 +23,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
@@ -52,6 +54,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
@@ -82,6 +86,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseendpointuriexchangeeventnotifier":
+        case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();
         case "camelcontext":
         case "camelContext": return target.getCamelContext();

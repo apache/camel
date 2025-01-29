@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,8 +43,19 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
     @Override
     protected AbstractMicrometerEventNotifier<?> getEventNotifier() {
         MicrometerExchangeEventNotifier eventNotifier = new MicrometerExchangeEventNotifier();
-        // use sanitized uri to not reveal sensitive information
-        eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.toString());
+        eventNotifier.setNamingStrategy(new MicrometerExchangeEventNotifierNamingStrategy() {
+
+            @Override
+            public String getName(Exchange exchange, Endpoint endpoint) {
+                return endpoint.toString();
+            }
+
+            @Override
+            public boolean isBaseEndpointURI() {
+                return false;
+            }
+
+        });
         return eventNotifier;
     }
 
