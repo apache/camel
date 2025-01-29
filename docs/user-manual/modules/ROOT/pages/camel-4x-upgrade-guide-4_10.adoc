@@ -158,6 +158,12 @@ this should only be used in advanced/rare use-cases. This option may in the futu
 
 The class `org.apache.camel.component.file.azure.FilesHeaders` has been renamed to `org.apache.camel.component.file.azure.FilesConstants`.
 
+=== camel-aws2-s3
+
+The header `CamelAwsS3BucketName` for setting a bucket to write to, on the producer side, cannot be used anymore: the header `CamelAwsS3OverrideBucketName` must be used 
+instead. This was done to avoid situation in which you're moving a file from a bucket to a different one, and the header coming from the S3 consumer is used as bucket name for S3 Producer.
+You can find more information on CAMEL-21680. 
+
 === camel-file
 
 The `camel-file` consumer has been optimized when filtering file names using name matching only,
