@@ -73,5 +73,5 @@ from("webhook:clickup:<workspaceId>?&authorizationToken=<authorizationToken>&eve
 ---------------------------------------------------------
 
 You can follow the
-https://clickup.com/api/developer-portal/webhooks[set up webhooks guide]
+https://clickup.com/api/developer-portal/webhooks[set-up webhooks guide]
 to enable and configure the webhook.
