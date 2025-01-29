@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for the FileRenameStrategy using preMoveExpression and expression options
  */
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends ContextTestSupport {
 
     @Test
