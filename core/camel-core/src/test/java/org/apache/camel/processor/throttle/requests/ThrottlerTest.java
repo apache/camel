@@ -26,14 +26,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThrottlerRejectedExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // time-bound that does not run well in shared environments
-@DisabledOnOs(OS.WINDOWS)
+
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
+             architectures = { "amd64", "aarch64", "ppc64le" },
+             disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     private static final int TOLERANCE = 50;

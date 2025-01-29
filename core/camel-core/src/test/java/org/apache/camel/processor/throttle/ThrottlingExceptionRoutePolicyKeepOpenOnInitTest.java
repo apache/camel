@@ -22,7 +22,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
+             architectures = { "amd64", "aarch64", "ppc64le" },
+             disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTestSupport {
 
     private final String url = "seda:foo?concurrentConsumers=20";

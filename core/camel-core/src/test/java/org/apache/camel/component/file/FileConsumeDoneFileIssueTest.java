@@ -27,6 +27,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * CAMEL-5848
  */
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
     private static final String TEST_DIR_NAME = "done" + UUID.randomUUID().toString();
     private static final String TEST_DIR_NAME_2 = "done2" + UUID.randomUUID().toString();

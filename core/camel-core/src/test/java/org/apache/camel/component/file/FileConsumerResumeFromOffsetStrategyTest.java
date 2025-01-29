@@ -35,9 +35,12 @@ import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FileConsumerResumeFromOffsetStrategyTest.class);
 

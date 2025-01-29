@@ -38,12 +38,15 @@ import org.apache.camel.spi.CamelEvent.RouteRestartingFailureEvent;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
 
     @Override

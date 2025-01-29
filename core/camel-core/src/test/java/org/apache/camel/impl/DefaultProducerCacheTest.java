@@ -45,11 +45,14 @@ import org.apache.camel.support.cache.ProducerServicePool;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final AtomicInteger producerCounter = new AtomicInteger();
