@@ -19,11 +19,15 @@ package org.apache.camel.component.azure.servicebus;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenCredential;
+import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredentialBuilder;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,15 +35,28 @@ class ServiceBusEndpointTest extends CamelTestSupport {
 
     @Test
     void testCreateWithInvalidData() {
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> context.getEndpoint("azure-servicebus:test//?"));
+        Exception exception = assertThrows(FailedToCreateProducerException.class, () -> {
+            template.sendBody("azure-servicebus:test//?", null);
+        });
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
 
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> context.getEndpoint("azure-servicebus://?connectionString=test"));
+        exception = assertThrows(ResolveEndpointFailedException.class, () -> {
+            template.sendBody("azure-servicebus://?connectionString=test", null);
+        });
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
 
         // provided credential but no fully qualified namespace
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> context.getEndpoint("azure-servicebus:test?tokenCredential=credential"));
+        context.getRegistry().bind("credential", new TokenCredential() {
+            @Override
+            public Mono<AccessToken> getToken(TokenRequestContext tokenRequestContext) {
+                return Mono.empty();
+            }
+        });
+
+        exception = assertThrows(FailedToCreateProducerException.class, () -> {
+            template.sendBody("azure-servicebus:test?tokenCredential=#credential", null);
+        });
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 
     @Test

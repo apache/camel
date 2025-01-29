@@ -61,4 +61,17 @@ public final class ServiceBusUtils {
                 .map(obj -> createServiceBusMessage(obj, applicationProperties, correlationId, sessionId))
                 .collect(Collectors.toList());
     }
+
+    public static void validateConfiguration(final ServiceBusConfiguration configuration, final boolean isConsumer) {
+        final boolean customClientAbsent
+                = isConsumer ? configuration.getProcessorClient() == null : configuration.getSenderClient() == null;
+        if (customClientAbsent && isConnectionStringOrFQNSAbsent(configuration)) {
+            throw new IllegalArgumentException("Azure ServiceBus ConnectionString or FQNS must be specified.");
+        }
+    }
+
+    static boolean isConnectionStringOrFQNSAbsent(final ServiceBusConfiguration configuration) {
+        return ObjectHelper.isEmpty(configuration.getConnectionString())
+                && ObjectHelper.isEmpty(configuration.getFullyQualifiedNamespace());
+    }
 }
