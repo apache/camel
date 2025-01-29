@@ -31,7 +31,7 @@
     <description>Camel Solr Support</description>
 
     <properties>
-        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipTests.ppc64le>true</skipTests.ppc64le>
     </properties>
 
     <dependencies>
