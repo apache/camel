@@ -38,12 +38,15 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
@@ -132,14 +135,14 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         case "routeTemplate", "routeTemplates" ->
                             new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                     .parseRouteTemplatesDefinition()
-                                    .ifPresent(this::setRouteTemplateCollection);
+                                    .ifPresent(this::addRouteTemplatesCollection);
                         case "templatedRoutes", "templatedRoute" ->
                             new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                     .parseTemplatedRoutesDefinition()
-                                    .ifPresent(this::setTemplatedRouteCollection);
+                                    .ifPresent(this::addTemplatedRoutesCollection);
                         case "rests", "rest" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRestsDefinition()
-                                .ifPresent(this::setRestCollection);
+                                .ifPresent(this::addRests);
                         case "routes", "route" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRoutesDefinition()
                                 .ifPresent(this::addRoutes);
@@ -210,76 +213,121 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 }
 
                 if (app.getDataFormats() != null) {
-                    app.getDataFormats().forEach(r -> r.setResource(getResource()));
+                    app.getDataFormats().forEach(def -> {
+                        CamelContextAware.trySetCamelContext(def, getCamelContext());
+                        def.setResource(getResource());
+                    });
                     DataFormatsDefinition list = new DataFormatsDefinition();
                     list.setDataFormats(app.getDataFormats());
                     addDataFormats(list);
                 }
 
                 if (!app.getRests().isEmpty()) {
-                    app.getRests().forEach(r -> r.setResource(getResource()));
+                    app.getRests().forEach(def -> {
+                        CamelContextAware.trySetCamelContext(def, getCamelContext());
+                        def.setResource(getResource());
+                    });
                     RestsDefinition def = new RestsDefinition();
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setResource(getResource());
                     def.setRests(app.getRests());
                     setRestCollection(def);
                 }
 
                 if (!app.getRouteConfigurations().isEmpty()) {
-                    app.getRouteConfigurations().forEach(r -> r.setResource(getResource()));
+                    app.getRouteConfigurations().forEach(def -> {
+                        CamelContextAware.trySetCamelContext(def, getCamelContext());
+                        def.setResource(getResource());
+                    });
                     RouteConfigurationsDefinition def = new RouteConfigurationsDefinition();
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setResource(getResource());
                     def.setRouteConfigurations(app.getRouteConfigurations());
                     addConfigurations(def);
                 }
 
                 if (!app.getRouteTemplates().isEmpty()) {
-                    app.getRouteTemplates().forEach(r -> r.setResource(getResource()));
+                    app.getRouteTemplates().forEach(def -> {
+                        CamelContextAware.trySetCamelContext(def, getCamelContext());
+                        def.setResource(getResource());
+                    });
                     RouteTemplatesDefinition def = new RouteTemplatesDefinition();
                     def.setResource(getResource());
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setRouteTemplates(app.getRouteTemplates());
                     setRouteTemplateCollection(def);
                 }
 
                 if (!app.getTemplatedRoutes().isEmpty()) {
-                    app.getTemplatedRoutes().forEach(r -> r.setResource(getResource()));
+                    app.getTemplatedRoutes().forEach(def -> {
+                        CamelContextAware.trySetCamelContext(def, getCamelContext());
+                        def.setResource(getResource());
+                    });
                     TemplatedRoutesDefinition def = new TemplatedRoutesDefinition();
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setResource(getResource());
                     def.setTemplatedRoutes(app.getTemplatedRoutes());
                     setTemplatedRouteCollection(def);
                 }
 
                 if (!app.getRoutes().isEmpty()) {
-                    app.getRoutes().forEach(r -> r.setResource(getResource()));
+                    app.getRoutes().forEach(def -> {
+                        CamelContextAware.trySetCamelContext(def, getCamelContext());
+                        def.setResource(getResource());
+                    });
                     RoutesDefinition def = new RoutesDefinition();
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setResource(getResource());
                     def.setRoutes(app.getRoutes());
                     addRoutes(def);
                 }
             }
 
-            private void addRoutes(RoutesDefinition routes) {
-                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+            private void addTemplatedRoutesCollection(TemplatedRoutesDefinition list) {
+                for (TemplatedRouteDefinition def : list.getTemplatedRoutes()) {
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
+                }
+                setTemplatedRouteCollection(list);
+            }
 
+            private void addRouteTemplatesCollection(RouteTemplatesDefinition list) {
+                for (RouteTemplateDefinition def : list.getRouteTemplates()) {
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
+                }
+                setRouteTemplateCollection(list);
+            }
+
+            private void addRests(RestsDefinition list) {
+                for (RestDefinition def : list.getRests()) {
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
+                }
+                setRestCollection(list);
+            }
+
+            private void addRoutes(RoutesDefinition routes) {
                 // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                 // so create a copy and use the fluent builder to add the route
                 for (RouteDefinition route : routes.getRoutes()) {
+                    CamelContextAware.trySetCamelContext(route, getCamelContext());
                     getRouteCollection().route(route);
                 }
             }
 
             private void addConfigurations(RouteConfigurationsDefinition configurations) {
-                CamelContextAware.trySetCamelContext(configurations, getCamelContext());
-
                 // xml routes must be prepared in the same way java-dsl (via RouteConfigurationDefinition)
                 // so create a copy and use the fluent builder to add the route
                 for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
+                    CamelContextAware.trySetCamelContext(config, getCamelContext());
                     getRouteConfigurationCollection().routeConfiguration(config);
                 }
             }
 
             private void addDataFormats(DataFormatsDefinition dataFormats) {
                 Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
-                dataFormats.getDataFormats().forEach(d -> d.setResource(getResource()));
+                dataFormats.getDataFormats().forEach(def -> {
+                    CamelContextAware.trySetCamelContext(def, getCamelContext());
+                    def.setResource(getResource());
+                });
                 model.setDataFormats(dataFormats.asMap());
             }
         };
