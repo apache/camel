@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -123,8 +124,7 @@ public class PropertiesComponent extends ServiceSupport
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
-    private final ThreadLocal<Properties> localProperties = new ThreadLocal<>();
-    private volatile boolean localPropertiesEnabled;
+    private final Stack<Properties> localProperties = new Stack<>();;
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -570,11 +570,9 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public void setLocalProperties(Properties localProperties) {
         if (localProperties != null) {
-            this.localProperties.set(localProperties);
-            this.localPropertiesEnabled = true;
-        } else {
-            this.localProperties.remove();
-            this.localPropertiesEnabled = false;
+            this.localProperties.push(localProperties);
+        } else if (!this.localProperties.isEmpty()) {
+            this.localProperties.pop();
         }
     }
 
@@ -583,7 +581,10 @@ public class PropertiesComponent extends ServiceSupport
      * currently in use.
      */
     public Properties getLocalProperties() {
-        return localPropertiesEnabled ? localProperties.get() : null;
+        if (localProperties.isEmpty()) {
+            return null;
+        }
+        return localProperties.peek();
     }
 
     @Override

@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
@@ -57,8 +58,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRegistry.class);
     protected CamelContext camelContext;
-    protected final ThreadLocal<BeanRepository> localRepository = new ThreadLocal<>();
-    protected volatile boolean localRepositoryEnabled; // flag to keep track if local is in use or not
+    protected final Stack<BeanRepository> localRepository = new Stack<>();;
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
     protected Registry supplierRegistry = new SupplierRegistry();
@@ -103,21 +103,21 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
      */
     public void setLocalBeanRepository(BeanRepository repository) {
         if (repository != null) {
-            this.localRepository.set(repository);
-            this.localRepositoryEnabled = true;
-        } else {
-            BeanRepository old = this.localRepository.get();
+            this.localRepository.push(repository);
+        } else if (!this.localRepository.isEmpty()) {
+            BeanRepository old = this.localRepository.pop();
             if (old != null) {
                 ServiceHelper.stopService(old);
             }
-            this.localRepository.remove();
-            this.localRepositoryEnabled = false;
         }
     }
 
     @Override
     public BeanRepository getLocalBeanRepository() {
-        return localRepositoryEnabled ? localRepository.get() : null;
+        if (localRepository.isEmpty()) {
+            return null;
+        }
+        return localRepository.peek();
     }
 
     /**
@@ -257,7 +257,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         }
 
         // local repository takes precedence
-        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        BeanRepository local = getLocalBeanRepository();
         if (local != null) {
             answer = local.lookupByName(name);
             if (answer != null) {
@@ -298,7 +298,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         }
 
         // local repository takes precedence
-        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        BeanRepository local = getLocalBeanRepository();
         if (local != null) {
             answer = local.lookupByNameAndType(name, type);
             if (answer != null) {
@@ -329,7 +329,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         Map<String, T> answer = new LinkedHashMap<>();
 
         // local repository takes precedence
-        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        BeanRepository local = getLocalBeanRepository();
         if (local != null) {
             Map<String, T> found = local.findByTypeWithName(type);
             if (found != null && !found.isEmpty()) {
@@ -363,7 +363,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         Set<T> answer = new LinkedHashSet<>();
 
         // local repository takes precedence
-        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        BeanRepository local = getLocalBeanRepository();
         if (local != null) {
             Set<T> found = local.findByType(type);
             if (found != null && !found.isEmpty()) {
@@ -397,7 +397,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         T found = null;
 
         // local repository takes precedence
-        BeanRepository local = localRepositoryEnabled ? localRepository.get() : null;
+        BeanRepository local = getLocalBeanRepository();
         if (local != null) {
             found = local.findSingleByType(type);
         }

@@ -217,7 +217,8 @@ public final class Kamelet {
                 wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(def.getCamelContext(), pro, null,
                         pro.getInheritErrorHandler());
             }
-            if (wrap && parent != null) {
+            if (wrap && parent != null && parent.isKamelet() == null) {
+                // do not wrap if the parent is also a kamelet
                 def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
             } else {
                 def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
