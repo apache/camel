@@ -40,7 +40,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifier;
-import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifierNamingStrategy;
+import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifierNamingStrategyDefault;
+import org.apache.camel.component.micrometer.eventnotifier.MicrometerExchangeEventNotifierNamingStrategyLegacy;
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifier;
 import org.apache.camel.component.micrometer.eventnotifier.MicrometerRouteEventNotifierNamingStrategy;
 import org.apache.camel.component.micrometer.messagehistory.MicrometerMessageHistoryFactory;
@@ -94,6 +95,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean enableMessageHistory;
     @Metadata(defaultValue = "true")
     private boolean enableExchangeEventNotifier = true;
+    @Metadata(defaultValue = "true")
+    private boolean baseEndpointURIExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
     @Metadata(defaultValue = "false")
@@ -176,6 +179,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
      */
     public void setEnableExchangeEventNotifier(boolean enableExchangeEventNotifier) {
         this.enableExchangeEventNotifier = enableExchangeEventNotifier;
+    }
+
+    public boolean isBaseEndpointURIExchangeEventNotifier() {
+        return baseEndpointURIExchangeEventNotifier;
+    }
+
+    /**
+     * Set whether to use base endpoint URI when capturing metrics on exchange processing times.
+     */
+    public void setBaseEndpointURIExchangeEventNotifier(boolean baseEndpointURIExchangeEventNotifier) {
+        this.baseEndpointURIExchangeEventNotifier = baseEndpointURIExchangeEventNotifier;
     }
 
     public boolean isEnableRouteEventNotifier() {
@@ -303,8 +317,13 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         if (isEnableExchangeEventNotifier()) {
             MicrometerExchangeEventNotifier notifier = new MicrometerExchangeEventNotifier();
+            notifier.setBaseEndpointURI(isBaseEndpointURIExchangeEventNotifier());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
-                notifier.setNamingStrategy(MicrometerExchangeEventNotifierNamingStrategy.LEGACY);
+                notifier.setNamingStrategy(
+                        new MicrometerExchangeEventNotifierNamingStrategyLegacy(isBaseEndpointURIExchangeEventNotifier()));
+            } else {
+                notifier.setNamingStrategy(
+                        new MicrometerExchangeEventNotifierNamingStrategyDefault(isBaseEndpointURIExchangeEventNotifier()));
             }
             notifier.setMeterRegistry(meterRegistry);
             managementStrategy.addEventNotifier(notifier);

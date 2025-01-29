@@ -39,6 +39,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private boolean enableExchangeEventNotifier = true;
     @Metadata(defaultValue = "true")
+    private boolean baseEndpointURIExchangeEventNotifier = true;
+    @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
     @Metadata(defaultValue = "false")
     private boolean enableInstrumentedThreadPoolFactory;
@@ -129,6 +131,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public void setEnableExchangeEventNotifier(boolean enableExchangeEventNotifier) {
         this.enableExchangeEventNotifier = enableExchangeEventNotifier;
+    }
+
+    public boolean isBaseEndpointURIExchangeEventNotifier() {
+        return baseEndpointURIExchangeEventNotifier;
+    }
+
+    /**
+     * Set whether to use base endpoint URI when capturing metrics on exchange processing times.
+     */
+    public void setBaseEndpointURIExchangeEventNotifier(boolean baseEndpointURIExchangeEventNotifier) {
+        this.baseEndpointURIExchangeEventNotifier = baseEndpointURIExchangeEventNotifier;
     }
 
     public boolean isEnableRouteEventNotifier() {
