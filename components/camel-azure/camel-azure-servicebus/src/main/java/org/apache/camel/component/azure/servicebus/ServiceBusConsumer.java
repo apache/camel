@@ -52,14 +52,19 @@ public class ServiceBusConsumer extends DefaultConsumer {
         super.doStart();
 
         LOG.debug("Creating connection to Azure ServiceBus");
-        // create client as per sessions
-        if (Boolean.FALSE.equals(getConfiguration().isSessionEnabled())) {
-            client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
-                    this::processMessage, this::processError);
-        } else {
-            client = getEndpoint().getServiceBusClientFactory().createServiceBusSessionProcessorClient(getConfiguration(),
-                    this::processMessage, this::processError);
+
+        client = getConfiguration().getProcessorClient();
+        if (client == null) {
+            // create client as per sessions
+            if (Boolean.FALSE.equals(getConfiguration().isSessionEnabled())) {
+                client = getEndpoint().getServiceBusClientFactory().createServiceBusProcessorClient(getConfiguration(),
+                        this::processMessage, this::processError);
+            } else {
+                client = getEndpoint().getServiceBusClientFactory().createServiceBusSessionProcessorClient(getConfiguration(),
+                        this::processMessage, this::processError);
+            }
         }
+
         client.start();
     }
 
