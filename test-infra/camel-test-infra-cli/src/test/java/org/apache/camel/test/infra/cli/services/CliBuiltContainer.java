@@ -43,6 +43,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     protected static final int DEV_CONSOLE_PORT = 8080;
     protected static final int SSH_PORT = 22;
     protected static final String TRUSTED_CERT_FOLDER = "/etc/pki/ca-trust/source/anchors";
+    public static final String CONTAINER_MVN_REPO = "/home/jbang/.m2/repository";
 
     private final String sshPassword;
 
@@ -81,6 +82,9 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
                         String.format("%s/%s", TRUSTED_CERT_FOLDER, path.getFileName()));
             });
         }
+        if (StringUtils.isNotBlank(params.getLocalMavenRepo())) {
+            withFileSystemBind(params.getLocalMavenRepo(), CONTAINER_MVN_REPO, BindMode.READ_WRITE);
+        }
     }
 
     public String getMountPoint() {
@@ -101,6 +105,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
         private String sshPassword;
         private Map<String, String> extraHosts;
         private List<String> trustedCertPaths;
+        private String localMavenRepo;
 
         public String getCamelRepo() {
             return camelRepo;
@@ -171,6 +176,15 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
 
         public CliBuiltContainerParams setTrustedCertPaths(List<String> trustedCertPaths) {
             this.trustedCertPaths = trustedCertPaths;
+            return this;
+        }
+
+        public String getLocalMavenRepo() {
+            return localMavenRepo;
+        }
+
+        public CliBuiltContainerParams setLocalMavenRepo(String localMavenRepo) {
+            this.localMavenRepo = localMavenRepo;
             return this;
         }
     }

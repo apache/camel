@@ -18,5 +18,6 @@ System variables are defined in link:{config-class}[CliProperties]
  - `cli.service.ssh.password` : ssh password set to access to the container via ssh, default `jbang`
  - `cli.service.execute.version` : Camel version set just after container start, default is empty so the version is the one in the branch
  - `cli.service.mvn.repos` : comma separated list of custom Maven repositories, default empty
+ - `cli.service.mvn.local` : path to the host folder mounted as container local maven repository
  - `cli.service.extra.hosts` : comma separated host=ip pairs to add in the hosts file
  - `cli.service.trusted.paths` : commas separated paths, relative to the host, of the files containing PEM trusted certificates

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.infra.cli.it;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 
 import org.apache.camel.test.infra.cli.services.CliService;
@@ -89,6 +92,22 @@ public class CliConfigITCase {
             Assertions.assertEquals(currentCamelVersion, version, "Check Camel JBang version in the current codebase");
         });
         System.clearProperty("cli.service.version");
+    }
+
+    @Test
+    @SetSystemProperty(key = "cli.service.mvn.local", value = "target/tmp-repo")
+    public void setLocalMavenRepoTest() {
+        final Path dir = Path.of("target/tmp-repo");
+        execute(cliService -> {
+            cliService.version();
+            Assertions.assertTrue(dir.toFile().exists(), "Check the local maven repository is created");
+            try {
+                Assertions.assertTrue(Files.list(dir).findFirst().isPresent(),
+                        "Check the local maven repository is not empty");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void execute(Consumer<CliService> consumer) {
