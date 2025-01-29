@@ -19,11 +19,12 @@ The Camel Smooks component uses https://www.smooks.org/[Smooks] to break up the 
 Common applications of Smooks include:
 
 * transformation: EDI to CSV, POJO to EDI, POJO to XML, and so on.
-* scalable processing: process huge payloads while keeping a small memory footprint. Split, transform, and route fragments to destinations such as JMS queues, file systems, and databases.
+* scalable processing: process huge payloads while keeping a small memory footprint.
+* split, transform, and route fragments to destinations such as JMS queues, file systems, and databases.
 * enrichment: enrich fragments with data from a database or other data sources.
 * Java binding: populate POJOs from a source such as CSV, EDI, XML, and other POJOs.
 
-Use the xref:dataformats:smooks-dataformat.adoc[Smooks Data Format] instead of this component when you are primarily interested in transformation and binding; not other Smooks features like routing.
+Use the xref:dataformats:smooks-dataformat.adoc[Smooks Data Format] instead of this component when you are primarily interested in transformation and binding. This should be used for other Smooks features, like routing.
 
 Maven users will need to add the following dependency to their `pom.xml`.
 
@@ -133,7 +134,7 @@ Smooks is capable of routing fragments to Camel endpoints using the `{https://ww
 </smooks-resource-list>
 ----
 
-The above file configures Smooks to route the Java bean `orderItem` in the https://www.smooks.org/documentation/#bean_context[bean context] to the endpoints `direct:slow` and `direct:express`, depending on whether the `priority` field of the `orderItem` instance is equal to `Normal` or `High`. It is possible to route based on an event selector rather than a condition thanks to the `routeOnElement` XML attribute:
+The file above configures Smooks to route the Java bean `orderItem` in the https://www.smooks.org/documentation/#bean_context[bean context] to the endpoints `direct:slow` and `direct:express`, depending on whether the `priority` field of the `orderItem` instance is equal to `Normal` or `High`. It is possible to route based on an event selector rather than a condition thanks to the `routeOnElement` XML attribute:
 
 .smooks-config.xml
 [source,xml]
@@ -155,4 +156,4 @@ The above file configures Smooks to route the Java bean `orderItem` in the https
 </smooks-resource-list>
 ----
 
-NOTE: instead of routing complex objects to Camel, a https://www.smooks.org/documentation/#pipeline[pipeline] allows you to have a template (e.g., FreeMarker) reference the beans and then route the evaluated template as string (e.g., XML, CSV, etc...) to Camel.
+NOTE: instead of routing complex objects to Camel, a https://www.smooks.org/documentation/#pipeline[pipeline] allows you to have a template (e.g., FreeMarker) reference the beans and then route the evaluated template as string (e.g., XML, CSV, etc.) to Camel.
