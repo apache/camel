@@ -48,6 +48,12 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceBusUtils.validateConfiguration(getConfiguration(), true);
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 

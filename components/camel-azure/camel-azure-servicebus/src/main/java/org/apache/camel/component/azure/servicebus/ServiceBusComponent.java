@@ -58,7 +58,6 @@ public class ServiceBusComponent extends DefaultComponent {
         final ServiceBusEndpoint endpoint = new ServiceBusEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         setCredentials(configuration);
-        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -85,15 +84,5 @@ public class ServiceBusComponent extends DefaultComponent {
 
     public void setConfiguration(ServiceBusConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    private void validateConfigurations(final ServiceBusConfiguration configuration) {
-        if (configuration.getProcessorClient() == null || configuration.getSenderClient() == null) {
-            if (ObjectHelper.isEmpty(configuration.getConnectionString()) &&
-                    ObjectHelper.isEmpty(configuration.getFullyQualifiedNamespace())) {
-                throw new IllegalArgumentException(
-                        "Azure ServiceBus ConnectionString or FQNS must be specified.");
-            }
-        }
     }
 }

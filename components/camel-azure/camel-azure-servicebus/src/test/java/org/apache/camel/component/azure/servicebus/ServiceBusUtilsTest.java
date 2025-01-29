@@ -22,7 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusMessage;
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
+import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -132,5 +135,53 @@ public class ServiceBusUtilsTest {
                 .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody2)));
         assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
                 .anyMatch(record -> record.getSessionId().equals("session-2")));
+    }
+
+    @Test
+    void validateConfigurationMissingCredentials() {
+        assertThrows(IllegalArgumentException.class,
+                () -> ServiceBusUtils.validateConfiguration(new ServiceBusConfiguration(), false));
+    }
+
+    @Test
+    void validateConfigurationConnectionStringProvided() {
+        ServiceBusConfiguration configuration = new ServiceBusConfiguration();
+        configuration.setConnectionString("test");
+        assertDoesNotThrow(() -> ServiceBusUtils.validateConfiguration(configuration, false));
+    }
+
+    @Test
+    void validateConfigurationFQNSProvided() {
+        ServiceBusConfiguration configuration = new ServiceBusConfiguration();
+        configuration.setFullyQualifiedNamespace("test");
+        assertDoesNotThrow(() -> ServiceBusUtils.validateConfiguration(configuration, false));
+    }
+
+    @Test
+    void validateConfigurationCustomProcessorClient() {
+        ServiceBusConfiguration configuration = new ServiceBusConfiguration();
+        ServiceBusProcessorClient client = new ServiceBusClientBuilder()
+                .connectionString("Endpoint=sb://camel.apache.org/;SharedAccessKeyName=test;SharedAccessKey=test")
+                .processor()
+                .queueName("test")
+                .processMessage(serviceBusReceivedMessageContext -> {
+                })
+                .processError(serviceBusErrorContext -> {
+                })
+                .buildProcessorClient();
+        configuration.setProcessorClient(client);
+        assertDoesNotThrow(() -> ServiceBusUtils.validateConfiguration(configuration, true));
+    }
+
+    @Test
+    void validateConfigurationCustomSenderClient() {
+        ServiceBusConfiguration configuration = new ServiceBusConfiguration();
+        ServiceBusSenderClient client = new ServiceBusClientBuilder()
+                .connectionString("Endpoint=sb://camel.apache.org/;SharedAccessKeyName=test;SharedAccessKey=test")
+                .sender()
+                .queueName("test")
+                .buildClient();
+        configuration.setSenderClient(client);
+        assertDoesNotThrow(() -> ServiceBusUtils.validateConfiguration(configuration, false));
     }
 }

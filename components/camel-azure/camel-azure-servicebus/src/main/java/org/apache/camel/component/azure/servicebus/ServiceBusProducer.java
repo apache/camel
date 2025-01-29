@@ -58,6 +58,7 @@ public class ServiceBusProducer extends DefaultProducer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+        ServiceBusUtils.validateConfiguration(getConfiguration(), false);
         configurationOptionsProxy = new ServiceBusConfigurationOptionsProxy(getConfiguration());
     }
 
