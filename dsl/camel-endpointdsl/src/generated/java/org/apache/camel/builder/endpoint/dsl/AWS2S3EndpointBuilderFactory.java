@@ -4082,6 +4082,20 @@ public interface AWS2S3EndpointBuilderFactory {
         public String awsS3IfUnmodifiedSinceCondition() {
             return "CamelAwsS3IfUnmodifiedSinceCondition";
         }
+        /**
+         * The bucket Name to override (can be dynamic using the simple language
+         * in the producer) which this object will be stored or which will be
+         * used for the current operation or in which this object is contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3OverrideBucketName}.
+         */
+        public String awsS3OverrideBucketName() {
+            return "CamelAwsS3OverrideBucketName";
+        }
     }
     static AWS2S3EndpointBuilder endpointBuilder(String componentName, String path) {
         class AWS2S3EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2S3EndpointBuilder, AdvancedAWS2S3EndpointBuilder {

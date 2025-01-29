@@ -157,4 +157,8 @@ public interface AWS2S3Constants {
     @Metadata(description = "Return/copy the object only if it has not been modified since the specified time.",
               javaType = "String")
     String IF_UNMODIFIED_SINCE_CONDITION = "CamelAwsS3IfUnmodifiedSinceCondition";
+    @Metadata(description = "The bucket Name to override (can be dynamic using the simple language in the producer) which this object will be stored or which will be used for the current operation or in which this object is contained.",
+              javaType = "String")
+    String OVERRIDE_BUCKET_NAME = "CamelAwsS3OverrideBucketName";
+
 }

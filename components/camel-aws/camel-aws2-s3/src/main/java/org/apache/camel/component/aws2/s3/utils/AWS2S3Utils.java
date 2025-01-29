@@ -47,7 +47,7 @@ public final class AWS2S3Utils {
      * @throws IllegalArgumentException if the header could not be determined.
      */
     public static String determineBucketName(final Exchange exchange, AWS2S3Configuration configuration) {
-        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
+        String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
             bucketName = configuration.getBucketName();
         }
