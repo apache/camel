@@ -64,13 +64,15 @@ public class KnativeTrait extends KnativeBaseTrait {
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        Knative knativeTrait = Optional.ofNullable(traitConfig.getKnative()).orElseGet(Knative::new);
-
-        if (knativeTrait.getEnabled() != null && !knativeTrait.getEnabled()) {
-            // Knative explicitly disabled
+        // Knative trait needs to be explicitly enabled
+        boolean enabled = false;
+        if (traitConfig.getKnative() != null) {
+            enabled = Optional.ofNullable(traitConfig.getKnative().getEnabled()).orElse(false);
+        }
+        if (!enabled) {
             return false;
         }
-
+        Knative knativeTrait = Optional.ofNullable(traitConfig.getKnative()).orElseGet(Knative::new);
         List<SourceMetadata> allSourcesMetadata = context.getSourceMetadata();
 
         if (knativeTrait.getChannelSources() == null) {
