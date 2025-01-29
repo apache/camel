@@ -293,7 +293,8 @@ public class RestOpenApiSupport {
             CamelContext camelContext, RestApiResponseAdapter response,
             BeanConfig openApiConfig, boolean json,
             ClassResolver classResolver,
-            RestConfiguration configuration)
+            RestConfiguration configuration,
+            Exchange exchange)
             throws Exception {
 
         LOG.trace("renderResourceListing");
@@ -318,6 +319,9 @@ public class RestOpenApiSupport {
                 }
             }
             response.setOpenApi(openApi);
+            if (configuration.isUseXForwardHeaders() && exchange != null) {
+                setupXForwardHeaders(response, exchange);
+            }
             byte[] bytes = getFromOpenAPI(openApi, openApiConfig, byte[].class, json);
             int len = bytes.length;
             response.setHeader(Exchange.CONTENT_LENGTH, Integer.toString(len));
