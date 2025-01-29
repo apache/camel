@@ -9,13 +9,19 @@
 
 *Since Camel {since}*
 
-The Camel Observability Services component provides a set of opinionated components and configuration which simplify operations such as observability on cloud environments. Although the component is mainly targeted for cloud, it can be used in any other environment, giving to the Camel application the capability to expose a set of observability features by default.
+The Camel Observability Services component provides a set of opinionated components and configuration
+which simplify operations such as observability on cloud environments.
+Although the component is mainly targeted for cloud, it can be used in any other environment,
+giving to the Camel application the ability to expose a set of observability features by default.
 
 == Usage
 
 === Auto-detection from classpath
 
-All you need to do is to add the `camel-observability-services` dependency to the classpath. There's no need to add any further configuration. Each individual component will be configured using each own default settings except the endpoint which will be exposed in `/observe/<service>` by default.
+All you need to do is to add the `camel-observability-services` dependency to the classpath.
+There's no need to add any further configuration.
+Each component will be configured using each own default setting,
+except the endpoint which will be exposed in `/observe/<service>` by default.
 
 If you need to customize each of the different components provided within this service, then, you can specify in the `application.properties` each of the configuration as it would be done normally when you provide the individual component.
 
@@ -46,7 +52,7 @@ The presence of this dependency will expose the following endpoints:
 
 == OpenTelemetry configuration
 
-The presence of this component will provide the required instrumentation to easily enable the collection of Opentelemetry metrics.
+The presence of this component will provide the required instrumentation to easily enable the collection of OpenTelemetry metrics.
 
 === Testing OpenTelemetry collector
 
@@ -60,22 +66,39 @@ This service will expose the port `4318` to `localhost` which is the default set
 
 === OpenTelemetry Agent configuration
 
-In order to collect the metrics exposed by the application, and, depending on the runtime of choice, you will need to start your Camel application with a Java agent, whose goal is to push those metrics to the OpenTelemetry compatible collector server. Follow the instructions provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[Opentelemetry Java Agent configuration].
+To collect the metrics exposed by the application, and, depending on the runtime of choice,
+you will need to start your Camel application with a Java agent.
+The Java agent goal is to push those metrics to the OpenTelemetry compatible collector server.
+Follow the instructions
+provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[OpenTelemetry Java Agent configuration].
 
-WARNING: Due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of Opentelemetry dependencies in Spring Boot] runtime you may hit a runtime error until the Spring Boot BOM dependencies is aligning the Opentelemetry dependencies. Be mindful of the required workaround required for this to work until the issue is fixed.
+WARNING: Due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of OpenTelemetry dependencies in Spring Boot] runtime, you may hit a runtime error until the Spring Boot BOM dependencies is aligning the OpenTelemetry dependencies.
+Be mindful of the required workaround required for this to work until the issue is fixed.
 
 == JMX configuration
 
 The presence of this component implies the presence of `camel-management` component. This is in charge to include information about Camel application status in JMX format.
 
-NOTE: The presence of this component automatically enable the collection of the JMX metrics. This should be negligible from performance point of view, however, you may want to disable that running the application with `-Dorg.apache.camel.jmx.disabled=true` JVM option.
+NOTE: The presence of this component automatically enables the collection of the JMX metrics. This should be negligible from performance point of view.
+However, you may want to disable that running the application with `-Dorg.apache.camel.jmx.disabled=true` JVM option.
 
 === Testing JMX
 
-An easy way to test the JMX configuration is to run a JMX client such as `jconsole`. Just execute it from the same machine where the Camel application you want to monitor is running and you can quickly verify the status of the application (selecting the local process). There is the possibility to https://docs.oracle.com/javase/tutorial/jmx/remote/jconsole.html[expose the JMX remotely as well].
+An easy way to test the JMX configuration is to run a JMX client such as `jconsole`.
+Execute it from the same machine where the Camel application you want to monitor is running,
+and you can quickly verify the status of the application (selecting the local process).
+There is the possibility to https://docs.oracle.com/javase/tutorial/jmx/remote/jconsole.html[expose the JMX remotely as well].
 
-Exposing remote JMX would require some security setting in place to avoid disclosing sensitive information. Also mind that it may not be suitable for cloud development (ie, Kubernetes) due to possible limitations within the binary protocols used by the JMX technology. In this case it is recommended the usage of a JSR 160 compatible Java agent.
+Exposing remote JMX would require some security setting in place to avoid disclosing sensitive information.
+Also mind that it may not be suitable for cloud development, i.e.,
+Kubernetes, due to possible limitations within the binary protocols used by the JMX technology.
+In this case, it is recommended the usage of a JSR 160 compatible Java agent.
 
 === JMX Agent configuration
 
-When dealing with JMX you may want to expose the information available via HTTP(S) protocol which would make JMX more suitable to cloud based development. A possible way to expose the information is to use a JSR 160 compatible Java agent, whose goal is to interact as an adapter interface towards JMX, exposing an HTTP based service instead. Follow the instructions provided in xref:manual::jmx.adoc#_how_to_use_a_java_agent[JMX Java Agent configuration].
+When dealing with JMX,
+you may want
+to expose the information available via HTTP(S) protocol which would make JMX more suitable to cloud-based development.
+A possible way to expose the information is to use a JSR 160 compatible Java agent,
+whose goal is to interact as an adapter interface towards JMX, exposing an HTTP-based service instead.
+Follow the instructions provided in xref:manual::jmx.adoc#_how_to_use_a_java_agent[JMX Java Agent configuration].
