@@ -82,4 +82,32 @@ public class ExportITCase extends JBangTestSupport {
                 "export --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
         assertFileInDataFolderContains("pom.xml", "<groupId>org.apache.camel.quarkus</groupId>");
     }
+
+    @Test
+    public void testExportWithAgent() throws IOException {
+        newFileInDataFolder("application.properties",
+                "camel.jbang.dependencies=camel:opentelemetry,agent:io.opentelemetry.javaagent:opentelemetry-javaagent:1.31.0\n"
+                                                      +
+                                                      "camel.opentelemetry.enabled=true");
+        execInContainer(String.format("mv %s/application.properties .", mountPoint()));
+        execute(String.format(
+                "export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
+        assertFileInDataFolderExists("agent/opentelemetry-javaagent-1.31.0.jar");
+    }
+
+    @Test
+    public void testExportWithJMXManagement() throws IOException {
+        execute(String.format(
+                "export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:management --directory=%s",
+                mountPoint()));
+        assertFileInDataFolderContains("pom.xml", "<artifactId>camel-quarkus-management</artifactId>\n");
+    }
+
+    @Test
+    public void testExportWithCliConnector() throws IOException {
+        execute(String.format(
+                "export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:cli-connector --directory=%s",
+                mountPoint()));
+        assertFileInDataFolderContains("pom.xml", "<artifactId>camel-quarkus-cli-connector</artifactId>\n");
+    }
 }
