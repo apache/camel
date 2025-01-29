@@ -27,29 +27,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 
-public class CamelUpdate {
+public final class CamelUpdate implements Update {
 
-    protected List<String> commands = new ArrayList<>();
+    private List<String> commands = new ArrayList<>();
+    private CamelUpdateMixin updateMixin;
+    private MavenDependencyDownloader downloader;
+
+    public CamelUpdate(CamelUpdateMixin updateMixin, MavenDependencyDownloader downloader) {
+        this.updateMixin = updateMixin;
+        this.downloader = downloader;
+    }
 
     /**
      * Download the jar containing the recipes and extract the recipe name to be used in the maven command
      *
      * @return
      */
-    public List<String> activeRecipes(MavenDependencyDownloader downloader, String recipesArtifactId, String version) {
+    public List<String> activeRecipes() throws CamelUpdateException {
         List<Recipe> recipes;
         MavenArtifact mavenArtifact
-                = downloader.downloadArtifact("org.apache.camel.upgrade", recipesArtifactId, version);
+                = downloader.downloadArtifact("org.apache.camel.upgrade", getArtifactCoordinates(), updateMixin.version);
 
         try {
             recipes = getRecipesInJar(mavenArtifact.getFile());
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new CamelUpdateException(ex);
         }
 
         List<String> activeRecipes = new ArrayList<>();
@@ -65,24 +74,6 @@ public class CamelUpdate {
         }
 
         return activeRecipes;
-    }
-
-    public String debug(boolean debug) {
-        String result = "--no-transfer-progress";
-        if (debug) {
-            result = "-X";
-        }
-
-        return result;
-    }
-
-    public String runMode(boolean dryRun) {
-        String task = "run";
-        if (dryRun) {
-            task = "dryRun";
-        }
-
-        return task;
     }
 
     private List<Recipe> getRecipesInJar(File jar) throws IOException {
@@ -107,6 +98,58 @@ public class CamelUpdate {
             }
         }
         return recipes;
+    }
+
+    @Override
+    public String debug() {
+        String result = "--no-transfer-progress";
+        if (updateMixin.debug) {
+            result = "-X";
+        }
+
+        return result;
+    }
+
+    @Override
+    public String runMode() {
+        String task = "run";
+        if (updateMixin.dryRun) {
+            task = "dryRun";
+        }
+
+        return task;
+    }
+
+    @Override
+    public List<String> command() throws CamelUpdateException {
+        commands.add(mvnProgramCall());
+        commands.add(debug());
+        commands.add("org.openrewrite.maven:rewrite-maven-plugin:" + updateMixin.openRewriteVersion + ":"
+                     + runMode());
+
+        List<String> coordinates = new ArrayList<>();
+        coordinates.add(String.format("org.apache.camel.upgrade:%s:%s", getArtifactCoordinates(), updateMixin.version));
+        if (updateMixin.extraRecipeArtifactCoordinates != null && !updateMixin.extraRecipeArtifactCoordinates.isEmpty()) {
+            coordinates.addAll(updateMixin.extraRecipeArtifactCoordinates);
+        }
+
+        commands.add("-Drewrite.recipeArtifactCoordinates=" +
+                     coordinates.stream().collect(Collectors.joining(",")));
+
+        List<String> recipes = new ArrayList<>();
+        recipes.addAll(activeRecipes());
+        if (updateMixin.extraActiveRecipes != null && !updateMixin.extraActiveRecipes.isEmpty()) {
+            recipes.addAll(updateMixin.extraActiveRecipes);
+        }
+        commands.add("-Drewrite.activeRecipes=" + recipes
+                .stream().collect(Collectors.joining(",")));
+
+        return commands;
+    }
+
+    public String getArtifactCoordinates() {
+        return updateMixin.runtime == RuntimeType.springBoot
+                ? updateMixin.camelSpringBootArtifactCoordinates : updateMixin.camelArtifactCoordinates;
     }
 
     record Recipe(String name, String content) {

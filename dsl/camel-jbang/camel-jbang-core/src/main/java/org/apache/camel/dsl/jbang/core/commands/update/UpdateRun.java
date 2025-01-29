@@ -24,16 +24,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
-import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 /**
@@ -44,53 +40,8 @@ import picocli.CommandLine;
                      description = "Update Camel project")
 public class UpdateRun extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Update version", arity = "1")
-    private String version;
-
-    @CommandLine.Option(names = { "--openRewriteVersion" },
-                        defaultValue = "6.0.4")
-    String openRewriteVersion;
-
-    @CommandLine.Option(names = { "--camelArtifact" },
-                        defaultValue = "camel-upgrade-recipes")
-    String camelArtifactCoordinates;
-
-    @CommandLine.Option(names = { "--camelSpringBootArtifact" },
-                        defaultValue = "camel-spring-boot-upgrade-recipes")
-    String camelSpringBootArtifactCoordinates;
-
-    @CommandLine.Option(names = { "--debug" },
-                        defaultValue = "false",
-                        description = "Show debug logs")
-    boolean debug;
-
-    @CommandLine.Option(names = { "--quarkusMavenPluginVersion" },
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusMavenPluginVersion;
-
-    @CommandLine.Option(names = { "--quarkusMavenPluginGroupId" },
-                        defaultValue = "io.quarkus")
-    String quarkusMavenPluginGroupId;
-
-    @CommandLine.Option(names = { "--dryRun" },
-                        defaultValue = "false")
-    boolean dryRun;
-
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        defaultValue = "camel-main",
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
-    RuntimeType runtime = RuntimeType.main;
-
-    @CommandLine.Option(names = { "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
-
-    @CommandLine.Option(names = { "--upgradeTimeout" },
-                        description = "Time to wait, in seconds, before shutting down the upgrade process",
-                        defaultValue = "240")
-    int upgradeTimeout;
+    @CommandLine.Mixin
+    private CamelUpdateMixin updateMixin;
 
     public UpdateRun(CamelJBangMain main) {
         super(main);
@@ -117,45 +68,29 @@ public class UpdateRun extends CamelCommand {
 
         List<String> command = new ArrayList<>();
         try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
-            downloader.setRepositories(repos);
+            downloader.setRepositories(updateMixin.repos);
             downloader.start();
 
-            String mvnProgramCall;
-            if (FileUtil.isWindows()) {
-                mvnProgramCall = "cmd /c mvn";
-            } else {
-                mvnProgramCall = "mvn";
-            }
+            Update update = null;
+            try {
+                if (updateMixin.runtime == RuntimeType.quarkus) {
+                    update = new CamelQuarkusUpdate(updateMixin, downloader);
 
-            if (runtime == RuntimeType.quarkus) {
-                CamelQuarkusUpdate camelUpdate = new CamelQuarkusUpdate();
+                    command = update.command();
+                } else {
+                    update = new CamelUpdate(updateMixin, downloader);
 
-                command.add(mvnProgramCall);
-                command.add(camelUpdate.debug(debug));
-                command.add(String.format("%s:quarkus-maven-plugin:%s:update", quarkusMavenPluginGroupId,
-                        quarkusMavenPluginVersion));
-                command.add("-Dstream=" + camelUpdate.getQuarkusStream(downloader, repos, version));
-                command.add(camelUpdate.runMode(dryRun));
-            } else {
-                String artifactCoordinates
-                        = runtime == RuntimeType.springBoot ? camelSpringBootArtifactCoordinates : camelArtifactCoordinates;
-                try {
-                    CamelUpdate camelUpdate = new CamelUpdate();
-
-                    command.add(mvnProgramCall);
-                    command.add(camelUpdate.debug(debug));
-                    command.add("org.openrewrite.maven:rewrite-maven-plugin:" + openRewriteVersion + ":"
-                                + camelUpdate.runMode(dryRun));
-                    command.add(String.format("-Drewrite.recipeArtifactCoordinates=org.apache.camel.upgrade:%s:%s",
-                            artifactCoordinates, version));
-                    command.add("-Drewrite.activeRecipes=" + camelUpdate.activeRecipes(downloader, artifactCoordinates, version)
-                            .stream().collect(Collectors.joining(",")));
-                } catch (DownloadException e) {
-                    printer().println(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
-                            "org.apache.camel.upgrade", artifactCoordinates, version));
-
-                    return -1;
+                    command = update.command();
                 }
+            } catch (CamelUpdateException ex) {
+                printer().println(ex.getMessage());
+
+                return -1;
+            } catch (DownloadException e) {
+                printer().println(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
+                        "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
+
+                return -1;
             }
         }
 
@@ -185,7 +120,7 @@ public class UpdateRun extends CamelCommand {
                 printer().println(line);
             }
 
-            if (!p.waitFor(upgradeTimeout, TimeUnit.SECONDS)) {
+            if (!p.waitFor(updateMixin.upgradeTimeout, TimeUnit.SECONDS)) {
                 p.destroyForcibly();
                 printer().println("Update execution timed out");
 

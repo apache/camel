@@ -16,29 +16,39 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.update;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.main.download.MavenDependencyDownloader;
 
-public class CamelQuarkusUpdate extends CamelUpdate {
+public final class CamelQuarkusUpdate implements Update {
+
+    private List<String> commands = new ArrayList<>();
+    private CamelUpdateMixin updateMixin;
+    private MavenDependencyDownloader downloader;
+
+    private final String QUARKUS_UPDATE_ARTIFACTID = "camel-quarkus-catalog";
+
+    public CamelQuarkusUpdate(CamelUpdateMixin updateMixin, MavenDependencyDownloader downloader) {
+        this.updateMixin = updateMixin;
+        this.downloader = downloader;
+    }
 
     /**
      * Quarkus updates are in the form 3.8, 3.15, 3.17... Downloads Camel Quarkus catalog for the given Camel version
      * and get the Quarkus stream version
      *
-     * @param  downloader
-     * @param  repos
-     * @param  version
      * @return
      */
-    public String getQuarkusStream(MavenDependencyDownloader downloader, String repos, String version) {
+    public String getQuarkusStream() {
         // Assume that the quarkus updates are in the form 3.8, 3.15, 3.16...
         List<String[]> qVersions
-                = downloader.resolveAvailableVersions("org.apache.camel.quarkus", "camel-quarkus-catalog", version,
-                        repos);
+                = downloader.resolveAvailableVersions("org.apache.camel.quarkus", QUARKUS_UPDATE_ARTIFACTID,
+                        updateMixin.version,
+                        updateMixin.repos);
         String streamVersion = null;
         for (String[] qVersion : qVersions) {
-            if (qVersion[0].equals(version)) {
+            if (qVersion[0].equals(updateMixin.version)) {
                 streamVersion = qVersion[1].substring(0, qVersion[1].lastIndexOf('.'));
             }
         }
@@ -47,9 +57,9 @@ public class CamelQuarkusUpdate extends CamelUpdate {
     }
 
     @Override
-    public String debug(boolean debug) {
+    public String debug() {
         String result = "--no-transfer-progress";
-        if (debug) {
+        if (updateMixin.debug) {
             result = "-X";
         }
 
@@ -57,12 +67,29 @@ public class CamelQuarkusUpdate extends CamelUpdate {
     }
 
     @Override
-    public String runMode(boolean dryRun) {
+    public String runMode() {
         String result = "-DrewriteFullRun";
-        if (dryRun) {
+        if (updateMixin.dryRun) {
             result = "-DrewriteDryRun";
         }
 
         return result;
+    }
+
+    @Override
+    public List<String> command() throws CamelUpdateException {
+        commands.add(mvnProgramCall());
+        commands.add(debug());
+        commands.add(String.format("%s:quarkus-maven-plugin:%s:update", updateMixin.quarkusMavenPluginGroupId,
+                updateMixin.quarkusMavenPluginVersion));
+        commands.add("-Dstream=" + getQuarkusStream());
+        commands.add(runMode());
+
+        return commands;
+    }
+
+    @Override
+    public String getArtifactCoordinates() {
+        return QUARKUS_UPDATE_ARTIFACTID;
     }
 }

@@ -107,6 +107,7 @@ public class UpdateList extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
             downloader.setRepositories(repos);
+            downloader.setFresh(true);
             downloader.start();
 
             RecipeVersions recipesVersions = collectRecipesVersions(downloader);
