@@ -507,6 +507,16 @@ public class ServiceBusConsumerTest {
         }
     }
 
+    @Test
+    void customProcessorClient() throws Exception {
+        ServiceBusProcessorClient customClient = mock();
+        when(configuration.getProcessorClient()).thenReturn(customClient);
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+            verify(customClient).start();
+        }
+    }
+
     private void configureMockMessage() {
         when(message.getApplicationProperties()).thenReturn(new HashMap<>());
         when(message.getBody()).thenReturn(BinaryData.fromBytes(MESSAGE_BODY.getBytes()));
