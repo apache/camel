@@ -41,7 +41,7 @@ include::partial$component-endpoint-options.adoc[]
 
 === Body content
 
-The body content is defined by the event model that is deployed to the Flowable Event Registry.
+The body content is defined by the event model deployed to the Flowable Event Registry.
 The event message can then be mapped to process or case variables in the process BPMN or case CMMN model.
 
 == Examples
@@ -58,7 +58,7 @@ from("direct:start").to("flowable:exampleChannel");
 To use Flowable in your Camel routes, you need to add a dependency on
 *camel-flowable*, which implements the component.
 
-If you use Maven, you can add the following to your pom.xml,
+If you use Maven, you can add the following to your `pom.xml`,
 substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
