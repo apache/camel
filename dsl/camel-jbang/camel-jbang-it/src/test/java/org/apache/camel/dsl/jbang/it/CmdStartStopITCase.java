@@ -24,18 +24,73 @@ import org.junit.jupiter.api.Test;
 public class CmdStartStopITCase extends JBangTestSupport {
 
     @Test
-    public void testCmdStop() throws IOException {
+    public void testCmdStopByRouteID() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         copyResourceInDataFolder(TestResources.ROUTE2);
         executeBackground(String.format("run --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
+        execute("cmd stop-route --id=route1");
         checkCommandOutputsPattern("get route",
-                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
-        execute("cmd stop-route route2");
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
+    }
+
+    @Test
+    public void testCmdStopByPID() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        String PID = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
+        executeBackground(String.format("run %s/route2.yaml", mountPoint()));
+        checkLogContains("Hello world!");
+        execute("cmd stop-route " + PID);
+        checkCommandOutputsPattern("get route",
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
+    }
+
+    @Test
+    public void testCmdStopAll() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        executeBackground(String.format("run --source-dir=%s", mountPoint()));
+        checkLogContains("Hello world!");
+        execute("cmd stop-route");
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped");
+    }
+
+    @Test
+    public void testCmdStartByRouteID() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        executeBackground(String.format("run --source-dir=%s", mountPoint()));
+        checkLogContains("Hello world!");
+        execute("cmd stop-route");
         execute("cmd start-route --id=route1");
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped");
+    }
+
+    @Test
+    public void testCmdStartByPID() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        String PID = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
+        executeBackground(String.format("run %s/route2.yaml", mountPoint()));
+        checkLogContains("Hello world!");
+        execute("cmd stop-route");
+        execute("cmd start-route " + PID);
+        checkCommandOutputsPattern("get route",
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped");
+    }
+
+    @Test
+    public void testCmdStartAll() throws IOException {
+        copyResourceInDataFolder(TestResources.DIR_ROUTE);
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        executeBackground(String.format("run --source-dir=%s", mountPoint()));
+        checkLogContains("Hello world!");
+        execute("cmd stop-route");
+        execute("cmd start-route");
+        checkCommandOutputsPattern("get route",
+                "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
     }
 }
