@@ -2876,6 +2876,20 @@ public interface MinioEndpointBuilderFactory {
         public String minioPresignedURLExpirationTime() {
             return "CamelMinioPresignedURLExpirationTime";
         }
+        /**
+         * The bucket Name to override which this object will be stored or which
+         * will be used for the current operation or in which this object is
+         * contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinioOverrideBucketName}.
+         */
+        public String minioOverrideBucketName() {
+            return "CamelMinioOverrideBucketName";
+        }
     }
     static MinioEndpointBuilder endpointBuilder(String componentName, String path) {
         class MinioEndpointBuilderImpl extends AbstractEndpointBuilder implements MinioEndpointBuilder, AdvancedMinioEndpointBuilder {
