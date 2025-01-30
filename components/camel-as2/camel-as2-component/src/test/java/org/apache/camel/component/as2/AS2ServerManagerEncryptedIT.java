@@ -60,6 +60,10 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
 
     @Test
     public void receiveEnvelopedMessageTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
                         AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
@@ -72,9 +76,6 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, AS2EncryptionAlgorithm.AES128_CBC,
                 certList.toArray(new Certificate[0]), null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -133,6 +134,10 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
     // Verify that the payload is compressed before being signed and encrypted.
     @Test
     public void receiveEnvelopedCompressedAndSignedMessageTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
                         AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
@@ -148,8 +153,7 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
                 AS2EncryptionAlgorithm.AES128_CBC,
                 certList.toArray(new Certificate[0]), null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        verifyMock(mockEndpoint);
+        mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         verifyExchanges(exchanges);

@@ -87,6 +87,10 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     }
 
     private void receivePlainEDIMessage(Object msg, String encoding) throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
@@ -94,9 +98,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -180,6 +181,9 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     }
 
     private void receiveMultipartSignedMessage(Object msg, String encoding) throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
 
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -190,9 +194,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -258,6 +259,9 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receiveMultipartSignedXMLMessageTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
 
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -268,9 +272,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -336,6 +337,9 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void receiveMultipartInvalidSignedMessageTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
 
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -358,9 +362,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 new Certificate[] { hackerSigningCert }, hackerSigningKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -444,6 +445,10 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     }
 
     private void receiveMultipartCompressedAndSignedMessage(Object msg, String encoding) throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
@@ -454,8 +459,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        verifyMock(mockEndpoint);
+        mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
         verifyExchanges(exchanges);
@@ -480,6 +484,10 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
     @Test
     public void sendEditMessageToFailingProcessorTest() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(0);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
+
         final AS2ClientConnection clientConnection = getAs2ClientConnection();
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
@@ -488,9 +496,6 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
-        mockEndpoint.expectedMinimumMessageCount(0);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
         mockEndpoint.assertIsSatisfied();
 
         HttpResponse response = context.getResponse();
