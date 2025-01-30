@@ -116,7 +116,8 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String executeBackground(String command) {
-        return StringUtils.substringAfter(execute(command.concat(" --background")), "PID:").trim();
+        final String pid = StringUtils.substringAfter(execute(command.concat(" --background")), "PID:").trim();
+        return StringUtils.isNumeric(pid) ? pid : StringUtils.substringBefore(pid, " ");
     }
 
     @Override
