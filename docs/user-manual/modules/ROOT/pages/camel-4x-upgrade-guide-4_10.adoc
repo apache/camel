@@ -181,6 +181,10 @@ The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been remove
 
 The camel-jbang commands for `camel-k` has been removed.
 
+=== camel-micrometer
+
+We have fixed a flawed behavior when using dynamic endpoints which made the generation of endpoint events to grow in an uncontrolled way. From now on the component will generate events for the endpoint base URI as a default behavior. If you still want to collect events for the extended URI (including the parameters), then, you can use the `camel.metrics.baseEndpointURIExchangeEventNotifier=false` configuration. Mind that this is strongly discouraged as it can make your number of events growing out of control.
+
 === camel-mina
 
 If using object codec, then you should configure the `objectCodecPattern` configuration to specify
@@ -202,7 +206,7 @@ The function calling feature was removed. Please use the `camel-langchain4j-tool
 
 === camel-smb
 
-The `camel-smb` component has been updated to extend `GenericFile` classes and now supports more consumer and producer options. 
+The `camel-smb` component has been updated to extend `GenericFile` classes and now supports more consumer and producer options.
 The Consumer includes options for filtering, pre and post processing, duplicate handling, directory traversal, polling, and readlocks.
 The Producer includes options for writing to temporary files, writing content, and handling existing files.
 
