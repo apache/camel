@@ -212,7 +212,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // still allow if using advice-with)
         boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass())
                 || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
-        if (output.isTopLevelOnly() && !parentIsRoute) {
+        boolean parentIsAlreadyTop = this.isTopLevelOnly();
+        if (output.isTopLevelOnly() && !parentIsRoute && !parentIsAlreadyTop) {
             throw new IllegalArgumentException(
                     "The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
         }
