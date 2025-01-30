@@ -19,10 +19,7 @@ package org.apache.camel.test.infra.cli.it;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Consumer;
 
-import org.apache.camel.test.infra.cli.services.CliService;
-import org.apache.camel.test.infra.cli.services.CliServiceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -31,7 +28,7 @@ import org.junitpioneer.jupiter.RestoreSystemProperties;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 @RestoreSystemProperties
-public class CliConfigITCase {
+public class CliConfigITCase extends AbstractTestSupport {
 
     @Test
     @SetSystemProperty(key = "cli.service.version", value = "4.8.3")
@@ -109,14 +106,4 @@ public class CliConfigITCase {
             }
         });
     }
-
-    private void execute(Consumer<CliService> consumer) {
-        try (CliService containerService = CliServiceFactory.createService()) {
-            containerService.beforeAll(null);
-            consumer.accept(containerService);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
