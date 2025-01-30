@@ -1828,6 +1828,21 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
         public String googleCloudStorageLastUpdate() {
             return "CamelGoogleCloudStorageLastUpdate";
         }
+        /**
+         * The bucket Name to override which this object will be stored or which
+         * will be used for the current operation or in which this object is
+         * contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GoogleCloudStorageOverrideBucketName}.
+         */
+        public String googleCloudStorageOverrideBucketName() {
+            return "CamelGoogleCloudStorageOverrideBucketName";
+        }
     }
     static GoogleCloudStorageEndpointBuilder endpointBuilder(String componentName, String path) {
         class GoogleCloudStorageEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCloudStorageEndpointBuilder, AdvancedGoogleCloudStorageEndpointBuilder {

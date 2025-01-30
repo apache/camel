@@ -95,6 +95,9 @@ public final class GoogleCloudStorageConstants {
     public static final String METADATA_CREATE_TIME = "CamelGoogleCloudStorageCreateTime";
     @Metadata(label = "consumer", description = "The last update of the object", javaType = "Date")
     public static final String METADATA_LAST_UPDATE = "CamelGoogleCloudStorageLastUpdate";
+    @Metadata(description = "The bucket Name to override which this object will be stored or which will be used for the current operation or in which this object is contained.",
+              javaType = "String")
+    public static final String OVERRIDE_BUCKET_NAME = "CamelGoogleCloudStorageOverrideBucketName";
 
     /**
      * Prevent instantiation.
