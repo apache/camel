@@ -118,4 +118,7 @@ public interface MinioConstants {
     String LENGTH = "CamelMinioLength";
     @Metadata(label = "producer", description = "Expiration of minio presigned url in Seconds", javaType = "int")
     String PRESIGNED_URL_EXPIRATION_TIME = "CamelMinioPresignedURLExpirationTime";
+    @Metadata(description = "The bucket Name to override which this object will be stored or which will be used for the current operation or in which this object is contained.",
+              javaType = "String")
+    String OVERRIDE_BUCKET_NAME = "CamelMinioOverrideBucketName";
 }

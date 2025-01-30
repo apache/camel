@@ -485,7 +485,7 @@ public class MinioProducer extends DefaultProducer {
      * @throws IllegalArgumentException if the header could not be determined.
      */
     private String determineBucketName(final Exchange exchange) {
-        String bucketName = exchange.getIn().getHeader(MinioConstants.BUCKET_NAME, String.class);
+        String bucketName = exchange.getIn().getHeader(MinioConstants.OVERRIDE_BUCKET_NAME, String.class);
 
         if (isEmpty(bucketName)) {
             if (isNotEmpty(getConfiguration().getBucketName())) {
