@@ -29,7 +29,7 @@
 
     <artifactId>camel-dsl-modeline</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: DSL :: Modeline</name>
+    <name>Camel :: DSL :: Modeline (deprecated)</name>
     <description>Camel DSL Camel K modeline</description>
 
     <properties>

@@ -27,8 +27,13 @@ import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.10")
 public class DefaultModelineParser implements ModelineParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultModelineParser.class);
 
     public static final String MODELINE_START = "camel-k:";
     public static final String JBANG_DEPS_START = "//DEPS";
@@ -78,6 +83,8 @@ public class DefaultModelineParser implements ModelineParser {
         List<CamelContextCustomizer> answer = new ArrayList<>();
 
         if (line.startsWith(MODELINE_START)) {
+            LOG.warn("Using modeline is deprecated. {}: {}", resource.getLocation(), line);
+
             line = line.substring(MODELINE_START.length()).trim();
             // split into key value pairs
             String[] parts = StringQuoteHelper.splitSafeQuote(line, ' ', false);

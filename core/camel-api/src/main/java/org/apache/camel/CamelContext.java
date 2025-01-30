@@ -1317,12 +1317,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
      * experience by being able to configure various settings using modeline directly in your route source code.
      */
+    @Deprecated(since = "4.10")
     Boolean isModeline();
 
     /**
      * Whether camel-k style modeline is also enabled when not using camel-k. Enabling this allows to use a camel-k like
      * experience by being able to configure various settings using modeline directly in your route source code.
      */
+    @Deprecated(since = "4.10")
     void setModeline(Boolean modeline);
 
     /**

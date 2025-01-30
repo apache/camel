@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 /**
  * Factory for parsing camel-k modeline when running Camel standalone with DSLs.
  */
+@Deprecated(since = "4.10")
 public interface ModelineFactory {
 
     /**

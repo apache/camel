@@ -22,6 +22,7 @@ import org.apache.camel.spi.Resource;
 /**
  * Modeline trait
  */
+@Deprecated(since = "4.10")
 public interface Trait {
 
     /**

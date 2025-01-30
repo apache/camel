@@ -36,6 +36,7 @@ import org.apache.camel.util.StringHelper;
  * This trait is a {@link PropertiesSource} so Camel properties component will use this directly when looking for
  * property values.
  */
+@Deprecated(since = "4.10")
 @JdkService("properties-source-factory")
 public class PropertyTrait implements Trait, LoadablePropertiesSource, CamelContextAware, Ordered {
 

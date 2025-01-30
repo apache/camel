@@ -21,6 +21,7 @@ import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.StringHelper;
 
+@Deprecated(since = "4.10")
 public class EnvTrait implements Trait {
 
     @Override

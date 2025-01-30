@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
 
+@Deprecated(since = "4.10")
 public class NameTrait implements Trait {
 
     @Override

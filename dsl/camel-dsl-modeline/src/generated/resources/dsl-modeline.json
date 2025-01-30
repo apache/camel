@@ -4,7 +4,7 @@
     "name": "dsl-modeline",
     "title": "DSL Modeline",
     "description": "Camel DSL Camel K modeline",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.16.0",
     "label": "dsl",
     "supportLevel": "Stable",

@@ -31,6 +31,7 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
+@Deprecated(since = "4.10")
 @JdkService(ModelineFactory.FACTORY)
 public class DefaultModelineFactory extends ServiceSupport
         implements ModelineFactory, CamelContextAware, NonManagedService, StaticService {
