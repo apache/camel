@@ -175,6 +175,12 @@ This optimization has changed APIs in the `camel-file` component to let methods 
 
 Camel users who have created 3rd party component extending `camel-file` may need to migrate your components.
 
+=== camel-google-storage
+
+The header `CamelGoogleCloudStorageBucketName` for setting a bucket to write to, on the producer side, cannot be used anymore: the header `CamelGoogleCloudStorageOverrideBucketName` must be used 
+instead. This was done to avoid situation in which you're moving a file from a bucket to a different one, and the header coming from the Google Storage consumer is used as bucket name for Google Storage Producer.
+You can find more information on CAMEL-21682. 
+
 === camel-jgroups
 
 The cluster lock has been removed as it has been removed in JGroups 5.4 onwards, and it was
