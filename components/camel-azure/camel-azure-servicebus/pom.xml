@@ -51,13 +51,6 @@
             <artifactId>azure-identity</artifactId>
         </dependency>
 
-        <!-- extras -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io-version}</version>
-        </dependency>
-
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
