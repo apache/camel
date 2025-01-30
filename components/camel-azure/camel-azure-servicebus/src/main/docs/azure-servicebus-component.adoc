@@ -60,7 +60,7 @@ This component implements the Consumer and Producer.
 
 === Authentication Information
 
-You have three different Credential Types: AZURE_IDENTITY, TOKEN_CREDENTIAL and CONNECTION_STRING. You can also provide a client instance yourself.
+There are three different Credential Types: `AZURE_IDENTITY`, `TOKEN_CREDENTIAL` and `CONNECTION_STRING`.
 To use this component, you have three options to provide the required Azure authentication information:
 
 *CONNECTION_STRING*:
@@ -77,33 +77,24 @@ See the documentation https://docs.microsoft.com/en-us/azure/active-directory/au
 - This will use `com.azure.identity.DefaultAzureCredentialBuilder().build();` instance. This will follow the Default Azure Credential Chain.
 See the documentation https://docs.microsoft.com/en-us/azure/active-directory/authentication/overview-authentication[here about Azure-AD authentication].
 
-*Client instance*:
+=== Custom Client Instance
 
-- You can provide a `com.azure.messaging.servicebus.ServiceBusSenderClient` for sending message and/or `com.azure.messaging.servicebus.ServiceBusReceiverClient` to receive messages. If you provide the instances, they will be autowired.
+It is possible to provide a custom client instance on either the consumer or producer endpoints.
+`com.azure.messaging.servicebus.ServiceBusSenderClient` for sending messages and `com.azure.messaging.servicebus.ServiceBusReceiverClient` to receive messages.
+When clients are bound to the Camel registry, they will be autowired into the Service Bus component.
 
 === Message Body
-In the producer, this component accepts message body of `String`, `byte[]` and `BinaryData` types or `List<String>`, `List<byte[]>` and `List<BinaryData>` to send batch messages.
+In the producer, this component accepts a message body of `String`, `byte[]` and `BinaryData` types. Or `List<String>`, `List<byte[]>` and `List<BinaryData>` to send batch messages.
 
-In the consumer, the returned message body will be of type `String.
-
+In the consumer, the returned message body will be of type `String`.
 
 === Azure ServiceBus Producer operations
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Operation |Description
 |`sendMessages`  | Sends a set of messages to a Service Bus queue or topic using a batched approach.
-|`scheduleMessages`  | Sends a scheduled message to the Azure Service Bus entity this sender is connected to. A scheduled message is enqueued and made available to receivers only at the scheduled enqueue time.
+|`scheduleMessages`  | Sends a scheduled message to the Azure Service Bus queue or topic. A scheduled message is enqueued and made available to receivers only at the scheduled time.
 |===
-
-
-=== Azure ServiceBus Consumer operations
-[width="100%",cols="10%,90%",options="header",]
-|===
-|Operation |Description
-|`receiveMessages`  | Receives an <b>infinite</b> stream of messages from the Service Bus entity.
-|`peekMessages`  | Reads the next batch of active messages without changing the state of the receiver or the message source.
-|===
-
 
 == Examples
 
@@ -176,7 +167,5 @@ from("azure-servicebus:test//?connectionString=test&sessionEnabled=true")
   .log("${body}")
   .to("mock:result");
 --------------------------------------------------------------------------------
-
-
 
 include::spring-boot:partial$starter.adoc[]
