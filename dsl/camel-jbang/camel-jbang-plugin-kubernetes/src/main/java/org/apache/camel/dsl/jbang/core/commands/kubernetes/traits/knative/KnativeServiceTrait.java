@@ -52,15 +52,11 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
         if (context.getKnativeService().isPresent()) {
             return false;
         }
-
         // one of Knative traits needs to be explicitly enabled
         boolean enabled = false;
         if (traitConfig.getKnativeService() != null) {
             enabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled()).orElse(false);
-        } else if (traitConfig.getKnative() != null) {
-            enabled = Optional.ofNullable(traitConfig.getKnative().getEnabled()).orElse(false);
         }
-
         return enabled && TraitHelper.exposesHttpService(context);
     }
 

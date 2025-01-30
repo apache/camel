@@ -449,7 +449,7 @@ https://knative.dev/docs/serving/[Knative serving] defines a set of resources on
 When Knative serving is available on the target Kubernetes cluster, you may want to use the Knative service resource instead of an arbitrary Kubernetes service resource.
 The Knative service trait will create such a resource as part of the Kubernetes manifest.
 
-NOTE: You need to enable the Knative service trait with `--trait knative-service.enabled=true` option. Otherwise, the Camel JBang export will always create an arbitrary Kubernetes service resource.
+NOTE: The `knative-service` trait is disabled by default, you need to enable the Knative service trait with `--trait knative-service.enabled=true` option. Otherwise, the Camel JBang export will always create an arbitrary Kubernetes service resource.
 
 The trait offers following options for customization:
 
@@ -532,6 +532,8 @@ The export command assists you in configuring both the Knative component and the
 
 You can configure the Knative component with the Knative trait.
 
+NOTE: The `knative` trait is disabled by default, you need to enable the Knative trait with `--trait knative.enabled=true` option.
+
 The trait offers the following options for customization:
 
 [cols="2m,1m,5a"]
@@ -594,6 +596,8 @@ In case your Camel route uses the Knative component as a consumer you may need t
 to connect your Camel application with the Knative broker.
 
 The Camel JBang Kubernetes plugin is able to automatically create this trigger for you.
+
+NOTE: The `knative` trait is disabled by default, you need to enable the Knative trait with `--trait knative.enabled=true` option.
 
 The following Camel route uses the Knative event component and references a Knative broker by its name.
 The plugin inspects the code and automatically generates the Knative trigger as part of the Kubernetes manifest that is used
@@ -672,6 +676,8 @@ Now you can just deploy the application using the Kubernetes manifest and see th
 Knative channels represent another form of producing and consuming events from the Knative broker.
 Instead of using a trigger, you can create a subscription for a Knative channel to consume events.
 
+NOTE: The `knative` trait is disabled by default, you need to enable the Knative trait with `--trait knative.enabled=true` option.
+
 The Camel route that connects to a Knative channel in order to receive events looks like this:
 
 [source,yaml]
@@ -749,6 +755,8 @@ The Knative URL injection uses environment variables (`K_SINK`, `K_CE_OVERRIDES`
 The Knative eventing operator will automatically resolve the Knative resource (e.g. a Knative broker URL) and inject the value so your application does not need to know the actual URL when deploying.
 
 The Camel JBang Kubernetes plugin leverages the sink binding concept for all routes that use the Knative component as an output.
+
+NOTE: The `knative` trait is disabled by default, you need to enable the Knative trait with `--trait knative.enabled=true` option.
 
 The following route produces events on a Knative broker:
 

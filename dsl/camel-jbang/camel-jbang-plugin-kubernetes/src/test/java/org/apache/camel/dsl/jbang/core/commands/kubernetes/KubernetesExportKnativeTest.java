@@ -98,6 +98,7 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-event-source.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
         command.traits = new String[] {
+                "knative.enabled=true",
                 "knative.filters=source=my-source" };
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -142,6 +143,8 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeSubscription(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-channel-source.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
         Assertions.assertTrue(hasService(rt));
@@ -181,6 +184,9 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeBrokerSinkBinding(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-event-sink.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
         Assertions.assertTrue(hasService(rt));
@@ -221,6 +227,9 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeChannelSinkBinding(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-channel-sink.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
         Assertions.assertTrue(hasService(rt));
@@ -261,6 +270,8 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
     public void shouldAddKnativeEndpointSinkBinding(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:knative-endpoint-sink.yaml" },
                 "--image-group=camel-test", "--runtime=" + rt.runtime());
+        command.traits = new String[] {
+                "knative.enabled=true" };
         command.doCall();
 
         Assertions.assertTrue(hasService(rt));
