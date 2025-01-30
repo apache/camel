@@ -26,7 +26,6 @@ import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -47,7 +46,6 @@ import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ServerManagerApiMethod;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -250,12 +248,6 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
         SSLContext sslContext = sslContextParameters.createSSLContext(context);
         return sslContext;
-    }
-
-    public void verifyMock(MockEndpoint mockEndpoint) throws InterruptedException {
-        mockEndpoint.expectedMinimumMessageCount(1);
-        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
-        mockEndpoint.assertIsSatisfied();
     }
 
     public void verifyExchanges(List<Exchange> exchanges) {
