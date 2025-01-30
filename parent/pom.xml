@@ -491,7 +491,7 @@
         <vavr-version>0.10.5</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
-        <vertx-version>4.5.11</vertx-version>
+        <vertx-version>4.5.12</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
