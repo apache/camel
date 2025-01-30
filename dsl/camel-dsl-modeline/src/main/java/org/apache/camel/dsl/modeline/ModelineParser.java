@@ -24,6 +24,7 @@ import org.apache.camel.spi.Resource;
 /**
  * Modeline parser
  */
+@Deprecated(since = "4.10")
 public interface ModelineParser {
 
     /**

@@ -21,6 +21,7 @@ import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.Resource;
 
+@Deprecated(since = "4.10")
 public class DependencyTrait implements Trait {
 
     @Override

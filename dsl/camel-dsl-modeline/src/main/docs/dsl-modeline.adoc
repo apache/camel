@@ -1,10 +1,11 @@
-= DSL Modeline Component
+= DSL Modeline Component (deprecated)
 :doctitle: DSL Modeline
 :shortname: dsl-modeline
 :artifactid: camel-dsl-modeline
 :description: Camel DSL Camel K modeline
 :since: 3.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :group: DSL
