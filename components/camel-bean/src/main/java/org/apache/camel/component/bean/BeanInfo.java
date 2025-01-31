@@ -209,59 +209,16 @@ public class BeanInfo {
             // special for getClass, as we want the user to be able to invoke this method
             // for example to log the class type or the likes
             if ("class".equals(name) || "getClass".equals(name)) {
-                try {
-                    Method method = pojo.getClass().getMethod("getClass");
-                    methodInfo = new MethodInfo(
-                            exchange.getContext(), pojo.getClass(), method, Collections.<ParameterInfo> emptyList(),
-                            Collections.<ParameterInfo> emptyList(), false, false);
-                } catch (NoSuchMethodException e) {
-                    throw new MethodNotFoundException(exchange, pojo, "getClass");
-                }
+                methodInfo = createGetClassInvocation(pojo, exchange);
                 // special for length on an array type
             } else if ("length".equals(name) && pojo.getClass().isArray()) {
-                try {
-                    // need to use arrayLength method from ObjectHelper as Camel's bean OGNL support is method invocation based
-                    // and not for accessing fields. And hence we need to create a MethodInfo instance with a method to call
-                    // and therefore use arrayLength from ObjectHelper to return the array length field.
-                    Method method = org.apache.camel.util.ObjectHelper.class.getMethod("arrayLength", Object[].class);
-                    ParameterInfo pi = new ParameterInfo(
-                            0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
-                    List<ParameterInfo> lpi = new ArrayList<>(1);
-                    lpi.add(pi);
-                    methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
-                    // Need to update the message body to be pojo for the invocation
-                    exchange.getIn().setBody(pojo);
-                } catch (NoSuchMethodException e) {
-                    throw new MethodNotFoundException(exchange, pojo, "getClass");
-                }
+                methodInfo = createLengthInvocation(pojo, exchange);
             } else {
                 List<MethodInfo> methods = getOperations(name);
                 if (methods != null && methods.size() == 1) {
-                    // only one method then choose it
-                    methodInfo = methods.get(0);
-
-                    // validate that if we want an explicit no-arg method, then that's what we get
-                    if (emptyParameters && methodInfo.hasParameters()) {
-                        throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
-                    }
+                    methodInfo = createSingleMethodInvocation(pojo, exchange, methods, emptyParameters, methodName);
                 } else if (methods != null) {
-                    // there are more methods with that name so we cannot decide which to use
-
-                    // but first let's try to choose a method and see if that complies with the name
-                    // must use the method name which may have qualifiers
-                    methodInfo = chooseMethod(pojo, exchange, methodName);
-
-                    // validate that if we want an explicit no-arg method, then that's what we get
-                    if (emptyParameters) {
-                        if (methodInfo == null || methodInfo.hasParameters()) {
-                            // we could not find a no-arg method with that name
-                            throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
-                        }
-                    }
-
-                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
-                        throw new AmbiguousMethodCallException(exchange, methods);
-                    }
+                    methodInfo = evalMethods(pojo, exchange, methodName, emptyParameters, name, methods);
                 } else {
                     // a specific method was given to invoke but not found
                     throw new MethodNotFoundException(exchange, pojo, methodName);
@@ -283,6 +240,75 @@ public class BeanInfo {
 
         LOG.debug("Cannot find suitable method to invoke on bean: {}", pojo);
         return null;
+    }
+
+    private MethodInfo evalMethods(
+            Object pojo, Exchange exchange, String methodName, boolean emptyParameters, String name, List<MethodInfo> methods) {
+        MethodInfo methodInfo;
+        // there are more methods with that name so we cannot decide which to use
+
+        // but first let's try to choose a method and see if that complies with the name
+        // must use the method name which may have qualifiers
+        methodInfo = chooseMethod(pojo, exchange, methodName);
+
+        // validate that if we want an explicit no-arg method, then that's what we get
+        if (emptyParameters) {
+            if (methodInfo == null || methodInfo.hasParameters()) {
+                // we could not find a no-arg method with that name
+                throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
+            }
+        }
+
+        if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
+            throw new AmbiguousMethodCallException(exchange, methods);
+        }
+        return methodInfo;
+    }
+
+    private static MethodInfo createSingleMethodInvocation(
+            Object pojo, Exchange exchange, List<MethodInfo> methods, boolean emptyParameters, String methodName) {
+        MethodInfo methodInfo;
+        // only one method then choose it
+        methodInfo = methods.get(0);
+
+        // validate that if we want an explicit no-arg method, then that's what we get
+        if (emptyParameters && methodInfo.hasParameters()) {
+            throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
+        }
+        return methodInfo;
+    }
+
+    private static MethodInfo createLengthInvocation(Object pojo, Exchange exchange) {
+        MethodInfo methodInfo;
+        try {
+            // need to use arrayLength method from ObjectHelper as Camel's bean OGNL support is method invocation based
+            // and not for accessing fields. And hence we need to create a MethodInfo instance with a method to call
+            // and therefore use arrayLength from ObjectHelper to return the array length field.
+            Method method = org.apache.camel.util.ObjectHelper.class.getMethod("arrayLength", Object[].class);
+            ParameterInfo pi = new ParameterInfo(
+                    0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
+            List<ParameterInfo> lpi = new ArrayList<>(1);
+            lpi.add(pi);
+            methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
+            // Need to update the message body to be pojo for the invocation
+            exchange.getIn().setBody(pojo);
+        } catch (NoSuchMethodException e) {
+            throw new MethodNotFoundException(exchange, pojo, "getClass");
+        }
+        return methodInfo;
+    }
+
+    private static MethodInfo createGetClassInvocation(Object pojo, Exchange exchange) {
+        MethodInfo methodInfo;
+        try {
+            Method method = pojo.getClass().getMethod("getClass");
+            methodInfo = new MethodInfo(
+                    exchange.getContext(), pojo.getClass(), method, Collections.emptyList(),
+                    Collections.emptyList(), false, false);
+        } catch (NoSuchMethodException e) {
+            throw new MethodNotFoundException(exchange, pojo, "getClass");
+        }
+        return methodInfo;
     }
 
     /**
@@ -317,7 +343,7 @@ public class BeanInfo {
 
         LOG.trace("Introspecting class: {}", clazz);
 
-        for (Method m : Arrays.asList(clazz.getDeclaredMethods())) {
+        for (Method m : clazz.getDeclaredMethods()) {
             filteredMethods.filterMethod(m);
         }
 
@@ -333,11 +359,10 @@ public class BeanInfo {
     /**
      * Introspects the given method
      *
-     * @param  clazz  the class
-     * @param  method the method
-     * @return        the method info, is newer <tt>null</tt>
+     * @param clazz  the class
+     * @param method the method
      */
-    private MethodInfo introspect(Class<?> clazz, Method method) {
+    private void introspect(Class<?> clazz, Method method) {
         LOG.trace("Introspecting class: {}, method: {}", clazz, method);
         String opName = method.getName();
 
@@ -348,7 +373,7 @@ public class BeanInfo {
         if (existingMethodInfo != null) {
             LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}",
                     existingMethodInfo);
-            return existingMethodInfo;
+            return;
         }
 
         LOG.trace("Adding operation: {} for method: {}", opName, methodInfo);
@@ -379,7 +404,6 @@ public class BeanInfo {
         // must add to method map last otherwise we break stuff
         methodMap.put(method, methodInfo);
 
-        return methodInfo;
     }
 
     /**
@@ -1004,25 +1028,21 @@ public class BeanInfo {
     private Expression createParameterUnmarshalExpressionForAnnotation(
             Method method,
             Class<?> parameterType, Annotation annotation) {
-        if (annotation instanceof ExchangeProperty) {
-            ExchangeProperty propertyAnnotation = (ExchangeProperty) annotation;
+        if (annotation instanceof ExchangeProperty propertyAnnotation) {
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof ExchangeProperties) {
             return ExpressionBuilder.exchangePropertiesExpression();
-        } else if (annotation instanceof Header) {
-            Header headerAnnotation = (Header) annotation;
+        } else if (annotation instanceof Header headerAnnotation) {
             return ExpressionBuilder.headerExpression(headerAnnotation.value());
         } else if (annotation instanceof Headers) {
             return ExpressionBuilder.headersExpression();
-        } else if (annotation instanceof Variable) {
-            Variable variableAnnotation = (Variable) annotation;
+        } else if (annotation instanceof Variable variableAnnotation) {
             return ExpressionBuilder.variableExpression(variableAnnotation.value());
         } else if (annotation instanceof Variables) {
             return ExpressionBuilder.variablesExpression();
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
-        } else if (annotation instanceof PropertyInject) {
-            PropertyInject propertyAnnotation = (PropertyInject) annotation;
+        } else if (annotation instanceof PropertyInject propertyAnnotation) {
             Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(),
                     propertyAnnotation.defaultValue());
             return ExpressionBuilder.convertToExpression(inject, parameterType);
@@ -1035,8 +1055,7 @@ public class BeanInfo {
                     type = DefaultAnnotationExpressionFactory.class;
                 }
                 Object object = camelContext.getInjector().newInstance(type);
-                if (object instanceof AnnotationExpressionFactory) {
-                    AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
+                if (object instanceof AnnotationExpressionFactory expressionFactory) {
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 } else {
                     LOG.warn(

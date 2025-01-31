@@ -297,14 +297,7 @@ public class MethodInfo {
             private boolean doProceed(AsyncCallback callback) throws Exception {
                 // dynamic router should be invoked beforehand
                 if (dynamicRouter != null) {
-                    if (!ServiceHelper.isStarted(dynamicRouter)) {
-                        ServiceHelper.startService(dynamicRouter);
-                    }
-                    // use an expression which invokes the method to be used by dynamic router
-                    Expression expression = new DynamicRouterExpression(pojo);
-                    expression.init(camelContext);
-                    exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, expression);
-                    return dynamicRouter.process(exchange, callback);
+                    return dynamicRouterInvocation(callback);
                 }
 
                 // invoke pojo
@@ -327,19 +320,10 @@ public class MethodInfo {
                 }
 
                 if (recipientList != null) {
-                    // ensure its started
-                    if (!ServiceHelper.isStarted(recipientList)) {
-                        ServiceHelper.startService(recipientList);
-                    }
-                    exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
-                    return recipientList.process(exchange, callback);
+                    return recipientListInvocation(callback, result);
                 }
                 if (routingSlip != null) {
-                    if (!ServiceHelper.isStarted(routingSlip)) {
-                        ServiceHelper.startService(routingSlip);
-                    }
-                    exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
-                    return routingSlip.process(exchange, callback);
+                    return routingSlipInvocation(callback, result);
                 }
 
                 //If it's Java 8 async result
@@ -367,6 +351,34 @@ public class MethodInfo {
                 // so notify the callback we are done synchronously
                 callback.done(true);
                 return true;
+            }
+
+            private boolean routingSlipInvocation(AsyncCallback callback, Object result) {
+                if (!ServiceHelper.isStarted(routingSlip)) {
+                    ServiceHelper.startService(routingSlip);
+                }
+                exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
+                return routingSlip.process(exchange, callback);
+            }
+
+            private boolean recipientListInvocation(AsyncCallback callback, Object result) {
+                // ensure its started
+                if (!ServiceHelper.isStarted(recipientList)) {
+                    ServiceHelper.startService(recipientList);
+                }
+                exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, result);
+                return recipientList.process(exchange, callback);
+            }
+
+            private boolean dynamicRouterInvocation(AsyncCallback callback) {
+                if (!ServiceHelper.isStarted(dynamicRouter)) {
+                    ServiceHelper.startService(dynamicRouter);
+                }
+                // use an expression which invokes the method to be used by dynamic router
+                Expression expression = new DynamicRouterExpression(pojo);
+                expression.init(camelContext);
+                exchange.setProperty(ExchangePropertyKey.EVALUATE_EXPRESSION_RESULT, expression);
+                return dynamicRouter.process(exchange, callback);
             }
 
             public Object getThis() {

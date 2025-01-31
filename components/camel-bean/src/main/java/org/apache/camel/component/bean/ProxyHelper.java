@@ -112,14 +112,14 @@ public final class ProxyHelper {
      * Returns the class loader of the first interface or throws {@link IllegalArgumentException} if there are no
      * interfaces specified
      */
-    protected static ClassLoader getClassLoader(Class<?>... interfaces) {
+    private static ClassLoader getClassLoader(Class<?>... interfaces) {
         if (interfaces == null || interfaces.length < 1) {
             throw new IllegalArgumentException("You must provide at least 1 interface class.");
         }
         return interfaces[0].getClassLoader();
     }
 
-    protected static MethodInfoCache createMethodInfoCache(Endpoint endpoint) {
+    private static MethodInfoCache createMethodInfoCache(Endpoint endpoint) {
         return new MethodInfoCache(endpoint.getCamelContext());
     }
 
