@@ -1028,25 +1028,21 @@ public class BeanInfo {
     private Expression createParameterUnmarshalExpressionForAnnotation(
             Method method,
             Class<?> parameterType, Annotation annotation) {
-        if (annotation instanceof ExchangeProperty) {
-            ExchangeProperty propertyAnnotation = (ExchangeProperty) annotation;
+        if (annotation instanceof ExchangeProperty propertyAnnotation) {
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof ExchangeProperties) {
             return ExpressionBuilder.exchangePropertiesExpression();
-        } else if (annotation instanceof Header) {
-            Header headerAnnotation = (Header) annotation;
+        } else if (annotation instanceof Header headerAnnotation) {
             return ExpressionBuilder.headerExpression(headerAnnotation.value());
         } else if (annotation instanceof Headers) {
             return ExpressionBuilder.headersExpression();
-        } else if (annotation instanceof Variable) {
-            Variable variableAnnotation = (Variable) annotation;
+        } else if (annotation instanceof Variable variableAnnotation) {
             return ExpressionBuilder.variableExpression(variableAnnotation.value());
         } else if (annotation instanceof Variables) {
             return ExpressionBuilder.variablesExpression();
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
-        } else if (annotation instanceof PropertyInject) {
-            PropertyInject propertyAnnotation = (PropertyInject) annotation;
+        } else if (annotation instanceof PropertyInject propertyAnnotation) {
             Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(),
                     propertyAnnotation.defaultValue());
             return ExpressionBuilder.convertToExpression(inject, parameterType);
@@ -1059,8 +1055,7 @@ public class BeanInfo {
                     type = DefaultAnnotationExpressionFactory.class;
                 }
                 Object object = camelContext.getInjector().newInstance(type);
-                if (object instanceof AnnotationExpressionFactory) {
-                    AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
+                if (object instanceof AnnotationExpressionFactory expressionFactory) {
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 } else {
                     LOG.warn(
