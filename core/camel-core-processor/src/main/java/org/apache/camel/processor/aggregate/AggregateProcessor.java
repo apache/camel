@@ -805,25 +805,10 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         Exchange answer;
         if (fromTimeout && isDiscardOnCompletionTimeout()) {
-            // this exchange is discarded
-            discarded.incrementAndGet();
-            // discard due timeout
-            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
-            // must confirm the discarded exchange
-            aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
-            // and remove redelivery state as well
-            redeliveryState.remove(aggregated.getExchangeId());
-            // the completion was from timeout and we should just discard it
+            discard(key, aggregated);
             answer = null;
         } else if (aggregateFailed && isDiscardOnAggregationFailure()) {
-            // this exchange is discarded
-            discarded.incrementAndGet();
-            // discard due aggregation failed (or by force)
-            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
-            // must confirm the discarded exchange
-            aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
-            // and remove redelivery state as well
-            redeliveryState.remove(aggregated.getExchangeId());
+            discard(key, aggregated);
             // the completion was failed during aggregation and we should just discard it
             answer = null;
         } else {
@@ -832,6 +817,18 @@ public class AggregateProcessor extends AsyncProcessorSupport
         }
 
         return answer;
+    }
+
+    private void discard(String key, Exchange aggregated) {
+        // this exchange is discarded
+        discarded.incrementAndGet();
+        // discard due timeout
+        LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: {}", key, aggregated);
+        // must confirm the discarded exchange
+        aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
+        // and remove redelivery state as well
+        redeliveryState.remove(aggregated.getExchangeId());
+        // the completion was from timeout and we should just discard it
     }
 
     private void onSubmitCompletion(final String key, final Exchange exchange) {
@@ -849,33 +846,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         if (getStatistics().isStatisticsEnabled()) {
             totalCompleted.incrementAndGet();
 
-            String completedBy = exchange.getProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, String.class);
-            switch (completedBy) {
-                case COMPLETED_BY_INTERVAL:
-                    completedByInterval.incrementAndGet();
-                    break;
-                case COMPLETED_BY_TIMEOUT:
-                    completedByTimeout.incrementAndGet();
-                    break;
-                case COMPLETED_BY_FORCE:
-                    completedByForce.incrementAndGet();
-                    break;
-                case COMPLETED_BY_CONSUMER:
-                    completedByBatchConsumer.incrementAndGet();
-                    break;
-                case COMPLETED_BY_PREDICATE:
-                    completedByPredicate.incrementAndGet();
-                    break;
-                case COMPLETED_BY_SIZE:
-                    completedBySize.incrementAndGet();
-                    break;
-                case COMPLETED_BY_STRATEGY:
-                    completedByStrategy.incrementAndGet();
-                    break;
-                default:
-                    LOG.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
-                    break;
-            }
+            aggregateCompletionCounter(exchange);
         }
 
         LOG.debug("Processing aggregated exchange: {}", exchange);
@@ -900,6 +871,36 @@ public class AggregateProcessor extends AsyncProcessorSupport
             // execute the task using this thread sync (similar to multicast eip in parallel mode)
             reactiveExecutor.scheduleSync(task);
         });
+    }
+
+    private void aggregateCompletionCounter(Exchange exchange) {
+        String completedBy = exchange.getProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, String.class);
+        switch (completedBy) {
+            case COMPLETED_BY_INTERVAL:
+                completedByInterval.incrementAndGet();
+                break;
+            case COMPLETED_BY_TIMEOUT:
+                completedByTimeout.incrementAndGet();
+                break;
+            case COMPLETED_BY_FORCE:
+                completedByForce.incrementAndGet();
+                break;
+            case COMPLETED_BY_CONSUMER:
+                completedByBatchConsumer.incrementAndGet();
+                break;
+            case COMPLETED_BY_PREDICATE:
+                completedByPredicate.incrementAndGet();
+                break;
+            case COMPLETED_BY_SIZE:
+                completedBySize.incrementAndGet();
+                break;
+            case COMPLETED_BY_STRATEGY:
+                completedByStrategy.incrementAndGet();
+                break;
+            default:
+                LOG.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
+                break;
+        }
     }
 
     /**
