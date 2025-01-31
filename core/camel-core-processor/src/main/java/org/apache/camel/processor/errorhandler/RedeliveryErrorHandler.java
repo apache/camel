@@ -756,48 +756,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     // okay there is a delay so create a scheduled task to have it executed in the future
 
                     if (currentRedeliveryPolicy.isAsyncDelayedRedelivery() && !exchange.isTransacted()) {
-
-                        // we are doing a redelivery then a thread pool must be configured (see the doStart method)
-                        ObjectHelper.notNull(executorService,
-                                "Redelivery is enabled but ExecutorService has not been configured.", this);
-
-                        // schedule the redelivery task
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay,
-                                    exchange.getExchangeId());
-                        }
-                        executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay,
-                                TimeUnit.MILLISECONDS);
-
+                        runAsynchronousRedelivery();
                     } else {
                         // async delayed redelivery was disabled or we are transacted so we must be synchronous
                         // as the transaction manager requires to execute in the same thread context
-                        try {
-                            // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
-                            redeliverySleepCounter.incrementAndGet();
-                            boolean complete = sleep();
-                            redeliverySleepCounter.decrementAndGet();
-                            if (!complete) {
-                                // the task was rejected
-                                exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
-                                // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
-                                exchange.getExchangeExtension().setRedeliveryExhausted(true);
-                                // jump to start of loop which then detects that we are failed and exhausted
-                                reactiveExecutor.schedule(this);
-                            } else {
-                                reactiveExecutor.schedule(this::redeliver);
-                            }
-                        } catch (InterruptedException e) {
-                            redeliverySleepCounter.decrementAndGet();
-                            // we was interrupted so break out
-                            exchange.setException(e);
-                            // mark the exchange to stop continue routing when interrupted
-                            // as we do not want to continue routing (for example a task has been cancelled)
-                            exchange.setRouteStop(true);
-                            reactiveExecutor.schedule(callback);
-
-                            Thread.currentThread().interrupt();
-                        }
+                        runSynchronousRedelivery();
                     }
                 } else {
                     // execute the task immediately
@@ -816,6 +779,49 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(this);
                     }
                 });
+            }
+        }
+
+        private void runAsynchronousRedelivery() {
+            // we are doing a redelivery then a thread pool must be configured (see the doStart method)
+            ObjectHelper.notNull(executorService,
+                    "Redelivery is enabled but ExecutorService has not been configured.", this);
+
+            // schedule the redelivery task
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay,
+                        exchange.getExchangeId());
+            }
+            executorService.schedule(() -> reactiveExecutor.schedule(this::redeliver), redeliveryDelay,
+                    TimeUnit.MILLISECONDS);
+        }
+
+        private void runSynchronousRedelivery() {
+            try {
+                // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
+                redeliverySleepCounter.incrementAndGet();
+                boolean complete = sleep();
+                redeliverySleepCounter.decrementAndGet();
+                if (!complete) {
+                    // the task was rejected
+                    exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
+                    // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
+                    exchange.getExchangeExtension().setRedeliveryExhausted(true);
+                    // jump to start of loop which then detects that we are failed and exhausted
+                    reactiveExecutor.schedule(this);
+                } else {
+                    reactiveExecutor.schedule(this::redeliver);
+                }
+            } catch (InterruptedException e) {
+                redeliverySleepCounter.decrementAndGet();
+                // we was interrupted so break out
+                exchange.setException(e);
+                // mark the exchange to stop continue routing when interrupted
+                // as we do not want to continue routing (for example a task has been cancelled)
+                exchange.setRouteStop(true);
+                reactiveExecutor.schedule(callback);
+
+                Thread.currentThread().interrupt();
             }
         }
 
