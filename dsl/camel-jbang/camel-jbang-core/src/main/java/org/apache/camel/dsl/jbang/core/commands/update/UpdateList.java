@@ -91,6 +91,10 @@ public class UpdateList extends CamelCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
+    @CommandLine.Option(names = { "--use-cache" },
+                        description = "Use Maven cache")
+    boolean useCache;
+
     private static final String CAMEL_UPGRADE_GROUPID = "org.apache.camel.upgrade";
     private static final String CAMEL_UPGRADE_ARTIFACTID = "camel-upgrade-recipes";
     private static final String CAMEL_SB_UPGRADE_ARTIFACTID = "camel-spring-boot-upgrade-recipes";
@@ -107,7 +111,7 @@ public class UpdateList extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
             downloader.setRepositories(repos);
-            downloader.setFresh(true);
+            downloader.setFresh(!useCache);
             downloader.start();
 
             RecipeVersions recipesVersions = collectRecipesVersions(downloader);
