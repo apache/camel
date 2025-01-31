@@ -343,7 +343,7 @@ public class BeanInfo {
 
         LOG.trace("Introspecting class: {}", clazz);
 
-        for (Method m : Arrays.asList(clazz.getDeclaredMethods())) {
+        for (Method m : clazz.getDeclaredMethods()) {
             filteredMethods.filterMethod(m);
         }
 
