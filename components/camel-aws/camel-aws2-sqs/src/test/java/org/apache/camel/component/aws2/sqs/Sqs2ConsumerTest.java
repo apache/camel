@@ -29,6 +29,7 @@ import org.apache.camel.clock.EventClock;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -51,6 +52,8 @@ import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeNa
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SEQUENCE_NUMBER;
 
 @ExtendWith(MockitoExtension.class)
+@DisabledOnOs(architectures = { "s390x" },
+              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 class Sqs2ConsumerTest extends CamelTestSupport {
     private AmazonSQSClientMock sqsClientMock;
     private Sqs2Configuration configuration;
