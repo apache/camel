@@ -872,7 +872,8 @@ public class Run extends CamelCommand {
         }
 
         // okay we have validated all input and are ready to run
-        if (camelVersion != null || isDebugMode()) {
+        // (if exporting then we cannot run a different version)
+        if (!exportRun && camelVersion != null || isDebugMode()) {
             // TODO: debug camel specific version
             boolean custom = false;
             if (camelVersion != null) {

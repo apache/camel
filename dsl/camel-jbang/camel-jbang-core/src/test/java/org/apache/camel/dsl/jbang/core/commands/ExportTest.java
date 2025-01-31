@@ -83,6 +83,34 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportDifferentVersion(RuntimeType rt) throws Exception {
+        // only test for main/spring-boot
+        if (rt == RuntimeType.quarkus) {
+            return;
+        }
+        Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--camel-version=4.8.3", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+        // Reproducible build
+        Assertions.assertNotNull(model.getProperties().get("project.build.outputTimestamp"));
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencyManagement().getDependencies(), "org.apache.camel",
+                    "camel-bom", "4.8.3"));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(containsDependency(model.getDependencyManagement().getDependencies(),
+                    "org.apache.camel.springboot", "camel-spring-boot-bom", "4.8.3"));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithBuildProperties(RuntimeType rt) throws Exception {
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
