@@ -359,11 +359,10 @@ public class BeanInfo {
     /**
      * Introspects the given method
      *
-     * @param  clazz  the class
-     * @param  method the method
-     * @return        the method info, is newer <tt>null</tt>
+     * @param clazz  the class
+     * @param method the method
      */
-    private MethodInfo introspect(Class<?> clazz, Method method) {
+    private void introspect(Class<?> clazz, Method method) {
         LOG.trace("Introspecting class: {}, method: {}", clazz, method);
         String opName = method.getName();
 
@@ -374,7 +373,7 @@ public class BeanInfo {
         if (existingMethodInfo != null) {
             LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}",
                     existingMethodInfo);
-            return existingMethodInfo;
+            return;
         }
 
         LOG.trace("Adding operation: {} for method: {}", opName, methodInfo);
@@ -405,7 +404,6 @@ public class BeanInfo {
         // must add to method map last otherwise we break stuff
         methodMap.put(method, methodInfo);
 
-        return methodInfo;
     }
 
     /**
