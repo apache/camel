@@ -37,11 +37,7 @@ public class TikaDetectTest extends CamelTestSupport {
 
     @Test
     public void testDocumentDetect() throws Exception {
-        File document = new File("src/test/resources/test.doc");
-        template.sendBody("direct:start", document);
-
         resultEndpoint.setExpectedMessageCount(1);
-
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
@@ -51,16 +47,15 @@ public class TikaDetectTest extends CamelTestSupport {
                 return true;
             }
         });
+
+        File document = new File("src/test/resources/test.doc");
+        template.sendBody("direct:start", document);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testImageDetect() throws Exception {
-        File document = new File("src/test/resources/testGIF.gif");
-        template.sendBody("direct:start", document);
-
         resultEndpoint.setExpectedMessageCount(1);
-
         resultEndpoint.expectedMessagesMatches(new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {
@@ -70,6 +65,9 @@ public class TikaDetectTest extends CamelTestSupport {
                 return true;
             }
         });
+
+        File document = new File("src/test/resources/testGIF.gif");
+        template.sendBody("direct:start", document);
         resultEndpoint.assertIsSatisfied();
     }
 
