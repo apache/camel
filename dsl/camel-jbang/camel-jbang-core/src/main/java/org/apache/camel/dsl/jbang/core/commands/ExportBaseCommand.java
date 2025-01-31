@@ -421,7 +421,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     if (asfKamelets) {
                         // include JARs for official ASF kamelets
                         answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                        answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                        if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                            answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                        }
                     }
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
@@ -435,7 +437,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             if (asfKamelets) {
                                 // include JARs for official ASF kamelets
                                 answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                                answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                                    answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                }
                             }
                         }
                     }
@@ -469,7 +473,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                     if (asfKamelets) {
                                         // include JARs for official ASF kamelets
                                         answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                                        answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                        if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                                            answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                                        }
                                     }
                                 }
                             }
@@ -483,7 +489,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 if (asfKamelets) {
                     // include JARs for official ASF kamelets
                     answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
-                    answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    if (VersionHelper.compare(camelVersion, "4.10.0") < 0) {
+                        answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+                    }
                 }
             } else if (line.startsWith("modeline=")) {
                 answer.add("camel:dsl-modeline");
