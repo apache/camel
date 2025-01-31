@@ -148,9 +148,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
                         description = "Whether to push image to given image registry as part of the run.")
-    boolean imagePush = false;
+    boolean imagePush = true;
 
     @CommandLine.Option(names = { "--image-platforms" },
                         description = "List of target platforms. Each platform is defined using the pattern.")
@@ -377,6 +377,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.image = image;
         export.imageRegistry = imageRegistry;
         export.imageGroup = imageGroup;
+        export.imagePush = imagePush;
         export.imageBuilder = imageBuilder;
         export.clusterType = clusterType;
         export.serviceAccount = serviceAccount;
@@ -561,6 +562,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("-Djkube.namespace=%s".formatted(namespace));
         }
 
+        // skip image build and push because we only want to build the Kubernetes manifest
+        args.add("-Djkube.skip.build=true");
+        args.add("-Djkube.skip.push=true");
+
         args.add("package");
 
         if (!quiet) {
@@ -606,6 +611,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         if (imagePush) {
             args.add("-Djkube.%s.push=true".formatted(imageBuilder));
+            args.add("-Djkube.skip.push=false");
         }
 
         if (!ObjectHelper.isEmpty(namespace)) {

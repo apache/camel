@@ -28,7 +28,6 @@ public final class ContainerBuilder {
     private String image;
     private Container.ImagePullPolicy imagePullPolicy;
     private List<String> imagePullSecrets;
-    private boolean imagePush;
     private String limitCPU;
     private String limitMemory;
     private String name;
@@ -91,11 +90,6 @@ public final class ContainerBuilder {
 
     public ContainerBuilder withImagePullSecrets(List<String> imagePullSecrets) {
         this.imagePullSecrets = imagePullSecrets;
-        return this;
-    }
-
-    public ContainerBuilder withImagePush(boolean imagePush) {
-        this.imagePush = imagePush;
         return this;
     }
 
@@ -170,7 +164,6 @@ public final class ContainerBuilder {
         container.setImage(image);
         container.setImagePullPolicy(imagePullPolicy);
         container.setImagePullSecrets(imagePullSecrets);
-        container.setImagePush(imagePush);
         container.setLimitCPU(limitCPU);
         container.setLimitMemory(limitMemory);
         container.setName(name);

@@ -79,11 +79,6 @@ public class Container {
     @JsonSetter(
                 nulls = Nulls.SKIP)
     private List<String> imagePullSecrets;
-    @JsonProperty("imagePush")
-    @JsonPropertyDescription("Enable image push to the registry")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
-    private boolean imagePush;
     @JsonProperty("limitCPU")
     @JsonPropertyDescription("The maximum amount of CPU to be provided (default 500 millicores).")
     @JsonSetter(
@@ -218,14 +213,6 @@ public class Container {
 
     public void setImagePullSecrets(List<String> imagePullSecret) {
         this.imagePullSecrets = imagePullSecret;
-    }
-
-    public boolean getImagePush() {
-        return imagePush;
-    }
-
-    public void setImagePush(boolean imagePush) {
-        this.imagePush = imagePush;
     }
 
     public String getLimitCPU() {
