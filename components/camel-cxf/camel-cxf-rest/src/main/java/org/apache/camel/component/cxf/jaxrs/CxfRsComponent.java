@@ -115,38 +115,44 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
             beanId = beanId.substring(2);
         }
 
-        AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId,
+        CxfRsEndpoint answer;
+        AbstractJAXRSFactoryBean bean = CamelContextHelper.lookup(getCamelContext(), beanId,
                 AbstractJAXRSFactoryBean.class);
 
-        CxfRsEndpointFactoryBean factory = null;
-        if (bean.getClass().getName().contains("blueprint")) {
-            // use blueprint
-            Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(
-                    "org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean",
-                    CxfRsEndpointFactoryBean.class);
-            factory = getCamelContext().getInjector().newInstance(clazz);
-        } else {
-            try {
-                //try spring first
-                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver()
-                        .resolveMandatoryClass("org.apache.camel.component.cxf.spring.jaxrs.SpringCxfRsEndpointFactoryBean",
-                                CxfRsEndpointFactoryBean.class);
+        if (bean != null) {
+            CxfRsEndpointFactoryBean factory = null;
+            if (bean.getClass().getName().contains("blueprint")) {
+                // use blueprint
+                Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(
+                        "org.apache.camel.component.cxf.jaxrs.blueprint.CxfRsBlueprintEndpointFactoryBean",
+                        CxfRsEndpointFactoryBean.class);
                 factory = getCamelContext().getInjector().newInstance(clazz);
-            } catch (Exception ex) {
-                factory = new DefaultCxfRsEndpointFactoryBean();
+            } else {
+                try {
+                    //try spring first
+                    Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver()
+                            .resolveMandatoryClass("org.apache.camel.component.cxf.spring.jaxrs.SpringCxfRsEndpointFactoryBean",
+                                    CxfRsEndpointFactoryBean.class);
+                    factory = getCamelContext().getInjector().newInstance(clazz);
+                } catch (Exception ex) {
+                    factory = new DefaultCxfRsEndpointFactoryBean();
+                }
             }
-        }
-        final CxfRsEndpoint answer = factory.createEndpoint(this, remaining, bean);
+            answer = factory.createEndpoint(this, remaining, bean);
 
-        // Apply Spring bean properties (including # notation referenced bean).  Note that the
-        // Spring bean properties values can be overridden by property defined in URI query.
-        // The super class (DefaultComponent) will invoke "setProperties" after this method
-        // with to apply properties defined by URI query.
-        if (bean.getProperties() != null) {
-            Map<String, Object> copy = new HashMap<>(bean.getProperties());
-            setProperties(answer, copy);
+            // Apply Spring bean properties (including # notation referenced bean).  Note that the
+            // Spring bean properties values can be overridden by property defined in URI query.
+            // The super class (DefaultComponent) will invoke "setProperties" after this method
+            // with to apply properties defined by URI query.
+            if (bean.getProperties() != null) {
+                Map<String, Object> copy = new HashMap<>(bean.getProperties());
+                setProperties(answer, copy);
+            }
+            // setup the skipFaultLogging
+        } else {
+            answer = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId,
+                    CxfRsEndpoint.class);
         }
-        // setup the skipFaultLogging
 
         answer.setBeanId(beanId);
         return answer;

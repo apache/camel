@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource;
 import org.apache.camel.component.cxf.jaxrs.testbean.ServiceUtil;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -40,10 +41,16 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     private static final String CXF_RS_ENDPOINT_URI_2
             = "cxfrs://http://localhost:" + CXT
               + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_BEAN_ENDPOINT_URI = "cxfrs:bean:myEndpoint";
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("service", new ServiceUtil());
+
+        CxfRsEndpoint cxfRsEndpoint = new CxfRsEndpoint();
+        cxfRsEndpoint.addResourceClass(CustomerServiceResource.class);
+        cxfRsEndpoint.setAddress("http://localhost:" + CXT + "/rest3");
+        registry.bind("myEndpoint", cxfRsEndpoint);
     }
 
     @Override
@@ -52,6 +59,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
                 from(CXF_RS_ENDPOINT_URI_2).bean(ServiceUtil.class, "invoke(${body[0]}, ${body[1]})");
+                from(CXF_RS_BEAN_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
             }
         };
     }
@@ -60,6 +68,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     public void testPutConsumer() throws Exception {
         sendPutRequest("http://localhost:" + CXT + "/rest/customerservice/c20");
         sendPutRequest("http://localhost:" + CXT + "/rest2/customerservice/c20");
+        sendPutRequest("http://localhost:" + CXT + "/rest3/customerservice/c20");
     }
 
     private void sendPutRequest(String uri) throws Exception {
