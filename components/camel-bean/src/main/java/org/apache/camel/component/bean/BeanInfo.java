@@ -303,8 +303,8 @@ public class BeanInfo {
         try {
             Method method = pojo.getClass().getMethod("getClass");
             methodInfo = new MethodInfo(
-                    exchange.getContext(), pojo.getClass(), method, Collections.<ParameterInfo> emptyList(),
-                    Collections.<ParameterInfo> emptyList(), false, false);
+                    exchange.getContext(), pojo.getClass(), method, Collections.emptyList(),
+                    Collections.emptyList(), false, false);
         } catch (NoSuchMethodException e) {
             throw new MethodNotFoundException(exchange, pojo, "getClass");
         }
