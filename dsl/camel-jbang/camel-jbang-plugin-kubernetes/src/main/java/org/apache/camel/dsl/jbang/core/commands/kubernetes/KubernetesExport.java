@@ -104,6 +104,10 @@ public class KubernetesExport extends Export {
                         description = "The image builder used to build the container image (e.g. docker, jib, podman).")
     protected String imageBuilder;
 
+    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
+                        description = "Whether to push the container image to a given image registry.")
+    protected boolean imagePush = true;
+
     @CommandLine.Option(names = { "--cluster-type" },
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
     protected String clusterType;
@@ -266,15 +270,12 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.container-image.imagePullPolicy=%s".formatted(imagePullPolicy));
         }
 
-        var skipPush = !container.getImagePush();
+        buildProperties.add("jkube.skip.push=%b".formatted(!imagePush));
+
         if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
             if (!"docker".equals(imageBuilder)) {
                 printer().printf("OpenShift forcing --image-builder=docker%n");
                 imageBuilder = "docker";
-            }
-            if (skipPush) {
-                printer().printf("OpenShift forcing --trait container.image-push=true%n");
-                container.setImagePush(true);
             }
             buildProperties.add("jkube.maven.plugin=%s".formatted("openshift-maven-plugin"));
         } else {
@@ -284,7 +285,6 @@ public class KubernetesExport extends Export {
         if ("docker".equals(imageBuilder) || "jib".equals(imageBuilder)) {
             buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
         }
-        buildProperties.add("jkube.skip.push=%b".formatted(skipPush));
 
         // Runtime specific for Main
         if (runtime == RuntimeType.main) {
