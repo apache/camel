@@ -483,7 +483,7 @@ EventNotifiers can be added to the CamelContext, e.g.:
 
 [source,java]
 ----
-camelContext.getManagementStrategy().addEventNotifier(new MicrometerExchangeEventNotifier())
+camelContext.getManagementStrategy().addEventNotifier(new MicrometerExchangeEventNotifier());
 ----
 
 At runtime the metrics can be accessed from Java API or JMX, which allows
@@ -500,6 +500,19 @@ String json = service.dumpStatisticsAsJson();
 
 If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
 with `name=MicrometerEventNotifier`.
+
+The following options are supported on the factory:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+|prettyPrint |false |Whether to use pretty print when outputting statistics in json format
+|meterRegistry |  |Allow using a shared `MeterRegistry`. If none is provided, then Camel will create a shared instance used by the CamelContext.
+|durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration when dumping the statistics as json.
+|baseEndpointURI |true |Whether to use static or dynamic values for Endpoint Name tags in captured metrics.
+By default, static values are used. When using dynamic tags, then a dynamic to (toD) can compute many different endpoint URIs that,
+can lead to many tags as the URI is dynamic, so use this with care if setting this option to false.
+|=======================================================================
 
 
 === Instrumenting Camel thread pools

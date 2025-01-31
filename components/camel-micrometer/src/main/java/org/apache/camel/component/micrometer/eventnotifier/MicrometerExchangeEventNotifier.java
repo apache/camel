@@ -46,7 +46,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     private MicrometerExchangeEventNotifierNamingStrategy namingStrategy;
     boolean registerKamelets;
     boolean registerTemplates = true;
-    boolean baseEndpointURI;
+    boolean baseEndpointURI = true;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -71,7 +71,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     public MicrometerExchangeEventNotifierNamingStrategy getNamingStrategy() {
         if (namingStrategy == null) {
             // Fallback to default if none is provided
-            this.namingStrategy = new MicrometerExchangeEventNotifierNamingStrategyDefault(baseEndpointURI);
+            this.namingStrategy = new MicrometerExchangeEventNotifierNamingStrategyDefault(isBaseEndpointURI());
         }
         return namingStrategy;
     }

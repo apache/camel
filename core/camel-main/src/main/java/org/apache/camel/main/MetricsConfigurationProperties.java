@@ -138,7 +138,12 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Set whether to use base endpoint URI when capturing metrics on exchange processing times.
+     * Whether to use static or dynamic values for Endpoint Name tags in captured metrics.
+     *
+     * By default, static values are used.
+     *
+     * When using dynamic tags, then a dynamic to (toD) can compute many different endpoint URIs that,
+     * can lead to many tags as the URI is dynamic, so use this with care if setting this option to false.
      */
     public void setBaseEndpointURIExchangeEventNotifier(boolean baseEndpointURIExchangeEventNotifier) {
         this.baseEndpointURIExchangeEventNotifier = baseEndpointURIExchangeEventNotifier;
