@@ -107,19 +107,24 @@ class ExportSpringBoot extends Export {
         copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
 
+        // create main class
+        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
+        // gather dependencies
+        final Set<String> deps = resolveDependencies(settings, profile);
+        // copy local lib JARs
+        copyLocalLibDependencies(deps);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
             }
+            // ensure spring-boot keeps running if no HTTP server included
+            boolean http = deps.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+            if (!http) {
+                prop.put("camel.springboot.main-run-controller", "true");
+            }
             return prop;
         });
-        // create main class
-        createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
-        // gather dependencies
-        Set<String> deps = resolveDependencies(settings, profile);
-        // copy local lib JARs
-        copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
             createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps);
             if (mavenWrapper) {

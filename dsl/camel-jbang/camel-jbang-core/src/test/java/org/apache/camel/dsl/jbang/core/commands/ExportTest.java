@@ -363,6 +363,10 @@ class ExportTest {
                 Assertions.assertFalse(content.contains("camel.main.routes-include-pattern"),
                         "should not contain camel.main.routes-include-pattern property, was " + content);
             }
+            if (rt == RuntimeType.springBoot) {
+                Assertions.assertTrue(content.contains("camel.springboot.main-run-controller=true"),
+                        "should contain camel.springboot.main-run-controller property, was " + content);
+            }
         }
     }
 
