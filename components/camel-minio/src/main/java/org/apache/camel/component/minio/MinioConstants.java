@@ -24,9 +24,7 @@ import org.apache.camel.spi.Metadata;
 public interface MinioConstants {
 
     int BYTE_ARRAY_LENGTH = 1024;
-    @Metadata(description = "*Producer:* The bucket Name which this object will be stored or which will be used for the current operation. "
-                            +
-                            "*Consumer:* The name of the bucket in which this object is contained.",
+    @Metadata(description = "*Consumer:* The name of the bucket in which this object is contained.",
               javaType = "String")
     String BUCKET_NAME = "CamelMinioBucketName";
     @Metadata(label = "producer", description = "The bucket Destination Name which will be used for the current operation.",

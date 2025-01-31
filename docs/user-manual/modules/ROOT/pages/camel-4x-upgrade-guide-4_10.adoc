@@ -202,6 +202,12 @@ We have fixed a flawed behavior when using dynamic endpoints which made the gene
 If using object codec, then you should configure the `objectCodecPattern` configuration to specify
 which java classes (FQN) to allow for Object serialization. You can use `*` to accept all patterns.
 
+=== camel-minio
+
+The header `CamelMinioBucketName` for setting a bucket to write to, on the producer side, cannot be used anymore: the header `CamelMinioOverrideBucketName` must be used 
+instead. This was done to avoid situation in which you're moving a file from a bucket to a different one, and the header coming from the Minio consumer is used as bucket name for Minio Producer.
+You can find more information on CAMEL-21678. 
+
 === camel-google-pubsub-lite
 
 The component `camel-google-pubsub-lite` has been deprecated following the deprecation of the corresponding service by Google Cloud Platform.

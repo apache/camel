@@ -142,8 +142,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      *
      * By default, static values are used.
      *
-     * When using dynamic tags, then a dynamic to (toD) can compute many different endpoint URIs that,
-     * can lead to many tags as the URI is dynamic, so use this with care if setting this option to false.
+     * When using dynamic tags, then a dynamic to (toD) can compute many different endpoint URIs that, can lead to many
+     * tags as the URI is dynamic, so use this with care if setting this option to false.
      */
     public void setBaseEndpointURIExchangeEventNotifier(boolean baseEndpointURIExchangeEventNotifier) {
         this.baseEndpointURIExchangeEventNotifier = baseEndpointURIExchangeEventNotifier;

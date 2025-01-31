@@ -2575,9 +2575,7 @@ public interface MinioEndpointBuilderFactory {
         private static final MinioHeaderNameBuilder INSTANCE = new MinioHeaderNameBuilder();
 
         /**
-         * Producer: The bucket Name which this object will be stored or which
-         * will be used for the current operation. Consumer: The name of the
-         * bucket in which this object is contained.
+         * Consumer: The name of the bucket in which this object is contained.
          * 
          * The option is a: {@code String} type.
          * 
