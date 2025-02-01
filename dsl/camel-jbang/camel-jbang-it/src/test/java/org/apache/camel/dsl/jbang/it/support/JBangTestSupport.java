@@ -80,7 +80,7 @@ public abstract class JBangTestSupport {
     }
 
     @AfterEach
-    protected void afterEach(TestInfo testInfo) throws IOException {
+    protected void afterEach(TestInfo testInfo) {
         logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
         assertNoErrors();
         logger.debug("clean up data folder");
@@ -167,19 +167,19 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel" + command + "should output" + contains)
+                .as("command camel " + command + " should output " + contains)
                 .contains(contains);
     }
 
     protected void checkCommandOutputsPattern(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel" + command + "should output pattern" + contains)
+                .as("command camel " + command + " should output pattern " + contains)
                 .containsPattern(contains);
     }
 
     protected void checkCommandDoesNotOutput(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel" + command + "should not output" + contains)
+                .as("command camel " + command + " should not output " + contains)
                 .doesNotContain(contains);
     }
 

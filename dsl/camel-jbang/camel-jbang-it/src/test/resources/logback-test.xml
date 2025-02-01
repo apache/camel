@@ -19,7 +19,7 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%highlight(%level)] [%property{forkNumber}] %logger{36}.%M - %msg%n</pattern>
+            <pattern>[%highlight(%level)] [%property{forkNumber}] [%thread] %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 

@@ -60,14 +60,17 @@ public class OpenApiITCase extends JBangTestSupport {
                 = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
         final String openApiConfig
                 = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore.camel.yaml";
+        final String appConfig
+                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/refs/heads/main/jbang/open-api-contract-first/application.properties";
 
         downloadFile(openApiUrl);
         downloadFile(openApiConfig);
+        downloadFile(appConfig);
         containerService.executeGenericCommand("mkdir -p camel-mock/pet");
         downloadFile(
                 "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/camel-mock/pet/123.json");
         containerService.executeGenericCommand("mv 123.json camel-mock/pet/");
-        executeBackground("run petstore-v3.json petstore.camel.yaml");
+        executeBackground("run petstore-v3.json petstore.camel.yaml application.properties");
         checkLogContains("HTTP endpoints summary");
 
         //verify mock
