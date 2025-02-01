@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.micrometer.MicrometerUtils;
@@ -66,7 +67,12 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
         return name;
     }
 
+    @Deprecated
     default String getInflightExchangesName(Exchange exchange, Endpoint endpoint) {
+        return getInflightExchangesName();
+    }
+
+    default String getInflightExchangesName() {
         return formatName(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT);
     }
 
@@ -95,6 +101,7 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
         }
     }
 
+    @Deprecated
     default Tags getInflightExchangesTags(ExchangeEvent event, Endpoint endpoint) {
         if (event.getExchange().getFromRouteId() != null) {
             return Tags.of(
@@ -106,5 +113,12 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
                     CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
                     KIND, KIND_EXCHANGE);
         }
+    }
+
+    default Tags getInflightExchangesTags(CamelContext camelContext, String routeId) {
+        return Tags.of(
+                CAMEL_CONTEXT_TAG, camelContext.getName(),
+                KIND, KIND_EXCHANGE,
+                ROUTE_ID_TAG, routeId);
     }
 }
