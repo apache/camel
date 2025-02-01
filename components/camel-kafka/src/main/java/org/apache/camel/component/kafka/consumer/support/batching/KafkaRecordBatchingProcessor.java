@@ -51,22 +51,15 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
     private final class CommitSynchronization implements Synchronization {
         private final ExceptionHandler exceptionHandler;
+        private final List<Exchange> exchanges;
 
-        public CommitSynchronization(ExceptionHandler exceptionHandler) {
+        public CommitSynchronization(ExceptionHandler exceptionHandler, List<Exchange> exchanges) {
             this.exceptionHandler = exceptionHandler;
+            this.exchanges = exchanges;
         }
 
         @Override
         public void onComplete(Exchange exchange) {
-            // TODO: Make it possible to not keep List<Exchange> in body as result
-            final List<?> exchanges = exchange.getMessage().getBody(List.class);
-
-            // Ensure we are actually receiving what we are asked for
-            if (exchanges == null || exchanges.isEmpty()) {
-                LOG.warn("The exchange is {}", exchanges == null ? "not of the expected type (null)" : "empty");
-                return;
-            }
-
             LOG.debug("Calling commit on {} exchanges using {}", exchanges.size(), commitManager.getClass().getSimpleName());
             commitManager.commit();
         }
@@ -135,7 +128,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
             exchangeList.add(childExchange);
 
-            if (exchangeList.size() == configuration.getMaxPollRecords()) {
+            if (exchangeList.size() >= configuration.getMaxPollRecords()) {
                 processBatch(camelKafkaConsumer);
                 exchangeList.clear();
             }
@@ -154,12 +147,13 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         // Create the bundle exchange
         Exchange exchange = camelKafkaConsumer.createExchange(false);
         Message message = exchange.getMessage();
-        message.setBody(exchangeList.stream().toList());
+        var exchanges = exchangeList.stream().toList();
+        message.setBody(exchanges);
         try {
             if (configuration.isAllowManualCommit()) {
                 manualCommitResultProcessing(camelKafkaConsumer, exchange);
             } else {
-                autoCommitResultProcessing(camelKafkaConsumer, exchange);
+                autoCommitResultProcessing(camelKafkaConsumer, exchange, exchanges);
             }
         } finally {
             // Release the exchange
@@ -170,14 +164,17 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     /*
      * The flow to execute when using auto-commit
      */
-    private void autoCommitResultProcessing(KafkaConsumer camelKafkaConsumer, Exchange exchange) {
+    private void autoCommitResultProcessing(KafkaConsumer camelKafkaConsumer, Exchange exchange, List<Exchange> list) {
         ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
-        CommitSynchronization commitSynchronization = new CommitSynchronization(exceptionHandler);
+        CommitSynchronization commitSynchronization = new CommitSynchronization(exceptionHandler, list);
         exchange.getExchangeExtension().addOnCompletion(commitSynchronization);
         try {
             processor.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            processException(exchange, exceptionHandler);
         }
     }
 
