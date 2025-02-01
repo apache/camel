@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,20 +43,16 @@ class MicrometerExchangeEventNotifierNamingStrategyTest {
 
     @Test
     void getDefaultInflightExchangesName() {
-        Exchange exchange = mock(Exchange.class);
-        Endpoint endpoint = mock(Endpoint.class);
         MicrometerExchangeEventNotifierNamingStrategy strategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
-        String result = strategy.getInflightExchangesName(exchange, endpoint);
+        String result = strategy.getInflightExchangesName();
 
         assertEquals("camel.exchanges.inflight", result);
     }
 
     @Test
     void getLegacyInflightExchangesName() {
-        Exchange exchange = mock(Exchange.class);
-        Endpoint endpoint = mock(Endpoint.class);
         MicrometerExchangeEventNotifierNamingStrategy strategy = MicrometerExchangeEventNotifierNamingStrategy.LEGACY;
-        String result = strategy.getInflightExchangesName(exchange, endpoint);
+        String result = strategy.getInflightExchangesName();
 
         assertEquals("CamelExchangesInflight", result);
     }
