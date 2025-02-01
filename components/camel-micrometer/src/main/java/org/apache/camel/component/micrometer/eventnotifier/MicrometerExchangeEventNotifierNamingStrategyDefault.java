@@ -23,10 +23,9 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_
 
 public class MicrometerExchangeEventNotifierNamingStrategyDefault implements MicrometerExchangeEventNotifierNamingStrategy {
 
-    boolean endpointBaseURI = true;
+    private boolean endpointBaseURI = true;
 
     public MicrometerExchangeEventNotifierNamingStrategyDefault() {
-
     }
 
     public MicrometerExchangeEventNotifierNamingStrategyDefault(boolean endpointBaseURI) {
