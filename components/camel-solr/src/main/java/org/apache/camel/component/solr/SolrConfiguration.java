@@ -18,7 +18,6 @@ package org.apache.camel.component.solr;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.Metadata;
@@ -28,30 +27,28 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
 
-import static org.apache.camel.component.solr.SolrConstants.DEFAULT_BASE_PATH;
-
 @UriParams
 public class SolrConfiguration {
 
     @UriPath
     @Metadata(required = true)
     private String host;
-    @UriPath
+    @UriPath(defaultValue = "" + SolrConstants.DEFAULT_PORT)
     private int port = -1;
+    @UriPath(defaultValue = SolrConstants.DEFAULT_BASE_PATH)
+    private String basePath;
     @UriParam(label = "security", secret = true)
     private String username;
     @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private SolrOperation operation;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean autoCommit;
     @UriParam
     private Integer size;
     @UriParam
     private Integer from;
-    @UriParam
-    private SolrClient solrClient;
     @UriParam
     private String collection;
     @UriParam
@@ -69,40 +66,9 @@ public class SolrConfiguration {
     private Long connectionTimeout;
     @UriParam(defaultValue = "true")
     private boolean async = true;
-    @Deprecated
-    @UriParam()
-    private int soTimeout;
-    @Deprecated
-    @UriParam()
-    private int streamingQueueSize = 10;
-    @Deprecated
-    @UriParam()
-    private int streamingThreadCount = 2;
-    @Deprecated
-    @UriParam(label = "HttpSolrClient")
-    private Boolean followRedirects;
-    @Deprecated
-    @UriParam(label = "HttpSolrClient")
-    private Boolean allowCompression;
-    @Deprecated
-    @UriParam(label = "CloudSolrClient")
-    private String zkHost;
-    @Deprecated
-    @UriParam(label = "CloudSolrClient")
-    private String zkChroot;
-    @Deprecated
     @UriParam
-    private HttpClient httpClient;
-    @Deprecated
-    @UriParam
-    private Integer maxRetries;
-    @Deprecated
-    @UriParam
-    private Integer defaultMaxConnectionsPerHost;
-    @Deprecated
-    @UriParam
-    private Integer maxTotalConnections;
-    private String basePath;
+    @Metadata(label = "advanced")
+    private SolrClient solrClient;
 
     /**
      * Uri of the solr instance with :host:port. Only a single solr instance should be targeted. When failover multiple
@@ -141,11 +107,11 @@ public class SolrConfiguration {
         // parse remaining path when set and not equal to "/solr"
         String remainingPath = uri.getPath();
         if (ObjectHelper.isNotEmpty(remainingPath)
-                && !remainingPath.equals(DEFAULT_BASE_PATH)) {
-            if (remainingPath.startsWith(DEFAULT_BASE_PATH.concat("/"))) {
+                && !remainingPath.equals(SolrConstants.DEFAULT_BASE_PATH)) {
+            if (remainingPath.startsWith(SolrConstants.DEFAULT_BASE_PATH.concat("/"))) {
                 // the default solr base path //host:port/solr/<collection>/<requestHandler>
                 // --> use collection and request handler
-                String[] parts = remainingPath.substring(DEFAULT_BASE_PATH.concat("/").length()).split("/");
+                String[] parts = remainingPath.substring(SolrConstants.DEFAULT_BASE_PATH.concat("/").length()).split("/");
                 if (parts.length > 0) {
                     setCollection(parts[0]);
                 }
@@ -346,17 +312,6 @@ public class SolrConfiguration {
     }
 
     /**
-     * The time in ms to wait before the request will time out (former soTimeout).
-     */
-    public int getSoTimeout() {
-        return soTimeout;
-    }
-
-    public void setSoTimeout(int soTimeout) {
-        this.soTimeout = soTimeout;
-    }
-
-    /**
      * The time in ms to wait before connection will time out.
      */
     public Long getConnectionTimeout() {
@@ -387,120 +342,6 @@ public class SolrConfiguration {
 
     public void setRequestTimeout(Long requestTimeout) {
         this.requestTimeout = requestTimeout;
-    }
-
-    public int getStreamingQueueSize() {
-        return streamingQueueSize;
-    }
-
-    /**
-     * Sets the queue size for the ConcurrentUpdateSolrClient
-     */
-    public void setStreamingQueueSize(int streamingQueueSize) {
-        this.streamingQueueSize = streamingQueueSize;
-    }
-
-    public int getStreamingThreadCount() {
-        return streamingThreadCount;
-    }
-
-    /**
-     * Sets the number of threads for the ConcurrentUpdateSolrClient
-     */
-    public void setStreamingThreadCount(int streamingThreadCount) {
-        this.streamingThreadCount = streamingThreadCount;
-    }
-
-    public Integer getMaxRetries() {
-        return maxRetries;
-    }
-
-    /**
-     * Maximum number of retries to attempt in the event of transient errors
-     */
-    public void setMaxRetries(Integer maxRetries) {
-        this.maxRetries = maxRetries;
-    }
-
-    public Integer getDefaultMaxConnectionsPerHost() {
-        return defaultMaxConnectionsPerHost;
-    }
-
-    /**
-     * maxConnectionsPerHost on the underlying HttpConnectionManager
-     */
-    public void setDefaultMaxConnectionsPerHost(Integer defaultMaxConnectionsPerHost) {
-        this.defaultMaxConnectionsPerHost = defaultMaxConnectionsPerHost;
-    }
-
-    public Integer getMaxTotalConnections() {
-        return maxTotalConnections;
-    }
-
-    /**
-     * maxTotalConnection on the underlying HttpConnectionManager
-     */
-    public void setMaxTotalConnections(Integer maxTotalConnections) {
-        this.maxTotalConnections = maxTotalConnections;
-    }
-
-    public Boolean getFollowRedirects() {
-        return followRedirects;
-    }
-
-    /**
-     * Indicates whether redirects are used to get to the Solr server
-     */
-    public void setFollowRedirects(Boolean followRedirects) {
-        this.followRedirects = followRedirects;
-    }
-
-    public Boolean getAllowCompression() {
-        return allowCompression;
-    }
-
-    /**
-     * Server side must support gzip or deflate for this to have any effect
-     */
-    public void setAllowCompression(Boolean allowCompression) {
-        this.allowCompression = allowCompression;
-    }
-
-    public String getZkHost() {
-        return zkHost;
-    }
-
-    /**
-     * Set the ZooKeeper host(s) urls which the CloudSolrClient uses, e.g. "zkHost=localhost:2181,localhost:2182".
-     * Optionally add the chroot, e.g. "zkHost=localhost:2181,localhost:2182/rootformysolr". In case the first part of
-     * the url path (='contextroot') is set to 'solr' (e.g. 'localhost:2181/solr' or 'localhost:2181/solr/..'), then
-     * that path is not considered as zookeeper chroot for backward compatibility reasons (this behaviour can be
-     * overridden via zkChroot parameter).
-     */
-    public void setZkHost(String zkHost) {
-        this.zkHost = zkHost;
-    }
-
-    public String getZkChroot() {
-        return zkChroot;
-    }
-
-    /**
-     * Set the chroot of the zookeeper connection (include the leading slash; e.g. '/mychroot')
-     */
-    public void setZkChroot(String zkChroot) {
-        this.zkChroot = zkChroot;
-    }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    /**
-     * Sets the http client to be used by the solrClient. This is only applicable when solrClient is not set.
-     */
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 
 }

@@ -70,20 +70,17 @@ the following. Some operations also require the message body to be set.
 |Operation |Message body |Description
 
 |`INSERT` | n/a |inserts/updates a document using message headers (solr fields must be prefixed with "SolrField.")
-
 |`INSERT` | File |inserts/updates a document or documents using the given File (using ContentStreamUpdateRequest)
-
 |`INSERT` | SolrInputDocument or Collection<SolrInputDocument>|inserts/updates a document or documents based on the given (collection of) SolrInputDocument
-
 |`INSERT` | bean or Collection<bean> |inserts/updates a document or documents based on values in an http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated bean]
-
 |`INSERT` | String |inserts/updates a document or documents index based on the given XML or json as string (must follow SolrInputDocument format)
 
 |`DELETE` | String or Collection<String> | delete a record by ID (or collection of ids) or by a query (or a collection of queries) when header "deleteByQuery=true"
 
-|`PING` |n/a | Pings the solr instance
+|`PING` |SolrPing | Pings the solr instance
 
-|`SEARCH` |n/a | Performs a search request to the solr instance
+|`SEARCH` |SolrQuery | Performs a search request to the solr instance
+|`SEARCH` |QueryRequest | Performs a search request to the solr instance
 |=======================================================================
 
 == Example
@@ -110,7 +107,7 @@ from("direct:search")
 ------------------------------------------
 <route>
     <from uri="direct:insert"/>
-    <setHeader name="operation">
+    <setHeader name="CamelSolrOperation">
         <constant>INSERT</constant>
     </setHeader>
     <setHeader name="SolrField.id">
@@ -120,14 +117,14 @@ from("direct:search")
 </route>
 <route>
     <from uri="direct:delete"/>
-    <setHeader name="operation">
+    <setHeader name="CamelSolrOperation">
         <constant>DELETE</constant>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
 </route>
 <route>
     <from uri="direct:search"/>
-    <setHeader name="operation">
+    <setHeader name="CamelSolrOperation">
         <constant>SEARCH</constant>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>

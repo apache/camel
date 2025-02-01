@@ -230,7 +230,11 @@ The Producer includes options for writing to temporary files, writing content, a
 
 === camel-solr
 
-The `camel-solr` component has been refactored. The `solrs` and `solrCloud` schemes have been deprecated in the uri format (but can still be enabled via the enableSSL and solrClient configuration options). The solr operations have been simplified and some solr operations will be no longer be available in the next release. For those operations, a warning message will tell you how to get the same results with the new operations. The Solr component exchange headers have been renamed and extended. As a consequence, the user should review the use of the Solr exchange headers and rename them when applicable.
+The `camel-solr` component has been refactored. The `solrs` and `solrCloud` schemes have been deprecated in the uri format (but can still be enabled via the enableSSL and solrClient configuration options).
+The solr operations have been simplified and some solr operations will be no longer be available in the next release. For those operations, a warning message will tell you how to get the same results with the new operations.
+The Solr component exchange headers have been renamed and extended. As a consequence, the user should review the use of the Solr exchange headers and rename them when applicable.
+
+All the solr headers has been renamed to use `CamelSolr` as prefix, such as `operation` -> `CamelSolrOperation`.
 
 == camel-spring-boot
 

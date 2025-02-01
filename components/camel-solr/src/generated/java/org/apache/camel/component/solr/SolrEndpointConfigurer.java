@@ -23,8 +23,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SolrEndpoint target = (SolrEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowcompression":
-        case "allowCompression": target.getConfiguration().setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "async": target.getConfiguration().setAsync(property(camelContext, boolean.class, value)); return true;
         case "autocommit":
         case "autoCommit": target.getConfiguration().setAutoCommit(property(camelContext, boolean.class, value)); return true;
@@ -33,23 +31,13 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "collection": target.getConfiguration().setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "defaultmaxconnectionsperhost":
-        case "defaultMaxConnectionsPerHost": target.getConfiguration().setDefaultMaxConnectionsPerHost(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deletebyquery":
         case "deleteByQuery": target.getConfiguration().setDeleteByQuery(property(camelContext, boolean.class, value)); return true;
         case "enablessl":
         case "enableSSL": target.getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
-        case "followredirects":
-        case "followRedirects": target.getConfiguration().setFollowRedirects(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpclient":
-        case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, java.net.http.HttpClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxretries":
-        case "maxRetries": target.getConfiguration().setMaxRetries(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxtotalconnections":
-        case "maxTotalConnections": target.getConfiguration().setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.solr.SolrOperation.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "requesthandler":
@@ -57,19 +45,9 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "size": target.getConfiguration().setSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sotimeout":
-        case "soTimeout": target.getConfiguration().setSoTimeout(property(camelContext, int.class, value)); return true;
         case "solrclient":
         case "solrClient": target.getConfiguration().setSolrClient(property(camelContext, org.apache.solr.client.solrj.SolrClient.class, value)); return true;
-        case "streamingqueuesize":
-        case "streamingQueueSize": target.getConfiguration().setStreamingQueueSize(property(camelContext, int.class, value)); return true;
-        case "streamingthreadcount":
-        case "streamingThreadCount": target.getConfiguration().setStreamingThreadCount(property(camelContext, int.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "zkchroot":
-        case "zkChroot": target.getConfiguration().setZkChroot(property(camelContext, java.lang.String.class, value)); return true;
-        case "zkhost":
-        case "zkHost": target.getConfiguration().setZkHost(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -77,8 +55,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowcompression":
-        case "allowCompression": return java.lang.Boolean.class;
         case "async": return boolean.class;
         case "autocommit":
         case "autoCommit": return boolean.class;
@@ -87,23 +63,13 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "collection": return java.lang.String.class;
         case "connectiontimeout":
         case "connectionTimeout": return java.lang.Long.class;
-        case "defaultmaxconnectionsperhost":
-        case "defaultMaxConnectionsPerHost": return java.lang.Integer.class;
         case "deletebyquery":
         case "deleteByQuery": return boolean.class;
         case "enablessl":
         case "enableSSL": return boolean.class;
-        case "followredirects":
-        case "followRedirects": return java.lang.Boolean.class;
         case "from": return java.lang.Integer.class;
-        case "httpclient":
-        case "httpClient": return java.net.http.HttpClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "maxretries":
-        case "maxRetries": return java.lang.Integer.class;
-        case "maxtotalconnections":
-        case "maxTotalConnections": return java.lang.Integer.class;
         case "operation": return org.apache.camel.component.solr.SolrOperation.class;
         case "password": return java.lang.String.class;
         case "requesthandler":
@@ -111,19 +77,9 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "requesttimeout":
         case "requestTimeout": return java.lang.Long.class;
         case "size": return java.lang.Integer.class;
-        case "sotimeout":
-        case "soTimeout": return int.class;
         case "solrclient":
         case "solrClient": return org.apache.solr.client.solrj.SolrClient.class;
-        case "streamingqueuesize":
-        case "streamingQueueSize": return int.class;
-        case "streamingthreadcount":
-        case "streamingThreadCount": return int.class;
         case "username": return java.lang.String.class;
-        case "zkchroot":
-        case "zkChroot": return java.lang.String.class;
-        case "zkhost":
-        case "zkHost": return java.lang.String.class;
         default: return null;
         }
     }
@@ -132,8 +88,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SolrEndpoint target = (SolrEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowcompression":
-        case "allowCompression": return target.getConfiguration().getAllowCompression();
         case "async": return target.getConfiguration().isAsync();
         case "autocommit":
         case "autoCommit": return target.getConfiguration().isAutoCommit();
@@ -142,23 +96,13 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "collection": return target.getConfiguration().getCollection();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
-        case "defaultmaxconnectionsperhost":
-        case "defaultMaxConnectionsPerHost": return target.getConfiguration().getDefaultMaxConnectionsPerHost();
         case "deletebyquery":
         case "deleteByQuery": return target.getConfiguration().isDeleteByQuery();
         case "enablessl":
         case "enableSSL": return target.getConfiguration().isEnableSSL();
-        case "followredirects":
-        case "followRedirects": return target.getConfiguration().getFollowRedirects();
         case "from": return target.getConfiguration().getFrom();
-        case "httpclient":
-        case "httpClient": return target.getConfiguration().getHttpClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "maxretries":
-        case "maxRetries": return target.getConfiguration().getMaxRetries();
-        case "maxtotalconnections":
-        case "maxTotalConnections": return target.getConfiguration().getMaxTotalConnections();
         case "operation": return target.getConfiguration().getOperation();
         case "password": return target.getConfiguration().getPassword();
         case "requesthandler":
@@ -166,19 +110,9 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "size": return target.getConfiguration().getSize();
-        case "sotimeout":
-        case "soTimeout": return target.getConfiguration().getSoTimeout();
         case "solrclient":
         case "solrClient": return target.getConfiguration().getSolrClient();
-        case "streamingqueuesize":
-        case "streamingQueueSize": return target.getConfiguration().getStreamingQueueSize();
-        case "streamingthreadcount":
-        case "streamingThreadCount": return target.getConfiguration().getStreamingThreadCount();
         case "username": return target.getConfiguration().getUsername();
-        case "zkchroot":
-        case "zkChroot": return target.getConfiguration().getZkChroot();
-        case "zkhost":
-        case "zkHost": return target.getConfiguration().getZkHost();
         default: return null;
         }
     }

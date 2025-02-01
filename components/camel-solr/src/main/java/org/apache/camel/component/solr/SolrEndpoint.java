@@ -35,7 +35,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClientBase;
@@ -45,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Perform operations against Apache Lucene Solr.
  */
-@UriEndpoint(firstVersion = "4.8.0", scheme = "solr", title = "Solr", syntax = "solr:host:port", producerOnly = true,
+@UriEndpoint(firstVersion = "4.8.0", scheme = "solr", title = "Solr", syntax = "solr:host:port/basePath", producerOnly = true,
              category = { Category.SEARCH, Category.MONITORING }, headersClass = SolrConstants.class)
 public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
@@ -86,25 +88,32 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        // preconfigured solr client
+        if (solrClient == null && configuration.getSolrClient() == null) {
+            // create solr client from config
+            solrClient = createSolrClient();
+            LOG.info("Starting SolrClient: {}",
+                    getSolrClientInfoString(solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
+        }
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
         // stop solr client when created (not pre-configured)
         if (solrClient != null) {
-            LOG.info("Stop using "
-                     + getSolrClientInfoString(solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
-            solrClient.close();
+            LOG.info("Stopping SolrClient: {}",
+                    getSolrClientInfoString(solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
+            IOHelper.close(solrClient);
+            solrClient = null;
         }
     }
 
     public SolrClient getSolrClient() {
-        // preconfigured solr client
         if (configuration.getSolrClient() != null) {
             return configuration.getSolrClient();
-        }
-        if (solrClient == null) {
-            // create solr client from config
-            solrClient = createSolrClient();
-            LOG.info("Start using "
-                     + getSolrClientInfoString(solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
         }
         return solrClient;
     }
@@ -117,7 +126,7 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
                         ? "@ " + httpJdkSolrClient.getBaseURL()
                         : "",
                 async,
-                endpointUri);
+                URISupport.sanitizeUri(endpointUri));
     }
 
     public SolrClient createSolrClient() {

@@ -13473,7 +13473,7 @@ public class StaticEndpointBuilders {
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
      * 
-     * Syntax: <code>solr:host:port</code>
+     * Syntax: <code>solr:host:port/basePath</code>
      * 
      * Path parameter: host (required)
      * The solr instance host name (set to 'default' to use the host name
@@ -13481,8 +13481,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: port
      * The solr instance port number
+     * Default value: 8983
      * 
-     * @param path host:port
+     * Path parameter: basePath
+     * The solr instance base path (usually /solr)
+     * Default value: /solr
+     * 
+     * @param path host:port/basePath
      * @return the dsl builder
      */
     public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String path) {
@@ -13496,7 +13501,7 @@ public class StaticEndpointBuilders {
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
      * 
-     * Syntax: <code>solr:host:port</code>
+     * Syntax: <code>solr:host:port/basePath</code>
      * 
      * Path parameter: host (required)
      * The solr instance host name (set to 'default' to use the host name
@@ -13504,10 +13509,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: port
      * The solr instance port number
+     * Default value: 8983
+     * 
+     * Path parameter: basePath
+     * The solr instance base path (usually /solr)
+     * Default value: /solr
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path host:port
+     * @param path host:port/basePath
      * @return the dsl builder
      */
     public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String componentName, String path) {

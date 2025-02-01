@@ -22,35 +22,23 @@ import org.apache.camel.spi.Metadata;
 public interface SolrConstants {
 
     @Metadata(description = "The operation to perform.", javaType = "String")
-    String PARAM_OPERATION = "operation";
-    @Deprecated
-    @Metadata(description = "The operation to perform.", javaType = "String",
-              deprecationNote = "Use header 'operation' instead")
-    String PARAM_OPERATION_DEPRECATED = "SolrOperation";
+    String PARAM_OPERATION = "CamelSolrOperation";
     @Metadata(description = "The collection to execute the request against.", javaType = "String")
-    String PARAM_COLLECTION = "collection";
-    @Deprecated
-    @Metadata(description = "The collection to execute the request against.", javaType = "String",
-              deprecationNote = "Use header 'collection' instead")
-    String PARAM_COLLECTION_DEPRECATED = "CamelSolrCollection";
+    String PARAM_COLLECTION = "CamelSolrCollection";
     @Metadata(description = "The request handler to execute the solr request against.", javaType = "String")
-    String PARAM_REQUEST_HANDLER = "requestHandler";
+    String PARAM_REQUEST_HANDLER = "CamelSolrRequestHandler";
     @Metadata(description = "The query to execute.", javaType = "String")
-    String PARAM_QUERY_STRING = "queryString";
-    @Deprecated
-    @Metadata(description = "The query to execute.", javaType = "String", deprecationNote = "Use header 'queryString' instead")
-    String PARAM_QUERY_STRING_DEPRECATED = "CamelSolrQueryString";
+    String PARAM_QUERY_STRING = "CamelSolrQueryString";
     @Metadata(description = "The size of the response.", javaType = "Integer")
-    String PARAM_SIZE = "size";
+    String PARAM_SIZE = "CamelSolrSize";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
-    String PARAM_FROM = "from";
-    @Metadata(description = "The solr client to use for the request.", javaType = "SolrClient")
-    String PARAM_SOLR_CLIENT = "solrClient";
-    @Metadata(description = "The solr parameters to use for the request.", javaType = "SolrParams")
-    String PARAM_SOLR_PARAMS = "solrParams";
-    @Metadata(description = "For the delete instruction, interprete body as query/queries instead of id/ids.",
+    String PARAM_FROM = "CamelSolrFrom";
+    @Metadata(description = "The solr parameters to use for the request.",
+              javaType = "org.apache.solr.common.params.SolrParams")
+    String PARAM_SOLR_PARAMS = "CamelSolrParams";
+    @Metadata(description = "For the delete instruction, interpret body as query/queries instead of id/ids.",
               javaType = "boolean", defaultValue = "false")
-    String PARAM_DELETE_BY_QUERY = "deleteByQuery";
+    String PARAM_DELETE_BY_QUERY = "CamelSolrDeleteByQuery";
     @Metadata(description = "The content type is used to identify the type when inserting files.", javaType = "String")
     String PARAM_CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
@@ -70,7 +58,6 @@ public interface SolrConstants {
     String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
     String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
     String OPERATION_QUERY = "QUERY";
-    String OPERATION_SEARCH = "SEARCH";
 
     String HEADER_PARAM_OPERATION_COMMIT = "commit";
     String HEADER_PARAM_OPERATION_SOFT_COMMIT = "softCommit";

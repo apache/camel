@@ -62,8 +62,7 @@ public class SolrProducer extends DefaultAsyncProducer {
         Message message = exchange.getMessage();
 
         // Retrieve values from header or from config
-        SolrClient solrClient = Optional.ofNullable(message.getHeader(SolrConstants.PARAM_SOLR_CLIENT, SolrClient.class))
-                .orElse(getSolrClient());
+        SolrClient solrClient = getSolrClient();
         String collection = Optional.ofNullable(message.getHeader(SolrConstants.PARAM_COLLECTION, String.class))
                 .orElse(configuration.getCollection());
         String requestHandler = message.getHeaders().containsKey(SolrConstants.PARAM_REQUEST_HANDLER)
@@ -244,7 +243,7 @@ public class SolrProducer extends DefaultAsyncProducer {
             ModifiableSolrParams solrParams) {
 
         public ActionContext {
-            ObjectHelper.notNull(solrClient, SolrConstants.PARAM_SOLR_CLIENT);
+            ObjectHelper.notNull(solrClient, "SolrClient");
             ObjectHelper.notNull(collection, SolrConstants.PARAM_COLLECTION);
             ObjectHelper.notNull(solrParams, SolrConstants.PARAM_SOLR_PARAMS);
         }
