@@ -57,7 +57,7 @@ public final class MavenGav {
 
     public static MavenGav parseGav(String gav, String defaultVersion) {
         MavenGav answer = new MavenGav();
-        // camel-k style GAV
+        // abbreviated style GAV
         gav = gav.trim();
         if (gav.startsWith("camel:")) {
             answer.setGroupId("org.apache.camel");
@@ -74,7 +74,7 @@ public final class MavenGav {
                 answer.setVersion(defaultVersion);
             }
         } else if (gav.startsWith("camel-") && !(gav.contains(":") || gav.contains("/"))) {
-            // not really camel-k style but users may mistakenly use camel-file instead of camel:file
+            // users may mistakenly use camel-file instead of camel:file
             answer.setGroupId("org.apache.camel");
             String a = gav;
             // users may mistakenly use quarkus extension, but they should just refer to the vanilla component name

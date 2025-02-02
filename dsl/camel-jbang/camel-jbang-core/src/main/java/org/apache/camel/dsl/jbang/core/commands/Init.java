@@ -71,12 +71,8 @@ public class Init extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version")
     private String kameletsVersion;
 
-    @Option(names = { "--integration" },
-            description = "When creating a yaml file should it be created as a Camel K Integration CRD")
-    private boolean integration;
-
     @Option(names = { "--pipe" },
-            description = "When creating a yaml file should it be created as a Camel K Pipe CRD")
+            description = "When creating a yaml file should it be created as a Pipe CR")
     private boolean pipe;
 
     public Init(CamelJBangMain main) {
@@ -104,9 +100,7 @@ public class Init extends CamelCommand {
         }
 
         String ext = FileUtil.onlyExt(file, false);
-        if ("yaml".equals(ext) && integration) {
-            ext = "integration.yaml";
-        } else if ("yaml".equals(ext) && pipe) {
+        if ("yaml".equals(ext) && pipe) {
             ext = "init-pipe.yaml";
         }
 

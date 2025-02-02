@@ -478,7 +478,7 @@ curl -T bar.java http://0.0.0.0:8080/q/upload/bar.java
 
 To send the data via PUT, then the file body can be included when using `Content-Type: application/x-www-form-urlencoded`:
 
-For example, from a CURL `--ascii-trace`:
+For example, from a CURL `--trace-ascii log.txt`:
 
 [source,text]
 ----
@@ -762,7 +762,7 @@ camel run foo.java --maven-settings=false
 
 You can run a route hosted on GitHub using Camels xref:components:others:resourceresolver-github.adoc[GitHub] resource loader.
 
-For example, to run one of the Camel K examples, you can do:
+For example, to run one of the Camel Kamelets examples, you can do:
 
 [source,bash]
 ----
@@ -841,11 +841,11 @@ You can also run in dev mode, to hot-deploy on source code changes.
 camel run * --dev
 ----
 
-You can also download a single file, such as one of the Camel K examples:
+You can also download a single file, such as one of the Camel Kamelets examples:
 
 [source,bash]
 ----
-camel init https://github.com/apache/camel-k-examples/blob/main/generic-examples/languages/simple.groovy
+camel init https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-yaml/hello.camel.yaml
 ----
 
 This is a groovy route, which you can run with (or use `*`):
@@ -1050,7 +1050,6 @@ Supported plugins:
 
  NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
  kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
- camel-k     k           org.apache.camel:camel-jbang-plugin-k           Managed Camel integrations on Kubernetes
  generate    generate    org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
 ----
 
@@ -1084,9 +1083,9 @@ To remove a plugin from the current Camel JBang command line tooling, you can us
 camel plugin delete <plugin-name>
 ----
 
-=== Running Camel K integrations or pipes
+=== Running Pipes
 
-Camel also supports running Camel K integrations and pipes, which represent Kubernetes custom resources following a specific CRD format (Kubernetes Custom Resource Definitions).
+Camel also supports running pipes, which represent Kubernetes custom resources following a specific CRD format (Kubernetes Custom Resource Definitions).
 
 For example, a pipe file named `joke.yaml`:
 
@@ -1211,11 +1210,6 @@ spec:
     uri: https://mycompany.com/the-service # <1>
 ----
 <1> Pipe with explicit Camel endpoint URI as sink where the data gets pushed to
-
-==== Advanced binding options
-
-The Camel K JBang plugin also provides the bind command. It enhances the arbitrary bind command with the option to directly create this resource on the
-Kubernetes cluster. Please refer to the plugin documentation for more complex examples and a full description on how to use the bind command options.
 
 === Creating a new Kamelet
 
@@ -1882,12 +1876,6 @@ Camel JBang provides a plugin for managing and easily running Camel applications
 The plugin uses the project export functionality to build and deploy the application on Kubernetes with Quarkus or SpringBoot.
 
 Read about it in the xref:camel-jbang-kubernetes.adoc[Camel Kubernetes plugin] documentation.
-
-In addition to that, you can also leverage the Camel K plugin commands that interact with the Camel K operator on Kubernetes.
-Camel K gets you started with the journey of running Camel integrations on Kubernetes in a declarative way.
-The container image build, push to registry as well as the ownership of deployments is all taken care of by the Camel K operator.
-
-Read about it in xref:camel-jbang-k.adoc[Camel K plugin].
 
 ==== Configuring logging levels
 
@@ -3785,7 +3773,7 @@ The follow options related to _exporting_, can be configured in `application.pro
 |Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
 
 |`camel.jbang.jkubeFiles`
-|Resource fragments for Kubernetes (Use commas to separate multiple files). 
+|Resource fragments for Kubernetes (Use commas to separate multiple files).
 
 |`camel.jbang.javaVersion`
 |Java version (17 or 21). Java 17 is default.
@@ -3997,15 +3985,15 @@ Following is the output for the above-mentioned configuration.
 
 [source,bash]
 ----
-ALIAS                   IMPLEMENTATION              
- ignite                                              
- azure                   storage-queue               
- openldap                                            
- event-bridge                                        
- xmpp                                                
- kinesis                                             
- redis           
- ...                     
+ALIAS                   IMPLEMENTATION
+ ignite
+ azure                   storage-queue
+ openldap
+ event-bridge
+ xmpp
+ kinesis
+ redis
+ ...
 ----
 
 === Run Service

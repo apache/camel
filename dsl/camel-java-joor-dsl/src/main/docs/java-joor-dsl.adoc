@@ -32,20 +32,13 @@ public class MyRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("timer:tick")
             .setBody()
-                .constant("Hello Camel K!")
+                .constant("Hello Camel!")
             .to("log:info");
     }
 }
 ----
 
-Can then be loaded and run with Camel CLI or Camel K.
-
-.Running with Camel K
-
-[source,bash]
-----
-kamel run MyRoute.java
-----
+Can then be loaded and run with Camel CLI.
 
 .Running with Camel CLI
 

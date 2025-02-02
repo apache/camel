@@ -91,7 +91,6 @@
         <californium-version>3.13.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camunda-version>7.22.0</camunda-version>
-        <camel-k-version>2.5.0</camel-k-version>
         <cassandra-driver-version>4.18.1</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
@@ -2758,11 +2757,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jbang-plugin-generate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-jbang-plugin-k</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

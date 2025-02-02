@@ -45,11 +45,11 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
  * Binding to Kamelets as Kubernetes object references. Automatically resolves Kamelet from catalog and reads required
  * properties. Adds required properties as placeholder to the object reference when not set already by the user.
  */
-public class KameletBindingProvider extends ObjectReferenceBindingProvider {
+public class PipeProvider extends ObjectReferenceBindingProvider {
 
     private static final String prefix = "kamelet:";
 
-    public KameletBindingProvider() {
+    public PipeProvider() {
         super("camel.apache.org/v1", "Kamelet");
     }
 
