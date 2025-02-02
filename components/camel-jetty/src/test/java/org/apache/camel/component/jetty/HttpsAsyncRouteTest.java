@@ -138,10 +138,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
         InputStream is = connection.getInputStream();
-        int c;
-        while ((c = is.read()) >= 0) {
-            os.write(c);
-        }
+        is.transferTo(os);
 
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
