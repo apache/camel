@@ -344,6 +344,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     // honor disable reply to configuration
                     LOG.trace("ReplyTo is disabled on endpoint: {}", endpoint);
                     JmsMessageHelper.setJMSReplyTo(answer, null);
+                    jmsReplyTo = null;
                 } else {
                     // if the binding did not create the reply to then we have to try to create it here
                     if (jmsReplyTo == null) {
