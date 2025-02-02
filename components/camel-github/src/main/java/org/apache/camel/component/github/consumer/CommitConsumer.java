@@ -169,7 +169,11 @@ public class CommitConsumer extends AbstractGitHubConsumer {
                 }
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_SHA, newCommit.getSha());
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_URL, newCommit.getUrl());
-                e.getMessage().setBody(newCommit.getCommit().getMessage());
+                if (getEndpoint().isCommitMessageAsBody()) {
+                    e.getMessage().setBody(newCommit.getCommit().getMessage());
+                } else {
+                    e.getMessage().setBody(newCommit);
+                }
                 exchanges.add(e);
             }
             int counter = processBatch(exchanges);
