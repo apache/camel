@@ -32,7 +32,15 @@ public final class AttachmentConverter {
 
     @Converter
     public static AttachmentMessage toAttachmentMessage(final Message message) {
-        return new DefaultAttachmentMessage(message);
+        AttachmentMessage answer;
+        if (message instanceof AttachmentMessage am) {
+            answer = am;
+        } else {
+            answer = new DefaultAttachmentMessage(message);
+            // need to wrap exchange message as attachment capable
+            message.getExchange().setMessage(answer);
+        }
+        return answer;
     }
 
     @Converter

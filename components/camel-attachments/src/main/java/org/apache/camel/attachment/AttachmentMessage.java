@@ -29,6 +29,12 @@ import org.apache.camel.Message;
 public interface AttachmentMessage extends Message {
 
     /**
+     * The {@link AttachmentMessage} will wrap the previous {@link Message} and this method gives access to the previous
+     * message instance.
+     */
+    Message getDelegateMessage();
+
+    /**
      * Returns the attachment specified by the id
      *
      * @param  id the id under which the attachment is stored
