@@ -352,6 +352,7 @@
                             <Jenkinsfile>SLASHSTAR_STYLE</Jenkinsfile>
                             <Jenkinsfile.deploy>SLASHSTAR_STYLE</Jenkinsfile.deploy>
                             <Jenkinsfile.dryrun>SLASHSTAR_STYLE</Jenkinsfile.dryrun>
+                            <Jenkinsfile.jbangtest>SLASHSTAR_STYLE</Jenkinsfile.jbangtest>
                             <atom>XML_STYLE</atom>
                             <bpmn>XML_STYLE</bpmn>
                             <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
