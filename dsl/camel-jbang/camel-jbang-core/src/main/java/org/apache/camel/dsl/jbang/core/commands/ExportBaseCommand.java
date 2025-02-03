@@ -1008,10 +1008,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
             return "camel:" + dependency.substring("camel-quarkus:".length());
         }
 
-        if (dependency.startsWith("camel-k-")) {
-            return "camel-k:" + dependency.substring("camel-k-".length());
-        }
-
         if (dependency.startsWith("camel-")) {
             return "camel:" + dependency.substring("camel-".length());
         }

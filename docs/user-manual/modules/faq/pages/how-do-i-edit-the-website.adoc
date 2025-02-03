@@ -28,7 +28,7 @@ For such documentation, you will need to locate the original source and propose 
 == In local repositories
 
 To edit files locally, it's important to understand how the website is generated and where the files are located. The configuration for the Antora and Hugo site generators is located in its https://github.com/apache/camel-website[own repository].
-The documentation is located in the main https://github.com/apache/camel[Apache Camel] repository and sub-project repositories, such as https://github.com/apache/camel-k[Camel-K] and https://github.com/apache/camel-quarkus[Camel Quarkus].
+The documentation is located in the main https://github.com/apache/camel[Apache Camel] repository and sub-project repositories, such as https://github.com/apache/camel-spring-boot[Camel Spring Boot] and https://github.com/apache/camel-quarkus[Camel Quarkus].
 
 See xref:ROOT:improving-the-documentation.adoc[] for instructions on how to work on the documentation.
 

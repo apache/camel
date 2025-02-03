@@ -90,7 +90,6 @@ public final class GitHubHelper {
         path = sj.toString();
 
         if ("tree".equals(action)) {
-            // https://api.github.com/repos/apache/camel-k-examples/contents/examples/generic-examples
             url = "https://api.github.com/repos/" + org + "/" + repo + "/contents/" + path;
             if (!"main".equals(branch) && !"master".equals(branch)) {
                 url = url + "?ref=" + branch;

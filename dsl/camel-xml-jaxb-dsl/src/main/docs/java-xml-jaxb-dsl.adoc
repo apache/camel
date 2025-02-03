@@ -18,7 +18,7 @@ However, the `xml-io-dsl` is a source code generated parser that is Camel specif
 route files (not classic Spring `<beans>` XML files).
 
 If you are using Camel XML DSL then it is recommended using `xml-io-dsl` instead of `xml-jaxb-dsl`.
-You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main, and Camel K etc.
+You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main.
 
 If you use classic Spring `<beans>` XML files then you must use the `camel-jaxb-dsl`,
 which comes out of the box when using `camel-spring-xml`.

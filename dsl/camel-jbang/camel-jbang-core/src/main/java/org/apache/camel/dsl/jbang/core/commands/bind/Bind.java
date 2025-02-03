@@ -74,7 +74,7 @@ public class Bind extends CamelCommand {
 
     // Available binding providers, order in array is important!
     private final BindingProvider[] bindingProviders = new BindingProvider[] {
-            new KameletBindingProvider(),
+            new PipeProvider(),
             new KnativeBrokerBindingProvider(),
             new KnativeChannelBindingProvider(),
             new StrimziKafkaTopicBindingProvider(),

@@ -7,7 +7,6 @@
 ** xref:camel-console.adoc[Camel Developer Console]
 ** xref:camel-jbang.adoc[Camel JBang]
 *** xref:camel-jbang-kubernetes.adoc[Camel Kubernetes plugin]
-*** xref:camel-jbang-k.adoc[Camel K plugin]
 ** xref:camel-maven-plugin.adoc[Camel Maven Plugin]
 ** xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin]
 ** xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin]

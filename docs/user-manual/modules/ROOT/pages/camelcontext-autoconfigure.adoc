@@ -1,7 +1,7 @@
 = CamelContext Auto Configuration
 
 The xref:camelcontext.adoc[CamelContext] is autoconfigured when running Camel with either
-xref:components:others:main.adoc[Camel Main], Camel Spring Boot, Camel Quarkus, or Camel K.
+xref:components:others:main.adoc[Camel Main], Camel Spring Boot, Camel Quarkus.
 
 == Camel Autoconfiguration
 

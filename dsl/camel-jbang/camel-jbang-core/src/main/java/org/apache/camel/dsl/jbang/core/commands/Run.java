@@ -290,7 +290,8 @@ public class Run extends CamelCommand {
             description = "Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
     boolean metrics;
 
-    @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
+    @Option(names = { "--modeline" }, defaultValue = "true",
+            description = "Deprecated, to be removed: Enables Camel-K style modeline")
     boolean modeline = true;
 
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
@@ -567,6 +568,7 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
         }
         if (modeline) {
+            printer().println("WARN: modeline parameter is deprecated, to be removed in the next version.");
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
         }
         if (ignoreLoadingError) {
@@ -1680,10 +1682,8 @@ public class Run extends CamelCommand {
                             || source.content().contains("- route-configuration:")
                             || source.content().contains("- rest:")
                             || source.content().contains("- beans:")
-                            // also support Camel K integrations and Pipes. And KameletBinding for backward compatibility
-                            || source.content().contains("KameletBinding")
-                            || source.content().contains("Pipe")
-                            || source.content().contains("kind: Integration");
+                            // also support Pipes.
+                            || source.content().contains("Pipe");
                 }
             }
             // if the ext is an accepted file then we include it as a potential route

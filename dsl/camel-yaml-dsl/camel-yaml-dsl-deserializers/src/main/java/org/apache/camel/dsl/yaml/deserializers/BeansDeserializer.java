@@ -74,7 +74,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             }
 
             // due to yaml-dsl is pre parsing beans which gets created eager
-            // and then later beans can be parsed again such as from Camel K Integration CRD files
+            // and then later beans can be parsed again such as from Yaml dsl files
             // we need to avoid double creating beans and therefore has a cache to check for duplicates
             String key = bean.getName() + ":" + bean.getType();
             boolean duplicate = beanCache.contains(key);

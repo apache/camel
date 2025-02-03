@@ -33,7 +33,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -69,7 +69,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     uri: timer:foo
@@ -98,7 +98,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     uri: timer:foo
@@ -274,7 +274,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -314,7 +314,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -343,7 +343,7 @@ class PipeLoaderTest extends YamlTestSupport {
                           kafka-service-account-secret: tiger
                       parameters:
                         maximumRedeliveries: 1
-                        redeliveryDelay: 2000    
+                        redeliveryDelay: 2000
                     ''')
         then:
         context.routeDefinitions.size() == 4
@@ -375,7 +375,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -414,7 +414,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: knative-event-source                  
+                  name: knative-event-source
                 spec:
                   source:
                     ref:
@@ -453,7 +453,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -468,7 +468,7 @@ class PipeLoaderTest extends YamlTestSupport {
                       apiVersion: eventing.knative.dev/v1
                       name: foo-broker
                     properties:
-                      type: org.apache.camel.event.messages  
+                      type: org.apache.camel.event.messages
             ''')
         then:
         context.routeDefinitions.size() == 2
@@ -494,7 +494,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: knative-event-source                  
+                  name: knative-event-source
                 spec:
                   source:
                     ref:
@@ -502,7 +502,7 @@ class PipeLoaderTest extends YamlTestSupport {
                       apiVersion: eventing.knative.dev/v1
                       name: foo-broker
                     properties:
-                      type: org.apache.camel.event.messages  
+                      type: org.apache.camel.event.messages
                   sink:
                     ref:
                       kind: Kamelet
@@ -530,7 +530,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -559,45 +559,13 @@ class PipeLoaderTest extends YamlTestSupport {
         }
     }
 
-    def "Pipe with trait properties"() {
-        when:
-        loadBindings('''
-                apiVersion: camel.apache.org/v1
-                kind: Pipe
-                metadata:
-                  name: timer-event-source
-                  annotations:
-                    trait.camel.apache.org/camel.properties: "foo=howdy,bar=123"                  
-                    trait.camel.apache.org/environment.vars: "MY_ENV=cheese"                  
-                spec:
-                  source:
-                    ref:
-                      kind: Kamelet
-                      apiVersion: camel.apache.org/v1
-                      name: timer-source
-                    properties:
-                      message: "Hello world!"
-                  sink:
-                    ref:
-                      kind: Kamelet
-                      apiVersion: camel.apache.org/v1
-                      name: log-sink
-            ''')
-        then:
-        context.routeDefinitions.size() == 3
-
-        context.resolvePropertyPlaceholders("{{foo}}") == "howdy"
-        context.resolvePropertyPlaceholders("{{bar}}") == "123"
-        context.resolvePropertyPlaceholders("{{MY_ENV}}") == "cheese"
-    }
-
     def "Pipe no sink"() {
         when:
         loadBindings('''
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -633,7 +601,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -652,7 +620,7 @@ class PipeLoaderTest extends YamlTestSupport {
                       name: log-sink
                     dataTypes:
                       out:
-                        format: application/octet-stream   
+                        format: application/octet-stream
             ''')
         then:
         context.routeDefinitions.size() == 3
@@ -677,7 +645,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -698,7 +666,7 @@ class PipeLoaderTest extends YamlTestSupport {
                     dataTypes:
                       out:
                         scheme: camel
-                        format: application/octet-stream   
+                        format: application/octet-stream
             ''')
         then:
         context.routeDefinitions.size() == 3
@@ -723,7 +691,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -732,7 +700,7 @@ class PipeLoaderTest extends YamlTestSupport {
                       name: timer-source
                     dataTypes:
                       out:
-                        format: application/octet-stream    
+                        format: application/octet-stream
                     properties:
                       message: "Hello world!"
                   sink:
@@ -775,7 +743,7 @@ class PipeLoaderTest extends YamlTestSupport {
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
-                  name: timer-event-source                  
+                  name: timer-event-source
                 spec:
                   source:
                     ref:
@@ -785,7 +753,7 @@ class PipeLoaderTest extends YamlTestSupport {
                     dataTypes:
                       out:
                         scheme: camel
-                        format: application/octet-stream    
+                        format: application/octet-stream
                     properties:
                       message: "Hello world!"
                   sink:

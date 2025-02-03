@@ -19,7 +19,7 @@ However, the `xml-io-dsl` is a source code generated parser that is Camel specif
 route files (not classic Spring `<beans>` XML files).
 
 If you are using Camel XML DSL then it is recommended using `xml-io-dsl` instead of `xml-jaxb-dsl`.
-You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main, and Camel K etc.
+You can use this in all of Camel's runtime such as Spring Boot, Quarkus, Camel Main.
 
 == Example
 
@@ -32,7 +32,7 @@ The following `my-route.xml` source file:
     <route>
         <from uri="timer:tick"/>
         <setBody>
-            <constant>Hello Camel K!</constant>
+            <constant>Hello Camel!</constant>
          </setBody>
         <to uri="log:info"/>
     </route>
@@ -41,14 +41,7 @@ The following `my-route.xml` source file:
 
 TIP: You can omit the `xmlns` namespace. And if there is only a single route, you can use `<route>` as the root XML tag.
 
-Can then be loaded and run with Camel CLI or Camel K.
-
-.Running with Camel K
-
-[source,bash]
-----
-kamel run my-route.xml
-----
+Can then be loaded and run with Camel CLI.
 
 .Running with Camel CLI
 
