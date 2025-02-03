@@ -355,7 +355,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security")
     private String kerberosConfigLocation;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean batching;
 
     public KafkaConfiguration() {
@@ -1996,7 +1996,13 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Whether to use batching for processing or streaming. The default is false, which uses streaming
+     * Whether to use batching for processing or streaming. The default is false, which uses streaming.
+     *
+     * In streaming mode, then a single kafka record is processed per Camel exchange in the message body.
+     *
+     * In batching mode, then Camel groups many kafka records together as a List<Exchange> objects
+     * in the message body. The option maxPollRecords is used to define the number of records to group together
+     * in batching mode.
      */
     public void setBatching(boolean batching) {
         this.batching = batching;

@@ -308,7 +308,11 @@ public interface KafkaComponentBuilderFactory {
         
         /**
          * Whether to use batching for processing or streaming. The default is
-         * false, which uses streaming.
+         * false, which uses streaming. In streaming mode, then a single kafka
+         * record is processed per Camel exchange in the message body. In
+         * batching mode, then Camel groups many kafka records together as a
+         * List objects in the message body. The option maxPollRecords is used
+         * to define the number of records to group together in batching mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
