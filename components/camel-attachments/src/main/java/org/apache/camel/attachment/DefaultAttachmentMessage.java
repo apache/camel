@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.trait.message.MessageTrait;
 
 public final class DefaultAttachmentMessage implements AttachmentMessage {
+
     /*
      * Attachments are stores as a property on the {@link Exchange} which ensures they are propagated
      * during routing and we dont have to pollute the generic {@link Message} with attachment APIs
@@ -41,6 +42,11 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     public DefaultAttachmentMessage(Message delegate) {
         this.delegate = delegate;
         this.exchange = delegate.getExchange();
+    }
+
+    @Override
+    public Message getDelegateMessage() {
+        return delegate;
     }
 
     @Override

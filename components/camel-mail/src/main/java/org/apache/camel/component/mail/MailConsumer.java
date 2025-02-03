@@ -233,8 +233,13 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            // must use the original message in case we need to workaround a charset issue when extracting mail content
-            final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
+            // must use the original message in case we need to work around a charset issue when extracting mail content
+            var msg = exchange.getIn();
+            if (msg instanceof AttachmentMessage am) {
+                // unwrap from attachment message
+                msg = am.getDelegateMessage();
+            }
+            final Message mail = ((MailMessage) msg).getOriginalMessage();
 
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
