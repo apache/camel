@@ -1800,7 +1800,7 @@ public abstract class BaseMainSupport extends BaseService {
         // auto-detect camel-platform-http-main on classpath
         MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
         // create http server as a service managed by camel context
-        Service http = sf.newHttpServer(server);
+        Service http = sf.newHttpServer(camelContext, server);
         // force eager starting as embedded http server is used for
         // container platform to check readiness and need to be started eager
         camelContext.addService(http, true, true);

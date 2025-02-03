@@ -37,7 +37,7 @@ public class MainHttpServerFactory {
                 try {
                     // enable http server if not silent
                     org.apache.camel.main.MainHttpServerFactory factory = resolveMainHttpServerFactory(camelContext);
-                    Service httpServer = factory.newHttpServer(config);
+                    Service httpServer = factory.newHttpServer(camelContext, config);
                     camelContext.addService(httpServer, true, true);
                 } catch (Exception e) {
                     throw new RuntimeException(e);

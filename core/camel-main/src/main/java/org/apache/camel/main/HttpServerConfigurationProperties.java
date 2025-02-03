@@ -38,7 +38,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String path = "/";
     private Long maxBodySize;
     private boolean useGlobalSslContextParameters;
-
+    @Metadata(defaultValue = "true")
+    private boolean fileUploadEnabled = true;
+    @Metadata
+    private String fileUploadDirectory;
     private boolean infoEnabled;
     private boolean staticEnabled;
     @Metadata(defaultValue = "/")
@@ -145,6 +148,32 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public boolean isFileUploadEnabled() {
+        return fileUploadEnabled;
+    }
+
+    /**
+     * Whether to enable file uploads being supported (such as POST multipart/form-data) and stored into a temporary
+     * directory.
+     */
+    public void setFileUploadEnabled(boolean fileUploadEnabled) {
+        this.fileUploadEnabled = fileUploadEnabled;
+    }
+
+    public String getFileUploadDirectory() {
+        return fileUploadDirectory;
+    }
+
+    /**
+     * Directory to temporary store file uploads while Camel routes the incoming request.
+     *
+     * If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir
+     * directory.
+     */
+    public void setFileUploadDirectory(String fileUploadDirectory) {
+        this.fileUploadDirectory = fileUploadDirectory;
     }
 
     public boolean isInfoEnabled() {
@@ -403,6 +432,26 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+        return this;
+    }
+
+    /**
+     * Whether to enable file uploads being supported (such as POST multipart/form-data) and stored into a temporary
+     * directory.
+     */
+    public HttpServerConfigurationProperties withFileUploadEnabled(boolean fileUploadEnabled) {
+        this.fileUploadEnabled = fileUploadEnabled;
+        return this;
+    }
+
+    /**
+     * Directory to temporary store file uploads while Camel routes the incoming request.
+     *
+     * If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir
+     * directory.
+     */
+    public HttpServerConfigurationProperties withFileUploadDirectory(String fileUploadDirectory) {
+        this.fileUploadDirectory = fileUploadDirectory;
         return this;
     }
 

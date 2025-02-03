@@ -152,6 +152,24 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.configuration = configuration;
     }
 
+    @ManagedAttribute(description = "Whether file uploads is enabled")
+    public boolean isFileUploadEnabled() {
+        return configuration.getBodyHandler().isHandleFileUploads();
+    }
+
+    public void setFileUploadEnabled(boolean fileUploadEnabled) {
+        configuration.getBodyHandler().setHandleFileUploads(fileUploadEnabled);
+    }
+
+    @ManagedAttribute(description = "Directory to temporary store file uploads")
+    public String getFileUploadDirectory() {
+        return configuration.getBodyHandler().getUploadsDirectory();
+    }
+
+    public void setFileUploadDirectory(String fileUploadDirectory) {
+        configuration.getBodyHandler().setUploadsDirectory(fileUploadDirectory);
+    }
+
     @ManagedAttribute(description = "Whether info is enabled (/q/info)")
     public boolean isInfoEnabled() {
         return infoEnabled;
