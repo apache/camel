@@ -1353,6 +1353,13 @@ camel kubernetes delete --name=route
 Use the `--name` option to select a previously exported project (either via `run` or `export` command).
 The delete operation will remove all resources defined in the Kubernetes manifest.
 
+If you used the `--cluster-type` option to create your project (either via `run` or `export` command) you will need to use it as well for the delete operation.
+
+[source,bash]
+----
+camel kubernetes delete --name=route --cluster-type=openshift
+----
+
 == Minikube deployment tips and troubleshooting
 
 To run a local Kubernetes cluster with Minikube for development purposes.

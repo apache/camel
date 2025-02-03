@@ -39,7 +39,9 @@ public class KubernetesDelete extends KubernetesBaseCommand {
     String workingDir;
 
     @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
+                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift."
+                                      +
+                                      " If a target cluster type was set to create the project (run/export command), it needs to be set.")
     protected String clusterType;
 
     public KubernetesDelete(CamelJBangMain main) {
