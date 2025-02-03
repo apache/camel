@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "main-http-server",
+    "title": "Main HTTP Server",
+    "description": "Camel Main HTTP Server",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.platform.http.main.MainHttpServerDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-platform-http-main",
+    "version": "4.10.0-SNAPSHOT"
+  }
+}
+

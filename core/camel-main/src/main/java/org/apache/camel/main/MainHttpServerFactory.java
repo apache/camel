@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 
 /**
@@ -26,8 +27,9 @@ public interface MainHttpServerFactory {
     /**
      * Creates the embedded HTTP server
      *
+     * @param  camelContext  the camel context
      * @param  configuration server configuration
      * @return               the server as a {@link Service} to be managed by {@link org.apache.camel.CamelContext}.
      */
-    Service newHttpServer(HttpServerConfigurationProperties configuration);
+    Service newHttpServer(CamelContext camelContext, HttpServerConfigurationProperties configuration);
 }

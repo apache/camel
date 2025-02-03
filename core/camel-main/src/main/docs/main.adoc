@@ -187,7 +187,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 24 options, which are listed below.
+The camel.server supports 26 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -198,6 +198,8 @@ The camel.server supports 24 options, which are listed below.
 | *camel.server.devConsoleEnabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
 | *camel.server.downloadEnabled* | Whether to enable file download via HTTP. This makes it possible to browse and download resource source files such as Camel XML or YAML routes. Only enable this for development, troubleshooting or special situations for management and monitoring. | false | boolean
 | *camel.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
+| *camel.server.fileUpload{zwsp}Directory* | Directory to temporary store file uploads while Camel routes the incoming request. If no directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory. |  | String
+| *camel.server.fileUploadEnabled* | Whether to enable file uploads being supported (such as POST multipart/form-data) and stored into a temporary directory. | true | boolean
 | *camel.server.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health (default) | false | boolean
 | *camel.server.healthPath* | The path endpoint used to expose the health status | /q/health | String
 | *camel.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String

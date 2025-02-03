@@ -326,9 +326,9 @@ public class VertxPlatformHttpServerConfiguration {
 
     public static class BodyHandler {
         private boolean handleFileUploads;
-        private String uploadsDirectory = "file-uploads";
+        private String uploadsDirectory;
         private boolean mergeFormAttributes = true;
-        private boolean deleteUploadedFilesOnEnd;
+        private boolean deleteUploadedFilesOnEnd = true;
         private boolean preallocateBodyBuffer = true;
 
         public boolean isHandleFileUploads() {

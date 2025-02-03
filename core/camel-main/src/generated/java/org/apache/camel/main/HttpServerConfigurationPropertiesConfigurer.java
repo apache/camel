@@ -28,6 +28,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("DevConsoleEnabled", boolean.class);
         map.put("DownloadEnabled", boolean.class);
         map.put("Enabled", boolean.class);
+        map.put("FileUploadDirectory", java.lang.String.class);
+        map.put("FileUploadEnabled", boolean.class);
         map.put("HealthCheckEnabled", boolean.class);
         map.put("HealthPath", java.lang.String.class);
         map.put("Host", java.lang.String.class);
@@ -64,6 +66,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "downloadenabled":
         case "downloadEnabled": target.setDownloadEnabled(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "fileuploaddirectory":
+        case "fileUploadDirectory": target.setFileUploadDirectory(property(camelContext, java.lang.String.class, value)); return true;
+        case "fileuploadenabled":
+        case "fileUploadEnabled": target.setFileUploadEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckenabled":
         case "healthCheckEnabled": target.setHealthCheckEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthpath":
@@ -120,6 +126,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "downloadenabled":
         case "downloadEnabled": return boolean.class;
         case "enabled": return boolean.class;
+        case "fileuploaddirectory":
+        case "fileUploadDirectory": return java.lang.String.class;
+        case "fileuploadenabled":
+        case "fileUploadEnabled": return boolean.class;
         case "healthcheckenabled":
         case "healthCheckEnabled": return boolean.class;
         case "healthpath":
@@ -172,6 +182,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "downloadenabled":
         case "downloadEnabled": return target.isDownloadEnabled();
         case "enabled": return target.isEnabled();
+        case "fileuploaddirectory":
+        case "fileUploadDirectory": return target.getFileUploadDirectory();
+        case "fileuploadenabled":
+        case "fileUploadEnabled": return target.isFileUploadEnabled();
         case "healthcheckenabled":
         case "healthCheckEnabled": return target.isHealthCheckEnabled();
         case "healthpath":

@@ -25,10 +25,13 @@ import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.MainHttpServerFactory;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.TempDirHelper;
 import org.apache.camel.util.ObjectHelper;
 
 @JdkService(MainConstants.PLATFORM_HTTP_SERVER)
 public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttpServerFactory {
+
+    private static final String DEFAULT_UPLOAD_DIR = "${java.io.tmpdir}/camel/camel-tmp-#uuid#/";
 
     private CamelContext camelContext;
 
@@ -43,7 +46,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
     }
 
     @Override
-    public Service newHttpServer(HttpServerConfigurationProperties configuration) {
+    public Service newHttpServer(CamelContext camelContext, HttpServerConfigurationProperties configuration) {
         MainHttpServer server = new MainHttpServer();
 
         server.setCamelContext(camelContext);
@@ -54,6 +57,15 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
             server.setMaxBodySize(configuration.getMaxBodySize());
         }
         server.setUseGlobalSslContextParameters(configuration.isUseGlobalSslContextParameters());
+        server.setFileUploadEnabled(configuration.isFileUploadEnabled());
+        if (configuration.isFileUploadEnabled()) {
+            String dir = configuration.getFileUploadDirectory();
+            if (dir == null) {
+                dir = DEFAULT_UPLOAD_DIR;
+            }
+            dir = TempDirHelper.resolveTempDir(camelContext, null, dir);
+            server.setFileUploadDirectory(dir);
+        }
         server.setInfoEnabled(configuration.isInfoEnabled());
         server.setStaticEnabled(configuration.isStaticEnabled());
         server.setStaticContextPath(configuration.getStaticContextPath());

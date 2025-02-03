@@ -34,8 +34,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.support.TempDirHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -333,43 +333,6 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         return false;
     }
 
-    protected String resolveSpoolDirectory(String path) {
-        if (camelContext.getManagementNameStrategy() != null) {
-            String name = camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
-            if (name != null) {
-                name = customResolveManagementName(name);
-            }
-            // and then check again with invalid check to ensure all ## is resolved
-            if (name != null) {
-                name = camelContext.getManagementNameStrategy().resolveManagementName(name, camelContext.getName(), true);
-            }
-            return name;
-        } else {
-            return defaultManagementName(path);
-        }
-    }
-
-    protected String defaultManagementName(String path) {
-        // must quote the names to have it work as literal replacement
-        String name = camelContext.getName();
-
-        // replace tokens
-        String answer = path;
-        answer = answer.replace("#camelId#", name);
-        answer = answer.replace("#name#", name);
-        // replace custom
-        answer = customResolveManagementName(answer);
-        return answer;
-    }
-
-    protected String customResolveManagementName(String pattern) {
-        if (pattern.contains("#uuid#")) {
-            String uuid = camelContext.getUuidGenerator().generateUuid();
-            pattern = pattern.replace("#uuid#", uuid);
-        }
-        return FilePathResolver.resolvePath(pattern);
-    }
-
     @Override
     protected void doStart() throws Exception {
         if (!enabled) {
@@ -409,7 +372,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 throw new IllegalArgumentException("SpoolDirectory must be configured when using SpoolThreshold > 0");
             }
             if (spoolDirectory == null) {
-                String name = resolveSpoolDirectory(spoolDirectoryName);
+                String name = TempDirHelper.resolveTempDir(camelContext, null, spoolDirectoryName);
                 if (name != null) {
                     spoolDirectory = new File(name);
                     spoolDirectoryName = null;
