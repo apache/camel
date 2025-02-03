@@ -430,7 +430,16 @@ To avoid blocking for too long, waiting for the whole set of records to fill the
 to set a timeout for the polling. The timeout is only triggered if there has not received any new messages for the given timeout period.
 So for example if `pollTimeoutMs=10000` then the timeout is 10 seconds, and this will only trigger if Camel did not receive any new messages
 from Kafka for 10 seconds. The timeout trigger will reset if a message has been received, so if you continuously and slowly receive new messages,
-then this timeout may newer trigger.
+then this timeout may not trigger for a long time. Therefore, the option `batchingIntervalMs` can therefore be used to specify an interval (in mills)
+to trigger the batch completion, to avoid waiting for more messages to be received to reach the batch size.
+For example setting `batchingIntervalMs=20000` would let Camel wait at most `pollTimeoutMs + batchingIntervalMs` before
+triggering a batch completion. In this example that would be 30 seconds.
+
+Notice the `pollTimeoutMs` should not be set to a high value, as it's used directly by Kafka while
+receiving new messages from the broker. Camel is not active during this processing, and if the option
+has been configured with a high value, then Camel cannot trigger batch timeout or interval completion ahead
+of time. Therefore, it's recommended to keep this value as default.
+
 
 ==== Automatic Commits
 
