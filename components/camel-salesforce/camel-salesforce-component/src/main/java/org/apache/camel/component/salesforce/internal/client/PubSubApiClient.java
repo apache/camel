@@ -229,7 +229,7 @@ public class PubSubApiClient extends ServiceSupport {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.warn("Stopping PubSubApiClient");
+        LOG.debug("Stopping PubSubApiClient");
         // stop each open stream
         observerMap.values().forEach(observer -> {
             LOG.debug("Stopping subscription");
