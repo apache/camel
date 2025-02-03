@@ -146,7 +146,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         // timeout is only triggered if we no new records
         boolean timeout = consumerRecords.isEmpty() && timeoutWatch.taken() >= configuration.getPollTimeoutMs();
         // interval is triggered if enabled, and it has been X time since last batch completion
-        boolean interval = configuration.getBatchingIntervalMs() != null && intervalWatch.taken() >= configuration.getBatchingIntervalMs();
+        boolean interval = configuration.getBatchingIntervalMs() != null
+                && intervalWatch.taken() >= configuration.getBatchingIntervalMs();
         return timeout || interval;
     }
 

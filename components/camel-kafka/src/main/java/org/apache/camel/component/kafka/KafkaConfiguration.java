@@ -2002,9 +2002,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      *
      * In streaming mode, then a single kafka record is processed per Camel exchange in the message body.
      *
-     * In batching mode, then Camel groups many kafka records together as a List<Exchange> objects
-     * in the message body. The option maxPollRecords is used to define the number of records to group together
-     * in batching mode. See also the batchingIntervalMs option.
+     * In batching mode, then Camel groups many kafka records together as a List<Exchange> objects in the message body.
+     * The option maxPollRecords is used to define the number of records to group together in batching mode. See also
+     * the batchingIntervalMs option.
      */
     public void setBatching(boolean batching) {
         this.batching = batching;
@@ -2015,14 +2015,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * In consumer batching mode, then this option is specifying a time in millis,
-     * to trigger batch completion eager when the current batch size has not reached
-     * the maximum size defined by maxPollRecords.
+     * In consumer batching mode, then this option is specifying a time in millis, to trigger batch completion eager
+     * when the current batch size has not reached the maximum size defined by maxPollRecords.
      *
-     * Notice the trigger is not exact at the given interval, as this can only happen
-     * between kafka polls (see pollTimeoutMs option). So for example setting this
-     * to 10000, then the trigger happens in the interval 10000 + pollTimeoutMs. The default
-     * value for pollTimeoutMs is 5000, so this would mean a trigger interval at about every
+     * Notice the trigger is not exact at the given interval, as this can only happen between kafka polls (see
+     * pollTimeoutMs option). So for example setting this to 10000, then the trigger happens in the interval 10000 +
+     * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this would mean a trigger interval at about every
      * 15 seconds.
      */
     public void setBatchingIntervalMs(Integer batchingIntervalMs) {
