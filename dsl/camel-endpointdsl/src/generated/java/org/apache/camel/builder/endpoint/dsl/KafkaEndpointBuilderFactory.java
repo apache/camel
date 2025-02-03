@@ -444,6 +444,7 @@ public interface KafkaEndpointBuilderFactory {
          * batching mode, then Camel groups many kafka records together as a
          * List objects in the message body. The option maxPollRecords is used
          * to define the number of records to group together in batching mode.
+         * See also the batchingIntervalMs option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -464,6 +465,7 @@ public interface KafkaEndpointBuilderFactory {
          * batching mode, then Camel groups many kafka records together as a
          * List objects in the message body. The option maxPollRecords is used
          * to define the number of records to group together in batching mode.
+         * See also the batchingIntervalMs option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -475,6 +477,49 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder batching(String batching) {
             doSetProperty("batching", batching);
+            return this;
+        }
+        /**
+         * In consumer batching mode, then this option is specifying a time in
+         * millis, to trigger batch completion eager when the current batch size
+         * has not reached the maximum size defined by maxPollRecords. Notice
+         * the trigger is not exact at the given interval, as this can only
+         * happen between kafka polls (see pollTimeoutMs option). So for example
+         * setting this to 10000, then the trigger happens in the interval 10000
+         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * would mean a trigger interval at about every 15 seconds.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param batchingIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder batchingIntervalMs(Integer batchingIntervalMs) {
+            doSetProperty("batchingIntervalMs", batchingIntervalMs);
+            return this;
+        }
+        /**
+         * In consumer batching mode, then this option is specifying a time in
+         * millis, to trigger batch completion eager when the current batch size
+         * has not reached the maximum size defined by maxPollRecords. Notice
+         * the trigger is not exact at the given interval, as this can only
+         * happen between kafka polls (see pollTimeoutMs option). So for example
+         * setting this to 10000, then the trigger happens in the interval 10000
+         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * would mean a trigger interval at about every 15 seconds.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @param batchingIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder batchingIntervalMs(String batchingIntervalMs) {
+            doSetProperty("batchingIntervalMs", batchingIntervalMs);
             return this;
         }
         /**

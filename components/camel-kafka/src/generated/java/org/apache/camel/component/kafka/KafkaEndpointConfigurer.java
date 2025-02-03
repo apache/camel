@@ -36,6 +36,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "batchwithindividualheaders":
         case "batchWithIndividualHeaders": target.getConfiguration().setBatchWithIndividualHeaders(property(camelContext, boolean.class, value)); return true;
         case "batching": target.getConfiguration().setBatching(property(camelContext, boolean.class, value)); return true;
+        case "batchingintervalms":
+        case "batchingIntervalMs": target.getConfiguration().setBatchingIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": target.getConfiguration().setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -253,6 +255,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "batchwithindividualheaders":
         case "batchWithIndividualHeaders": return boolean.class;
         case "batching": return boolean.class;
+        case "batchingintervalms":
+        case "batchingIntervalMs": return java.lang.Integer.class;
         case "breakonfirsterror":
         case "breakOnFirstError": return boolean.class;
         case "bridgeerrorhandler":
@@ -471,6 +475,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "batchwithindividualheaders":
         case "batchWithIndividualHeaders": return target.getConfiguration().isBatchWithIndividualHeaders();
         case "batching": return target.getConfiguration().isBatching();
+        case "batchingintervalms":
+        case "batchingIntervalMs": return target.getConfiguration().getBatchingIntervalMs();
         case "breakonfirsterror":
         case "breakOnFirstError": return target.getConfiguration().isBreakOnFirstError();
         case "bridgeerrorhandler":

@@ -313,6 +313,7 @@ public interface KafkaComponentBuilderFactory {
          * batching mode, then Camel groups many kafka records together as a
          * List objects in the message body. The option maxPollRecords is used
          * to define the number of records to group together in batching mode.
+         * See also the batchingIntervalMs option.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -324,6 +325,28 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder batching(boolean batching) {
             doSetProperty("batching", batching);
+            return this;
+        }
+    
+        /**
+         * In consumer batching mode, then this option is specifying a time in
+         * millis, to trigger batch completion eager when the current batch size
+         * has not reached the maximum size defined by maxPollRecords. Notice
+         * the trigger is not exact at the given interval, as this can only
+         * happen between kafka polls (see pollTimeoutMs option). So for example
+         * setting this to 10000, then the trigger happens in the interval 10000
+         * pollTimeoutMs. The default value for pollTimeoutMs is 5000, so this
+         * would mean a trigger interval at about every 15 seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param batchingIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder batchingIntervalMs(java.lang.Integer batchingIntervalMs) {
+            doSetProperty("batchingIntervalMs", batchingIntervalMs);
             return this;
         }
     
@@ -2408,6 +2431,7 @@ public interface KafkaComponentBuilderFactory {
             case "autoCommitIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setAutoCommitIntervalMs((java.lang.Integer) value); return true;
             case "autoOffsetReset": getOrCreateConfiguration((KafkaComponent) component).setAutoOffsetReset((java.lang.String) value); return true;
             case "batching": getOrCreateConfiguration((KafkaComponent) component).setBatching((boolean) value); return true;
+            case "batchingIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setBatchingIntervalMs((java.lang.Integer) value); return true;
             case "breakOnFirstError": getOrCreateConfiguration((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
             case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "checkCrcs": getOrCreateConfiguration((KafkaComponent) component).setCheckCrcs((java.lang.Boolean) value); return true;

@@ -45,7 +45,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     private final KafkaConfiguration configuration;
     private final Processor processor;
     private final CommitManager commitManager;
-    private final StopWatch watch = new StopWatch();
+    private final StopWatch timeoutWatch = new StopWatch();
+    private final StopWatch intervalWatch = new StopWatch();
     private final Queue<Exchange> exchangeList;
 
     private final class CommitSynchronization implements Synchronization {
@@ -106,7 +107,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
         // Aggregate all consumer records in a single exchange
         if (exchangeList.isEmpty()) {
-            watch.takenAndRestart();
+            timeoutWatch.takenAndRestart();
         }
 
         if (hasExpiredRecords(consumerRecords)) {
@@ -117,7 +118,6 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             // poll timeout has elapsed, so check for expired records
             processBatch(camelKafkaConsumer);
             exchangeList.clear();
-
             return ProcessingResult.newUnprocessed();
         }
 
@@ -139,10 +139,21 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     }
 
     private boolean hasExpiredRecords(ConsumerRecords<Object, Object> consumerRecords) {
-        return !exchangeList.isEmpty() && consumerRecords.isEmpty() && watch.taken() >= configuration.getPollTimeoutMs();
+        // no records in batch
+        if (exchangeList.isEmpty()) {
+            return false;
+        }
+        // timeout is only triggered if we no new records
+        boolean timeout = consumerRecords.isEmpty() && timeoutWatch.taken() >= configuration.getPollTimeoutMs();
+        // interval is triggered if enabled, and it has been X time since last batch completion
+        boolean interval = configuration.getBatchingIntervalMs() != null
+                && intervalWatch.taken() >= configuration.getBatchingIntervalMs();
+        return timeout || interval;
     }
 
     private void processBatch(KafkaConsumer camelKafkaConsumer) {
+        intervalWatch.restart();
+
         // Create the bundle exchange
         Exchange exchange = camelKafkaConsumer.createExchange(false);
         Message message = exchange.getMessage();
