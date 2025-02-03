@@ -64,20 +64,9 @@ pipeline {
             }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
-            }
-        }
-        
-        stage('Run Camel-Jbang it tests') {
-            when {
-                anyOf {
-                    branch 'main'
-                    branch 'camel-4.8.x'
-                }
-            }
-            steps {
                 sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Pjbang-it-test"
             }
-        }       
+        }  
 
     }
 
