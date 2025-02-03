@@ -226,7 +226,7 @@
                 <maven.test.skip>false</maven.test.skip>
                 <shared.data.folder>target/data</shared.data.folder>
                 <cli.jbang.version>${project.version}</cli.jbang.version>
-                <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
+                <shared.maven.local.repo>target/mvn-repo</shared.maven.local.repo>
                 <x11.display>:0</x11.display>
             </properties>
             <build>
@@ -243,6 +243,10 @@
                                         <mkdir dir="${shared.data.folder}"/>
                                         <chmod perm="ugo+rwx">
                                             <dirset dir="${shared.data.folder}"/>
+                                        </chmod>
+                                        <mkdir dir="${shared.maven.local.repo}"/>
+                                        <chmod perm="ugo+rwx">
+                                            <dirset dir="${shared.maven.local.repo}"/>
                                         </chmod>
                                     </target>
                                 </configuration>
