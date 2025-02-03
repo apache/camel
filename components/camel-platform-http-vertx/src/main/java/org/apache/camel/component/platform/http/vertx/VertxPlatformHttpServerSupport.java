@@ -32,6 +32,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.vertx.common.VertxHelper;
+import org.apache.camel.support.TempDirHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -43,6 +44,8 @@ public final class VertxPlatformHttpServerSupport {
 
     private static final Pattern COMMA_SEPARATED_SPLIT_REGEX = Pattern.compile("\\s*,\\s*");
 
+    private static final String DEFAULT_UPLOAD_DIR = "${java.io.tmpdir}/camel/camel-tmp-#uuid#/";
+
     private VertxPlatformHttpServerSupport() {
     }
 
@@ -52,15 +55,20 @@ public final class VertxPlatformHttpServerSupport {
     //
     // *****************************
 
-    static Handler<RoutingContext> createBodyHandler(VertxPlatformHttpServerConfiguration configuration) {
+    static Handler<RoutingContext> createBodyHandler(
+            CamelContext camelContext, VertxPlatformHttpServerConfiguration configuration) {
         BodyHandler bodyHandler = BodyHandler.create();
 
         if (configuration.getMaxBodySize() != null) {
             bodyHandler.setBodyLimit(configuration.getMaxBodySize());
         }
-        bodyHandler.setHandleFileUploads(configuration.getBodyHandler().isHandleFileUploads());
-        if (configuration.getBodyHandler().getUploadsDirectory() != null) {
-            bodyHandler.setUploadsDirectory(configuration.getBodyHandler().getUploadsDirectory());
+        if (configuration.getBodyHandler().isHandleFileUploads()) {
+            String dir = configuration.getBodyHandler().getUploadsDirectory();
+            if (dir == null) {
+                dir = DEFAULT_UPLOAD_DIR;
+            }
+            dir = TempDirHelper.resolveTempDir(camelContext, null, dir);
+            bodyHandler.setUploadsDirectory(dir);
         }
         bodyHandler.setDeleteUploadedFilesOnEnd(configuration.getBodyHandler().isDeleteUploadedFilesOnEnd());
         bodyHandler.setMergeFormAttributes(configuration.getBodyHandler().isMergeFormAttributes());

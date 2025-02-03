@@ -202,7 +202,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                 new VertxPlatformHttpRouter(this, vertx, subRouter) {
                     @Override
                     public Handler<RoutingContext> bodyHandler() {
-                        return createBodyHandler(configuration);
+                        return createBodyHandler(getCamelContext(), configuration);
                     }
                 });
     }
