@@ -67,22 +67,16 @@ class ExportQuarkus extends Export {
         File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
         if (fresh || !files.isEmpty() || !settings.exists()) {
             // allow to automatic build
-            if (!quiet) {
-                printer().println("Generating fresh run data");
-            }
+            printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean);
             if (silent != 0) {
                 return silent;
             }
         } else {
-            if (!quiet) {
-                printer().println("Reusing existing run data");
-            }
+            printer().println("Reusing existing run data");
         }
 
-        if (!quiet) {
-            printer().println("Exporting as Quarkus project to: " + exportDir);
-        }
+        printer().println("Exporting as Quarkus project to: " + exportDir);
 
         // use a temporary work dir
         File buildDir = new File(BUILD_DIR);

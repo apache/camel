@@ -80,7 +80,11 @@ public class KubernetesBaseTest {
 
     protected InputStream getKubernetesManifestAsStream(String printerOutput, String output) {
         if (output.equals("yaml")) {
-            return new ByteArrayInputStream(StringHelper.after(printerOutput, "---").getBytes(StandardCharsets.UTF_8));
+            String manifest = StringHelper.after(printerOutput, "---");
+            if (manifest == null) {
+                throw new RuntimeException("Failed to find Kubernetes manifest in output: %n%s%n".formatted(printerOutput));
+            }
+            return new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8));
         }
         throw new RuntimeException("Unsupported output format: " + output);
     }

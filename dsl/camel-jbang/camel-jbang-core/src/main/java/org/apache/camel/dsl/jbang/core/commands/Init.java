@@ -135,9 +135,9 @@ public class Init extends CamelCommand {
         }
         if (is == null) {
             if (fromKamelet != null) {
-                printer().println("Error: Existing Kamelet does not exist: " + fromKamelet);
+                printer().printErr("Existing Kamelet does not exist: " + fromKamelet);
             } else {
-                printer().println("Error: Unsupported file type: " + ext);
+                printer().printErr("Unsupported file type: " + ext);
             }
             return 1;
         }

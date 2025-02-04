@@ -1092,7 +1092,7 @@ class BindTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals(-1, command.doCall());
 
-        Assertions.assertEquals("Unsupported output format 'wrong' (supported: file, yaml, json)", printer.getOutput());
+        Assertions.assertEquals("ERROR: Unsupported output format 'wrong' (supported: file, yaml, json)", printer.getOutput());
     }
 
     private Bind createCommand(String source, String sink) {

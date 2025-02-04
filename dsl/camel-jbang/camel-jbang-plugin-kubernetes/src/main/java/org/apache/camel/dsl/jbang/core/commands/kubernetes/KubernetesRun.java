@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -112,6 +113,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
     boolean quiet;
+
+    @CommandLine.Option(names = { "--verbose" },
+                        defaultValue = "false",
+                        description = "Verbose output of build/deploy progress")
+    boolean verbose = false;
 
     @CommandLine.Option(names = { "--cleanup" },
                         defaultValue = "true",
@@ -250,6 +256,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private KubernetesPodLogs reusablePodLogs;
 
+    private Printer quietPrinter;
+
     public KubernetesRun(CamelJBangMain main) {
         this(main, null);
     }
@@ -273,15 +281,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
         KubernetesExport export = configureExport(workingDir);
         int exit = export.export();
         if (exit != 0) {
-            printer().println("Project export failed!");
+            printer().printErr("Project export failed!");
             return exit;
         }
 
         if (output != null) {
-
             exit = buildProject(workingDir);
             if (exit != 0) {
-                printer().println("Project build failed!");
+                printer().printErr("Project build failed!");
                 return exit;
             }
 
@@ -293,13 +300,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes",
                             "json");
                 default -> {
-                    printer().printf("Unsupported output format '%s' (supported: yaml, json)%n", output);
+                    printer().printErr("Unsupported output format '%s' (supported: yaml, json)".formatted(output));
                     return 1;
                 }
             }
 
             try (FileInputStream fis = new FileInputStream(manifest)) {
-                printer().println(IOHelper.loadText(fis));
+                super.printer().println(IOHelper.loadText(fis));
             }
 
             return 0;
@@ -307,7 +314,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         exit = deployProject(workingDir, false);
         if (exit != 0) {
-            printer().println("Project deploy failed!");
+            printer().printErr("Project deploy failed!");
             return exit;
         }
 
@@ -369,7 +376,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 false,
                 true,
                 true,
-                false,
+                (quiet || output != null),
                 false,
                 "off");
         KubernetesExport export = new KubernetesExport(getMain(), configurer);
@@ -427,7 +434,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 KubernetesExport export = configureExport(reloadWorkingDir);
                 int exit = export.export();
                 if (exit != 0) {
-                    printer().printf("Project reexport failed for: %s%n", reloadWorkingDir);
+                    printer().printErr("Project (re)export failed for: %s".formatted(reloadWorkingDir));
                     return;
                 }
 
@@ -446,7 +453,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     //
                     exit = deployProject(reloadWorkingDir, true);
                     if (exit != 0) {
-                        printer().printf("Project redeploy failed for: %s%n", reloadWorkingDir);
+                        printer().printErr("Project redeploy failed for: %s".formatted(reloadWorkingDir));
                         return;
                     }
 
@@ -486,7 +493,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             reusablePodLogs.name = projectName;
             reusablePodLogs.doCall();
         } catch (Exception e) {
-            printer().println("Failed to read pod logs - " + e);
+            printer().printErr("Failed to read pod logs", e);
             throw e;
         }
     }
@@ -502,9 +509,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
         var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
                 .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
-        if (!quiet) {
-            printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
-        }
+        printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
     }
 
     private void installShutdownHook(String projectName, String workingDir) {
@@ -552,7 +557,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        if (quiet) {
+        if (quiet || !verbose) {
             args.add("--quiet");
         }
         args.add("--file");
@@ -568,18 +573,22 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         args.add("package");
 
-        if (!quiet) {
-            printer().println("Run: " + String.join(" ", args));
-        }
+        printer().println("Run: " + String.join(" ", args));
 
         pb.command(args.toArray(String[]::new));
 
-        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        if (quiet || !verbose) {
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        }
+
         Process p = pb.start();
         // wait for that process to exit as we run in foreground
         int exit = p.waitFor();
         if (exit != 0) {
-            printer().println("Build failed!");
+            printer().printErr("Build failed!");
             return exit;
         }
 
@@ -599,7 +608,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         List<String> args = new ArrayList<>();
 
         args.add(workingDir + mvnw);
-        if (quiet) {
+        if (quiet || !verbose) {
             args.add("--quiet");
         }
         args.add("--file");
@@ -622,21 +631,39 @@ public class KubernetesRun extends KubernetesBaseCommand {
         var prefix = isOpenshift ? "oc" : "k8s";
         args.add(prefix + ":deploy");
 
-        if (!quiet) {
-            printer().println("Run: " + String.join(" ", args));
-        }
+        printer().println("Run: " + String.join(" ", args));
 
         pb.command(args.toArray(String[]::new));
 
-        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        if (quiet || !verbose) {
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        }
+
         Process p = pb.start();
         // wait for that process to exit as we run in foreground
         int exit = p.waitFor();
         if (exit != 0) {
-            printer().println("Deployment to %s failed!".formatted(clusterType));
+            printer().printErr("Deployment to %s failed!".formatted(clusterType));
             return exit;
         }
 
         return 0;
+    }
+
+    @Override
+    protected Printer printer() {
+        if (quiet || output != null) {
+            if (quietPrinter == null) {
+                quietPrinter = new Printer.QuietPrinter(super.printer());
+            }
+
+            CommandHelper.setPrinter(quietPrinter);
+            return quietPrinter;
+        }
+
+        return super.printer();
     }
 }

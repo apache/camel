@@ -97,7 +97,7 @@ public class Bind extends CamelCommand {
         String pipe = constructPipe();
 
         if (pipe.isEmpty()) {
-            printer().println("Failed to construct Pipe resource");
+            printer().printErr("Failed to construct Pipe resource");
             return -1;
         }
 
@@ -140,7 +140,7 @@ public class Bind extends CamelCommand {
                 switch (errorHandlerType) {
                     case "sink":
                         if (errorHandlerTokens.length != 2) {
-                            printer().println(
+                            printer().printErr(
                                     "Invalid error handler syntax. Type 'sink' needs an endpoint configuration (ie sink:endpointUri)");
                             // Error abort Pipe construction
                             return "";
@@ -236,7 +236,7 @@ public class Bind extends CamelCommand {
                         .replaceAll("\\\\/", "/"));
                 break;
             default:
-                printer().printf("Unsupported output format '%s' (supported: file, yaml, json)%n", output);
+                printer().printErr("Unsupported output format '%s' (supported: file, yaml, json)".formatted(output));
                 return -1;
         }
         return 0;
@@ -253,9 +253,9 @@ public class Bind extends CamelCommand {
                 if (propertyExpression.startsWith(keyPrefix + ".")) {
                     String[] keyValue = propertyExpression.split("=", 2);
                     if (keyValue.length != 2) {
-                        printer().printf(
-                                "property '%s' does not follow format [source|sink|error-handler|step-<n>].<key>=<value>%n",
-                                propertyExpression);
+                        printer().printErr(
+                                "property '%s' does not follow format [source|sink|error-handler|step-<n>].<key>=<value>"
+                                        .formatted(propertyExpression));
                         continue;
                     }
 

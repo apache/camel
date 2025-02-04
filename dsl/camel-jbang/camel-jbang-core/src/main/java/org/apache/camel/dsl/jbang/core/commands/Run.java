@@ -43,6 +43,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -113,6 +114,8 @@ public class Run extends CamelCommand {
 
     private File logFile;
     public long spawnPid;
+
+    private Printer quietPrinter;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -425,7 +428,7 @@ public class Run extends CamelCommand {
     private int run() throws Exception {
         if (!empty && !files.isEmpty() && sourceDir != null) {
             // cannot have both files and source dir at the same time
-            System.err.println("Cannot specify both file(s) and source-dir at the same time.");
+            printer().printErr("Cannot specify both file(s) and source-dir at the same time.");
             return 1;
         }
 
@@ -451,7 +454,9 @@ public class Run extends CamelCommand {
 
         File work = CommandLineHelper.getWorkDir();
         removeDir(work);
-        work.mkdirs();
+        if (!work.exists() && !work.mkdirs()) {
+            printer().println("WARN: Failed to create working directory: " + work.getAbsolutePath());
+        }
 
         Properties profileProperties = !empty ? loadProfileProperties() : null;
         configureLogging();
@@ -469,7 +474,7 @@ public class Run extends CamelCommand {
                 // must be a java file
                 boolean java = f.getName().endsWith(".java");
                 if (!java) {
-                    printer().println("ERROR: Only java source files is accepted when using --code parameter");
+                    printer().printErr("Only java source files is accepted when using --code parameter");
                     return 1;
                 }
                 code = Files.readString(f.toPath());
@@ -1585,9 +1590,7 @@ public class Run extends CamelCommand {
     }
 
     private void configureLogging() throws Exception {
-        if (exportRun) {
-            // do not configure logging
-        } else if (logging) {
+        if (logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties();
             if (prop != null) {
@@ -1956,6 +1959,21 @@ public class Run extends CamelCommand {
             // ignore
         }
         return null;
+    }
+
+    @Override
+    protected Printer printer() {
+        // Export run should be silent
+        if (exportRun) {
+            if (quietPrinter == null) {
+                quietPrinter = new Printer.QuietPrinter(super.printer());
+            }
+
+            CommandHelper.setPrinter(quietPrinter);
+            return quietPrinter;
+        }
+
+        return super.printer();
     }
 
 }

@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CamelCommandBaseTest {
