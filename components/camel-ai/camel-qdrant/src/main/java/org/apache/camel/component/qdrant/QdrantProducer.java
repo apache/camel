@@ -36,6 +36,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.ObjectHelper;
 
 import static io.qdrant.client.QueryFactory.nearest;
 import static io.qdrant.client.WithPayloadSelectorFactory.enable;
@@ -259,7 +260,17 @@ public class QdrantProducer extends DefaultAsyncProducer {
         final String collection = getEndpoint().getCollection();
         // Vector List
         final Message in = exchange.getMessage();
-        final List<Float> vectors = in.getMandatoryBody(List.class);
+        Object body = in.getMandatoryBody();
+
+        List<Float> vectors = null;
+        if (body instanceof Points.PointStruct) {
+            Points.Vectors resultVector = ((Points.PointStruct) body).getVectors();
+            vectors = resultVector.getVector().getDataList();
+        } else {
+            vectors = in.getMandatoryBody(List.class);
+        }
+
+        ObjectHelper.notNull(vectors, "vectors");
         final int maxResults = getEndpoint().getConfiguration().getMaxResults();
         final Points.Filter filter = getEndpoint().getConfiguration().getFilter();
         final Duration timeout = getEndpoint().getConfiguration().getTimeout();
