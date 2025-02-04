@@ -39,6 +39,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -177,7 +178,17 @@ public final class IOConverter {
 
     @Converter(order = 22)
     public static String toString(Path file, Exchange exchange) throws IOException {
-        return Files.readString(file, ExchangeHelper.getCharset(exchange));
+        Charset cs = ExchangeHelper.getCharset(exchange, false);
+        if (cs != null) {
+            return Files.readString(file, cs);
+        } else {
+            byte[] arr = Files.readAllBytes(file);
+            if (arr.length == 0) {
+                return "";
+            } else {
+                return new String(arr);
+            }
+        }
     }
 
     @Converter(order = 23)
