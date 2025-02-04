@@ -57,9 +57,7 @@
 
         <!-- we want to test these modules first to catch any errors early as possible -->
         <module>camel-test</module>
-        <module>camel-spring</module>
-        <module>camel-spring-main</module>
-        <module>camel-spring-xml</module>
+        <module>camel-spring-parent</module>
         <module>camel-groovy</module>
         <module>camel-attachments</module>
         <module>camel-http-base</module>
@@ -284,13 +282,6 @@
         <module>camel-solr</module>
         <module>camel-splunk</module>
         <module>camel-splunk-hec</module>
-        <module>camel-spring-batch</module>
-        <module>camel-spring-jdbc</module>
-        <module>camel-spring-ldap</module>
-        <module>camel-spring-rabbitmq</module>
-        <module>camel-spring-redis</module>
-        <module>camel-spring-security</module>
-        <module>camel-spring-ws</module>
         <module>camel-sql</module>
         <module>camel-ssh</module>
         <module>camel-stax</module>
@@ -314,7 +305,6 @@
         <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>
-        <module>camel-undertow-spring-security</module>
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>
