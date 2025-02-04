@@ -89,6 +89,10 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                     if (tryUsingReader(cos, source, li)) {
                         continue;
                     }
+                    //tryUsingReader returns false so we will fallback to DOM mode
+                    LOG.debug(
+                            "Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored",
+                            e);
                 }
             }
             // fallback to using DOM
