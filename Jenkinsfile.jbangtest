@@ -19,9 +19,6 @@ def JDK_NAME = env.JDK_NAME ?: 'jdk_17_latest'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true "
 
-String sharedDataFolder = "/tmp/data-" + UUID.randomUUID().toString().substring(0,5)
-String localMavenRepo = "/tmp/mvn-" + UUID.randomUUID().toString().substring(0,5)
-
 pipeline {
 
     agent {
