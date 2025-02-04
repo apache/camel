@@ -362,6 +362,38 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to populate the message Body with a Map containing
+         * application/x-www-form-urlencoded form properties.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param populateBodyWithForm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder populateBodyWithForm(boolean populateBodyWithForm) {
+            doSetProperty("populateBodyWithForm", populateBodyWithForm);
+            return this;
+        }
+        /**
+         * Whether to populate the message Body with a Map containing
+         * application/x-www-form-urlencoded form properties.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param populateBodyWithForm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder populateBodyWithForm(String populateBodyWithForm) {
+            doSetProperty("populateBodyWithForm", populateBodyWithForm);
+            return this;
+        }
+        /**
          * Whether to include HTTP request headers (Accept, User-Agent, etc.)
          * into HTTP response produced by this endpoint.
          * 

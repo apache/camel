@@ -56,6 +56,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "platformhttpengine":
         case "platformHttpEngine": target.setPlatformHttpEngine(property(camelContext, org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class, value)); return true;
+        case "populatebodywithform":
+        case "populateBodyWithForm": target.setPopulateBodyWithForm(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
         case "returnhttprequestheaders":
         case "returnHttpRequestHeaders": target.setReturnHttpRequestHeaders(property(camelContext, boolean.class, value)); return true;
@@ -103,6 +105,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "muteException": return boolean.class;
         case "platformhttpengine":
         case "platformHttpEngine": return org.apache.camel.component.platform.http.spi.PlatformHttpEngine.class;
+        case "populatebodywithform":
+        case "populateBodyWithForm": return boolean.class;
         case "produces": return java.lang.String.class;
         case "returnhttprequestheaders":
         case "returnHttpRequestHeaders": return boolean.class;
@@ -151,6 +155,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "muteException": return target.isMuteException();
         case "platformhttpengine":
         case "platformHttpEngine": return target.getPlatformHttpEngine();
+        case "populatebodywithform":
+        case "populateBodyWithForm": return target.isPopulateBodyWithForm();
         case "produces": return target.getProduces();
         case "returnhttprequestheaders":
         case "returnHttpRequestHeaders": return target.isReturnHttpRequestHeaders();
