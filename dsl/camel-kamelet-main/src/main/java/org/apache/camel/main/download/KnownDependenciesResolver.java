@@ -66,7 +66,7 @@ public final class KnownDependenciesResolver {
 
     public MavenGav mavenGavForClass(String className) {
         MavenGav answer = null;
-        String gav = mappings.get(className);
+        String gav = findGav(className);
         if (gav != null) {
             answer = MavenGav.parseGav(gav, camelContext.getVersion());
         }
@@ -79,5 +79,14 @@ public final class KnownDependenciesResolver {
             }
         }
         return answer;
+    }
+
+    private String findGav(String prefix) {
+        String gav = mappings.get(prefix);
+        while (gav == null && prefix.lastIndexOf(".") != -1) {
+            prefix = prefix.substring(0, prefix.lastIndexOf("."));
+            gav = mappings.get(prefix);
+        }
+        return gav;
     }
 }
