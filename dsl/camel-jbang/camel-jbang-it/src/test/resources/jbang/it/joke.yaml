@@ -18,8 +18,8 @@
 # limitations under the License.
 #
 
-apiVersion: camel.apache.org/v1alpha1
-kind: KameletBinding
+apiVersion: camel.apache.org/v1
+kind: Pipe
 metadata:
   name: joke
 spec:
