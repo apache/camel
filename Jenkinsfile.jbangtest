@@ -19,6 +19,9 @@ def JDK_NAME = env.JDK_NAME ?: 'jdk_17_latest'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true "
 
+String sharedDataFolder = "/tmp/data-" + UUID.randomUUID().toString().substring(0,5)
+String localMavenRepo = "/tmp/mvn-" + UUID.randomUUID().toString().substring(0,5)
+
 pipeline {
 
     agent {
@@ -64,8 +67,20 @@ pipeline {
             }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
-                sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Pjbang-it-test"
+                sh(script: """
+			mkdir -p ${sharedDataFolder}
+			chmod 777 -R ${sharedDataFolder}
+			mkdir -p ${localMavenRepo}
+                        chmod 777 -R ${localMavenRepo}
+	        """)
+                sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Dshared.maven.local.repo=${localMavenRepo} -Pjbang-it-test"
             }
+            post {
+               always {
+                   junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml', skipPublishingChecks: true
+                   junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml', skipPublishingChecks: true
+                       }
+                 }
         }  
 
     }
