@@ -22,56 +22,68 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
+        <artifactId>camel-spring-parent</artifactId>
         <version>4.10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-spring-jdbc</artifactId>
+    <artifactId>camel-spring</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Spring :: JDBC</name>
-    <description>Camel Spring JDBC support</description>
+    <name>Camel :: Spring</name>
+    <description>Camel Spring</description>
 
     <properties>
-        <firstVersion>3.10.0</firstVersion>
-        <label>database</label>
-
-        <camel.surefire.parallel>true</camel.surefire.parallel>
+        <firstVersion>1.0</firstVersion>
+        <label>spring</label>
     </properties>
 
     <dependencies>
+
+        <!-- camel JARs -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jdbc</artifactId>
+            <artifactId>camel-core-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cron</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- spring JARs -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
+            <artifactId>spring-aop</artifactId>
             <version>${spring-version}</version>
-        </dependency>    
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby-version}</version>
-            <scope>test</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${derby-version}</version>
-            <scope>test</scope>
-        </dependency>        
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
     </dependencies>
 </project>
