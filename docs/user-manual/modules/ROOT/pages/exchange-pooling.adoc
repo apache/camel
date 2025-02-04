@@ -11,7 +11,7 @@ With the advance of cloud computing, where workloads are precisely measured, the
 The most significant object being reused is the `org.apache.camel.Exchange` object. This object is the root object
 that holds the message with its payload, headers, metadata, and other content.
 
-Besides pooling exchanges, then internal objects used by the routing engine are also pooled and recycled. This can dramatically reduce the object allocations from Camel core itself.
+Besides pooling exchanges, the internal objects used by the routing engine are also pooled and recycled. This can dramatically reduce the object allocations from Camel core itself.
 
 There will always be object allocations from the actual message content (payload and headers), and also from the Camel components in use and its 3rd party libraries. The footprint of Camel core and its routing engine is close to zero when pooling is enabled.
 
@@ -62,7 +62,7 @@ The `ExtendedCamelContext` is an internal API of Camel and, as such, may not off
 
 == Configuration Options
 
-You can configure exchange poolomg with the following options:
+You can configure exchange pooling with the following options:
 
 [width="100%",cols="25%,50%,25%",options="header"]
 |===
