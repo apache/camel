@@ -17,17 +17,21 @@
 package org.apache.camel.language.csimple.joor;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.language.csimple.CSimpleCodeGenerator;
 import org.apache.camel.language.csimple.CSimpleCompiler;
 import org.apache.camel.language.csimple.CSimpleExpression;
 import org.apache.camel.language.csimple.CSimpleGeneratedCode;
+import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
@@ -40,14 +44,25 @@ import org.slf4j.LoggerFactory;
  * jOOR compiler for csimple language.
  */
 @JdkService(CSimpleCompiler.FACTORY)
-public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompiler, StaticService {
+public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompiler, CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorCSimpleCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
+    private CamelContext camelContext;
     private Set<String> imports = new TreeSet<>();
     private Map<String, String> aliases;
     private int counter;
     private long taken;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public Set<String> getImports() {
         return imports;
@@ -127,6 +142,7 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
         script = script.trim();
 
         CSimpleCodeGenerator generator = new CSimpleCodeGenerator();
+        generator.setCamelContext(camelContext);
         if (aliases != null && !aliases.isEmpty()) {
             generator.setAliases(aliases);
         }
@@ -150,7 +166,17 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        // check if camel-attachment is on classpath which then includes custom csimple functions
+        if (camelContext != null) {
+            Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                    SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
+                    SimpleLanguageFunctionFactory.class);
+            if (factory.isPresent()) {
+                addImport("import static org.apache.camel.attachment.CSimpleAttachmentHelper.*");
+            }
+        }
     }
 
     @Override

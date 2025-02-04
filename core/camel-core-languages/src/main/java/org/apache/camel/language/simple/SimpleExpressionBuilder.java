@@ -1125,9 +1125,7 @@ public final class SimpleExpressionBuilder {
             public String toString() {
                 return "type:" + name;
             }
-        }
-
-        ;
+        };
     }
 
     /**
@@ -1197,8 +1195,8 @@ public final class SimpleExpressionBuilder {
         private Expression ognlExpression;
         private Language beanLanguage;
 
-        KeyedOgnlExpressionAdapter(String ognl, String toStringValue,
-                                   KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
+        public KeyedOgnlExpressionAdapter(String ognl, String toStringValue,
+                                          KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
             this.ognl = ognl;
             this.toStringValue = toStringValue;
             this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;

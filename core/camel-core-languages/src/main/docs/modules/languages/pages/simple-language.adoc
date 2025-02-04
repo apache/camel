@@ -128,6 +128,7 @@ Camel OGNL expression.
 classname
 
 |headers |Map |refer to the headers
+|headers.size |int |The number of headers
 
 |variable.foo |Object |refer to the foo variable
 
@@ -140,6 +141,7 @@ value using a Camel OGNL expression.
 classname
 
 |variables |Map |refer to the variables
+|variables.size |int |The number of variables
 
 |exchangeProperty.foo |Object |refer to the foo property on the exchange
 
@@ -320,6 +322,29 @@ For _input_ you can choose `header:key`, `exchangeProperty:key` or `variable:key
 true, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 
 |=======================================================================
+
+== Attachment functions
+
+From *Camel 4.10* onwards then Camel has built-in attachment functions making it easy to obtain
+details from attachments stored on the Camel Message such as from HTTP file uploads, email with file attachments etc.
+
+This requires having `camel-attachments` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Function |Type |Description
+
+|attachments |Map | All the attachments as a `Map<String,DataHandler>`.
+|attachments.size | int | The number of attachments. Is 0 if there are no attachments.
+|attachmentContentAsText(key) | String | The content of the attachment as text (ie `String`).
+|attachmentContent(key) | Object | The content of the attachment.
+|attachmentContentAs(key,_type_) | Object | The content of the attachment, converted to the given type.
+|attachmentHeader(key,name) | Object | The attachment header with the given name.
+|attachmentHeaderAs(key,name,_type_) | Object | The attachment header with the given name, converted to the given type.
+|attachment[key] | DataHandler | The `DataHandler` for the given attachment.
+|attachment.*OGNL* | Object | refer to the foo attachment on the exchange and invoke its value using a Camel OGNL expression.
+|=======================================================================
+
 
 == OGNL expression support
 

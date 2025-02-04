@@ -889,6 +889,7 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${headers}", headers);
         assertExpression("${in.headers}", headers);
+        assertExpression("${headers.size}", 2);
     }
 
     @Test
@@ -952,6 +953,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals(3, variables.size());
 
         assertExpression("${variables}", variables);
+        assertExpression("${variables.size}", 3);
     }
 
     @Test

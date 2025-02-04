@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -29,6 +30,8 @@ import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.SimpleLanguageFunctionFactory;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -325,11 +328,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return misc;
         }
 
+        // attachments
+        if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
+            Expression exp = createSimpleAttachments(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
+
         if (strict) {
             throw new SimpleParserException("Unknown function: " + function, token.getIndex());
         } else {
             return null;
         }
+    }
+
+    private Expression createSimpleAttachments(CamelContext camelContext, String function) {
+        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
+                SimpleLanguageFunctionFactory.class);
+
+        if (factory.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
+        }
+        return factory.get().createFunction(camelContext, function, token.getIndex());
     }
 
     private Expression createSimpleExpressionMessage(CamelContext camelContext, String function, boolean strict) {
@@ -435,6 +460,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // headers function
         if ("in.headers".equals(function) || "headers".equals(function)) {
             return ExpressionBuilder.headersExpression();
+        } else if ("headers.size".equals(function) || "headers.size()".equals(function)
+                || "headers.length".equals(function) || "headers.length()".equals(function)) {
+            return ExpressionBuilder.headersSizeExpression();
         }
 
         // in header function
@@ -492,6 +520,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // variables function
         if ("variables".equals(function)) {
             return ExpressionBuilder.variablesExpression();
+        } else if ("variables.size".equals(function) || "variables.size()".equals(function)
+                || "variables.length".equals(function) || "variables.length()".equals(function)) {
+            return ExpressionBuilder.variablesSizeExpression();
         }
 
         // variable function
@@ -874,11 +905,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     @Override
-    public String createCode(String expression) throws SimpleParserException {
-        return BaseSimpleParser.CODE_START + doCreateCode(expression) + BaseSimpleParser.CODE_END;
+    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
+        return BaseSimpleParser.CODE_START + doCreateCode(camelContext, expression) + BaseSimpleParser.CODE_END;
     }
 
-    private String doCreateCode(String expression) throws SimpleParserException {
+    private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
         String function = getText();
 
         // return the function directly if we can create function without analyzing the prefix
@@ -1088,6 +1119,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
         String misc = createCodeExpressionMisc(function);
         if (misc != null) {
             return misc;
+        }
+
+        // attachments
+        if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
+            String code = createCodeAttachments(camelContext, function);
+            if (code != null) {
+                return code;
+            }
         }
 
         throw new SimpleParserException("Unknown function: " + function, token.getIndex());
@@ -1373,6 +1412,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // headers function
         if ("in.headers".equals(function) || "headers".equals(function)) {
             return "message.getHeaders()";
+        } else if ("headers.size".equals(function) || "headers.size()".equals(function)
+                || "headers.length".equals(function) || "headers.length()".equals(function)) {
+            return "message.getHeaders().size()";
         }
 
         // in header function
@@ -1485,6 +1527,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // variables function
         if ("variables".equals(function)) {
             return "variables(exchange)";
+        } else if ("variables.size".equals(function) || "variables.size()".equals(function)
+                || "variables.length".equals(function) || "variables.length()".equals(function)) {
+            return "variablesSize(exchange)";
         }
 
         // variable
@@ -1685,6 +1730,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "fileModified(message)";
         }
         throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+    }
+
+    private String createCodeAttachments(CamelContext camelContext, String function) {
+        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
+                SimpleLanguageFunctionFactory.class);
+
+        if (factory.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
+        }
+        return factory.get().createCode(camelContext, function, token.getIndex());
     }
 
     private String createCodeExpressionMisc(String function) {

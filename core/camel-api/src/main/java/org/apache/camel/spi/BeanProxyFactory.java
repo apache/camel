@@ -31,7 +31,7 @@ public interface BeanProxyFactory {
     String FACTORY = "bean-proxy-factory";
 
     /**
-     * Creates a proxy bean facaded with the interfaces that when invoked will send the data as a message to a Camel
+     * Creates a proxy bean facade with the interfaces that when invoked will send the data as a message to a Camel
      * endpoint.
      *
      * @param  endpoint         the endpoint to send to when the proxy is invoked
