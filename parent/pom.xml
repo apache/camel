@@ -188,7 +188,7 @@
         <google-api-services-sheets-version>v4-rev20250106-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.37.0</google-oauth-client-version>
-        <google-cloud-bom-version>26.53.0</google-cloud-bom-version>
+        <google-cloud-bom-version>26.54.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.57.0</google-cloud-functions-bom-version>
         <google-cloud-http-client-version>1.45.3</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.55.0</google-cloud-secretmanager-bom-version>
