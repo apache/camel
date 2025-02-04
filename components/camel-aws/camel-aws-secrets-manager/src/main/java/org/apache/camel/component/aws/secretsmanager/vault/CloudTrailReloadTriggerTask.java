@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.secretsmanager.vault;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,6 +85,11 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     private static final String CAMEL_AWS_VAULT_USE_SQS_NOTIFICATION_ENV
             = "CAMEL_AWS_VAULT_USE_SQS_NOTIFICATION";
+
+    private static final String CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT
+            = "CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT";
+
+    private static final String CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE = "CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
@@ -170,6 +176,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         String accessKey = System.getenv(CAMEL_AWS_VAULT_ACCESS_KEY_ENV);
         String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
+        boolean isOverrideEndpoint = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_IS_OVERRIDE_ENDPOINT));
+        String uriEndpointOverride = System.getenv(CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE);
         boolean useDefaultCredentialsProvider
                 = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
         boolean useProfileCredentialsProvider
@@ -184,6 +192,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 accessKey = awsVaultConfiguration.getAccessKey();
                 secretKey = awsVaultConfiguration.getSecretKey();
                 region = awsVaultConfiguration.getRegion();
+                isOverrideEndpoint = awsVaultConfiguration.isOverrideEndpoint();
+                uriEndpointOverride = awsVaultConfiguration.getUriEndpointOverride();
                 useDefaultCredentialsProvider = awsVaultConfiguration.isDefaultCredentialsProvider();
                 useProfileCredentialsProvider = awsVaultConfiguration.isProfileCredentialsProvider();
                 profileName = awsVaultConfiguration.getProfileName();
@@ -217,7 +227,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
                 clientBuilder.region(Region.of(region));
-                sqsClient = clientBuilder.build();
+                sqsClient = isOverrideEndpoint
+                        ? clientBuilder.endpointOverride(URI.create(uriEndpointOverride)).build() : clientBuilder.build();
             } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
                 SqsClientBuilder clientBuilder = SqsClient.builder();
                 clientBuilder.region(Region.of(region));
