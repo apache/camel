@@ -125,6 +125,9 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
                             + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
                             + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
     private boolean handleWriteResponseError;
+    @UriParam(label = "advanced,consumer", defaultValue = "true",
+              description = "Whether to populate the message Body with a Map containing application/x-www-form-urlencoded form properties.")
+    private boolean populateBodyWithForm = true;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -308,5 +311,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setHandleWriteResponseError(boolean handleWriteResponseError) {
         this.handleWriteResponseError = handleWriteResponseError;
+    }
+
+    public boolean isPopulateBodyWithForm() {
+        return populateBodyWithForm;
+    }
+
+    public void setPopulateBodyWithForm(boolean populateBodyWithForm) {
+        this.populateBodyWithForm = populateBodyWithForm;
     }
 }

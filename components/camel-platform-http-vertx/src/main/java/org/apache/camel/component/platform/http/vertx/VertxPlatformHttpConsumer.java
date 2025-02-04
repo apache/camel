@@ -313,7 +313,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                     if (headerFilterStrategy != null
                             && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, message.getExchange())) {
                         appendEntry(message.getHeaders(), key, value);
-                        appendEntry(body, key, value);
+                        if (getEndpoint().isPopulateBodyWithForm()) {
+                            appendEntry(body, key, value);
+                        }
                     }
                 }
             }
