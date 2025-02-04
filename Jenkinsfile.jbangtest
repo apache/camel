@@ -68,13 +68,6 @@ pipeline {
             steps {
 
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
-               sh(script: """
-			mkdir -p ${sharedDataFolder}
-			chmod 777 -R ${sharedDataFolder}
-
-			mkdir -p ${localMavenRepo}
-                        chmod 777 -R ${localMavenRepo}
-	        """)
                 sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Dshared.maven.local.repo=${localMavenRepo} -Pjbang-it-test"
             }
             post {
