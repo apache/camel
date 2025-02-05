@@ -57,6 +57,8 @@ a `Map`). The `Exchange` is transferred as:
 |`request` |The message.
 |`response` | *Deprecated* The Out message (only for InOut message exchange pattern).
 
+|`attachments` | A `Map<String,jakarta.activation.DataHandler>` containing file attachments such as from HTTP file uploads, or emails containing files.
+
 |`log` | Can be used for logging purposes such as `log.info('Using body: {}', body)`.
 |=======================================================================
 
