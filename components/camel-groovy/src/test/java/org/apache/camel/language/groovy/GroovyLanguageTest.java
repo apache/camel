@@ -16,6 +16,13 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.io.File;
+
+import jakarta.activation.DataHandler;
+
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.CamelFileDataSource;
+import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.junit.jupiter.api.Test;
@@ -68,6 +75,23 @@ public class GroovyLanguageTest extends LanguageTestSupport {
             assertEquals(23, e.getIndex());
             assertInstanceOf(MultipleCompilationErrorsException.class, e.getCause());
         }
+    }
+
+    @Test
+    public void testGroovyAttachments() throws Exception {
+        DefaultAttachment da
+                = new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
+        da.addHeader("orderId", "123");
+        exchange.getIn(AttachmentMessage.class).addAttachmentObject("message1.xml", da);
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("message1.xml").getContent();
+        String xml1 = context.getTypeConverter().convertTo(String.class, is1);
+
+        assertExpression("attachments.size()", 1);
+        assertExpression("attachments.get('message1.xml').getName()", "message1.xml");
+        assertExpression("attachments.get('message1.xml').getContentType()", "application/octet-stream");
+        assertExpression("attachments.get('message1.xml').getContent()", xml1);
     }
 
     @Override

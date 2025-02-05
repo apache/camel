@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.apache.camel.Exchange;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.ObjectHelper;
@@ -90,6 +92,11 @@ public class GroovyExpression extends ExpressionSupport {
     protected Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
         Map<String, Object> map = new HashMap<>(globalVariables);
         ExchangeHelper.populateVariableMap(exchange, map, true);
+        if (exchange.getMessage() instanceof AttachmentMessage am && am.hasAttachments()) {
+            map.put("attachments", am.getAttachments());
+        } else {
+            map.put("attachments", Collections.EMPTY_MAP);
+        }
         map.put("log", LOG);
         return new Binding(map);
     }
