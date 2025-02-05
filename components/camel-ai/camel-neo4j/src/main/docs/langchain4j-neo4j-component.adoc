@@ -1,0 +1,271 @@
+= Neo4j Component
+:doctitle: Neo4j
+:shortname: neo4j
+:artifactid: camel-neo4j
+:description: Neo4j
+:since: 4.10
+:supportlevel: Stable
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: neo4j
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Neo4j component provides support for Neo4j graph database.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-neo4j</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+neo4j:name[?options]
+----
+
+Where *name* is the database name.
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+include::spring-boot:partial$starter.adoc[]
+
+== Graph database usage - simple operations
+
+=== Create a Node
+
+To create a node in a database named `test`, define the body as a string containing the JSON body. Use the operation `CREATE_NODE`.
+The URI endpoint should contain also specify the label and the alias.
+
+.Example:
+[source,java]
+----
+        var body = "{name: 'Alice', email: 'alice@example.com', age: 30}";
+
+        Exchange result = fluentTemplate.to("neo4j:test?alias=u1&label=User")
+                .withBodyAs(body, String.class)
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_NODE)
+                .request(Exchange.class);
+----
+
+=== Create a Node with properties
+
+To create a node in a database named `test` with properties, define the body as a Map containing the properties and values. Use the operation `CREATE_NODE`.
+The URI endpoint should contain also specify the label and the alias.
+
+.Example:
+[source,java]
+----
+        Map<String, Object> params = Map.of(
+                "name", "Bob",
+                "email", "bob@example.com",
+                "age", 25);
+
+        Exchange result = fluentTemplate.to("neo4j:test?alias=u2&label=User")
+                .withBodyAs(params, Map.class)
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_NODE)
+                .request(Exchange.class);
+----
+
+
+=== Retrieve Node
+
+To retrieve a node in a database named `test`. Define the header `MATCH_PROPERTIES` as a string containing the match query. Use the operation `RETRIEVE_NODES`.
+The URI endpoint should also specify the label and the alias.
+The response is a List of Map<String, Object>. Each map represents the list of properties of a single node.
+
+.Example:
+[source,java]
+----
+        Exchange result = fluentTemplate.to("neo4j:test?alias=u&label=User")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .request(Exchange.class);
+----
+
+To retrieve all nodes with label=`User`, use the same request without specifying any `MATCH_PROPERTIES`.
+
+.Example:
+[source,java]
+----
+        Exchange result = fluentTemplate.to("neo4j:test?alias=u&label=User")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .request(Exchange.class);
+----
+
+=== Delete Node
+
+To delete a node in a database named `test`. Define the header `MATCH_PROPERTIES` as a string containing the match query. Use the operation `DELETE_NODE`.
+The URI endpoint should also specify the label and the alias.
+
+.Example:
+[source,java]
+----
+        Exchange result = fluentTemplate.to("neo4j:test?alias=u&label=User")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.DELETE_NODE)
+                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .request(Exchange.class);
+----
+
+=== Delete Node with relationships
+
+If a node has relationships, it won't be deleted unless we either delete the relationships or delete it with detached relationships.
+To delete a node with detached relationships, set the option `detachRelationship` to `true`.
+
+.Example:
+[source,java]
+----
+        Exchange result = fluentTemplate.to("neo4j:test?alias=u&label=User&detachRelationship=true")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.DELETE_NODE)
+                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .request(Exchange.class);
+----
+
+== Graph database usage - use Cypher Queries
+
+=== Create / Delete Nodes with a Cypher query
+
+To create or delete nodes with a Cypher query in a database named `test`, set the Cypher query in the body. Use the operation `ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY`.
+The operation can be used too to create multiple nodes and relationships between nodes.
+
+.Example creating a node:
+[source,java]
+----
+        var cypherQuery = "CREATE (u3:User {name: 'Charlie', email: 'charlie@example.com', age: 35})";
+        Exchange result = fluentTemplate.to("neo4j:test")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
+                .withBodyAs(cypherQuery, String.class)
+                .request(Exchange.class);
+----
+
+.Example deleting a node:
+[source,java]
+----
+        var cypherQuery = "MATCH (u:User {name: 'Bob'}) DELETE u";
+        Exchange result = fluentTemplate.to("neo4j:test")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
+                .withBodyAs(cypherQuery, String.class)
+                .request(Exchange.class);
+----
+
+=== Retrieve / Update nodes with a Cypher query
+To retrieve or update nodes with Cypher Query in a database named `test`, set the Cypher query in the body. Use the operation `RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY`.
+
+The operation is the same as `ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY`, except that it returns a list of retrieved or updated nodes represented as `Map<String, Object>`.
+
+.Example updating a node:
+[source,java]
+----
+         var cypherQuery = "MATCH " +
+                          "(u:User {name: 'Ethan'})" +
+                          "SET u.age=41 " +
+                          "RETURN u";
+
+         Exchange result = fluentTemplate.to("neo4j:test")
+                .withBodyAs(cypherQuery, String.class)
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY)
+                .request(Exchange.class);
+----
+
+== Vector database embeddings usage
+
+=== Create a vector index
+To use Neo4j as a Vector database, we must create first a vector index for a label.
+
+To create a vector index in a database named `test`, use the operation `CREATE_VECTOR_INDEX`.
+The URI endpoint should also specify the label, the alias, the vector index name and the dimension of embeddings.
+
+.Example:
+[source,java]
+----
+         Exchange result = fluentTemplate.to("neo4j:test?vectorIndexName=movieIdx&alias=m&label=Movie&dimension=2")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_VECTOR_INDEX)
+                .request(Exchange.class);
+----
+
+=== Drop a vector index
+To drop a vector index in a database named `test`, use the operation `DROP_VECTOR_INDEX`.
+The URI endpoint should contain also specify the vector index name.
+
+.Example:
+[source,java]
+----
+         Exchange result = fluentTemplate.to("neo4j:test?vectorIndexName=movieIdx")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.DROP_VECTOR_INDEX)
+                .request(Exchange.class);
+----
+
+=== Create a vector
+To create a vector in a database named `test`, use the operation `CREATE_VECTOR`.
+The URI endpoint should also specify the label, the alias and the vector index name.
+
+Camel Neo4j will create the node and store the vector as an `embedding` property.
+
+.Example:
+[source,java]
+----
+         Exchange result = fluentTemplate.to("neo4j:test?vectorIndexName=movieIdx&label=Movie&alias=m")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_VECTOR)
+                .withHeader(Neo4j.Headers.VECTOR_ID, testData.getId())
+                .withBody(List.of(0.8f, 0.6f))
+                .request(Exchange.class);
+----
+
+=== Similarity search
+
+To perform a similarity search using vectors in a database named `test`, use the operation `VECTOR_SIMILARITY_SEARCH`.
+The URI endpoint should also specify the label, the alias and the vector index name.
+
+.Example:
+[source,java]
+----
+         Exchange result = fluentTemplate.to("neo4j:test?vectorIndexName=movieIdx&label=Movie&alias=m")
+                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_VECTOR)
+                .withHeader(Neo4j.Headers.VECTOR_ID, testData.getId())
+                .withBody(List.of(0.75f, 0.65f))
+                .request(Exchange.class);
+----
+
+== Generate Embeddings with Langchain4j-embeddings
+You can generate embeddings with an Embedding Models using the camel Lancghain4j Embeddings components. Camel Neo4j introduces a DataType `neo4j:embeddings` that automates the transformations of the Lancghain4j embeddings to Neo4j vectors.
+
+.Example of a camel Route that create embeddings with Camel Langchain4j Embeddings
+[source,java]
+----
+         from("direct:in")
+            .to("langchain4j-embeddings:test")
+            .setHeader(Neo4j.Headers.OPERATION).constant(Neo4Operation.CREATE_VECTOR)
+            .setHeader(Neo4j.Headers.LABEL).constant("Test")
+            .transform(new DataType("neo4j:embeddings"))
+            .to("neo4j:test");
+----
+
+
+
+
+

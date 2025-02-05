@@ -13,6 +13,7 @@
 *** xref:langchain4j-tools-component.adoc[LangChain4j Tools]
 *** xref:langchain4j-web-search-component.adoc[LangChain4j Web Search]
 *** xref:milvus-component.adoc[Milvus]
+*** xref:langchain4j-neo4j-component.adoc[Neo4j]
 *** xref:pinecone-component.adoc[Pinecone]
 *** xref:qdrant-component.adoc[Qdrant]
 *** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
