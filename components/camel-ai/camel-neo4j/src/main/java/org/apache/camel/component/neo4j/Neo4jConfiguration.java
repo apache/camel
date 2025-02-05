@@ -26,49 +26,42 @@ import org.neo4j.driver.Driver;
 @Configurer
 @UriParams
 public class Neo4jConfiguration implements Cloneable {
+
     @Metadata
     @UriParam
     private String dbUri;
-
-    @UriParam(description = "Basic authentication database user", displayName = "Database user", secret = true)
+    @UriParam(label = "security", description = "Basic authentication database user", displayName = "Database user",
+              secret = true)
     private String dbUser;
-
-    @UriParam(description = "Basic authentication database password", displayName = "Database password", secret = true)
+    @UriParam(label = "security", description = "Basic authentication database password", displayName = "Database password",
+              secret = true)
     private String dbPassword;
-    @UriParam(description = "Basic authentication database realm", displayName = "Database user", secret = true)
+    @UriParam(label = "security", description = "Basic authentication database realm", displayName = "Database user",
+              secret = true)
     private String realm;
-
-    @UriParam(description = "Bearer authentication database realm", displayName = "Realm", secret = true)
+    @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm", secret = true)
     private String token;
-
-    @UriParam(description = "Kerberos Authentication encoded base64 ticket", displayName = "Encoded base64 ticket",
+    @UriParam(label = "security", description = "Kerberos Authentication encoded base64 ticket",
+              displayName = "Encoded base64 ticket",
               secret = true)
     private String base64;
 
     @UriParam
     private String query;
-
     @UriParam
     private String label;
-
     @UriParam
     private String vectorIndexName;
-
     @UriParam
     private String alias;
-
     @UriParam(defaultValue = "false")
     private boolean detachRelationship = false;
-
     @UriParam
     private Integer dimension;
-
     @UriParam(defaultValue = "cosine")
     private Neo4jSimilarityFunction similarityFunction = Neo4jSimilarityFunction.cosine;
-
     @UriParam(defaultValue = "0.0")
     private double minScore = 0.0;
-
     @UriParam(defaultValue = "3")
     private int maxResults = 3;
 
@@ -78,8 +71,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * URI of the Neo4j server - used for Authentication
-     *
-     * @return
      */
     public String getDbUri() {
         return dbUri;
@@ -91,8 +82,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * User of the database - used for Basic Authentication
-     *
-     * @return
      */
     public String getDbUser() {
         return dbUser;
@@ -104,8 +93,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Password for dbUser - used for Basic Authentication
-     *
-     * @return
      */
     public String getDbPassword() {
         return dbPassword;
@@ -117,8 +104,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Node Label
-     *
-     * @return
      */
     public String getLabel() {
         return label;
@@ -130,8 +115,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Node alias
-     *
-     * @return
      */
     public String getAlias() {
         return alias;
@@ -144,8 +127,6 @@ public class Neo4jConfiguration implements Cloneable {
     /**
      * Detach a relationship - set true if want to delete a node and detach its relationships to other nodes at same
      * time
-     *
-     * @return
      */
     public boolean isDetachRelationship() {
         return detachRelationship;
@@ -157,8 +138,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Vector Index Name
-     *
-     * @return
      */
     public String getVectorIndexName() {
         return vectorIndexName;
@@ -170,8 +149,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Dimension of Vector Index
-     *
-     * @return
      */
     public Integer getDimension() {
         return dimension;
@@ -183,8 +160,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Similarity Function of Vector Index
-     *
-     * @return
      */
     public Neo4jSimilarityFunction getSimilarityFunction() {
         return similarityFunction;
@@ -196,8 +171,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Minimum score for Vector Similarity search
-     *
-     * @return
      */
     public double getMinScore() {
         return minScore;
@@ -209,8 +182,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Maximum results for Vector Similarity search
-     *
-     * @return
      */
     public int getMaxResults() {
         return maxResults;
@@ -222,8 +193,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Advanced - Driver
-     *
-     * @return
      */
     public Driver getDriver() {
         return driver;
@@ -234,9 +203,7 @@ public class Neo4jConfiguration implements Cloneable {
     }
 
     /**
-     * realm - used for Basic Authentication
-     *
-     * @return
+     * Realm - used for Basic Authentication
      */
     public String getRealm() {
         return realm;
@@ -247,9 +214,7 @@ public class Neo4jConfiguration implements Cloneable {
     }
 
     /**
-     * token - used for Bearer Authentication
-     *
-     * @return
+     * Token - used for Bearer Authentication
      */
     public String getToken() {
         return token;
@@ -261,8 +226,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Encoded base64 ticket - used for Kerberos Authentication
-     *
-     * @return
      */
     public String getBase64() {
         return base64;
@@ -274,8 +237,6 @@ public class Neo4jConfiguration implements Cloneable {
 
     /**
      * Cypher Query
-     *
-     * @return
      */
     public String getQuery() {
         return query;

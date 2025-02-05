@@ -36,8 +36,7 @@ import org.neo4j.driver.GraphDatabase;
 /**
  * Perform operations on the Neo4j Graph Database
  */
-@UriEndpoint(
-             firstVersion = "4.10.0",
+@UriEndpoint(firstVersion = "4.10.0",
              scheme = Neo4j.SCHEME,
              title = "Neo4j",
              syntax = "neo4j:name",
@@ -48,23 +47,20 @@ import org.neo4j.driver.GraphDatabase;
              },
              headersClass = Neo4j.Headers.class)
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+
     @Metadata(required = true)
     @UriPath(description = "The database Name")
     private final String name;
-
     @UriParam
     private Neo4jConfiguration configuration;
 
     private volatile Driver driver;
 
-    public Neo4jEndpoint(
-                         String endpointUri,
+    public Neo4jEndpoint(String endpointUri,
                          Component component,
                          String name,
                          Neo4jConfiguration configuration) {
-
         super(endpointUri, component);
-
         this.name = name;
         this.configuration = configuration;
     }
@@ -100,7 +96,6 @@ public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     @Override
     public void doStop() throws Exception {
         super.doStop();
-
         if (this.driver != null) {
             this.driver = null;
         }

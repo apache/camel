@@ -59,34 +59,6 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Kerberos Authentication encoded base64 ticket.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param base64 the value to set
-         * @return the dsl builder
-         */
-        default Neo4jEndpointBuilder base64(String base64) {
-            doSetProperty("base64", base64);
-            return this;
-        }
-        /**
-         * Basic authentication database password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param dbPassword the value to set
-         * @return the dsl builder
-         */
-        default Neo4jEndpointBuilder dbPassword(String dbPassword) {
-            doSetProperty("dbPassword", dbPassword);
-            return this;
-        }
-        /**
          * URI of the Neo4j server - used for Authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -98,20 +70,6 @@ public interface Neo4jEndpointBuilderFactory {
          */
         default Neo4jEndpointBuilder dbUri(String dbUri) {
             doSetProperty("dbUri", dbUri);
-            return this;
-        }
-        /**
-         * Basic authentication database user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param dbUser the value to set
-         * @return the dsl builder
-         */
-        default Neo4jEndpointBuilder dbUser(String dbUser) {
-            doSetProperty("dbUser", dbUser);
             return this;
         }
         /**
@@ -264,20 +222,6 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Basic authentication database realm.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param realm the value to set
-         * @return the dsl builder
-         */
-        default Neo4jEndpointBuilder realm(String realm) {
-            doSetProperty("realm", realm);
-            return this;
-        }
-        /**
          * Similarity Function of Vector Index.
          * 
          * The option is a:
@@ -312,20 +256,6 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * Bearer authentication database realm.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param token the value to set
-         * @return the dsl builder
-         */
-        default Neo4jEndpointBuilder token(String token) {
-            doSetProperty("token", token);
-            return this;
-        }
-        /**
          * Vector Index Name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -337,6 +267,76 @@ public interface Neo4jEndpointBuilderFactory {
          */
         default Neo4jEndpointBuilder vectorIndexName(String vectorIndexName) {
             doSetProperty("vectorIndexName", vectorIndexName);
+            return this;
+        }
+        /**
+         * Kerberos Authentication encoded base64 ticket.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param base64 the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder base64(String base64) {
+            doSetProperty("base64", base64);
+            return this;
+        }
+        /**
+         * Basic authentication database password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param dbPassword the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder dbPassword(String dbPassword) {
+            doSetProperty("dbPassword", dbPassword);
+            return this;
+        }
+        /**
+         * Basic authentication database user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param dbUser the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder dbUser(String dbUser) {
+            doSetProperty("dbUser", dbUser);
+            return this;
+        }
+        /**
+         * Basic authentication database realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param realm the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder realm(String realm) {
+            doSetProperty("realm", realm);
+            return this;
+        }
+        /**
+         * Bearer authentication database realm.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder token(String token) {
+            doSetProperty("token", token);
             return this;
         }
     }
