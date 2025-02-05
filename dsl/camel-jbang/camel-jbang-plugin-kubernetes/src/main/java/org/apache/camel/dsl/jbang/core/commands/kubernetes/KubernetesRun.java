@@ -144,7 +144,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
                         description = "The image builder used to build the container image (e.g. docker, jib, podman).")
-    String imageBuilder;
+    String imageBuilder = "jib";
 
     @CommandLine.Option(names = { "--cluster-type" },
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
@@ -158,9 +158,17 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Whether to push image to given image registry as part of the run.")
     boolean imagePush = true;
 
-    @CommandLine.Option(names = { "--image-platforms" },
-                        description = "List of target platforms. Each platform is defined using the pattern.")
-    String imagePlatforms;
+    @CommandLine.Option(names = { "--image-platform" },
+                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    String[] imagePlatforms;
+
+    @CommandLine.Option(names = { "--base-image" },
+                        description = "The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).")
+    String baseImage;
+
+    @CommandLine.Option(names = { "--registry-mirror" },
+                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    String registryMirror;
 
     // Export base options
 
@@ -386,6 +394,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
         export.imageGroup = imageGroup;
         export.imagePush = imagePush;
         export.imageBuilder = imageBuilder;
+        export.imagePlatforms = imagePlatforms;
+        export.baseImage = baseImage;
+        export.registryMirror = registryMirror;
         export.clusterType = clusterType;
         export.serviceAccount = serviceAccount;
         export.setApplicationProperties(properties);

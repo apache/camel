@@ -102,11 +102,23 @@ public class KubernetesExport extends Export {
 
     @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
                         description = "The image builder used to build the container image (e.g. docker, jib, podman).")
-    protected String imageBuilder;
+    protected String imageBuilder = "jib";
 
     @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
                         description = "Whether to push the container image to a given image registry.")
     protected boolean imagePush = true;
+
+    @CommandLine.Option(names = { "--image-platform" },
+                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    protected String[] imagePlatforms;
+
+    @CommandLine.Option(names = { "--base-image" },
+                        description = "The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).")
+    protected String baseImage;
+
+    @CommandLine.Option(names = { "--registry-mirror" },
+                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    protected String registryMirror;
 
     @CommandLine.Option(names = { "--cluster-type" },
                         description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
@@ -182,9 +194,15 @@ public class KubernetesExport extends Export {
 
         if (resolvedImageRegistry != null) {
             buildProperties.add("jkube.container-image.registry=%s".formatted(resolvedImageRegistry));
+            if (imagePush) {
+                buildProperties.add("jkube.docker.push.registry=%s".formatted(resolvedImageRegistry));
+            }
+
             // [TODO] jkube config for insecure registries?
-            // var allowInsecure = resolvedImageRegistry.startsWith("localhost");
-            // buildProperties.add("%s.container-image.insecure=%b".formatted(propPrefix, allowInsecure));
+            var allowInsecure = resolvedImageRegistry.startsWith("localhost");
+            if (allowInsecure && "jib".equals(imageBuilder)) {
+                buildProperties.add("jib.allowInsecureRegistries=true");
+            }
         }
 
         String projectName = getProjectName();
@@ -255,6 +273,7 @@ public class KubernetesExport extends Export {
 
         Container container = traitsSpec.getContainer();
 
+        buildProperties.add("jkube.image.name=%s".formatted(container.getImage()));
         buildProperties.add("jkube.container-image.name=%s".formatted(container.getImage()));
 
         if (container.getName() != null && !container.getName().equals(projectName)) {
@@ -278,8 +297,26 @@ public class KubernetesExport extends Export {
             buildProperties.add("jkube.maven.plugin=%s".formatted("kubernetes-maven-plugin"));
         }
 
-        if ("docker".equals(imageBuilder) || "jib".equals(imageBuilder)) {
-            buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
+        if (baseImage == null) {
+            // use default base image with java version
+            baseImage = "eclipse-temurin:%s".formatted(javaVersion);
+        }
+
+        if (registryMirror != null) {
+            baseImage = "%s/%s".formatted(registryMirror, baseImage);
+        }
+
+        buildProperties.add("jkube.base.image=%s".formatted(baseImage));
+        buildProperties.add("jkube.build.strategy=%s".formatted(imageBuilder));
+
+        if ("jib".equals(imageBuilder)) {
+            buildProperties.add("jkube.container-image.nocache=true");
+            buildProperties.add("jib.disableUpdateChecks=true");
+        }
+
+        if (imagePlatforms != null) {
+            buildProperties.add("jkube.container-image.platforms=%s".formatted(
+                    Arrays.stream(imagePlatforms).distinct().collect(Collectors.joining(","))));
         }
 
         // Runtime specific for Main
