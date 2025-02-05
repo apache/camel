@@ -3197,6 +3197,19 @@ public interface ComponentsBuilderFactory {
         return NatsComponentBuilderFactory.nats();
     }
     /**
+     * Neo4j (camel-neo4j)
+     * Perform operations on the Neo4j Graph Database
+     * 
+     * Category: database,ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-neo4j
+     * 
+     * @return the dsl builder
+     */
+    static Neo4jComponentBuilderFactory.Neo4jComponentBuilder neo4j() {
+        return Neo4jComponentBuilderFactory.neo4j();
+    }
+    /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
      * 

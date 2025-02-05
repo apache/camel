@@ -248,6 +248,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.MyBatisBeanBuilders,
             org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.MyBatisBuilders,
             org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.NatsBuilders,
+            org.apache.camel.builder.endpoint.dsl.Neo4jEndpointBuilderFactory.Neo4jBuilders,
             org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.NetWeaverBuilders,
             org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyBuilders,
             org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpBuilders,

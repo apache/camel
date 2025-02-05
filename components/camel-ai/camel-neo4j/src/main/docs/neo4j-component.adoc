@@ -2,9 +2,9 @@
 :doctitle: Neo4j
 :shortname: neo4j
 :artifactid: camel-neo4j
-:description: Neo4j
+:description: Perform operations on the Neo4j Graph Database
 :since: 4.10
-:supportlevel: Stable
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -264,8 +264,3 @@ You can generate embeddings with an Embedding Models using the camel Lancghain4j
             .transform(new DataType("neo4j:embeddings"))
             .to("neo4j:test");
 ----
-
-
-
-
-

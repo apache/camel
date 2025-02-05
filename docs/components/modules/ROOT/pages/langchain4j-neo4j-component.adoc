@@ -1,1 +1,0 @@
-../../../../../components/camel-ai/camel-neo4j/src/main/docs/langchain4j-neo4j-component.adoc

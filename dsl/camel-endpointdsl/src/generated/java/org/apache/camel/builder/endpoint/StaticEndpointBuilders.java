@@ -10683,6 +10683,46 @@ public class StaticEndpointBuilders {
         return NatsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Neo4j (camel-neo4j)
+     * Perform operations on the Neo4j Graph Database
+     * 
+     * Category: database,ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-neo4j
+     * 
+     * Syntax: <code>neo4j:name</code>
+     * 
+     * Path parameter: name (required)
+     * The database Name
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static Neo4jEndpointBuilderFactory.Neo4jEndpointBuilder neo4j(String path) {
+        return neo4j("neo4j", path);
+    }
+    /**
+     * Neo4j (camel-neo4j)
+     * Perform operations on the Neo4j Graph Database
+     * 
+     * Category: database,ai
+     * Since: 4.10
+     * Maven coordinates: org.apache.camel:camel-neo4j
+     * 
+     * Syntax: <code>neo4j:name</code>
+     * 
+     * Path parameter: name (required)
+     * The database Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static Neo4jEndpointBuilderFactory.Neo4jEndpointBuilder neo4j(String componentName, String path) {
+        return Neo4jEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
      * 
