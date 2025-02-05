@@ -2101,33 +2101,39 @@ so use Camel JBang terminal scripting where using Camel makes sense.
 For example, to use
 many Camel components or Kamelets, to more easily send or receive data from disparate IT systems.
 
-This requires adding the following line in top of the file, for example, as in the `upper.yaml` file below:
+This requires adding the following line in top of the file, for example, as in the `UpperCase.java` file below:
 
 [source,text]
 ----
-///usr/bin/env jbang --quiet camel@apache/camel pipe "$0" "$@" ; exit $?
+///usr/bin/env jbang --quiet camel@apache/camel script "$0" "$@" ; exit $?
 
-# Will upper-case the input
-- from:
-    uri: "stream:in"
-    steps:
-      - setBody:
-          simple: "${body.toUpperCase()}"
-      - to: "stream:out"
+import org.apache.camel.builder.RouteBuilder;
+
+//Will upper-case the input
+public class UpperCase extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("stream:in")
+                .setBody()
+                .simple("${body.toUpperCase()}")
+                .to("stream:out");
+    }
+}
 ----
 
 To be able to execute this as a script, you need to set execute file permission:
 
 [source,bash]
 ----
-chmod +x upper.yaml
+chmod +x UpperCase.java
 ----
 
 Then you can then execute this as a script:
 
 [source,bash]
 ----
-echo "Hello\nWorld" | ./upper.yaml
+echo "Hello\nWorld" | ./UpperCase.java
 ----
 
 Which should output:
@@ -2143,7 +2149,7 @@ The name of the logging file cannot be configured.
 
 [source,bash]
 ----
-echo "Hello\nWorld" | ./upper.yaml --logging=true
+echo "Hello\nWorld" | ./UpperCase.java --logging=true
 ----
 
 ==== Using stream:in with line vs. raw mode
