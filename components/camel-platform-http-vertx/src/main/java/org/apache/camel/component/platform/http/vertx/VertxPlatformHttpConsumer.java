@@ -355,8 +355,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 attachmentMessage.addAttachment(name, new DataHandler(new CamelFileDataSource(localFile, fileName)));
 
                 // populate body in case there is only one attachment
-                if (uploads.size() == 1 && message.getBody() == null) {
-                    message.setHeader(Exchange.FILE_NAME, localFile.getName());
+                if (uploads.size() == 1) {
+                    message.setHeader(Exchange.FILE_NAME, upload.fileName());
+                    if (upload.contentType() != null) {
+                        message.setHeader(Exchange.CONTENT_TYPE, upload.contentType());
+                    }
                     message.setBody(localFile);
                 }
             } else {
