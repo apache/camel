@@ -202,46 +202,40 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             }
         }
         if (!useSqsNotification) {
+            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
-                CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
                 clientBuilder.region(Region.of(region));
-                cloudTrailClient = clientBuilder.build();
             } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
-                CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
                 clientBuilder.region(Region.of(region));
-                cloudTrailClient = clientBuilder.build();
             } else if (useProfileCredentialsProvider && ObjectHelper.isNotEmpty(profileName)) {
-                CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
                 clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(profileName));
                 clientBuilder.region(Region.of(region));
-                cloudTrailClient = clientBuilder.build();
             } else {
                 throw new RuntimeCamelException(
                         "Using the AWS Secrets Refresh Task requires setting AWS credentials as application properties or environment variables");
             }
+            cloudTrailClient = isOverrideEndpoint
+                    ? clientBuilder.endpointOverride(URI.create(uriEndpointOverride)).build() : clientBuilder.build();
         } else {
+            SqsClientBuilder clientBuilder = SqsClient.builder();
             if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
-                SqsClientBuilder clientBuilder = SqsClient.builder();
                 AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
                 clientBuilder.region(Region.of(region));
-                sqsClient = isOverrideEndpoint
-                        ? clientBuilder.endpointOverride(URI.create(uriEndpointOverride)).build() : clientBuilder.build();
             } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
-                SqsClientBuilder clientBuilder = SqsClient.builder();
                 clientBuilder.region(Region.of(region));
-                sqsClient = clientBuilder.build();
             } else if (useProfileCredentialsProvider && ObjectHelper.isNotEmpty(profileName)) {
-                SqsClientBuilder clientBuilder = SqsClient.builder();
                 clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(profileName));
                 clientBuilder.region(Region.of(region));
-                sqsClient = clientBuilder.build();
             } else {
                 throw new RuntimeCamelException(
                         "Using the AWS Secrets Refresh Task requires setting AWS credentials as application properties or environment variables");
             }
+            sqsClient = isOverrideEndpoint
+                    ? clientBuilder.endpointOverride(URI.create(uriEndpointOverride)).build() : clientBuilder.build();
         }
     }
 
