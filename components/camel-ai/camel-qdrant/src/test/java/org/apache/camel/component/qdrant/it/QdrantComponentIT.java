@@ -148,6 +148,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
                 .withBody(
                         Points.PointStruct.newBuilder()
                                 .setId(PointIdFactory.id(testData.getId()))
+                                .putPayload("text_segment", ValueFactory.value(testData.getPayload()))
                                 .setVectors(VectorsFactory.vectors(testData.getVectors()))
                                 .build())
                 .request(Exchange.class);
@@ -221,17 +222,19 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     // Enum to provide test data
     public enum TestData {
-        VECTOR_1(9, List.of(0.8f, 0.6f)),
-        VECTOR_2(10, List.of(0.1f, 0.9f)),
-        VECTOR_3(11, List.of(0.7f, 0.7f)),
-        VECTOR_4(12, List.of(-0.3f, -0.9f)),
-        VECTOR_5(13, List.of(1.2f, 0.8f));
+        VECTOR_1(9, "VECTOR_1", List.of(0.8f, 0.6f)),
+        VECTOR_2(10, "VECTOR_2", List.of(0.1f, 0.9f)),
+        VECTOR_3(11, "VECTOR_3", List.of(0.7f, 0.7f)),
+        VECTOR_4(12, "VECTOR_4", List.of(-0.3f, -0.9f)),
+        VECTOR_5(13, "VECTOR_5", List.of(1.2f, 0.8f));
 
         private final int id;
+        private final String payload;
         private final List<Float> vectors;
 
-        TestData(int id, List<Float> vectors) {
+        TestData(int id, String payload, List<Float> vectors) {
             this.id = id;
+            this.payload = payload;
             this.vectors = vectors;
         }
 
@@ -241,6 +244,10 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
         public List<Float> getVectors() {
             return vectors;
+        }
+
+        public String getPayload() {
+            return payload;
         }
     }
 
