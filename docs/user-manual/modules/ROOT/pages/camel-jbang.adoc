@@ -1773,7 +1773,7 @@ NOTE: Only Camel Main is supported to run in background
 
 [source,bash]
 ----
-$ camel run chuck.yaml --background
+$ camel run chuck.yaml --background --runtime=main
 Running Camel integration: chuck in background with PID: 80093
 
 $ camel ps
