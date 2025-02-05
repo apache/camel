@@ -14,34 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j.transformer;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.segment.TextSegment;
 import org.apache.camel.Message;
-import org.apache.camel.ai.CamelLangchain4jAttributes;
-import org.apache.camel.component.neo4j.Neo4jConstants;
-import org.apache.camel.component.neo4j.Neo4jEmbedding;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
-@DataTypeTransformer(name = "neo4j:embeddings",
-                     description = "Prepares the message to become an object writable by Neo4j component")
-public class Neo4jEmbeddingDataTypeTransformer extends Transformer {
+/**
+ * Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG
+ **/
+@DataTypeTransformer(name = "neo4j:rag",
+                     description = "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
+public class Neo4jReverseEmbeddingsDataTypeTransformer extends Transformer {
+
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        final Embedding embedding
-                = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        final List<Map<String, Object>> embeddings = message.getBody(List.class);
 
-        final TextSegment text = message.getBody(TextSegment.class);
+        List<String> result = embeddings.stream()
+                .map(embedding -> (String) embedding.getOrDefault("text", ""))
+                .collect(Collectors.toList());
 
-        final String id = message.getHeader(Neo4jConstants.Headers.VECTOR_ID, () -> UUID.randomUUID(), String.class);
+        message.setBody(result);
 
-        Neo4jEmbedding neo4jEmbedding = new Neo4jEmbedding(id, text.text(), embedding.vector());
-
-        message.setBody(neo4jEmbedding);
     }
 }

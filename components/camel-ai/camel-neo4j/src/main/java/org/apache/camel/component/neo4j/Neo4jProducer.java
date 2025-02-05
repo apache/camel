@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.neo4j.driver.Driver;
@@ -242,37 +243,60 @@ public class Neo4jProducer extends DefaultProducer {
 
     private void createVector(Exchange exchange) {
         final String alias
-                = getEndpoint().getConfiguration().getAlias() != null ? getEndpoint().getConfiguration().getAlias() : "x";
+                = getEndpoint().getConfiguration().getAlias() != null ? getEndpoint().getConfiguration().getAlias() : "e";
 
-        final String label = exchange.getMessage().getHeader(Neo4jConstants.Headers.LABEL,
-                () -> getEndpoint().getConfiguration().getLabel(), String.class);
-        ObjectHelper.notNull(label, "label");
+        final String label
+                = getEndpoint().getConfiguration().getLabel() != null
+                        ? getEndpoint().getConfiguration().getLabel() : "Embedding";
 
-        final String id
-                = exchange.getMessage().getHeader(Neo4jConstants.Headers.VECTOR_ID, () -> UUID.randomUUID(), String.class);
-
-        final float[] body = exchange.getMessage().getBody(float[].class);
+        String id;
+        String text;
+        float[] vectors;
 
         final String databaseName = getEndpoint().getName();
 
+        Object body = exchange.getMessage().getBody();
+
+        if (body instanceof Neo4jEmbedding) {
+            id = ((Neo4jEmbedding) body).getId();
+            text = ((Neo4jEmbedding) body).getText();
+            vectors = ((Neo4jEmbedding) body).getVectors();
+        } else {
+            id = exchange.getMessage().getHeader(Neo4jConstants.Headers.VECTOR_ID, () -> UUID.randomUUID(), String.class);
+            vectors = exchange.getMessage().getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
+                    float[].class);
+            text = exchange.getMessage().getBody(String.class);
+        }
+
+        ObjectHelper.notNull(text, "text");
+        ObjectHelper.notNull(vectors, "vectors");
+
         String query = String.format("""
-                MERGE (%s:%s {id: $id})
+                MERGE (%s:%s {id: $id, text: $text})
                 WITH %s
                 CALL db.create.setNodeVectorProperty(%s, 'embedding', $embedding);
                 """, alias, label, alias, alias);
 
         Map<String, Object> params = Map.of(
-                "embedding", Values.value(body),
-                "id", id);
+                "embedding", Values.value(vectors),
+                "id", id,
+                "text", text);
 
         executeWriteQuery(exchange, query, params, databaseName, Neo4Operation.CREATE_VECTOR);
     }
 
-    public void similaritySearch(Exchange exchange) {
+    public void similaritySearch(Exchange exchange) throws InvalidPayloadException {
         final String vectorIndexName = getEndpoint().getConfiguration().getVectorIndexName();
         ObjectHelper.notNull(vectorIndexName, "vectorIndexName");
 
-        final float[] body = exchange.getMessage().getBody(float[].class);
+        float[] vectors;
+
+        Object body = exchange.getMessage().getMandatoryBody();
+        if (body instanceof Neo4jEmbedding) {
+            vectors = ((Neo4jEmbedding) body).getVectors();
+        } else {
+            vectors = exchange.getMessage().getBody(float[].class);
+        }
 
         final double minScore = getEndpoint().getConfiguration().getMinScore();
 
@@ -288,7 +312,7 @@ public class Neo4jProducer extends DefaultProducer {
                 """;
 
         Map<String, Object> params = Map.of("indexName", vectorIndexName,
-                "embeddingValue", body,
+                "embeddingValue", vectors,
                 "minScore", minScore,
                 "maxResults", maxResults);
 
