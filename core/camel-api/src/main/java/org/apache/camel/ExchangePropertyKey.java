@@ -30,6 +30,7 @@ public enum ExchangePropertyKey {
     AGGREGATION_COMPLETE_ALL_GROUPS(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS),
     AGGREGATION_COMPLETE_CURRENT_GROUP(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP),
     AGGREGATION_STRATEGY(Exchange.AGGREGATION_STRATEGY),
+    ATTACHMENTS_SIZE(Exchange.ATTACHMENTS_SIZE),
     BATCH_COMPLETE(Exchange.BATCH_COMPLETE),
     BATCH_INDEX(Exchange.BATCH_INDEX),
     BATCH_SIZE(Exchange.BATCH_SIZE),
@@ -105,6 +106,8 @@ public enum ExchangePropertyKey {
                 return AGGREGATION_COMPLETE_CURRENT_GROUP;
             case Exchange.AGGREGATION_STRATEGY:
                 return AGGREGATION_STRATEGY;
+            case Exchange.ATTACHMENTS_SIZE:
+                return ATTACHMENTS_SIZE;
             case Exchange.BATCH_COMPLETE:
                 return BATCH_COMPLETE;
             case Exchange.BATCH_INDEX:
