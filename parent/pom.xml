@@ -194,7 +194,7 @@
         <google-cloud-secretmanager-bom-version>2.55.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.1.2</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
-        <greenmail-version>2.1.2</greenmail-version>
+        <greenmail-version>2.1.3</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.25</groovy-version>
         <grpc-version>1.70.0</grpc-version>
