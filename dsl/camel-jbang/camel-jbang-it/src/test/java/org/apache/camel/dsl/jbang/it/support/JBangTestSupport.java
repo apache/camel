@@ -312,18 +312,14 @@ public abstract class JBangTestSupport {
                     .atMost(Duration.ofMinutes(2))
                     .pollInterval(Duration.ofSeconds(1))
                     .until(() -> !process.isAlive());
+            final String out = new String(process.getInputStream().readAllBytes());
             if (process.exitValue() != 0) {
-                logger.error(String.valueOf(process.getErrorStream()));
-                logger.info(String.valueOf(process.getOutputStream()));
+                logger.error(out);
             }
-            return new String(process.getInputStream().readAllBytes());
+            return out;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected String makeTheFileWriteable(String containerPath) {
-        return containerService.executeGenericCommand("chmod 777 " + containerPath);
     }
 
     protected String downloadNewFileInDataFolder(String downloadUrl) {

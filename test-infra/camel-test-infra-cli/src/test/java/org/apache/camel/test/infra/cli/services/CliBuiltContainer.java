@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.cli.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -24,6 +26,8 @@ import java.util.Objects;
 
 import org.apache.camel.test.infra.common.TestUtils;
 import org.junit.platform.commons.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -32,6 +36,10 @@ import org.testcontainers.utility.MountableFile;
 
 public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CliBuiltContainer.class);
+
+    private static final String UID_ARG = "CUSTOM_UID";
+    private static final String GID_ARG = "CUSTOM_GID";
     private static final String CAMEL_REF_ARG = "CAMEL_REF";
     private static final String CAMEL_REPO_ARG = "CAMEL_REPO";
     private static final String CAMEL_JBANG_VERSION_ARG = "CAMEL_JBANG_VERSION";
@@ -46,6 +54,20 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     public static final String CONTAINER_MVN_REPO = "/home/jbang/.m2/repository";
 
     private final String sshPassword;
+
+    private static int UID = 1000;
+    private static int GID = 1000;
+
+    static {
+        final Path target = Path.of("target");
+        try {
+            UID = (Integer) Files.getAttribute(target, "unix:uid");
+            GID = (Integer) Files.getAttribute(target, "unix:gid");
+            LOGGER.info("building container using user {} and group {}", UID, GID);
+        } catch (IOException e) {
+            LOGGER.warn("unable to retrieve user id and group: {}", e.getMessage());
+        }
+    }
 
     public CliBuiltContainer(CliBuiltContainerParams params) {
         super(new ImageFromDockerfile(
@@ -63,7 +85,9 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
                 .withBuildArg(KEEP_RUNNING_ARG, String.valueOf(params.getKeepContainerRunning()))
                 .withBuildArg(SSH_PASSWORD_ARG, params.getSshPassword())
                 .withBuildArg(CAMEL_REPO_ARG, params.getCamelRepo())
-                .withBuildArg(CAMEL_JBANG_VERSION_ARG, params.getCamelJBangVersion()));
+                .withBuildArg(CAMEL_JBANG_VERSION_ARG, params.getCamelJBangVersion())
+                .withBuildArg(UID_ARG, String.valueOf(UID))
+                .withBuildArg(GID_ARG, String.valueOf(GID)));
         this.sshPassword = params.getSshPassword();
         if (StringUtils.isNotBlank(params.getDataFolder())) {
             withFileSystemBind(params.getDataFolder(), MOUNT_POINT, BindMode.READ_WRITE);
