@@ -525,6 +525,7 @@
                             <exclude>**/file-sig-api.txt</exclude>
                             <exclude>**/Tasks__c.java</exclude>
                             <exclude>**/*.proto</exclude>
+                            <exclude>**/*.pbtxt</exclude>
                             <exclude>
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
                             </exclude>
