@@ -44,6 +44,11 @@
             <artifactId>camel-support</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-languages</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- attachments api -->
         <dependency>
@@ -56,6 +61,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bean</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

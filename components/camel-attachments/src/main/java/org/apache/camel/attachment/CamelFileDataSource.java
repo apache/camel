@@ -21,9 +21,16 @@ import java.io.File;
 import jakarta.activation.FileDataSource;
 import jakarta.activation.FileTypeMap;
 
+/**
+ * A {@link FileDataSource} that uses the file name/extension to determine the content-type.
+ */
 public class CamelFileDataSource extends FileDataSource {
     private final String fileName;
     private FileTypeMap typeMap;
+
+    public CamelFileDataSource(File file) {
+        this(file, file.getName());
+    }
 
     public CamelFileDataSource(File file, String fileName) {
         super(file);

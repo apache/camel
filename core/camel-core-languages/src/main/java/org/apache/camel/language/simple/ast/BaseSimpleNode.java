@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 
@@ -40,10 +41,11 @@ public abstract class BaseSimpleNode implements SimpleNode {
         return token.getText();
     }
 
-    protected static String createCode(String expression, CompositeNodes block) throws SimpleParserException {
+    protected static String createCode(CamelContext camelContext, String expression, CompositeNodes block)
+            throws SimpleParserException {
         String answer = null;
         if (block != null) {
-            answer = block.createCode(expression);
+            answer = block.createCode(camelContext, expression);
         }
         // use double quote as this become used as string literals in the generated code
         if (answer == null) {

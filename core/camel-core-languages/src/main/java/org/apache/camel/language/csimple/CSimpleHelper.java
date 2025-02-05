@@ -205,6 +205,10 @@ public final class CSimpleHelper {
         return exchange.getVariables();
     }
 
+    public static int variablesSize(Exchange exchange) {
+        return exchange.getVariables().size();
+    }
+
     public static String bodyOneLine(Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         if (body == null) {

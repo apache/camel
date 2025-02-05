@@ -282,16 +282,16 @@ public class BinaryExpression extends BaseSimpleNode {
     }
 
     @Override
-    public String createCode(String expression) throws SimpleParserException {
-        return BaseSimpleParser.CODE_START + doCreateCode(expression) + BaseSimpleParser.CODE_END;
+    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
+        return BaseSimpleParser.CODE_START + doCreateCode(camelContext, expression) + BaseSimpleParser.CODE_END;
     }
 
-    private String doCreateCode(String expression) throws SimpleParserException {
+    private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
         org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
         org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
 
-        final String leftExp = left.createCode(expression);
-        final String rightExp = right.createCode(expression);
+        final String leftExp = left.createCode(camelContext, expression);
+        final String rightExp = right.createCode(camelContext, expression);
 
         if (operator == BinaryOperatorType.EQ) {
             return "isEqualTo(exchange, " + leftExp + ", " + rightExp + ")";

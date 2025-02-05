@@ -368,6 +368,23 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the size of the message headers
+     */
+    public static Expression headersSizeExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeaders().size();
+            }
+
+            @Override
+            public String toString() {
+                return "headers.size";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the {@link Exchange} variables
      *
      * @return an expression object which will return the variables
@@ -382,6 +399,23 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "variables";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the number of {@link Exchange} variables
+     */
+    public static Expression variablesSizeExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exchange.getVariables().size();
+            }
+
+            @Override
+            public String toString() {
+                return "variables.size";
             }
         };
     }
