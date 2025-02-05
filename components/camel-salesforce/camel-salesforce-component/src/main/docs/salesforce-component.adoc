@@ -76,11 +76,12 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Authenticating to Salesforce [[AuthenticatingToSalesforce]]
 
-The component supports three OAuth authentication flows:
+The component supports four OAuth authentication flows:
 
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_username_password_flow.htm[OAuth 2.0 Username-Password Flow]
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm[OAuth 2.0 Refresh Token Flow]
 * https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm[OAuth 2.0 JWT Bearer Token Flow]
+* https://help.salesforce.com/s/articleView?id=xcloud.remoteaccess_oauth_client_credentials_flow.htm[OAuth 2.0 Client Credentials Flow]
 
 For each of the flows, different sets of properties need to be set:
 
