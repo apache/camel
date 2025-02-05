@@ -43,7 +43,6 @@ public class DevModeITCase extends JBangTestSupport {
         executeBackground(String.format("run %s/cheese.xml --dev", mountPoint()));
         checkLogContains("cheese", DEFAULT_MSG);
         final Path routeFile = Path.of(getDataFolder(), "cheese.xml");
-        makeTheFileWriteable(String.format("%s/cheese.xml", mountPoint()));
         Files.write(routeFile,
                 Files.readAllLines(routeFile).stream()
                         .map(line -> line.replace("${routeId}", "custom"))
@@ -107,7 +106,6 @@ public class DevModeITCase extends JBangTestSupport {
                 Path.of(getDataFolder() + "/source-dir/FromDirectoryRoute.java"));
         executeBackground(String.format("run --dev --console --source-dir=%s/source-dir", mountPoint()));
         checkLogContains("Hello world!");
-        makeTheFileWriteable(String.format("%s/FromDirectoryRoute.java", mountPoint()));
         Path routeFile = Path.of(getDataFolder(), "FromDirectoryRoute.java");
         Files.write(routeFile,
                 Files.readAllLines(routeFile).stream()
