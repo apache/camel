@@ -117,6 +117,7 @@ public interface Exchange extends VariableAware {
     String CONTENT_TYPE = "Content-Type";
     String COOKIE_HANDLER = "CamelCookieHandler";
     String CORRELATION_ID = "CamelCorrelationId";
+    String ATTACHMENTS_SIZE = "CamelAttachmentsSize";
 
     // The schema of the message payload
     String CONTENT_SCHEMA = "CamelContentSchema";
