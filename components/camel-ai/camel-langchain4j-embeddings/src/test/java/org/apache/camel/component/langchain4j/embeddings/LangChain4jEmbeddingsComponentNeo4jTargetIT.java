@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.embeddings;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.neo4j.Neo4Operation;
 import org.apache.camel.component.neo4j.Neo4jComponent;
 import org.apache.camel.component.neo4j.Neo4jConstants;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.neo4j.services.Neo4jService;
 import org.apache.camel.test.infra.neo4j.services.Neo4jServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -47,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSupport {
 
-    public static final String NEO4J_URI = "neo4j:neo4j";
+    public static final String NEO4J_URI = "neo4j:neo4j?vectorIndexName=myIndex&label=Test";
     @RegisterExtension
     static Neo4jService NEO4J = Neo4jServiceFactory.createSingletonService();
 
@@ -138,6 +140,20 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
 
     }
 
+    @Test
+    @Order(3)
+    public void rag_similarity_search() {
+        Exchange result = fluentTemplate.to("direct:search")
+                .withBody("hi")
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+
+        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
+        assertTrue(result.getIn().getBody(List.class).contains("hi"));
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -149,6 +165,17 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
                         .setHeader(Neo4jConstants.Headers.LABEL).constant("Test")
                         .transform(new org.apache.camel.spi.DataType("neo4j:embeddings"))
                         .to(NEO4J_URI);
+
+                from("direct:search")
+                        .to("langchain4j-embeddings:test")
+                        // transform prompt into embeddings for search
+                        .transform(
+                                new DataType("neo4j:embeddings"))
+                        .setHeader(Neo4jConstants.Headers.OPERATION, constant(Neo4Operation.VECTOR_SIMILARITY_SEARCH))
+                        .to(NEO4J_URI)
+                        // decode retrieved embeddings for RAG
+                        .transform(
+                                new DataType("neo4j:rag"));
             }
         };
     }

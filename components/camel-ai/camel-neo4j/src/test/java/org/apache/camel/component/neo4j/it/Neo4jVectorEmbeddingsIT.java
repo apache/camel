@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ai.CamelLangchain4jAttributes;
 import org.apache.camel.component.neo4j.Neo4Operation;
 import org.apache.camel.component.neo4j.Neo4jConstants;
+import org.apache.camel.component.neo4j.Neo4jEmbedding;
 import org.apache.camel.component.neo4j.Neo4jTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -62,7 +64,29 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR)
                 .withHeader(Neo4jConstants.Headers.VECTOR_ID, testData.getId())
-                .withBody(testData.getVectors())
+                .withHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, testData.getVectors())
+                .withBody(testData.getText())
+                .request(Exchange.class);
+
+        assertNotNull(result);
+
+        Message in = result.getMessage();
+        assertNotNull(in);
+
+        assertEquals(Neo4Operation.CREATE_VECTOR, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertTrue("The executed request should contain the procedure of setting vector embedding",
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT, String.class)
+                        .contains("CALL db.create.setNodeVectorProperty"));
+        assertEquals("A node creation is expected ", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+    }
+
+    @Order(2)
+    @Test
+    void addGeneratedNeo4jEmbedding() {
+        Neo4jEmbedding neo4jEmbedding = new Neo4jEmbedding("15", "Hello World", new float[] { 10.8f, 10.6f });
+        Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_VECTOR)
+                .withBody(neo4jEmbedding)
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -78,7 +102,7 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void similaritySeach() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx&label=Movie&alias=m")
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.VECTOR_SIMILARITY_SEARCH)
@@ -98,7 +122,7 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void dropVectorIndex() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?vectorIndexName=movieIdx")
                 .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.DROP_VECTOR_INDEX)
@@ -116,17 +140,19 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
 
     // Enum to provide test data
     public enum TestData {
-        VECTOR_1(9, List.of(0.8f, 0.6f)),
-        VECTOR_2(10, List.of(0.1f, 0.9f)),
-        VECTOR_3(11, List.of(0.7f, 0.7f)),
-        VECTOR_4(12, List.of(-0.3f, -0.9f)),
-        VECTOR_5(13, List.of(1.2f, 0.8f));
+        VECTOR_1(9, "VECTOR_1", List.of(0.8f, 0.6f)),
+        VECTOR_2(10, "VECTOR_2", List.of(0.1f, 0.9f)),
+        VECTOR_3(11, "VECTOR_3", List.of(0.7f, 0.7f)),
+        VECTOR_4(12, "VECTOR_4", List.of(-0.3f, -0.9f)),
+        VECTOR_5(13, "VECTOR_5", List.of(1.2f, 0.8f));
 
         private final int id;
+        private final String text;
         private final List<Float> vectors;
 
-        TestData(int id, List<Float> vectors) {
+        TestData(int id, String text, List<Float> vectors) {
             this.id = id;
+            this.text = text;
             this.vectors = vectors;
         }
 
@@ -136,6 +162,10 @@ public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
 
         public List<Float> getVectors() {
             return vectors;
+        }
+
+        public String getText() {
+            return text;
         }
     }
 }
