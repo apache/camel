@@ -62,22 +62,16 @@ class ExportCamelMain extends Export {
         File settings = new File(CommandLineHelper.getWorkDir(), Run.RUN_SETTINGS_FILE);
         if (fresh || !files.isEmpty() || !settings.exists()) {
             // allow to automatic build
-            if (!quiet && fresh) {
-                printer().println("Generating fresh run data");
-            }
+            printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean);
             if (silent != 0) {
                 return silent;
             }
         } else {
-            if (!quiet) {
-                printer().println("Reusing existing run data");
-            }
+            printer().println("Reusing existing run data");
         }
 
-        if (!quiet) {
-            printer().println("Exporting as Camel Main project to: " + exportDir);
-        }
+        printer().println("Exporting as Camel Main project to: " + exportDir);
 
         File profile = new File("application.properties");
 

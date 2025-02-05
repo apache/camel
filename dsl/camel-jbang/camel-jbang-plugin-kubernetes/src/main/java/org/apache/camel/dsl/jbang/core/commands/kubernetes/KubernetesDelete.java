@@ -81,7 +81,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         }
 
         if (resolvedManifestDir == null) {
-            printer().printf("Failed to resolve exported project: %s%n", projectName);
+            printer().printErr("Failed to resolve exported project: %s".formatted(projectName));
             return 1;
         }
 

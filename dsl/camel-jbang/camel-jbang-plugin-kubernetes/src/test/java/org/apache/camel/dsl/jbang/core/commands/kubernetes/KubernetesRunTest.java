@@ -71,7 +71,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
 
         Assertions.assertEquals(1, exit);
 
-        Assertions.assertTrue(printer.getOutput().contains("Project export failed"));
+        Assertions.assertTrue(printer.getOutput().contains("ERROR: Project export failed!"));
     }
 
     @ParameterizedTest
@@ -114,7 +114,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
                 "--output=wrong", "--runtime=" + rt.runtime());
 
         Assertions.assertEquals(1, command.doCall());
-        Assertions.assertTrue(printer.getOutput().endsWith("Unsupported output format 'wrong' (supported: yaml, json)"));
+        Assertions.assertTrue(printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
     }
 
     @ParameterizedTest

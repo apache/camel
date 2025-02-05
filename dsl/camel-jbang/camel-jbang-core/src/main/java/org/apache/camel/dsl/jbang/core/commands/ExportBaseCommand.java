@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -84,6 +85,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private MavenDownloader downloader;
+
+    private Printer quietPrinter;
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -335,6 +338,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.lazyBean = lazyBean;
         run.property = applicationProperties;
         run.repositories = repositories;
+        run.logging = false;
+        run.loggingLevel = "off";
 
         return run.runExport(ignoreLoadingError);
     }
@@ -1156,6 +1161,20 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private void init() {
         this.downloader = new MavenDownloaderImpl();
         ((MavenDownloaderImpl) downloader).build();
+    }
+
+    @Override
+    protected Printer printer() {
+        if (quiet) {
+            if (quietPrinter == null) {
+                quietPrinter = new Printer.QuietPrinter(super.printer());
+            }
+
+            CommandHelper.setPrinter(quietPrinter);
+            return quietPrinter;
+        }
+
+        return super.printer();
     }
 
     static class FilesConsumer extends ParameterConsumer<Export> {

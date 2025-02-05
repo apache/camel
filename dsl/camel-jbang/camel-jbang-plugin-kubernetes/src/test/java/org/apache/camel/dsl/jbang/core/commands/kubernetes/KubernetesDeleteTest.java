@@ -95,7 +95,7 @@ class KubernetesDeleteTest extends KubernetesBaseTest {
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);
-        Assertions.assertEquals("Failed to resolve exported project: does-not-exist",
+        Assertions.assertEquals("ERROR: Failed to resolve exported project: does-not-exist",
                 printer.getOutput());
     }
 

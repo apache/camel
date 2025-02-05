@@ -175,8 +175,8 @@ class BindObjectReferenceTest extends CamelCommandBaseTest {
         String output = printer.getOutput();
         Assertions.assertEquals(
                 """
-                        Error: Failed to resolve endpoint URI expression sandbox.camel.apache.org:Foo:bar - no matching binding provider found
-                        Failed to construct Pipe resource
+                        ERROR: Failed to resolve endpoint URI expression sandbox.camel.apache.org:Foo:bar - no matching binding provider found
+                        ERROR: Failed to construct Pipe resource
                         """
                         .trim(),
                 output);

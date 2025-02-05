@@ -170,9 +170,7 @@ public class KubernetesExport extends Export {
             runtime = RuntimeType.quarkus;
         }
 
-        if (!quiet) {
-            printer().println("Exporting application ...");
-        }
+        printer().println("Exporting application ...");
 
         if (!buildTool.equals("maven")) {
             printer().printf("--build-tool=%s is not yet supported%n", buildTool);
@@ -196,10 +194,8 @@ public class KubernetesExport extends Export {
         try {
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
-            if (!quiet) {
-                printer().printf("Project export failed: %s - %s%n", e.getMessage(),
-                        Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
-            }
+            printer().printf("Project export failed: %s - %s%n", e.getMessage(),
+                    Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
             return 1;
         }
 
@@ -298,16 +294,12 @@ public class KubernetesExport extends Export {
         // Run export
         int exit = super.export();
         if (exit != 0) {
-            if (!quiet) {
-                printer().println("Project export failed");
-            }
+            printer().println("Project export failed");
             return exit;
         }
 
         // Post export processing
-        if (!quiet) {
-            printer().println("Building Kubernetes manifest ...");
-        }
+        printer().println("Building Kubernetes manifest ...");
 
         new TraitCatalog().apply(traitsSpec, context, clusterType, runtime);
 
@@ -330,16 +322,12 @@ public class KubernetesExport extends Export {
                     safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), target);
                 }
             } catch (Exception e) {
-                if (!quiet) {
-                    printer().printf("Failed to create configuration resource %s - %s%n",
-                            exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
-                }
+                printer().printf("Failed to create configuration resource %s - %s%n",
+                        exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
             }
         });
 
-        if (!quiet) {
-            printer().println("Project export successful!");
-        }
+        printer().println("Project export successful!");
 
         return 0;
     }
@@ -402,7 +390,10 @@ public class KubernetesExport extends Export {
 
     private String resolveImageRegistry() {
         if (image != null) {
-            return extractImageRegistry(image);
+            String extracted = extractImageRegistry(image);
+            if (extracted != null) {
+                return extracted;
+            }
         }
 
         if (imageRegistry != null) {
