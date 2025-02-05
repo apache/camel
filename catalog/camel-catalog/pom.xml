@@ -151,6 +151,8 @@
                             <goal>prepare-catalog</goal>
                             <!-- update secrets in camel-util -->
                             <goal>update-sensitive-helper</goal>
+                            <!-- update mime-types in camel-util -->
+                            <goal>update-mime-type-helper</goal>
                             <!-- update names in camel-main -->
                             <goal>update-main-helper</goal>
                             <!-- update test-infra metadata -->
