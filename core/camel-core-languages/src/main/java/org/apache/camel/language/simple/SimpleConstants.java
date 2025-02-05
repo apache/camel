@@ -212,4 +212,25 @@ public final class SimpleConstants {
     @Metadata(description = "Evaluates the predicate and returns the value of trueExp or falseExp. This function is similar to the ternary operator in Java.",
               label = "function", javaType = "Object", displayName = "If Then Else")
     public static final String IIF = "iif(predicate,trueExp,falseExp)";
+    @Metadata(description = "All the attachments as a Map<String,DataHandler.", javaType = "java.util.Map", label = "function")
+    public static final String ATTACHMENTS = "attachments";
+    @Metadata(description = "The number of attachments. Is 0 if there are no attachments.", javaType = "int",
+              label = "function")
+    public static final String ATTACHMENTS_SIZE = "attachments.size";
+    @Metadata(description = "The content of the attachment as text (ie String).", javaType = "String", label = "function")
+    public static final String ATTACHMENTS_CONTENT_AS_TEXT = "attachmentContentAsText";
+    @Metadata(description = "The content of the attachment", javaType = "Object", label = "function")
+    public static final String ATTACHMENTS_CONTENT = "attachmentContent";
+    @Metadata(description = "The content of the attachment, converted to the given type.", javaType = "Object",
+              label = "function")
+    public static final String ATTACHMENTS_CONTENT_AS = "attachmentContentAs(type)";
+    @Metadata(description = "The attachment header with the given name.", javaType = "String", label = "function")
+    public static final String ATTACHMENTS_HEADER = "attachmentHeader(key,name)";
+    @Metadata(description = "The attachment header with the given name, converted to the given type.", javaType = "Object",
+              label = "function")
+    public static final String ATTACHMENTS_HEADER_AS = "attachmentHeader(key,name,type)";
+    @Metadata(description = "The DataHandler for the given attachment.", javaType = "jakarta.activation.DataHandler",
+              label = "function,ognl")
+    public static final String ATTACHMENT = "attachment(key)";
+
 }
