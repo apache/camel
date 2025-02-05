@@ -430,7 +430,8 @@ public class VertxPlatformHttpEngineTest {
                                 }
 
                                 exchange.getIn().setHeader("ConcatFileContent", result);
-                            });
+                            })
+                            .setHeader("UploadedAttachments", simple("${headers.CamelAttachmentsSize}"));
                 }
             });
 
@@ -444,6 +445,7 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(204)
                     .body(emptyOrNullString())
+                    .header("UploadedAttachments", is(String.valueOf(attachmentIds.size())))
                     .header("ConcatFileContent",
                             is("Test multipart upload content myFirstTestFileTest multipart upload content mySecondTestFile"));
         } finally {
@@ -476,7 +478,9 @@ public class VertxPlatformHttpEngineTest {
                                 AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
                                 DataHandler attachment = message.getAttachment(attachmentId);
                                 exchange.getMessage().setHeader("myDataHandler", attachment);
-                            });
+                            })
+                            .setHeader("UploadedFileContentType", simple("${header.CamelFileContentType}"))
+                            .setHeader("UploadedFileSize", simple("${header.CamelFileLength}"));
                 }
             });
 
@@ -489,6 +493,8 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .header("myDataHandler", containsString("jakarta.activation.DataHandler"))
+                    .header("UploadedFileContentType", is("text/plain"))
+                    .header("UploadedFileSize", is(String.valueOf(fileContent.getBytes().length)))
                     .body(is(fileContent));
         } finally {
             context.stop();
