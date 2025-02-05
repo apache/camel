@@ -24,16 +24,16 @@
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
         <version>4.10.0-SNAPSHOT</version>
     </parent>
-    
+
     <modelVersion>4.0.0</modelVersion>
-    
+
     <artifactId>camel-test-infra-solr</artifactId>
     <name>Camel :: Test Infra :: Solr</name>
-    
+
     <properties>
         <assembly.skipAssembly>false</assembly.skipAssembly>
     </properties>
-    
+
     <dependencies>
 
         <dependency>
@@ -41,21 +41,20 @@
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>

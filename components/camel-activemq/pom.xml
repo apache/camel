@@ -59,7 +59,12 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
+       <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-artemis</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-artemis</artifactId>
@@ -67,7 +72,6 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-messaging-common</artifactId>
