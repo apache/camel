@@ -25,30 +25,30 @@ public class Neo4jEndpointUriFactory extends org.apache.camel.support.component.
     static {
         Set<String> props = new HashSet<>(18);
         props.add("alias");
-        props.add("base64");
-        props.add("dbPassword");
-        props.add("dbUri");
-        props.add("dbUser");
+        props.add("databaseUrl");
         props.add("detachRelationship");
         props.add("dimension");
         props.add("driver");
+        props.add("kerberosAuthTicket");
         props.add("label");
         props.add("lazyStartProducer");
         props.add("maxResults");
         props.add("minScore");
         props.add("name");
+        props.add("password");
         props.add("query");
         props.add("realm");
         props.add("similarityFunction");
         props.add("token");
+        props.add("username");
         props.add("vectorIndexName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("base64");
-        secretProps.add("dbPassword");
-        secretProps.add("dbUser");
+        secretProps.add("kerberosAuthTicket");
+        secretProps.add("password");
         secretProps.add("realm");
         secretProps.add("token");
+        secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }

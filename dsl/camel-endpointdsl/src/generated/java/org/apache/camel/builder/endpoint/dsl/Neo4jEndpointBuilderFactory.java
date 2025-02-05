@@ -59,17 +59,17 @@ public interface Neo4jEndpointBuilderFactory {
             return this;
         }
         /**
-         * URI of the Neo4j server - used for Authentication.
+         * Url for connecting to Neo database.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
-         * @param dbUri the value to set
+         * @param databaseUrl the value to set
          * @return the dsl builder
          */
-        default Neo4jEndpointBuilder dbUri(String dbUri) {
-            doSetProperty("dbUri", dbUri);
+        default Neo4jEndpointBuilder databaseUrl(String databaseUrl) {
+            doSetProperty("databaseUrl", databaseUrl);
             return this;
         }
         /**
@@ -276,11 +276,11 @@ public interface Neo4jEndpointBuilderFactory {
          * 
          * Group: security
          * 
-         * @param base64 the value to set
+         * @param kerberosAuthTicket the value to set
          * @return the dsl builder
          */
-        default Neo4jEndpointBuilder base64(String base64) {
-            doSetProperty("base64", base64);
+        default Neo4jEndpointBuilder kerberosAuthTicket(String kerberosAuthTicket) {
+            doSetProperty("kerberosAuthTicket", kerberosAuthTicket);
             return this;
         }
         /**
@@ -290,25 +290,11 @@ public interface Neo4jEndpointBuilderFactory {
          * 
          * Group: security
          * 
-         * @param dbPassword the value to set
+         * @param password the value to set
          * @return the dsl builder
          */
-        default Neo4jEndpointBuilder dbPassword(String dbPassword) {
-            doSetProperty("dbPassword", dbPassword);
-            return this;
-        }
-        /**
-         * Basic authentication database user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param dbUser the value to set
-         * @return the dsl builder
-         */
-        default Neo4jEndpointBuilder dbUser(String dbUser) {
-            doSetProperty("dbUser", dbUser);
+        default Neo4jEndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -337,6 +323,20 @@ public interface Neo4jEndpointBuilderFactory {
          */
         default Neo4jEndpointBuilder token(String token) {
             doSetProperty("token", token);
+            return this;
+        }
+        /**
+         * Basic authentication database user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default Neo4jEndpointBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -453,7 +453,7 @@ public interface Neo4jEndpointBuilderFactory {
          * Syntax: <code>neo4j:name</code>
          * 
          * Path parameter: name (required)
-         * The database Name
+         * The database name
          * 
          * @param path name
          * @return the dsl builder
@@ -472,7 +472,7 @@ public interface Neo4jEndpointBuilderFactory {
          * Syntax: <code>neo4j:name</code>
          * 
          * Path parameter: name (required)
-         * The database Name
+         * The database name
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -501,10 +501,10 @@ public interface Neo4jEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code Neo4jAction}.
+         * @return the name of the header {@code Neo4jOperation}.
          */
-        public String neo4jAction() {
-            return "CamelNeo4jAction";
+        public String neo4jOperation() {
+            return "CamelNeo4jOperation";
         }
         /**
          * MATCH properties for the generated MATCH query. Needed only if we are
@@ -520,7 +520,7 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jMatchProperties";
         }
         /**
-         * Query excetuded.
+         * Query Result.
          * 
          * The option is a: {@code String} type.
          * 
@@ -558,7 +558,7 @@ public interface Neo4jEndpointBuilderFactory {
         /**
          * Query executed contains update.
          * 
-         * The option is a: {@code Booleab} type.
+         * The option is a: {@code Boolean} type.
          * 
          * Group: producer
          * 
@@ -607,7 +607,7 @@ public interface Neo4jEndpointBuilderFactory {
             return "CamelNeo4jQueryResultRetrieveSize";
         }
         /**
-         * Query execution time in Milliseconfs.
+         * Query execution time in Milliseconds.
          * 
          * The option is a: {@code Long} type.
          * 

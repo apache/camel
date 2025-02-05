@@ -24,27 +24,26 @@ public class Neo4jConfigurationConfigurer extends org.apache.camel.support.compo
         org.apache.camel.component.neo4j.Neo4jConfiguration target = (org.apache.camel.component.neo4j.Neo4jConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": target.setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "base64": target.setBase64(property(camelContext, java.lang.String.class, value)); return true;
-        case "dbpassword":
-        case "dbPassword": target.setDbPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "dburi":
-        case "dbUri": target.setDbUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "dbuser":
-        case "dbUser": target.setDbUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseurl":
+        case "databaseUrl": target.setDatabaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "detachrelationship":
         case "detachRelationship": target.setDetachRelationship(property(camelContext, boolean.class, value)); return true;
         case "dimension": target.setDimension(property(camelContext, java.lang.Integer.class, value)); return true;
         case "driver": target.setDriver(property(camelContext, org.neo4j.driver.Driver.class, value)); return true;
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": target.setKerberosAuthTicket(property(camelContext, java.lang.String.class, value)); return true;
         case "label": target.setLabel(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
         case "maxResults": target.setMaxResults(property(camelContext, int.class, value)); return true;
         case "minscore":
         case "minScore": target.setMinScore(property(camelContext, double.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "realm": target.setRealm(property(camelContext, java.lang.String.class, value)); return true;
         case "similarityfunction":
         case "similarityFunction": target.setSimilarityFunction(property(camelContext, org.apache.camel.component.neo4j.Neo4jSimilarityFunction.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "vectorindexname":
         case "vectorIndexName": target.setVectorIndexName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -55,27 +54,26 @@ public class Neo4jConfigurationConfigurer extends org.apache.camel.support.compo
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return java.lang.String.class;
-        case "base64": return java.lang.String.class;
-        case "dbpassword":
-        case "dbPassword": return java.lang.String.class;
-        case "dburi":
-        case "dbUri": return java.lang.String.class;
-        case "dbuser":
-        case "dbUser": return java.lang.String.class;
+        case "databaseurl":
+        case "databaseUrl": return java.lang.String.class;
         case "detachrelationship":
         case "detachRelationship": return boolean.class;
         case "dimension": return java.lang.Integer.class;
         case "driver": return org.neo4j.driver.Driver.class;
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": return java.lang.String.class;
         case "label": return java.lang.String.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "minscore":
         case "minScore": return double.class;
+        case "password": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "realm": return java.lang.String.class;
         case "similarityfunction":
         case "similarityFunction": return org.apache.camel.component.neo4j.Neo4jSimilarityFunction.class;
         case "token": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         case "vectorindexname":
         case "vectorIndexName": return java.lang.String.class;
         default: return null;
@@ -87,27 +85,26 @@ public class Neo4jConfigurationConfigurer extends org.apache.camel.support.compo
         org.apache.camel.component.neo4j.Neo4jConfiguration target = (org.apache.camel.component.neo4j.Neo4jConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return target.getAlias();
-        case "base64": return target.getBase64();
-        case "dbpassword":
-        case "dbPassword": return target.getDbPassword();
-        case "dburi":
-        case "dbUri": return target.getDbUri();
-        case "dbuser":
-        case "dbUser": return target.getDbUser();
+        case "databaseurl":
+        case "databaseUrl": return target.getDatabaseUrl();
         case "detachrelationship":
         case "detachRelationship": return target.isDetachRelationship();
         case "dimension": return target.getDimension();
         case "driver": return target.getDriver();
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": return target.getKerberosAuthTicket();
         case "label": return target.getLabel();
         case "maxresults":
         case "maxResults": return target.getMaxResults();
         case "minscore":
         case "minScore": return target.getMinScore();
+        case "password": return target.getPassword();
         case "query": return target.getQuery();
         case "realm": return target.getRealm();
         case "similarityfunction":
         case "similarityFunction": return target.getSimilarityFunction();
         case "token": return target.getToken();
+        case "username": return target.getUsername();
         case "vectorindexname":
         case "vectorIndexName": return target.getVectorIndexName();
         default: return null;

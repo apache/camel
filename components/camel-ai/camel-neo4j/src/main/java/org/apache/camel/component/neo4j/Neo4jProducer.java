@@ -37,15 +37,15 @@ import org.neo4j.driver.summary.ResultSummary;
 import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES;
 import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY;
 import static org.apache.camel.component.neo4j.Neo4Operation.VECTOR_SIMILARITY_SEARCH;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.MATCH_PROPERTIES;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RESULT;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RESULT_CONTAINS_UPDATES;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RESULT_NODES_CREATED;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RESULT_NODES_DELETED;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RETRIEVE_LIST_NEO4J_NODES;
-import static org.apache.camel.component.neo4j.Neo4j.Headers.QUERY_RETRIEVE_SIZE;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.MATCH_PROPERTIES;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RESULT;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RESULT_CONTAINS_UPDATES;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RESULT_NODES_DELETED;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RETRIEVE_LIST_NEO4J_NODES;
+import static org.apache.camel.component.neo4j.Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE;
 
 public class Neo4jProducer extends DefaultProducer {
 
@@ -71,10 +71,10 @@ public class Neo4jProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         final Message in = exchange.getMessage();
-        final Neo4Operation operation = in.getHeader(Neo4j.Headers.OPERATION, Neo4Operation.class);
+        final Neo4Operation operation = in.getHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.class);
 
         if (operation == null) {
-            throw new NoSuchHeaderException("The operation is a required header", exchange, Neo4j.Headers.OPERATION);
+            throw new NoSuchHeaderException("The operation is a required header", exchange, Neo4jConstants.Headers.OPERATION);
         }
 
         switch (operation) {
@@ -244,11 +244,12 @@ public class Neo4jProducer extends DefaultProducer {
         final String alias
                 = getEndpoint().getConfiguration().getAlias() != null ? getEndpoint().getConfiguration().getAlias() : "x";
 
-        final String label = exchange.getMessage().getHeader(Neo4j.Headers.LABEL,
+        final String label = exchange.getMessage().getHeader(Neo4jConstants.Headers.LABEL,
                 () -> getEndpoint().getConfiguration().getLabel(), String.class);
         ObjectHelper.notNull(label, "label");
 
-        final String id = exchange.getMessage().getHeader(Neo4j.Headers.VECTOR_ID, () -> UUID.randomUUID(), String.class);
+        final String id
+                = exchange.getMessage().getHeader(Neo4jConstants.Headers.VECTOR_ID, () -> UUID.randomUUID(), String.class);
 
         final float[] body = exchange.getMessage().getBody(float[].class);
 

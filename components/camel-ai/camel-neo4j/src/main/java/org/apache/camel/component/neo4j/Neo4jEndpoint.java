@@ -37,7 +37,7 @@ import org.neo4j.driver.GraphDatabase;
  * Perform operations on the Neo4j Graph Database
  */
 @UriEndpoint(firstVersion = "4.10.0",
-             scheme = Neo4j.SCHEME,
+             scheme = Neo4jConstants.SCHEME,
              title = "Neo4j",
              syntax = "neo4j:name",
              producerOnly = true,
@@ -45,11 +45,11 @@ import org.neo4j.driver.GraphDatabase;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = Neo4j.Headers.class)
+             headersClass = Neo4jConstants.Headers.class)
 public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
-    @UriPath(description = "The database Name")
+    @UriPath(description = "The database name")
     private final String name;
     @UriParam
     private Neo4jConfiguration configuration;
@@ -120,7 +120,7 @@ public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     private Driver createDriver() {
         // Check that Database URI is set
-        String dbUri = this.configuration.getDbUri();
+        String dbUri = this.configuration.getDatabaseUrl();
         ObjectHelper.notNull(dbUri, "dbUri");
 
         AuthToken authToken = createAuthToken();
@@ -133,8 +133,8 @@ public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
 
     private AuthToken createAuthToken() {
         // Case Kerberos Authentication
-        if (this.configuration.getBase64() != null) {
-            return AuthTokens.kerberos(this.configuration.getBase64());
+        if (this.configuration.getKerberosAuthTicket() != null) {
+            return AuthTokens.kerberos(this.configuration.getKerberosAuthTicket());
         }
 
         // Case Bearer Authentication
@@ -143,12 +143,12 @@ public class Neo4jEndpoint extends DefaultEndpoint implements EndpointServiceLoc
         }
 
         // Case Basic Authentication
-        if (this.configuration.getDbUser() != null && this.configuration.getDbPassword() != null) {
+        if (this.configuration.getUsername() != null && this.configuration.getPassword() != null) {
             if (this.configuration.getRealm() != null) {
-                return AuthTokens.basic(this.configuration.getDbUser(), this.configuration.getDbPassword(),
+                return AuthTokens.basic(this.configuration.getUsername(), this.configuration.getPassword(),
                         this.configuration.getRealm());
             }
-            return AuthTokens.basic(this.configuration.getDbUser(), this.configuration.getDbPassword());
+            return AuthTokens.basic(this.configuration.getUsername(), this.configuration.getPassword());
         }
 
         return null;

@@ -33,18 +33,15 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "alias": getOrCreateConfiguration(target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "base64": getOrCreateConfiguration(target).setBase64(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.neo4j.Neo4jConfiguration.class, value)); return true;
-        case "dbpassword":
-        case "dbPassword": getOrCreateConfiguration(target).setDbPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "dburi":
-        case "dbUri": getOrCreateConfiguration(target).setDbUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "dbuser":
-        case "dbUser": getOrCreateConfiguration(target).setDbUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseurl":
+        case "databaseUrl": getOrCreateConfiguration(target).setDatabaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "detachrelationship":
         case "detachRelationship": getOrCreateConfiguration(target).setDetachRelationship(property(camelContext, boolean.class, value)); return true;
         case "dimension": getOrCreateConfiguration(target).setDimension(property(camelContext, java.lang.Integer.class, value)); return true;
         case "driver": getOrCreateConfiguration(target).setDriver(property(camelContext, org.neo4j.driver.Driver.class, value)); return true;
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": getOrCreateConfiguration(target).setKerberosAuthTicket(property(camelContext, java.lang.String.class, value)); return true;
         case "label": getOrCreateConfiguration(target).setLabel(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -52,11 +49,13 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "minscore":
         case "minScore": getOrCreateConfiguration(target).setMinScore(property(camelContext, double.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "realm": getOrCreateConfiguration(target).setRealm(property(camelContext, java.lang.String.class, value)); return true;
         case "similarityfunction":
         case "similarityFunction": getOrCreateConfiguration(target).setSimilarityFunction(property(camelContext, org.apache.camel.component.neo4j.Neo4jSimilarityFunction.class, value)); return true;
         case "token": getOrCreateConfiguration(target).setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "vectorindexname":
         case "vectorIndexName": getOrCreateConfiguration(target).setVectorIndexName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -74,18 +73,15 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "alias": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
-        case "base64": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.neo4j.Neo4jConfiguration.class;
-        case "dbpassword":
-        case "dbPassword": return java.lang.String.class;
-        case "dburi":
-        case "dbUri": return java.lang.String.class;
-        case "dbuser":
-        case "dbUser": return java.lang.String.class;
+        case "databaseurl":
+        case "databaseUrl": return java.lang.String.class;
         case "detachrelationship":
         case "detachRelationship": return boolean.class;
         case "dimension": return java.lang.Integer.class;
         case "driver": return org.neo4j.driver.Driver.class;
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": return java.lang.String.class;
         case "label": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -93,11 +89,13 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxResults": return int.class;
         case "minscore":
         case "minScore": return double.class;
+        case "password": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "realm": return java.lang.String.class;
         case "similarityfunction":
         case "similarityFunction": return org.apache.camel.component.neo4j.Neo4jSimilarityFunction.class;
         case "token": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         case "vectorindexname":
         case "vectorIndexName": return java.lang.String.class;
         default: return null;
@@ -111,18 +109,15 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "alias": return getOrCreateConfiguration(target).getAlias();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
-        case "base64": return getOrCreateConfiguration(target).getBase64();
         case "configuration": return target.getConfiguration();
-        case "dbpassword":
-        case "dbPassword": return getOrCreateConfiguration(target).getDbPassword();
-        case "dburi":
-        case "dbUri": return getOrCreateConfiguration(target).getDbUri();
-        case "dbuser":
-        case "dbUser": return getOrCreateConfiguration(target).getDbUser();
+        case "databaseurl":
+        case "databaseUrl": return getOrCreateConfiguration(target).getDatabaseUrl();
         case "detachrelationship":
         case "detachRelationship": return getOrCreateConfiguration(target).isDetachRelationship();
         case "dimension": return getOrCreateConfiguration(target).getDimension();
         case "driver": return getOrCreateConfiguration(target).getDriver();
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": return getOrCreateConfiguration(target).getKerberosAuthTicket();
         case "label": return getOrCreateConfiguration(target).getLabel();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
@@ -130,11 +125,13 @@ public class Neo4jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "minscore":
         case "minScore": return getOrCreateConfiguration(target).getMinScore();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "query": return getOrCreateConfiguration(target).getQuery();
         case "realm": return getOrCreateConfiguration(target).getRealm();
         case "similarityfunction":
         case "similarityFunction": return getOrCreateConfiguration(target).getSimilarityFunction();
         case "token": return getOrCreateConfiguration(target).getToken();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         case "vectorindexname":
         case "vectorIndexName": return getOrCreateConfiguration(target).getVectorIndexName();
         default: return null;

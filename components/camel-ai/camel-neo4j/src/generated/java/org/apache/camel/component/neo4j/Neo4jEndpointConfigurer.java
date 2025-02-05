@@ -24,17 +24,14 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         Neo4jEndpoint target = (Neo4jEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": target.getConfiguration().setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "base64": target.getConfiguration().setBase64(property(camelContext, java.lang.String.class, value)); return true;
-        case "dbpassword":
-        case "dbPassword": target.getConfiguration().setDbPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "dburi":
-        case "dbUri": target.getConfiguration().setDbUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "dbuser":
-        case "dbUser": target.getConfiguration().setDbUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseurl":
+        case "databaseUrl": target.getConfiguration().setDatabaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "detachrelationship":
         case "detachRelationship": target.getConfiguration().setDetachRelationship(property(camelContext, boolean.class, value)); return true;
         case "dimension": target.getConfiguration().setDimension(property(camelContext, java.lang.Integer.class, value)); return true;
         case "driver": target.getConfiguration().setDriver(property(camelContext, org.neo4j.driver.Driver.class, value)); return true;
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": target.getConfiguration().setKerberosAuthTicket(property(camelContext, java.lang.String.class, value)); return true;
         case "label": target.getConfiguration().setLabel(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -42,11 +39,13 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
         case "minscore":
         case "minScore": target.getConfiguration().setMinScore(property(camelContext, double.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "realm": target.getConfiguration().setRealm(property(camelContext, java.lang.String.class, value)); return true;
         case "similarityfunction":
         case "similarityFunction": target.getConfiguration().setSimilarityFunction(property(camelContext, org.apache.camel.component.neo4j.Neo4jSimilarityFunction.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "vectorindexname":
         case "vectorIndexName": target.getConfiguration().setVectorIndexName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -62,17 +61,14 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return java.lang.String.class;
-        case "base64": return java.lang.String.class;
-        case "dbpassword":
-        case "dbPassword": return java.lang.String.class;
-        case "dburi":
-        case "dbUri": return java.lang.String.class;
-        case "dbuser":
-        case "dbUser": return java.lang.String.class;
+        case "databaseurl":
+        case "databaseUrl": return java.lang.String.class;
         case "detachrelationship":
         case "detachRelationship": return boolean.class;
         case "dimension": return java.lang.Integer.class;
         case "driver": return org.neo4j.driver.Driver.class;
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": return java.lang.String.class;
         case "label": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -80,11 +76,13 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxResults": return int.class;
         case "minscore":
         case "minScore": return double.class;
+        case "password": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "realm": return java.lang.String.class;
         case "similarityfunction":
         case "similarityFunction": return org.apache.camel.component.neo4j.Neo4jSimilarityFunction.class;
         case "token": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         case "vectorindexname":
         case "vectorIndexName": return java.lang.String.class;
         default: return null;
@@ -96,17 +94,14 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         Neo4jEndpoint target = (Neo4jEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return target.getConfiguration().getAlias();
-        case "base64": return target.getConfiguration().getBase64();
-        case "dbpassword":
-        case "dbPassword": return target.getConfiguration().getDbPassword();
-        case "dburi":
-        case "dbUri": return target.getConfiguration().getDbUri();
-        case "dbuser":
-        case "dbUser": return target.getConfiguration().getDbUser();
+        case "databaseurl":
+        case "databaseUrl": return target.getConfiguration().getDatabaseUrl();
         case "detachrelationship":
         case "detachRelationship": return target.getConfiguration().isDetachRelationship();
         case "dimension": return target.getConfiguration().getDimension();
         case "driver": return target.getConfiguration().getDriver();
+        case "kerberosauthticket":
+        case "kerberosAuthTicket": return target.getConfiguration().getKerberosAuthTicket();
         case "label": return target.getConfiguration().getLabel();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
@@ -114,11 +109,13 @@ public class Neo4jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxResults": return target.getConfiguration().getMaxResults();
         case "minscore":
         case "minScore": return target.getConfiguration().getMinScore();
+        case "password": return target.getConfiguration().getPassword();
         case "query": return target.getConfiguration().getQuery();
         case "realm": return target.getConfiguration().getRealm();
         case "similarityfunction":
         case "similarityFunction": return target.getConfiguration().getSimilarityFunction();
         case "token": return target.getConfiguration().getToken();
+        case "username": return target.getConfiguration().getUsername();
         case "vectorindexname":
         case "vectorIndexName": return target.getConfiguration().getVectorIndexName();
         default: return null;

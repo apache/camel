@@ -18,46 +18,38 @@ package org.apache.camel.component.neo4j;
 
 import org.apache.camel.spi.Metadata;
 
-public class Neo4j {
+public class Neo4jConstants {
 
     public static final String SCHEME = "neo4j";
 
-    private Neo4j() {
+    private Neo4jConstants() {
     }
 
     public static class Headers {
-        //TODO update me
         @Metadata(description = "The operation to be performed.", javaType = "String",
                   enums = "CREATE_NODE,DELETE_NODE,RETRIEVE_NODES,RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY,ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY,CREATE_VECTOR_INDEX,DROP_VECTOR_INDEX,CREATE_VECTOR,VECTOR_SIMILARITY_SEARCH")
-        public static final String OPERATION = "CamelNeo4jAction";
-
+        public static final String OPERATION = "CamelNeo4jOperation";
         @Metadata(description = "MATCH properties for the generated MATCH query. Needed only if we are matching properties and values. Example: {name: 'Alice'} ",
                   javaType = "String")
         public static final String MATCH_PROPERTIES = "CamelNeo4jMatchProperties";
-
-        @Metadata(description = "Query excetuded", javaType = "String")
+        @Metadata(description = "Query Result", javaType = "String")
         public static final String QUERY_RESULT = "CamelNeo4jQueryResult";
-
         @Metadata(description = "Query Number of nodes created", javaType = "Long")
         public static final String QUERY_RESULT_NODES_CREATED = "CamelNeo4jQueryResultNodesCreated";
         @Metadata(description = "Query Number of nodes deleted", javaType = "Long")
         public static final String QUERY_RESULT_NODES_DELETED = "CamelNeo4jQueryResultNodesDeleted";
-        @Metadata(description = "Query executed contains update", javaType = "Booleab")
+        @Metadata(description = "Query executed contains update", javaType = "Boolean")
         public static final String QUERY_RESULT_CONTAINS_UPDATES = "CamelNeo4jQueryResultContainsUpdates";
         @Metadata(description = "Query executed number of relationships created", javaType = "Long")
         public static final String QUERY_RESULT_RELATIONSHIPS_CREATED = "CamelNeo4jQueryResultRelationshipsCreated";
         @Metadata(description = "Query executed number of relationships deleted", javaType = "Long")
         public static final String QUERY_RESULT_RELATIONSHIPS_DELETED = "CamelNeo4jQueryResultRelationshipsDeleted";
-
         @Metadata(description = "Number of nodes retrieved", javaType = "Long")
         public static final String QUERY_RETRIEVE_SIZE = "CamelNeo4jQueryResultRetrieveSize";
-
-        @Metadata(description = "Query execution time in Milliseconfs", javaType = "Long")
+        @Metadata(description = "Query execution time in Milliseconds", javaType = "Long")
         public static final String QUERY_RETRIEVE_LIST_NEO4J_NODES = "CamelNeo4jQueryResultListNeo4jNodes";
-
         @Metadata(description = "Vector Id for the embedding", javaType = "String")
         public static final String VECTOR_ID = "CamelNeo4jVectorEmbeddingId";
-
         @Metadata(description = "Label for the Node -  used when inserting from Embeddings", javaType = "String")
         public static final String LABEL = "CamelNeo4jLabel";
 

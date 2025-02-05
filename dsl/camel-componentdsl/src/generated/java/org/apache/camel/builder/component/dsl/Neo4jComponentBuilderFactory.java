@@ -82,17 +82,17 @@ public interface Neo4jComponentBuilderFactory {
         }
     
         /**
-         * URI of the Neo4j server - used for Authentication.
+         * Url for connecting to Neo database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
-         * @param dbUri the value to set
+         * @param databaseUrl the value to set
          * @return the dsl builder
          */
-        default Neo4jComponentBuilder dbUri(java.lang.String dbUri) {
-            doSetProperty("dbUri", dbUri);
+        default Neo4jComponentBuilder databaseUrl(java.lang.String databaseUrl) {
+            doSetProperty("databaseUrl", databaseUrl);
             return this;
         }
     
@@ -294,11 +294,11 @@ public interface Neo4jComponentBuilderFactory {
          * 
          * Group: security
          * 
-         * @param base64 the value to set
+         * @param kerberosAuthTicket the value to set
          * @return the dsl builder
          */
-        default Neo4jComponentBuilder base64(java.lang.String base64) {
-            doSetProperty("base64", base64);
+        default Neo4jComponentBuilder kerberosAuthTicket(java.lang.String kerberosAuthTicket) {
+            doSetProperty("kerberosAuthTicket", kerberosAuthTicket);
             return this;
         }
     
@@ -309,26 +309,11 @@ public interface Neo4jComponentBuilderFactory {
          * 
          * Group: security
          * 
-         * @param dbPassword the value to set
+         * @param password the value to set
          * @return the dsl builder
          */
-        default Neo4jComponentBuilder dbPassword(java.lang.String dbPassword) {
-            doSetProperty("dbPassword", dbPassword);
-            return this;
-        }
-    
-        /**
-         * Basic authentication database user.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param dbUser the value to set
-         * @return the dsl builder
-         */
-        default Neo4jComponentBuilder dbUser(java.lang.String dbUser) {
-            doSetProperty("dbUser", dbUser);
+        default Neo4jComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
             return this;
         }
     
@@ -361,6 +346,21 @@ public interface Neo4jComponentBuilderFactory {
             doSetProperty("token", token);
             return this;
         }
+    
+        /**
+         * Basic authentication database user.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default Neo4jComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class Neo4jComponentBuilderImpl
@@ -384,7 +384,7 @@ public interface Neo4jComponentBuilderFactory {
             switch (name) {
             case "alias": getOrCreateConfiguration((Neo4jComponent) component).setAlias((java.lang.String) value); return true;
             case "configuration": ((Neo4jComponent) component).setConfiguration((org.apache.camel.component.neo4j.Neo4jConfiguration) value); return true;
-            case "dbUri": getOrCreateConfiguration((Neo4jComponent) component).setDbUri((java.lang.String) value); return true;
+            case "databaseUrl": getOrCreateConfiguration((Neo4jComponent) component).setDatabaseUrl((java.lang.String) value); return true;
             case "detachRelationship": getOrCreateConfiguration((Neo4jComponent) component).setDetachRelationship((boolean) value); return true;
             case "dimension": getOrCreateConfiguration((Neo4jComponent) component).setDimension((java.lang.Integer) value); return true;
             case "label": getOrCreateConfiguration((Neo4jComponent) component).setLabel((java.lang.String) value); return true;
@@ -396,11 +396,11 @@ public interface Neo4jComponentBuilderFactory {
             case "vectorIndexName": getOrCreateConfiguration((Neo4jComponent) component).setVectorIndexName((java.lang.String) value); return true;
             case "autowiredEnabled": ((Neo4jComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "driver": getOrCreateConfiguration((Neo4jComponent) component).setDriver((org.neo4j.driver.Driver) value); return true;
-            case "base64": getOrCreateConfiguration((Neo4jComponent) component).setBase64((java.lang.String) value); return true;
-            case "dbPassword": getOrCreateConfiguration((Neo4jComponent) component).setDbPassword((java.lang.String) value); return true;
-            case "dbUser": getOrCreateConfiguration((Neo4jComponent) component).setDbUser((java.lang.String) value); return true;
+            case "kerberosAuthTicket": getOrCreateConfiguration((Neo4jComponent) component).setKerberosAuthTicket((java.lang.String) value); return true;
+            case "password": getOrCreateConfiguration((Neo4jComponent) component).setPassword((java.lang.String) value); return true;
             case "realm": getOrCreateConfiguration((Neo4jComponent) component).setRealm((java.lang.String) value); return true;
             case "token": getOrCreateConfiguration((Neo4jComponent) component).setToken((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((Neo4jComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

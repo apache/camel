@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.neo4j.Neo4Operation;
-import org.apache.camel.component.neo4j.Neo4j;
+import org.apache.camel.component.neo4j.Neo4jConstants;
 import org.apache.camel.component.neo4j.Neo4jTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -46,7 +46,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u1&label=User")
                 .withBodyAs(body, String.class)
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_NODE)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_NODE)
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -54,9 +54,9 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         assertNotNull(in);
 
-        assertEquals(Neo4Operation.CREATE_NODE, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(expectedCypherQuery, in.getHeader(Neo4j.Headers.QUERY_RESULT));
-        assertEquals(1, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals(Neo4Operation.CREATE_NODE, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(expectedCypherQuery, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT));
+        assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
 
     }
 
@@ -73,7 +73,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u2&label=User")
                 .withBodyAs(params, Map.class)
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.CREATE_NODE)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.CREATE_NODE)
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -81,9 +81,9 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         assertNotNull(in);
 
-        assertEquals(Neo4Operation.CREATE_NODE, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(expectedCypherQuery, in.getHeader(Neo4j.Headers.QUERY_RESULT));
-        assertEquals(1, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals(Neo4Operation.CREATE_NODE, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(expectedCypherQuery, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT));
+        assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
 
     }
 
@@ -94,7 +94,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         Exchange result = fluentTemplate.to("neo4j:neo4j")
                 .withBodyAs(cypherQuery, String.class)
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -102,12 +102,12 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         assertNotNull(in);
 
-        assertEquals(Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(1, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
-        assertEquals(0, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_DELETED));
-        assertTrue(in.getHeader(Neo4j.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
-        assertEquals(0, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
-        assertEquals(0, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
+        assertEquals(Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals(0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_DELETED));
+        assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
+        assertEquals(0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
+        assertEquals(0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         Exchange result = fluentTemplate.to("neo4j:neo4j")
                 .withBodyAs(cypherQuery, String.class)
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -128,28 +128,28 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         Message in = result.getMessage();
         assertNotNull(in);
 
-        assertEquals(Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(2, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
-        assertEquals(0, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_DELETED));
-        assertTrue(in.getHeader(Neo4j.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
-        assertEquals(1, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
-        assertEquals(0, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
+        assertEquals(Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(2, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals(0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_DELETED));
+        assertTrue(in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
+        assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
+        assertEquals(0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
     }
 
     @Test
     @Order(4)
     void testRetrieveNode() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
                 .request(Exchange.class);
 
         assertNotNull(result);
 
         Message in = result.getMessage();
         assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(1, in.getHeader(Neo4j.Headers.QUERY_RETRIEVE_SIZE));
+        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
 
         List resultList = in.getBody(List.class);
         assertNotNull(resultList);
@@ -171,15 +171,15 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
     @Order(5)
     void testRetrieveAllNodes() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
                 .request(Exchange.class);
 
         assertNotNull(result);
 
         Message in = result.getMessage();
         assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(5, in.getHeader(Neo4j.Headers.QUERY_RETRIEVE_SIZE));
+        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(5, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
 
         List resultList = in.getBody(List.class);
         assertNotNull(resultList);
@@ -192,8 +192,8 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
     void testDeleteNode() {
         // delete node
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.DELETE_NODE)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.DELETE_NODE)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -201,29 +201,30 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         assertNotNull(in);
 
         assertEquals("Make sure we excuted the DELETE_NODE operation", Neo4Operation.DELETE_NODE,
-                in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals("No created node expected", 0, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
-        assertEquals("1 deleted node expected", 1, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_DELETED));
+                in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals("No created node expected", 0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals("1 deleted node expected", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_DELETED));
         assertTrue("Delete node operation is considered as an update to the database",
-                in.getHeader(Neo4j.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
         assertEquals("No relationship between nodes expected", 0,
-                in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
-        assertEquals("No deleted relationships expected", 0, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
+        assertEquals("No deleted relationships expected", 0,
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
 
         // query to check we can't find Alice anymore
 
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Alice'}")
                 .request(Exchange.class);
 
         assertNotNull(result);
 
         in = result.getMessage();
         assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4j.Headers.OPERATION));
+        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4jConstants.Headers.OPERATION));
         assertEquals("The node should be deleted from the database, so no result expected", 0,
-                in.getHeader(Neo4j.Headers.QUERY_RETRIEVE_SIZE));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
     }
 
     @Test
@@ -231,8 +232,8 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
     void testDeleteNodeWithExistingRelationship() {
         // try to delete user named Diana and this should fail as Diana has a relationship with Ethan
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.DELETE_NODE)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Diana'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.DELETE_NODE)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Diana'}")
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -243,8 +244,8 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         // delete the Diana by detaching its relationship with Ethan - detachRelationship=true
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User&detachRelationship=true")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.DELETE_NODE)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Diana'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.DELETE_NODE)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Diana'}")
                 .request(Exchange.class);
         assertNotNull(result);
         assertNull("No exception anymore when deleting relationship at same time", result.getException());
@@ -253,31 +254,31 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         assertNotNull(in);
 
         assertEquals("Make sure we excuted the DELETE_NODE operation", Neo4Operation.DELETE_NODE,
-                in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals("No created node expected", 0, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
-        assertEquals("1 deleted node expected", 1, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_DELETED));
+                in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals("No created node expected", 0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals("1 deleted node expected", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_DELETED));
         assertTrue("Delete node operation is considered as an update to the database",
-                in.getHeader(Neo4j.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
         assertEquals("No relationship between nodes expected", 0,
-                in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
         assertEquals(
                 "The relationships between Diana and Ethan created testCreateMultipleNodesAndRelationshipWithCypherQuery test is expected to be deleted when Diana is deleted from the database",
-                1, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
+                1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
 
         // query to check we can't find Diana anymore
 
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Diana'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Diana'}")
                 .request(Exchange.class);
 
         assertNotNull(result);
 
         in = result.getMessage();
         assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4j.Headers.OPERATION));
+        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4jConstants.Headers.OPERATION));
         assertEquals("The node should be deleted from the database, so no result expected", 0,
-                in.getHeader(Neo4j.Headers.QUERY_RETRIEVE_SIZE));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
 
     }
 
@@ -288,7 +289,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         Exchange result = fluentTemplate.to("neo4j:neo4j")
                 .withBodyAs(cypherQuery, String.class)
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY)
                 .request(Exchange.class);
 
         assertNotNull(result);
@@ -296,29 +297,30 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         assertNotNull(in);
 
         assertEquals("Make sure we excuted the DELETE_NODE operation", Neo4Operation.ADD_OR_DELETE_NODE_WITH_CYPHER_QUERY,
-                in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals("No created node expected", 0, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_CREATED));
-        assertEquals("1 deleted node expected", 1, in.getHeader(Neo4j.Headers.QUERY_RESULT_NODES_DELETED));
+                in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals("No created node expected", 0, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_CREATED));
+        assertEquals("1 deleted node expected", 1, in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_NODES_DELETED));
         assertTrue("Delete node operation is considered as an update to the database",
-                in.getHeader(Neo4j.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_CONTAINS_UPDATES, Boolean.class));
         assertEquals("No relationship between nodes expected", 0,
-                in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
-        assertEquals("No deleted relationships expected", 0, in.getHeader(Neo4j.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_CREATED));
+        assertEquals("No deleted relationships expected", 0,
+                in.getHeader(Neo4jConstants.Headers.QUERY_RESULT_RELATIONSHIPS_DELETED));
 
         // query to check we can't find Bob anymore
 
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4j.Headers.MATCH_PROPERTIES, "{name: 'Bob'}")
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES)
+                .withHeader(Neo4jConstants.Headers.MATCH_PROPERTIES, "{name: 'Bob'}")
                 .request(Exchange.class);
 
         assertNotNull(result);
 
         in = result.getMessage();
         assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4j.Headers.OPERATION));
+        assertEquals(Neo4Operation.RETRIEVE_NODES, in.getHeader(Neo4jConstants.Headers.OPERATION));
         assertEquals("The node should be deleted from the database, so no result expected", 0,
-                in.getHeader(Neo4j.Headers.QUERY_RETRIEVE_SIZE));
+                in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
     }
 
     @Test
@@ -333,15 +335,15 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         Exchange result = fluentTemplate.to("neo4j:neo4j")
                 .withBodyAs(cypherQuery, String.class)
-                .withHeader(Neo4j.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY)
+                .withHeader(Neo4jConstants.Headers.OPERATION, Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY)
                 .request(Exchange.class);
 
         assertNotNull(result);
 
         Message in = result.getMessage();
         assertNotNull(in);
-        assertEquals(Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY, in.getHeader(Neo4j.Headers.OPERATION));
-        assertEquals(1, in.getHeader(Neo4j.Headers.QUERY_RETRIEVE_SIZE));
+        assertEquals(Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY, in.getHeader(Neo4jConstants.Headers.OPERATION));
+        assertEquals(1, in.getHeader(Neo4jConstants.Headers.QUERY_RETRIEVE_SIZE));
 
         List resultList = in.getBody(List.class);
         assertNotNull(resultList);

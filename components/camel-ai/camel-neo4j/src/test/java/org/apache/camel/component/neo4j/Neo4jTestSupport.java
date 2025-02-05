@@ -33,10 +33,10 @@ public class Neo4jTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        Neo4jComponent component = context.getComponent(Neo4j.SCHEME, Neo4jComponent.class);
-        component.getConfiguration().setDbUri(NEO4J.getNeo4jDatabaseUri());
-        component.getConfiguration().setDbUser(NEO4J.getNeo4jDatabaseUser());
-        component.getConfiguration().setDbPassword(NEO4J.getNeo4jDatabasePassword());
+        Neo4jComponent component = context.getComponent(Neo4jConstants.SCHEME, Neo4jComponent.class);
+        component.getConfiguration().setDatabaseUrl(NEO4J.getNeo4jDatabaseUri());
+        component.getConfiguration().setUsername(NEO4J.getNeo4jDatabaseUser());
+        component.getConfiguration().setPassword(NEO4J.getNeo4jDatabasePassword());
         return context;
     }
 }

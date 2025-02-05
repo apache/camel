@@ -42,7 +42,6 @@ public final class SensitiveUtils {
                     "apiusername",
                     "authkey",
                     "authorizationtoken",
-                    "base64",
                     "blobaccesskey",
                     "blobstoragesharedkeycredential",
                     "certresourcepassword",
@@ -52,10 +51,9 @@ public final class SensitiveUtils {
                     "connectionstring",
                     "consumerkey",
                     "consumersecret",
-                    "dbpassword",
-                    "dbuser",
                     "emailaddress",
                     "httpproxypassword",
+                    "kerberosauthticket",
                     "keystorePassword",
                     "keystorepassword",
                     "login",
@@ -125,7 +123,6 @@ public final class SensitiveUtils {
                                                     + "|\\Qapiusername\\E"
                                                     + "|\\Qauthkey\\E"
                                                     + "|\\Qauthorizationtoken\\E"
-                                                    + "|\\Qbase64\\E"
                                                     + "|\\Qblobaccesskey\\E"
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
                                                     + "|\\Qcertresourcepassword\\E"
@@ -135,10 +132,9 @@ public final class SensitiveUtils {
                                                     + "|\\Qconnectionstring\\E"
                                                     + "|\\Qconsumerkey\\E"
                                                     + "|\\Qconsumersecret\\E"
-                                                    + "|\\Qdbpassword\\E"
-                                                    + "|\\Qdbuser\\E"
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qhttpproxypassword\\E"
+                                                    + "|\\Qkerberosauthticket\\E"
                                                     + "|\\QkeystorePassword\\E"
                                                     + "|\\Qkeystorepassword\\E"
                                                     + "|\\Qlogin\\E"

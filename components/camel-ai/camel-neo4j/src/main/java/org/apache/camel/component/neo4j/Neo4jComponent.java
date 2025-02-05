@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-@Component(Neo4j.SCHEME)
+@Component(Neo4jConstants.SCHEME)
 public class Neo4jComponent extends DefaultComponent {
 
     @Metadata

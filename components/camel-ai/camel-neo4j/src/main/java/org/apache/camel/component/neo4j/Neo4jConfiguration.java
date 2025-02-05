@@ -28,15 +28,15 @@ import org.neo4j.driver.Driver;
 public class Neo4jConfiguration implements Cloneable {
 
     @Metadata
-    @UriParam
-    private String dbUri;
+    @UriParam(description = "Url for connecting to Neo database")
+    private String databaseUrl;
     @UriParam(label = "security", description = "Basic authentication database user", displayName = "Database user",
               secret = true)
-    private String dbUser;
+    private String username;
     @UriParam(label = "security", description = "Basic authentication database password", displayName = "Database password",
               secret = true)
-    private String dbPassword;
-    @UriParam(label = "security", description = "Basic authentication database realm", displayName = "Database user",
+    private String password;
+    @UriParam(label = "security", description = "Basic authentication database realm", displayName = "Database realm",
               secret = true)
     private String realm;
     @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm", secret = true)
@@ -44,7 +44,7 @@ public class Neo4jConfiguration implements Cloneable {
     @UriParam(label = "security", description = "Kerberos Authentication encoded base64 ticket",
               displayName = "Encoded base64 ticket",
               secret = true)
-    private String base64;
+    private String kerberosAuthTicket;
 
     @UriParam
     private String query;
@@ -72,34 +72,34 @@ public class Neo4jConfiguration implements Cloneable {
     /**
      * URI of the Neo4j server - used for Authentication
      */
-    public String getDbUri() {
-        return dbUri;
+    public String getDatabaseUrl() {
+        return databaseUrl;
     }
 
-    public void setDbUri(String dbUri) {
-        this.dbUri = dbUri;
+    public void setDatabaseUrl(String databaseUrl) {
+        this.databaseUrl = databaseUrl;
     }
 
     /**
      * User of the database - used for Basic Authentication
      */
-    public String getDbUser() {
-        return dbUser;
+    public String getUsername() {
+        return username;
     }
 
-    public void setDbUser(String dbUser) {
-        this.dbUser = dbUser;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
      * Password for dbUser - used for Basic Authentication
      */
-    public String getDbPassword() {
-        return dbPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setDbPassword(String dbPassword) {
-        this.dbPassword = dbPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -227,12 +227,12 @@ public class Neo4jConfiguration implements Cloneable {
     /**
      * Encoded base64 ticket - used for Kerberos Authentication
      */
-    public String getBase64() {
-        return base64;
+    public String getKerberosAuthTicket() {
+        return kerberosAuthTicket;
     }
 
-    public void setBase64(String base64) {
-        this.base64 = base64;
+    public void setKerberosAuthTicket(String kerberosAuthTicket) {
+        this.kerberosAuthTicket = kerberosAuthTicket;
     }
 
     /**

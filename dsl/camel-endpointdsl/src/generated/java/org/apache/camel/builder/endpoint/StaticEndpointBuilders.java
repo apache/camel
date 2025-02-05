@@ -10693,7 +10693,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>neo4j:name</code>
      * 
      * Path parameter: name (required)
-     * The database Name
+     * The database name
      * 
      * @param path name
      * @return the dsl builder
@@ -10712,7 +10712,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>neo4j:name</code>
      * 
      * Path parameter: name (required)
-     * The database Name
+     * The database name
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
