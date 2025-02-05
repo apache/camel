@@ -96,9 +96,9 @@ public class SimpleAttachmentTest extends LanguageTestSupport {
 
     @Test
     public void testAttachmentContentType() throws Exception {
-        assertExpression("${attachmentContentType(message1.xml)}", "application/octet-stream");
-        assertExpression("${attachmentContentType(message2.xml)}", "application/octet-stream");
-        assertExpression("${attachmentContentType(123.txt)}", "application/octet-stream");
+        assertExpression("${attachmentContentType(message1.xml)}", "application/xml");
+        assertExpression("${attachmentContentType(message2.xml)}", "application/xml");
+        assertExpression("${attachmentContentType(123.txt)}", "text/plain");
     }
 
     @Test
@@ -110,28 +110,28 @@ public class SimpleAttachmentTest extends LanguageTestSupport {
         String xml2 = context.getTypeConverter().convertTo(String.class, is2);
 
         assertExpression("${attachment[message1.xml].name}", "message1.xml");
-        assertExpression("${attachment[message1.xml].contentType}", "application/octet-stream");
+        assertExpression("${attachment[message1.xml].contentType}", "application/xml");
         assertExpression("${attachment[message1.xml].content}", xml1);
 
         assertExpression("${attachment[message2.xml].name}", "message2.xml");
-        assertExpression("${attachment[message2.xml].contentType}", "application/octet-stream");
+        assertExpression("${attachment[message2.xml].contentType}", "application/xml");
         assertExpression("${attachment[message2.xml].content}", xml2);
 
         assertExpression("${attachment[123.txt].name}", "123.txt");
-        assertExpression("${attachment[123.txt].contentType}", "application/octet-stream");
+        assertExpression("${attachment[123.txt].contentType}", "text/plain");
         assertExpression("${attachment[123.txt].content}", "456");
     }
 
     @Test
     public void testAttachmentOgnlByIndex() throws Exception {
         assertExpression("${attachment[0].name}", "message1.xml");
-        assertExpression("${attachment[0].contentType}", "application/octet-stream");
+        assertExpression("${attachment[0].contentType}", "application/xml");
 
         assertExpression("${attachment[1].name}", "message2.xml");
-        assertExpression("${attachment[1].contentType}", "application/octet-stream");
+        assertExpression("${attachment[1].contentType}", "application/xml");
 
         assertExpression("${attachment[2].name}", "123.txt");
-        assertExpression("${attachment[2].contentType}", "application/octet-stream");
+        assertExpression("${attachment[2].contentType}", "text/plain");
         assertExpression("${attachment[2].content}", "456");
     }
 }

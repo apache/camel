@@ -21,6 +21,8 @@ import java.io.File;
 import jakarta.activation.FileDataSource;
 import jakarta.activation.FileTypeMap;
 
+import org.apache.camel.util.MimeTypeHelper;
+
 /**
  * A {@link FileDataSource} that uses the file name/extension to determine the content-type.
  */
@@ -39,11 +41,15 @@ public class CamelFileDataSource extends FileDataSource {
 
     @Override
     public String getContentType() {
-        if (typeMap == null) {
-            return FileTypeMap.getDefaultFileTypeMap().getContentType(fileName);
-        } else {
-            return typeMap.getContentType(fileName);
+        String answer = MimeTypeHelper.probeMimeType(fileName);
+        if (answer == null) {
+            if (typeMap == null) {
+                answer = FileTypeMap.getDefaultFileTypeMap().getContentType(fileName);
+            } else {
+                answer = typeMap.getContentType(fileName);
+            }
         }
+        return answer;
     }
 
     @Override
