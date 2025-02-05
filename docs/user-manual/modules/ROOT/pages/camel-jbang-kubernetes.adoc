@@ -160,6 +160,15 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |--image-builder
 |The image builder used to build the container image (e.g. docker, jib, podman, s2i).
 
+|--image-platform
+|List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).
+
+|--base-image
+|The base image that is used to build the container image from (default is eclipse-temurin:<java-version>).
+
+|--registry-mirror
+|Optional Docker registry mirror where to pull images from when building the container image.
+
 |--cluster-type
 |The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.
 

@@ -132,7 +132,7 @@
                     <images>
                         <image>
                             <build>
-                                <from>eclipse-temurin:{{ .JavaVersion }}</from>
+                                <from>${jkube.base.image}</from>
                                 <entryPoint>
                                     <exec>
                                         <arg>java</arg>

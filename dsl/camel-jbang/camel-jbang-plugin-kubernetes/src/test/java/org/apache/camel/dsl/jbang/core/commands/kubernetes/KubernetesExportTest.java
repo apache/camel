@@ -61,6 +61,14 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("examples", model.getGroupId());
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("eclipse-temurin:17", props.get("jkube.base.image"));
+        Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
+        Assertions.assertNull(props.get("jkube.docker.push.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.registry"));
+        Assertions.assertNull(props.get("jkube.container-image.platforms"));
     }
 
     @ParameterizedTest
@@ -75,6 +83,30 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("org.example.project", model.getGroupId());
         Assertions.assertEquals("proj-name", model.getArtifactId());
         Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldConfigureContainerImage(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-registry=quay.io", "--image-group=camel-riders", "--base-image=my-base-image:latest",
+                "--registry-mirror=mirror.gcr.io", "--image-builder=docker",
+                "--image-platform=linux/amd64", "--image-platform=linux/arm64", "--runtime=" + rt.runtime());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel-riders/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("mirror.gcr.io/my-base-image:latest", props.get("jkube.base.image"));
+        Assertions.assertEquals("docker", props.get("jkube.build.strategy"));
+        Assertions.assertEquals("quay.io", props.get("jkube.docker.push.registry"));
+        Assertions.assertEquals("quay.io", props.get("jkube.container-image.registry"));
+        Assertions.assertEquals("linux/amd64,linux/arm64", props.get("jkube.container-image.platforms"));
     }
 
     @ParameterizedTest
