@@ -573,7 +573,6 @@ public class Run extends CamelCommand {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
         }
         if (modeline) {
-            printer().println("WARN: modeline parameter is deprecated, to be removed in the next version.");
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
         }
         if (ignoreLoadingError) {
