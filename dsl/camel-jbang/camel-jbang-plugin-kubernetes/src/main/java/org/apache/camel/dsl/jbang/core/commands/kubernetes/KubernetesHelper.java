@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,10 +32,12 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
+import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -76,7 +79,6 @@ public final class KubernetesHelper {
     public static KubernetesClient getKubernetesClient() {
         if (kubernetesClient == null) {
             kubernetesClient = new KubernetesClientBuilder().build();
-            printClientInfo(kubernetesClient);
         }
 
         return kubernetesClient;
@@ -91,17 +93,7 @@ public final class KubernetesHelper {
         }
 
         var client = new KubernetesClientBuilder().withConfig(config).build();
-        printClientInfo(client);
         return clients.put(config, client);
-    }
-
-    private static void printClientInfo(KubernetesClient client) {
-        var printer = CommandHelper.getPrinter();
-        if (printer != null) {
-            var serverUrl = client.getConfiguration().getMasterUrl();
-            var info = client.getKubernetesVersion();
-            printer.println(String.format("Kubernetes v%s.%s %s", info.getMajor(), info.getMinor(), serverUrl));
-        }
     }
 
     /**
@@ -123,6 +115,67 @@ public final class KubernetesHelper {
 
     public static ObjectMapper json() {
         return OBJECT_MAPPER;
+    }
+
+    /**
+     * Verify what cluster this shell console is connected to, currently it tests for Openshift and Minikube, in case of
+     * errors or no connected cluster, it defaults to Kubernetes.
+     *
+     * @return The cluster type may be: Openshift, Minikube or Kubernetes.
+     */
+    static ClusterType discoverClusterType() {
+        ClusterType cluster = ClusterType.KUBERNETES;
+        // in case it's not connected to a cluster, don't waste time waiting for a response.
+        System.setProperty("kubernetes.connection.timeout", "2000");
+        System.setProperty("kubernetes.request.timeout", "2000");
+        System.setProperty("kubernetes.request.retry.backoffLimit", "1");
+        if (isConnectedToOpenshift()) {
+            cluster = ClusterType.OPENSHIFT;
+        } else if (isConnectedToMinikube()) {
+            cluster = ClusterType.MINIKUBE;
+        }
+        return cluster;
+    }
+
+    private static boolean isConnectedToOpenshift() {
+        boolean ocp = false;
+        try {
+            // set to openshift if there is clusterversions.config.openshift.io/version
+            ResourceDefinitionContext ocpVersion = new ResourceDefinitionContext.Builder()
+                    .withGroup("config.openshift.io")
+                    .withVersion("v1")
+                    .withKind("ClusterVersion")
+                    .withNamespaced(false)
+                    .build();
+            GenericKubernetesResource versioncr
+                    = getKubernetesClient().genericKubernetesResources(ocpVersion).withName("version").get();
+            ocp = versioncr != null;
+        } catch (RuntimeException e) {
+            // ignore it, since we try to discover the cluster and don't want the caller to handle any error
+        }
+        return ocp;
+    }
+
+    private static boolean isConnectedToMinikube() {
+        boolean minikube = false;
+        try {
+            ResourceDefinitionContext nodecrd = new ResourceDefinitionContext.Builder()
+                    .withVersion("v1")
+                    .withKind("Node")
+                    .withNamespaced(false)
+                    .build();
+            // if there is a node with minikube label, then it's minikube
+            GenericKubernetesResourceList list = getKubernetesClient().genericKubernetesResources(nodecrd)
+                    .withLabels(Collections.singletonMap("minikube.k8s.io/name", null)).list();
+            minikube = list.getItems().size() > 0;
+            // thse env properties are set when running eval $(minikube docker-env) in the console
+            // this is important for the docker builder to actually build the image in the exposed docker from the minikube registry
+            minikube = minikube && System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
+                    && System.getenv("DOCKER_TLS_VERIFY") != null;
+        } catch (Exception e) {
+            // ignore it, since we try to discover the cluster and don't want the caller to handle any error
+        }
+        return minikube;
     }
 
     /**
