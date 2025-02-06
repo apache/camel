@@ -62,7 +62,7 @@ public class Hawtio extends CamelCommand {
         if (name == null) {
             exit = callHawtio();
         } else {
-            // attach jolokia before calling hawtio and disconnect afterwards
+            // attach jolokia before calling hawtio and disconnect afterward
             try {
                 exit = connectJolokia();
                 if (exit == 0) {
