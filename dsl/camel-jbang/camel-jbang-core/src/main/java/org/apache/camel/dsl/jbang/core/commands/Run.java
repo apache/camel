@@ -39,6 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -905,7 +906,15 @@ public class Run extends CamelCommand {
             return runBackground(main);
         } else {
             // run default in current JVM with same camel version
-            return runKameletMain(main);
+            try {
+                return runKameletMain(main);
+            } catch (FailedToCreateRouteException ex) {
+                if (ignoreLoadingError) {
+                    printer().printErr(ex);
+                    return 0;
+                }
+                throw ex;
+            }
         }
     }
 
