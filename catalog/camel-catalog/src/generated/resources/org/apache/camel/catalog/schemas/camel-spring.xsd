@@ -7442,6 +7442,16 @@ down. Default value: false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="onPrepare" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Uses the Processor when preparing the org.apache.camel.Exchange for each loop iteration. This can be used to deep-clone
+messages, or any custom logic needed before the looping executes.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

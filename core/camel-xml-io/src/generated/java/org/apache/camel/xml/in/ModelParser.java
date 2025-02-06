@@ -531,6 +531,7 @@ public class ModelParser extends BaseParser {
                 case "breakOnShutdown": def.setBreakOnShutdown(val); yield true;
                 case "copy": def.setCopy(val); yield true;
                 case "doWhile": def.setDoWhile(val); yield true;
+                case "onPrepare": def.setOnPrepare(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputExpressionNodeElementHandler(), noValueHandler());
     }

@@ -2775,6 +2775,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "onPrepare" : {
+            "type" : "string",
+            "title" : "On Prepare",
+            "description" : "Uses the Processor when preparing the org.apache.camel.Exchange for each loop iteration. This can be used to deep-clone messages, or any custom logic needed before the looping executes."
+          },
           "steps" : {
             "type" : "array",
             "items" : {

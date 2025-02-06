@@ -1163,6 +1163,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteLoopDefinition(String name, LoopDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("onPrepare", def.getOnPrepare(), null);
         doWriteAttribute("doWhile", def.getDoWhile(), null);
         doWriteAttribute("breakOnShutdown", def.getBreakOnShutdown(), null);
         doWriteAttribute("copy", def.getCopy(), null);
