@@ -307,6 +307,7 @@
         <module>camel-tahu</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>
+        <module>camel-telemetry-dev</module>
         <module>camel-threadpoolfactory-vertx</module>
         <module>camel-thrift</module>
         <module>camel-thymeleaf</module>

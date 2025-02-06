@@ -219,6 +219,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.lra.";
                 } else if (file.getName().contains("Otel")) {
                     prefix = "camel.opentelemetry.";
+                } else if (file.getName().contains("TelemetryDev")) {
+                    prefix = "camel.telemetryDev.";
                 } else if (file.getName().contains("Metrics")) {
                     prefix = "camel.metrics.";
                 } else if (file.getName().contains("HttpServer")) {
@@ -393,6 +395,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getGroups().add(new MainGroupModel(
                     "camel.opentelemetry", "Camel OpenTelemetry configurations",
                     "org.apache.camel.main.OtelConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.telemetryDev", "Camel Telemetry Dev configurations",
+                    "org.apache.camel.main.TelemetryDevConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.metrics", "Camel Micrometer Metrics configurations",
                     "org.apache.camel.main.MetricsConfigurationProperties"));

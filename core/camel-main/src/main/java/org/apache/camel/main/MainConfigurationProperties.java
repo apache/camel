@@ -60,6 +60,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private StartupConditionConfigurationProperties startupConditionConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
+    private TelemetryDevConfigurationProperties telemetryDevConfigurationProperties;
     private MetricsConfigurationProperties metricsConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
     private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
@@ -206,6 +207,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasOtelConfiguration() {
         return otelConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any TelemetryDev configuration specified
+     */
+    public boolean hasTelemetryDevConfiguration() {
+        return telemetryDevConfigurationProperties != null;
     }
 
     /**

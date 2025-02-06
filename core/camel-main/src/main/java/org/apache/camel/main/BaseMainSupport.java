@@ -135,7 +135,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
-            "camel.lra.", "camel.opentelemetry.", "camel.metrics.", "camel.routeTemplate",
+            "camel.lra.", "camel.opentelemetry.", "camel.telemetryDev.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
@@ -1244,6 +1244,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties healthProperties = new OrderedLocationProperties();
         OrderedLocationProperties lraProperties = new OrderedLocationProperties();
         OrderedLocationProperties otelProperties = new OrderedLocationProperties();
+        OrderedLocationProperties telemetryDevProperties = new OrderedLocationProperties();
         OrderedLocationProperties metricsProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeTemplateProperties = new OrderedLocationProperties();
         OrderedLocationProperties variableProperties = new OrderedLocationProperties();
@@ -1306,6 +1307,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 otelProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, "camel.telemetryDev.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(19);
+                validateOptionAndValue(key, option, value);
+                telemetryDevProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.metrics.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1441,6 +1448,14 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.debug("Auto-configuring OpenTelemetry from loaded properties: {}", otelProperties.size());
             setOtelProperties(camelContext, otelProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
+        } else {
+            // Attempt to fallback to Telemetry simple only if no other tracing service is found
+            if (!telemetryDevProperties.isEmpty() || mainConfigurationProperties.hasTelemetryDevConfiguration()) {
+                LOG.debug("Auto-configuring TelemetryDev from loaded properties: {}", telemetryDevProperties.size());
+                setTelemetryDevProperties(camelContext, telemetryDevProperties,
+                        mainConfigurationProperties.isAutoConfigurationFailFast(),
+                        autoConfiguredProperties);
+            }
         }
         if (!metricsProperties.isEmpty() || mainConfigurationProperties.hasMetricsConfiguration()) {
             LOG.debug("Auto-configuring Micrometer metrics from loaded properties: {}", metricsProperties.size());
@@ -1556,6 +1571,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!otelProperties.isEmpty()) {
             otelProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.opentelemetry.{}={}", k, v);
+            });
+        }
+        if (!telemetryDevProperties.isEmpty()) {
+            telemetryDevProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.telemetryDev.{}={}", k, v);
             });
         }
         if (!httpServerProperties.isEmpty()) {
@@ -1732,6 +1752,29 @@ public abstract class BaseMainSupport extends BaseService {
             if (camelContext.hasService(CamelTracingService.class) == null) {
                 // add as service so tracing can be active
                 camelContext.addService(otel, true, true);
+            }
+        }
+    }
+
+    private void setTelemetryDevProperties(
+            CamelContext camelContext, OrderedLocationProperties telemetryDevProperties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        String loc = telemetryDevProperties.getLocation("enabled");
+        Object obj = telemetryDevProperties.remove("enabled");
+        if (ObjectHelper.isNotEmpty(obj)) {
+            autoConfiguredProperties.put(loc, "camel.telemetryDev.enabled", obj.toString());
+        }
+        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        if (enabled) {
+            CamelTracingService telemetryDev = resolveTelemetryDevService(camelContext);
+            setPropertiesOnTarget(camelContext, telemetryDev, telemetryDevProperties, "camel.telemetryDev.",
+                    failIfNotSet, true,
+                    autoConfiguredProperties);
+            if (camelContext.hasService(CamelTracingService.class) == null) {
+                // add as service so tracing can be active
+                camelContext.addService(telemetryDev, true, true);
             }
         }
     }
@@ -2576,6 +2619,20 @@ public abstract class BaseMainSupport extends BaseService {
                     .newInstance("opentelemetry-tracer", CamelTracingService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find OpenTelemetryTracer on classpath. Add camel-opentelemetry to classpath."));
+        }
+        return answer;
+    }
+
+    private static CamelTracingService resolveTelemetryDevService(CamelContext camelContext) throws Exception {
+        CamelTracingService answer = camelContext.hasService(CamelTracingService.class);
+        if (answer == null) {
+            answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
+        }
+        if (answer == null) {
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
+                    .newInstance("telemetry-dev-tracer", CamelTracingService.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Cannot find TelemetryDevTracer on classpath. Add camel-telemetry-dev to classpath."));
         }
         return answer;
     }

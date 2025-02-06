@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
 
@@ -35,7 +36,8 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             CamelContext camelContext,
             NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
-        return new TraceProcessor(target, processorDefinition);
+        //return new TraceProcessor(target, processorDefinition);
+        return new DelegateAsyncProcessor(new TraceProcessor(target, processorDefinition));
     }
 
     private class TraceProcessor implements Processor {
