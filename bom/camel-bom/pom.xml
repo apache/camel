@@ -2014,6 +2014,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-telemetry-dev</artifactId>
+        <version>4.11.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-tensorflow-serving</artifactId>
         <version>4.11.0-SNAPSHOT</version>
       </dependency>

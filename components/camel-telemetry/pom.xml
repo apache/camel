@@ -30,6 +30,7 @@
   <properties>
     <firstVersion>4.11.0</firstVersion>
     <label>monitoring,microservice</label>
+    <supportLevel>Preview</supportLevel>
   </properties>
 
   <artifactId>camel-telemetry</artifactId>

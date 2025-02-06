@@ -1,0 +1,74 @@
+= Temetry Dev Component
+:doctitle: Temetry Dev
+:shortname: telemetry-dev
+:artifactid: camel-telemetry-dev
+:description: Basic implementation of Camel Telemetry useful for development purposes
+:since: 4.11
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This module is a basic implementation of the common `camel-telemetry` interface. You can use this component as a basic tracing component when you can't use any other production grade telemetry component in order to troubleshoot or test the telemetry of your application.
+
+The component contains a basic mechanism to get the traces coming from the application and store to the very same log of the application in a variety of formats. The user may extract the result by scraping the log and aggregating the information accordingly.
+
+WARNING: this is an experimental component which is not suitable for production or system critical workflows.
+
+Ideally you can also configure the logger to output the telemetry results in a separate log file. This configuration depends on the concrete logging implementation you have in place knowing that the output will be logged at an `INFO` level from a logger named `LOG_TRACE`.
+
+== Configuration
+
+The configuration properties for the Telemetry component are:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Default |Description
+|`camel.telemetryDev.enabled`| false | Turn the tracing on/off.
+|`camel.telemetryDev.traceFormat`| default | The format used to trace in the log (default, tree, json).
+|`camel.telemetryDev.traceProcessors`| false | Trace inner processors.
+|`camel.telemetryDev.excludePatterns` |  | Sets exclude pattern(s) that will disable tracing for Camel
+messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
+uses the rules from Intercept.
+|=======================================================================
+
+== Tracing format
+
+The component provides a few different traces representation formats you can use, depending on the scope of your telemetry or the integration with any third party telemetry collectors.
+
+=== Tree
+
+As the component is mainly targeted to have a quick visualization of a running application, then, the `tree` format is the recommended one. The output will be like the following:
+
+```
+| d6c36bc6f3374ed0bd6edb638535f130
+├── | timer://start (camel-timer) [2030 millis] <--
+    ├── | process (to1-to) [2021 millis]
+        ├── | direct://new (camel-direct) [2020 millis] -->
+            ├── | direct://new (camel-direct) [2019 millis] <--
+                ├── | process (delay1-delay) [2002 millis]
+                ├── | process (log2-log) [2 millis]
+                └── | process (to3-to) [3 millis]
+                    └── | log://new (camel-log) [2 millis] -->
+                └── | process (to4-to) [1 millis]
+                    └── | mock://end (camel-mock) [0 millis] -->
+    ├── | process (log1-log) [0 millis]
+    └── | process (to2-to) [2 millis]
+        └── | log://info (camel-log) [1 millis] -->
+```
+
+This is a quick visual tree Trace representation of a given execution of a Camel route. You can quickly verify the Camel URI, the component and the time spent to execute each Span.
+
+NOTE: the --> and <-- represents an outgoing or incoming message.
+
+=== Json
+
+This format is suitable if you need to integrate with any third party. The output of each trace will come in the following format:
+
+```json
+{"traceId":"4ee161eb055644fca713f4c02ab2fb50","spans":[{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"8785debcdc09409abeed65d08aaaca1b","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_RECEIVED","component":"camel-timer","url.path":"start","initTimestamp":"4085653460994","camel.uri":"timer://start","url.scheme":"timer","endTimestamp":"4087698388888","isDone":"true"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"51cc3929d34e45218d8b7eacabbd1791","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to1-to","initTimestamp":"4085657493896","endTimestamp":"4087694416371","isDone":"true","parentSpan":"8785debcdc09409abeed65d08aaaca1b"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"d0139a2ce41840e793870aa41cee1fdb","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-direct","url.path":"new","initTimestamp":"4085658724372","camel.uri":"direct://new","url.scheme":"direct","endTimestamp":"4087694351732","isDone":"true","parentSpan":"51cc3929d34e45218d8b7eacabbd1791"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"481705e45eb5440da3c4d80b1cb72782","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_RECEIVED","component":"camel-direct","url.path":"new","initTimestamp":"4085659711482","camel.uri":"direct://new","url.scheme":"direct","endTimestamp":"4087694171231","isDone":"true","parentSpan":"d0139a2ce41840e793870aa41cee1fdb"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"f60cda25f0b94d339d4cd46c71675273","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"delay1-delay","initTimestamp":"4085660053232","endTimestamp":"4087662537085","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[{"fields":{"message":"A new message"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"43f759e7904e4255937f395b2b8447ce","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"log2-log","initTimestamp":"4087668469960","endTimestamp":"4087683763263","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"f84fabb0dc9e4549bf544f3e22833747","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to3-to","initTimestamp":"4087686094066","endTimestamp":"4087691026432","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[{"fields":{"message":"Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null]]"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"1f468061fb914db8a809ac6660b64e5f","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-log","url.path":"new","initTimestamp":"4087687679924","camel.uri":"log://new","url.scheme":"log","endTimestamp":"4087690877575","isDone":"true","parentSpan":"f84fabb0dc9e4549bf544f3e22833747"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"124d4c89f7124941bcc3a383d0548382","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to4-to","initTimestamp":"4087692103508","endTimestamp":"4087693840549","isDone":"true","parentSpan":"481705e45eb5440da3c4d80b1cb72782"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"d9a50630958a47fca126dd33015b8595","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-mock","url.path":"end","initTimestamp":"4087692840068","camel.uri":"mock://end","url.scheme":"mock","endTimestamp":"4087693765128","isDone":"true","parentSpan":"124d4c89f7124941bcc3a383d0548382"},{"logEntries":[{"fields":{"message":"A direct message"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"c63fa5fc1fef4c219ba38d4a94144bb8","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"log1-log","initTimestamp":"4087695240589","endTimestamp":"4087696229225","isDone":"true","parentSpan":"8785debcdc09409abeed65d08aaaca1b"},{"logEntries":[],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"a09ad1afe037420bb518e9dd1e21b096","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_PROCESS","component":"to2-to","initTimestamp":"4087696762964","endTimestamp":"4087698248033","isDone":"true","parentSpan":"8785debcdc09409abeed65d08aaaca1b"},{"logEntries":[{"fields":{"message":"Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null]]"}}],"traceid":"4ee161eb055644fca713f4c02ab2fb50","spanid":"56f736f7a8be481e8bffea23e43b7f15","exchangeId":"D1B1814C509A376-0000000000000000","op":"EVENT_SENT","component":"camel-log","url.path":"info","initTimestamp":"4087697222908","camel.uri":"log://info","url.scheme":"log","endTimestamp":"4087698189820","isDone":"true","parentSpan":"a09ad1afe037420bb518e9dd1e21b096"}]}
+```
+
+=== Default
+
+Default is a very simple serialization into the default Java object `toString()` representation.

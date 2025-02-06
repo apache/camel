@@ -481,6 +481,19 @@ The camel.opentelemetry supports 5 options, which are listed below.
 |===
 
 
+=== Camel Telemetry Dev configurations
+The camel.telemetryDev supports 4 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.telemetryDev.enabled* | To enable TelemetryDev | false | boolean
+| *camel.telemetryDev.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.telemetryDev.traceFormat* | The output format for traces. |  | String
+| *camel.telemetryDev.trace{zwsp}Processors* | Setting this to true will create new TelemetrySimple Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
+|===
+
+
 === Camel Micrometer Metrics configurations
 The camel.metrics supports 13 options, which are listed below.
 

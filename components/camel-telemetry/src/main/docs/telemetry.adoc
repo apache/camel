@@ -9,7 +9,9 @@
 
 *Since Camel {since}*
 
-This module is a common interface and API for distributed tracing/telemetry. It is not intended to be used directly by end users. It will be eventually implemented by some concrete component.
+This module is a common interface and API for distributed tracing/telemetry. It is not intended to be used directly by end users. This component is implemented concretely in following dependencies:
+
+* camel-telemetry-dev
 
 Tracing an application in a distributed deployment is an important feature supported by Camel. As there are plenty of potential telemetry implementation out there we have created an abstract component whose goal is to define the structure and lifecycle of a trace from Camel point of view. This component acts as a trace manager, making sure that regardless of the concrete technology used, the traces are consistently treated by Camel applications.
 
