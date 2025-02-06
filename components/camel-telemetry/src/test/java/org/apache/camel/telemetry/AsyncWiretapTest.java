@@ -56,12 +56,13 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
         int j = 10;
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(j);
+        mock.setAssertPeriod(5000);
         for (int i = 0; i < j; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        // The wiretapped endpoint is delaying at least 2 seconds for each request so
-        // we must wait for the overall execution time (i*2 seconds) to complete before checking the results
-        mock.assertIsSatisfied(j * 2500);
+        mock.assertIsSatisfied(1000);
+        // We must wait a safe time to let the context completing the async writing to the log trace.
+        Thread.sleep(10000);
         Map<String, MockTrace> traces = mockTracer.traces();
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
