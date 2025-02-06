@@ -257,6 +257,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--disable-auto" }, description = "Disable automatic cluster type detection.")
+    boolean disableAuto = false;
+
     // DevMode/Reload state
     private CamelContext devModeContext;
     private Thread devModeShutdownTask;
@@ -350,6 +353,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private KubernetesExport configureExport(String workingDir) {
+        detectCluster();
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
                 quarkusVersion,
@@ -664,6 +668,23 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return 0;
     }
 
+    private void detectCluster() {
+        if (!disableAuto) {
+            if (verbose) {
+                printer().print("Automatic kubernetes cluster detection... ");
+            }
+            ClusterType cluster = KubernetesHelper.discoverClusterType();
+            this.clusterType = cluster.name();
+            if (ClusterType.MINIKUBE == cluster) {
+                this.imageBuilder = "docker";
+                this.imagePush = false;
+            }
+            if (verbose) {
+                printer().println(this.clusterType);
+            }
+        }
+    }
+
     @Override
     protected Printer printer() {
         if (quiet || output != null) {
@@ -674,7 +695,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
             CommandHelper.setPrinter(quietPrinter);
             return quietPrinter;
         }
-
         return super.printer();
     }
 }
