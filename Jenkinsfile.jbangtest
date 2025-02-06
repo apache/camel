@@ -51,7 +51,7 @@ pipeline {
                  expression { params.CLEAN }
              }
              steps {
-                 sh 'git clean -fdx'
+                 cleanWs()
            }
         }
 
@@ -71,6 +71,12 @@ pipeline {
                always {
                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml', skipPublishingChecks: true
                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml', skipPublishingChecks: true
+                   cleanWs(cleanWhenNotBuilt: false,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true,
+                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                               [pattern: '.propsfile', type: 'EXCLUDE']])
                        }
                  }
         }  
