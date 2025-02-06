@@ -96,7 +96,7 @@ public class LoopDefinition extends OutputExpressionNode {
 
     /**
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} for each loop iteration. This can
-     * be used to deep-clone messages, or any custom logic needed before the looping executes..
+     * be used to deep-clone messages, or any custom logic needed before the looping executes.
      *
      * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
      * @return           the builder
@@ -108,7 +108,7 @@ public class LoopDefinition extends OutputExpressionNode {
 
     /**
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} for each loop iteration. This can
-     * be used to deep-clone messages, or any custom logic needed before the looping executes..
+     * be used to deep-clone messages, or any custom logic needed before the looping executes.
      *
      * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
      * @return           the builder
