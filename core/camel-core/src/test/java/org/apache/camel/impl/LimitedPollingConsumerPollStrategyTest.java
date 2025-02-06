@@ -43,11 +43,11 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.setPollStrategy(strategy);
 
         consumer.start();
+        assertTrue(consumer.isStarted(), "Should be started");
 
         consumer.run();
         assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
         assertTrue(consumer.isSuspended(), "Should be suspended");
 
@@ -66,9 +66,9 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.setPollStrategy(strategy);
 
         consumer.start();
+        assertTrue(consumer.isStarted(), "Should still be started");
 
         consumer.run();
-        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
         assertTrue(consumer.isSuspended(), "Should be suspended");
 
@@ -87,9 +87,9 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.setPollStrategy(strategy);
 
         consumer.start();
+        assertTrue(consumer.isStarted(), "Should be started");
 
         consumer.run();
-        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
         assertTrue(consumer.isStarted(), "Should still be started");
 
@@ -134,7 +134,6 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.run();
         assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
         assertTrue(consumer.isSuspended(), "Should be suspended");
 
@@ -191,7 +190,6 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.run();
         assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
         assertTrue(consumer.isSuspended(), "Should be suspended");
 
@@ -201,7 +199,6 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.run();
         assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
         assertTrue(consumer.isSuspended(), "Should be suspended");
 
