@@ -20,9 +20,11 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -34,6 +36,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends OutputExpressionNode {
 
+    @XmlTransient
+    private Processor onPrepareProcessor;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String copy;
@@ -43,6 +48,9 @@ public class LoopDefinition extends OutputExpressionNode {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String breakOnShutdown;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
+    private String onPrepare;
 
     public LoopDefinition() {
     }
@@ -52,6 +60,8 @@ public class LoopDefinition extends OutputExpressionNode {
         this.copy = source.copy;
         this.doWhile = source.doWhile;
         this.breakOnShutdown = source.breakOnShutdown;
+        this.onPrepareProcessor = source.onPrepareProcessor;
+        this.onPrepare = source.onPrepare;
     }
 
     public LoopDefinition(Expression expression) {
@@ -72,11 +82,39 @@ public class LoopDefinition extends OutputExpressionNode {
         return new LoopDefinition(this);
     }
 
+    public Processor getOnPrepareProcessor() {
+        return onPrepareProcessor;
+    }
+
     /**
      * Enables copy mode so a copy of the input Exchange is used for each iteration.
      */
     public LoopDefinition copy() {
         setCopy(Boolean.toString(true));
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} for each loop iteration. This can
+     * be used to deep-clone messages, or any custom logic needed before the looping executes..
+     *
+     * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return           the builder
+     */
+    public LoopDefinition onPrepare(Processor onPrepare) {
+        this.onPrepareProcessor = onPrepare;
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} for each loop iteration. This can
+     * be used to deep-clone messages, or any custom logic needed before the looping executes..
+     *
+     * @param  onPrepare reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return           the builder
+     */
+    public LoopDefinition onPrepare(String onPrepare) {
+        setOnPrepare(onPrepare);
         return this;
     }
 
@@ -120,6 +158,14 @@ public class LoopDefinition extends OutputExpressionNode {
 
     public String getBreakOnShutdown() {
         return breakOnShutdown;
+    }
+
+    public String getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(String onPrepare) {
+        this.onPrepare = onPrepare;
     }
 
     @Override
