@@ -64,6 +64,15 @@ public class DependencyList extends Export {
             return 1;
         }
 
+        // automatic detect maven/gradle based projects and use that
+        if (files.isEmpty()) {
+            if (new File("pom.xml").exists()) {
+                files.add("pom.xml");
+            } else if (new File("build.gradle").exists()) {
+                files.add("build.gradle");
+            }
+        }
+
         Integer answer = doExport();
         if (answer == 0) {
             // read pom.xml
