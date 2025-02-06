@@ -99,8 +99,8 @@ public class CSimpleAttachmentsTest extends LanguageTestSupport {
 
     @Test
     public void testAttachmentContentType() throws Exception {
-        assertExpression("${attachmentContentType(message1.xml)}", "application/octet-stream");
-        assertExpression("${attachmentContentType(message2.xml)}", "application/octet-stream");
+        assertExpression("${attachmentContentType(message1.xml)}", "application/xml");
+        assertExpression("${attachmentContentType(message2.xml)}", "application/xml");
         assertExpression("${attachmentContentType(123.txt)}", "text/plain");
     }
 
