@@ -361,7 +361,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 buildProperties,
                 true,
                 false,
-                false,
+                true,
                 true,
                 false,
                 true,
