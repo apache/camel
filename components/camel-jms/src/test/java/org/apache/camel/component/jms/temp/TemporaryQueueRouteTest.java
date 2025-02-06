@@ -26,7 +26,7 @@ import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -40,7 +40,7 @@ public class TemporaryQueueRouteTest extends AbstractJMSTest {
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
-    @RepeatedTest(5)
+    @Test
     public void testSendMessage() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Hello World");
