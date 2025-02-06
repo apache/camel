@@ -101,7 +101,7 @@ public class Hawtio extends CamelCommand {
         // download war that has the web-console
         MavenArtifact ma = downloader.downloadArtifact("io.hawt", "hawtio-war:war", version);
         if (ma == null) {
-            System.err.println("Cannot download io.hawt:hawtio-war:war:" + version);
+            printer().printErr("Cannot download io.hawt:hawtio-war:war:" + version);
             return 1;
         }
 
@@ -131,7 +131,7 @@ public class Hawtio extends CamelCommand {
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception e) {
-                        System.err.println("Failed to open browser session, to access Hawtio open url: " + url);
+                        printer().printErr("Failed to open browser session, to access Hawtio open url: " + url);
                     }
                 }
             }
@@ -141,10 +141,10 @@ public class Hawtio extends CamelCommand {
             shutdownLatch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("Interrupted while launching Hawtio");
+            printer().printErr("Interrupted while launching Hawtio");
             return 1;
         } catch (Exception e) {
-            System.err.println("Cannot launch Hawtio due to: " + e.getMessage());
+            printer().printErr("Cannot launch Hawtio due to: " + e.getMessage());
             return 1;
         } finally {
             downloader.close();

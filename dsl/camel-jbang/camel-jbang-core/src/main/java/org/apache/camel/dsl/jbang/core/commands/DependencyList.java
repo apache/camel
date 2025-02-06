@@ -60,7 +60,7 @@ public class DependencyList extends Export {
     @Override
     protected Integer export() throws Exception {
         if (!"gav".equals(output) && !"maven".equals(output) && !"jbang".equals(output)) {
-            System.err.println("--output must be either gav or maven, was: " + output);
+            printer().printErr("--output must be either gav or maven, was: " + output);
             return 1;
         }
 
@@ -162,22 +162,22 @@ public class DependencyList extends Export {
 
     protected void outputGav(MavenGav gav, int index, int total) {
         if ("gav".equals(output)) {
-            printer().println(String.valueOf(gav));
+            outPrinter().println(String.valueOf(gav));
         } else if ("maven".equals(output)) {
-            printer().println("<dependency>");
-            printer().printf("    <groupId>%s</groupId>%n", gav.getGroupId());
-            printer().printf("    <artifactId>%s</artifactId>%n", gav.getArtifactId());
-            printer().printf("    <version>%s</version>%n", gav.getVersion());
-            printer().println("</dependency>");
+            outPrinter().println("<dependency>");
+            outPrinter().printf("    <groupId>%s</groupId>%n", gav.getGroupId());
+            outPrinter().printf("    <artifactId>%s</artifactId>%n", gav.getArtifactId());
+            outPrinter().printf("    <version>%s</version>%n", gav.getVersion());
+            outPrinter().println("</dependency>");
         } else if ("jbang".equals(output)) {
             if (index == 0) {
-                printer().println("//DEPS org.apache.camel:camel-bom:" + gav.getVersion() + "@pom");
+                outPrinter().println("//DEPS org.apache.camel:camel-bom:" + gav.getVersion() + "@pom");
             }
             if (gav.getGroupId().equals("org.apache.camel")) {
                 // jbang has version in @pom so we should remove this
                 gav.setVersion(null);
             }
-            printer().println("//DEPS " + gav);
+            outPrinter().println("//DEPS " + gav);
         }
     }
 
@@ -225,7 +225,7 @@ public class DependencyList extends Export {
                 return export(new ExportCamelMain(getMain()));
             }
             default -> {
-                System.err.println("Unknown runtime: " + runtime);
+                printer().printErr("Unknown runtime: " + runtime);
                 return 1;
             }
         }

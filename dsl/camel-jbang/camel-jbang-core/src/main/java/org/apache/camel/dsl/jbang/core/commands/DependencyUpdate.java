@@ -49,10 +49,10 @@ public class DependencyUpdate extends DependencyList {
 
     @Override
     public Integer doCall() throws Exception {
-        // source file must exists
+        // source file must exist
         target = new File(source);
         if (!target.exists()) {
-            System.err.println("Source file does not exist: " + target);
+            printer().printErr("Source file does not exist: " + target);
             return -1;
         }
 
@@ -119,7 +119,7 @@ public class DependencyUpdate extends DependencyList {
             String text = String.join(System.lineSeparator(), answer);
             IOHelper.writeText(text, target);
         } catch (Exception e) {
-            System.err.println("Error updating source file: " + target + " due to: " + e.getMessage());
+            printer().printErr("Error updating source file: " + target + " due to: " + e.getMessage());
         }
     }
 

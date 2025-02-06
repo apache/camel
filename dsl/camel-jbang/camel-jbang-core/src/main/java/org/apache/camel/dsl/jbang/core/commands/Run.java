@@ -733,7 +733,7 @@ public class Run extends CamelCommand {
                 // check if file exist
                 File inputFile = new File(file.substring(5));
                 if (!inputFile.exists() && !inputFile.isFile()) {
-                    System.err.println("File does not exist: " + file);
+                    printer().printErr("File does not exist: " + file);
                     return 1;
                 }
             }
@@ -778,7 +778,7 @@ public class Run extends CamelCommand {
             // must be an existing directory
             File dir = new File(sourceDir);
             if (!dir.exists() && !dir.isDirectory()) {
-                System.err.println("Directory does not exist: " + sourceDir);
+                printer().printErr("Directory does not exist: " + sourceDir);
                 return 1;
             }
             // make it a pattern as we load all files from this directory
