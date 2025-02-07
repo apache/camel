@@ -88,6 +88,15 @@ public class DependencyList extends Export {
                 String quarkusVersion = null;
                 for (int i = 0; i < nl.getLength(); i++) {
                     Element node = (Element) nl.item(i);
+
+                    // must be child at <project/dependencyManagement> or <project/dependencies>
+                    String p = node.getParentNode().getNodeName();
+                    String p2 = node.getParentNode().getParentNode().getNodeName();
+                    boolean accept = "project".equals(p2) && (p.equals("dependencyManagement") || p.equals("dependencies"));
+                    if (!accept) {
+                        continue;
+                    }
+
                     String g = node.getElementsByTagName("groupId").item(0).getTextContent();
                     String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
                     String v = null;
