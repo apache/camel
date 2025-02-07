@@ -16,16 +16,16 @@
  */
 package org.apache.camel.reifier;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
-import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.PollDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.PollProcessor;
-import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.spi.Language;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.util.StringHelper;
 
 public class PollReifier extends ProcessorReifier<PollDefinition> {
 
@@ -35,34 +35,36 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Endpoint endpoint = resolveEndpoint();
-        String uri = endpoint.getEndpointUri();
-        boolean simple = LanguageSupport.hasSimpleFunction(uri);
-        Expression exp;
-        if (simple) {
-            exp = camelContext.resolveLanguage("simple").createExpression(uri);
+        String uri;
+        if (definition.getEndpointConsumerBuilder() != null) {
+            uri = definition.getEndpointConsumerBuilder().getRawUri();
         } else {
-            exp = camelContext.resolveLanguage("constant").createExpression(uri);
+            uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
         }
+        Expression exp = createExpression(uri);
         long timeout = parseDuration(definition.getTimeout(), 20000);
         PollProcessor answer = new PollProcessor(exp, uri, timeout);
         answer.setVariableReceive(parseString(definition.getVariableReceive()));
         return answer;
     }
 
-    public Endpoint resolveEndpoint() {
-        Endpoint answer;
-        if (definition.getEndpoint() == null) {
-            if (definition.getEndpointConsumerBuilder() == null) {
-                answer = CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), null);
-            } else {
-                answer = definition.getEndpointConsumerBuilder().resolve(camelContext);
-            }
-        } else {
-            answer = definition.getEndpoint();
+    protected Expression createExpression(String uri) {
+        // make sure to parse property placeholders
+        uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+
+        // we use simple/constant language by default, but you can configure a different language
+        String language = null;
+        if (uri.startsWith("language:")) {
+            String value = StringHelper.after(uri, "language:");
+            language = StringHelper.before(value, ":");
+            uri = StringHelper.after(value, ":");
         }
-        LineNumberAware.trySetLineNumberAware(answer, definition);
-        return answer;
+        if (language == null) {
+            // only use simple language if needed
+            language = LanguageSupport.hasSimpleFunction(uri) ? "simple" : "constant";
+        }
+        Language lan = camelContext.resolveLanguage(language);
+        return lan.createExpression(uri);
     }
 
 }
