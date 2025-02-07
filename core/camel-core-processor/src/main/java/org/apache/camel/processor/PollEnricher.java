@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -36,6 +37,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
@@ -44,6 +46,7 @@ import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,10 +67,11 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
 
+    private SendDynamicAware dynamicAware;
+    private volatile String scheme;
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
     private HeadersMapFactory headersMapFactory;
-    private volatile String scheme;
     private String id;
     private String routeId;
     private String variableReceive;
@@ -79,6 +83,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
     private boolean autoStartupComponents = true;
+    private boolean allowOptimisedComponents = true;
 
     /**
      * Creates a new {@link PollEnricher}.
@@ -133,6 +138,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public SendDynamicAware getDynamicAware() {
+        return dynamicAware;
     }
 
     public String getUri() {
@@ -213,6 +222,14 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     public void setAutoStartupComponents(boolean autoStartupComponents) {
         this.autoStartupComponents = autoStartupComponents;
+    }
+
+    public boolean isAllowOptimisedComponents() {
+        return allowOptimisedComponents;
+    }
+
+    public void setAllowOptimisedComponents(boolean allowOptimisedComponents) {
+        this.allowOptimisedComponents = allowOptimisedComponents;
     }
 
     /**
@@ -470,9 +487,43 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             scheme = ExchangeHelper.resolveScheme(u);
         }
 
+        if (isAllowOptimisedComponents() && uri != null) {
+            try {
+                if (scheme != null) {
+                    // find out if the component can be optimised for send-dynamic
+                    SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
+                    dynamicAware = resolver.resolve(camelContext, scheme);
+                    if (dynamicAware == null) {
+                        // okay fallback and try with default component name
+                        Component comp = camelContext.getComponent(scheme, false, isAutoStartupComponents());
+                        if (comp != null) {
+                            String defaultScheme = comp.getDefaultName();
+                            if (!scheme.equals(defaultScheme)) {
+                                dynamicAware = resolver.resolve(camelContext, defaultScheme);
+                                dynamicAware.setScheme(scheme);
+                            }
+                        }
+                    }
+                    if (dynamicAware != null) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Detected SendDynamicAware component: {} optimising poll: {}", scheme,
+                                    URISupport.sanitizeUri(uri));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(
+                            "Error creating optimised SendDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
+                            URISupport.sanitizeUri(uri), e.getMessage(), e);
+                }
+            }
+        }
+
         headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
 
-        ServiceHelper.initService(consumerCache, aggregationStrategy);
+        ServiceHelper.initService(consumerCache, aggregationStrategy, dynamicAware);
     }
 
     @Override
@@ -482,12 +533,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             camelContext.getComponent(scheme);
         }
 
-        ServiceHelper.startService(consumerCache, aggregationStrategy);
+        ServiceHelper.startService(consumerCache, aggregationStrategy, dynamicAware);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(aggregationStrategy, consumerCache);
+        ServiceHelper.stopService(aggregationStrategy, consumerCache, dynamicAware);
     }
 
     @Override

@@ -672,6 +672,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategy": def.setAggregationStrategy(val); yield true;
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
+                case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); yield true;
                 case "autoStartComponents": def.setAutoStartComponents(val); yield true;
                 case "cacheSize": def.setCacheSize(val); yield true;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); yield true;
