@@ -193,6 +193,11 @@ The `camel-jgroups-cluster-service-starter` in Camel Spring Boot has been remove
 
 The camel-jbang commands for `camel-k` has been removed.
 
+The `camel dependency update` has removed the option `--source` to specify the source file,
+but to refer to the source file directly such as:
+
+`camel dependency update --source=MyRoute.java` to be `camel dependency update MyRoute.java`.
+
 === camel-micrometer
 
 We have fixed a flawed behavior when using dynamic endpoints which made the generation of endpoint events to grow in an uncontrolled way. From now on the component will generate events for the endpoint base URI as a default behavior. If you still want to collect events for the extended URI (including the parameters), then, you can use the `camel.metrics.baseEndpointURIExchangeEventNotifier=false` configuration. Mind that this is strongly discouraged as it can make your number of events growing out of control.
