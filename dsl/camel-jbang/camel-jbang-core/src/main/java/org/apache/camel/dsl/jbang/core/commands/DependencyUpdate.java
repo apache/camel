@@ -42,7 +42,8 @@ import picocli.CommandLine;
                      showDefaultValues = true)
 public class DependencyUpdate extends DependencyList {
 
-    @CommandLine.Parameters(description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated", arity = "1")
+    @CommandLine.Parameters(description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated",
+                            arity = "1")
     public File file;
 
     @CommandLine.Option(names = { "--clean" },
