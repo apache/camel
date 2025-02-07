@@ -74,7 +74,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return exchange;
     }
 
-    private boolean pollDirectory(File directory, List<GenericFile<File>> fileList, int depth) {
+    private boolean pollDirectory(Exchange dynamic, File directory, List<GenericFile<File>> fileList, int depth) {
         depth++;
 
         if (LOG.isTraceEnabled()) {
@@ -89,14 +89,14 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             Arrays.sort(files, Comparator.comparing(File::getAbsoluteFile));
         }
 
-        if (processPolledFiles(fileList, depth, files)) {
+        if (processPolledFiles(dynamic, fileList, depth, files)) {
             return false;
         }
 
         return true;
     }
 
-    private boolean processPolledFiles(List<GenericFile<File>> fileList, int depth, File[] files) {
+    private boolean processPolledFiles(Exchange dynamic, List<GenericFile<File>> fileList, int depth, File[] files) {
         for (File file : files) {
             // check if we can continue polling in files
             if (!canPollMoreFiles(fileList)) {
@@ -125,7 +125,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
                 }
             }
 
-            if (processEntry(fileList, depth, file, gf, files)) {
+            if (processEntry(dynamic, fileList, depth, file, gf, files)) {
                 return true;
             }
         }
@@ -133,23 +133,25 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     private boolean processEntry(
+            Exchange dynamic,
             List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         if (file.isDirectory()) {
-            return processDirectoryEntry(fileList, depth, file, gf, files);
+            return processDirectoryEntry(dynamic, fileList, depth, file, gf, files);
         } else {
-            processFileEntry(fileList, depth, file, gf, files);
+            processFileEntry(dynamic, fileList, depth, file, gf, files);
 
         }
         return false;
     }
 
     private void processFileEntry(
+            Exchange dynamic,
             List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         // Windows can report false to a file on a share so regard it
         // always as a file (if it is not a directory)
         if (depth >= endpoint.minDepth) {
             boolean valid
-                    = isValidFile(gf, file.getName(), file.getAbsolutePath(),
+                    = isValidFile(dynamic, gf, file.getName(), file.getAbsolutePath(),
                             getRelativeFilePath(endpointPath, null, null, file),
                             false, files);
             if (valid) {
@@ -168,14 +170,15 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     private boolean processDirectoryEntry(
+            Exchange dynamic,
             List<GenericFile<File>> fileList, int depth, File file, Supplier<GenericFile<File>> gf, File[] files) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
             boolean valid
-                    = isValidFile(gf, file.getName(), file.getAbsolutePath(),
+                    = isValidFile(dynamic, gf, file.getName(), file.getAbsolutePath(),
                             getRelativeFilePath(endpointPath, null, null, file),
                             true, files);
             if (valid) {
-                boolean canPollMore = pollDirectory(file, fileList, depth);
+                boolean canPollMore = pollDirectory(dynamic, file, fileList, depth);
                 return !canPollMore;
             }
         }
@@ -194,7 +197,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     @Override
-    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
+    protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<File>> fileList, int depth) {
         LOG.trace("pollDirectory from fileName: {}", fileName);
 
         File directory = new File(fileName);
@@ -206,7 +209,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             return true;
         }
 
-        return pollDirectory(directory, fileList, depth);
+        return pollDirectory(dynamic, directory, fileList, depth);
     }
 
     private File[] listFiles(File directory) {

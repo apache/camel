@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.DynamicPollingConsumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -323,6 +324,11 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         final Processor preProcessor = preAwareProcessor;
         final Processor postProcessor = postAwareProcessor;
 
+        DynamicPollingConsumer dynamicConsumer = null;
+        if (consumer instanceof DynamicPollingConsumer dyn) {
+            dynamicConsumer = dyn;
+        }
+
         Exchange resourceExchange;
         try {
             if (preProcessor != null) {
@@ -331,15 +337,16 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
             if (timeout < 0) {
                 LOG.debug("Consumer receive: {}", consumer);
-                resourceExchange = consumer.receive();
+                resourceExchange = dynamicConsumer != null ? dynamicConsumer.receive(exchange) : consumer.receive();
             } else if (timeout == 0) {
                 LOG.debug("Consumer receiveNoWait: {}", consumer);
-                resourceExchange = consumer.receiveNoWait();
+                resourceExchange = dynamicConsumer != null ? dynamicConsumer.receiveNoWait(exchange) : consumer.receiveNoWait();
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
                 }
-                resourceExchange = consumer.receive(timeout);
+                resourceExchange
+                        = dynamicConsumer != null ? dynamicConsumer.receive(exchange, timeout) : consumer.receive(timeout);
             }
 
             if (resourceExchange == null) {

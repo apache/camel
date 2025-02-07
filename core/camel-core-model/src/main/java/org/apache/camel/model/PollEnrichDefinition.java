@@ -281,12 +281,32 @@ public class PollEnrichDefinition extends ExpressionNode
     }
 
     /**
+     * Whether to auto startup components when poll enricher is starting up.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition autoStartComponents(boolean autoStartComponents) {
+        setAutoStartComponents(Boolean.toString(autoStartComponents));
+        return this;
+    }
+
+    /**
      * Whether to allow components to optimise if they are {@link org.apache.camel.spi.SendDynamicAware}.
      *
      * @return the builder
      */
     public PollEnrichDefinition allowOptimisedComponents(String allowOptimisedComponents) {
         setAllowOptimisedComponents(allowOptimisedComponents);
+        return this;
+    }
+
+    /**
+     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
+        setAllowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
         return this;
     }
 
