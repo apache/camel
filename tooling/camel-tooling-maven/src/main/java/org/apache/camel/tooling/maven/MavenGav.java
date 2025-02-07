@@ -16,6 +16,8 @@
  */
 package org.apache.camel.tooling.maven;
 
+import java.util.Objects;
+
 /**
  * Maven GAV model with parsing support and special rules for some names:
  * <ul>
@@ -169,6 +171,27 @@ public final class MavenGav {
 
     public void setClassifier(String classifier) {
         this.classifier = classifier;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MavenGav mavenGav)) {
+            return false;
+        }
+
+        return groupId.equals(mavenGav.groupId) && artifactId.equals(mavenGav.artifactId)
+                && Objects.equals(version, mavenGav.version) && Objects.equals(packaging, mavenGav.packaging)
+                && Objects.equals(classifier, mavenGav.classifier);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = groupId.hashCode();
+        result = 31 * result + artifactId.hashCode();
+        result = 31 * result + Objects.hashCode(version);
+        result = 31 * result + Objects.hashCode(packaging);
+        result = 31 * result + Objects.hashCode(classifier);
+        return result;
     }
 
     @Override
