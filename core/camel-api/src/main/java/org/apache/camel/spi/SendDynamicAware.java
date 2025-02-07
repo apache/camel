@@ -45,7 +45,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     String getScheme();
 
     /**
-     * Whether to traverses the given parameters, and resolve any parameter values which uses the RAW token syntax:
+     * Whether to traverse the given parameters, and resolve any parameter values which uses the RAW token syntax:
      * <tt>key=RAW(value)</tt>. And then remove the RAW tokens, and replace the content of the value, with just the
      * value.
      */
@@ -98,7 +98,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
 
     /**
      * Prepares for using optimised dynamic to by parsing the uri and returning an entry of details that are used for
-     * creating the pre and post processors, and the static uri.
+     * creating the pre- and post-processors, and the static uri.
      *
      * @param  exchange    the exchange
      * @param  uri         the resolved uri which is intended to be used

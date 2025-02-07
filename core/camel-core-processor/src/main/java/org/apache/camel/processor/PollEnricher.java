@@ -302,7 +302,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         }
 
         // remember current redelivery stats
-        Object redeliveried = exchange.getIn().getHeader(Exchange.REDELIVERED);
+        Object redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED);
         Object redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER);
         Object redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER);
 
@@ -365,8 +365,8 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
                 // preserve the redelivery stats
-                if (redeliveried != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERED, redeliveried);
+                if (redelivered != null) {
+                    exchange.getMessage().setHeader(Exchange.REDELIVERED, redelivered);
                 }
                 if (redeliveryCounter != null) {
                     exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
@@ -502,7 +502,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             if (newExchange != null) {
                 copyResultsPreservePattern(oldExchange, newExchange);
             } else {
-                // if no newExchange then there was no message from the external resource
+                // if no newExchange then there was no message from the external resource,
                 // and therefore we should set an empty body to indicate this fact
                 // but keep headers/attachments as we want to propagate those
                 oldExchange.getIn().setBody(null);
