@@ -251,11 +251,12 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      *                                             maxMessagesPerPoll limit has been hit
      * @throws GenericFileOperationFailedException if the exception during doPollDirectory can not be ignored
      */
-    protected boolean doSafePollSubDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth) {
+    protected boolean doSafePollSubDirectory(
+            Exchange dynamic, String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth) {
         try {
             LOG.trace("Polling sub directory: {} from: {}", absolutePath, endpoint);
             // Try to poll the directory
-            return doPollDirectory(absolutePath, dirName, fileList, depth);
+            return doPollDirectory(dynamic, absolutePath, dirName, fileList, depth);
         } catch (Exception e) {
             LOG.debug("Caught exception {}", e.getMessage());
             if (ignoreCannotRetrieveFile(absolutePath, null, e)) {
@@ -285,5 +286,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      * @return              whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has
      *                      been hit
      */
-    protected abstract boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth);
+    protected abstract boolean doPollDirectory(
+            Exchange dynamic, String absolutePath, String dirName, List<GenericFile<T>> fileList, int depth);
 }

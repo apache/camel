@@ -72,14 +72,14 @@ public class RemoteFileIgnoreDoPollErrorTest {
     @Test
     public void testReadDirErrorIsHandled() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("true", true);
-        boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<>(), 0);
+        boolean result = consumer.doSafePollSubDirectory(null, "anyPath", "adir", new ArrayList<>(), 0);
         assertTrue(result);
     }
 
     @Test
     public void testReadDirErrorIsHandledWithNoMorePoll() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("false", true);
-        boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<>(), 0);
+        boolean result = consumer.doSafePollSubDirectory(null, "anyPath", "adir", new ArrayList<>(), 0);
         assertFalse(result);
     }
 
@@ -89,7 +89,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
         List<GenericFile<Object>> list = Collections.emptyList();
 
         Exception ex = assertThrows(GenericFileOperationFailedException.class,
-                () -> consumer.doSafePollSubDirectory("anyPath", "adir", list, 0));
+                () -> consumer.doSafePollSubDirectory(null, "anyPath", "adir", list, 0));
 
         assertInstanceOf(IllegalStateException.class, ex.getCause());
     }
@@ -100,7 +100,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
         List<GenericFile<Object>> list = Collections.emptyList();
 
         Exception ex = assertThrows(GenericFileOperationFailedException.class,
-                () -> consumer.doSafePollSubDirectory("anyPath", "adir", list, 0));
+                () -> consumer.doSafePollSubDirectory(null, "anyPath", "adir", list, 0));
 
         assertNull(ex.getCause());
     }
@@ -113,6 +113,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
         return new RemoteFileConsumer<>(remoteFileEndpoint, null, null, null) {
             @Override
             protected boolean doPollDirectory(
+                    Exchange dynamic,
                     String absolutePath, String dirName, List<GenericFile<Object>> genericFiles, int depth) {
                 if ("IllegalStateException".equals(doPollResult)) {
                     throw new IllegalStateException("Problem");
@@ -124,7 +125,8 @@ public class RemoteFileIgnoreDoPollErrorTest {
             }
 
             @Override
-            protected boolean pollDirectory(String fileName, List<GenericFile<Object>> genericFiles, int depth) {
+            protected boolean pollDirectory(
+                    Exchange dynamic, String fileName, List<GenericFile<Object>> genericFiles, int depth) {
                 return false;
             }
 
