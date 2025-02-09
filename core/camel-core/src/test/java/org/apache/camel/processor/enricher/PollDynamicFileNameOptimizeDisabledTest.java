@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PollDynamicFileNameTest extends ContextTestSupport {
+public class PollDynamicFileNameOptimizeDisabledTest extends ContextTestSupport {
 
     @Test
     public void testPollEnrichFileOne() throws Exception {
@@ -40,7 +40,7 @@ public class PollDynamicFileNameTest extends ContextTestSupport {
         // there should only be 1 file endpoint
         long c = context.getEndpoints().stream()
                 .filter(e -> e.getEndpointKey().startsWith("file") && e.getEndpointUri().contains("?fileName=")).count();
-        Assertions.assertEquals(1, c, "There should only be 1 file endpoint");
+        Assertions.assertEquals(2, c, "There should only be 2 file endpoints");
     }
 
     @Test
@@ -58,7 +58,7 @@ public class PollDynamicFileNameTest extends ContextTestSupport {
         // there should only be 1 file endpoint
         long c = context.getEndpoints().stream()
                 .filter(e -> e.getEndpointKey().startsWith("file") && e.getEndpointUri().contains("?fileName=")).count();
-        Assertions.assertEquals(1, c, "There should only be 1 file endpoint");
+        Assertions.assertEquals(2, c, "There should only be 2 file endpoints");
     }
 
     @Override
@@ -67,7 +67,8 @@ public class PollDynamicFileNameTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .poll(fileUri() + "?noop=true&fileName=${header.target}", 500)
+                        .pollEnrich().simple(fileUri() + "?noop=true&fileName=${header.target}")
+                        .allowOptimisedComponents(false).timeout(500)
                         .to("mock:result");
             }
         };

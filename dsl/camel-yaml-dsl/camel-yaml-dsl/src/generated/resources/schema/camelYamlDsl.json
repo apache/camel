@@ -4108,6 +4108,11 @@
             "title" : "Aggregation Strategy Method Name",
             "description" : "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy."
           },
+          "allowOptimisedComponents" : {
+            "type" : "boolean",
+            "title" : "Allow Optimised Components",
+            "description" : "Whether to allow components to optimise if they are org.apache.camel.spi.SendDynamicAware ."
+          },
           "autoStartComponents" : {
             "type" : "boolean",
             "title" : "Auto Start Components",

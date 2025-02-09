@@ -33,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.support.EmptyAsyncCallback;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
@@ -107,11 +108,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected abstract Exchange createExchange(GenericFile<T> file);
 
+    @Override
+    protected int poll() throws Exception {
+        return poll(null);
+    }
+
     /**
      * Poll for files
      */
     @Override
-    public int poll() throws Exception {
+    protected int poll(Exchange dynamic) throws Exception {
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
             // prepare on startup
@@ -138,7 +144,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         StopWatch stop = new StopWatch();
         boolean limitHit;
         try {
-            limitHit = !pollDirectory(name, files, 0);
+            limitHit = !pollDirectory(dynamic, name, files, 0);
         } catch (Exception e) {
             // during poll directory we add files to the in progress repository,
             // in case of any exception thrown after this work
@@ -336,7 +342,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return          whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been
      *                  hit
      */
-    protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList, int depth);
+    protected abstract boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<T>> fileList, int depth);
 
     /**
      * Sets the operations to be used.
@@ -429,7 +435,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // must use full name when downloading so we have the correct path
         final String name = target.getAbsoluteFilePath();
         try {
-
             if (isRetrieveFile()) {
                 if (!tryRetrievingFile(exchange, name, target, absoluteFileName, file)) {
                     return false;
@@ -587,9 +592,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return             <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     protected boolean isValidFile(
+            Exchange dynamic,
             Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
             Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
-        if (!isMatched(file, name, absoluteFilePath, relativeFilePath, isDirectory, files)) {
+        if (!isMatched(dynamic, file, name, absoluteFilePath, relativeFilePath, isDirectory, files)) {
             LOG.trace("File did not match. Will skip this file: {}", name);
             return false;
         }
@@ -610,7 +616,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // if it is a file then check we have the file in the idempotent registry
         // already
         if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
-            if (notUnique(file, absoluteFilePath)) {
+            if (notUnique(dynamic, file, absoluteFilePath)) {
                 return false;
             }
         }
@@ -621,13 +627,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return endpoint.getInProgressRepository().add(absoluteFilePath);
     }
 
-    private boolean notUnique(Supplier<GenericFile<T>> file, String absoluteFilePath) {
+    private boolean notUnique(Exchange dynamic, Supplier<GenericFile<T>> file, String absoluteFilePath) {
         boolean answer = false;
         // use absolute file path as default key, but evaluate if an
         // expression key was configured
         String key = absoluteFilePath;
         if (endpoint.getIdempotentKey() != null) {
-            Exchange dummy = endpoint.createExchange(file.get());
+            Exchange dummy = createDummy(dynamic, file);
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
             LOG.trace("Evaluated idempotentKey: {} for file: {}", key, file);
         }
@@ -686,6 +692,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return                  <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(
+            Exchange dynamic,
             Supplier<GenericFile<T>> file, String name, String absoluteFilePath,
             Supplier<String> relativeFilePath, boolean isDirectory, T[] files) {
 
@@ -722,9 +729,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (isDirectory && endpoint.getFilterDirectory() != null) {
-            // create a dummy exchange as Exchange is needed for expression
-            // evaluation
-            Exchange dummy = endpoint.createExchange(file.get());
+            // create a dummy exchange as Exchange is needed for expression evaluation
+            Exchange dummy = createDummy(dynamic, file);
             boolean matches = endpoint.getFilterDirectory().matches(dummy);
             if (!matches) {
                 return false;
@@ -742,7 +748,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         if (endpoint.getFileName() != null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
-            Exchange dummy = endpoint.createExchange(file.get());
+            Exchange dummy = createDummy(dynamic, file);
             String result = evaluateFileExpression(dummy);
             if (result != null) {
                 if (!name.equals(result)) {
@@ -753,7 +759,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         if (endpoint.getFilterFile() != null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
-            Exchange dummy = endpoint.createExchange(file.get());
+            Exchange dummy = createDummy(dynamic, file);
             boolean matches = endpoint.getFilterFile().matches(dummy);
             if (!matches) {
                 return false;
@@ -847,6 +853,20 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             throw RuntimeCamelException.wrapRuntimeCamelException(exchange.getException());
         }
         return result;
+    }
+
+    protected Exchange createDummy(Exchange dynamic, Supplier<GenericFile<T>> file) {
+        Exchange dummy = endpoint.createExchange(file.get());
+        if (dynamic != null) {
+            // enrich with data from dynamic source
+            if (dynamic.getMessage().hasHeaders()) {
+                MessageHelper.copyHeaders(dynamic.getMessage(), dummy.getMessage(), true);
+                if (dynamic.hasVariables()) {
+                    dummy.getVariables().putAll(dynamic.getVariables());
+                }
+            }
+        }
+        return dummy;
     }
 
     @SuppressWarnings("unchecked")

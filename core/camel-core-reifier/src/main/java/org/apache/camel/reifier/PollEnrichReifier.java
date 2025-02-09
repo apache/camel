@@ -73,6 +73,9 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (definition.getAutoStartComponents() != null) {
             enricher.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));
         }
+        if (definition.getAllowOptimisedComponents() != null) {
+            enricher.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
+        }
 
         return enricher;
     }

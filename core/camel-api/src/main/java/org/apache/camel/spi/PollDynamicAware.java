@@ -21,16 +21,14 @@ import java.util.Map;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.Service;
 
 /**
- * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD) to
- * reuse a static {@link org.apache.camel.Endpoint} and {@link Producer} that supports using headers to provide the
- * dynamic parts. For example many of the HTTP components supports this.
+ * Used for components that can optimise the usage of {@link org.apache.camel.processor.PollProcessor} (poll/pollEnrich)
+ * to reuse a static {@link Endpoint} and {@link org.apache.camel.DynamicPollingConsumer} that supports using headers to
+ * provide the dynamic parts. For example many of the file based components supports this.
  */
-public interface SendDynamicAware extends Service, CamelContextAware {
+public interface PollDynamicAware extends Service, CamelContextAware {
 
     /**
      * Sets the component name.
@@ -61,8 +59,8 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     boolean isLenientProperties();
 
     /**
-     * An entry of detailed information from the recipient uri, which allows the {@link SendDynamicAware} implementation
-     * to prepare pre- and post- processor and the static uri to be used for the optimised dynamic to.
+     * An entry of detailed information from the recipient uri, which allows the {@link PollDynamicAware} implementation
+     * to prepare the static uri to be used for the optimised poll.
      */
     class DynamicAwareEntry {
 
@@ -97,8 +95,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     }
 
     /**
-     * Prepares for using optimised dynamic to by parsing the uri and returning an entry of details that are used for
-     * creating the pre- and post-processors, and the static uri.
+     * Prepares for using optimised dynamic polling consumer by parsing the uri and returning an entry of details.
      *
      * @param  exchange    the exchange
      * @param  uri         the resolved uri which is intended to be used
@@ -109,36 +106,14 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception;
 
     /**
-     * Resolves the static part of the uri that are used for creating a single {@link org.apache.camel.Endpoint} and
-     * {@link Producer} that will be reused for processing the optimised toD.
+     * Resolves the static part of the uri that are used for creating a single {@link Endpoint} and
+     * {@link org.apache.camel.DynamicPollingConsumer} that will be reused for processing the optimised poll/pollEnrich.
      *
      * @param  exchange  the exchange
      * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the static uri, or <tt>null</tt> to not let toD use this optimisation.
+     * @return           the static uri, or <tt>null</tt> to not let poll/pollEnrich use this optimisation.
      * @throws Exception is thrown if error resolving the static uri.
      */
     String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception;
-
-    /**
-     * Creates the pre {@link Processor} that will prepare the {@link Exchange} with dynamic details from the given
-     * recipient.
-     *
-     * @param  exchange  the exchange
-     * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the processor, or <tt>null</tt> to not let toD use this optimisation.
-     * @throws Exception is thrown if error creating the pre processor.
-     */
-    Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
-
-    /**
-     * Creates an optional post {@link Processor} that will be executed afterwards when the message has been sent
-     * dynamic.
-     *
-     * @param  exchange  the exchange
-     * @param  entry     prepared information about the dynamic endpoint to use
-     * @return           the post processor, or <tt>null</tt> if no post processor is needed.
-     * @throws Exception is thrown if error creating the post processor.
-     */
-    Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
 
 }

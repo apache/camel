@@ -568,6 +568,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
      */
     protected abstract int poll() throws Exception;
 
+    /**
+     * The polling method which is invoked periodically to poll this consumer, for components that support
+     * {@link org.apache.camel.DynamicPollingConsumer} such as camel-file.
+     *
+     * @param  dynamic   the current exchange when being used from Poll and PollEnrich EIPs in dynamic mode,
+     * @return           number of messages polled, will be <tt>0</tt> if no message was polled at all.
+     * @throws Exception can be thrown if an exception occurred during polling
+     */
+    protected int poll(Exchange dynamic) throws Exception {
+        return poll();
+    }
+
     @Override
     protected void doBuild() throws Exception {
         if (getHealthCheck() == null) {

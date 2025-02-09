@@ -68,7 +68,8 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     @Override
-    protected boolean pollDirectory(String path, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth) {
+    protected boolean pollDirectory(
+            Exchange dynamic, String path, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth) {
         depth++;
         path = (path == null) ? "" : path;
         FileIdBothDirectoryInformation[] files = getSmbFiles(path);
@@ -96,7 +97,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
                         = path + (path.endsWith("/") ? "" : "/") + file.getFileName();
             }
 
-            if (handleSmbEntries(fullFilePath, fileList, depth, files, file)) {
+            if (handleSmbEntries(dynamic, fullFilePath, fileList, depth, files, file)) {
                 return false;
             }
         }
@@ -109,20 +110,22 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     private boolean handleSmbEntries(
+            Exchange dynamic,
             String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
             FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
 
         if (isDirectory(file)) {
             LOG.trace("SmbFile[name={}, dir=true]", file.getFileName());
-            return handleDirectory(fullFilePath, fileList, depth, files, file);
+            return handleDirectory(dynamic, fullFilePath, fileList, depth, files, file);
         } else {
             LOG.trace("SmbFile[name={}, file=true]", file.getFileName());
-            handleFile(fullFilePath, fileList, depth, files, file);
+            handleFile(dynamic, fullFilePath, fileList, depth, files, file);
         }
         return false;
     }
 
     private boolean handleDirectory(
+            Exchange dynamic,
             String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
             FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
 
@@ -130,10 +133,10 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             SmbFile smbFile = asGenericFile(fullFilePath, file, getEndpoint().getCharset());
             Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
             Supplier<String> relativePath = smbFile::getRelativeFilePath;
-            if (isValidFile(genericFileSupplier, file.getFileName(),
+            if (isValidFile(dynamic, genericFileSupplier, file.getFileName(),
                     smbFile.getAbsoluteFilePath(), relativePath, true, files)) {
                 // recursive scan and add the sub files and folders
-                boolean canPollMore = pollDirectory(fullFilePath, fileList, depth);
+                boolean canPollMore = pollDirectory(dynamic, fullFilePath, fileList, depth);
                 return !canPollMore;
             }
         }
@@ -141,6 +144,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     }
 
     private void handleFile(
+            Exchange dynamic,
             String fullFilePath, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth,
             FileIdBothDirectoryInformation[] files, FileIdBothDirectoryInformation file) {
 
@@ -149,7 +153,7 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             Supplier<GenericFile<FileIdBothDirectoryInformation>> genericFileSupplier = Suppliers.memorize(() -> smbFile);
             Supplier<String> relativePath = smbFile::getRelativeFilePath;
 
-            if (isValidFile(genericFileSupplier, file.getFileName(),
+            if (isValidFile(dynamic, genericFileSupplier, file.getFileName(),
                     smbFile.getAbsoluteFilePath(), relativePath, false, files)) {
                 fileList.add(smbFile);
             }

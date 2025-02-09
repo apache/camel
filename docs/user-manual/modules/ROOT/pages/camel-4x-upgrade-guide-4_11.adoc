@@ -1,0 +1,18 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+== Upgrading Camel 4.10 to 4.11
+
+=== file based components
+
+The file based component such as `camel-file`, `camel-ftp`, `camel-smb`, and `camel-azure-files` has
+been improved to allow optimized dynamic poll when using dynamic `fileName` header.
+
+This change means that there is a new `DynamicPollingConsumer` API the consumer implements.
+And as such some APIs inside these components has been changed.
+
+This will only affect if you have built your own custom Camel component on top of `camel-file`.
+And if so, your custom code may need to be changed slightly as well.
