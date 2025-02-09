@@ -115,6 +115,16 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
+    public Boolean isAllowOptimisedComponents() {
+        return processor.isAllowOptimisedComponents();
+    }
+
+    @Override
+    public Boolean isOptimised() {
+        return processor.getDynamicAware() != null;
+    }
+
+    @Override
     public TabularData extendedInformation() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());

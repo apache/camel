@@ -32,15 +32,14 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
@@ -70,7 +69,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
 
-    private SendDynamicAware dynamicAware;
+    private PollDynamicAware dynamicAware;
     private volatile String scheme;
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
@@ -143,7 +142,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         this.routeId = routeId;
     }
 
-    public SendDynamicAware getDynamicAware() {
+    public PollDynamicAware getDynamicAware() {
         return dynamicAware;
     }
 
@@ -260,8 +259,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
-        Processor preAwareProcessor = null;
-        Processor postAwareProcessor = null;
         String staticUri = null;
         boolean prototype = cacheSize < 0;
         try {
@@ -272,14 +269,12 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 String uri = resolveUri(exchange, recipient);
                 String scheme = resolveScheme(exchange, uri);
                 if (dynamicAware.getScheme().equals(scheme)) {
-                    SendDynamicAware.DynamicAwareEntry entry = dynamicAware.prepare(exchange, uri, originalUri);
+                    PollDynamicAware.DynamicAwareEntry entry = dynamicAware.prepare(exchange, uri, originalUri);
                     if (entry != null) {
                         staticUri = dynamicAware.resolveStaticUri(exchange, entry);
-                        preAwareProcessor = dynamicAware.createPreProcessor(exchange, entry);
-                        postAwareProcessor = dynamicAware.createPostProcessor(exchange, entry);
                         if (staticUri != null) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Optimising toD via SendDynamicAware component: {} to use static uri: {}", scheme,
+                                LOG.debug("Optimising poll via PollDynamicAware component: {} to use static uri: {}", scheme,
                                         URISupport.sanitizeUri(staticUri));
                             }
                         }
@@ -290,7 +285,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             targetRecipient = prepareRecipient(exchange, targetRecipient);
             if (targetRecipient == null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Send dynamic evaluated as null so cannot send to any endpoint");
+                    LOG.debug("Poll dynamic evaluated as null so cannot poll from any endpoint");
                 }
                 // no endpoint to send to, so ignore
                 callback.done(true);
@@ -321,8 +316,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
         // grab the real delegate consumer that performs the actual polling
         final boolean bridgeErrorHandler = isBridgeErrorHandler(consumer);
-        final Processor preProcessor = preAwareProcessor;
-        final Processor postProcessor = postAwareProcessor;
 
         DynamicPollingConsumer dynamicConsumer = null;
         if (consumer instanceof DynamicPollingConsumer dyn) {
@@ -331,10 +324,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
         Exchange resourceExchange;
         try {
-            if (preProcessor != null) {
-                preProcessor.process(exchange);
-            }
-
             if (timeout < 0) {
                 LOG.debug("Consumer receive: {}", consumer);
                 resourceExchange = dynamicConsumer != null ? dynamicConsumer.receive(exchange) : consumer.receive();
@@ -359,13 +348,6 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             callback.done(true);
             return true;
         } finally {
-            try {
-                if (postProcessor != null) {
-                    postProcessor.process(exchange);
-                }
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
             // return the consumer back to the cache
             consumerCache.releasePollingConsumer(endpoint, consumer);
             // and stop prototype endpoints
@@ -577,7 +559,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
             try {
                 if (scheme != null) {
                     // find out if the component can be optimised for send-dynamic
-                    SendDynamicAwareResolver resolver = new SendDynamicAwareResolver();
+                    PollDynamicAwareResolver resolver = new PollDynamicAwareResolver();
                     dynamicAware = resolver.resolve(camelContext, scheme);
                     if (dynamicAware == null) {
                         // okay fallback and try with default component name
@@ -592,7 +574,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                     }
                     if (dynamicAware != null) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Detected SendDynamicAware component: {} optimising poll: {}", scheme,
+                            LOG.debug("Detected PollDynamicAware component: {} optimising poll: {}", scheme,
                                     URISupport.sanitizeUri(uri));
                         }
                     }
@@ -601,7 +583,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // ignore
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
-                            "Error creating optimised SendDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
+                            "Error creating optimised PollDynamicAwareResolver for uri: {} due to {}. This exception is ignored",
                             URISupport.sanitizeUri(uri), e.getMessage(), e);
                 }
             }
