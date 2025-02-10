@@ -18,6 +18,7 @@ package org.apache.camel.component.kubernetes.producer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
@@ -55,6 +56,28 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
                 .andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
+
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    public void listByLabelsTest() throws Exception {
+        Map<String, String> labels = Map.of(
+                "key1", "value1",
+                "key2", "value2");
+
+        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(",")));
+
+        server.expect().withPath("/api/v1/resourcequotas?labelSelector=" + urlEncodedLabels)
+                .andReturn(200,
+                        new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, labels);
+        });
+
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }
@@ -132,6 +155,8 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
             public void configure() {
                 from("direct:list")
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
+                from("direct:listByLabels")
+                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuotaByLabels");
                 from("direct:create")
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=createResourceQuota");
                 from("direct:update")

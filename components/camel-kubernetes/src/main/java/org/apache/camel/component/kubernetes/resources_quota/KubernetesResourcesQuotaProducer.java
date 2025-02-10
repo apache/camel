@@ -25,8 +25,6 @@ import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
 import io.fabric8.kubernetes.api.model.ResourceQuotaList;
 import io.fabric8.kubernetes.api.model.ResourceQuotaSpec;
 import io.fabric8.kubernetes.api.model.StatusDetails;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
-import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -63,7 +61,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
                 doList(exchange);
                 break;
 
-            case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
+            case KubernetesOperations.LIST_RESOURCES_QUOTA_BY_LABELS_OPERATION:
                 doListResourceQuotasByLabels(exchange);
                 break;
 
@@ -100,19 +98,9 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ResourceQuotaList resList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<ResourceQuota, ResourceQuotaList, Resource<ResourceQuota>> resQuota
-                    = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName);
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                resQuota.withLabel(entry.getKey(), entry.getValue());
-            }
-            resList = resQuota.list();
+            resList = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withLabels(labels).list();
         } else {
-            MixedOperation<ResourceQuota, ResourceQuotaList, Resource<ResourceQuota>> resQuota
-                    = getEndpoint().getKubernetesClient().resourceQuotas();
-            for (Map.Entry<String, String> entry : labels.entrySet()) {
-                resQuota.withLabel(entry.getKey(), entry.getValue());
-            }
-            resList = resQuota.list();
+            resList = getEndpoint().getKubernetesClient().resourceQuotas().inAnyNamespace().withLabels(labels).list();
         }
 
         prepareOutboundMessage(exchange, resList.getItems());
