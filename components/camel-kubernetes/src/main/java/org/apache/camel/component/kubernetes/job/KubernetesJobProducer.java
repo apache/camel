@@ -153,9 +153,9 @@ public class KubernetesJobProducer extends DefaultProducer {
                     String.format("%s a specific job require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(jobSpec)) {
-            LOG.error("{} a specific job require specify a hpa spec bean", operationName);
+            LOG.error("{} a specific job require specify a job spec bean", operationName);
             throw new IllegalArgumentException(
-                    String.format("%s a specific job require specify a hpa spec bean", operationName));
+                    String.format("%s a specific job require specify a job spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         JobBuilder jobCreatingBuilder = new JobBuilder();
