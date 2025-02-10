@@ -190,7 +190,7 @@
         <google-oauth-client-version>1.37.0</google-oauth-client-version>
         <google-cloud-bom-version>26.54.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.57.0</google-cloud-functions-bom-version>
-        <google-cloud-http-client-version>1.46.0</google-cloud-http-client-version>
+        <google-cloud-http-client-version>1.46.1</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.55.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.1.2</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
