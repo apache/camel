@@ -113,7 +113,7 @@
         <commons-io-version>2.18.0</commons-io-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.17.0</commons-lang3-version>
-        <commons-logging-version>1.3.4</commons-logging-version>
+        <commons-logging-version>1.3.5</commons-logging-version>
         <commons-math3-version>3.6.1</commons-math3-version>
         <commons-net-version>3.11.1</commons-net-version>
         <commons-pool2-version>2.12.1</commons-pool2-version>
