@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.10.0-SNAPSHOT</version>
+        <version>4.11.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sync-properties-maven-plugin</artifactId>
