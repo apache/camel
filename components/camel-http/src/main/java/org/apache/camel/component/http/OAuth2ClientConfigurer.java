@@ -51,7 +51,8 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
     private final static Map<OAuth2URIAndCredentials, TokenCache> tokenCache = new HashMap<>();
     private final String resourceIndicator;
 
-    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator, String scope, boolean cacheTokens,
+    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
+                                  String scope, boolean cacheTokens,
                                   long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -107,7 +108,7 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
 
         httpPost.addHeader(HttpHeaders.AUTHORIZATION,
                 HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
-        if(null != resourceIndicator) {
+        if (null != resourceIndicator) {
             bodyStr = String.join(bodyStr, "&resourceIndicator=" + resourceIndicator);
         }
         httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_FORM_URLENCODED));

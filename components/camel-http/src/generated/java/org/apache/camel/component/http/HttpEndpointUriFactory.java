@@ -66,7 +66,6 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("oauth2ClientSecret");
         props.add("oauth2Scope");
         props.add("oauth2TokenEndpoint");
-        props.add("oauth2ResourceIndicator");
         props.add("okStatusCodeRange");
         props.add("preserveHostHeader");
         props.add("proxyAuthDomain");
