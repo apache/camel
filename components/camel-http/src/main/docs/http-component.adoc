@@ -361,6 +361,22 @@ from("direct:start")
   .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope);
 ------------------------------------------------------------------------------------
 
+Additional support for OAuth2 is for RFC 8707 where a _Resource Indicator_ must be provided in the body:
+
+[source,java]
+------------------------------------------------------------------------------------
+String clientId = "my-client-id";
+String clientSecret = "my-client-secret";
+String tokenEndpoint = "https://localhost:8080/realms/master/protocol/openid-connect/token";
+String scope = "my-scope"; // optional scope
+String resourceIndicator = "https://localhost:9090"; // optional, for RFC 8707
+
+from("direct:start")
+  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope + "&resourceIndicator=" + resourceIndicator);
+------------------------------------------------------------------------------------
+
+NOTE: Resource Indicator is the URL to the actual endpoint as defined in the component URI!
+
 [NOTE]
 Camel only provides support for OAuth2 client credentials flow
 

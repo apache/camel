@@ -49,12 +49,14 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
     private final Long cachedTokensDefaultExpirySeconds;
     private final Long cachedTokensExpirationMarginSeconds;
     private final static Map<OAuth2URIAndCredentials, TokenCache> tokenCache = new HashMap<>();
+    private final String resourceIndicator;
 
-    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String scope, boolean cacheTokens,
+    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator, String scope, boolean cacheTokens,
                                   long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
+        this.resourceIndicator = resourceIndicator;
         this.scope = scope;
         this.cacheTokens = cacheTokens;
         this.cachedTokensDefaultExpirySeconds = cachedTokensDefaultExpirySeconds;
@@ -91,6 +93,7 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
     }
 
     private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
+        String bodyStr = "grant_type=client_credentials";
         String url = tokenEndpoint;
         if (scope != null) {
             String sep = "?";
@@ -104,7 +107,10 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
 
         httpPost.addHeader(HttpHeaders.AUTHORIZATION,
                 HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
-        httpPost.setEntity(new StringEntity("grant_type=client_credentials", ContentType.APPLICATION_FORM_URLENCODED));
+        if(null != resourceIndicator) {
+            bodyStr = String.join(bodyStr, "&resourceIndicator=" + resourceIndicator);
+        }
+        httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_FORM_URLENCODED));
 
         AtomicReference<JsonObject> result = new AtomicReference<>();
         httpClient.execute(httpPost, response -> {
