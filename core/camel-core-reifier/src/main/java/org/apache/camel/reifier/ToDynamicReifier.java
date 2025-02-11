@@ -27,6 +27,7 @@ import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.StringHelper;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
@@ -78,14 +79,17 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         // make sure to parse property placeholders
         uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
 
-        // we use simple language by default, but you can configure a different language
-        String language = "simple";
+        // we use simple/constant language by default, but you can configure a different language
+        String language = null;
         if (uri.startsWith("language:")) {
             String value = StringHelper.after(uri, "language:");
             language = StringHelper.before(value, ":");
             uri = StringHelper.after(value, ":");
         }
-
+        if (language == null) {
+            // only use simple language if needed
+            language = LanguageSupport.hasSimpleFunction(uri) ? "simple" : "constant";
+        }
         Language lan = camelContext.resolveLanguage(language);
         return lan.createExpression(uri);
     }

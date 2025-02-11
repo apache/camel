@@ -129,11 +129,11 @@ public class TransformMessageAction extends ActionWatchCommand {
         if (dataformat == null) {
             // either source or language/template is required
             if (source == null && template == null && language == null && component == null) {
-                System.err.println("Either source or template and one of language/component must be configured");
+                printer().printErr("Either source or template and one of language/component must be configured");
                 return -1;
             }
             if (source == null && (template == null || language == null && component == null)) {
-                System.err.println("Both template and one of language/component must be configured");
+                printer().printErr("Both template and one of language/component must be configured");
                 return -1;
             }
         }
@@ -144,14 +144,14 @@ public class TransformMessageAction extends ActionWatchCommand {
             s = StringHelper.beforeLast(s, ":", s); // remove line number
             File f = new File(s);
             if (!f.exists()) {
-                System.err.println("Source file does not exist: " + f);
+                printer().printErr("Source file does not exist: " + f);
                 return -1;
             }
         }
         if (template != null && template.startsWith("file:")) {
             File f = new File(template.substring(5));
             if (!f.exists()) {
-                System.err.println("Template file does not exist: " + f);
+                printer().printErr("Template file does not exist: " + f);
                 return -1;
             }
         }
@@ -162,7 +162,7 @@ public class TransformMessageAction extends ActionWatchCommand {
             Run run = new Run(getMain());
             // requires camel 4.3 onwards
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
-                System.err.println("This requires Camel version 4.3 or newer");
+                printer().printErr("This requires Camel version 4.3 or newer");
                 return -1;
             }
             exit = run.runTransformMessage(camelVersion);

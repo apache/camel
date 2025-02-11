@@ -70,17 +70,17 @@
         <asn1bean-version>1.14.0</asn1bean-version>
         <assertj-version>3.27.3</assertj-version>
         <asterisk-java-version>3.41.0</asterisk-java-version>
-        <atlassian-fugue-version>6.1.1</atlassian-fugue-version>
+        <atlassian-fugue-version>6.1.2</atlassian-fugue-version>
         <atmosphere-version>3.0.13</atmosphere-version>
         <avro-version>1.12.0</avro-version>
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.2.2</awaitility-version>
-        <aws-java-sdk2-version>2.30.13</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.30.16</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.31</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.27</azure-storage-blob-changefeed-version>
-        <beanio-version>3.2.0</beanio-version>
+        <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.79</bouncycastle-version>
         <box-java-sdk-version>4.14.0</box-java-sdk-version>
         <braintree-gateway-version>3.39.0</braintree-gateway-version>
@@ -113,7 +113,7 @@
         <commons-io-version>2.18.0</commons-io-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.17.0</commons-lang3-version>
-        <commons-logging-version>1.3.4</commons-logging-version>
+        <commons-logging-version>1.3.5</commons-logging-version>
         <commons-math3-version>3.6.1</commons-math3-version>
         <commons-net-version>3.11.1</commons-net-version>
         <commons-pool2-version>2.12.1</commons-pool2-version>
@@ -181,7 +181,7 @@
         <jaxb-xjc-version>4.0.5</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.5</jaxb-jxc-version>
         <gmavenplus-plugin-version>4.1.1</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.31.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.32.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.7.2</google-api-client-version>
         <google-api-services-drive-version>v3-rev20250122-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20250115-2.0.0</google-api-services-calendar-version>
@@ -190,7 +190,7 @@
         <google-oauth-client-version>1.37.0</google-oauth-client-version>
         <google-cloud-bom-version>26.54.0</google-cloud-bom-version>
         <google-cloud-functions-bom-version>2.57.0</google-cloud-functions-bom-version>
-        <google-cloud-http-client-version>1.45.3</google-cloud-http-client-version>
+        <google-cloud-http-client-version>1.46.1</google-cloud-http-client-version>
         <google-cloud-secretmanager-bom-version>2.55.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>24.1.2</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
@@ -198,7 +198,7 @@
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.25</groovy-version>
         <grpc-version>1.70.0</grpc-version>
-        <grpc-google-auth-library-version>1.32.0</grpc-google-auth-library-version>
+        <grpc-google-auth-library-version>1.32.1</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
         <gson-version>2.12.1</gson-version>
@@ -207,8 +207,8 @@
         <h2-version>2.3.232</h2-version>
         <hadoop3-version>3.4.1</hadoop3-version>
         <hamcrest-version>3.0</hamcrest-version>
-        <hapi-version>2.5.1</hapi-version>
-        <hapi-base-version>2.5.1</hapi-base-version>
+        <hapi-version>2.6.0</hapi-version>
+        <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>7.6.1</hapi-fhir-version>
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
@@ -223,7 +223,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.24.12</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.133</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.134</huaweicloud-sdk-version>
         <ical4j-version>4.1.0</ical4j-version>
         <icu4j-version>76.1</icu4j-version>
         <ignite-version>2.16.0</ignite-version>
@@ -239,11 +239,11 @@
         <jackson2-version>2.18.2</jackson2-version>
         <jackrabbit-version>2.22.0</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
-        <jandex-version>3.2.4</jandex-version>
+        <jandex-version>3.2.5</jandex-version>
         <jansi-version>2.4.1</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
-        <java-util-version>3.0.2</java-util-version>
+        <java-util-version>3.0.3</java-util-version>
         <jnats-version>2.20.5</jnats-version>
         <javacc-maven-plugin-version>3.1.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
@@ -280,7 +280,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.4</jettison-version>
         <jgit-version>7.1.0.202411261347-r</jgit-version>
-        <jgroups-version>5.4.1.Final</jgroups-version>
+        <jgroups-version>5.4.2.Final</jgroups-version>
         <jgroups-raft-version>1.0.14.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -288,7 +288,7 @@
         <jline-version>3.29.0</jline-version>
         <libthrift-version>0.21.0</libthrift-version>
         <jodatime2-version>2.13.1</jodatime2-version>
-        <jolokia-version>2.2.1</jolokia-version>
+        <jolokia-version>2.2.2</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <jooq-version>3.19.18</jooq-version>
@@ -370,13 +370,13 @@
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.3.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-        <msal4j-version>1.18.0</msal4j-version>
+        <msal4j-version>1.19.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <neo4j-version>5.27.0</neo4j-version>
+        <neo4j-version>5.28.1</neo4j-version>
         <netty-version>4.1.117.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.5</networknt-json-schema-validator-version>
@@ -391,7 +391,7 @@
         <opensearch-java-client-version>2.20.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.2</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
-        <opentelemetry-version>1.46.0</opentelemetry-version>
+        <opentelemetry-version>1.47.0</opentelemetry-version>
         <opentelemetry-log4j2-version>2.12.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
         <opentelemetry-alpha-version>1.27.0-alpha</opentelemetry-alpha-version>
@@ -482,7 +482,7 @@
         <tahu-version>1.0.13</tahu-version>
         <testcontainers-version>1.20.4</testcontainers-version>
         <thymeleaf-version>3.1.3.RELEASE</thymeleaf-version>
-        <tika-version>2.9.2</tika-version>
+        <tika-version>2.9.3</tika-version>
         <twilio-version>10.6.8</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
         <undertow-version>2.3.18.Final</undertow-version>

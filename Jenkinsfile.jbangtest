@@ -38,6 +38,7 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
+        skipDefaultCheckout(true)
     }
 
     parameters {
@@ -51,7 +52,6 @@ pipeline {
                  expression { params.CLEAN }
              }
              steps {
-                 sh 'git clean -fdx'
            }
         }
 
@@ -63,7 +63,7 @@ pipeline {
                 }
             }
             steps {
-
+                cleanWs()
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
                 sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Dshared.maven.local.repo=${localMavenRepo} -Pjbang-it-test"
             }
@@ -71,6 +71,12 @@ pipeline {
                always {
                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml', skipPublishingChecks: true
                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml', skipPublishingChecks: true
+                   cleanWs(cleanWhenNotBuilt: false,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true,
+                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                               [pattern: '.propsfile', type: 'EXCLUDE']])
                        }
                  }
         }  

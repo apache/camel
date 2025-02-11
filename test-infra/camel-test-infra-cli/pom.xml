@@ -112,9 +112,6 @@
                                 <configuration>
                                     <target>
                                         <mkdir dir="target/tmp-repo"/>
-                                        <chmod perm="ugo+rwx">
-                                            <dirset dir="target/tmp-repo"/>
-                                        </chmod>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -136,6 +133,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
                             <systemPropertyVariables>
                                 <cli.service.data.folder>target/data</cli.service.data.folder>
                                 <currentProjectVersion>${project.version}</currentProjectVersion>

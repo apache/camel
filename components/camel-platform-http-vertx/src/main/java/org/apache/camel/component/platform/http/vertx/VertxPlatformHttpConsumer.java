@@ -55,6 +55,7 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.MimeTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -331,6 +332,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     }
 
     protected void populateAttachments(List<FileUpload> uploads, Message message) {
+        message.setHeader(Exchange.ATTACHMENTS_SIZE, uploads.size());
         for (FileUpload upload : uploads) {
             final String name = upload.name();
             final String fileName = upload.fileName();
@@ -356,9 +358,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
 
                 // populate body in case there is only one attachment
                 if (uploads.size() == 1) {
+                    message.setHeader(Exchange.FILE_PATH, localFile.getAbsolutePath());
+                    message.setHeader(Exchange.FILE_LENGTH, upload.size());
                     message.setHeader(Exchange.FILE_NAME, upload.fileName());
-                    if (upload.contentType() != null) {
-                        message.setHeader(Exchange.CONTENT_TYPE, upload.contentType());
+                    String ct = MimeTypeHelper.probeMimeType(upload.fileName());
+                    if (ct == null) {
+                        ct = upload.contentType();
+                    }
+                    if (ct != null) {
+                        message.setHeader(Exchange.FILE_CONTENT_TYPE, ct);
                     }
                     message.setBody(localFile);
                 }

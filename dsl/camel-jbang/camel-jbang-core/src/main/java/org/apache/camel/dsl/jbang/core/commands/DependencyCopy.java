@@ -36,6 +36,7 @@ import picocli.CommandLine;
                      description = "Copies all Camel dependencies required to run to a specific directory", sortOptions = false,
                      showDefaultValues = true)
 public class DependencyCopy extends DependencyList {
+
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private MavenDownloader downloader;
@@ -54,7 +55,7 @@ public class DependencyCopy extends DependencyList {
             if (Files.isDirectory(outputDirectoryPath)) {
                 FileUtil.removeDir(outputDirectoryPath.toFile());
             } else {
-                System.err.println("Error creating the output directory: " + outputDirectory
+                printer().printErr("Error creating the output directory: " + outputDirectory
                                    + " is not a directory");
                 return;
             }
@@ -79,9 +80,9 @@ public class DependencyCopy extends DependencyList {
                 Files.copy(artifact.getFile().toPath(), target);
             }
         } catch (MavenResolutionException e) {
-            System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
+            printer().printErr("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+            printer().printErr("Error copying the artifact: " + gav + " due to: " + e.getMessage());
         }
     }
 

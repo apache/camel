@@ -1116,9 +1116,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 Files.copy(artifact.getFile().toPath(), target);
             }
         } catch (MavenResolutionException e) {
-            System.err.println("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
+            printer().printErr("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println("Error copying the artifact: " + gav + " due to: " + e.getMessage());
+            printer().printErr("Error copying the artifact: " + gav + " due to: " + e.getMessage());
         }
     }
 
@@ -1161,6 +1161,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private void init() {
         this.downloader = new MavenDownloaderImpl();
         ((MavenDownloaderImpl) downloader).build();
+    }
+
+    protected Printer outPrinter() {
+        return super.printer();
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.azure.storage.file.share.models.ShareFileItem;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedResource;
@@ -89,15 +90,17 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
 
     @Override
     protected boolean pollDirectory(
+            Exchange dynamic,
             String path, List<GenericFile<ShareFileItem>> fileList,
             int depth) {
         LOG.trace("pollDirectory({},,{})", path, depth);
 
-        return doPollDirectory(FilesPath.trimTrailingSeparator(path), null, fileList, depth);
+        return doPollDirectory(dynamic, FilesPath.trimTrailingSeparator(path), null, fileList, depth);
     }
 
     @Override
     protected boolean doPollDirectory(
+            Exchange dynamic,
             String path, String dirName,
             List<GenericFile<ShareFileItem>> fileList, int depth) {
         LOG.trace("doPollDirectory({},{},,{})", path, dirName, depth);
@@ -119,7 +122,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
 
         for (var fileItem : listedFileItems) {
-            if (handleFileItem(path, fileList, depth + 1, listedFileItems, fileItem)) {
+            if (handleFileItem(dynamic, path, fileList, depth + 1, listedFileItems, fileItem)) {
                 return false;
             }
         }
@@ -128,6 +131,7 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private boolean handleFileItem(
+            Exchange dynamic,
             String path, List<GenericFile<ShareFileItem>> polledFiles,
             int depth, ShareFileItem[] listedFileItems, ShareFileItem fileItem) {
         if (LOG.isTraceEnabled()) {
@@ -140,16 +144,17 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         }
 
         if (fileItem.isDirectory()) {
-            if (handleDirectory(path, polledFiles, depth, listedFileItems, fileItem)) {
+            if (handleDirectory(dynamic, path, polledFiles, depth, listedFileItems, fileItem)) {
                 return true;
             }
         } else {
-            handleFile(path, polledFiles, depth, listedFileItems, fileItem);
+            handleFile(dynamic, path, polledFiles, depth, listedFileItems, fileItem);
         }
         return false;
     }
 
     private boolean handleDirectory(
+            Exchange dynamic,
             String path, List<GenericFile<ShareFileItem>> polledFiles,
             int depth, ShareFileItem[] listedFileItems, ShareFileItem dir) {
 
@@ -157,10 +162,10 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, dir));
             String absoluteFilePath = FilesPath.concat(path, dir.getName());
             Supplier<String> relative = getRelativeFilePath(endpointPath, path, absoluteFilePath, dir);
-            if (isValidFile(remote, dir.getName(), absoluteFilePath, relative, true, listedFileItems)) {
+            if (isValidFile(dynamic, remote, dir.getName(), absoluteFilePath, relative, true, listedFileItems)) {
                 String dirName = dir.getName();
                 String dirPath = FilesPath.concat(path, dirName);
-                boolean canPollMore = doSafePollSubDirectory(dirPath, dirName, polledFiles, depth);
+                boolean canPollMore = doSafePollSubDirectory(dynamic, dirPath, dirName, polledFiles, depth);
                 if (!canPollMore) {
                     return true;
                 }
@@ -170,13 +175,14 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
     }
 
     private void handleFile(
+            Exchange dynamic,
             String path, List<GenericFile<ShareFileItem>> polledFiles, int depth,
             ShareFileItem[] listedFileItems, ShareFileItem file) {
         if (depth >= endpoint.getMinDepth()) {
             Supplier<GenericFile<ShareFileItem>> remote = Suppliers.memorize(() -> asRemoteFile(path, file));
             String absoluteFilePath = FilesPath.concat(path, file.getName());
             Supplier<String> relative = getRelativeFilePath(endpointPath, path, absoluteFilePath, file);
-            if (isValidFile(remote, file.getName(), absoluteFilePath, relative, false,
+            if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relative, false,
                     listedFileItems)) {
                 polledFiles.add(remote.get());
             }

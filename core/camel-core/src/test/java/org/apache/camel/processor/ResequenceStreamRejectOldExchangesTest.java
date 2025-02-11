@@ -93,7 +93,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
                 from("direct:start").onException(MessageRejectedException.class).maximumRedeliveries(0).handled(true)
                         .to("mock:error").end().resequence(header("seqno")).stream()
-                        .capacity(3).rejectOld().timeout(50).deliveryAttemptInterval(10) // use
+                        .capacity(3).rejectOld().timeout(1000).deliveryAttemptInterval(10) // use
                         // low
                         // timeout
                         // to

@@ -91,6 +91,9 @@ Since Apache Camel 4.10, multipart file uploads are easier and harmonized across
 * The Apache Camel message contains:
 ** The uploaded file in the message body
 ** The file name in the "CamelFileName" message header
-** The file's content type in the "Content-Type" message header
+** The file content type in the "CamelFileContentType" message header
+** The file size in the "CamelFileLength" message header
+
+In case of multiple uploads, the header "CamelAttachmentsSize" contains the number of files uploaded.
 
 include::spring-boot:partial$starter.adoc[]

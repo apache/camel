@@ -52,14 +52,14 @@ public class Export extends ExportBaseCommand {
         }
 
         if (runtime == null) {
-            System.err.println("The runtime option must be specified");
+            printer().printErr("The runtime option must be specified");
             return 1;
         }
 
         if (gav == null) {
             String pn = getProjectName();
             if (pn == null) {
-                System.err.println("Failed to resolve project name: Please provide --name, --gav or source file");
+                printer().printErr("Failed to resolve project name: Please provide --name, --gav or source file");
                 return 1;
             }
             gav = "org.example.project:%s:%s".formatted(pn, getVersion());
@@ -76,7 +76,7 @@ public class Export extends ExportBaseCommand {
                 return export(new ExportCamelMain(getMain()));
             }
             default -> {
-                System.err.println("Unknown runtime: " + runtime);
+                printer().printErr("Unknown runtime: " + runtime);
                 return 1;
             }
         }

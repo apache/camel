@@ -49,8 +49,8 @@ public class SBOMGenerator extends Export {
     protected String outputName = "sbom";
 
     @CommandLine.Option(names = { "--cyclonedx-plugin-version" }, description = "The CycloneDX Maven Plugin version",
-                        defaultValue = "2.9.0")
-    protected String cyclonedxPluginVersion = "2.9.0";
+                        defaultValue = "2.9.1")
+    protected String cyclonedxPluginVersion = "2.9.1";
 
     @CommandLine.Option(names = { "--spdx-plugin-version" }, description = "The SPDX Maven Plugin version",
                         defaultValue = "0.7.4")
@@ -188,7 +188,7 @@ public class SBOMGenerator extends Export {
                 return export(new ExportCamelMain(getMain()));
             }
             default -> {
-                System.err.println("Unknown runtime: " + runtime);
+                printer().printErr("Unknown runtime: " + runtime);
                 return 1;
             }
         }

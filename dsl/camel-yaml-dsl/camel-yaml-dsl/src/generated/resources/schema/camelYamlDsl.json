@@ -2775,6 +2775,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "onPrepare" : {
+            "type" : "string",
+            "title" : "On Prepare",
+            "description" : "Uses the Processor when preparing the org.apache.camel.Exchange for each loop iteration. This can be used to deep-clone messages, or any custom logic needed before the looping executes."
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -4102,6 +4107,11 @@
             "type" : "string",
             "title" : "Aggregation Strategy Method Name",
             "description" : "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy."
+          },
+          "allowOptimisedComponents" : {
+            "type" : "boolean",
+            "title" : "Allow Optimised Components",
+            "description" : "Whether to allow components to optimise if they are org.apache.camel.spi.SendDynamicAware ."
           },
           "autoStartComponents" : {
             "type" : "boolean",

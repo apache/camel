@@ -50,5 +50,10 @@ public class LoopTestProcessor implements Processor {
         if (i == null || i.intValue() != this.index++) {
             exchange.setException(new CamelException("Invalid index value.  Expected " + this.index + " but was " + i));
         }
+
+        int len = Thread.currentThread().getStackTrace().length;
+        if (len > 120) {
+            exchange.setException(new CamelException("Call strackframe is too large. Expected 120 or less, was: " + len));
+        }
     }
 }

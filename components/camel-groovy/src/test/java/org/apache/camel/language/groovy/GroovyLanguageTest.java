@@ -90,7 +90,7 @@ public class GroovyLanguageTest extends LanguageTestSupport {
 
         assertExpression("attachments.size()", 1);
         assertExpression("attachments.get('message1.xml').getName()", "message1.xml");
-        assertExpression("attachments.get('message1.xml').getContentType()", "application/octet-stream");
+        assertExpression("attachments.get('message1.xml').getContentType()", "application/xml");
         assertExpression("attachments.get('message1.xml').getContent()", xml1);
     }
 

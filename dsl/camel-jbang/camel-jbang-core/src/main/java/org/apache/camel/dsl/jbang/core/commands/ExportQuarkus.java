@@ -53,11 +53,11 @@ class ExportQuarkus extends Export {
     public Integer export() throws Exception {
         String[] ids = gav.split(":");
         if (ids.length != 3) {
-            System.err.println("--gav must be in syntax: groupId:artifactId:version");
+            printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
         if (!buildTool.equals("maven") && !buildTool.equals("gradle")) {
-            System.err.println("--build-tool must either be maven or gradle, was: " + buildTool);
+            printer().printErr("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
         }
 

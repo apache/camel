@@ -65,6 +65,9 @@ public class PollEnrichDefinition extends ExpressionNode
     private String ignoreInvalidEndpoint;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String allowOptimisedComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String autoStartComponents;
 
     public PollEnrichDefinition() {
@@ -86,6 +89,7 @@ public class PollEnrichDefinition extends ExpressionNode
         this.timeout = source.timeout;
         this.cacheSize = source.cacheSize;
         this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
+        this.allowOptimisedComponents = source.allowOptimisedComponents;
         this.autoStartComponents = source.autoStartComponents;
     }
 
@@ -276,6 +280,36 @@ public class PollEnrichDefinition extends ExpressionNode
         return this;
     }
 
+    /**
+     * Whether to auto startup components when poll enricher is starting up.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition autoStartComponents(boolean autoStartComponents) {
+        setAutoStartComponents(Boolean.toString(autoStartComponents));
+        return this;
+    }
+
+    /**
+     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition allowOptimisedComponents(String allowOptimisedComponents) {
+        setAllowOptimisedComponents(allowOptimisedComponents);
+        return this;
+    }
+
+    /**
+     * Whether to allow components to optimise if they are {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
+        setAllowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -372,6 +406,14 @@ public class PollEnrichDefinition extends ExpressionNode
 
     public void setAutoStartComponents(String autoStartComponents) {
         this.autoStartComponents = autoStartComponents;
+    }
+
+    public String getAllowOptimisedComponents() {
+        return allowOptimisedComponents;
+    }
+
+    public void setAllowOptimisedComponents(String allowOptimisedComponents) {
+        this.allowOptimisedComponents = allowOptimisedComponents;
     }
 
     @Override

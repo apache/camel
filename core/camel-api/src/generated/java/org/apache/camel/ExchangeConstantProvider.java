@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(160);
+        Map<String, String> map = new HashMap<>(161);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -25,6 +25,7 @@ public class ExchangeConstantProvider {
         map.put("AGGREGATION_COMPLETE_CURRENT_GROUP", "CamelAggregationCompleteCurrentGroup");
         map.put("AGGREGATION_STRATEGY", "CamelAggregationStrategy");
         map.put("ASYNC_WAIT", "CamelAsyncWait");
+        map.put("ATTACHMENTS_SIZE", "CamelAttachmentsSize");
         map.put("AUTHENTICATION", "CamelAuthentication");
         map.put("AUTHENTICATION_FAILURE_POLICY_ID", "CamelAuthenticationFailurePolicyId");
         map.put("BATCH_COMPLETE", "CamelBatchComplete");

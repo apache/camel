@@ -96,6 +96,8 @@ public interface Exchange extends VariableAware {
               javaType = "boolean")
     String AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE = "CamelAggregationCompleteAllGroupsInclusive";
     String ASYNC_WAIT = "CamelAsyncWait";
+    @Metadata(description = "The number of Multipart files uploaded with a single request")
+    String ATTACHMENTS_SIZE = "CamelAttachmentsSize";
 
     String BATCH_INDEX = "CamelBatchIndex";
     String BATCH_SIZE = "CamelBatchSize";

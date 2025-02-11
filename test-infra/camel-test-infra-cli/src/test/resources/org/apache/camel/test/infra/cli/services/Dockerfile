@@ -19,6 +19,8 @@ ARG FROMIMAGE
 
 FROM $FROMIMAGE
 
+ARG CUSTOM_UID=1000
+ARG CUSTOM_GID=1000
 ARG CAMEL_JBANG_VERSION=default
 ARG CAMEL_REF=main
 ARG CAMEL_REPO=apache/camel
@@ -37,7 +39,8 @@ ADD 99-ssh-jbang.conf /etc/ssh/sshd_config.d/
 RUN	sed -i "s|#auth		sufficient	pam_wheel.so trust use_uid|auth		sufficient	pam_wheel.so trust use_uid|g" /etc/pam.d/su
 
 #create new user
-RUN useradd -s /bin/bash jbang
+RUN groupadd -g $CUSTOM_GID jbang \
+    && useradd -u $CUSTOM_UID -g $CUSTOM_GID -s /bin/bash jbang
 
 #to avoid prompt su - root password
 RUN usermod -a -G wheel jbang

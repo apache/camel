@@ -85,7 +85,7 @@ public class Jolokia extends ProcessBaseCommand {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Cannot execute jolokia command due: " + e.getMessage());
+            printer().printErr("Cannot execute jolokia command due: " + e.getMessage());
             exitCode = 1;
         }
 
