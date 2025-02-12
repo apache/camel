@@ -34,6 +34,10 @@
     <name>Camel :: Smooks :: Parent</name>
     <description>Camel Smooks Component</description>
 
+    <properties>
+        <supportLevel>Preview</supportLevel>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
