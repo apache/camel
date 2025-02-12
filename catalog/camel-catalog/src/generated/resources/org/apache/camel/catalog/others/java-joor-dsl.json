@@ -11,6 +11,6 @@
     "metadata": { "routes.language": "java" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-java-joor-dsl",
-    "version": "4.10.0-SNAPSHOT"
+    "version": "4.11.0-SNAPSHOT"
   }
 }
