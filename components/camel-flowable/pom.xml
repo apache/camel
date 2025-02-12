@@ -32,6 +32,10 @@
     <name>Camel :: Flowable</name>
     <description>Camel Flowable support</description>
 
+    <properties>
+        <supportLevel>Preview</supportLevel>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -48,7 +52,7 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- Flowable JARs -->
         <dependency>
             <groupId>org.flowable</groupId>

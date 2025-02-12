@@ -4,7 +4,7 @@
 :artifactid: camel-smooks
 :description: Use Smooks to transform, route, and bind both XML and non-XML data, including EDI, CSV, JSON, and YAML.
 :since: 4.7
-:supportlevel: Stable
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
