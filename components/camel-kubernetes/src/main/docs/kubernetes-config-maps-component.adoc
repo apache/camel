@@ -99,7 +99,7 @@ fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
     }
 --------------------------------------------------------------------------------
 
-This consumer watches all ConfigMaps from all namespaces in the cluster by default.
+This consumer returns a message per event received for all ConfigMaps from all namespaces in the cluster.
 
 You can narrow the scope of the consumer using the following query parameter combinations:
 

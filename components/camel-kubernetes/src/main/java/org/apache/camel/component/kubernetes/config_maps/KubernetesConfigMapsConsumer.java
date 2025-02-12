@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kubernetes.config_maps;
 
+import java.util.concurrent.ExecutorService;
+
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.client.Watch;
@@ -33,8 +35,6 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutorService;
 
 public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
@@ -96,23 +96,21 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                 - inNamespace + withLabel
                 - inNamespace + withName
              */
-            if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
+            String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
+
+            if (ObjectHelper.isEmpty(namespace)) {
                 w = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace();
 
-                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                        && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                    w = w.withLabel(
-                            getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                            getEndpoint().getKubernetesConfiguration().getLabelValue());
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = w.withLabel(labelKey, labelValue);
                 }
             } else {
                 final NonNamespaceOperation<ConfigMap, ConfigMapList, Resource<ConfigMap>> client
-                        = getEndpoint().getKubernetesClient().configMaps()
-                                .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
+                        = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespace);
                 w = client;
-                String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
-                String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
-                String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = client.withLabel(labelKey, labelValue);
                 } else if (ObjectHelper.isNotEmpty(resourceName)) {
@@ -123,7 +121,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
             watch = w.watch(new Watcher<>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, ConfigMap resource) {
+                public void eventReceived(Action action, ConfigMap resource) {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);

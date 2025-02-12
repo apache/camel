@@ -19,6 +19,7 @@ package org.apache.camel.component.kubernetes.consumer.integration.configmaps;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.consumer.integration.support.KubernetesConsumerTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -28,20 +29,16 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
         @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
         @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
 })
-public class KubernetesConfigMapsConsumerClusterwideLabelsIT extends KubernetesConfigMapsTestSupport {
-    private static final Map<String, String> LABELS = Map.of("testkey", "testvalue");
-
+public class KubernetesConfigMapsConsumerClusterwideLabelsIT extends KubernetesConsumerTestSupport {
     @Test
     public void clusterWideLabelsTest() throws Exception {
-        final String withLabels = "cm-with-labels";
         result.expectedBodiesReceivedInAnyOrder(
-                withLabels + " " + NS_DEFAULT + " ADDED",
-                withLabels + " " + NS_WATCH + " ADDED");
+                "ConfigMap cm1 " + ns1 + " ADDED",
+                "ConfigMap cm2 " + ns2 + " ADDED");
 
-        // Create the resource in two namespaces, it should list only from one
-        createConfigMap(NS_DEFAULT, withLabels, LABELS);
-        createConfigMap(NS_WATCH, withLabels, LABELS);
-        createConfigMap(NS_WATCH, "different", Map.of("otherKey", "otherValue"));
+        createConfigMap(ns1, "cm1", LABELS);
+        createConfigMap(ns2, "cm2", LABELS);
+        createConfigMap(ns2, "cm3", Map.of("otherKey", "otherValue"));
 
         result.assertIsSatisfied();
     }

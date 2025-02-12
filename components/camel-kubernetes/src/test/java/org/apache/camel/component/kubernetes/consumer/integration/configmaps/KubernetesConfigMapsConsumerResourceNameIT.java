@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes.consumer.integration.configmaps;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.consumer.integration.support.KubernetesConsumerTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -26,16 +27,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
         @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
         @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
 })
-public class KubernetesConfigMapsConsumerResourceNameIT extends KubernetesConfigMapsTestSupport {
-    private static final String RESOURCE_NAME = "cm-watch";
-
+public class KubernetesConfigMapsConsumerResourceNameIT extends KubernetesConsumerTestSupport {
     @Test
     public void resourceNameTest() throws Exception {
-        result.expectedBodiesReceived(RESOURCE_NAME + " " + NS_WATCH + " ADDED");
+        result.expectedBodiesReceived("ConfigMap " + WATCH_RESOURCE_NAME + " " + ns2 + " ADDED");
 
-        // Create the resource in two namespaces, it should list only from one
-        createConfigMap(NS_DEFAULT, RESOURCE_NAME, null);
-        createConfigMap(NS_WATCH, RESOURCE_NAME, null);
+        createConfigMap(ns1, WATCH_RESOURCE_NAME, null);
+        createConfigMap(ns2, WATCH_RESOURCE_NAME, null);
 
         result.assertIsSatisfied();
     }
@@ -45,8 +43,9 @@ public class KubernetesConfigMapsConsumerResourceNameIT extends KubernetesConfig
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&resourceName=%s&namespace=%s", host, authToken, RESOURCE_NAME,
-                        NS_WATCH)
+                fromF("kubernetes-config-maps://%s?oauthToken=%s&resourceName=%s&namespace=%s", host, authToken,
+                        WATCH_RESOURCE_NAME,
+                        ns2)
                         .process(new KubernetesProcessor())
                         .to(result);
             }

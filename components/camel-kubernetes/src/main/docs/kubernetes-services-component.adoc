@@ -83,19 +83,27 @@ This operation returns a list of services from your cluster using a label select
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-services://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
+fromF("kubernetes-services://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Service sv = exchange.getIn().getBody(Service.class);
-            log.info("Got event with configmap name: " + sv.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with service name: " + sv.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the service test.
+This consumer returns a message per event received for all Services from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Services with the specified label in any namespace.
+- `namespace` - Watch all Services in the specified namespace.
+- `namespace` + `resourceName` - Watch the Service with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch Services with the specified label in the given namespace.
 
 
 include::spring-boot:partial$starter.adoc[]

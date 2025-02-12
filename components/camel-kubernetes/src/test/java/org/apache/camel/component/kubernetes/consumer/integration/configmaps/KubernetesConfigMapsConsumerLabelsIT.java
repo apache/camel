@@ -19,6 +19,7 @@ package org.apache.camel.component.kubernetes.consumer.integration.configmaps;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kubernetes.consumer.integration.support.KubernetesConsumerTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -28,18 +29,15 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
         @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
         @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
 })
-public class KubernetesConfigMapsConsumerLabelsIT extends KubernetesConfigMapsTestSupport {
-    private static final Map<String, String> LABELS = Map.of("testkey", "testvalue");
-
+public class KubernetesConfigMapsConsumerLabelsIT extends KubernetesConsumerTestSupport {
     @Test
     public void labelsTest() throws Exception {
-        final String withLabels = "cm-with-labels";
-        result.expectedBodiesReceived(withLabels + " " + NS_WATCH + " ADDED");
+        result.expectedBodiesReceived("ConfigMap cm4 " + ns2 + " ADDED");
 
-        // Create the resource in two namespaces, it should list only from one
-        createConfigMap(NS_WATCH, "cm-no-labels", null);
-        createConfigMap(NS_WATCH, "cm-diff-labels", Map.of("otherKey", "otherValue"));
-        createConfigMap(NS_WATCH, withLabels, LABELS);
+        createConfigMap(ns2, "cm1", null);
+        createConfigMap(ns2, "cm2", Map.of("otherKey", "otherValue"));
+        createConfigMap(ns1, "cm3", LABELS);
+        createConfigMap(ns2, "cm4", LABELS);
 
         result.assertIsSatisfied();
     }
@@ -50,7 +48,7 @@ public class KubernetesConfigMapsConsumerLabelsIT extends KubernetesConfigMapsTe
             @Override
             public void configure() {
                 fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=%s&labelKey=%s&labelValue=%s",
-                        host, authToken, NS_WATCH, "testkey", "testvalue")
+                        host, authToken, ns2, "testkey", "testvalue")
                         .process(new KubernetesProcessor())
                         .to(result);
             }
