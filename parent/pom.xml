@@ -521,6 +521,19 @@
     <dependencyManagement>
         <dependencies>
 
+            <!--
+                Workaround for https://github.com/netplex/json-smart-v2/issues/240
+                To be reverted once the issue is fixed upstream
+            -->
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>2.5.2</version>
+            </dependency>
+            <!--
+                End workaround
+            -->
+
             <!-- camel core -->
             <dependency>
                 <groupId>org.apache.camel</groupId>
