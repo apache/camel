@@ -1,1 +1,1 @@
-../../../../../components/camel-spring-security/src/main/docs/spring-security.adoc
+../../../../../components/camel-spring-parent/camel-spring-security/src/main/docs/spring-security.adoc

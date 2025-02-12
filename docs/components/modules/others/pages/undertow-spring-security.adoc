@@ -1,1 +1,1 @@
-../../../../../components/camel-undertow-spring-security/src/main/docs/undertow-spring-security.adoc
+../../../../../components/camel-spring-parent/camel-undertow-spring-security/src/main/docs/undertow-spring-security.adoc
