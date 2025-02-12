@@ -387,7 +387,7 @@
         <ognl-version>3.4.5</ognl-version>
         <openapi-generator-version>7.11.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
-        <opensearch-rest-client-version>2.18.0</opensearch-rest-client-version>
+        <opensearch-rest-client-version>2.19.0</opensearch-rest-client-version>
         <opensearch-java-client-version>2.20.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.2</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
