@@ -88,12 +88,21 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
             NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>> w
                     = getEndpoint().getKubernetesClient().namespaces();
 
-            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::withName);
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
 
-            watch = w.watch(new Watcher<Namespace>() {
+            if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                w = (NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>>) w.withLabel(labelKey, labelValue);
+            } else if (ObjectHelper.isNotEmpty(resourceName)) {
+                w = (NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>>) getEndpoint().getKubernetesClient()
+                        .namespaces().withName(resourceName);
+            }
+
+            watch = w.watch(new Watcher<>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Namespace resource) {
+                public void eventReceived(Action action, Namespace resource) {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);

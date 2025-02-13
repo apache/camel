@@ -86,18 +86,27 @@ This operation returns a list of RCs from your cluster using a label selector (w
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-replication-controllers://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-    public class KubernertesProcessor implements Processor {
+fromF("kubernetes-replication-controllers://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
+
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             ReplicationController rc = exchange.getIn().getBody(ReplicationController.class);
-            log.info("Got event with configmap name: " + rc.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with replication controller name: " + rc.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the rc test.
+This consumer returns a message per event received for all ReplicationControllers from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Replication Controllers with the specified label in any namespace.
+- `namespace` - Watch all Replication Controllers in the specified namespace.
+- `namespace` + `resourceName` - Watch the Replication Controller with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch Replication Controllers with the specified label in the given namespace.
 
 
 include::spring-boot:partial$starter.adoc[]

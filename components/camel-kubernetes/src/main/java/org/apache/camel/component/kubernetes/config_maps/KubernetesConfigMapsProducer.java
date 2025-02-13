@@ -87,18 +87,28 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        ConfigMapList configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ConfigMapList configMapsList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().list();
+        } else {
+            configMapsList = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespace).list();
+        }
 
         prepareOutboundMessage(exchange, configMapsList.getItems());
     }
 
     protected void doListConfigMapsByLabels(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        ConfigMapList configMapsList = getEndpoint().getKubernetesClient()
-                .configMaps()
-                .inAnyNamespace()
-                .withLabels(labels)
-                .list();
+        ConfigMapList configMapsList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().withLabels(labels).list();
+        } else {
+            configMapsList = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespace).withLabels(labels).list();
+        }
 
         prepareOutboundMessage(exchange, configMapsList.getItems());
     }
