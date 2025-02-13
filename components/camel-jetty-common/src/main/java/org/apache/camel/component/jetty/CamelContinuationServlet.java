@@ -33,12 +33,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpConsumer;
-import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ObjectHelper;
@@ -200,8 +200,10 @@ public class CamelContinuationServlet extends CamelServlet {
                 exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
             }
 
-            HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
-
+            String charset = request.getCharacterEncoding();
+            if (charset != null) {
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
+            }
             // reuse existing http message if pooled
             Message msg = exchange.getIn();
             if (msg instanceof HttpMessage) {
