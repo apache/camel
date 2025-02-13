@@ -93,7 +93,14 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        DeploymentList deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        DeploymentList deploymentsList;
+
+        if (ObjectHelper.isNotEmpty(namespace)) {
+            deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespace).list();
+        } else {
+            deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().list();
+        }
 
         prepareOutboundMessage(exchange, deploymentsList.getItems());
     }
@@ -104,18 +111,32 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>> deployments = getEndpoint()
                 .getKubernetesClient().apps().deployments();
 
-        DeploymentList deploymentList = deployments.withLabels(labels).list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        DeploymentList deploymentsList;
 
-        prepareOutboundMessage(exchange, deploymentList.getItems());
+        if (ObjectHelper.isNotEmpty(namespace)) {
+            deploymentsList = deployments.inNamespace(namespace).withLabels(labels).list();
+        } else {
+            deploymentsList = deployments.withLabels(labels).list();
+        }
+
+        prepareOutboundMessage(exchange, deploymentsList.getItems());
     }
 
     protected void doGetDeployment(Exchange exchange) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Get a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
         }
-        Deployment deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
+        Deployment deployment;
+        if (ObjectHelper.isNotEmpty(namespace)) {
+            deployment = getEndpoint().getKubernetesClient().apps().deployments()
+                    .inNamespace(namespace).withName(deploymentName).get();
+        } else {
+            deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
+        }
 
         prepareOutboundMessage(exchange, deployment);
     }
