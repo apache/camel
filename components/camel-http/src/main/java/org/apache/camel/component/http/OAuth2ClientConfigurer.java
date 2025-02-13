@@ -109,7 +109,7 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
         httpPost.addHeader(HttpHeaders.AUTHORIZATION,
                 HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
         if (null != resourceIndicator) {
-            bodyStr = String.join(bodyStr, "&resourceIndicator=" + resourceIndicator);
+            bodyStr = String.join(bodyStr, "&resource=" + resourceIndicator);
         }
         httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_FORM_URLENCODED));
 

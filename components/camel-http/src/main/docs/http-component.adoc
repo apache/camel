@@ -372,7 +372,7 @@ String scope = "my-scope"; // optional scope
 String resourceIndicator = "https://localhost:9090"; // optional, for RFC 8707
 
 from("direct:start")
-  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope + "&resourceIndicator=" + resourceIndicator);
+  .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope + "&resource=" + resourceIndicator);
 ------------------------------------------------------------------------------------
 
 NOTE: Resource Indicator is the URL to the actual endpoint as defined in the component URI!
