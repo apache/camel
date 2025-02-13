@@ -302,7 +302,7 @@
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>2.9.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
-        <json-smart-version>2.5.1</json-smart-version>
+        <json-smart-version>2.5.2</json-smart-version>
         <jsonata-version>0.9.8</jsonata-version>
         <json-unit-version>4.1.0</json-unit-version>
         <jsoup-version>1.18.3</jsoup-version>
