@@ -496,7 +496,7 @@
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wildfly-elytron>2.2.2.Final</wildfly-elytron>
-        <wiremock-version>3.11.0</wiremock-version>
+        <wiremock-version>3.12.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>7.1.0</woodstox-core-version>
         <xbean-spring-version>4.26</xbean-spring-version>
