@@ -24,10 +24,10 @@ import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListDeletable;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
@@ -86,23 +86,38 @@ public class KubernetesEventsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
+            FilterWatchListDeletable<Event, EventList, Resource<Event>> w;
 
-            FilterWatchListDeletable<Event, EventList, Resource<Event>> w = null;
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w = getEndpoint().getKubernetesClient().events().v1().events().withLabel(
-                        getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                        getEndpoint().getKubernetesConfiguration().getLabelValue());
+            /*
+                Valid options are (according to how the client can be constructed):
+                - inAnyNamespace
+                - inAnyNamespace + withLabel
+                - inNamespace
+                - inNamespace + withLabel
+                - inNamespace + withName
+             */
+            String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
+
+            if (ObjectHelper.isEmpty(namespace)) {
+                w = getEndpoint().getKubernetesClient().events().v1().events().inAnyNamespace();
+
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = w.withLabel(labelKey, labelValue);
+                }
+            } else {
+                final NonNamespaceOperation<Event, EventList, Resource<Event>> client
+                        = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespace);
+                w = client;
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = client.withLabel(labelKey, labelValue);
+                } else if (ObjectHelper.isNotEmpty(resourceName)) {
+                    w = (FilterWatchListDeletable<Event, EventList, Resource<Event>>) client.withName(resourceName);
+                }
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                Resource<Event> eventResource = getEndpoint()
-                        .getKubernetesClient().events().v1().events()
-                        .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
-                w = (FilterWatchListDeletable<Event, EventList, Resource<Event>>) eventResource;
-            }
-            if (w == null) {
-                throw new RuntimeCamelException("Consumer label key or consumer resource name need to be set.");
-            }
+
             watch = w.watch(new Watcher<>() {
 
                 @Override

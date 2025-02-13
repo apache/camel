@@ -21,7 +21,8 @@ import java.util.concurrent.ExecutorService;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.WatcherException;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListDeletable;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
 import io.fabric8.openshift.client.OpenShiftClient;
@@ -86,19 +87,41 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            MixedOperation<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> w
-                    = getEndpoint().getKubernetesClient()
-                            .adapt(OpenShiftClient.class)
-                            .deploymentConfigs();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                        getEndpoint().getKubernetesConfiguration().getLabelValue());
+            FilterWatchListDeletable<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> w;
+
+            /*
+                Valid options are (according to how the client can be constructed):
+                - inAnyNamespace
+                - inAnyNamespace + withLabel
+                - inNamespace
+                - inNamespace + withLabel
+                - inNamespace + withName
+             */
+            String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
+            String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
+            String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
+            String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
+
+            if (ObjectHelper.isEmpty(namespace)) {
+                w = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs().inAnyNamespace();
+
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = w.withLabel(labelKey, labelValue);
+                }
+            } else {
+                final NonNamespaceOperation<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> client
+                        = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
+                                .inNamespace(namespace);
+                w = client;
+                if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
+                    w = client.withLabel(labelKey, labelValue);
+                } else if (ObjectHelper.isNotEmpty(resourceName)) {
+                    w = (FilterWatchListDeletable<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>>) client
+                            .withName(resourceName);
+                }
             }
 
-            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
-
-            watch = w.watch(new Watcher<DeploymentConfig>() {
+            watch = w.watch(new Watcher<>() {
 
                 @Override
                 public void eventReceived(Action action, DeploymentConfig resource) {

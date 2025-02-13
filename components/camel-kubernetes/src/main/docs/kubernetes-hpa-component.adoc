@@ -84,8 +84,10 @@ This operation returns a List of HPAs from your cluster using a label selector (
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-hpa://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-    public class KubernertesProcessor implements Processor {
+fromF("kubernetes-hpa://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
+
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
@@ -95,8 +97,14 @@ fromF("kubernetes-hpa://%s?oauthToken=%s&namespace=default&resourceName=test", h
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the hpa test.
+This consumer returns a message per event received for all HorizontalPodAutoscalers from all namespaces in the cluster.
 
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch HorizontalPodAutoscalers with the specified label in any namespace.
+- `namespace` - Watch all HorizontalPodAutoscalers in the specified namespace.
+- `namespace` + `resourceName` - Watch the HorizontalPodAutoscaler with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch HorizontalPodAutoscalers with the specified label in the given namespace.
 
 
 include::spring-boot:partial$starter.adoc[]

@@ -85,18 +85,27 @@ This operation returns a list of deployment configs from your cluster using a la
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("openshift-deploymentconfigs://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new OpenshiftProcessor()).to("mock:result");
+fromF("openshift-deploymentconfigs://%s?oauthToken=%s", host, authToken)
+    .process(new OpenshiftProcessor()).to("mock:result");
+
     public class OpenshiftProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             DeploymentConfig dp = exchange.getIn().getBody(DeploymentConfig.class);
-            log.info("Got event with configmap name: " + dp.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with deployment config name: " + dp.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the deployment config test.
+This consumer returns a message per event received for all DeploymentConfigs from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch DeploymentConfigs with the specified label in any namespace.
+- `namespace` - Watch all DeploymentConfigs in the specified namespace.
+- `namespace` + `resourceName` - Watch the DeploymentConfig with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch DeploymentConfigs with the specified label in the given namespace.
 
 
 include::spring-boot:partial$starter.adoc[]
