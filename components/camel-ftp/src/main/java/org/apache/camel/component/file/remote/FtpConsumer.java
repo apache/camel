@@ -316,7 +316,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             // the relative filename, skip the leading endpoint configured path
             String relativePath = StringHelper.after(absolutePath, endpointPath);
             // skip leading /
-            return FileUtil.stripLeadingSeparator(relativePath);
+            return FileUtil.stripLeadingSeparator(relativePath) + "/" + file.getName();
         };
     }
 
