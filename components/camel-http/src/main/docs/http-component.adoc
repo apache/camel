@@ -375,7 +375,7 @@ from("direct:start")
   .to("https://localhost:9090/?oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2Scope=" + scope + "&resource=" + resourceIndicator);
 ------------------------------------------------------------------------------------
 
-NOTE: Resource Indicator is the URL to the actual endpoint as defined in the component URI!
+NOTE: Resource Indicator is the URL to the actual endpoint as defined in the component URI.
 
 [NOTE]
 Camel only provides support for OAuth2 client credentials flow
