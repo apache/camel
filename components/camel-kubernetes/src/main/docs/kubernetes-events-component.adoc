@@ -172,21 +172,26 @@ This operation expects two message headers which are `CamelKubernetesNamespaceNa
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-events://%s?oauthToken=%s", host, authToken)
-    .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, constant("default"))
-    .setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, constant("test"))
-    .process(new KubernertesProcessor()).to("mock:result");
+    .process(new KubernetesProcessor()).to("mock:result");
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            Event cm = exchange.getIn().getBody(Event.class);
-            log.info("Got event with event name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            Event e = exchange.getIn().getBody(Event.class);
+            log.info("Got event with event name: " + e.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer returns a message per event received on the namespace "default" for the event "test". It also set the action (`io.fabric8.kubernetes.client.Watcher.Action`) in the message header `CamelKubernetesEventAction` and the timestamp (`long`) in the message header `CamelKubernetesEventTimestamp`.
+This consumer returns a message per event received in the whole cluster. It also set the action (`io.fabric8.kubernetes.client.Watcher.Action`) in the message header `CamelKubernetesEventAction` and the timestamp (`long`) in the message header `CamelKubernetesEventTimestamp`.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Events with the specified label in any namespace.
+- `namespace` - Watch all Events in the specified namespace.
+- `namespace` + `resourceName` - Watch the Event with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch Events with the specified label in the given namespace.
 
 
 include::spring-boot:partial$starter.adoc[]

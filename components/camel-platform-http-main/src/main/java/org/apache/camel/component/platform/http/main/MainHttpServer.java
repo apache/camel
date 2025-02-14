@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
@@ -1309,9 +1310,10 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 if (!scheme) {
                     endpoint = endpoint + "*";
                 }
+                String quotedEndpoint = Pattern.quote(endpoint);
                 for (org.apache.camel.Route route : camelContext.getRoutes()) {
                     Endpoint e = route.getEndpoint();
-                    if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
+                    if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), quotedEndpoint)) {
                         target = e;
                         break;
                     }
@@ -1321,7 +1323,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     for (org.apache.camel.Route route : camelContext.getRoutes()) {
                         String id = route.getRouteId();
                         Endpoint e = route.getEndpoint();
-                        if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
+                        if (EndpointHelper.matchEndpoint(camelContext, id, quotedEndpoint)) {
                             target = e;
                             break;
                         }

@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-mongodb",
-    "version": "4.10.0-SNAPSHOT",
+    "version": "4.11.0-SNAPSHOT",
     "properties": { "mongoClient": { "index": 0, "kind": "property", "displayName": "Mongo Client", "required": true, "type": "object", "javaType": "com.mongodb.client.MongoClient", "deprecated": false, "autowired": false, "secret": false, "description": "The MongoClient to use for connecting to the MongoDB server" }, "dbName": { "index": 1, "kind": "property", "displayName": "Db Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The Database name" }, "collectionName": { "index": 2, "kind": "property", "displayName": "Collection Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The collection name" } }
   }
 }

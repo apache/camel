@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.10.0-SNAPSHOT</version>
+        <version>4.11.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -72,6 +72,10 @@
         <module>camel-jms</module>
         <module>camel-master</module>
         <module>camel-service</module>
+
+        <!-- Abstract components -->
+        <module>camel-tracing</module>
+        <module>camel-telemetry</module>
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
@@ -170,7 +174,6 @@
         <module>camel-javascript</module>
         <module>camel-jaxb</module>
         <module>camel-jcache</module>
-        <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>
         <module>camel-jfr</module>
