@@ -141,7 +141,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     protected void doGet(Exchange exchange, String namespaceName) {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
-            throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
+            throw new IllegalArgumentException("Get a specific custom resource require specify a custom resource name");
         }
         JsonObject customResourceJSON = new JsonObject();
         try {
@@ -166,8 +166,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     protected void doDelete(Exchange exchange, String namespaceName) {
         String customResourceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, String.class);
         if (ObjectHelper.isEmpty(customResourceName)) {
-            LOG.error("Deleting a specific deployment require specify a deployment name");
-            throw new IllegalArgumentException("Deleting a specific deployment require specify a deployment name");
+            LOG.error("Deleting a specific custom resource require specify a custom resource name");
+            throw new IllegalArgumentException("Deleting a specific custom resource require specify a custom resource name");
         }
 
         try {
