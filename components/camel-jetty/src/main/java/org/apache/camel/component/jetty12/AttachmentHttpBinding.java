@@ -121,7 +121,9 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
             // there may be multiple values for the same name
             String[] values = request.getParameterValues(name);
-            LOG.trace("HTTP parameter {} = {}", name, values);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
+            }
 
             if (values != null) {
                 for (String value : values) {
