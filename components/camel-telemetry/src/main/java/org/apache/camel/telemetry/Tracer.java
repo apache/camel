@@ -93,6 +93,10 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         this.traceProcessors = traceProcessors;
     }
 
+    public SpanLifecycleManager getSpanLifecycleManager() {
+        return this.spanLifecycleManager;
+    }
+
     public void setSpanLifecycleManager(SpanLifecycleManager spanLifecycleManager) {
         this.spanLifecycleManager = spanLifecycleManager;
     }

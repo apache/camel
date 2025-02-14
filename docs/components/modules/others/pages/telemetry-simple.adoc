@@ -1,0 +1,1 @@
+../../../../../components/camel-telemetry-simple/src/main/docs/telemetry-simple.adoc
