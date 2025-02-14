@@ -18,6 +18,7 @@ package org.apache.camel.openapi;
 
 import java.util.Map;
 
+import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ComposedSchema;
@@ -41,6 +42,7 @@ public class BeanConfig {
     String basePath;
     String defaultConsumes = DEFAULT_MEDIA_TYPE;
     String defaultProduces = DEFAULT_MEDIA_TYPE;
+    ExternalDocumentation externalDocs;
 
     public String[] getSchemes() {
         return schemes;
@@ -128,10 +130,22 @@ public class BeanConfig {
         this.defaultProduces = defaultProduces;
     }
 
+    public ExternalDocumentation getExternalDocs() {
+        return externalDocs;
+    }
+
+    public void setExternalDocs(ExternalDocumentation externalDocs) {
+        this.externalDocs = externalDocs;
+    }
+
     public OpenAPI configure(OpenAPI openApi) {
         if (info != null) {
             openApi.setInfo(info);
         }
+        if (externalDocs != null) {
+            openApi.setExternalDocs(externalDocs);
+        }
+
         if (this.schemes != null) {
             for (String scheme : this.schemes) {
                 String url = scheme + "://" + this.host;
