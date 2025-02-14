@@ -48,10 +48,10 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                        + "?username=admin&password=admin&delay=10000&disconnect=true"
-                        + "&recursive=true&antInclude=subdir/hello.txt"
-                        + "&knownHostsFile="
-                        + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
+                     + "?username=admin&password=admin&delay=10000&disconnect=true"
+                     + "&recursive=true&antInclude=subdir/hello.txt"
+                     + "&knownHostsFile="
+                     + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };
