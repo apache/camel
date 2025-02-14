@@ -41,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.json.Jsoner;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import picocli.CommandLine;
 
 /**
@@ -119,7 +120,9 @@ public class UpdateList extends CamelCommand {
             // Convert recipes versions into Rows for table and json visualization
             recipesVersions.plainCamelRecipesVersion()
                     .forEach(l -> rows
-                            .add(new Row(l[0], "Camel", "", "Migrates Apache Camel 4 application to Apache Camel " + l[0])));
+                            .add(new Row(
+                                    l[0], "Camel", "",
+                                    "Migrates Apache Camel 4 application to Apache Camel " + l[0])));
             recipesVersions.camelSpringBootRecipesVersion().forEach(l -> {
                 String[] runtimeVersion
                         = recipesVersions.sbVersions().stream().filter(v -> v[0].equals(l[0])).findFirst().orElseThrow();
@@ -143,7 +146,8 @@ public class UpdateList extends CamelCommand {
             });
         }
 
-        rows.sort(Comparator.comparing(Row::version));
+        rows.sort(Comparator.comparing(Row::version).reversed()
+                .thenComparing(Row::runtime));
 
         if (jsonOutput) {
             printer().println(
@@ -157,7 +161,7 @@ public class UpdateList extends CamelCommand {
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("VERSION").minWidth(30).dataAlign(HorizontalAlign.LEFT)
-                            .with(r -> r.version()),
+                            .with(r -> r.version().toString()),
                     new Column().header("RUNTIME")
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtime()),
                     new Column().header("RUNTIME VERSION")
@@ -255,7 +259,10 @@ public class UpdateList extends CamelCommand {
             List<String[]> qVersions) {
     }
 
-    record Row(String version, String runtime, String runtimeVersion, String description) {
+    record Row(ComparableVersion version, String runtime, String runtimeVersion, String description) {
+        public Row(String version, String runtime, String runtimeVersion, String description) {
+            this(new ComparableVersion(version), runtime, runtimeVersion, description);
+        }
     }
 
     record QuarkusUpdates(String version, String description) {
