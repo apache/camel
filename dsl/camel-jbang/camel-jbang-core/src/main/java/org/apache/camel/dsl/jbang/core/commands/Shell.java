@@ -89,6 +89,7 @@ public class Shell extends CamelCommand {
             // start the shell and process input until the user quits with Ctrl-C or Ctrl-D
             String line;
             boolean run = true;
+            TerminalBuilder.setTerminalOverride(terminal);
             while (run) {
                 try {
                     systemRegistry.cleanUp();
@@ -106,6 +107,8 @@ public class Shell extends CamelCommand {
                     systemRegistry.trace(e);
                 }
             }
+        } finally {
+            TerminalBuilder.setTerminalOverride(null);
         }
         return 0;
     }
