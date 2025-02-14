@@ -33,6 +33,7 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
+import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -244,6 +245,20 @@ public class RestOpenApiSupport {
 
         setInfo(openApiConfig, version, title, description, termsOfService, licenseName, licenseUrl,
                 contactName, contactUrl, contactEmail);
+
+        String externalDocsDescription = (String) config.get("externalDocs.description");
+        String externalDocsUrl = (String) config.get("externalDocs.url");
+
+        setExternalDocs(openApiConfig, externalDocsUrl, externalDocsDescription);
+    }
+
+    private static void setExternalDocs(BeanConfig openApiConfig, String externalDocsUrl, String externalDocsDescription) {
+        if (externalDocsUrl != null) {
+            ExternalDocumentation externalDocumentation = new ExternalDocumentation();
+            externalDocumentation.setDescription(externalDocsDescription);
+            externalDocumentation.setUrl(externalDocsUrl);
+            openApiConfig.setExternalDocs(externalDocumentation);
+        }
     }
 
     private void setInfo(

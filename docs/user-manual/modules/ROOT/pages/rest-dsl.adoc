@@ -865,4 +865,6 @@ Most of the properties affect the OpenAPI https://github.com/OAI/OpenAPI-Specifi
 | api.contact.email | The email address of the contact person/organization
 | api.specification.contentType.json | The Content-Type of the served OpenAPI JSON specification, `application/json` by default
 | api.specification.contentType.yaml | The Content-Type of the served OpenAPI YAML specification, `text/yaml` by default
+| externalDocs.url |  The URI for the target documentation. This must be in the form of a URI
+| externalDocs.description | A description of the target documentation
 |===
