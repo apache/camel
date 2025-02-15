@@ -1566,8 +1566,6 @@ public abstract class BaseMainSupport extends BaseService {
 
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
-        // and configure vault
-        DefaultConfigurationConfigurer.configureVaultRefresh(camelContext);
     }
 
     /**
