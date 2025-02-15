@@ -18,4 +18,4 @@
 # A distributed part of main camel "docs/components" 'components' component descriptor:
 
 name: components
-version: next
+version: 4.10.x
