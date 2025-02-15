@@ -91,7 +91,7 @@
         <californium-version>3.13.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camunda-version>7.22.0</camunda-version>
-        <cassandra-driver-version>4.18.1</cassandra-driver-version>
+        <cassandra-driver-version>4.19.0</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
         <chicory-version>1.0.0</chicory-version>
