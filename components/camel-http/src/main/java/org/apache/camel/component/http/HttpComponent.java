@@ -244,6 +244,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String clientSecret = getParameter(parameters, "oauth2ClientSecret", String.class);
         String tokenEndpoint = getParameter(parameters, "oauth2TokenEndpoint", String.class);
         String scope = getParameter(parameters, "oauth2Scope", String.class);
+        String resourceIndicator = getParameter(parameters, "oauth2ResourceIndicator", String.class);
         HttpConfiguration configDefaults = new HttpConfiguration();
         boolean cacheTokens = getParameter(
                 parameters,
@@ -267,6 +268,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             clientId,
                             clientSecret,
                             tokenEndpoint,
+                            resourceIndicator,
                             scope,
                             cacheTokens,
                             cachedTokensDefaultExpirySeconds,

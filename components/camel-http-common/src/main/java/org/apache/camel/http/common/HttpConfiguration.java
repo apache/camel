@@ -42,6 +42,8 @@ public class HttpConfiguration implements Serializable {
     private String oauth2TokenEndpoint;
     @Metadata(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
+    @Metadata(label = "producer,security", description = "OAuth2 Resource Indicator")
+    private String oauth2ResourceIndicator;
     @UriParam(label = "producer,security", defaultValue = "false",
               description = "Whether to cache OAuth2 client tokens.")
     private boolean oauth2CacheTokens = false;
@@ -323,5 +325,23 @@ public class HttpConfiguration implements Serializable {
      */
     public void setOauth2CachedTokensExpirationMarginSeconds(long oauth2CachedTokensExpirationMarginSeconds) {
         this.oauth2CachedTokensExpirationMarginSeconds = oauth2CachedTokensExpirationMarginSeconds;
+    }
+
+    /**
+     * Gets oauth 2 resource indicator.
+     *
+     * @return the oauth 2 resource indicator
+     */
+    public String getOauth2ResourceIndicator() {
+        return oauth2ResourceIndicator;
+    }
+
+    /**
+     * Sets oauth 2 resource indicator.
+     *
+     * @param oauth2ResourceIndicator the oauth 2 resource indicator
+     */
+    public void setOauth2ResourceIndicator(final String oauth2ResourceIndicator) {
+        this.oauth2ResourceIndicator = oauth2ResourceIndicator;
     }
 }
