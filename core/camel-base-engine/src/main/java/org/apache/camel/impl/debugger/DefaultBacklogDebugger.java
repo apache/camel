@@ -909,6 +909,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 try {
                     boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                     if (!hit) {
+                        // remove breakpoint as it timed out
+                        suspendedBreakpointMessages.remove(nodeId);
+                        suspendedBreakpoints.remove(nodeId);
                         logger.log(
                                 String.format("NodeBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
                                         exchangeId),
@@ -989,6 +992,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             try {
                 boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                 if (!hit) {
+                    // remove breakpoint as it timed out
+                    suspendedBreakpointMessages.remove(toNode);
+                    suspendedBreakpoints.remove(toNode);
                     logger.log(
                             String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
                                     exchange.getExchangeId()),
@@ -1093,6 +1099,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             try {
                 boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                 if (!hit) {
+                    // remove breakpoint as it timed out
+                    suspendedBreakpointMessages.remove(toNode);
+                    suspendedBreakpoints.remove(toNode);
                     logger.log(
                             String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
                                     exchange.getExchangeId()),
