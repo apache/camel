@@ -73,7 +73,8 @@ public class PubSubApiClient extends ServiceSupport {
 
     public static final String PUBSUB_ERROR_AUTH_ERROR = "sfdc.platform.eventbus.grpc.service.auth.error";
     private static final String PUBSUB_ERROR_AUTH_REFRESH_INVALID = "sfdc.platform.eventbus.grpc.service.auth.refresh.invalid";
-    private static final String PUBSUB_ERROR_CORRUPTED_REPLAY_ID = "sfdc.platform.eventbus.grpc.subscription.fetch.replayid.corrupted";
+    private static final String PUBSUB_ERROR_CORRUPTED_REPLAY_ID
+            = "sfdc.platform.eventbus.grpc.subscription.fetch.replayid.corrupted";
 
     protected PubSubGrpc.PubSubStub asyncStub;
     protected PubSubGrpc.PubSubBlockingStub blockingStub;
@@ -345,7 +346,8 @@ public class PubSubApiClient extends ServiceSupport {
                             LOG.debug("logged in {}", consumer.getTopic());
                         }
                         case PUBSUB_ERROR_CORRUPTED_REPLAY_ID -> {
-                            LOG.error("replay id is corrupt. try resubscribing with LATEST replay preset");
+                            LOG.error("replay id: " + replayId
+                                      + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
                             replayId = null;
                             initialReplayPreset = ReplayPreset.LATEST;
                         }
