@@ -57,9 +57,7 @@ public class MongoDbComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
-        endpoint.setMongoConnection(mongoConnection);
         setProperties(endpoint, parameters);
-
         return endpoint;
     }
 
