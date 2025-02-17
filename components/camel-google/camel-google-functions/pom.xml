@@ -46,6 +46,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-functions</artifactId>
+            <version>${google-cloud-functions-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
@@ -56,6 +57,7 @@
         <dependency>
             <groupId>com.google.api.grpc</groupId>
             <artifactId>grpc-google-cloud-functions-v1</artifactId>
+            <version>${google-cloud-functions-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -68,6 +70,7 @@
             <groupId>com.google.api</groupId>
             <artifactId>gax-grpc</artifactId>
             <classifier>testlib</classifier>
+            <version>${google-cloud-functions-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
