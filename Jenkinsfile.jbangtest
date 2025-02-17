@@ -59,6 +59,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
+                    branch 'camel-4.10.x'
                     branch 'camel-4.8.x'
                 }
             }
