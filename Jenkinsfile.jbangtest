@@ -38,7 +38,6 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
-        skipDefaultCheckout(true)
     }
 
     parameters {
