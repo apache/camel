@@ -7,7 +7,7 @@
     "javaType": "org.apache.camel.processor.transformer.StringDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-processor",
-    "version": "4.10.0-SNAPSHOT"
+    "version": "4.10.1-SNAPSHOT"
   }
 }
 

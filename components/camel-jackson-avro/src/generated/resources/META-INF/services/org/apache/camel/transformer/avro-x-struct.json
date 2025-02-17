@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.jackson.avro.transform.AvroStructDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson-avro",
-    "version": "4.10.0-SNAPSHOT"
+    "version": "4.10.1-SNAPSHOT"
   }
 }
 

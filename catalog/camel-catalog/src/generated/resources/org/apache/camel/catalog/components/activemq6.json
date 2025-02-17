@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-activemq6",
-    "version": "4.10.0-SNAPSHOT",
+    "version": "4.10.1-SNAPSHOT",
     "scheme": "activemq6",
     "extendsScheme": "jms",
     "syntax": "activemq6:destinationType:destinationName",

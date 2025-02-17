@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.impl.console.ServiceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.10.0-SNAPSHOT"
+    "version": "4.10.1-SNAPSHOT"
   }
 }
 

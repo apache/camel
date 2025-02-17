@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-imagerecognition",
-    "version": "4.10.0-SNAPSHOT",
+    "version": "4.10.1-SNAPSHOT",
     "scheme": "hwcloud-imagerecognition",
     "extendsScheme": "",
     "syntax": "hwcloud-imagerecognition:operation",
