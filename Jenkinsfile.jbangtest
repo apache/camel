@@ -38,7 +38,6 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
-        skipDefaultCheckout(true)
     }
 
     parameters {
@@ -52,6 +51,7 @@ pipeline {
                  expression { params.CLEAN }
              }
              steps {
+                 sh 'git clean -fdx'           
            }
         }
 
@@ -59,13 +59,13 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
+                    branch 'camel-4.10.x'
                     branch 'camel-4.8.x'
                 }
             }
             steps {
-                cleanWs()
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
-                sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Dshared.maven.local.repo=${localMavenRepo} -Pjbang-it-test"
+                sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Pjbang-it-test"
             }
             post {
                always {
