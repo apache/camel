@@ -87,11 +87,9 @@ This operation returns a List of ConfigMaps from your cluster, using a label sel
 [source,java]
 --------------------------------------------------------------------------------
 fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
-    .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, constant("default"))
-    .setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, constant("test"))
-    .process(new KubernertesProcessor()).to("mock:result");
+    .process(new KubernetesProcessor()).to("mock:result");
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
@@ -101,7 +99,14 @@ fromF("kubernetes-config-maps://%s?oauthToken=%s", host, authToken)
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events on the namespace default for the config map test.
+This consumer returns a message per event received for all ConfigMaps from all namespaces in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch ConfigMaps with the specified label in any namespace.
+- `namespace` - Watch all ConfigMaps in the specified namespace.
+- `namespace` + `resourceName` - Watch the ConfigMap with the specified name in the given namespace.
+- `namespace` + `labelKey` + `labelValue` - Watch ConfigMaps with the specified label in the given namespace.
 
 == Using configmap properties function with Kubernetes
 

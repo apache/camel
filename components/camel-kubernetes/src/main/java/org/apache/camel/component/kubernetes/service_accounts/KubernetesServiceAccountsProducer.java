@@ -63,7 +63,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
                 doListServiceAccountsByLabels(exchange);
                 break;
 
-            case KubernetesOperations.GET_SECRET_OPERATION:
+            case KubernetesOperations.GET_SERVICE_ACCOUNT_OPERATION:
                 doGetServiceAccount(exchange);
                 break;
 

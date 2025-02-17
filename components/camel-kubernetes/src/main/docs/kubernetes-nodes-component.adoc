@@ -84,18 +84,25 @@ This operation returns a list of nodes from your cluster, using a label selector
 
 [source,java]
 --------------------------------------------------------------------------------
-fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
-    public class KubernertesProcessor implements Processor {
+fromF("kubernetes-nodes://%s?oauthToken=%s", host, authToken)
+    .process(new KubernetesProcessor()).to("mock:result");
+
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Node node = exchange.getIn().getBody(Node.class);
-            log.info("Got event with configmap name: " + node.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with node name: " + node.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 --------------------------------------------------------------------------------
 
-This consumer will return a list of events for the node test.
+This consumer returns a message per event received for all Nodes in the cluster.
+
+You can narrow the scope of the consumer using the following query parameter combinations:
+
+- `labelKey` + `labelValue` - Watch Nodes with the specified label.
+- `resourceName` - Watch the Nodes with the specified name.
 
 
 include::spring-boot:partial$starter.adoc[]

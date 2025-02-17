@@ -125,6 +125,24 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
         assertTrue(secDeleted);
     }
 
+    @Test
+    public void getServiceAccount() {
+        final String name = "sa1";
+        final String ns = "test";
+        ServiceAccount sa = new ServiceAccountBuilder().withNewMetadata().withName(name).withNamespace(ns).and().build();
+        server.expect().get().withPath("/api/v1/namespaces/" + ns + "/serviceaccounts/" + name).andReturn(200, sa).once();
+
+        Exchange ex = template.request("direct:get", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, ns);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, name);
+        });
+
+        ServiceAccount result = ex.getMessage().getBody(ServiceAccount.class);
+
+        assertEquals(ns, result.getMetadata().getNamespace());
+        assertEquals(name, result.getMetadata().getName());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -140,6 +158,8 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=updateServiceAccount");
                 from("direct:delete").to(
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=deleteServiceAccount");
+                from("direct:get")
+                        .to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=getServiceAccount");
             }
         };
     }
