@@ -188,10 +188,14 @@
         <google-api-services-sheets-version>v4-rev20250106-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.37.0</google-oauth-client-version>
-        <google-cloud-bom-version>26.54.0</google-cloud-bom-version>
-        <google-cloud-functions-bom-version>2.57.0</google-cloud-functions-bom-version>
+        <google-cloud-bigquery-version>2.48.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.51.0</google-cloud-core-version>
+        <google-cloud-functions-version>2.60.0</google-cloud-functions-version>
         <google-cloud-http-client-version>1.46.1</google-cloud-http-client-version>
-        <google-cloud-secretmanager-bom-version>2.55.0</google-cloud-secretmanager-bom-version>
+        <google-cloud-pubsub-version>1.137.0</google-cloud-pubsub-version>
+        <google-cloud-pubsublite-version>1.15.3</google-cloud-pubsublite-version>
+        <google-cloud-secretmanager-version>2.55.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.48.2</google-cloud-storage-version>
         <graaljs-version>24.1.2</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
         <greenmail-version>2.1.3</greenmail-version>
@@ -3108,14 +3112,6 @@
                 <artifactId>protoc-gen-grpc-java</artifactId>
                 <version>${grpc-version}</version>
                 <type>pom</type>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-cloud-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <dependency>
