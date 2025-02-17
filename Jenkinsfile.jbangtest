@@ -64,7 +64,7 @@ pipeline {
             }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
-                sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Dshared.maven.local.repo=${localMavenRepo} -Pjbang-it-test"
+                sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Pjbang-it-test"
             }
             post {
                always {
