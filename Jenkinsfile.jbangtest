@@ -52,6 +52,7 @@ pipeline {
                  expression { params.CLEAN }
              }
              steps {
+                 cleanWs()             
            }
         }
 
