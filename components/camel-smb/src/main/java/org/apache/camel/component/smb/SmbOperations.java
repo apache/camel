@@ -66,7 +66,7 @@ public class SmbOperations implements SmbFileOperations {
 
     public SmbOperations(SmbConfiguration configuration) {
         this.configuration = configuration;
-        this.smbClient = new SMBClient();
+        this.smbClient = configuration == null || configuration.getSmbConfig() == null ? new SMBClient() : new SMBClient(configuration.getSmbConfig());
     }
 
     @Override
