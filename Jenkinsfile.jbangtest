@@ -52,7 +52,7 @@ pipeline {
                  expression { params.CLEAN }
              }
              steps {
-                 cleanWs()             
+                 sh 'git clean -fdx'           
            }
         }
 
