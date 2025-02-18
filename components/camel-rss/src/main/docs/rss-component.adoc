@@ -112,6 +112,62 @@ public static class FilterBean {
 }
 ----
 
+== Proxy Support in Camel RSS Component
 
+The Camel RSS component does not natively support proxy configuration. However, you can work around this limitation by using the Camel HTTP component with a proxy and then processing the raw RSS feed using xref:rss-dataformat.adoc[RSS DataFormat].
+
+Alternative Approach: Using the HTTP Component with Proxy
+Instead of directly using `from("rss:...")`, you can configure an HTTP client with proxy settings and fetch the RSS feed via the HTTP component. Then, the xref:rss-dataformat.adoc[RSS DataFormat] can be used to parse the raw response into a structured RSS feed.
+
+=== Configuring Proxy for HTTP Component and Processing RSS
+
+Below is an example that sets up an HTTP client with a proxy (including authentication support) and uses it to retrieve and process an RSS feed:
+
+[source,java]
+----
+protected RoutesBuilder createRouteBuilder() throws Exception {
+    String proxyHost = "myProxyHost";
+    Integer proxyPort = 8888;
+    String proxyUserName = "username";
+    String proxyPassword = "password";
+
+    context().getRegistry().bind("myHttpClientConfigurer", new HttpClientConfigurer() {
+        @Override
+        public void configureHttpClient(HttpClientBuilder clientBuilder) {
+            var routePlanner = new DefaultProxyRoutePlanner(new HttpHost(proxyHost, proxyPort)) {
+                @Override
+                protected HttpHost determineProxy(HttpHost host, HttpContext context) throws HttpException {
+                    // Custom logic for filtering specific hosts
+                    return super.determineProxy(host, context);
+                }
+            };
+            clientBuilder.setRoutePlanner(routePlanner);
+            clientBuilder.setProxyAuthenticationStrategy(new DefaultAuthenticationStrategy());
+
+            var credentials = new UsernamePasswordCredentials(
+                    proxyUserName,
+                    proxyPassword.toCharArray()
+            );
+
+            var credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(
+                    new AuthScope(proxyHost, proxyPort),
+                    credentials
+            );
+            clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+        }
+    });
+
+    return new RouteBuilder() {
+        @Override
+        public void configure() throws Exception {
+            from("timer://mytimer?fixedRate=false&period=60&synchronous=true")
+                .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=myHttpClientConfigurer")
+                .unmarshal(new RssDataFormat()) // Convert raw response to structured RSS
+                .to("mock:result");
+        }
+    };
+}
+----
 
 include::spring-boot:partial$starter.adoc[]
