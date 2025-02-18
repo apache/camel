@@ -224,6 +224,8 @@
                 <maven.test.skip>false</maven.test.skip>
                 <shared.data.folder>target/data</shared.data.folder>
                 <cli.jbang.version>${project.version}</cli.jbang.version>
+                <cli.jbang.repo>apache/camel</cli.jbang.repo>
+                <cli.jbang.branch>main</cli.jbang.branch>
                 <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
                 <x11.display>:0</x11.display>
             </properties>
@@ -267,6 +269,8 @@
                                 <cli.service.data.folder>${shared.data.folder}</cli.service.data.folder>
                                 <cli.service.version>${cli.jbang.version}</cli.service.version>
                                 <cli.service.mvn.local>${shared.maven.local.repo}</cli.service.mvn.local>
+                                <cli.service.repo>${cli.jbang.repo}</cli.service.repo>
+                                <cli.service.branch>${cli.jbang.branch}</cli.service.branch>
                                 <jbang.it.assert.wait.timeout>300</jbang.it.assert.wait.timeout>
                                 <DISPLAY>${x11.display}</DISPLAY>
                             </systemPropertyVariables>
