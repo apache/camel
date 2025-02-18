@@ -34,7 +34,7 @@ public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, "subdir/hello.txt");
         mock.expectedBodiesReceived(expected);
 
         context.getRouteController().startRoute("foo");
