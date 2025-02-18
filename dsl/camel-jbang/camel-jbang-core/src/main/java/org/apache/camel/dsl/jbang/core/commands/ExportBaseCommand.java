@@ -804,10 +804,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "mvnw")));
         is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/mvnw.cmd");
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "mvnw.cmd")));
-        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/.mvn/wrapper/maven-wrapper.jar");
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("maven-wrapper/maven-wrapper.jar");
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "maven-wrapper.jar")));
         is = ExportBaseCommand.class.getClassLoader()
-                .getResourceAsStream("maven-wrapper/.mvn/wrapper/maven-wrapper.properties");
+                .getResourceAsStream("maven-wrapper/maven-wrapper.properties");
         IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "maven-wrapper.properties")));
         // set execute file permission on mvnw/mvnw.cmd files
         File file = new File(BUILD_DIR, "mvnw");
