@@ -13,7 +13,7 @@ System variables are defined in link:{config-class}[CliProperties]
 
  - `cli.service.repo` : the repo on github, default `apache/camel`
  - `cli.service.branch` : the branch of the repo on github, default `main`
- - `cli.service.version` : the version of the `camel.jbang.version` and the `camel-kamelets.version` defined in the `CamelJBang.java` file, default value is `default`, it means it uses the default values in the file
+ - `cli.service.version` : the version of the `camel.jbang.version` defined in the `CamelJBang.java` file, default value is `default`, it means it uses the default values in the file
  - `cli.service.data.folder` : mandatory - path to local folder to bind as volume in the container
  - `cli.service.ssh.password` : ssh password set to access to the container via ssh, default `jbang`
  - `cli.service.execute.version` : Camel version set just after container start, default is empty so the version is the one in the branch
