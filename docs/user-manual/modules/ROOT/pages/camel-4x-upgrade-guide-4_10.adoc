@@ -4,6 +4,13 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.10.0 to 4.10.1
+
+=== camel-ftp
+
+The file name header `Exchange.FILE_NAME` now includes the relative path such as `subdir/hello.txt`
+when using `recursive=true`, to be similar to how `camel-file` component behaves.
+
 == Upgrading Camel 4.9 to 4.10
 
 === XML DSL changes
