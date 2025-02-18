@@ -455,8 +455,14 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processExchange(Exchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
-            MailMessage msg = (MailMessage) exchange.getIn();
-            LOG.debug("Processing message: {}", MailUtils.dumpMessage(msg.getMessage()));
+            var msg = exchange.getIn();
+            if (msg instanceof AttachmentMessage am) {
+                // unwrap from attachment message
+                msg = am.getDelegateMessage();
+            }
+            if (msg instanceof MailMessage mm) {
+                LOG.debug("Processing message: {}", MailUtils.dumpMessage(mm.getMessage()));
+            }
         }
         getProcessor().process(exchange);
     }
