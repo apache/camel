@@ -16,3 +16,8 @@ And as such some APIs inside these components has been changed.
 
 This will only affect if you have built your own custom Camel component on top of `camel-file`.
 And if so, your custom code may need to be changed slightly as well.
+
+=== camel-ftp
+
+The file name header `Exchange.FILE_NAME` now includes the relative path such as `subdir/hello.txt`
+when using `recursive=true`, to be similar to how `camel-file` component behaves.
