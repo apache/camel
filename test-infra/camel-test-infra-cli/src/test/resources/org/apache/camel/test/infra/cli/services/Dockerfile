@@ -63,7 +63,6 @@ RUN source ~/.bashrc \
     then jbang app install camel@$CAMEL_REPO/$CAMEL_REF ; \
     else jbang app install \
     -Dcamel.jbang.version=$CAMEL_JBANG_VERSION \
-    -Dcamel-kamelets.version=$CAMEL_JBANG_VERSION \
     camel@$CAMEL_REPO/$CAMEL_REF ; fi
 
 LABEL "camel.ref"=$CAMEL_REF
