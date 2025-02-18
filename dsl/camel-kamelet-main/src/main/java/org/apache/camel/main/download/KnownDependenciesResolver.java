@@ -17,6 +17,8 @@
 package org.apache.camel.main.download;
 
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -38,22 +40,25 @@ public final class KnownDependenciesResolver {
     }
 
     public void loadKnownDependencies() {
-        doLoadKnownDependencies("/camel-main-known-dependencies.properties");
-        doLoadKnownDependencies("/camel-component-known-dependencies.properties");
+        doLoadKnownDependencies("camel-main-known-dependencies.properties");
+        doLoadKnownDependencies("camel-component-known-dependencies.properties");
     }
 
     private void doLoadKnownDependencies(String name) {
         try {
-            InputStream is = getClass().getResourceAsStream(name);
-            if (is != null) {
-                Properties prop = new Properties();
-                prop.load(is);
-                Map<String, String> map = new HashMap<>();
-                for (String key : prop.stringPropertyNames()) {
-                    String value = prop.getProperty(key);
-                    map.put(key, value);
+            Enumeration<URL> resources = getClass().getClassLoader().getResources(name);
+            while (resources.hasMoreElements()) {
+                URL resource = resources.nextElement();
+                try (InputStream is = resource.openStream()) {
+                    Properties prop = new Properties();
+                    prop.load(is);
+                    Map<String, String> map = new HashMap<>();
+                    for (String key : prop.stringPropertyNames()) {
+                        String value = prop.getProperty(key);
+                        map.put(key, value);
+                    }
+                    addMappings(map);
                 }
-                addMappings(map);
             }
         } catch (Exception e) {
             // ignore
