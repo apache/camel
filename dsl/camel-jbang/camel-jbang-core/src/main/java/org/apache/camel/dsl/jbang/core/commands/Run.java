@@ -987,7 +987,8 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "package", "quarkus:" + (dev ? "dev" : "run"));
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.getCanonicalPath() + File.separatorChar + "pom.xml", "package",
+                "quarkus:" + (dev ? "dev" : "run"));
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
@@ -1068,7 +1069,8 @@ public class Run extends CamelCommand {
         if (FileUtil.isWindows()) {
             mvnw = "/mvnw.cmd";
         }
-        pb.command(runDir + mvnw, "--quiet", "--file", runDir.toString(), "spring-boot:run");
+        pb.command(runDir + mvnw, "--quiet", "--file", runDir.getCanonicalPath() + File.separatorChar + "pom.xml",
+                "spring-boot:run");
 
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         Process p = pb.start();
