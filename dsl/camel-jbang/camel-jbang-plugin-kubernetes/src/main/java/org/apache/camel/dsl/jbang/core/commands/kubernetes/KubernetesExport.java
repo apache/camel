@@ -292,6 +292,9 @@ public class KubernetesExport extends Export {
                 printer().printf("OpenShift forcing --image-builder=docker%n");
                 imageBuilder = "docker";
             }
+            // the deployment trait already generates the src/main/jkube/deployment.yml
+            // but we also have to set in the jkube to generate Deployment instead of DeploymentConfig
+            buildProperties.add("jkube.build.switchToDeployment=true");
             buildProperties.add("jkube.maven.plugin=%s".formatted("openshift-maven-plugin"));
         } else {
             buildProperties.add("jkube.maven.plugin=%s".formatted("kubernetes-maven-plugin"));

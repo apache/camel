@@ -314,6 +314,21 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldAddJkubeOpenshiftDeploymentProperty(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--cluster-type", "openshift",
+                "--runtime=" + rt.runtime());
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        Properties props = model.getProperties();
+        Assertions.assertEquals("true", props.get("jkube.build.switchToDeployment"),
+                "property jkube.build.switchToDeployment=true not set in pom.xml");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldAddContainerSpec(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route-service.yaml" },
                 "--gav=camel-test:route-service:1.0.0", "--runtime=" + rt.runtime());
