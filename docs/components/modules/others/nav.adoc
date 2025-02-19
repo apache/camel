@@ -52,7 +52,7 @@
 ** xref:spring-xml.adoc[Spring XML]
 ** xref:springdoc.adoc[Springdoc]
 ** xref:telemetry.adoc[Telemetry]
-** xref:telemetry-dev.adoc[Temetry Dev]
+** xref:telemetry-dev.adoc[Telemetry Dev]
 ** xref:test-junit5.adoc[Test JUnit5]
 ** xref:test-main-junit5.adoc[Test Main JUnit5]
 ** xref:test-spring-junit5.adoc[Test Spring JUnit5]

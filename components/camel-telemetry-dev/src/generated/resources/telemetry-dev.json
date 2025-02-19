@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "telemetry-dev",
-    "title": "Temetry Dev",
+    "title": "Telemetry Dev",
     "description": "Basic implementation of Camel Telemetry useful for development purposes",
     "deprecated": false,
     "firstVersion": "4.11.0",
