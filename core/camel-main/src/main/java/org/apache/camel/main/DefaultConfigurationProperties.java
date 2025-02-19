@@ -86,6 +86,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String logName;
     private String logLanguage;
     private boolean autoStartup = true;
+    private String autoStartupExcludePattern;
     private boolean allowUseOriginalMessage;
     private boolean caseInsensitiveHeaders = true;
     private boolean autowiredEnabled = true;
@@ -800,6 +801,22 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public String getAutoStartupExcludePattern() {
+        return autoStartupExcludePattern;
+    }
+
+    /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    public void setAutoStartupExcludePattern(String autoStartupExcludePattern) {
+        this.autoStartupExcludePattern = autoStartupExcludePattern;
     }
 
     public boolean isAllowUseOriginalMessage() {
@@ -2093,6 +2110,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
+        return (T) this;
+    }
+
+    /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    public T withAutoStartupExcludePattern(String autoStartupExcludePattern) {
+        this.autoStartupExcludePattern = autoStartupExcludePattern;
         return (T) this;
     }
 

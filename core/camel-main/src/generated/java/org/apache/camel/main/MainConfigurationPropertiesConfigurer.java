@@ -29,6 +29,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("AutoConfigurationLogSummary", boolean.class);
         map.put("AutoConfigurationSystemPropertiesEnabled", boolean.class);
         map.put("AutoStartup", boolean.class);
+        map.put("AutoStartupExcludePattern", java.lang.String.class);
         map.put("AutowiredEnabled", boolean.class);
         map.put("BasePackageScan", java.lang.String.class);
         map.put("BasePackageScanEnabled", boolean.class);
@@ -165,6 +166,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "autoConfigurationSystemPropertiesEnabled": target.setAutoConfigurationSystemPropertiesEnabled(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": target.setAutoStartupExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
@@ -414,6 +417,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "autoConfigurationSystemPropertiesEnabled": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "basepackagescan":
@@ -659,6 +664,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "autoConfigurationSystemPropertiesEnabled": return target.isAutoConfigurationSystemPropertiesEnabled();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return target.getAutoStartupExcludePattern();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basepackagescan":

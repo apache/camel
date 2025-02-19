@@ -40,6 +40,12 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel Profile")
     String getProfile();
 
+    @ManagedAttribute(description = "Camel Auto Startup")
+    Boolean getAutoStartup();
+
+    @ManagedAttribute(description = "Camel Auto Startup Exclude Pattern")
+    String getAutoStartupExcludePattern();
+
     @ManagedAttribute(description = "Camel State")
     String getState();
 

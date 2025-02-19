@@ -204,6 +204,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public Boolean getAutoStartup() {
+        return context.isAutoStartup();
+    }
+
+    @Override
+    public String getAutoStartupExcludePattern() {
+        return context.getAutoStartupExcludePattern();
+    }
+
+    @Override
     public String getState() {
         return context.getStatus().name();
     }

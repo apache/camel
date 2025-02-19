@@ -29,6 +29,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "applicationContextClassLoader": target.setApplicationContextClassLoader(property(camelContext, java.lang.ClassLoader.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": target.setAutoStartupExcludePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracing":
@@ -143,6 +145,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "applicationContextClassLoader": return java.lang.ClassLoader.class;
         case "autostartup":
         case "autoStartup": return java.lang.Boolean.class;
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return java.lang.Boolean.class;
         case "backlogtracing":
@@ -258,6 +262,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "applicationContextClassLoader": return target.getApplicationContextClassLoader();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
+        case "autostartupexcludepattern":
+        case "autoStartupExcludePattern": return target.getAutoStartupExcludePattern();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
