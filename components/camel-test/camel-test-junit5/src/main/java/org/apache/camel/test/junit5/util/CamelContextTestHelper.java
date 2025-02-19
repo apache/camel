@@ -29,14 +29,18 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
+import org.apache.camel.test.junit5.StubComponentResolver;
 import org.apache.camel.test.junit5.TestExecutionConfiguration;
 import org.apache.camel.test.junit5.TestSupport;
 import org.slf4j.Logger;
@@ -159,6 +163,27 @@ public final class CamelContextTestHelper {
         if (mockAndSkipPattern != null) {
             context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockAndSkipPattern, true));
+        }
+    }
+
+    /**
+     * Enables auto stub
+     */
+    public static void enableAutoStub(CamelContext context, String pattern) {
+        if (pattern != null) {
+            StubComponent stub = context.getComponent("stub", StubComponent.class);
+            // enable shadow mode on stub component
+            stub.setShadow(true);
+            stub.setShadowPattern(pattern);
+            // should not autowire
+            stub.setAutowiredEnabled(false);
+            // and use a specialized component resolver
+            context.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
+                    new StubComponentResolver(pattern));
+            // need to replace autowire strategy with stub capable
+            context.getLifecycleStrategies()
+                    .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+            context.getLifecycleStrategies().add(new StubComponentAutowireStrategy(context, pattern));
         }
     }
 

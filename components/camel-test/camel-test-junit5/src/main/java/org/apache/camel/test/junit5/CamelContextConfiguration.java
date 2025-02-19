@@ -59,6 +59,7 @@ public class CamelContextConfiguration {
     private Breakpoint breakpoint;
     private String mockEndpoints;
     private String mockEndpointsAndSkip;
+    private String stubEndpoints;
     private Properties useOverridePropertiesWithPropertiesComponent;
     private Boolean ignoreMissingLocationWithPropertiesComponent;
 
@@ -182,6 +183,22 @@ public class CamelContextConfiguration {
      */
     public CamelContextConfiguration withMockEndpointsAndSkip(String mockEndpointsAndSkip) {
         this.mockEndpointsAndSkip = mockEndpointsAndSkip;
+        return this;
+    }
+
+    public String stubEndpoints() {
+        return stubEndpoints;
+    }
+
+    /**
+     * Enables auto stub endpoints based on the pattern.
+     * <p/>
+     * Use <tt>*</tt> to stub all endpoints.
+     *
+     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
+     */
+    public CamelContextConfiguration withStubEndpoints(String pattern) {
+        this.stubEndpoints = pattern;
         return this;
     }
 

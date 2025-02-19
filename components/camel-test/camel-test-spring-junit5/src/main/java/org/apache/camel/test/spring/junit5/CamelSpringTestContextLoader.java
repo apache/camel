@@ -151,6 +151,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
         CamelAnnotationsHandler.handleMockEndpointsAndSkip(context, testClass);
+        CamelAnnotationsHandler.handleStubEndpoints(context, testClass);
 
         // CamelContext(s) startup
         CamelAnnotationsHandler.handleCamelContextStartup(context, testClass);

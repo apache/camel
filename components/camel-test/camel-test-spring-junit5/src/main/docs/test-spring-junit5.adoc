@@ -212,6 +212,7 @@ The following annotations can be used with `camel-spring-junit5` unit testing.
 | `@ShutdownTimeout` | Timeout to use for xref:manual::graceful-shutdown.adoc[shutdown]. The default is 10 seconds.
 | `@UseAdviceWith` | To enable testing with xref:manual::advice-with.adoc[Advice With].
 | `@UseOverridePropertiesWithPropertiesComponent` | To use custom `Properties` with the xref:ROOT:properties-component.adoc[Properties] component. The annotated method must be `public` and return `Properties`.
+| `@StubEndpoints` | To auto-stub of endpoints whose URIs match the provided filter.
 |=======================================================================
 
 
