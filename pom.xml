@@ -77,6 +77,7 @@
         <module>core</module>
         <module>test-infra</module>
         <module>components</module>
+        <module>preview</module>
         <module>catalog</module>
         <module>camel-dependencies</module>
         <module>dsl</module>
