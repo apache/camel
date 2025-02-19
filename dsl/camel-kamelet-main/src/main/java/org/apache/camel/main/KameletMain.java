@@ -71,6 +71,7 @@ import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
 import org.apache.camel.main.download.SagaDownloader;
 import org.apache.camel.main.download.StubBeanRepository;
+import org.apache.camel.main.download.StubComponentAutowireStrategy;
 import org.apache.camel.main.download.TransactedDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
@@ -637,6 +638,12 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
                     new DependencyDownloaderResourceLoader(answer, sourceDir));
 
+            if (stubPattern != null) {
+                // need to replace autowire strategy with stub capable
+                answer.getLifecycleStrategies()
+                        .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+                answer.getLifecycleStrategies().add(new StubComponentAutowireStrategy(answer, stubPattern));
+            }
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
             Object kameletsVersion = getInitialProperties().get(getInstanceType() + ".kameletsVersion");
             if (kameletsVersion != null) {
