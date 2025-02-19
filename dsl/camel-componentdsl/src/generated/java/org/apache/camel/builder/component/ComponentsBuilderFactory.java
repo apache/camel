@@ -2078,6 +2078,19 @@ public interface ComponentsBuilderFactory {
         return HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
+     * IBM Secrets Manager (camel-ibm-secrets-manager)
+     * Manage secrets in IBM Secrets Manager Service
+     * 
+     * Category: cloud,cloud
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
+     * 
+     * @return the dsl builder
+     */
+    static IbmSecretsManagerComponentBuilderFactory.IbmSecretsManagerComponentBuilder ibmSecretsManager() {
+        return IbmSecretsManagerComponentBuilderFactory.ibmSecretsManager();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

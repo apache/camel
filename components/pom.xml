@@ -158,6 +158,7 @@
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
+        <module>camel-ibm-secrets-manager</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>

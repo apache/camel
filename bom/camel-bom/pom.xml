@@ -1004,6 +1004,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ibm-secrets-manager</artifactId>
+        <version>4.11.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ical</artifactId>
         <version>4.11.0-SNAPSHOT</version>
       </dependency>
