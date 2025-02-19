@@ -39,12 +39,16 @@
         </dependency>
         <dependency>
             <groupId>org.apache.drill.exec</groupId>
-            <artifactId>drill-jdbc-all</artifactId>
+            <artifactId>drill-jdbc</artifactId>
             <version>${apache-drill-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
