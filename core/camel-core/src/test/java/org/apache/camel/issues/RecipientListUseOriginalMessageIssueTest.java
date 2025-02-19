@@ -16,10 +16,13 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,7 +39,9 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists(testFile("outbox/hello.txt"), "A");
+        Awaitility.await().pollDelay(50, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+            assertFileExists(testFile("outbox/hello.txt"), "A");
+        });
     }
 
     @Override
