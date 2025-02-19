@@ -97,6 +97,60 @@ Then notice the error handler has been configured to do redeliveries up till 5 t
 Suppose the sink kamelet is throwing an exception, then Camel will now perform the redelivery attempt
 at the point of origin, which means inside the Kamelet.
 
+=== Calling a Kamelet from another Kamelet
+
+NOTE: this feature is available since version 4.10.0 onward
+
+As a Kamelet behave as any other regular component, you will be able to use it in a nested way. The definition of a Kamelet can contains the reference to another Kamelet which will give you a high level of flexibility when constructing your abstraction.
+
+In the following example, we are creating a Kamelet which is calling a bundled catalog Kamelet `log-sink`:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Kamelet
+metadata:
+  name: nested-sink
+spec:
+  definition:
+    title: "Kamelet in a Kamelet"
+    description: A Kamelet calling another Kamelet
+    required:
+      - log-level
+    properties:
+      log-level:
+        title: The Kamelet log-sink log level
+        description: The Kamelet log-sink log level
+        type: string
+        example: DEBUG
+  dependencies:
+  - "camel:core"
+  - "camel:kamelet"
+  template:
+    from:
+      uri: "kamelet:source"
+      steps:
+      - to: "kamelet:log-sink?level={{log-level}}"
+----
+
+According to the specification, this Kamelet expects a parameter, _log-level_ which we will use as a further parameter for the downstream call to the `log-sink` Kamelet.
+
+The usage of this Kamelet into a Camel route is going to be the same as any other Kamelet:
+
+[source,yaml]
+----
+- from:
+    uri: "timer:yaml"
+    parameters:
+      period: "5000"
+    steps:
+      - setBody:
+          simple: "Hello Camel from ${routeId}"
+      - to: "kamelet:nested-sink?log-level=INFO"
+----
+
+WARNING: beware of any potential circular reference you may introduce when using chain of Kamelets, in which case, the runtime will likely be idle consuming a high amount of resources.
+
 == Examples
 
 _Kamelets_ can be used as if they were standard Camel components.
