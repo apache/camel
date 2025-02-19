@@ -34,7 +34,7 @@
     <properties>
         <firstVersion>4.11.0</firstVersion>
         <label>monitoring,microservice</label>
-        <title>Temetry Dev</title>
+        <title>Telemetry Dev</title>
         <supportLevel>Preview</supportLevel>
     </properties>
 

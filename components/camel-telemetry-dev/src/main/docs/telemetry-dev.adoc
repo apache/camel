@@ -1,5 +1,5 @@
-= Temetry Dev Component
-:doctitle: Temetry Dev
+= Telemetry Dev Component
+:doctitle: Telemetry Dev
 :shortname: telemetry-dev
 :artifactid: camel-telemetry-dev
 :description: Basic implementation of Camel Telemetry useful for development purposes
