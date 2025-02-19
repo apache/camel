@@ -6761,6 +6761,46 @@ public class StaticEndpointBuilders {
         return SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Secrets Manager (camel-ibm-secrets-manager)
+     * Manage secrets in IBM Secrets Manager Service
+     * 
+     * Category: cloud,cloud
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
+     * 
+     * Syntax: <code>ibm-secrets-manager:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(String path) {
+        return ibmSecretsManager("ibm-secrets-manager", path);
+    }
+    /**
+     * IBM Secrets Manager (camel-ibm-secrets-manager)
+     * Manage secrets in IBM Secrets Manager Service
+     * 
+     * Category: cloud,cloud
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
+     * 
+     * Syntax: <code>ibm-secrets-manager:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(String componentName, String path) {
+        return IBMSecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

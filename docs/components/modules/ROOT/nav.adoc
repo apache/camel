@@ -168,6 +168,7 @@
 *** xref:hwcloud-iam-component.adoc[Huawei Identity and Access Management (IAM)]
 *** xref:hwcloud-obs-component.adoc[Huawei Object Storage Service (OBS)]
 *** xref:hwcloud-smn-component.adoc[Huawei Simple Message Notification (SMN)]
+** xref:ibm-secrets-manager-component.adoc[IBM Secrets Manager]
 ** xref:iec60870-client-component.adoc[IEC 60870 Client]
 ** xref:iec60870-server-component.adoc[IEC 60870 Server]
 ** xref:ignite-summary.adoc[Ignite]
