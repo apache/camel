@@ -114,10 +114,10 @@ public static class FilterBean {
 
 == Proxy Support in Camel RSS Component
 
-The Camel RSS component does not natively support proxy configuration. However, you can work around this limitation by using the Camel HTTP component with a proxy and then processing the raw RSS feed using xref:rss-dataformat.adoc[RSS DataFormat].
+The Camel RSS component does not natively support proxy configuration. However, you can work around this limitation by using the Camel HTTP component with a proxy and then processing the raw RSS feed using RSS dataformat.
 
 Alternative Approach: Using the HTTP Component with Proxy
-Instead of directly using `from("rss:...")`, you can configure an HTTP client with proxy settings and fetch the RSS feed via the HTTP component. Then, the xref:rss-dataformat.adoc[RSS DataFormat] can be used to parse the raw response into a structured RSS feed.
+Instead of directly using `from("rss:...")`, you can configure an HTTP client with proxy settings and fetch the RSS feed via the HTTP component. Then, zhe RSS dataformat can be used to parse the raw response into a structured RSS feed.
 
 === Configuring Proxy for HTTP Component and Processing RSS
 
