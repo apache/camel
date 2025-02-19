@@ -1296,6 +1296,26 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setLoadHealthChecks(Boolean loadHealthChecks);
 
     /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    void setAutoStartupExcludePattern(String autoStartupExcludePattern);
+
+    /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    String getAutoStartupExcludePattern();
+
+    /**
      * Whether to capture precise source location:line-number for all EIPs in Camel routes.
      *
      * Enabling this will impact parsing Java based routes (also Groovy, etc.) on startup as this uses

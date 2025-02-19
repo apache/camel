@@ -46,6 +46,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Description")
     String getDescription();
 
+    @ManagedAttribute(description = "Route Auto Startup")
+    Boolean getAutoStartup();
+
     @ManagedAttribute(description = "Route Source Location")
     String getSourceLocation();
 

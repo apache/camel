@@ -253,6 +253,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
+        camelContext.setAutoStartupExcludePattern(config.getAutoStartupExcludePattern());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
         camelContext.setAutowiredEnabled(config.isAutowiredEnabled());

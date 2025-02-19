@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 122 options, which are listed below.
+The camel.main supports 123 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -31,6 +31,7 @@ The camel.main supports 122 options, which are listed below.
 | *camel.main.autoConfiguration{zwsp}LogSummary* | Whether auto configuration should log a summary with the configured properties. This option is default enabled. | true | boolean
 | *camel.main.autoConfiguration{zwsp}SystemPropertiesEnabled* | Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D camel.main.shutdown-timeout=5. Note that JVM system properties take precedence over OS environment variables. This option is default enabled. | true | boolean
 | *camel.main.autoStartup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
+| *camel.main.autoStartupExclude{zwsp}Pattern* | Used for exclusive filtering of routes to not automatically start with Camel starts. The pattern support matching by route id or endpoint urls. Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka or jms use: kafka,jms. |  | String
 | *camel.main.autowiredEnabled* | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. Default is true. | true | boolean
 | *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , org.apache.camel.TypeConverter , CamelConfiguration classes, and also classes annotated with org.apache.camel.Converter , or org.apache.camel.BindToRegistry . If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
 | *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean

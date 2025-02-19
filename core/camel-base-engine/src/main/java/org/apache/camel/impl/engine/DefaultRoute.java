@@ -725,12 +725,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public List<Processor> filter(String pattern) {
         List<Processor> match = new ArrayList<>();
-        doFilter(pattern, navigate(), match);
+        doFilter(pattern.split(","), navigate(), match);
         return match;
     }
 
     @SuppressWarnings("unchecked")
-    private void doFilter(String pattern, Navigate<Processor> nav, List<Processor> match) {
+    private void doFilter(String[] patterns, Navigate<Processor> nav, List<Processor> match) {
         List<Processor> list = nav.next();
         if (list != null) {
             for (Processor proc : list) {
@@ -741,12 +741,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
                 if (proc instanceof IdAware idAware) {
                     id = idAware.getId();
                 }
-                if (PatternHelper.matchPattern(id, pattern)) {
+                if (PatternHelper.matchPatterns(id, patterns)) {
                     match.add(proc);
                 }
                 if (proc instanceof Navigate) {
                     Navigate<Processor> child = (Navigate<Processor>) proc;
-                    doFilter(pattern, child, match);
+                    doFilter(patterns, child, match);
                 }
             }
         }

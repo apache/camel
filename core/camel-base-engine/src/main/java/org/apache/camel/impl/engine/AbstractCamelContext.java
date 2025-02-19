@@ -243,6 +243,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private Boolean autoStartup = Boolean.TRUE;
+    private String autoStartupExcludePattern;
     private Boolean backlogTrace = Boolean.FALSE;
     private Boolean backlogTraceStandby = Boolean.FALSE;
     private Boolean backlogTraceTemplates = Boolean.FALSE;
@@ -3686,6 +3687,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
+    }
+
+    @Override
+    public String getAutoStartupExcludePattern() {
+        return autoStartupExcludePattern;
+    }
+
+    @Override
+    public void setAutoStartupExcludePattern(String autoStartupExcludePattern) {
+        this.autoStartupExcludePattern = autoStartupExcludePattern;
     }
 
     @Override
