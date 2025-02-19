@@ -143,6 +143,11 @@ public class LegacyCamelContextManager implements CamelContextManager {
         // enable auto stub if enabled
         final String stubPattern = camelContextConfiguration.stubEndpoints();
         CamelContextTestHelper.enableAutoStub(context, stubPattern);
+        // auto startup exclude
+        final String excludePattern = camelContextConfiguration.autoStartupExcludePatterns();
+        if (excludePattern != null) {
+            context.setAutoStartupExcludePattern(excludePattern);
+        }
 
         // configure properties component (mandatory for testing)
         configurePropertiesComponent();

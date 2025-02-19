@@ -190,6 +190,22 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     }
 
     /**
+     * Override to exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     *
+     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
+     */
+    @Deprecated(since = "4.11.0")
+    public String isAutoStartupExcludePatterns() {
+        return camelContextConfiguration().autoStartupExcludePatterns();
+    }
+
+    /**
      * To replace from routes
      *
      * @param      routeId

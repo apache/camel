@@ -89,6 +89,7 @@ public abstract class CamelTestSupport extends AbstractTestSupport
                 .withRouteFilterIncludePattern(getRouteFilterIncludePattern())
                 .withMockEndpoints(isMockEndpoints())
                 .withMockEndpointsAndSkip(isMockEndpointsAndSkip())
+                .withAutoStartupExcludePatterns(isAutoStartupExcludePatterns())
                 .withStubEndpoints(isStubEndpoints());
     }
 

@@ -403,6 +403,23 @@ public final class CamelAnnotationsHandler {
     }
 
     /**
+     * Handles auto-stub of endpoints with mocks based on {@link StubEndpoints}.
+     *
+     * @param context   the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    public static void handleAutoStartupExclude(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
+        if (testClass.isAnnotationPresent(AutoStartupExclude.class)) {
+            final String patterns = testClass.getAnnotation(AutoStartupExclude.class).value();
+            CamelSpringTestHelper.doToSpringCamelContexts(context, (contextName, camelContext) -> {
+                LOGGER.info("Excluding routes from starting matching pattern [{}] on CamelContext with name [{}].",
+                        patterns, contextName);
+                camelContext.setAutoStartupExcludePattern(patterns);
+            });
+        }
+    }
+
+    /**
      * Handles override this method to include and override properties with the Camel
      * {@link org.apache.camel.component.properties.PropertiesComponent}.
      *

@@ -60,6 +60,7 @@ public class CamelContextConfiguration {
     private String mockEndpoints;
     private String mockEndpointsAndSkip;
     private String stubEndpoints;
+    private String autoStartupExcludePatterns;
     private Properties useOverridePropertiesWithPropertiesComponent;
     private Boolean ignoreMissingLocationWithPropertiesComponent;
 
@@ -199,6 +200,23 @@ public class CamelContextConfiguration {
      */
     public CamelContextConfiguration withStubEndpoints(String pattern) {
         this.stubEndpoints = pattern;
+        return this;
+    }
+
+    public String autoStartupExcludePatterns() {
+        return autoStartupExcludePatterns;
+    }
+
+    /**
+     * Used for exclusive filtering of routes to not automatically start with Camel starts.
+     *
+     * The pattern support matching by route id or endpoint urls.
+     *
+     * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
+     * or jms use: kafka,jms.
+     */
+    public CamelContextConfiguration withAutoStartupExcludePatterns(String pattern) {
+        this.autoStartupExcludePatterns = pattern;
         return this;
     }
 

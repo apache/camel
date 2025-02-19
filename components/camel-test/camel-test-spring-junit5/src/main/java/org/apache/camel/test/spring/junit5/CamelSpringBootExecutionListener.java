@@ -68,6 +68,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
         CamelAnnotationsHandler.handleMockEndpointsAndSkip(context, testClass);
         CamelAnnotationsHandler.handleStubEndpoints(context, testClass);
+        CamelAnnotationsHandler.handleAutoStartupExclude(context, testClass);
 
         System.clearProperty(PROPERTY_SKIP_STARTING_CAMEL_CONTEXT);
         SpringCamelContext.setNoStart(false);

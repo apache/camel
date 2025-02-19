@@ -14,24 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.test.junit5.patterns;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class AutoStartupExcludePatternTest extends ContextTestSupport {
+public class IsAutoStartupExcludePatternsTest extends CamelTestSupport {
 
-    @Test
-    public void testRouteNotAutoStarted() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-        mock.setAssertPeriod(50);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
+    @Override
+    public String isAutoStartupExcludePatterns() {
+        return "myRoute,timer*";
     }
 
     @Test
@@ -42,14 +36,14 @@ public class AutoStartupExcludePatternTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedMessageCount(1);
 
         context.getRouteController().startRoute("myRoute");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -57,8 +51,6 @@ public class AutoStartupExcludePatternTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                context.setAutoStartupExcludePattern("myRoute,timer*");
-
                 from("timer:tick?delay=1").to("mock:result");
 
                 from("direct:start").to("seda:foo");
