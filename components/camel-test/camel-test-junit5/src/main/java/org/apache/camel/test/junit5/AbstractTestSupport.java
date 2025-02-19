@@ -177,6 +177,19 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
     }
 
     /**
+     * Override to enable auto stub endpoints based on the pattern.
+     * <p/>
+     * Return <tt>*</tt> to mock all endpoints.
+     *
+     * @see        EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @deprecated Use the accessors from {@link #camelContextConfiguration()} method
+     */
+    @Deprecated(since = "4.11.0")
+    public String isStubEndpoints() {
+        return camelContextConfiguration().stubEndpoints();
+    }
+
+    /**
      * To replace from routes
      *
      * @param      routeId

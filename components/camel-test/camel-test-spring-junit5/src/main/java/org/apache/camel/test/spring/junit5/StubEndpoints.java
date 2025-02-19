@@ -23,22 +23,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.RoutesBuilder;
-
 /**
- * Indicates if certain route builder classes should be excluded from discovery. Initializes a
- * {@link org.apache.camel.spi.PackageScanClassResolver} to exclude a set of given classes from being resolved.
- * Typically, this is used at test time to exclude certain routes, which might otherwise be noisy, from being discovered
- * and initialized.
+ * Triggers the auto-stub of endpoints whose URIs match the provided filter.
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
-public @interface ExcludeRoutes {
+public @interface StubEndpoints {
 
     /**
-     * The classes to exclude from resolution when using package scanning.
+     * The pattern to use for matching endpoints to enable stub on.
      */
-    Class<? extends RoutesBuilder>[] value() default {};
+    String value();
 }

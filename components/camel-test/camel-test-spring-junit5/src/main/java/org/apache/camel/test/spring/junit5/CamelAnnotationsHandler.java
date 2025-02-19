@@ -29,14 +29,18 @@ import java.util.function.Function;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit5.StubComponentAutowireStrategy;
+import org.apache.camel.test.junit5.StubComponentResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -343,6 +347,35 @@ public final class CamelAnnotationsHandler {
                         mockEndpoints, contextName);
                 camelContext.getCamelContextExtension()
                         .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
+            });
+        }
+    }
+
+    /**
+     * Handles auto-stub of endpoints with mocks based on {@link StubEndpoints}.
+     *
+     * @param context   the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    public static void handleStubEndpoints(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
+        if (testClass.isAnnotationPresent(StubEndpoints.class)) {
+            final String stubEndpoints = testClass.getAnnotation(StubEndpoints.class).value();
+            CamelSpringTestHelper.doToSpringCamelContexts(context, (contextName, camelContext) -> {
+                LOGGER.info("Enabling auto stub of endpoints matching pattern [{}] on CamelContext with name [{}].",
+                        stubEndpoints, contextName);
+                StubComponent stub = camelContext.getComponent("stub", StubComponent.class);
+                // enable shadow mode on stub component
+                stub.setShadow(true);
+                stub.setShadowPattern(stubEndpoints);
+                // should not autowire
+                stub.setAutowiredEnabled(false);
+                // and use a specialized component resolver
+                camelContext.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
+                        new StubComponentResolver(stubEndpoints));
+                // need to replace autowire strategy with stub capable
+                camelContext.getLifecycleStrategies()
+                        .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+                camelContext.getLifecycleStrategies().add(new StubComponentAutowireStrategy(camelContext, stubEndpoints));
             });
         }
     }

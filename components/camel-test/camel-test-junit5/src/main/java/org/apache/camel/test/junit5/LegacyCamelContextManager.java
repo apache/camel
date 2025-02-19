@@ -140,6 +140,9 @@ public class LegacyCamelContextManager implements CamelContextManager {
         final String mockPattern = camelContextConfiguration.mockEndpoints();
         final String mockAndSkipPattern = camelContextConfiguration.mockEndpointsAndSkip();
         CamelContextTestHelper.enableAutoMocking(context, mockPattern, mockAndSkipPattern);
+        // enable auto stub if enabled
+        final String stubPattern = camelContextConfiguration.stubEndpoints();
+        CamelContextTestHelper.enableAutoStub(context, stubPattern);
 
         // configure properties component (mandatory for testing)
         configurePropertiesComponent();
