@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ibm.secrets.manager;
 
+import java.util.Map;
+
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.model.*;
 import org.apache.camel.Endpoint;
@@ -34,6 +36,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         switch (operation) {
             case createArbitrarySecret:
                 createArbitratySecret(exchange);
+                break;
+            case createKVSecret:
+                createKVSecret(exchange);
                 break;
             case getSecret:
                 getSecret(exchange);
@@ -66,6 +71,26 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         exchange.getMessage().setBody(createResp.getResult().getId());
     }
 
+    private void createKVSecret(Exchange exchange) {
+        KVSecretPrototype.Builder kvSecretResourceBuilder = new KVSecretPrototype.Builder();
+        if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_NAME, String.class))) {
+            kvSecretResourceBuilder
+                    .name(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_NAME, String.class));
+        } else {
+            throw new IllegalArgumentException("Secret Name must be specified");
+        }
+        kvSecretResourceBuilder.data(exchange.getMessage().getBody(Map.class));
+        kvSecretResourceBuilder.secretType(KVSecretPrototype.SecretType.KV);
+        KVSecretPrototype kvSecretResource = kvSecretResourceBuilder.build();
+
+        CreateSecretOptions createSecretOptions = new CreateSecretOptions.Builder()
+                .secretPrototype(kvSecretResource)
+                .build();
+        Response<Secret> createResp = getEndpoint().getSecretManager().createSecret(createSecretOptions).execute();
+
+        exchange.getMessage().setBody(createResp.getResult().getId());
+    }
+
     private void getSecret(Exchange exchange) {
         GetSecretOptions.Builder getSecretOptionsBuilder = new GetSecretOptions.Builder();
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class))) {
@@ -75,7 +100,17 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         }
         Response<Secret> getResp = getEndpoint().getSecretManager().getSecret(getSecretOptionsBuilder.build()).execute();
 
-        exchange.getMessage().setBody(getResp.getResult().getPayload());
+        String secretType = getResp.getResult().getSecretType();
+        switch (secretType) {
+            case "arbitrary":
+                exchange.getMessage().setBody(getResp.getResult().getPayload());
+                break;
+            case "kv":
+                exchange.getMessage().setBody(getResp.getResult().getData());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported Secret Type");
+        }
     }
 
     private void deleteSecret(Exchange exchange) {
