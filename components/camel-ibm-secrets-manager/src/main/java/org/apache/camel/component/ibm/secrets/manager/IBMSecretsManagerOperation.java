@@ -18,6 +18,7 @@ package org.apache.camel.component.ibm.secrets.manager;
 
 public enum IBMSecretsManagerOperation {
     createArbitrarySecret,
+    createKVSecret,
     getSecret,
     deleteSecret
 }
