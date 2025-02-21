@@ -19,14 +19,9 @@ package org.apache.camel.component.kafka.consumer.support.subcription;
 import org.apache.camel.component.kafka.consumer.support.TopicHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
 
 public class DefaultSubscribeAdapter implements SubscribeAdapter {
 

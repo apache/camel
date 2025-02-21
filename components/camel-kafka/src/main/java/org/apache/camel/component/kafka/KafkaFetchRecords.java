@@ -220,6 +220,12 @@ public class KafkaFetchRecords implements Runnable {
             LOG.warn("Error subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
                     e);
             setLastError(e);
+
+            // allow camel error handler to be aware
+            if (kafkaConsumer.getEndpoint().isBridgeErrorHandler()) {
+                kafkaConsumer.getExceptionHandler().handleException(e);
+            }
+
             return false;
         }
 
@@ -251,6 +257,12 @@ public class KafkaFetchRecords implements Runnable {
             LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
                     e);
             setLastError(e);
+
+            // allow camel error handler to be aware
+            if (kafkaConsumer.getEndpoint().isBridgeErrorHandler()) {
+                kafkaConsumer.getExceptionHandler().handleException(e);
+            }
+
             return false;
         }
 
@@ -332,7 +344,9 @@ public class KafkaFetchRecords implements Runnable {
         SubscribeAdapter adapter = camelContext.getRegistry().lookupByNameAndType(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER,
                 SubscribeAdapter.class);
         if (adapter == null) {
-            adapter = new DefaultSubscribeAdapter(kafkaConsumer.getEndpoint().getConfiguration().getTopic(), kafkaConsumer.getEndpoint().getComponent().isSubscribeConsumerTopicMustExists());
+            adapter = new DefaultSubscribeAdapter(
+                    kafkaConsumer.getEndpoint().getConfiguration().getTopic(),
+                    kafkaConsumer.getEndpoint().getComponent().isSubscribeConsumerTopicMustExists());
         }
         return adapter;
     }
