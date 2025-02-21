@@ -30,6 +30,10 @@ public class DefaultSubscribeAdapter implements SubscribeAdapter {
     private final String topic;
     private final boolean topicMustExists;
 
+    public DefaultSubscribeAdapter() {
+        this(null, false);
+    }
+
     public DefaultSubscribeAdapter(String topic, boolean topicMustExists) {
         this.topic = topic;
         this.topicMustExists = topicMustExists;
@@ -49,15 +53,13 @@ public class DefaultSubscribeAdapter implements SubscribeAdapter {
 
         if (topicMustExists) {
             boolean found = false;
-            // check if a topic exists
-            var topics = consumer.listTopics();
-            for (var id : topics.keySet()) {
-                if (!found) {
-                    if (topicInfo.isPattern()) {
-                        found = topicInfo.getPattern().matcher(id).matches();
-                    } else {
-                        found = topicInfo.getTopics().contains(id);
-                    }
+            var it = consumer.listTopics().keySet().iterator();
+            while (!found && it.hasNext()) {
+                String id = it.next();
+                if (topicInfo.isPattern()) {
+                    found = topicInfo.getPattern().matcher(id).matches();
+                } else {
+                    found = topicInfo.getTopics().contains(id);
                 }
             }
             if (!found) {

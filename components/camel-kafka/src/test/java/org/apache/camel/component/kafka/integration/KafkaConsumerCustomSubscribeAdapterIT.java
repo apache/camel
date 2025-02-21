@@ -44,10 +44,6 @@ public class KafkaConsumerCustomSubscribeAdapterIT extends BaseKafkaTestSupport 
     private static class TestSubscribeAdapter extends DefaultSubscribeAdapter {
         private volatile boolean subscribeCalled = false;
 
-        public TestSubscribeAdapter(String topic, boolean topicMustExists) {
-            super(topic, topicMustExists);
-        }
-
         @Override
         public void subscribe(Consumer<?, ?> consumer, ConsumerRebalanceListener reBalanceListener, TopicInfo topicInfo) {
             try {
@@ -63,7 +59,7 @@ public class KafkaConsumerCustomSubscribeAdapterIT extends BaseKafkaTestSupport 
     }
 
     @BindToRegistry(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER)
-    private TestSubscribeAdapter testSubscribeAdapter = new TestSubscribeAdapter(null, false);
+    private TestSubscribeAdapter testSubscribeAdapter = new TestSubscribeAdapter();
 
     @BeforeEach
     public void before() {
