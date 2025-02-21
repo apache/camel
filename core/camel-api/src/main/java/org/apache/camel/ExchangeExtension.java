@@ -29,6 +29,7 @@ import org.apache.camel.spi.UnitOfWork;
  * Camel.
  */
 public interface ExchangeExtension {
+
     /**
      * If there is an existing inbound message of the given type then return it as-is, otherwise return null.
      *
@@ -38,6 +39,11 @@ public interface ExchangeExtension {
     <T> T getInOrNull(Class<T> type);
 
     /**
+     * Prepares the exchange by setting IN as OUT
+     */
+    void prepareInToOut();
+
+    /**
      * Sets the endpoint which originated this message exchange. This method should typically only be called by
      * {@link Endpoint} implementations
      */
@@ -45,7 +51,7 @@ public interface ExchangeExtension {
 
     /**
      * Returns the endpoint which originated this message exchange. See {@link Exchange#getFromEndpoint()} for details.
-     **/
+     */
     Endpoint getFromEndpoint();
 
     /**
