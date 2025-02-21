@@ -221,3 +221,13 @@ Using the spoolRules attribute on `<streamCaching>`. if you have more rules, the
 <streamCaching id="myCacheConfig" spoolEnabled="true" spoolDirectory="/tmp/cachedir" spoolRules="mySpoolRule,myOtherSpoolRule"/>
 ----
 
+== Using StreamCachingProcessor
+
+Since Camel 4.11 this processor can be used to convert the current message body to a `StreamCache`. This allows the body to be re-read multiple times and can be placed at any point in a Camel route.
+
+[source, java]
+----
+from("direct:start")
+    .process(new StreamCachingProcessor())
+    .to("log:cached");
+----
