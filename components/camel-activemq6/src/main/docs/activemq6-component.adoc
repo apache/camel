@@ -19,7 +19,7 @@ Users of Apache ActiveMQ Artemis should use the JMS component.
 
 [IMPORTANT]
 ====
-The camel-activemq component is best intended for ActiveMQ 6.x brokers. If you use ActiveMQ 5.x brokers,
+The camel-activemq6 component is best intended for ActiveMQ 6.x brokers. If you use ActiveMQ 5.x brokers,
 then use the camel-activemq 5.x component instead.
 ====
 
@@ -37,7 +37,7 @@ for this component:
 ------------------------------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-activemq</artifactId>
+    <artifactId>camel-activemq6</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
