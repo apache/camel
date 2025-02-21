@@ -272,6 +272,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     }
 
     @Override
+    public void prepareInToOut() {
+        this.exchange.out = this.exchange.in;
+    }
+
+    @Override
     public AsyncCallback getDefaultConsumerCallback() {
         return this.defaultConsumerCallback;
     }
