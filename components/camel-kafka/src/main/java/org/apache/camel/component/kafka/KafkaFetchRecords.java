@@ -332,7 +332,7 @@ public class KafkaFetchRecords implements Runnable {
         SubscribeAdapter adapter = camelContext.getRegistry().lookupByNameAndType(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER,
                 SubscribeAdapter.class);
         if (adapter == null) {
-            adapter = new DefaultSubscribeAdapter(kafkaConsumer.getEndpoint().getConfiguration().getTopic(), kafkaConsumer.getEndpoint().getConfiguration().isTopicMustExist());
+            adapter = new DefaultSubscribeAdapter(kafkaConsumer.getEndpoint().getConfiguration().getTopic(), kafkaConsumer.getEndpoint().getComponent().isSubscribeConsumerTopicMustExists());
         }
         return adapter;
     }

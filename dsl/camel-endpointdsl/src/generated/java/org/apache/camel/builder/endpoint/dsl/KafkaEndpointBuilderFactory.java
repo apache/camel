@@ -1380,52 +1380,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether when a Camel Kafka consumer is subscribing to a Kafka broker
-         * then check whether a topic already exist on the broker, and fail if
-         * it does not. Otherwise, the Camel Kafka consumer will keep attempt to
-         * consume from the topic, until it's created on the Kafka broker; and
-         * until then the Camel Kafka consumer will fail and log a WARN about
-         * UNKNOWN_TOPIC_OR_PARTITION. The option
-         * subscribeConsumerBackoffMaxAttempts on the kafka component can be
-         * configured to give up trying to subscribe after a given number of
-         * attempts.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param topicMustExist the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder topicMustExist(boolean topicMustExist) {
-            doSetProperty("topicMustExist", topicMustExist);
-            return this;
-        }
-        /**
-         * Whether when a Camel Kafka consumer is subscribing to a Kafka broker
-         * then check whether a topic already exist on the broker, and fail if
-         * it does not. Otherwise, the Camel Kafka consumer will keep attempt to
-         * consume from the topic, until it's created on the Kafka broker; and
-         * until then the Camel Kafka consumer will fail and log a WARN about
-         * UNKNOWN_TOPIC_OR_PARTITION. The option
-         * subscribeConsumerBackoffMaxAttempts on the kafka component can be
-         * configured to give up trying to subscribe after a given number of
-         * attempts.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param topicMustExist the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointConsumerBuilder topicMustExist(String topicMustExist) {
-            doSetProperty("topicMustExist", topicMustExist);
-            return this;
-        }
-        /**
          * Deserializer class for value that implements the Deserializer
          * interface.
          * 

@@ -240,11 +240,11 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "subscribeConsumerBackoffInterval": target.setSubscribeConsumerBackoffInterval(property(camelContext, long.class, value)); return true;
         case "subscribeconsumerbackoffmaxattempts":
         case "subscribeConsumerBackoffMaxAttempts": target.setSubscribeConsumerBackoffMaxAttempts(property(camelContext, int.class, value)); return true;
+        case "subscribeconsumertopicmustexists":
+        case "subscribeConsumerTopicMustExists": target.setSubscribeConsumerTopicMustExists(property(camelContext, boolean.class, value)); return true;
         case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
-        case "topicmustexist":
-        case "topicMustExist": getOrCreateConfiguration(target).setTopicMustExist(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "useiterator":
@@ -481,11 +481,11 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "subscribeConsumerBackoffInterval": return long.class;
         case "subscribeconsumerbackoffmaxattempts":
         case "subscribeConsumerBackoffMaxAttempts": return int.class;
+        case "subscribeconsumertopicmustexists":
+        case "subscribeConsumerTopicMustExists": return boolean.class;
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
-        case "topicmustexist":
-        case "topicMustExist": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "useiterator":
@@ -718,11 +718,11 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "subscribeConsumerBackoffInterval": return target.getSubscribeConsumerBackoffInterval();
         case "subscribeconsumerbackoffmaxattempts":
         case "subscribeConsumerBackoffMaxAttempts": return target.getSubscribeConsumerBackoffMaxAttempts();
+        case "subscribeconsumertopicmustexists":
+        case "subscribeConsumerTopicMustExists": return target.isSubscribeConsumerTopicMustExists();
         case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();
-        case "topicmustexist":
-        case "topicMustExist": return getOrCreateConfiguration(target).isTopicMustExist();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "useiterator":

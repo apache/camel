@@ -223,8 +223,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": target.getConfiguration().setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": target.getConfiguration().setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
-        case "topicmustexist":
-        case "topicMustExist": target.getConfiguration().setTopicMustExist(property(camelContext, boolean.class, value)); return true;
         case "useiterator":
         case "useIterator": target.getConfiguration().setUseIterator(property(camelContext, boolean.class, value)); return true;
         case "valuedeserializer":
@@ -444,8 +442,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
-        case "topicmustexist":
-        case "topicMustExist": return boolean.class;
         case "useiterator":
         case "useIterator": return boolean.class;
         case "valuedeserializer":
@@ -666,8 +662,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": return target.getConfiguration().isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return target.getConfiguration().isTopicIsPattern();
-        case "topicmustexist":
-        case "topicMustExist": return target.getConfiguration().isTopicMustExist();
         case "useiterator":
         case "useIterator": return target.getConfiguration().isUseIterator();
         case "valuedeserializer":

@@ -83,8 +83,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String groupId;
     @UriParam(label = "consumer")
     private String groupInstanceId;
-    @UriParam(label = "consumer")
-    private boolean topicMustExist;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
@@ -701,23 +699,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setGroupInstanceId(String groupInstanceId) {
         this.groupInstanceId = groupInstanceId;
-    }
-
-    public boolean isTopicMustExist() {
-        return topicMustExist;
-    }
-
-    /**
-     * Whether when a Camel Kafka consumer is subscribing to a Kafka broker then check whether a topic
-     * already exist on the broker, and fail if it does not. Otherwise, the Camel Kafka consumer will
-     * keep attempt to consume from the topic, until it's created on the Kafka broker; and until then
-     * the Camel Kafka consumer will fail and log a WARN about UNKNOWN_TOPIC_OR_PARTITION.
-     * 
-     * The option subscribeConsumerBackoffMaxAttempts on the kafka component can be configured to give
-     * up trying to subscribe after a given number of attempts.
-     */
-    public void setTopicMustExist(boolean topicMustExist) {
-        this.topicMustExist = topicMustExist;
     }
 
     public String getPartitioner() {
