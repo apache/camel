@@ -243,6 +243,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": getOrCreateConfiguration(target).setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "topicispattern":
         case "topicIsPattern": getOrCreateConfiguration(target).setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
+        case "topicmustexist":
+        case "topicMustExist": getOrCreateConfiguration(target).setTopicMustExist(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "useiterator":
@@ -482,6 +484,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": return boolean.class;
         case "topicispattern":
         case "topicIsPattern": return boolean.class;
+        case "topicmustexist":
+        case "topicMustExist": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "useiterator":
@@ -717,6 +721,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": return getOrCreateConfiguration(target).isSynchronous();
         case "topicispattern":
         case "topicIsPattern": return getOrCreateConfiguration(target).isTopicIsPattern();
+        case "topicmustexist":
+        case "topicMustExist": return getOrCreateConfiguration(target).isTopicMustExist();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "useiterator":
