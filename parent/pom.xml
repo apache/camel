@@ -295,7 +295,7 @@
         <jolokia-version>2.2.2</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
-        <jooq-version>3.19.18</jooq-version>
+        <jooq-version>3.19.19</jooq-version>
         <joor-version>0.9.15</joor-version>
         <jose4j-version>0.9.3</jose4j-version>
         <johnzon-version>2.0.1</johnzon-version>
@@ -306,7 +306,7 @@
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>2.9.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
-        <json-smart-version>2.5.1</json-smart-version>
+        <json-smart-version>2.5.2</json-smart-version>
         <jsonata-version>0.9.8</jsonata-version>
         <json-unit-version>4.1.0</json-unit-version>
         <jsoup-version>1.18.3</jsoup-version>
@@ -360,8 +360,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.30</metrics-version>
-        <micrometer-version>1.14.3</micrometer-version>
-        <micrometer-tracing-version>1.4.2</micrometer-tracing-version>
+        <micrometer-version>1.14.4</micrometer-version>
+        <micrometer-tracing-version>1.4.3</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.1</microprofile-fault-tolerance-version>
         <milvus-client-version>2.5.4</milvus-client-version>
@@ -381,7 +381,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>5.28.1</neo4j-version>
-        <netty-version>4.1.117.Final</netty-version>
+        <netty-version>4.1.118.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.5</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.0.1</nimbus-jose-jwt>
@@ -465,11 +465,11 @@
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.2.1</spring-batch-version>
         <spring-data-redis-version>3.4.2</spring-data-redis-version>
-        <spring-ldap-version>3.2.10</spring-ldap-version>
+        <spring-ldap-version>3.2.11</spring-ldap-version>
         <spring-vault-core-version>3.1.2</spring-vault-core-version>
-        <spring-version>6.2.2</spring-version>
+        <spring-version>6.2.3</spring-version>
         <spring-rabbitmq-version>3.2.2</spring-rabbitmq-version>
-        <spring-security-version>6.4.2</spring-security-version>
+        <spring-security-version>6.4.3</spring-security-version>
         <spring-ws-version>4.0.11</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
