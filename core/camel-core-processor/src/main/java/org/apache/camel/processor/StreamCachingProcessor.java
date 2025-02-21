@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -25,6 +24,9 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
+/**
+ * A processor which converts current message body to a stream cache.
+ */
 public class StreamCachingProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private String id;
@@ -32,7 +34,6 @@ public class StreamCachingProcessor extends AsyncProcessorSupport implements Tra
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-
         try {
             Object body = exchange.getIn().getBody();
 
