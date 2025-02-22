@@ -130,7 +130,6 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
-    private boolean lightweight;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
@@ -1396,18 +1395,6 @@ public abstract class DefaultConfigurationProperties<T> {
         this.jmxUpdateRouteEnabled = jmxUpdateRouteEnabled;
     }
 
-    public boolean isLightweight() {
-        return lightweight;
-    }
-
-    /**
-     * Configure the context to be lightweight. This will trigger some optimizations and memory reduction options.
-     * Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not supported.
-     */
-    public void setLightweight(boolean lightweight) {
-        this.lightweight = lightweight;
-    }
-
     public String getExchangeFactory() {
         return exchangeFactory;
     }
@@ -2579,18 +2566,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
         this.routesReloadRestartDuration = routesReloadRestartDuration;
-        return (T) this;
-    }
-
-    /**
-     * Configure the context to be lightweight. This will trigger some optimizations and memory reduction options.
-     * <p/>
-     * Lightweight context have some limitations. At the moment, dynamic endpoint destinations are not supported. Also,
-     * this should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus,
-     * camel-spring-boot). As this affects the entire JVM where Camel JARs are on the classpath.
-     */
-    public T withLightweight(boolean lightweight) {
-        this.lightweight = lightweight;
         return (T) this;
     }
 

@@ -1087,10 +1087,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public void disposeModel() {
-    }
-
-    @Override
     public String getTestExcludeRoutes() {
         return camelContext.getTestExcludeRoutes();
     }

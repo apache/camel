@@ -6,6 +6,10 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.10 to 4.11
 
+=== camel-main
+
+Remove the deprecated `camel.main.lightweight` option that was not in use.
+
 === file based components
 
 The file based component such as `camel-file`, `camel-ftp`, `camel-smb`, and `camel-azure-files` has

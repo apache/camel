@@ -485,16 +485,6 @@ public interface ExtendedCamelContext {
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
     /**
-     * Danger!!! This will dispose the route model from the {@link CamelContext} which is used for lightweight mode.
-     * This means afterwards no new routes can be dynamically added. Any operations on the
-     * org.apache.camel.model.ModelCamelContext will return null or be a noop operation.
-     *
-     * @deprecated noop, do not use
-     */
-    @Deprecated
-    void disposeModel();
-
-    /**
      * Used during unit-testing where it is possible to specify a set of routes to exclude from discovery
      */
     String getTestExcludeRoutes();

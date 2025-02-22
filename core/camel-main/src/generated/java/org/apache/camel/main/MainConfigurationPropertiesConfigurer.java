@@ -77,7 +77,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("JmxManagementRegisterRoutesCreateByTemplate", boolean.class);
         map.put("JmxManagementStatisticsLevel", org.apache.camel.ManagementStatisticsLevel.class);
         map.put("JmxUpdateRouteEnabled", boolean.class);
-        map.put("Lightweight", boolean.class);
         map.put("LoadHealthChecks", boolean.class);
         map.put("LoadStatisticsEnabled", boolean.class);
         map.put("LoadTypeConverters", boolean.class);
@@ -260,7 +259,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "jmxManagementStatisticsLevel": target.setJmxManagementStatisticsLevel(property(camelContext, org.apache.camel.ManagementStatisticsLevel.class, value)); return true;
         case "jmxupdaterouteenabled":
         case "jmxUpdateRouteEnabled": target.setJmxUpdateRouteEnabled(property(camelContext, boolean.class, value)); return true;
-        case "lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "loadhealthchecks":
         case "loadHealthChecks": target.setLoadHealthChecks(property(camelContext, boolean.class, value)); return true;
         case "loadstatisticsenabled":
@@ -511,7 +509,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "jmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
         case "jmxupdaterouteenabled":
         case "jmxUpdateRouteEnabled": return boolean.class;
-        case "lightweight": return boolean.class;
         case "loadhealthchecks":
         case "loadHealthChecks": return boolean.class;
         case "loadstatisticsenabled":
@@ -758,7 +755,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "jmxManagementStatisticsLevel": return target.getJmxManagementStatisticsLevel();
         case "jmxupdaterouteenabled":
         case "jmxUpdateRouteEnabled": return target.isJmxUpdateRouteEnabled();
-        case "lightweight": return target.isLightweight();
         case "loadhealthchecks":
         case "loadHealthChecks": return target.isLoadHealthChecks();
         case "loadstatisticsenabled":
