@@ -168,7 +168,7 @@ public class KafkaFetchRecords implements Runnable {
                         .build();
                 success = task.run(this::initializeConsumerTask);
                 if (!success) {
-                    int max = kafkaConsumer.getEndpoint().getComponent().getCreateConsumerBackoffMaxAttempts();
+                    int max = kafkaConsumer.getEndpoint().getComponent().getSubscribeConsumerBackoffMaxAttempts();
                     setupInitializeErrorException(task, max);
                     // give up and terminate this consumer
                     terminated = true;
@@ -220,6 +220,12 @@ public class KafkaFetchRecords implements Runnable {
             LOG.warn("Error subscribing org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
                     e);
             setLastError(e);
+
+            // allow camel error handler to be aware
+            if (kafkaConsumer.getEndpoint().isBridgeErrorHandler()) {
+                kafkaConsumer.getExceptionHandler().handleException(e);
+            }
+
             return false;
         }
 
@@ -251,6 +257,12 @@ public class KafkaFetchRecords implements Runnable {
             LOG.warn("Error creating org.apache.kafka.clients.consumer.KafkaConsumer due to: {}", e.getMessage(),
                     e);
             setLastError(e);
+
+            // allow camel error handler to be aware
+            if (kafkaConsumer.getEndpoint().isBridgeErrorHandler()) {
+                kafkaConsumer.getExceptionHandler().handleException(e);
+            }
+
             return false;
         }
 
@@ -328,17 +340,18 @@ public class KafkaFetchRecords implements Runnable {
         adapter.subscribe(consumer, listener, topicInfo);
     }
 
-    private static SubscribeAdapter resolveSubscribeAdapter(CamelContext camelContext) {
+    private SubscribeAdapter resolveSubscribeAdapter(CamelContext camelContext) {
         SubscribeAdapter adapter = camelContext.getRegistry().lookupByNameAndType(KafkaConstants.KAFKA_SUBSCRIBE_ADAPTER,
                 SubscribeAdapter.class);
         if (adapter == null) {
-            adapter = new DefaultSubscribeAdapter();
+            adapter = new DefaultSubscribeAdapter(
+                    kafkaConsumer.getEndpoint().getConfiguration().getTopic(),
+                    kafkaConsumer.getEndpoint().getComponent().isSubscribeConsumerTopicMustExists());
         }
         return adapter;
     }
 
     protected void startPolling() {
-
         try {
             /*
              * We lock the processing of the record to avoid raising a WakeUpException as a result to a call

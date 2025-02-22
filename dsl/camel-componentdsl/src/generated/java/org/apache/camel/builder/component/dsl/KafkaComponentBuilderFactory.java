@@ -1055,6 +1055,30 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
+         * Whether when a Camel Kafka consumer is subscribing to a Kafka broker
+         * then check whether a topic already exist on the broker, and fail if
+         * it does not. Otherwise, the Camel Kafka consumer will keep attempt to
+         * consume from the topic, until it's created on the Kafka broker; and
+         * until then the Camel Kafka consumer will fail and log a WARN about
+         * UNKNOWN_TOPIC_OR_PARTITION. The option
+         * subscribeConsumerBackoffMaxAttempts can be configured to give up
+         * trying to subscribe after a given number of attempts.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param subscribeConsumerTopicMustExists the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder subscribeConsumerTopicMustExists(boolean subscribeConsumerTopicMustExists) {
+            doSetProperty("subscribeConsumerTopicMustExists", subscribeConsumerTopicMustExists);
+            return this;
+        }
+    
+        
+        /**
          * If this feature is enabled and a single element of a batch is an
          * Exchange or Message, the producer will generate individual kafka
          * header values for it by using the batch Message to determine the
@@ -2465,6 +2489,7 @@ public interface KafkaComponentBuilderFactory {
             case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
             case "subscribeConsumerBackoffInterval": ((KafkaComponent) component).setSubscribeConsumerBackoffInterval((long) value); return true;
             case "subscribeConsumerBackoffMaxAttempts": ((KafkaComponent) component).setSubscribeConsumerBackoffMaxAttempts((int) value); return true;
+            case "subscribeConsumerTopicMustExists": ((KafkaComponent) component).setSubscribeConsumerTopicMustExists((boolean) value); return true;
             case "batchWithIndividualHeaders": getOrCreateConfiguration((KafkaComponent) component).setBatchWithIndividualHeaders((boolean) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
