@@ -150,15 +150,4 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         return Collections.emptyList();
     }
 
-    @Override
-    public ExpressionNode id(String id) {
-        if (!(this instanceof OutputNode)) {
-            // let parent handle assigning the id, as we do not support outputs
-            getParent().id(id);
-            return this;
-        } else {
-            return super.id(id);
-        }
-    }
-
 }
