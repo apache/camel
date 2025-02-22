@@ -695,6 +695,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 if (getParent() != null) {
                     outputs = getParent().getOutputs();
                 }
+            } else if (this instanceof OutputExpressionNode) {
+                outputs = getOutputs();
+            } else if (this instanceof ExpressionNode) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
             } else {
                 outputs = getOutputs();
             }
