@@ -155,6 +155,20 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The base directory within the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param path the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointConsumerBuilder path(String path) {
+            doSetProperty("path", path);
+            return this;
+        }
+        /**
          * If true, the file will be deleted after it is processed successfully.
          * 
          * The option is a: <code>boolean</code> type.
@@ -235,20 +249,6 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointConsumerBuilder noop(String noop) {
             doSetProperty("noop", noop);
-            return this;
-        }
-        /**
-         * The path, within the share, to consume the files from.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         * 
-         * @param path the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder path(String path) {
-            doSetProperty("path", path);
             return this;
         }
         /**
@@ -2631,6 +2631,20 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The base directory within the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param path the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointProducerBuilder path(String path) {
+            doSetProperty("path", path);
+            return this;
+        }
+        /**
          * If provided, then Camel will write a checksum file when the original
          * file has been written. The checksum file will contain the checksum
          * created with the provided algorithm for the original file. The
@@ -3404,6 +3418,20 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
+            return this;
+        }
+        /**
+         * The base directory within the share.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param path the value to set
+         * @return the dsl builder
+         */
+        default SmbEndpointBuilder path(String path) {
+            doSetProperty("path", path);
             return this;
         }
         /**
