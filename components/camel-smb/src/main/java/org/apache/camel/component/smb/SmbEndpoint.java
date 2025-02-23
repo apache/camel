@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
              headersClass = SmbConstants.class, category = { Category.FILE })
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                              + "directoryMustExist,extendedAttributes,probeContentType,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous")
 public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
@@ -57,7 +57,7 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
     private static final Logger LOG = LoggerFactory.getLogger(SmbEndpoint.class);
 
     @UriParam
-    protected SmbConfiguration configuration;
+    private SmbConfiguration configuration;
 
     protected SmbEndpoint(String uri, SmbComponent component, SmbConfiguration configuration) {
         super(uri, component);
@@ -136,7 +136,7 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
     }
 
     @Override
-    public GenericFileConsumer<FileIdBothDirectoryInformation> createConsumer(Processor processor) {
+    public GenericFileConsumer<FileIdBothDirectoryInformation> createConsumer(Processor processor) throws Exception {
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotentSet()) {
             LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
