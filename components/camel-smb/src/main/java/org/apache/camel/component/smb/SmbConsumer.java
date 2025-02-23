@@ -32,10 +32,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
@@ -342,10 +344,30 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     @Override
     protected void doStart() throws Exception {
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
         boolean startScheduler = isStartScheduler();
         setStartScheduler(false);
         try {
             super.doStart();
+            if (endpoint.isAutoCreate() && hasStartingDirectory()) {
+                String dir = endpoint.getConfiguration().getDirectory();
+                LOG.debug("Auto creating directory: {}", dir);
+                try {
+                    operations.buildDirectory(dir, true);
+                } catch (GenericFileOperationFailedException e) {
+                    // log a WARN as we want to start the consumer.
+                    LOG.warn(
+                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            e);
+                }
+            } else if (configuration.isStartingDirectoryMustExist() && hasStartingDirectory()) {
+                String dir = endpoint.getConfiguration().getDirectory();
+                SmbOperations ops = (SmbOperations) operations;
+                boolean exists = ops.existsFolder(dir);
+                if (!exists) {
+                    throw new GenericFileOperationFailedException("Starting directory does not exist: " + dir);
+                }
+            }
         } finally {
             if (startScheduler) {
                 setStartScheduler(true);
@@ -362,6 +384,18 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
 
     private SmbOperations getOperations() {
         return (SmbOperations) operations;
+    }
+
+    /**
+     * Whether there is a starting directory configured.
+     */
+    private boolean hasStartingDirectory() {
+        String dir = endpoint.getConfiguration().getDirectory();
+        if (ObjectHelper.isEmpty(dir)) {
+            return false;
+        }
+        // should not be an empty separator
+        return !dir.equals("/") && !dir.equals("\\");
     }
 
     private boolean isDirectory(FileIdBothDirectoryInformation file) {

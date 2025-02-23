@@ -2303,11 +2303,48 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should an exception be thrown if connection failed (exhausted)By
+         * Whether the starting directory must exist. Mind that the autoCreate
+         * option is default enabled, which means the starting directory is
+         * normally auto created if it doesn't exist. You can disable autoCreate
+         * and enable this to ensure the starting directory must exist. Will
+         * throw an exception if the directory doesn't exist.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param startingDirectoryMustExist the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder startingDirectoryMustExist(boolean startingDirectoryMustExist) {
+            doSetProperty("startingDirectoryMustExist", startingDirectoryMustExist);
+            return this;
+        }
+        /**
+         * Whether the starting directory must exist. Mind that the autoCreate
+         * option is default enabled, which means the starting directory is
+         * normally auto created if it doesn't exist. You can disable autoCreate
+         * and enable this to ensure the starting directory must exist. Will
+         * throw an exception if the directory doesn't exist.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param startingDirectoryMustExist the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder startingDirectoryMustExist(String startingDirectoryMustExist) {
+            doSetProperty("startingDirectoryMustExist", startingDirectoryMustExist);
+            return this;
+        }
+        /**
+         * Should an exception be thrown if connection failed (exhausted). By
          * default exception is not thrown and a WARN is logged. You can use
          * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
+         * from the PollingConsumerPollStrategy rollback method.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2322,11 +2359,10 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should an exception be thrown if connection failed (exhausted)By
+         * Should an exception be thrown if connection failed (exhausted). By
          * default exception is not thrown and a WARN is logged. You can use
          * this to enable exception being thrown and handle the thrown exception
-         * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
-         * method.
+         * from the PollingConsumerPollStrategy rollback method.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

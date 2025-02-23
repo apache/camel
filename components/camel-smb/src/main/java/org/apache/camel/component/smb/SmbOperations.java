@@ -213,6 +213,11 @@ public class SmbOperations implements SmbFileOperations {
         }
     }
 
+    public boolean existsFolder(String name) {
+        connectIfNecessary();
+        return share.folderExists(name);
+    }
+
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         SmbFile target = (SmbFile) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
