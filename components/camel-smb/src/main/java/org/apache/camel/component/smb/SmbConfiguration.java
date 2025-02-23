@@ -40,14 +40,14 @@ public class SmbConfiguration extends GenericFileConfiguration {
     @UriPath(description = "The name of the share directory")
     @Metadata(required = true)
     private String shareName;
+    @UriParam(label = "common", description = "The base directory within the share")
+    private String path;
     @UriParam(label = "security", description = "The username required to access the share", secret = true)
     private String username;
     @UriParam(label = "security", description = "The password to access the share", secret = true)
     private String password;
     @UriParam(label = "security", description = "The user domain")
     private String domain;
-    @UriParam(label = "consumer", description = "The path, within the share, to consume the files from")
-    private String path;
     @UriParam(label = "consumer",
               description = "The search pattern used to list the files (server side on SMB). This parameter can contain the name of a file (or multiple files, if wildcards are used) within this directory. When it is null all files are included."
                             + " Two wild card characters are supported in the search pattern. The ? (question mark) character matches a single character. If a search pattern contains one or more ? characters, then exactly that number of characters is matched by the wildcards."
