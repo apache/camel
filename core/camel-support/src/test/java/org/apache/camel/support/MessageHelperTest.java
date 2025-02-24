@@ -92,8 +92,12 @@ class MessageHelperTest {
         }
 
         @Override
-        public void reset() {
+        public Message newInstance() {
+            return null;
+        }
 
+        @Override
+        public void reset() {
         }
 
         @Override
@@ -108,7 +112,6 @@ class MessageHelperTest {
 
         @Override
         public void setMessageId(String messageId) {
-
         }
 
         @Override
@@ -153,7 +156,6 @@ class MessageHelperTest {
 
         @Override
         public void setHeader(String name, Object value) {
-
         }
 
         @Override
@@ -178,12 +180,21 @@ class MessageHelperTest {
 
         @Override
         public void setHeaders(Map<String, Object> headers) {
-
         }
 
         @Override
         public boolean hasHeaders() {
             return false;
+        }
+
+        @Override
+        public boolean hasAttachments() {
+            return false;
+        }
+
+        @Override
+        public Map<String, Object> getAttachmentsMap() {
+            return null;
         }
 
         @Override
@@ -213,7 +224,6 @@ class MessageHelperTest {
 
         @Override
         public <T> void setBody(Object body, Class<T> type) {
-
         }
 
         @Override
@@ -223,12 +233,10 @@ class MessageHelperTest {
 
         @Override
         public void copyFrom(Message message) {
-
         }
 
         @Override
         public void copyFromWithNewBody(Message message, Object newBody) {
-
         }
 
         @Override
@@ -243,7 +251,6 @@ class MessageHelperTest {
 
         @Override
         public void setPayloadForTrait(MessageTrait trait, Object object) {
-
         }
     }
 }

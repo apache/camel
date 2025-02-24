@@ -515,10 +515,7 @@ abstract class AbstractExchange implements Exchange {
     }
 
     private Message newOutMessage() {
-        if (in instanceof MessageSupport messageSupport) {
-            return messageSupport.newInstance();
-        }
-        return new DefaultMessage(getContext());
+        return in.newInstance();
     }
 
     @SuppressWarnings("deprecated")

@@ -226,10 +226,27 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
                 getHeaders().putAll(that.getHeaders());
             }
         }
+
+        // the attachments may be the same instance if the end user has made some mistake
+        // and set the OUT message with the same attachment instance of the IN message etc
+        if (!sameAttachments(that)) {
+            if (hasAttachments()) {
+                // okay its safe to clear the attachments
+                getAttachmentsMap().clear();
+            }
+            if (that.hasAttachments()) {
+                getAttachmentsMap().putAll(that.getAttachmentsMap());
+            }
+        }
+
     }
 
     private boolean sameHeaders(Message that) {
         return hasHeaders() && that.hasHeaders() && getHeaders() == that.getHeaders();
+    }
+
+    private boolean sameAttachments(Message that) {
+        return hasAttachments() && that.hasAttachments() && getAttachmentsMap() == that.getAttachmentsMap();
     }
 
     @Override
@@ -251,11 +268,6 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         this.camelContext = camelContext;
         this.typeConverter = camelContext.getTypeConverter();
     }
-
-    /**
-     * Returns a new instance
-     */
-    public abstract Message newInstance();
 
     /**
      * A factory method to allow a provider to lazily create the message body for inbound messages from other sources

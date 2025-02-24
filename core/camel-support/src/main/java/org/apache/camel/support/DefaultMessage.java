@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -36,6 +37,7 @@ import org.apache.camel.spi.HeadersMapFactory;
  */
 public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
+    private Map<String, Object> attachments;
 
     public DefaultMessage(Exchange exchange) {
         setExchange(exchange);
@@ -54,6 +56,9 @@ public class DefaultMessage extends MessageSupport {
         super.reset();
         if (headers != null) {
             headers.clear();
+        }
+        if (attachments != null) {
+            attachments.clear();
         }
     }
 
@@ -290,6 +295,20 @@ public class DefaultMessage extends MessageSupport {
             headers = createHeaders();
         }
         return !headers.isEmpty();
+    }
+
+    @Override
+    public boolean hasAttachments() {
+        return attachments != null && !attachments.isEmpty();
+    }
+
+    @Override
+    public Map<String, Object> getAttachmentsMap() {
+        if (attachments == null) {
+            // force creating attachments
+            attachments = new LinkedHashMap<>();
+        }
+        return attachments;
     }
 
     @Override

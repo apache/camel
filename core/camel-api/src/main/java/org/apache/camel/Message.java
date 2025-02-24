@@ -34,6 +34,11 @@ import org.apache.camel.trait.message.MessageTrait;
 public interface Message {
 
     /**
+     * Returns a new instance of this type.
+     */
+    Message newInstance();
+
+    /**
      * Clears the message from user data, so the message can be reused.
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
@@ -214,6 +219,10 @@ public interface Message {
      * @return <tt>true</tt> if any headers has been set
      */
     boolean hasHeaders();
+
+    boolean hasAttachments();
+
+    Map<String, Object> getAttachmentsMap();
 
     /**
      * Returns the body of the message as a POJO
