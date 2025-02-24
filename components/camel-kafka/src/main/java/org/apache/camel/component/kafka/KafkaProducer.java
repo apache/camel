@@ -445,9 +445,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         if (configuration.isRecordMetadata()) {
             List<RecordMetadata> metadataList = Collections.singletonList(metadata);
-
             ProducerUtil.setRecordMetadata(key, metadataList);
-
             return metadataList;
         }
 

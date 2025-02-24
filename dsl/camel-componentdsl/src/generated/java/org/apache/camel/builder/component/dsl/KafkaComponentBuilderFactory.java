@@ -1595,26 +1595,6 @@ public interface KafkaComponentBuilderFactory {
     
         
         /**
-         * Whether the producer should store the RecordMetadata results from
-         * sending to Kafka. The results are stored in a List containing the
-         * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORDMETA.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param recordMetadata the value to set
-         * @return the dsl builder
-         */
-        default KafkaComponentBuilder recordMetadata(boolean recordMetadata) {
-            doSetProperty("recordMetadata", recordMetadata);
-            return this;
-        }
-    
-        
-        /**
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
@@ -1810,6 +1790,26 @@ public interface KafkaComponentBuilderFactory {
          */
         default KafkaComponentBuilder workerPoolMaxSize(java.lang.Integer workerPoolMaxSize) {
             doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORD_META.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder recordMetadata(boolean recordMetadata) {
+            doSetProperty("recordMetadata", recordMetadata);
             return this;
         }
     
@@ -2515,7 +2515,6 @@ public interface KafkaComponentBuilderFactory {
             case "queueBufferingMaxMessages": getOrCreateConfiguration((KafkaComponent) component).setQueueBufferingMaxMessages((java.lang.Integer) value); return true;
             case "receiveBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setReceiveBufferBytes((java.lang.Integer) value); return true;
             case "reconnectBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setReconnectBackoffMs((java.lang.Integer) value); return true;
-            case "recordMetadata": getOrCreateConfiguration((KafkaComponent) component).setRecordMetadata((boolean) value); return true;
             case "requestRequiredAcks": getOrCreateConfiguration((KafkaComponent) component).setRequestRequiredAcks((java.lang.String) value); return true;
             case "requestTimeoutMs": getOrCreateConfiguration((KafkaComponent) component).setRequestTimeoutMs((java.lang.Integer) value); return true;
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
@@ -2525,6 +2524,7 @@ public interface KafkaComponentBuilderFactory {
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
             case "workerPoolMaxSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolMaxSize((java.lang.Integer) value); return true;
+            case "recordMetadata": getOrCreateConfiguration((KafkaComponent) component).setRecordMetadata((boolean) value); return true;
             case "autowiredEnabled": ((KafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "kafkaClientFactory": ((KafkaComponent) component).setKafkaClientFactory((org.apache.camel.component.kafka.KafkaClientFactory) value); return true;
             case "synchronous": getOrCreateConfiguration((KafkaComponent) component).setSynchronous((boolean) value); return true;

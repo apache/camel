@@ -72,7 +72,7 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(SEQUENTIAL_TRANSACTION_URI).to("kafka:" + TOPIC_TRANSACTION + "?requestRequiredAcks=-1"
+                from(SEQUENTIAL_TRANSACTION_URI).to("kafka:" + TOPIC_TRANSACTION + "?recordMetadata=true&requestRequiredAcks=-1"
                                                     + "&additional-properties[transactional.id]=1234"
                                                     + "&additional-properties[enable.idempotence]=true"
                                                     + "&additional-properties[retries]=5")
@@ -87,7 +87,8 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
                         }).to(KafkaTestUtil.MOCK_RESULT);
 
                 from(CONCURRENT_TRANSACTION_URI)
-                        .to("kafka:" + TOPIC_CONCURRENCY_TRANSACTION + "?requestRequiredAcks=-1&synchronous=true"
+                        .to("kafka:" + TOPIC_CONCURRENCY_TRANSACTION
+                            + "?recordMetadata=true&requestRequiredAcks=-1&synchronous=true"
                             + "&additional-properties[transactional.id]=5678"
                             + "&additional-properties[enable.idempotence]=true"
                             + "&additional-properties[retries]=5");

@@ -226,8 +226,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean recordMetadata = true;
+    @UriParam(label = "producer,advanced")
+    private boolean recordMetadata;
     // max.in.flight.requests.per.connection
     @UriParam(label = "producer", defaultValue = "5")
     private Integer maxInFlightRequest = 5;
