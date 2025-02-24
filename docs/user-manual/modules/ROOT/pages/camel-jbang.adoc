@@ -220,7 +220,7 @@ camel run build.gradle
 
 Camel JBang will then scan in `src/main/java` and `src/main/resources` for files to include (recursive).
 
-NOTE: Using `camel run pom.xml` is not intended as a fully compatible way of running an existing Maven-based project.
+NOTE: Using `camel run pom.xml` is not intended as a fully compatible way of running an existing Maven-based project. It cannot start Quarkus or Spring Boot applications; instead, use the proper plugins/commands. The command is mainly used to migrate from old projects.
 
 === Running Route with user interactive prompt for placeholder values
 
