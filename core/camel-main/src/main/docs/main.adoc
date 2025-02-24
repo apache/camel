@@ -468,7 +468,7 @@ The camel.vault.hashicorp supports 6 options, which are listed below.
 
 
 === Camel OpenTelemetry configurations
-The camel.opentelemetry supports 5 options, which are listed below.
+The camel.opentelemetry supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -478,6 +478,25 @@ The camel.opentelemetry supports 5 options, which are listed below.
 | *camel.opentelemetry.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
 | *camel.opentelemetry.instrumentation{zwsp}Name* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
 | *camel.opentelemetry.trace{zwsp}Processors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
+| *camel.opentelemetry2.enabled* | To enable OpenTelemetry 2 | false | boolean
+| *camel.opentelemetry2.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
+| *camel.opentelemetry2.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.opentelemetry2.instrumentation{zwsp}Name* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
+| *camel.opentelemetry2.trace{zwsp}Processors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
+|===
+
+
+=== Camel OpenTelemetry 2 configurations
+The camel.opentelemetry2 supports 5 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.opentelemetry2.enabled* | To enable OpenTelemetry 2 | false | boolean
+| *camel.opentelemetry2.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
+| *camel.opentelemetry2.exclude{zwsp}Patterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.opentelemetry2.instrumentation{zwsp}Name* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
+| *camel.opentelemetry2.trace{zwsp}Processors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 

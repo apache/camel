@@ -60,6 +60,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private StartupConditionConfigurationProperties startupConditionConfigurationProperties;
     private LraConfigurationProperties lraConfigurationProperties;
     private OtelConfigurationProperties otelConfigurationProperties;
+    private Otel2ConfigurationProperties otel2ConfigurationProperties;
     private TelemetryDevConfigurationProperties telemetryDevConfigurationProperties;
     private MetricsConfigurationProperties metricsConfigurationProperties;
     private ThreadPoolConfigurationProperties threadPoolProperties;
@@ -86,6 +87,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (otelConfigurationProperties != null) {
             otelConfigurationProperties.close();
             otelConfigurationProperties = null;
+        }
+        if (otel2ConfigurationProperties != null) {
+            otel2ConfigurationProperties.close();
+            otel2ConfigurationProperties = null;
+        }
+        if (telemetryDevConfigurationProperties != null) {
+            telemetryDevConfigurationProperties.close();
+            telemetryDevConfigurationProperties = null;
         }
         if (metricsConfigurationProperties != null) {
             metricsConfigurationProperties.close();
@@ -207,6 +216,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasOtelConfiguration() {
         return otelConfigurationProperties != null;
+    }
+
+    /**
+     * Whether there has been any OpenTelemetry configuration specified
+     */
+    public boolean hasOtel2Configuration() {
+        return otel2ConfigurationProperties != null;
     }
 
     /**
