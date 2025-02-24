@@ -33,6 +33,5 @@ public final class DelegatingCallback implements Callback {
     public void onCompletion(RecordMetadata metadata, Exception exception) {
         callback1.onCompletion(metadata, exception);
         callback2.onCompletion(metadata, exception);
-
     }
 }

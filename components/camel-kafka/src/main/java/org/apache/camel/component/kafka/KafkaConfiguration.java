@@ -1815,7 +1815,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * Whether the producer should store the {@link RecordMetadata} results from sending to Kafka. The results are
      * stored in a {@link List} containing the {@link RecordMetadata} metadata's. The list is stored on a header with
-     * the key {@link KafkaConstants#KAFKA_RECORDMETA}
+     * the key {@link KafkaConstants#KAFKA_RECORD_META}
      */
     public void setRecordMetadata(boolean recordMetadata) {
         this.recordMetadata = recordMetadata;
