@@ -195,13 +195,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The directory where the camel-spring XML models are
      */
-    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-parent/camel-spring-xml")
     protected File springDir;
 
     /**
      * The directory where the camel-spring XML schema are
      */
-    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-xml/target/schema")
+    @Parameter(defaultValue = "${project.basedir}/../../components/camel-spring-parent/camel-spring-xml/target/schema")
     protected File springSchemaDir;
 
     /**
@@ -924,6 +924,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-olingo4":
                 case "camel-salesforce":
                 case "camel-servicenow":
+                case "camel-spring-parent":
                 case "camel-test":
                 case "camel-vertx":
                     return false;
