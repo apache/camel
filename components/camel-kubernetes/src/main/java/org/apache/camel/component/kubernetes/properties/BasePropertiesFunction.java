@@ -69,6 +69,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     private Boolean clientEnabled;
     private String mountPathConfigMaps;
     private String mountPathSecrets;
+    private boolean isAutowiredClient;
 
     @Override
     protected void doInit() {
@@ -98,6 +99,9 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         }
         if (clientEnabled && client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
+            if (client != null) {
+                isAutowiredClient = true;
+            }
         }
         if (clientEnabled && client == null) {
             // try to auto-configure via properties
@@ -222,6 +226,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
      */
     public void setMountPathSecrets(String mountPathSecrets) {
         this.mountPathSecrets = mountPathSecrets;
+    }
+
+    public boolean isAutowiredClient() {
+        return isAutowiredClient;
     }
 
     @Override
