@@ -54,7 +54,7 @@ public class OgnlExpression extends ExpressionSupport {
         RootObject root = new RootObject(exchange);
         OgnlContext oglContext = Ognl.createDefaultContext(root, cr);
         try {
-            Object value = OgnlHelper.getValue(expression, oglContext, root);
+            Object value = Ognl.getValue(expression, oglContext, root);
             return exchange.getContext().getTypeConverter().convertTo(tClass, value);
         } catch (OgnlException e) {
             throw new ExpressionEvaluationException(this, exchange, e);
