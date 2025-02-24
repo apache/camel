@@ -36,6 +36,7 @@
 ** xref:openapi-java.adoc[Openapi Java]
 ** xref:openapi-validator.adoc[Openapi Validator]
 ** xref:opentelemetry.adoc[OpenTelemetry]
+** xref:opentelemetry2.adoc[Opentelemetry2]
 ** xref:platform-http-jolokia.adoc[Platform HTTP Jolokia]
 ** xref:platform-http-main.adoc[Platform Http Main]
 ** xref:platform-http-vertx.adoc[Platform Http Vertx]
