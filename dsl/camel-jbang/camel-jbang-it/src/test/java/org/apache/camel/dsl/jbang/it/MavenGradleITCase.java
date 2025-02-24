@@ -25,30 +25,28 @@ import org.junit.jupiter.api.Test;
 
 public class MavenGradleITCase extends JBangTestSupport {
 
-    final public void generateArchetype() {
-        execInHost("mvn archetype:generate" +
-                   "  -DarchetypeGroupId=org.apache.camel.archetypes" +
-                   "  -DarchetypeArtifactId=camel-archetype-java" +
-                   "  -DinteractiveMode=false" +
-                   "  -DgroupId=org.jbang -DartifactId=jbang-app -Dversion=1.0-SNAPSHOT " +
-                   "  -DoutputDirectory=" + getDataFolder() +
-                   "  -DarchetypeVersion=" + version());
-    }
-
     @Test
     public void runFromMavenModuleTest() {
-        generateArchetype();
-        executeBackground(String.format("run %s/jbang-app/pom.xml", mountPoint()));
-        checkLogContains("Apache Camel " + version() + " (CamelJBang) started");
+        execInContainer(String.format("mkdir %s/mvn-app", mountPoint()));
+        execInContainer(String.format("cd %s/mvn-app && camel init cheese.xml", mountPoint()));
+        execInContainer(String.format(
+                "cd %s/mvn-app && camel export --runtime=camel-main --gav=org.jbang:maven-app:1.0-SNAPSHOT", mountPoint()));
+        execInContainer(String.format("cd %s/mvn-app && camel run pom.xml --background", mountPoint()));
+        checkLogContains("Apache Camel " + version() + " (maven-app) started");
+        checkLogContains("Hello Camel from route1");
     }
 
     @Test
     public void runFromGradleTest() throws IOException {
-        generateArchetype();
+        execInContainer(String.format("mkdir %s/gradle-app", mountPoint()));
+        execInContainer(String.format("cd %s/gradle-app && camel init cheese.xml", mountPoint()));
+        execInContainer(String.format(
+                "cd %s/gradle-app && camel export --runtime=camel-main --gav=org.jbang:gradle-app:1.0-SNAPSHOT", mountPoint()));
         copyResourceInDataFolder(TestResources.BUILD_GRADLE);
         Files.move(Path.of(String.format("%s/build.gradle", getDataFolder())),
-                Path.of(String.format("%s/jbang-app/build.gradle", getDataFolder())));
-        executeBackground(String.format("run %s/jbang-app/build.gradle", mountPoint()));
-        checkLogContains("Apache Camel " + version() + " (CamelJBang) started");
+                Path.of(String.format("%s/gradle-app/build.gradle", getDataFolder())));
+        execInContainer(String.format("cd %s/gradle-app && camel run pom.xml --background", mountPoint()));
+        checkLogContains("Apache Camel " + version() + " (gradle-app) started");
+        checkLogContains("Hello Camel from route1");
     }
 }
