@@ -17,8 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
@@ -102,12 +100,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         ObjectHelper.notNull(operations, PARAM_OPERATIONS);
         ObjectHelper.notNull(file, "file");
 
-        // auto create starting directory if needed
-        if (!file.exists() && !file.isDirectory()) {
-            tryCreateDirectory();
-        }
-        tryReadingStartDirectory();
-
         FileConsumer result = newFileConsumer(processor, operations);
 
         if (isDelete() && getMove() != null) {
@@ -138,17 +130,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return result;
     }
 
-    private void tryReadingStartDirectory() throws IOException {
-        if (!isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
-            throw new IllegalArgumentException(
-                    "You cannot set startingDirectoryMustHaveAccess=true without setting startingDirectoryMustExist=true");
-        } else if (isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
-            if (!file.canRead() || !file.canWrite()) {
-                throw new IOException("Starting directory permission denied: " + file);
-            }
-        }
-    }
-
     private void readLockCheck() {
         // check if it's valid
         String valid = "none,markerFile,fileLock,rename,changed,idempotent,idempotent-changed,idempotent-rename";
@@ -156,23 +137,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         boolean matched = Arrays.stream(arr).anyMatch(n -> n.equals(getReadLock()));
         if (!matched) {
             throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + valid);
-        }
-    }
-
-    private void tryCreateDirectory() throws FileNotFoundException {
-        if (isAutoCreate()) {
-            doCreateStartDirectory();
-        } else if (isStartingDirectoryMustExist()) {
-            throw new FileNotFoundException("Starting directory does not exist: " + file);
-        }
-    }
-
-    private void doCreateStartDirectory() {
-        LOG.debug("Creating non existing starting directory: {}", file);
-        boolean absolute = FileUtil.isAbsolute(file);
-        boolean created = operations.buildDirectory(file.getPath(), absolute);
-        if (!created) {
-            LOG.warn("Cannot auto create starting directory: {}", file);
         }
     }
 
