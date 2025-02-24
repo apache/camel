@@ -17,6 +17,8 @@
 package org.apache.camel.support;
 
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -198,6 +200,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     }
 
     @Override
+    @SuppressWarnings("raw")
     public void copyFromWithNewBody(Message that, Object newBody) {
         if (that == this) {
             // it's the same instance, so do not need to copy
@@ -226,6 +229,12 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
                 getHeaders().putAll(that.getHeaders());
             }
         }
+
+        // copy attachments
+        Map<String, Object> attachments = (Map<String, Object>) that.getPayloadForTrait(MessageTrait.ATTACHMENTS);
+        if (attachments != null) {
+            setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
+        }
     }
 
     private boolean sameHeaders(Message that) {
@@ -251,11 +260,6 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         this.camelContext = camelContext;
         this.typeConverter = camelContext.getTypeConverter();
     }
-
-    /**
-     * Returns a new instance
-     */
-    public abstract Message newInstance();
 
     /**
      * A factory method to allow a provider to lazily create the message body for inbound messages from other sources
@@ -318,5 +322,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void setPayloadForTrait(MessageTrait trait, Object object) {
         traits.put(trait, object);
+    }
+
+    @Override
+    public void removeTrait(MessageTrait trait) {
+        traits.remove(trait);
     }
 }

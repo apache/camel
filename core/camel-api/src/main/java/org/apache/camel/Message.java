@@ -34,6 +34,11 @@ import org.apache.camel.trait.message.MessageTrait;
 public interface Message {
 
     /**
+     * Returns a new instance of this type.
+     */
+    Message newInstance();
+
+    /**
      * Clears the message from user data, so the message can be reused.
      * <p/>
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
@@ -354,5 +359,10 @@ public interface Message {
      * @param object the payload
      */
     void setPayloadForTrait(MessageTrait trait, Object object);
+
+    /**
+     * Removes the trait
+     */
+    void removeTrait(MessageTrait trait);
 
 }

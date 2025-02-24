@@ -39,11 +39,6 @@ public interface ExchangeExtension {
     <T> T getInOrNull(Class<T> type);
 
     /**
-     * Prepares the exchange by setting IN as OUT
-     */
-    void prepareInToOut();
-
-    /**
      * Sets the endpoint which originated this message exchange. This method should typically only be called by
      * {@link Endpoint} implementations
      */

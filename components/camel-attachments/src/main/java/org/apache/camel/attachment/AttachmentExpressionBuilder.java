@@ -30,14 +30,21 @@ import static org.apache.camel.support.builder.ExpressionBuilder.simpleExpressio
 
 public class AttachmentExpressionBuilder {
 
+    private static AttachmentMessage toAttachmentMessage(Exchange exchange) {
+        AttachmentMessage answer;
+        if (exchange.getMessage() instanceof AttachmentMessage am) {
+            answer = am;
+        } else {
+            answer = new DefaultAttachmentMessage(exchange.getMessage());
+        }
+        return answer;
+    }
+
     public static Expression attachments() {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                if (exchange.getMessage() instanceof AttachmentMessage am) {
-                    return am.getAttachments();
-                }
-                return null;
+                return toAttachmentMessage(exchange).getAttachments();
             }
         };
     }
@@ -46,10 +53,7 @@ public class AttachmentExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                if (exchange.getMessage() instanceof AttachmentMessage am) {
-                    return am.getAttachments().size();
-                }
-                return 0;
+                return toAttachmentMessage(exchange).getAttachments().size();
             }
         };
     }
@@ -60,20 +64,18 @@ public class AttachmentExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Object answer = null;
-                if (exchange.getMessage() instanceof AttachmentMessage am) {
-                    var dh = am.getAttachment(key);
+                Object answer;
+                var dh = toAttachmentMessage(exchange).getAttachment(key);
+                try {
+                    answer = dh.getContent();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                if (answer != null && clazz != null) {
                     try {
-                        answer = dh.getContent();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (answer != null && clazz != null) {
-                        try {
-                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(clazz, answer);
-                        } catch (NoTypeConversionAvailableException e) {
-                            throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
-                        }
+                        answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(clazz, answer);
+                    } catch (NoTypeConversionAvailableException e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                     }
                 }
                 return answer;
@@ -99,16 +101,14 @@ public class AttachmentExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object answer = null;
-                if (exchange.getMessage() instanceof AttachmentMessage am) {
-                    var ao = am.getAttachmentObject(key);
-                    if (ao != null) {
-                        answer = ao.getHeader(name);
-                        if (answer != null && clazz != null) {
-                            try {
-                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(clazz, answer);
-                            } catch (NoTypeConversionAvailableException e) {
-                                throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
-                            }
+                var ao = toAttachmentMessage(exchange).getAttachmentObject(key);
+                if (ao != null) {
+                    answer = ao.getHeader(name);
+                    if (answer != null && clazz != null) {
+                        try {
+                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(clazz, answer);
+                        } catch (NoTypeConversionAvailableException e) {
+                            throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                         }
                     }
                 }
@@ -132,11 +132,9 @@ public class AttachmentExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                if (exchange.getMessage() instanceof AttachmentMessage am) {
-                    var dh = am.getAttachment(key);
-                    if (dh != null) {
-                        return dh.getContentType();
-                    }
+                var dh = toAttachmentMessage(exchange).getAttachment(key);
+                if (dh != null) {
+                    return dh.getContentType();
                 }
                 return null;
             }
@@ -164,15 +162,12 @@ public class AttachmentExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                if (exchange.getMessage() instanceof AttachmentMessage am) {
-                    String key = attachmentName.evaluate(exchange, String.class);
-                    Object answer = am.getAttachment(key);
-                    if (mandatory && answer == null) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(new NoSuchAttachmentException(exchange, key));
-                    }
-                    return answer;
+                String key = attachmentName.evaluate(exchange, String.class);
+                Object answer = toAttachmentMessage(exchange).getAttachment(key);
+                if (mandatory && answer == null) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(new NoSuchAttachmentException(exchange, key));
                 }
-                return null;
+                return answer;
             }
 
             @Override
@@ -198,27 +193,25 @@ public class AttachmentExpressionBuilder {
         return new SimpleExpressionBuilder.KeyedOgnlExpressionAdapter(
                 ognl, "attachmentOgnl(" + ognl + ")",
                 (exchange, exp) -> {
-                    if (exchange.getMessage() instanceof AttachmentMessage am) {
-                        String text = exp.evaluate(exchange, String.class);
-                        var dh = am.getAttachment(text);
-                        if (dh == null && ObjectHelper.isNumber(text)) {
-                            try {
-                                // fallback to lookup by numeric index
-                                int idx = Integer.parseInt(text);
-                                if (idx < am.getAttachments().size()) {
-                                    var it = am.getAttachments().values().iterator();
-                                    for (int i = 0; i < idx; i++) {
-                                        it.next();
-                                    }
-                                    dh = it.next();
+                    String text = exp.evaluate(exchange, String.class);
+                    var am = toAttachmentMessage(exchange);
+                    var dh = am.getAttachment(text);
+                    if (dh == null && ObjectHelper.isNumber(text)) {
+                        try {
+                            // fallback to lookup by numeric index
+                            int idx = Integer.parseInt(text);
+                            if (idx < am.getAttachments().size()) {
+                                var it = am.getAttachments().values().iterator();
+                                for (int i = 0; i < idx; i++) {
+                                    it.next();
                                 }
-                            } catch (NumberFormatException e) {
-                                // ignore
+                                dh = it.next();
                             }
+                        } catch (NumberFormatException e) {
+                            // ignore
                         }
-                        return dh;
                     }
-                    return null;
+                    return dh;
                 });
     }
 

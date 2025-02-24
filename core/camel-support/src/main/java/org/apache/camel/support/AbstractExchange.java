@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -515,10 +516,13 @@ abstract class AbstractExchange implements Exchange {
     }
 
     private Message newOutMessage() {
-        if (in instanceof MessageSupport messageSupport) {
-            return messageSupport.newInstance();
+        if (in != null) {
+            Message answer = in.newInstance();
+            CamelContextAware.trySetCamelContext(answer, getContext());
+            return answer;
+        } else {
+            return new DefaultMessage(getContext());
         }
-        return new DefaultMessage(getContext());
     }
 
     @SuppressWarnings("deprecated")
@@ -655,10 +659,8 @@ abstract class AbstractExchange implements Exchange {
     public boolean isExternalRedelivered() {
         if (externalRedelivered == RedeliveryTraitPayload.UNDEFINED_REDELIVERY) {
             Message message = getIn();
-
             externalRedelivered = (RedeliveryTraitPayload) message.getPayloadForTrait(MessageTrait.REDELIVERY);
         }
-
         return externalRedelivered == RedeliveryTraitPayload.IS_REDELIVERY;
     }
 

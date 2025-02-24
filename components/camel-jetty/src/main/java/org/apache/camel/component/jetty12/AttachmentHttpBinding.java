@@ -33,6 +33,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
@@ -65,7 +66,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                             attachment.addHeader(headerName, headerValue);
                         }
                     }
-                    AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
+                    AttachmentMessage am = new DefaultAttachmentMessage(message);
                     am.addAttachmentObject(part.getName(), attachment);
                     String name = part.getSubmittedFileName();
                     Object value = am.getAttachment(name);
@@ -101,12 +102,12 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         //        }
 
         // attachment is optional
-        AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
+        AttachmentMessage am = new DefaultAttachmentMessage(message);
 
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            if (am != null && am.getAttachment(name) != null) {
+            if (am.getAttachment(name) != null) {
                 DataHandler dh = am.getAttachment(name);
                 Object value = dh;
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {

@@ -22,13 +22,20 @@ package org.apache.camel.trait.message;
  * type, etc). This is specifically for internal usage of Camel and not a public API.
  */
 public enum MessageTrait {
+
     /**
      * The redelivery trait for the message. See {@link RedeliveryTraitPayload}.
      */
     REDELIVERY,
+
     /**
      * Whether the message can store a data type. This carries the payload associated with the API specified in
      * {@link org.apache.camel.spi.DataTypeAware}.
      */
-    DATA_AWARE
+    DATA_AWARE,
+
+    /**
+     * Trait for storing attachments on the message.
+     */
+    ATTACHMENTS
 }
