@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -406,7 +407,56 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             resumeStrategy.loadCache();
         }
 
+        // turn off scheduler first, so autoCreate is handled before scheduler
+        // starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+
+            // auto create starting directory if needed
+            File file = getEndpoint().getFile();
+            if (!file.exists() && !file.isDirectory()) {
+                tryCreateDirectory(file);
+            }
+            // ensure directory can be read
+            tryReadingStartDirectory(file);
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
+
         super.doStart();
+    }
+
+    private void tryCreateDirectory(File file) throws FileNotFoundException {
+        if (getEndpoint().isAutoCreate()) {
+            doCreateStartDirectory(file);
+        } else if (getEndpoint().isStartingDirectoryMustExist()) {
+            throw new FileNotFoundException("Starting directory does not exist: " + file);
+        }
+    }
+
+    private void doCreateStartDirectory(File file) {
+        LOG.debug("Creating non existing starting directory: {}", file);
+        boolean absolute = FileUtil.isAbsolute(file);
+        boolean created = operations.buildDirectory(file.getPath(), absolute);
+        if (!created) {
+            LOG.warn("Cannot auto create starting directory: {}", file);
+        }
+    }
+
+    private void tryReadingStartDirectory(File file) throws IOException {
+        if (!getEndpoint().isStartingDirectoryMustExist() && getEndpoint().isStartingDirectoryMustHaveAccess()) {
+            throw new IllegalArgumentException(
+                    "You cannot set startingDirectoryMustHaveAccess=true without setting startingDirectoryMustExist=true");
+        } else if (getEndpoint().isStartingDirectoryMustExist() && getEndpoint().isStartingDirectoryMustHaveAccess()) {
+            if (!file.canRead() || !file.canWrite()) {
+                throw new IOException("Starting directory permission denied: " + file);
+            }
+        }
     }
 
     @Override

@@ -53,7 +53,8 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // the scheduler is only run once, and we can configure its properties
-        assertEquals(1, scheduler.getCounter());
+        // (camel run the scheduler once during startup so the value is +1)
+        assertEquals(2, scheduler.getCounter());
         assertEquals("bar", scheduler.getFoo());
     }
 
