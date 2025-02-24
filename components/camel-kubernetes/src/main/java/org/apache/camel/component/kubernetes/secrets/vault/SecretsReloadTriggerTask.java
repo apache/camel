@@ -103,7 +103,7 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
     protected void doShutdown() throws Exception {
         super.doShutdown();
 
-        if (kubernetesClient != null) {
+        if (kubernetesClient != null && !propertiesFunction.isAutowiredClient()) {
             try {
                 kubernetesClient.close();
             } catch (Exception e) {
