@@ -48,7 +48,7 @@ jobs:
       - name: mvn build ${{ matrix.os }}
         run: ./mvnw -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -Dquickly install
       - name: Archive logs ${{ matrix.os }}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         if: always()
         with:
           name: build-${{ matrix.os }}
