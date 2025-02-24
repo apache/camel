@@ -165,6 +165,10 @@
                                 <class>org.apache.camel.vault.GcpVaultConfiguration=org.apache.camel.main.GcpVaultConfiguration</class>
                                 <!-- we want to have configurer for HashicorpVaultConfiguration in the package main to prevent a split packages issue -->
                                 <class>org.apache.camel.vault.HashicorpVaultConfiguration=org.apache.camel.main.HashicorpVaultConfiguration</class>
+                                <!-- we want to have configurer for KubernetesVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.KubernetesVaultConfiguration=org.apache.camel.main.KubernetesVaultConfiguration</class>
+                                <!-- we want to have configurer for KubernetesConfigMapVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.KubernetesConfigMapVaultConfiguration=org.apache.camel.main.KubernetesConfigMapVaultConfiguration</class>
                             </classes>
                         </configuration>
                     </execution>
