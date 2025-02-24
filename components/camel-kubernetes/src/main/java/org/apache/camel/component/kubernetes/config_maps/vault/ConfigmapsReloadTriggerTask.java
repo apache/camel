@@ -106,7 +106,7 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
     protected void doShutdown() throws Exception {
         super.doShutdown();
 
-        if (kubernetesClient != null) {
+        if (kubernetesClient != null && !propertiesFunction.isAutowiredClient()) {
             try {
                 kubernetesClient.close();
             } catch (Exception e) {
