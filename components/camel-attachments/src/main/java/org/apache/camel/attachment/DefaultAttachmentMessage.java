@@ -16,6 +16,7 @@
  */
 package org.apache.camel.attachment;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,9 +37,13 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
         this.delegate = delegate;
     }
 
-    @Override
-    public Message getDelegateMessage() {
-        return delegate;
+    private Map<String, Object> getAttachmentsMap() {
+        var m = (Map<String, Object>) delegate.getPayloadForTrait(MessageTrait.ATTACHMENTS);
+        if (m == null) {
+            m = new LinkedHashMap<>();
+            delegate.setPayloadForTrait(MessageTrait.ATTACHMENTS, m);
+        }
+        return m;
     }
 
     @Override
@@ -178,7 +183,7 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
 
     @Override
     public void copyFrom(Message message) {
-
+        delegate.copyFrom(message);
     }
 
     @Override
@@ -227,7 +232,7 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
             Attachment a = (Attachment) att;
             answer.put(id, a.getDataHandler());
         });
-        return answer;
+        return Collections.unmodifiableMap(answer);
     }
 
     @Override
@@ -237,7 +242,7 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
             Attachment a = (Attachment) att;
             answer.put(id, a);
         });
-        return answer;
+        return Collections.unmodifiableMap(answer);
     }
 
     @Override
@@ -252,12 +257,12 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
 
     @Override
     public boolean hasAttachments() {
-        return delegate.hasAttachments();
+        return delegate.hasTrait(MessageTrait.ATTACHMENTS);
     }
 
     @Override
-    public Map<String, Object> getAttachmentsMap() {
-        return delegate.getAttachmentsMap();
+    public void clearAttachments() {
+        delegate.removeTrait(MessageTrait.ATTACHMENTS);
     }
 
     @Override
@@ -273,5 +278,10 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     @Override
     public void setPayloadForTrait(MessageTrait trait, Object object) {
         delegate.setPayloadForTrait(trait, object);
+    }
+
+    @Override
+    public void removeTrait(MessageTrait trait) {
+        delegate.removeTrait(trait);
     }
 }

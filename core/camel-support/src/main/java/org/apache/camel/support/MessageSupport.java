@@ -17,6 +17,8 @@
 package org.apache.camel.support;
 
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -198,6 +200,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     }
 
     @Override
+    @SuppressWarnings("raw")
     public void copyFromWithNewBody(Message that, Object newBody) {
         if (that == this) {
             // it's the same instance, so do not need to copy
@@ -227,26 +230,15 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             }
         }
 
-        // the attachments may be the same instance if the end user has made some mistake
-        // and set the OUT message with the same attachment instance of the IN message etc
-        if (!sameAttachments(that)) {
-            if (hasAttachments()) {
-                // okay its safe to clear the attachments
-                getAttachmentsMap().clear();
-            }
-            if (that.hasAttachments()) {
-                getAttachmentsMap().putAll(that.getAttachmentsMap());
-            }
+        // copy attachments
+        Map<String, Object> attachments = (Map<String, Object>) that.getPayloadForTrait(MessageTrait.ATTACHMENTS);
+        if (attachments != null) {
+            setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
         }
-
     }
 
     private boolean sameHeaders(Message that) {
         return hasHeaders() && that.hasHeaders() && getHeaders() == that.getHeaders();
-    }
-
-    private boolean sameAttachments(Message that) {
-        return hasAttachments() && that.hasAttachments() && getAttachmentsMap() == that.getAttachmentsMap();
     }
 
     @Override
@@ -330,5 +322,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void setPayloadForTrait(MessageTrait trait, Object object) {
         traits.put(trait, object);
+    }
+
+    @Override
+    public void removeTrait(MessageTrait trait) {
+        traits.remove(trait);
     }
 }

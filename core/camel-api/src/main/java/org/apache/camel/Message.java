@@ -220,10 +220,6 @@ public interface Message {
      */
     boolean hasHeaders();
 
-    boolean hasAttachments();
-
-    Map<String, Object> getAttachmentsMap();
-
     /**
      * Returns the body of the message as a POJO
      * <p/>
@@ -363,5 +359,10 @@ public interface Message {
      * @param object the payload
      */
     void setPayloadForTrait(MessageTrait trait, Object object);
+
+    /**
+     * Removes the trait
+     */
+    void removeTrait(MessageTrait trait);
 
 }

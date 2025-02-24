@@ -24,31 +24,33 @@ import org.apache.camel.Exchange;
 
 public class CSimpleAttachmentHelper {
 
-    public static Map<String, DataHandler> attachments(Exchange exchange) {
+    private static AttachmentMessage toAttachmentMessage(Exchange exchange) {
+        AttachmentMessage answer;
         if (exchange.getMessage() instanceof AttachmentMessage am) {
-            return am.getAttachments();
+            answer = am;
+        } else {
+            answer = new DefaultAttachmentMessage(exchange.getMessage());
         }
-        return null;
+        return answer;
+    }
+
+    public static Map<String, DataHandler> attachments(Exchange exchange) {
+        return toAttachmentMessage(exchange).getAttachments();
     }
 
     public static int attachmentsSize(Exchange exchange) {
-        if (exchange.getMessage() instanceof AttachmentMessage am) {
-            return am.getAttachments().size();
-        }
-        return 0;
+        return toAttachmentMessage(exchange).getAttachments().size();
     }
 
     public static Object attachmentContent(Exchange exchange, String key) throws Exception {
-        if (exchange.getMessage() instanceof AttachmentMessage am) {
-            var dh = am.getAttachments().get(key);
-            if (dh != null) {
-                return dh.getContent();
-            }
+        var dh = toAttachmentMessage(exchange).getAttachments().get(key);
+        if (dh != null) {
+            return dh.getContent();
         }
         return null;
     }
 
-    public static Object attachmentContentAsText(Exchange exchange, String key) throws Exception {
+    public static String attachmentContentAsText(Exchange exchange, String key) throws Exception {
         Object data = attachmentContent(exchange, key);
         if (data != null) {
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, data);
@@ -65,21 +67,17 @@ public class CSimpleAttachmentHelper {
     }
 
     public static String attachmentContentType(Exchange exchange, String key) {
-        if (exchange.getMessage() instanceof AttachmentMessage am) {
-            var dh = am.getAttachments().get(key);
-            if (dh != null) {
-                return dh.getContentType();
-            }
+        var dh = toAttachmentMessage(exchange).getAttachments().get(key);
+        if (dh != null) {
+            return dh.getContentType();
         }
         return null;
     }
 
     public static String attachmentHeader(Exchange exchange, String key, String name) {
-        if (exchange.getMessage() instanceof AttachmentMessage am) {
-            var ao = am.getAttachmentObjects().get(key);
-            if (ao != null) {
-                return ao.getHeader(name);
-            }
+        var ao = toAttachmentMessage(exchange).getAttachmentObjects().get(key);
+        if (ao != null) {
+            return ao.getHeader(name);
         }
         return null;
     }

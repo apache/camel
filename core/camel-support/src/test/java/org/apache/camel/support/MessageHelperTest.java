@@ -188,16 +188,6 @@ class MessageHelperTest {
         }
 
         @Override
-        public boolean hasAttachments() {
-            return false;
-        }
-
-        @Override
-        public Map<String, Object> getAttachmentsMap() {
-            return null;
-        }
-
-        @Override
         public Object getBody() {
             return body;
         }
@@ -251,6 +241,10 @@ class MessageHelperTest {
 
         @Override
         public void setPayloadForTrait(MessageTrait trait, Object object) {
+        }
+
+        @Override
+        public void removeTrait(MessageTrait trait) {
         }
     }
 }

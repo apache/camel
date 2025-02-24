@@ -37,8 +37,6 @@ public final class AttachmentConverter {
             answer = am;
         } else {
             answer = new DefaultAttachmentMessage(message);
-            // need to wrap exchange message as attachment capable
-            message.getExchange().setMessage(answer);
         }
         return answer;
     }
