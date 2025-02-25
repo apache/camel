@@ -48,17 +48,6 @@
             <artifactId>slack-api-client</artifactId>
             <version>${slack-api-model-version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-
-        <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${squareup-okhttp-version}</version>
-        </dependency>
 
         <!-- test dependencies -->
         <dependency>
