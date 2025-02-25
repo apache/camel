@@ -4,6 +4,40 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+<<<<<<< HEAD
+=======
+== Upgrading from 4.10.0 to 4.10.1
+
+=== camel-api
+
+Added `removeTraits` method to `org.apache.camel.Message`.
+
+=== camel-attachments
+
+The attachments have been refactored to be stored internally as a _message trait_,
+and the `org.apache.camel.attachment.AttachmentMessage` is only a facade to provide
+end user access to the fine-grained Attachment APIs. The underlying message implementation
+such as `DefaultMessage` in the `Exchange` is un-affected when converting from `Message` to `AttachmentMessage` via:
+
+[source,java]
+----
+AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
+am.addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+----
+
+The class `org.apache.camel.attachment.AttachmentMap` has been removed.
+Removed `getDelegateMessage` method from `org.apache.camel.attachment.AttachmentMessage`.
+
+=== camel-ftp
+
+The file name header `Exchange.FILE_NAME` now includes the relative path such as `subdir/hello.txt`
+when using `recursive=true`, to be similar to how `camel-file` component behaves.
+
+=== camel-kafka
+
+The camel-kafka option `recordMetadata` has changed default from `true` to `false`.
+
+>>>>>>> 0c05a351261 (CAMEL-21788: camel-kafka - Turn recordMetadata off by default)
 == Upgrading Camel 4.9 to 4.10
 
 === XML DSL changes
