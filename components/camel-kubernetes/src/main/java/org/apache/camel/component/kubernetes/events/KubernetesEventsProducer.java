@@ -91,29 +91,31 @@ public class KubernetesEventsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange) {
         EventList eventList;
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        if (ObjectHelper.isNotEmpty(namespaceName)) {
-            eventList = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespaceName).list();
-        } else {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        if (ObjectHelper.isEmpty(namespace)) {
             eventList = getEndpoint().getKubernetesClient().events().v1().events().inAnyNamespace().list();
+        } else {
+            eventList = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespace).list();
         }
         prepareOutboundMessage(exchange, eventList.getItems());
     }
 
     protected void doListEventsByLabel(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, Map.class);
+        EventList eventList;
+
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get events by labels require specify a labels set");
             throw new IllegalArgumentException("Get events by labels require specify a labels set");
         }
 
-        EventList eventList = getEndpoint().getKubernetesClient()
-                .events()
-                .v1()
-                .events()
-                .inAnyNamespace()
-                .withLabels(labels)
-                .list();
+        if (ObjectHelper.isEmpty(namespace)) {
+            eventList = getEndpoint().getKubernetesClient().events().v1().events().inAnyNamespace().withLabels(labels).list();
+        } else {
+            eventList = getEndpoint().getKubernetesClient().events().v1().events().inNamespace(namespace).withLabels(labels)
+                    .list();
+        }
 
         prepareOutboundMessage(exchange, eventList.getItems());
     }

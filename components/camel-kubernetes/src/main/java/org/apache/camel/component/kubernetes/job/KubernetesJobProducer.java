@@ -24,9 +24,7 @@ import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobList;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpec;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
-import io.fabric8.kubernetes.client.dsl.ScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -94,21 +92,33 @@ public class KubernetesJobProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        JobList jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        JobList jobList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inAnyNamespace().list();
+        } else {
+            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespace).list();
+        }
 
         prepareOutboundMessage(exchange, jobList.getItems());
     }
 
     protected void doListJobByLabel(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
+        JobList jobList;
+
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get Job by labels require specify a labels set");
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        MixedOperation<Job, JobList, ScalableResource<Job>> jobs = getEndpoint().getKubernetesClient().batch().v1().jobs();
-
-        JobList jobList = jobs.withLabels(labels).list();
+        if (ObjectHelper.isEmpty(namespace)) {
+            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inAnyNamespace().withLabels(labels).list();
+        } else {
+            jobList = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespace).withLabels(labels).list();
+        }
 
         prepareOutboundMessage(exchange, jobList.getItems());
     }

@@ -55,9 +55,15 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
         server.expect().withPath("/api/v1/resourcequotas")
                 .andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
+        server.expect().withPath("/api/v1/namespaces/test/resourcequotas")
+                .andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().build())
+                .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
-
         assertEquals(3, result.size());
+
+        Exchange ex = template.request("direct:list",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
     @Test
@@ -70,16 +76,22 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
                 .collect(Collectors.joining(",")));
 
         server.expect().withPath("/api/v1/resourcequotas?labelSelector=" + urlEncodedLabels)
-                .andReturn(200,
-                        new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
-        Exchange ex = template.request("direct:listByLabels", exchange -> {
+        server.expect().withPath("/api/v1/namespaces/test/resourcequotas?labelSelector=" + urlEncodedLabels)
+                .andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().build())
+                .once();
+        Exchange ex = template.request("direct:listByLabels",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, labels));
+
+        assertEquals(3, ex.getMessage().getBody(List.class).size());
+
+        ex = template.request("direct:listByLabels", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
         });
 
-        List<?> result = ex.getMessage().getBody(List.class);
-
-        assertEquals(3, result.size());
+        assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
     @Test

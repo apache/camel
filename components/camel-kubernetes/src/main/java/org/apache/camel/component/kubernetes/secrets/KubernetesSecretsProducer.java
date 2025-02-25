@@ -86,27 +86,32 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        SecretList secretsList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
+        } else {
+            secretsList = getEndpoint().getKubernetesClient().secrets().inNamespace(namespace).list();
+        }
+
         prepareOutboundMessage(exchange, secretsList.getItems());
     }
 
     protected void doListSecretsByLabels(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         SecretList secretsList;
-        if (!ObjectHelper.isEmpty(namespaceName)) {
-            secretsList = getEndpoint()
-                    .getKubernetesClient()
-                    .secrets()
-                    .inNamespace(namespaceName)
-                    .withLabels(labels)
-                    .list();
+
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Listing Secrets by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing Secrets by labels requires specifying labels");
+        }
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().withLabels(labels).list();
         } else {
-            secretsList = getEndpoint()
-                    .getKubernetesClient()
-                    .secrets()
-                    .inAnyNamespace()
-                    .withLabels(labels).list();
+            secretsList = getEndpoint().getKubernetesClient().secrets().inNamespace(namespace).withLabels(labels).list();
         }
 
         prepareOutboundMessage(exchange, secretsList.getItems());

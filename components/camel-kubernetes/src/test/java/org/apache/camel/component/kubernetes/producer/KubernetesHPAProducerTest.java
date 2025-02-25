@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.kubernetes.producer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerListBuilder;
@@ -53,31 +52,51 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
     @Test
     void listTest() {
+        server.expect().withPath("/apis/autoscaling/v1/horizontalpodautoscalers")
+                .andReturn(200,
+                        new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and()
+                                .build())
+                .once();
         server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers")
-                .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem()
-                        .and().build())
+                .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().build())
                 .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
-
         assertEquals(3, result.size());
+
+        Exchange ex = template.request("direct:list",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
     @Test
     void listByLabelsTest() throws Exception {
+        Map<String, String> labels = Map.of(
+                "key1", "value1",
+                "key2", "value2");
+
+        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining(",")));
+
+        server.expect().withPath("/apis/autoscaling/v1/horizontalpodautoscalers?labelSelector=" + urlEncodedLabels)
+                .andReturn(200,
+                        new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and()
+                                .build())
+                .once();
         server.expect()
-                .withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers?labelSelector="
-                          + toUrlEncoded("key1=value1,key2=value2"))
-                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", exchange -> {
-            Map<String, String> labels = new HashMap<>();
-            labels.put("key1", "value1");
-            labels.put("key2", "value2");
+                .withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers?labelSelector=" + urlEncodedLabels)
+                .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().build())
+                .once();
+        Exchange ex = template.request("direct:listByLabels",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels));
+
+        assertEquals(3, ex.getMessage().getBody(List.class).size());
+
+        ex = template.request("direct:listByLabels", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
         });
 
-        List<?> result = ex.getMessage().getBody(List.class);
-
-        assertEquals(3, result.size());
+        assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
     @Test

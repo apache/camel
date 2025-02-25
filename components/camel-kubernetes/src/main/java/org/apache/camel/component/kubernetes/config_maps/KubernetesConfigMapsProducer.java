@@ -104,6 +104,11 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
         ConfigMapList configMapsList;
 
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Listing ConfigMaps by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing ConfigMaps by labels requires specifying labels");
+        }
+
         if (ObjectHelper.isEmpty(namespace)) {
             configMapsList = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace().withLabels(labels).list();
         } else {

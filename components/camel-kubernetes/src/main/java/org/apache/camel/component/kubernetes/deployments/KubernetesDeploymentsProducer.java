@@ -96,10 +96,10 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         DeploymentList deploymentsList;
 
-        if (ObjectHelper.isNotEmpty(namespace)) {
-            deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespace).list();
+        if (ObjectHelper.isEmpty(namespace)) {
+            deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().inAnyNamespace().list();
         } else {
-            deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().list();
+            deploymentsList = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespace).list();
         }
 
         prepareOutboundMessage(exchange, deploymentsList.getItems());
@@ -111,13 +111,18 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>> deployments = getEndpoint()
                 .getKubernetesClient().apps().deployments();
 
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Listing Deployments by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing Deployments by labels requires specifying labels");
+        }
+
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         DeploymentList deploymentsList;
 
         if (ObjectHelper.isNotEmpty(namespace)) {
             deploymentsList = deployments.inNamespace(namespace).withLabels(labels).list();
         } else {
-            deploymentsList = deployments.withLabels(labels).list();
+            deploymentsList = deployments.inAnyNamespace().withLabels(labels).list();
         }
 
         prepareOutboundMessage(exchange, deploymentsList.getItems());
