@@ -515,7 +515,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
             KafkaProducerMetadataCallBack metadataCallBack = new KafkaProducerMetadataCallBack(
                     key, configuration.isRecordMetadata());
 
-            DelegatingCallback delegatingCallback = new DelegatingCallback(cb, metadataCallBack);
+            // make sure to cb is last in the order here
+            DelegatingCallback delegatingCallback = new DelegatingCallback(metadataCallBack, cb);
 
             kafkaProducer.send(record, delegatingCallback);
         } else {
