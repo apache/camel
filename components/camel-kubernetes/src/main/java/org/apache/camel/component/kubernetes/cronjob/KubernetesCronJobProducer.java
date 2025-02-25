@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.fabric8.kubernetes.api.model.batch.v1.*;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.api.model.batch.v1.CronJob;
+import io.fabric8.kubernetes.api.model.batch.v1.CronJobBuilder;
+import io.fabric8.kubernetes.api.model.batch.v1.CronJobList;
+import io.fabric8.kubernetes.api.model.batch.v1.CronJobSpec;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -90,23 +92,37 @@ public class KubernetesCronJobProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        CronJobList cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        CronJobList cronJobList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inAnyNamespace().list();
+        } else {
+            cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespace).list();
+        }
 
         prepareOutboundMessage(exchange, cronJobList.getItems());
     }
 
     protected void doListCronJobByLabel(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
+        CronJobList cronJobList;
+
         if (ObjectHelper.isEmpty(labels)) {
-            throw new IllegalArgumentException("Cron Job by labels require specify a labels set");
+            LOG.error("Listing CronJobs by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing CronJobs by labels requires specifying labels");
         }
 
-        MixedOperation<CronJob, CronJobList, Resource<CronJob>> cronJobs
-                = getEndpoint().getKubernetesClient().batch().v1().cronjobs();
+        if (ObjectHelper.isEmpty(namespace)) {
+            cronJobList
+                    = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inAnyNamespace().withLabels(labels).list();
+        } else {
+            cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespace).withLabels(labels)
+                    .list();
+        }
 
-        CronJobList jobList = cronJobs.withLabels(labels).list();
-
-        prepareOutboundMessage(exchange, jobList.getItems());
+        prepareOutboundMessage(exchange, cronJobList.getItems());
     }
 
     protected void doGetCronJob(Exchange exchange) {

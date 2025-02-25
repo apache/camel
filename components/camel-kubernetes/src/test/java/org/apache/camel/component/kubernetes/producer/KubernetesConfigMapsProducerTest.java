@@ -80,13 +80,12 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
         server.expect().withPath("/api/v1/namespaces/test/configmaps?labelSelector=" + urlEncodedLabels)
                 .andReturn(200, new ConfigMapListBuilder().addNewItem().and().addNewItem().and().build())
                 .once();
-        Exchange ex = template.request("direct:listConfigMapsByLabels", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
-        });
+        Exchange ex = template.request("direct:listByLabels",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels));
 
         assertEquals(3, ex.getMessage().getBody(List.class).size());
 
-        ex = template.request("direct:listConfigMapsByLabels", exchange -> {
+        ex = template.request("direct:listByLabels", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
         });
@@ -224,7 +223,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
             public void configure() {
                 from("direct:list")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMaps");
-                from("direct:listConfigMapsByLabels")
+                from("direct:listByLabels")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels");
                 from("direct:getConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=getConfigMap");

@@ -85,29 +85,33 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        ServiceAccountList saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().list();
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ServiceAccountList saList;
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().list();
+        } else {
+            saList = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespace).list();
+        }
+
         prepareOutboundMessage(exchange, saList.getItems());
     }
 
     protected void doListServiceAccountsByLabels(Exchange exchange) {
+        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ServiceAccountList saList;
-        if (!ObjectHelper.isEmpty(namespaceName)) {
-            saList = getEndpoint()
-                    .getKubernetesClient()
-                    .serviceAccounts()
-                    .inNamespace(namespaceName)
-                    .withLabels(labels)
-                    .list();
+
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Listing ServiceAccounts by labels requires specifying labels");
+            throw new IllegalArgumentException("Listing ServiceAccounts by labels requires specifying labels");
+        }
+
+        if (ObjectHelper.isEmpty(namespace)) {
+            saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace().withLabels(labels).list();
         } else {
-            saList = getEndpoint()
-                    .getKubernetesClient()
-                    .serviceAccounts()
-                    .inAnyNamespace()
-                    .withLabels(labels)
-                    .list();
+            saList = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespace).withLabels(labels).list();
         }
 
         prepareOutboundMessage(exchange, saList.getItems());
