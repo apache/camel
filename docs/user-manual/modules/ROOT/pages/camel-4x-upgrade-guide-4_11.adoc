@@ -10,6 +10,9 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `removeTraits` method to `org.apache.camel.Message`.
 
+Added `bind` method that accepts `Supplier` for the bean and also accepts init and destroy methods,
+to the `org.apache.camel.spi.Registry` interface.
+
 === camel-attachments
 
 The attachments have been refactored to be stored internally as a _message trait_,
