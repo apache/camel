@@ -18,9 +18,12 @@ package org.apache.camel.component.kafka.producer.support;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DelegatingCallback implements Callback {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DelegatingCallback.class);
     private final Callback callback1;
     private final Callback callback2;
 
@@ -31,7 +34,17 @@ public final class DelegatingCallback implements Callback {
 
     @Override
     public void onCompletion(RecordMetadata metadata, Exception exception) {
-        callback1.onCompletion(metadata, exception);
-        callback2.onCompletion(metadata, exception);
+        try {
+            callback1.onCompletion(metadata, exception);
+        } catch (Exception e) {
+            // ensure every callback is invoked
+            LOG.warn("Error invoking 1st onCompletion. This exception is ignored.", e);
+        }
+        try {
+            callback2.onCompletion(metadata, exception);
+        } catch (Exception e) {
+            // ensure every callback is invoked
+            LOG.warn("Error invoking 2nd onCompletion. This exception is ignored.", e);
+        }
     }
 }
