@@ -37,7 +37,7 @@ public class ScriptingWithPipesITCase extends JBangTestSupport {
                                               "                .to(\"stream:out\");\n" +
                                               "    }\n" +
                                               "}");
-        execInHost(String.format("chmod +x %s/UpperCase.java", getDataFolder()));
+        execInContainer(String.format("chmod +x %s/UpperCase.java", mountPoint()));
         execInContainer(String.format("echo \"hello camel\" | %s/UpperCase.java > %s/hello.txt", mountPoint(), mountPoint()));
         assertFileInDataFolderContains("hello.txt", "HELLO CAMEL");
     }
