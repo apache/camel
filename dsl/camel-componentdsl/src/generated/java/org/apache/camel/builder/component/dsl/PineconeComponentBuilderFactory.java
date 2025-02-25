@@ -51,6 +51,67 @@ public interface PineconeComponentBuilderFactory {
     interface PineconeComponentBuilder extends ComponentBuilder<PineconeVectorDbComponent> {
     
         /**
+         * Sets the cloud type to use (aws/gcp/azure).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param cloud the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder cloud(java.lang.String cloud) {
+            doSetProperty("cloud", cloud);
+            return this;
+        }
+    
+        /**
+         * Sets the cloud region.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param cloudRegion the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder cloudRegion(java.lang.String cloudRegion) {
+            doSetProperty("cloudRegion", cloudRegion);
+            return this;
+        }
+    
+        /**
+         * Sets the Collection Dimension to use (1-1536).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param collectionDimension the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder collectionDimension(java.lang.Integer collectionDimension) {
+            doSetProperty("collectionDimension", collectionDimension);
+            return this;
+        }
+    
+        /**
+         * Sets the Collection Similarity Metric to use
+         * (cosine/euclidean/dotproduct).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param collectionSimilarityMetric the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder collectionSimilarityMetric(java.lang.String collectionSimilarityMetric) {
+            doSetProperty("collectionSimilarityMetric", collectionSimilarityMetric);
+            return this;
+        }
+    
+        /**
          * The configuration;.
          * 
          * The option is a:
@@ -63,6 +124,21 @@ public interface PineconeComponentBuilderFactory {
          */
         default PineconeComponentBuilder configuration(org.apache.camel.component.pinecone.PineconeVectorDbConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        /**
+         * Sets the index name to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param indexName the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder indexName(java.lang.String indexName) {
+            doSetProperty("indexName", indexName);
             return this;
         }
     
@@ -148,7 +224,12 @@ public interface PineconeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "cloud": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCloud((java.lang.String) value); return true;
+            case "cloudRegion": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCloudRegion((java.lang.String) value); return true;
+            case "collectionDimension": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCollectionDimension((java.lang.Integer) value); return true;
+            case "collectionSimilarityMetric": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCollectionSimilarityMetric((java.lang.String) value); return true;
             case "configuration": ((PineconeVectorDbComponent) component).setConfiguration((org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) value); return true;
+            case "indexName": getOrCreateConfiguration((PineconeVectorDbComponent) component).setIndexName((java.lang.String) value); return true;
             case "lazyStartProducer": ((PineconeVectorDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "token": getOrCreateConfiguration((PineconeVectorDbComponent) component).setToken((java.lang.String) value); return true;
             case "autowiredEnabled": ((PineconeVectorDbComponent) component).setAutowiredEnabled((boolean) value); return true;

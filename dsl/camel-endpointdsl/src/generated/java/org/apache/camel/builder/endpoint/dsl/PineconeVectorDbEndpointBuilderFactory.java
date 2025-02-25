@@ -45,6 +45,92 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         }
 
         /**
+         * Sets the cloud type to use (aws/gcp/azure).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param cloud the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder cloud(String cloud) {
+            doSetProperty("cloud", cloud);
+            return this;
+        }
+        /**
+         * Sets the cloud region.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param cloudRegion the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder cloudRegion(String cloudRegion) {
+            doSetProperty("cloudRegion", cloudRegion);
+            return this;
+        }
+        /**
+         * Sets the Collection Dimension to use (1-1536).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param collectionDimension the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder collectionDimension(Integer collectionDimension) {
+            doSetProperty("collectionDimension", collectionDimension);
+            return this;
+        }
+        /**
+         * Sets the Collection Dimension to use (1-1536).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param collectionDimension the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder collectionDimension(String collectionDimension) {
+            doSetProperty("collectionDimension", collectionDimension);
+            return this;
+        }
+        /**
+         * Sets the Collection Similarity Metric to use
+         * (cosine/euclidean/dotproduct).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param collectionSimilarityMetric the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder collectionSimilarityMetric(String collectionSimilarityMetric) {
+            doSetProperty("collectionSimilarityMetric", collectionSimilarityMetric);
+            return this;
+        }
+        /**
+         * Sets the index name to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param indexName the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder indexName(String indexName) {
+            doSetProperty("indexName", indexName);
+            return this;
+        }
+        /**
          * Sets the API key to use for authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.

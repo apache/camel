@@ -107,8 +107,13 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void createCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
+
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
         String collectionName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_NAME, String.class);
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
 
         CollectionModel result = this.client.createCollection(collectionName, indexName);
 
@@ -118,12 +123,31 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void createServerlessIndex(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
-        String collectionSimilarityMetricName
-                = in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class);
-        int collectionDimension = in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class);
-        String collectionCloudName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD, String.class);
-        String collectionCloudRegionName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD_REGION, String.class);
+
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+        String collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
+        int collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+        String collectionCloudName = getEndpoint().getConfiguration().getCloud();
+        String collectionCloudRegionName = getEndpoint().getConfiguration().getCloudRegion();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
+
+        if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class) != null) {
+            collectionSimilarityMetricName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class);
+        }
+
+        if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class) != null) {
+            collectionDimension = in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class);
+        }
+        if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD, String.class) != null) {
+            collectionCloudName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD, String.class);
+        }
+
+        if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD_REGION, String.class) != null) {
+            collectionCloudRegionName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_CLOUD_REGION, String.class);
+        }
 
         IndexModel result = this.client.createServerlessIndex(indexName, collectionSimilarityMetricName, collectionDimension,
                 collectionCloudName, collectionCloudRegionName, DeletionProtection.DISABLED);
@@ -134,10 +158,22 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void createPodIndex(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
-        String collectionSimilarityMetricName
-                = in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class);
-        int collectionDimension = in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+        String collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
+        int collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
+
+        if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class) != null) {
+            collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
+        }
+
+        if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class) != null) {
+            collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+        }
+
         String indexPodType = in.getHeader(PineconeVectorDb.Headers.INDEX_POD_TYPE, String.class);
         String indexPodEnv = in.getHeader(PineconeVectorDb.Headers.INDEX_POD_ENVIRONMENT, String.class);
 
@@ -151,7 +187,10 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     private void upsert(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
         String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
         Index index = this.client.getIndexConnection(indexName);
 
@@ -164,7 +203,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     private void update(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
         String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
         Index index = this.client.getIndexConnection(indexName);
 
@@ -176,7 +219,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void deleteIndex(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
         this.client.deleteIndex(indexName);
     }
 
@@ -189,7 +236,12 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     private void query(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
+
         int topK = in.getHeader(PineconeVectorDb.Headers.QUERY_TOP_K, Integer.class);
         Index index = this.client.getIndexConnection(indexName);
 
@@ -200,7 +252,14 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void queryById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+
+        // Check to see if indexName is stored in the header, if it is not, check the configuration
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
+
         int topK = in.getHeader(PineconeVectorDb.Headers.QUERY_TOP_K, Integer.class);
         Index index = this.client.getIndexConnection(indexName);
 
