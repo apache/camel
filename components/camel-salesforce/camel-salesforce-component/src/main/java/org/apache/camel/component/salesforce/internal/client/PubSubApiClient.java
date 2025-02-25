@@ -24,8 +24,11 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.protobuf.ByteString;
 import com.salesforce.eventbus.protobuf.ConsumerEvent;
 import com.salesforce.eventbus.protobuf.FetchRequest;
@@ -145,7 +148,8 @@ public class PubSubApiClient extends ServiceSupport {
         return publishResults;
     }
 
-    public void subscribe(PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId) {
+    public void subscribe(
+            PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, boolean initialSubscribe) {
         LOG.debug("Starting subscribe {}", consumer.getTopic());
         this.initialReplayPreset = replayPreset;
         this.initialReplayId = initialReplayId;
@@ -153,11 +157,14 @@ public class PubSubApiClient extends ServiceSupport {
             throw new RuntimeException("initialReplayId is required for ReplayPreset.CUSTOM");
         }
 
+        String topic = consumer.getTopic();
         ByteString replayId = null;
         if (initialReplayId != null) {
             replayId = base64DecodeToByteString(initialReplayId);
+            if (initialSubscribe) {
+                checkInitialReplayIdValidity(topic, replayId);
+            }
         }
-        String topic = consumer.getTopic();
         LOG.info("Subscribing to topic: {}.", topic);
         final FetchResponseObserver responseObserver = new FetchResponseObserver(consumer);
         StreamObserver<FetchRequest> serverStream = asyncStub.subscribe(responseObserver);
@@ -172,6 +179,52 @@ public class PubSubApiClient extends ServiceSupport {
             fetchRequestBuilder.setReplayId(replayId);
         }
         serverStream.onNext(fetchRequestBuilder.build());
+    }
+
+    public void checkInitialReplayIdValidity(String topic, ByteString replayId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Checking initialReplayId {} for topic {}", base64EncodeByteString(replayId), topic);
+        }
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final CountDownLatch latch = new CountDownLatch(1);
+        final StreamObserver<FetchResponse> responseObserver = new StreamObserver<>() {
+
+            @Override
+            public void onNext(FetchResponse value) {
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                error.set(t);
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+            }
+        };
+        StreamObserver<FetchRequest> serverStream = asyncStub.subscribe(responseObserver);
+        FetchRequest.Builder fetchRequestBuilder = FetchRequest.newBuilder()
+                .setReplayPreset(ReplayPreset.CUSTOM)
+                .setTopicName(topic)
+                .setNumRequested(1)
+                .setReplayId(replayId);
+        serverStream.onNext(fetchRequestBuilder.build());
+
+        try {
+            if (!Uninterruptibles.awaitUninterruptibly(latch, 10, TimeUnit.SECONDS)) {
+                throw new RuntimeException("timeout while checking initialReplayId.");
+            }
+        } finally {
+            serverStream.onCompleted();
+        }
+
+        if (error.get() != null) {
+            throw new RuntimeException(
+                    "initialReplayId " + base64EncodeByteString(replayId) + " is not valid",
+                    error.get());
+        }
     }
 
     public TopicInfo getTopicInfo(String name) {
@@ -369,12 +422,12 @@ public class PubSubApiClient extends ServiceSupport {
                 throw new RuntimeException(e);
             }
             if (replayId != null) {
-                subscribe(consumer, ReplayPreset.CUSTOM, replayId);
+                subscribe(consumer, ReplayPreset.CUSTOM, replayId, false);
             } else {
                 if (initialReplayPreset == ReplayPreset.CUSTOM) {
-                    subscribe(consumer, initialReplayPreset, initialReplayId);
+                    subscribe(consumer, initialReplayPreset, initialReplayId, false);
                 } else {
-                    subscribe(consumer, initialReplayPreset, null);
+                    subscribe(consumer, initialReplayPreset, null, false);
                 }
             }
         }
