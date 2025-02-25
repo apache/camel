@@ -47,12 +47,13 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
 
         template.sendBodyAndHeader(fileUri("reports"), "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
+        context.getRouteController().startAllRoutes();
+
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testIllegalOptions() {
-
         Endpoint ep = context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true"));
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> ep.createConsumer(exchange -> {
@@ -65,6 +66,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
             public void configure() {
                 from(fileUri(
                         "reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10"))
+                        .autoStartup(false)
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) {
