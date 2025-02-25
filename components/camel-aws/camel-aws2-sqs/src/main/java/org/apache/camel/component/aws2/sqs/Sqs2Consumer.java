@@ -174,8 +174,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 LOG.debug("Error processing exchange, stopping exchange from extending its visibility", e);
                 if (timeoutExtender != null && timeoutExtender.entries != null) {
                     timeoutExtender.entries.remove(exchange.getExchangeId());
-                    throw e;
                 }
+                throw e;
             }
         }
 
