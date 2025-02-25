@@ -272,7 +272,7 @@
         <jboss-logging-version>3.6.1.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi-version>7.6.1.Final</jboss-transaction-spi-version>
-        <jboss-xnio-version>3.8.14.Final</jboss-xnio-version>
+        <jboss-xnio-version>3.8.16.Final</jboss-xnio-version>
         <jcache-version>1.1.1</jcache-version>
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
