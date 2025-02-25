@@ -3298,7 +3298,7 @@ public interface KafkaEndpointBuilderFactory {
          * Whether the producer should store the RecordMetadata results from
          * sending to Kafka. The results are stored in a List containing the
          * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORDMETA.
+         * key KafkaConstants#KAFKA_RECORD_META.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3316,7 +3316,7 @@ public interface KafkaEndpointBuilderFactory {
          * Whether the producer should store the RecordMetadata results from
          * sending to Kafka. The results are stored in a List containing the
          * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORDMETA.
+         * key KafkaConstants#KAFKA_RECORD_META.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
