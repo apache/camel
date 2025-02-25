@@ -347,10 +347,14 @@ public class PubSubApiClient extends ServiceSupport {
                             LOG.debug("logged in {}", consumer.getTopic());
                         }
                         case PUBSUB_ERROR_CORRUPTED_REPLAY_ID -> {
-                            LOG.error("replay id: " + replayId
-                                      + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
-                            replayId = null;
-                            initialReplayPreset = ReplayPreset.LATEST;
+                            if (initialReplayPreset == ReplayPreset.CUSTOM) {
+                                LOG.error("replay id: " + replayId + " is corrupt.");
+                            } else {
+                                LOG.error("replay id: " + replayId
+                                          + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
+                                replayId = null;
+                                initialReplayPreset = ReplayPreset.LATEST;
+                            }
                         }
                         default -> LOG.error("unexpected errorCode: {}", errorCode);
                     }
