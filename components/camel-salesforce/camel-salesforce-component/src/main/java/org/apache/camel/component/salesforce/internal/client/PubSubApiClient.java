@@ -196,7 +196,13 @@ public class PubSubApiClient extends ServiceSupport {
 
             @Override
             public void onError(Throwable t) {
-                error.set(t);
+                if (t instanceof StatusRuntimeException e) {
+                    Metadata trailers = e.getTrailers();
+                    if (trailers != null && PUBSUB_ERROR_CORRUPTED_REPLAY_ID
+                            .equals(trailers.get(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER)))) {
+                        error.set(t);
+                    }
+                }
                 latch.countDown();
             }
 
