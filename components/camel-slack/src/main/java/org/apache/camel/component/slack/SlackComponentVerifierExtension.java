@@ -24,6 +24,7 @@ import com.slack.api.Slack;
 import com.slack.api.SlackConfig;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.ConversationType;
+import com.slack.api.util.http.SlackHttpClient;
 import com.slack.api.webhook.WebhookResponse;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
@@ -87,7 +88,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
 
                 SlackConfig config = SlackHelper.createSlackConfig(serverUrl);
                 WebhookResponse response
-                        = Slack.getInstance(config, new CustomSlackHttpClient()).send(webhookUrl, GSON.toJson(slackMessage));
+                        = Slack.getInstance(config, new SlackHttpClient()).send(webhookUrl, GSON.toJson(slackMessage));
 
                 // 2xx is OK, anything else we regard as failure
                 if (response.getCode() < 200 || response.getCode() > 299) {
@@ -106,7 +107,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
 
             try {
                 SlackConfig config = SlackHelper.createSlackConfig(serverUrl);
-                ConversationsListResponse response = Slack.getInstance(config, new CustomSlackHttpClient()).methods(token)
+                ConversationsListResponse response = Slack.getInstance(config, new SlackHttpClient()).methods(token)
                         .conversationsList(req -> req
                                 .types(Collections.singletonList(ConversationType.PUBLIC_CHANNEL))
                                 .limit(1));
