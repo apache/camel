@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.w3c.dom.Document;
 
@@ -48,9 +50,11 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -391,11 +395,25 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
      * {@link #doLoadRouteBuilder}), a failure may lead to delayed registration.
      */
     private void registerBeanDefinition(BeanFactoryDefinition<?> def, boolean delayIfFailed) {
+        CamelBeanPostProcessor cbpp = PluginHelper.getBeanPostProcessor(getCamelContext());
+        Predicate<?> lazy = cbpp.getLazyBeanStrategy();
+
         String name = def.getName();
         String type = def.getType();
         try {
-            Object target = BeanModelHelper.newInstance(def, getCamelContext());
-            bindBean(def, name, target);
+            // only do lazy bean on 2nd pass as 1st pass may work
+            if (!delayIfFailed && lazy != null && lazy.test(null)) {
+                bindLazyBean(def, name, () -> {
+                    try {
+                        return BeanModelHelper.newInstance(def, getCamelContext());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } else {
+                Object target = BeanModelHelper.newInstance(def, getCamelContext());
+                bindBean(def, name, target);
+            }
         } catch (Exception e) {
             if (delayIfFailed) {
                 delayedRegistrations.add(def);
@@ -411,6 +429,28 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         // unbind in case we reload
         getCamelContext().getRegistry().unbind(name);
         getCamelContext().getRegistry().bind(name, target, def.getInitMethod(), def.getDestroyMethod());
+
+        // register bean in model
+        Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
+        model.addCustomBean(def);
+    }
+
+    protected void bindLazyBean(
+            BeanFactoryDefinition<?> def,
+            String name, Supplier<Object> target)
+            throws Exception {
+
+        Class<?> beanType = null;
+        if (def.getType() != null) {
+            beanType = getCamelContext().getClassResolver().resolveClass(def.getType());
+        }
+        if (beanType == null) {
+            beanType = Object.class;
+        }
+
+        // unbind in case we reload
+        getCamelContext().getRegistry().unbind(name);
+        getCamelContext().getRegistry().bind(name, beanType, target, def.getInitMethod(), def.getDestroyMethod());
 
         // register bean in model
         Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);

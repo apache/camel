@@ -29,7 +29,7 @@ public interface Registry extends BeanRepository {
     /**
      * Binds the bean to the repository (if possible).
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param  id                    the id of the bean
      * @param  bean                  the bean
@@ -44,7 +44,7 @@ public interface Registry extends BeanRepository {
     /**
      * Binds the bean to the repository (if possible).
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param  id                    the id of the bean
      * @param  bean                  the bean
@@ -63,7 +63,7 @@ public interface Registry extends BeanRepository {
      * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param  id                    the id of the bean
      * @param  type                  the type of the bean to associate the binding
@@ -77,7 +77,7 @@ public interface Registry extends BeanRepository {
      * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param  id                    the id of the bean
      * @param  type                  the type of the bean to associate the binding
@@ -102,6 +102,26 @@ public interface Registry extends BeanRepository {
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException;
+
+    /**
+     * Binds the bean to the repository (if possible).
+     * <p/>
+     * Camel will cache the result from the supplier from first lookup (singleton scope). If you do not need cached then
+     * use {@link #bindAsPrototype(String, Class, Supplier)} instead.
+     * <p/>
+     * Binding by id and type allows to bind multiple entries with the same id but with different type.
+     *
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
+     *
+     * @param  id                    the id of the bean
+     * @param  type                  the type of the bean to associate the binding
+     * @param  bean                  a supplier for the bean
+     * @param  initMethod            optional init method (invoked at bind)
+     * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
+     * @throws RuntimeCamelException is thrown if binding is not possible
+     */
+    void bind(String id, Class<?> type, Supplier<Object> bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException;
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).

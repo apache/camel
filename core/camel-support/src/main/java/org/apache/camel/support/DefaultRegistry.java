@@ -215,6 +215,29 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
     }
 
     @Override
+    public void bind(String id, Class<?> type, Supplier<Object> bean, String initMethod, String destroyMethod)
+            throws RuntimeCamelException {
+        if (bean != null) {
+            // wrap in cached supplier (memorize)
+            Supplier<Object> sup = Suppliers.memorize(() -> {
+                Object answer = bean.get();
+                if (isNotEmpty(initMethod)) {
+                    try {
+                        ObjectHelper.invokeMethodSafe(initMethod, answer);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
+                }
+                return answer;
+            });
+            supplierRegistry.bind(id, type, sup);
+            if (isNotEmpty(destroyMethod)) {
+                beansToDestroy.put(id, new KeyValueHolder<>(sup, destroyMethod));
+            }
+        }
+    }
+
+    @Override
     public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException {
         if (bean != null) {
             supplierRegistry.bind(id, type, bean);
@@ -234,11 +257,16 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
         if (holder != null) {
             String destroyMethod = holder.getValue();
             Object target = holder.getKey();
-            try {
-                org.apache.camel.support.ObjectHelper.invokeMethodSafe(destroyMethod, target);
-            } catch (Exception e) {
-                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
-                        destroyMethod, target, e.getMessage(), e);
+            if (target instanceof Supplier sup) {
+                target = sup.get();
+            }
+            if (target != null) {
+                try {
+                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(destroyMethod, target);
+                } catch (Exception e) {
+                    LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                            destroyMethod, target, e.getMessage(), e);
+                }
             }
         }
     }
