@@ -166,7 +166,7 @@ class ExportTest {
     @MethodSource("runtimeProvider")
     public void shouldExportLazyBean(RuntimeType rt) throws Exception {
         Export command = createCommand(rt, new String[] { "classpath:route.yaml", "file:src/test/resources/LazyFoo.java" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--lazy-bean");
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--lazy-bean=true");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);

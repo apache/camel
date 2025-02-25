@@ -10,6 +10,9 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 Added `removeTraits` method to `org.apache.camel.Message`.
 
+Added `bind` method that accepts `Supplier` for the bean and also accepts init and destroy methods,
+to the `org.apache.camel.spi.Registry` interface.
+
 === camel-attachments
 
 The attachments have been refactored to be stored internally as a _message trait_,
@@ -34,6 +37,11 @@ when using `recursive=true`, to be similar to how `camel-file` component behaves
 === camel-kafka
 
 The camel-kafka option `recordMetadata` has changed default from `true` to `false`.
+
+=== camel-jbang
+
+The option `lazy-bean` has changed to be default `true` when exporting to make the export
+work in more situations out of the box.
 
 == Upgrading Camel 4.9 to 4.10
 
