@@ -3295,42 +3295,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the producer should store the RecordMetadata results from
-         * sending to Kafka. The results are stored in a List containing the
-         * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORD_META.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param recordMetadata the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder recordMetadata(boolean recordMetadata) {
-            doSetProperty("recordMetadata", recordMetadata);
-            return this;
-        }
-        /**
-         * Whether the producer should store the RecordMetadata results from
-         * sending to Kafka. The results are stored in a List containing the
-         * RecordMetadata metadata's. The list is stored on a header with the
-         * key KafkaConstants#KAFKA_RECORD_META.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param recordMetadata the value to set
-         * @return the dsl builder
-         */
-        default KafkaEndpointProducerBuilder recordMetadata(String recordMetadata) {
-            doSetProperty("recordMetadata", recordMetadata);
-            return this;
-        }
-        /**
          * The number of acknowledgments the producer requires the leader to
          * have received before considering a request complete. This controls
          * the durability of records that are sent. The following settings are
@@ -4227,6 +4191,42 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORD_META.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointProducerBuilder recordMetadata(boolean recordMetadata) {
+            doSetProperty("recordMetadata", recordMetadata);
+            return this;
+        }
+        /**
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORD_META.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
+         */
+        default AdvancedKafkaEndpointProducerBuilder recordMetadata(String recordMetadata) {
+            doSetProperty("recordMetadata", recordMetadata);
             return this;
         }
         /**
