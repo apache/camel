@@ -52,6 +52,12 @@ public class DefaultDependencyInjectionAnnotationFactory
     public Runnable createBindToRegistryFactory(
             String id, Object bean, Class<?> beanType, String beanName, boolean beanPostProcess,
             String initMethod, String destroyMethod) {
+
+        if (beanType.isAssignableFrom(Supplier.class)) {
+            beanType = Object.class;
+        }
+        final Class<?> beanTarget = beanType;
+
         return () -> {
             if (beanPostProcess) {
                 try {
@@ -66,7 +72,11 @@ public class DefaultDependencyInjectionAnnotationFactory
             if (bean instanceof Supplier) {
                 // must be Supplier<Object> to ensure correct binding
                 Supplier<Object> sup = (Supplier<Object>) bean;
-                camelContext.getRegistry().bind(id, beanType, sup);
+                if (initMethod != null || destroyMethod != null) {
+                    camelContext.getRegistry().bind(id, beanTarget, sup, initMethod, destroyMethod);
+                } else {
+                    camelContext.getRegistry().bind(id, beanTarget, sup);
+                }
             } else {
                 if (initMethod != null || destroyMethod != null) {
                     camelContext.getRegistry().bind(id, bean, initMethod, destroyMethod);
