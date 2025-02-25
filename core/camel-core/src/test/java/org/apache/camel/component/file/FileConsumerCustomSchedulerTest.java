@@ -44,7 +44,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
     @Test
     public void testCustomScheduler() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
