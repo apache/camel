@@ -237,9 +237,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--lazy-bean" },
+    @CommandLine.Option(names = { "--lazy-bean" }, defaultValue = "true",
                         description = "Whether to use lazy bean initialization (can help with complex classloading issues")
-    protected boolean lazyBean;
+    protected boolean lazyBean = true;
 
     protected boolean symbolicLink;     // copy source files using symbolic link
 
