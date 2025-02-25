@@ -168,7 +168,15 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
-            getAsyncProcessor().process(exchange, cb);
+            try {
+                Boolean a = getAsyncProcessor().process(exchange, cb);
+            } catch (Error e) {
+                LOG.debug("Error processing exchange, stopping exchange from extending its visibility", e);
+                if (timeoutExtender != null && timeoutExtender.entries != null) {
+                    timeoutExtender.entries.remove(exchange.getExchangeId());
+                    throw e;
+                }
+            }
         }
 
         return total;
