@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
@@ -28,10 +30,12 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.Model;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -96,11 +100,25 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             List<BeanFactoryDefinition<?>> delayedRegistrations,
             BeanFactoryDefinition<?> def, boolean delayIfFailed) {
 
+        CamelBeanPostProcessor cbpp = PluginHelper.getBeanPostProcessor(camelContext);
+        Predicate<?> lazy = cbpp.getLazyBeanStrategy();
+
         String name = def.getName();
         String type = def.getType();
         try {
-            Object target = BeanModelHelper.newInstance(def, camelContext);
-            bindBean(camelContext, def, name, target);
+            // only do lazy bean on 2nd pass as 1st pass may work
+            if (!delayIfFailed && lazy != null && lazy.test(null)) {
+                bindLazyBean(camelContext, def, name, () -> {
+                    try {
+                        return BeanModelHelper.newInstance(def, camelContext);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } else {
+                Object target = BeanModelHelper.newInstance(def, camelContext);
+                bindBean(camelContext, def, name, target);
+            }
         } catch (Exception e) {
             if (delayIfFailed) {
                 delayedRegistrations.add(def);
@@ -144,6 +162,28 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         // unbind in case we reload
         camelContext.getRegistry().unbind(name);
         camelContext.getRegistry().bind(name, target, def.getInitMethod(), def.getDestroyMethod());
+
+        // register bean in model
+        Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        model.addCustomBean(def);
+    }
+
+    protected void bindLazyBean(
+            CamelContext camelContext, BeanFactoryDefinition<?> def,
+            String name, Supplier<Object> target)
+            throws Exception {
+
+        Class<?> beanType = null;
+        if (def.getType() != null) {
+            beanType = camelContext.getClassResolver().resolveClass(def.getType());
+        }
+        if (beanType == null) {
+            beanType = Object.class;
+        }
+
+        // unbind in case we reload
+        camelContext.getRegistry().unbind(name);
+        camelContext.getRegistry().bind(name, beanType, target, def.getInitMethod(), def.getDestroyMethod());
 
         // register bean in model
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
