@@ -29,6 +29,7 @@ import com.slack.api.methods.response.conversations.ConversationsHistoryResponse
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.Conversation;
 import com.slack.api.model.Message;
+import com.slack.api.util.http.SlackHttpClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -57,7 +58,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected void doStart() throws Exception {
         SlackConfig config = SlackHelper.createSlackConfig(slackEndpoint.getServerUrl());
-        CustomSlackHttpClient client = new CustomSlackHttpClient();
+        SlackHttpClient client = new SlackHttpClient();
         this.slack = Slack.getInstance(config, client);
         this.channelId = getChannelId(slackEndpoint.getChannel(), null);
         super.doStart();
