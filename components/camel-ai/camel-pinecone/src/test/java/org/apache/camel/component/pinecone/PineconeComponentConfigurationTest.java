@@ -60,6 +60,9 @@ public class PineconeComponentConfigurationTest extends CamelTestSupport {
         assertEquals(3, endpoint.getConfiguration().getCollectionDimension());
         assertEquals("aws", endpoint.getConfiguration().getCloud());
         assertEquals("us-east-1", endpoint.getConfiguration().getCloudRegion());
+        assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
+        assertEquals(9080, endpoint.getConfiguration().getProxyPort().intValue());
+        assertEquals(false, endpoint.getConfiguration().isTls());
     }
 
 }

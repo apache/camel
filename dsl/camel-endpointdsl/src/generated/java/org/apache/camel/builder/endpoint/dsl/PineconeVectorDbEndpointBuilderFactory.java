@@ -131,6 +131,81 @@ public interface PineconeVectorDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Set the proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Set the proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder tls(String tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+        /**
          * Sets the API key to use for authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.

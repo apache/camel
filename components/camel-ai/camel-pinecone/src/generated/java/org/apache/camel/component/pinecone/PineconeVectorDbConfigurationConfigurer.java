@@ -33,6 +33,11 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "collectionSimilarityMetric": target.setCollectionSimilarityMetric(property(camelContext, java.lang.String.class, value)); return true;
         case "indexname":
         case "indexName": target.setIndexName(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "tls": target.setTls(property(camelContext, boolean.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -51,6 +56,11 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "collectionSimilarityMetric": return java.lang.String.class;
         case "indexname":
         case "indexName": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "tls": return boolean.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -70,6 +80,11 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "collectionSimilarityMetric": return target.getCollectionSimilarityMetric();
         case "indexname":
         case "indexName": return target.getIndexName();
+        case "proxyhost":
+        case "proxyHost": return target.getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getProxyPort();
+        case "tls": return target.isTls();
         case "token": return target.getToken();
         default: return null;
         }

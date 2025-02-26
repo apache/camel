@@ -44,6 +44,11 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "indexName": getOrCreateConfiguration(target).setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "tls": getOrCreateConfiguration(target).setTls(property(camelContext, boolean.class, value)); return true;
         case "token": getOrCreateConfiguration(target).setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -66,6 +71,11 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "indexName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "tls": return boolean.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -89,6 +99,11 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         case "indexName": return getOrCreateConfiguration(target).getIndexName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "proxyhost":
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
+        case "proxyport":
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
+        case "tls": return getOrCreateConfiguration(target).isTls();
         case "token": return getOrCreateConfiguration(target).getToken();
         default: return null;
         }
