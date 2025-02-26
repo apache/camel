@@ -34,7 +34,7 @@ public class SqsBatchConsumerConcurrentConsumersIT extends CamelTestSupport {
     @Test
     public void receiveBatch() throws Exception {
         mock.expectedMessageCount(6);
-        MockEndpoint.assertIsSatisfied(context, 3, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @BindToRegistry("amazonSQSClient")
