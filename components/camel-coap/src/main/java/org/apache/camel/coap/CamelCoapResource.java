@@ -134,7 +134,7 @@ final class CamelCoapResource extends CoapResource {
                 res++;
             }
 
-            byte[] bytes = exchange.getCurrentRequest().getPayload();
+            byte[] bytes = exchange.getRequest().getPayload();
             camelExchange.getIn().setBody(bytes);
 
             consumer.getProcessor().process(camelExchange);
