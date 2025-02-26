@@ -20,5 +20,6 @@ public enum IBMSecretsManagerOperation {
     createArbitrarySecret,
     createKVSecret,
     getSecret,
-    deleteSecret
+    deleteSecret,
+    listSecrets
 }

@@ -46,6 +46,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             case deleteSecret:
                 deleteSecret(exchange);
                 break;
+            case listSecrets:
+                listSecrets(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -121,6 +124,11 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             throw new IllegalArgumentException("Secret ID must be specified");
         }
         getEndpoint().getSecretManager().deleteSecret(deleteSecretOptionsBuilder.build()).execute();
+    }
+
+    private void listSecrets(Exchange exchange) {
+        Response<SecretMetadataPaginatedCollection> result = getEndpoint().getSecretManager().listSecrets().execute();
+        exchange.getMessage().setBody(result.getResult());
     }
 
     @Override
