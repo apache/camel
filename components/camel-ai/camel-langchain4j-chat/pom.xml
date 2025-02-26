@@ -24,7 +24,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.4-SNAPSHOT</version>
+        <version>4.8.4</version>
     </parent>
 
     <artifactId>camel-langchain4j-chat</artifactId>
