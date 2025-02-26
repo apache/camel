@@ -344,7 +344,7 @@ public class CamelContextConfiguration {
     }
 
     /**
-     * Set set a custom post-test processor
+     * Set a custom post-test processor
      *
      * @param postProcessor the post-test processor to use
      */
