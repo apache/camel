@@ -34,6 +34,11 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         case "indexName": target.getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "tls": target.getConfiguration().setTls(property(camelContext, boolean.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -53,6 +58,11 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         case "indexName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "tls": return boolean.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -73,6 +83,11 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         case "indexName": return target.getConfiguration().getIndexName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "proxyhost":
+        case "proxyHost": return target.getConfiguration().getProxyHost();
+        case "proxyport":
+        case "proxyPort": return target.getConfiguration().getProxyPort();
+        case "tls": return target.getConfiguration().isTls();
         case "token": return target.getConfiguration().getToken();
         default: return null;
         }
