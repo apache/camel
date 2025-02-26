@@ -262,7 +262,7 @@ public class CamelContextConfiguration {
      *
      * @param camelContextSupplier A supplier for the Camel context
      */
-    protected CamelContextConfiguration withCamelContextSupplier(
+    public CamelContextConfiguration withCamelContextSupplier(
             CamelContextSupplier camelContextSupplier) {
         this.camelContextSupplier = camelContextSupplier;
         return this;
