@@ -49,6 +49,15 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String cloudRegion;
 
+    @UriParam(label = "producer")
+    private String proxyHost;
+
+    @UriParam(label = "producer")
+    private Integer proxyPort;
+
+    @UriParam(defaultValue = "true", label = "producer")
+    private boolean tls;
+
     public String getIndexName() {
         return indexName;
     }
@@ -102,6 +111,39 @@ public class PineconeVectorDbConfiguration implements Cloneable {
      */
     public void setCloudRegion(String cloudRegion) {
         this.cloudRegion = cloudRegion;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * Set the proxy host
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * Set the proxy port
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public boolean isTls() {
+        return tls;
+    }
+
+    /**
+     * Whether the client uses Transport Layer Security (TLS) to secure communications
+     */
+    public void setTls(boolean tls) {
+        this.tls = tls;
     }
 
     public String getToken() {
