@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.function.Supplier;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.support.MessageHelper;
+
 public final class GenericFileHelper {
 
     private GenericFileHelper() {
@@ -34,6 +39,20 @@ public final class GenericFileHelper {
 
     public static String asExclusiveReadLockKey(String path, String key) {
         return path + "-" + key;
+    }
+
+    public static <T> Exchange createDummy(GenericFileEndpoint<T> endpoint, Exchange dynamic, Supplier<GenericFile<T>> file) {
+        Exchange dummy = endpoint.createExchange(file.get());
+        if (dynamic != null) {
+            // enrich with data from dynamic source
+            if (dynamic.getMessage().hasHeaders()) {
+                MessageHelper.copyHeaders(dynamic.getMessage(), dummy.getMessage(), true);
+                if (dynamic.hasVariables()) {
+                    dummy.getVariables().putAll(dynamic.getVariables());
+                }
+            }
+        }
+        return dummy;
     }
 
 }
