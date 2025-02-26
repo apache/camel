@@ -1,0 +1,70 @@
+= DFDL Component
+:doctitle: DFDL
+:shortname: dfdl
+:artifactid: camel-dfdl
+:description: Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
+:since: 4.11
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: dfdl
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The DFDL component allows you to transform the fixed format data such as EDI message from/to XML
+using https://ogf.org/ogf/doku.php/standards/dfdl/dfdl.html[Data Format Description Language], also known as DFDL.
+DFDL schema is an XML schema annotated with DFDL elements and attributes.
+
+While DFDL schema defines the XML representation of the data structure,
+it also defines how the conversion between the fixed format and XML is processed using DFDL annotations.
+
+This component uses https://daffodil.apache.org/[Apache Daffodil] as an underlying DFDL
+implementation.
+
+== URI format
+
+----
+dfdl:schemaUri[?options]
+----
+
+The URI format contains *schemaUri*, which can be the classpath-local URI of the DFDL schema file.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+/ component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Using DFDL endpoints
+
+The following format is an example of using DFDL to convert an EDI message to an XML using `X12-837P-dfdl.xsd` DFDL schema file.
+
+[source,java]
+----
+from("direct:parse").
+  to("dfdl:X12-837P.dfdl.xsd");
+----
+
+The following format is an example of using DFDL to convert an XML to an EDI message using `X12-837P-dfdl.xsd` DFDL schema file. Note that `UNPARSE` is specified for the `parseDirection` parameter.
+
+[source,java]
+----
+from("direct:unparse").
+  to("dfdl:X12-837P.dfdl.xsd?parseDirection=UNPARSE");
+----
+
+include::spring-boot:partial$starter.adoc[]

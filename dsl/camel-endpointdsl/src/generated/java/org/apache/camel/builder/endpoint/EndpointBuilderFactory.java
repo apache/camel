@@ -87,6 +87,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.DebeziumOracleEndpointBuilderFactory.DebeziumOracleBuilders,
             org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresBuilders,
             org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverBuilders,
+            org.apache.camel.builder.endpoint.dsl.DfdlEndpointBuilderFactory.DfdlBuilders,
             org.apache.camel.builder.endpoint.dsl.Dhis2EndpointBuilderFactory.Dhis2Builders,
             org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.DigitalOceanBuilders,
             org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.DigitalSignatureBuilders,
