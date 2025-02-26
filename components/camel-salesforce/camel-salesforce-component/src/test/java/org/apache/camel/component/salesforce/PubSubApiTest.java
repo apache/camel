@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -65,11 +64,11 @@ public class PubSubApiTest {
                 port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
-        client.subscribe(consumer, ReplayPreset.LATEST, null);
+        client.subscribe(consumer, ReplayPreset.LATEST, null, true);
 
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
-        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.LATEST, null);
-        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.CUSTOM, "MTIz");
+        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.LATEST, null, true);
+        verify(client, timeout(5000).times(1)).subscribe(consumer, ReplayPreset.CUSTOM, "MTIz", false);
     }
 
     @Test
@@ -95,10 +94,10 @@ public class PubSubApiTest {
                 port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
-        client.subscribe(consumer, ReplayPreset.CUSTOM, "initial");
+        client.subscribe(consumer, ReplayPreset.CUSTOM, "initial", false);
 
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
-        verify(client, timeout(5000).times(2)).subscribe(consumer, ReplayPreset.CUSTOM, "initial");
+        verify(client, timeout(5000).times(2)).subscribe(consumer, ReplayPreset.CUSTOM, "initial", false);
     }
 
     @Test
@@ -124,12 +123,12 @@ public class PubSubApiTest {
                 port, 1000, 10000, true));
         client.setUsePlainTextConnection(true);
         client.start();
-        client.subscribe(consumer, ReplayPreset.LATEST, null);
+        client.subscribe(consumer, ReplayPreset.LATEST, null, false);
 
         Thread.sleep(1000);
 
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
-        verify(client, timeout(5000).times(2)).subscribe(consumer, ReplayPreset.LATEST, null);
+        verify(client, timeout(5000).times(2)).subscribe(consumer, ReplayPreset.LATEST, null, false);
     }
 
     @Test
@@ -155,7 +154,7 @@ public class PubSubApiTest {
                 port, 1000, 10000, true);
         client.setUsePlainTextConnection(true);
         client.start();
-        client.subscribe(consumer, ReplayPreset.LATEST, null);
+        client.subscribe(consumer, ReplayPreset.LATEST, null, true);
 
         verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
     }
