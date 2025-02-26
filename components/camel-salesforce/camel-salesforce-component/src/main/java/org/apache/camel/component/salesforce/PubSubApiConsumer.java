@@ -88,7 +88,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 
         ServiceHelper.startService(pubSubClient);
-        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId);
+        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId, true);
     }
 
     @Override
