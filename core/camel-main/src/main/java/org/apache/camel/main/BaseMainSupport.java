@@ -2671,7 +2671,7 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
                     .newInstance("opentelemetry-tracer-2", CamelTracingService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find OpenTelemetryTracer2 on classpath. Add camel-opentelemetry-2 to classpath."));
+                            "Cannot find OpenTelemetryTracer2 on classpath. Add camel-opentelemetry2 to classpath."));
         }
         return answer;
     }
