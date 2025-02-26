@@ -93,7 +93,7 @@ public class PineconeComponentIT extends CamelTestSupport {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void queryByVector() {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
@@ -112,7 +112,7 @@ public class PineconeComponentIT extends CamelTestSupport {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void queryById() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
@@ -128,7 +128,7 @@ public class PineconeComponentIT extends CamelTestSupport {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void deleteIndex() {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")

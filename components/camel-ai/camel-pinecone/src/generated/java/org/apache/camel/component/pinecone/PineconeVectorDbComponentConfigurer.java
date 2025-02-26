@@ -32,7 +32,16 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "cloud": getOrCreateConfiguration(target).setCloud(property(camelContext, java.lang.String.class, value)); return true;
+        case "cloudregion":
+        case "cloudRegion": getOrCreateConfiguration(target).setCloudRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectiondimension":
+        case "collectionDimension": getOrCreateConfiguration(target).setCollectionDimension(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": getOrCreateConfiguration(target).setCollectionSimilarityMetric(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.pinecone.PineconeVectorDbConfiguration.class, value)); return true;
+        case "indexname":
+        case "indexName": getOrCreateConfiguration(target).setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "token": getOrCreateConfiguration(target).setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -45,7 +54,16 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "cloud": return java.lang.String.class;
+        case "cloudregion":
+        case "cloudRegion": return java.lang.String.class;
+        case "collectiondimension":
+        case "collectionDimension": return java.lang.Integer.class;
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.pinecone.PineconeVectorDbConfiguration.class;
+        case "indexname":
+        case "indexName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "token": return java.lang.String.class;
@@ -59,7 +77,16 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "cloud": return getOrCreateConfiguration(target).getCloud();
+        case "cloudregion":
+        case "cloudRegion": return getOrCreateConfiguration(target).getCloudRegion();
+        case "collectiondimension":
+        case "collectionDimension": return getOrCreateConfiguration(target).getCollectionDimension();
+        case "collectionsimilaritymetric":
+        case "collectionSimilarityMetric": return getOrCreateConfiguration(target).getCollectionSimilarityMetric();
         case "configuration": return target.getConfiguration();
+        case "indexname":
+        case "indexName": return getOrCreateConfiguration(target).getIndexName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "token": return getOrCreateConfiguration(target).getToken();
