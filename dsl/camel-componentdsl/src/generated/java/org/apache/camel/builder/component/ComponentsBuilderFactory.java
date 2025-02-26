@@ -1159,6 +1159,20 @@ public interface ComponentsBuilderFactory {
         return DebeziumSqlserverComponentBuilderFactory.debeziumSqlserver();
     }
     /**
+     * DFDL (camel-dfdl)
+     * Transforms fixed format data such as EDI message from/to XML using a Data
+     * Format Description Language (DFDL).
+     * 
+     * Category: transformation
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dfdl
+     * 
+     * @return the dsl builder
+     */
+    static DfdlComponentBuilderFactory.DfdlComponentBuilder dfdl() {
+        return DfdlComponentBuilderFactory.dfdl();
+    }
+    /**
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
      * API.

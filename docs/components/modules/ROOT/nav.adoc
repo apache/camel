@@ -98,6 +98,7 @@
 *** xref:debezium-oracle-component.adoc[Debezium Oracle Connector]
 *** xref:debezium-postgres-component.adoc[Debezium PostgresSQL Connector]
 *** xref:debezium-sqlserver-component.adoc[Debezium SQL Server Connector]
+** xref:dfdl-component.adoc[DFDL]
 ** xref:dhis2-component.adoc[DHIS2]
 ** xref:digitalocean-component.adoc[DigitalOcean]
 ** xref:direct-component.adoc[Direct]

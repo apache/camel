@@ -3688,6 +3688,48 @@ public class StaticEndpointBuilders {
         return DebeziumSqlserverEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * DFDL (camel-dfdl)
+     * Transforms fixed format data such as EDI message from/to XML using a Data
+     * Format Description Language (DFDL).
+     * 
+     * Category: transformation
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dfdl
+     * 
+     * Syntax: <code>dfdl:schemaUri</code>
+     * 
+     * Path parameter: schemaUri (required)
+     * The path to the DFDL schema file.
+     * 
+     * @param path schemaUri
+     * @return the dsl builder
+     */
+    public static DfdlEndpointBuilderFactory.DfdlEndpointBuilder dfdl(String path) {
+        return dfdl("dfdl", path);
+    }
+    /**
+     * DFDL (camel-dfdl)
+     * Transforms fixed format data such as EDI message from/to XML using a Data
+     * Format Description Language (DFDL).
+     * 
+     * Category: transformation
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dfdl
+     * 
+     * Syntax: <code>dfdl:schemaUri</code>
+     * 
+     * Path parameter: schemaUri (required)
+     * The path to the DFDL schema file.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path schemaUri
+     * @return the dsl builder
+     */
+    public static DfdlEndpointBuilderFactory.DfdlEndpointBuilder dfdl(String componentName, String path) {
+        return DfdlEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
      * API.
