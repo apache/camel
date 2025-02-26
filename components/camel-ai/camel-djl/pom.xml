@@ -23,7 +23,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.4</version>
+        <version>4.8.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-djl</artifactId>

@@ -24,7 +24,7 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>4.8.4</version>
+        <version>4.8.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-test-infra-smb</artifactId>
