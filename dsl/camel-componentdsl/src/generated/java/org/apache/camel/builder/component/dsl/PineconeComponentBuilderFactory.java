@@ -168,6 +168,54 @@ public interface PineconeComponentBuilderFactory {
         }
     
         /**
+         * Set the proxy host.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+    
+        /**
+         * Set the proxy port.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+    
+        /**
          * Sets the API key to use for authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -231,6 +279,9 @@ public interface PineconeComponentBuilderFactory {
             case "configuration": ((PineconeVectorDbComponent) component).setConfiguration((org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) value); return true;
             case "indexName": getOrCreateConfiguration((PineconeVectorDbComponent) component).setIndexName((java.lang.String) value); return true;
             case "lazyStartProducer": ((PineconeVectorDbComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((PineconeVectorDbComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((PineconeVectorDbComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "tls": getOrCreateConfiguration((PineconeVectorDbComponent) component).setTls((boolean) value); return true;
             case "token": getOrCreateConfiguration((PineconeVectorDbComponent) component).setToken((java.lang.String) value); return true;
             case "autowiredEnabled": ((PineconeVectorDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
