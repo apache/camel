@@ -34,6 +34,76 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private Pinecone client;
 
+    @UriParam(label = "producer")
+    private String indexName;
+
+    @UriParam(label = "producer")
+    private String collectionSimilarityMetric;
+
+    @UriParam(label = "producer")
+    private Integer collectionDimension;
+
+    @UriParam(label = "producer")
+    private String cloud;
+
+    @UriParam(label = "producer")
+    private String cloudRegion;
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    /**
+     * Sets the index name to use
+     */
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public String getCollectionSimilarityMetric() {
+        return collectionSimilarityMetric;
+    }
+
+    /**
+     * Sets the Collection Similarity Metric to use (cosine/euclidean/dotproduct)
+     */
+    public void setCollectionSimilarityMetric(String collectionSimilarityMetric) {
+        this.collectionSimilarityMetric = collectionSimilarityMetric;
+    }
+
+    public Integer getCollectionDimension() {
+        return collectionDimension;
+    }
+
+    /**
+     * Sets the Collection Dimension to use (1-1536)
+     */
+    public void setCollectionDimension(Integer collectionDimension) {
+        this.collectionDimension = collectionDimension;
+    }
+
+    public String getCloud() {
+        return cloud;
+    }
+
+    /**
+     * Sets the cloud type to use (aws/gcp/azure)
+     */
+    public void setCloud(String cloud) {
+        this.cloud = cloud;
+    }
+
+    public String getCloudRegion() {
+        return cloudRegion;
+    }
+
+    /**
+     * Sets the cloud region
+     */
+    public void setCloudRegion(String cloudRegion) {
+        this.cloudRegion = cloudRegion;
+    }
+
     public String getToken() {
         return token;
     }

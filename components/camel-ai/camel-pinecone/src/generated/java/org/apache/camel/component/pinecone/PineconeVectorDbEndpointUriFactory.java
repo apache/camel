@@ -23,8 +23,13 @@ public class PineconeVectorDbEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(3);
+        Set<String> props = new HashSet<>(8);
+        props.add("cloud");
+        props.add("cloudRegion");
         props.add("collection");
+        props.add("collectionDimension");
+        props.add("collectionSimilarityMetric");
+        props.add("indexName");
         props.add("lazyStartProducer");
         props.add("token");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
