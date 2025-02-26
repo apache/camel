@@ -262,7 +262,7 @@ public class CamelContextConfiguration {
      *
      * @param camelContextSupplier A supplier for the Camel context
      */
-    protected CamelContextConfiguration withCamelContextSupplier(
+    public CamelContextConfiguration withCamelContextSupplier(
             CamelContextSupplier camelContextSupplier) {
         this.camelContextSupplier = camelContextSupplier;
         return this;
@@ -344,7 +344,7 @@ public class CamelContextConfiguration {
     }
 
     /**
-     * Set set a custom post-test processor
+     * Set a custom post-test processor
      *
      * @param postProcessor the post-test processor to use
      */
