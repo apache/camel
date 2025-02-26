@@ -111,15 +111,11 @@ public class SmbProcessStrategyFactory implements GenericFileProcessStrategyFact
             } else if ("rename".equals(readLock)) {
                 GenericFileRenameExclusiveReadLockStrategy<FileIdBothDirectoryInformation> readLockStrategy
                         = new GenericFileRenameExclusiveReadLockStrategy<>();
-
                 StrategyUtil.setup(readLockStrategy, params);
-
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 SmbChangedExclusiveReadLockStrategy readLockStrategy = new SmbChangedExclusiveReadLockStrategy();
-
                 StrategyUtil.setup(readLockStrategy, params);
-
                 return readLockStrategy;
             }
         }
