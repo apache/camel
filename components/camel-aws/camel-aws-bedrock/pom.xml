@@ -54,7 +54,7 @@
             <artifactId>bedrockruntime</artifactId>
             <version>${aws-java-sdk2-version}</version>
         </dependency>
-                <dependency>
+        <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bedrockagent</artifactId>
             <version>${aws-java-sdk2-version}</version>
@@ -62,6 +62,11 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bedrockagentruntime</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sts</artifactId>
             <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
