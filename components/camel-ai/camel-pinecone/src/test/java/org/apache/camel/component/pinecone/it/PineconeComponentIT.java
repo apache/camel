@@ -112,6 +112,30 @@ public class PineconeComponentIT extends CamelTestSupport {
     }
 
     @Test
+    @Order(4)
+    public void queryByVectorExtended() {
+
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
+
+        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.QUERY)
+                .withBody(
+                        elements)
+                .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
+                .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
+                .withHeader(PineconeVectorDb.Headers.QUERY_NAMESPACE, "defaultNamespace")
+                .withHeader(PineconeVectorDb.Headers.QUERY_FILTER, "subject\": {\"$eq\": \"marine\"}")
+                .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, true)
+                .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, true)
+
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+    }
+
+    @Test
     @Order(5)
     public void queryById() {
 

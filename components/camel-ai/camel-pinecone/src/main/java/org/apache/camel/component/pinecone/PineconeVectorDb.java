@@ -64,5 +64,18 @@ public class PineconeVectorDb {
 
         @Metadata(description = "Query Top K", javaType = "Integer")
         public static final String QUERY_TOP_K = "CamelPineconeQueryTopK";
+
+        @Metadata(description = "Query Namespace", javaType = "String")
+        public static final String QUERY_NAMESPACE = "CamelPineconeQueryNamespace";
+
+        @Metadata(description = "Query Filter", javaType = "String")
+        public static final String QUERY_FILTER = "CamelPineconeQueryFilter";
+
+        @Metadata(description = "Query Include Values", javaType = "boolean")
+        public static final String QUERY_INCLUDE_VALUES = "CamelPineconeQueryIncludeValues";
+
+        @Metadata(description = "Query Include Metadata", javaType = "com.google.protobuf.Struct")
+        public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
+
     }
 }
