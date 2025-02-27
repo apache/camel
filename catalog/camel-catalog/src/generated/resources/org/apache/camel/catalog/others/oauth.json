@@ -1,0 +1,13 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "oauth",
+    "title": "Oauth",
+    "description": "Camel OAuth (Preview)",
+    "deprecated": false,
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-oauth",
+    "version": "4.11.0-SNAPSHOT"
+  }
+}
