@@ -28,7 +28,7 @@
 
     <artifactId>camel-spring-redis</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Redis</name>
+    <name>Camel :: Spring Redis</name>
     <description>Camel Spring Redis Component</description>
 
     <dependencies>
