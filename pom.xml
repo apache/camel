@@ -349,6 +349,7 @@
                                     <exclude>**/.camel-jbang-run/**</exclude>
                                     <exclude>**/camel-jbang-run.properties</exclude>
                                     <exclude>**/javax.annotations.processing.Processor</exclude>
+                                    <exclude>**/camel-oauth/helm/etc/**</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
@@ -529,6 +530,7 @@
                             <exclude>
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
                             </exclude>
+                            <exclude>**/helm/etc/**/*</exclude>
                             <exclude>**/META-INF/MANIFEST.MF</exclude>
                             <exclude>**/openapi.yaml</exclude>
                             <exclude>**/ignite/work/**/*</exclude>
