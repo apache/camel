@@ -29,7 +29,7 @@
     <artifactId>camel-spring-jdbc</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Spring :: JDBC</name>
+    <name>Camel :: Spring JDBC</name>
     <description>Camel Spring JDBC support</description>
 
     <properties>
