@@ -20,6 +20,7 @@ import org.apache.camel.spi.Metadata;
 
 public class PineconeVectorDb {
     public static final String SCHEME = "pinecone";
+    public static final int DEFAULT_COLLECTION_DIMENSION = 1536;
 
     private PineconeVectorDb() {
     }

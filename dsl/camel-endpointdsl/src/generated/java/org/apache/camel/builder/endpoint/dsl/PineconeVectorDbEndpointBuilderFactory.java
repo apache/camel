@@ -77,6 +77,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1536
          * Group: producer
          * 
          * @param collectionDimension the value to set
@@ -92,6 +93,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 1536
          * Group: producer
          * 
          * @param collectionDimension the value to set
@@ -114,6 +116,20 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          */
         default PineconeVectorDbEndpointBuilder collectionSimilarityMetric(String collectionSimilarityMetric) {
             doSetProperty("collectionSimilarityMetric", collectionSimilarityMetric);
+            return this;
+        }
+        /**
+         * Sets a custom host URL to connect to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder host(String host) {
+            doSetProperty("host", host);
             return this;
         }
         /**
