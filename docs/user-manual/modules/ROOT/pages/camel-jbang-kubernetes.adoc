@@ -1394,7 +1394,7 @@ The following steps have been known to be working with Camel 4.10+:
 
 1. `minikube start --addons registry --driver=docker`
 2. `eval $(minikube -p minikube docker-env)`
-3. `camel kubernetes run demo.camel.yaml --cluster-type=minikube --build-property=quarkus.kubernetes.image-pull-policy=Never --image-registry '$(kubectl -n kube-system get service registry -o jsonpath='{.spec.clusterIP}')' --image-builder=docker`
+3. `camel kubernetes run demo.camel.yaml --cluster-type=minikube --build-property=quarkus.kubernetes.image-pull-policy=Never --image-registry "$(kubectl -n kube-system get service registry -o jsonpath='{.spec.clusterIP}')" --image-builder=docker`
 
 Note that Docker multi-platform build is used. It requires to have followed these https://docs.docker.com/build/building/multi-platform/#build-multi-platform-images[Docker requirements].
 
