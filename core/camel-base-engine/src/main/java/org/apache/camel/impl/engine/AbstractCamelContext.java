@@ -785,15 +785,28 @@ public abstract class AbstractCamelContext extends BaseService
         }
         if (answer == null) {
             try {
-                scheme = StringHelper.before(uri, ":");
+                // the uri may not contain a scheme such as a dynamic kamelet
+                // so we need to find the component name via the first text before : or ? mark
+                int pos1 = uri.indexOf(':');
+                int pos2 = uri.indexOf('?');
+                if (pos1 != -1 && pos2 != -1) {
+                    scheme = uri.substring(0, Math.min(pos1, pos2));
+                } else if (pos1 != -1) {
+                    scheme = uri.substring(0, pos1);
+                } else if (pos2 != -1) {
+                    scheme = uri.substring(0, pos2);
+                } else {
+                    scheme = null;
+                }
                 if (scheme == null) {
                     // it may refer to a logical endpoint
                     answer = camelContextExtension.getRegistry().lookupByNameAndType(uri, Endpoint.class);
                     if (answer != null) {
                         return answer;
-                    } else {
-                        throw new NoSuchEndpointException(uri);
                     }
+                }
+                if (scheme == null) {
+                    scheme = uri;
                 }
                 LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                 Component component = getComponent(scheme);

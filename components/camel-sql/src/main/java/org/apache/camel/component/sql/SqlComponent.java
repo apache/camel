@@ -26,6 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -65,13 +66,17 @@ public class SqlComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String query = getAndRemoveParameter(parameters, "query", String.class);
+        if (query == null) {
+            query = remaining;
+        }
+        if (ObjectHelper.isEmpty(query)) {
+            throw new IllegalArgumentException("Query parameter is required");
+        }
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
-
-        String query = remaining;
         if (usePlaceholder) {
             query = query.replaceAll(parameterPlaceholderSubstitute, "?");
         }
-
         String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
         if (onConsume == null) {
             onConsume = getAndRemoveParameter(parameters, "onConsume", String.class);
