@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.10.1-SNAPSHOT</version>
+        <version>4.10.1</version>
     </parent>
 
     <artifactId>camel-oaipmh</artifactId>
