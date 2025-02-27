@@ -1524,6 +1524,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-oauth</artifactId>
+        <version>4.11.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-observability-services</artifactId>
         <version>4.11.0-SNAPSHOT</version>
       </dependency>
