@@ -457,8 +457,9 @@ public class PubSubApiClient extends ServiceSupport {
                 case POJO -> deserializePojo(ce, schema);
                 case JSON -> deserializeJson(ce, schema);
             };
+            String eventId = ce.getEvent().getId();
             String replayId = PubSubApiClient.base64EncodeByteString(ce.getReplayId());
-            consumer.processEvent(recordObj, replayId);
+            consumer.processEvent(recordObj, eventId, replayId);
         }
 
         private Object deserializeAvro(ConsumerEvent ce, Schema schema) throws IOException {
