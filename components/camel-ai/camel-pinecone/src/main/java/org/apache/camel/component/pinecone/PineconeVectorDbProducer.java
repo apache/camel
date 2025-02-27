@@ -126,7 +126,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
         String indexName = getEndpoint().getConfiguration().getIndexName();
         String collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
-        int collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+        Integer collectionDimension = getEndpoint().getConfiguration().getCollectionDimension();
         String collectionCloudName = getEndpoint().getConfiguration().getCloud();
         String collectionCloudRegionName = getEndpoint().getConfiguration().getCloudRegion();
 
