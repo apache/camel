@@ -404,7 +404,7 @@ Suppose we have the route in the `camel-route.xml` file:
 [source,xml]
 .*camel-route.xml*
 ----
-include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
+include::{examplesdir}/components/camel-spring-parent/camel-spring-xml/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
 ----
 
 Then we create a new XML file as follows, where we include the
@@ -415,7 +415,7 @@ Camel to mock all endpoints:
 [source,xml]
 .*test-camel-route.xml*
 ----
-include::{examplesdir}/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
+include::{examplesdir}/components/camel-spring-parent/camel-spring-xml/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
 ----
 
 Then in your unit test you load the new XML file

@@ -23,12 +23,12 @@ the `<routeContext>` is currently isolated. This may change in Camel
 ====
 
 For example, we could have a file named `myCoolRoutes.xml` which
-contains a couple of routes as shown in https://github.com/apache/camel/tree/main/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/config/myCoolRoutes.xml[this example].
+contains a couple of routes as shown in https://github.com/apache/camel/tree/main/components/camel-spring-parent/camel-spring-xml/src/test/resources/org/apache/camel/spring/config/myCoolRoutes.xml[this example].
 
 
 Then in your XML file which contains the CamelContext you can use Spring to
 import the `myCoolRoute.xml` file. And then inside `<camelContext/>`
-you can refer to the `<routeContext/>` by its `id` as shown below in https://github.com/apache/camel/tree/main/components/camel-spring-xml/src/test/resources/org/apache/camel/spring/config/RouteRefIncludeXmlFileTest.xml[this example].
+you can refer to the `<routeContext/>` by its `id` as shown below in https://github.com/apache/camel/tree/main/components/camel-spring-parent/camel-spring-xml/src/test/resources/org/apache/camel/spring/config/RouteRefIncludeXmlFileTest.xml[this example].
 
 
 Also notice that you can mix and match, having routes inside `CamelContext`

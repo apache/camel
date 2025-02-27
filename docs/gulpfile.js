@@ -108,7 +108,7 @@ const sources = {
       source: [
         '../core/camel-base/src/main/docs/*.adoc',
         '../core/camel-main/src/main/docs/*.adoc',
-        '../components/{*,*/*}/src/main/docs/*.adoc',
+        '../components/{*,*/*,*/*/*}/src/main/docs/*.adoc',
       ],
       destination: 'components/modules/ROOT/examples',
     },
