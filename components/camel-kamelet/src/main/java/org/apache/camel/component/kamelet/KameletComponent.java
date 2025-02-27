@@ -64,6 +64,8 @@ public class KameletComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(KameletComponent.class);
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     private final LifecycleHandler lifecycleHandler = new LifecycleHandler();
 
     // active consumers
@@ -454,6 +456,18 @@ public class KameletComponent extends DefaultComponent {
 
         public void createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
                 throws Exception {
+            // creating dynamic routes from kamelets should not happen concurrently so we use locking
+            lock.lock();
+            try {
+                doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        protected void doCreateRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
+                throws Exception {
+
             final ModelCamelContext context = (ModelCamelContext) getCamelContext();
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
