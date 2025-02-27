@@ -188,7 +188,7 @@
         <google-api-services-sheets-version>v4-rev20250211-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20240520-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.38.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.48.0</google-cloud-bigquery-version>
+        <google-cloud-bigquery-version>2.48.1</google-cloud-bigquery-version>
         <google-cloud-core-version>2.52.0</google-cloud-core-version>
         <google-cloud-functions-version>2.60.0</google-cloud-functions-version>
         <google-cloud-http-client-version>1.46.3</google-cloud-http-client-version>
