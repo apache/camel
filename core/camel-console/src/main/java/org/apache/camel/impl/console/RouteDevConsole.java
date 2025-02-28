@@ -93,6 +93,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.getNodePrefixId() != null) {
                 sb.append(String.format("    Node Prefix Id: %s", mrb.getNodePrefixId()));
             }
+            if (mrb.getDescription() != null) {
+                sb.append(String.format("    Description: %s", mrb.getDescription()));
+            }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
             sb.append(String.format("\n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
@@ -197,6 +200,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mp.getNodePrefixId() != null) {
                 sb.append(String.format("\n        Node Prefix Id: %s", mp.getNodePrefixId()));
             }
+            if (mp.getDescription() != null) {
+                sb.append(String.format("\n        Description: %s", mp.getDescription()));
+            }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
@@ -254,6 +260,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             jo.put("routeId", mrb.getRouteId());
             if (mrb.getNodePrefixId() != null) {
                 jo.put("nodePrefixId", mrb.getNodePrefixId());
+            }
+            if (mrb.getDescription() != null) {
+                jo.put("description", mrb.getDescription());
             }
             jo.put("from", mrb.getEndpointUri());
             jo.put("remote", mrb.isRemoteEndpoint());
@@ -353,6 +362,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             jo.put("id", mp.getProcessorId());
             if (mp.getNodePrefixId() != null) {
                 jo.put("nodePrefixId", mp.getNodePrefixId());
+            }
+            if (mp.getDescription() != null) {
+                jo.put("description", mp.getDescription());
             }
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
