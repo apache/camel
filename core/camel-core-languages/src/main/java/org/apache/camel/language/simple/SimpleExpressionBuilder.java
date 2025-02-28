@@ -18,10 +18,12 @@ package org.apache.camel.language.simple;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -208,6 +210,82 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "iif(" + predicate + "," + trueValue + "," + falseValue + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that creates an ArrayList
+     */
+    public static Expression listExpression(String[] values) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[values != null ? values.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; values != null && i < values.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(values[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                List<Object> answer = new ArrayList<>(values != null ? values.length : 0);
+                for (Expression exp : exps) {
+                    Object val = exp.evaluate(exchange, Object.class);
+                    answer.add(val);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "list(" + Arrays.toString(values) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that creates an LinkedHashMap
+     */
+    public static Expression mapExpression(String[] pairs) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] keys = new Expression[pairs != null ? pairs.length / 2 : 0];
+            private final Expression[] values = new Expression[pairs != null ? pairs.length / 2 : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0, j = 0; pairs != null && i < pairs.length - 1; j++) {
+                    String key = pairs[i];
+                    String value = pairs[i + 1];
+                    Expression exp = context.resolveLanguage("simple").createExpression(key);
+                    exp.init(context);
+                    keys[j] = exp;
+                    exp = context.resolveLanguage("simple").createExpression(value);
+                    exp.init(context);
+                    values[j] = exp;
+                    i = i + 2;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Map<String, Object> answer = new LinkedHashMap<>(keys.length);
+                for (int i = 0; i < keys.length; i++) {
+                    String key = keys[i].evaluate(exchange, String.class);
+                    Object val = values[i].evaluate(exchange, Object.class);
+                    answer.put(key, val);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "map(" + Arrays.toString(values) + ")";
             }
         };
     }

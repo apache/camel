@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -889,6 +890,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
             }
             return SimpleExpressionBuilder.iifExpression(tokens[0].trim(), tokens[1].trim(), tokens[2].trim());
+        }
+
+        // list function
+        remainder = ifStartsWithReturnRemainder("list(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            }
+            return SimpleExpressionBuilder.listExpression(tokens);
+        }
+        // map function
+        remainder = ifStartsWithReturnRemainder("map(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',');
+            }
+            // there must be an even number of tokens as each map element is a pair
+            if (tokens != null && tokens.length % 2 == 1) {
+                throw new SimpleParserException(
+                        "Map function must have an even number of values, was: " + tokens.length + " values.",
+                        token.getIndex());
+            }
+            return SimpleExpressionBuilder.mapExpression(tokens);
         }
 
         return null;
@@ -1911,6 +1939,38 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             value = StringQuoteHelper.doubleQuote(value);
             return "empty(exchange, " + value + ")";
+        }
+
+        // list function
+        remainder = ifStartsWithReturnRemainder("list(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                sj.add(tokens[i]);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "null";
+            return "list(exchange, " + p + ")";
+        }
+
+        // map function
+        remainder = ifStartsWithReturnRemainder("map(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                sj.add(tokens[i]);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "null";
+            return "map(exchange, " + p + ")";
         }
 
         // hash function

@@ -234,7 +234,11 @@ constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 
 `string` -> empty String +
 `list`   -> empty ArrayList +
-`map`    -> empty HashMap +
+`map`    -> empty LinkedHashMap +
+
+|list(val1,val2,...) | java.util.ArrayList | The list function creates an ArrayList with the given set of values.
+
+|map(key1,value1,...) | java.util.LinkedHashMap | The map function creates a LinkedHashMap with the given set of pairs.
 
 |null |null |represents a *null*
 

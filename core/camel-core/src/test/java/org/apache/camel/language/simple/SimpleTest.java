@@ -2046,6 +2046,23 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testList() {
+        exchange.getMessage().setBody("4");
+        assertExpression("${list(1,2,3)}", "[1, 2, 3]");
+        assertExpression("${list(1,2,3,${body})}", "[1, 2, 3, 4]");
+        assertExpression("${list('a','b','c')}", "[a, b, c]");
+        assertExpression("${list()}", "[]");
+    }
+
+    @Test
+    public void testMap() {
+        exchange.getMessage().setBody("d");
+        assertExpression("${map(1,a,2,b,3,c)}", "{1=a, 2=b, 3=c}");
+        assertExpression("${map(1,a,2,b,3,c,4,${body})}", "{1=a, 2=b, 3=c, 4=d}");
+        assertExpression("${map()}", "{}");
+    }
+
+    @Test
     public void testSubstringExpression() {
         exchange.getMessage().setBody("ABCDEFGHIJK");
         // head
