@@ -20,10 +20,9 @@ import org.apache.camel.spi.Metadata;
 
 public final class SalesforceConstants {
 
+    // Streaming headers
     @Metadata(label = "consumer", description = "The Streaming API replayId.", javaType = "Object")
     public static final String HEADER_SALESFORCE_REPLAY_ID = "CamelSalesforceReplayId";
-    @Metadata(label = "consumer", description = "The Pub/Sub API replayId.", javaType = "Object")
-    public static final String HEADER_SALESFORCE_PUBSUB_REPLAY_ID = "CamelSalesforcePubSubReplayId";
     @Metadata(label = "consumer", description = "The change event schema.", javaType = "Object")
     public static final String HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA = "CamelSalesforceChangeEventSchema";
     @Metadata(label = "consumer", description = "The event type.", javaType = "String")
@@ -58,6 +57,12 @@ public final class SalesforceConstants {
     public static final String HEADER_SALESFORCE_CHANNEL = "CamelSalesforceChannel";
     @Metadata(label = "consumer", description = "The client id.", javaType = "String")
     public static final String HEADER_SALESFORCE_CLIENT_ID = "CamelSalesforceClientId";
+
+    // Pub/Sub API headers
+    @Metadata(label = "consumer", description = "The Pub/Sub API replayId.", javaType = "String")
+    public static final String HEADER_SALESFORCE_PUBSUB_REPLAY_ID = "CamelSalesforcePubSubReplayId";
+    @Metadata(label = "consumer", description = "The Pub/Sub API event id.", javaType = "String")
+    public static final String HEADER_SALESFORCE_PUBSUB_EVENT_ID = "CamelSalesforcePubSubEventId";
 
     @Metadata(label = "producer", description = "Total number of records matching a query.", javaType = "int")
     public static final String HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE = "CamelSalesforceQueryResultTotalSize";

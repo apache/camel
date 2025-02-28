@@ -28,6 +28,7 @@ import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_EVENT_ID;
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
 
 public class PubSubApiConsumer extends DefaultConsumer {
@@ -62,10 +63,11 @@ public class PubSubApiConsumer extends DefaultConsumer {
         }
     }
 
-    public void processEvent(Object recordObj, String replayId) {
+    public void processEvent(Object recordObj, String eventId, String replayId) {
         final Exchange exchange = createExchange(true);
         final Message in = exchange.getIn();
         in.setBody(recordObj);
+        in.setHeader(HEADER_SALESFORCE_PUBSUB_EVENT_ID, eventId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
