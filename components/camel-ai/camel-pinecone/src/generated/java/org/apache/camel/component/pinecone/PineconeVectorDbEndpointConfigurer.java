@@ -30,6 +30,7 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         case "collectionDimension": target.getConfiguration().setCollectionDimension(property(camelContext, java.lang.Integer.class, value)); return true;
         case "collectionsimilaritymetric":
         case "collectionSimilarityMetric": target.getConfiguration().setCollectionSimilarityMetric(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "indexname":
         case "indexName": target.getConfiguration().setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -54,6 +55,7 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         case "collectionDimension": return java.lang.Integer.class;
         case "collectionsimilaritymetric":
         case "collectionSimilarityMetric": return java.lang.String.class;
+        case "host": return java.lang.String.class;
         case "indexname":
         case "indexName": return java.lang.String.class;
         case "lazystartproducer":
@@ -79,6 +81,7 @@ public class PineconeVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         case "collectionDimension": return target.getConfiguration().getCollectionDimension();
         case "collectionsimilaritymetric":
         case "collectionSimilarityMetric": return target.getConfiguration().getCollectionSimilarityMetric();
+        case "host": return target.getConfiguration().getHost();
         case "indexname":
         case "indexName": return target.getConfiguration().getIndexName();
         case "lazystartproducer":

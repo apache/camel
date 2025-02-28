@@ -808,11 +808,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Sets the description of this node.
      * <p/>
-     * <b>Important:</b> If you want to set the description of the route, then you <b>must</b> use {@link #routeDescription(String)}
-     * instead.
+     * <b>Important:</b> If you want to set the description of the route, then you <b>must</b> use
+     * {@link #routeDescription(String)} instead.
      *
      * @param  description the description
-     * @return    the builder
+     * @return             the builder
      */
     @Override
     public Type description(String description) {

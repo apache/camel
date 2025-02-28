@@ -80,11 +80,13 @@ public interface PineconeComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Sets the Collection Dimension to use (1-1536).
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 1536
          * Group: producer
          * 
          * @param collectionDimension the value to set
@@ -124,6 +126,21 @@ public interface PineconeComponentBuilderFactory {
          */
         default PineconeComponentBuilder configuration(org.apache.camel.component.pinecone.PineconeVectorDbConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        /**
+         * Sets a custom host URL to connect to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder host(java.lang.String host) {
+            doSetProperty("host", host);
             return this;
         }
     
@@ -277,6 +294,7 @@ public interface PineconeComponentBuilderFactory {
             case "collectionDimension": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCollectionDimension((java.lang.Integer) value); return true;
             case "collectionSimilarityMetric": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCollectionSimilarityMetric((java.lang.String) value); return true;
             case "configuration": ((PineconeVectorDbComponent) component).setConfiguration((org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) value); return true;
+            case "host": getOrCreateConfiguration((PineconeVectorDbComponent) component).setHost((java.lang.String) value); return true;
             case "indexName": getOrCreateConfiguration((PineconeVectorDbComponent) component).setIndexName((java.lang.String) value); return true;
             case "lazyStartProducer": ((PineconeVectorDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((PineconeVectorDbComponent) component).setProxyHost((java.lang.String) value); return true;

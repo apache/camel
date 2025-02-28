@@ -40,7 +40,7 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String collectionSimilarityMetric;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", defaultValue = "1536")
     private Integer collectionDimension;
 
     @UriParam(label = "producer")
@@ -57,6 +57,9 @@ public class PineconeVectorDbConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "true", label = "producer")
     private boolean tls;
+
+    @UriParam(label = "producer")
+    private String host;
 
     public String getIndexName() {
         return indexName;
@@ -144,6 +147,17 @@ public class PineconeVectorDbConfiguration implements Cloneable {
      */
     public void setTls(boolean tls) {
         this.tls = tls;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Sets a custom host URL to connect to
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getToken() {

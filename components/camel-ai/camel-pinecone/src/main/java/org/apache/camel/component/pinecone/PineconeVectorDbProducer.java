@@ -127,9 +127,14 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
         String indexName = getEndpoint().getConfiguration().getIndexName();
         String collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
-        int collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+
         String collectionCloudName = getEndpoint().getConfiguration().getCloud();
         String collectionCloudRegionName = getEndpoint().getConfiguration().getCloudRegion();
+        int collectionDimension = PineconeVectorDb.DEFAULT_COLLECTION_DIMENSION;
+
+        if (getEndpoint().getConfiguration().getCollectionDimension() != null) {
+            collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+        }
 
         if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
             indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
@@ -161,18 +166,22 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
         String indexName = getEndpoint().getConfiguration().getIndexName();
         String collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
-        int collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+        int collectionDimension = PineconeVectorDb.DEFAULT_COLLECTION_DIMENSION;
+
+        if (getEndpoint().getConfiguration().getCollectionDimension() != null) {
+            collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+        }
 
         if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
             indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
         }
 
         if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class) != null) {
-            collectionSimilarityMetricName = getEndpoint().getConfiguration().getCollectionSimilarityMetric();
+            collectionSimilarityMetricName = in.getHeader(PineconeVectorDb.Headers.COLLECTION_SIMILARITY_METRIC, String.class);
         }
 
         if (in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class) != null) {
-            collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+            collectionDimension = in.getHeader(PineconeVectorDb.Headers.COLLECTION_DIMENSION, Integer.class);
         }
 
         String indexPodType = in.getHeader(PineconeVectorDb.Headers.INDEX_POD_TYPE, String.class);

@@ -63,6 +63,7 @@ public class PineconeComponentConfigurationTest extends CamelTestSupport {
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(9080, endpoint.getConfiguration().getProxyPort().intValue());
         assertEquals(false, endpoint.getConfiguration().isTls());
+        assertEquals("http://www.foobar.com", endpoint.getConfiguration().getHost());
     }
 
 }

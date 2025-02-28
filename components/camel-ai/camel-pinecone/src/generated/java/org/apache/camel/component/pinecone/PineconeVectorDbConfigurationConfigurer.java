@@ -31,6 +31,7 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "collectionDimension": target.setCollectionDimension(property(camelContext, java.lang.Integer.class, value)); return true;
         case "collectionsimilaritymetric":
         case "collectionSimilarityMetric": target.setCollectionSimilarityMetric(property(camelContext, java.lang.String.class, value)); return true;
+        case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "indexname":
         case "indexName": target.setIndexName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -54,6 +55,7 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "collectionDimension": return java.lang.Integer.class;
         case "collectionsimilaritymetric":
         case "collectionSimilarityMetric": return java.lang.String.class;
+        case "host": return java.lang.String.class;
         case "indexname":
         case "indexName": return java.lang.String.class;
         case "proxyhost":
@@ -78,6 +80,7 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
         case "collectionDimension": return target.getCollectionDimension();
         case "collectionsimilaritymetric":
         case "collectionSimilarityMetric": return target.getCollectionSimilarityMetric();
+        case "host": return target.getHost();
         case "indexname":
         case "indexName": return target.getIndexName();
         case "proxyhost":

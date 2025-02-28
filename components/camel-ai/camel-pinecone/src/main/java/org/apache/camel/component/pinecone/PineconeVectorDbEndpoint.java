@@ -110,18 +110,27 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     private Pinecone createClient() {
 
-        Pinecone pinecone;
         boolean tls = configuration.isTls();
+
+        Pinecone.Builder builder = new Pinecone.Builder(configuration.getToken());
+
+        // Check to see if a host is configured
+        if (getConfiguration().getHost() != null) {
+            builder = builder.withHost(getConfiguration().getHost());
+        }
+
+        // if TLS is false, set it
+        if (!tls) {
+            builder = builder.withTlsEnabled(tls);
+        }
 
         // Check to see if a proxyHost/proxyPort pair is configured
         if ((getConfiguration().getProxyHost() != null) &&
                 (getConfiguration().getProxyPort() != null)) {
-            pinecone = new Pinecone.Builder(configuration.getToken()).withProxy(getConfiguration().getProxyHost(),
-                    getConfiguration().getProxyPort().intValue()).withTlsEnabled(tls).build();
-        } else {
-            pinecone = new Pinecone.Builder(configuration.getToken()).withTlsEnabled(tls).build();
+            builder = builder.withProxy(getConfiguration().getProxyHost(),
+                    getConfiguration().getProxyPort().intValue());
         }
 
-        return pinecone;
+        return builder.build();
     }
 }
