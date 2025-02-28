@@ -19,6 +19,7 @@ package org.apache.camel.component.pinecone.it;
 import java.util.Arrays;
 import java.util.List;
 
+import io.pinecone.proto.FetchResponse;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pinecone.PineconeVectorDb;
@@ -123,7 +124,7 @@ public class PineconeComponentIT extends CamelTestSupport {
                         elements)
                 .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDb.Headers.QUERY_TOP_K, 3)
-                .withHeader(PineconeVectorDb.Headers.QUERY_NAMESPACE, "defaultNamespace")
+                .withHeader(PineconeVectorDb.Headers.NAMESPACE, "defaultNamespace")
                 .withHeader(PineconeVectorDb.Headers.QUERY_FILTER, "subject\": {\"$eq\": \"marine\"}")
                 .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, true)
                 .withHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, true)
@@ -164,6 +165,23 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(7)
+    public void fetch() {
+
+        List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
+
+        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+                .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.FETCH)
+                .withBody(
+                        elements)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(FetchResponse.class).getVectorsCount() != 0);
     }
 
 }
