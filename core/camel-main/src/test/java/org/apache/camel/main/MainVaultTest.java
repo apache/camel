@@ -447,4 +447,45 @@ public class MainVaultTest {
         Assertions.assertEquals("xxxx", cfg.getConfigmaps());
         main.stop();
     }
+
+    @Test
+    public void testMainIBMSecretsManager() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.ibm.serviceUrl", "http://ibm.cloud.com");
+        main.addInitialProperty("camel.vault.ibm.token", "token");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        IBMSecretsManagerVaultConfiguration cfg = context.getVaultConfiguration().ibmSecretsManager();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("token", cfg.getToken());
+        Assertions.assertEquals("http://ibm.cloud.com", cfg.getServiceUrl());
+        main.stop();
+    }
+
+    @Test
+    public void testMainIBMFluent() {
+        Main main = new Main();
+        main.configure().vault().ibmSecretsManager()
+                .withToken("token")
+                .withServiceUrl("http://ibm.cloud.com")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        IBMSecretsManagerVaultConfiguration cfg = context.getVaultConfiguration().ibmSecretsManager();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("token", cfg.getToken());
+        Assertions.assertEquals("http://ibm.cloud.com", cfg.getServiceUrl());
+        main.stop();
+    }
 }

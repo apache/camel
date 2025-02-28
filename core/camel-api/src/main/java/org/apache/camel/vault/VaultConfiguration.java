@@ -27,6 +27,7 @@ public class VaultConfiguration {
     private HashicorpVaultConfiguration hashicorp;
     private KubernetesVaultConfiguration kubernetes;
     private KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
+    private IBMSecretsManagerVaultConfiguration ibmSecretsManager;
 
     /**
      * AWS Vault Configuration
@@ -88,6 +89,16 @@ public class VaultConfiguration {
         return kubernetesConfigmaps;
     }
 
+    /**
+     * IBM Secrets Manager Vault Configuration
+     */
+    public IBMSecretsManagerVaultConfiguration ibmSecretsManager() {
+        if (ibmSecretsManager == null) {
+            ibmSecretsManager = new IBMSecretsManagerVaultConfiguration();
+        }
+        return ibmSecretsManager;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -134,5 +145,13 @@ public class VaultConfiguration {
 
     public void setKubernetesConfigMapVaultConfiguration(KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
         this.kubernetesConfigmaps = kubernetesConfigmaps;
+    }
+
+    public IBMSecretsManagerVaultConfiguration getIBMSecretsManagerVaultConfiguration() {
+        return ibmSecretsManager;
+    }
+
+    public void setIBMSecretsManagerVaultConfiguration(IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
+        this.ibmSecretsManager = ibmSecretsManager;
     }
 }

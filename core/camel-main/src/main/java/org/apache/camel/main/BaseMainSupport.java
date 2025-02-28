@@ -1918,6 +1918,9 @@ public abstract class BaseMainSupport extends BaseService {
             if ("kubernetescm".equalsIgnoreCase(name)) {
                 target = target.kubernetesConfigmaps();
             }
+            if ("ibm".equalsIgnoreCase(name)) {
+                target = target.ibmSecretsManager();
+            }
             // configure all the properties on the vault at once (to ensure they are configured in right order)
             OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
             setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + ".", failIfNotSet, true,

@@ -49,6 +49,11 @@
 	<version>${ibm-secrets-manager-version}</version>
     </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
