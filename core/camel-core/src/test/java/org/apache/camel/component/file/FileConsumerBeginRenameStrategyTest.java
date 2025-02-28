@@ -70,7 +70,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("reports?preMove=../inprogress/${file:name}&initialDelay=0&delay=10"))
+                from(fileUri("reports?preMove=inprogress/${file:name}&initialDelay=0&delay=10"))
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) {
@@ -79,7 +79,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
                                 assertNotNull(file);
                                 assertTrue(file.getRelativeFilePath().contains("inprogress"));
                             }
-                        }).to("mock:report");
+                        }).convertBodyTo(String.class).to("mock:report");
             }
         };
     }
