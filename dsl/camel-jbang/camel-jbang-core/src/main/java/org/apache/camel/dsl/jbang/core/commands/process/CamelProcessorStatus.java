@@ -71,6 +71,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         description = "Filter processors that must be slower than the given time (ms)")
     long mean;
 
+    @CommandLine.Option(names = { "--description" },
+                        description = "Include description in the ID column (if available)")
+    boolean description;
+
     public CamelProcessorStatus(CamelJBangMain main) {
         super(main);
     }
@@ -99,6 +103,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             }
                             row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
+                            row.description = o.getString("description");
                             row.nodePrefixId = o.getString("nodePrefixId");
                             row.processor = o.getString("from");
                             row.source = o.getString("source");
@@ -177,6 +182,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.processorId = o.getString("id");
             row.nodePrefixId = o.getString("nodePrefixId");
             row.processor = o.getString("processor");
+            row.description = o.getString("description");
             row.level = o.getIntegerOrDefault("level", 0);
             row.source = o.getString("source");
             Map<String, ?> stats = o.getMap("statistics");
@@ -231,8 +237,12 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(this::getPid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getName),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
+                new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(60, OverflowBehaviour.NEWLINE)
+                        .with(this::getIdAndDescription),
                 new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
@@ -305,6 +315,18 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         return answer;
     }
 
+    protected String getIdAndDescription(Row r) {
+        String id = getId(r);
+        if (description && r.description != null) {
+            if (id != null) {
+                id = id + "\n  " + r.description;
+            } else {
+                id = r.description;
+            }
+        }
+        return id;
+    }
+
     protected String getPid(Row r) {
         if (r.processorId == null) {
             return r.pid;
@@ -334,6 +356,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String nodePrefixId;
         String processorId;
         String processor;
+        String description;
         int level;
         String source;
         String state;

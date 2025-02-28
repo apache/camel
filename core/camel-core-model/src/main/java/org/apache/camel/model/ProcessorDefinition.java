@@ -806,6 +806,84 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Sets the description of this node.
+     * <p/>
+     * <b>Important:</b> If you want to set the description of the route, then you <b>must</b> use {@link #routeDescription(String)}
+     * instead.
+     *
+     * @param  description the description
+     * @return    the builder
+     */
+    @Override
+    public Type description(String description) {
+        // special for choice otherwise
+        if (this instanceof ChoiceDefinition cbr) {
+            if (cbr.getOtherwise() != null) {
+                if (cbr.getOtherwise().getOutputs().isEmpty()) {
+                    cbr.getOtherwise().description(description);
+                } else {
+                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    last.description(description);
+                }
+            } else if (!cbr.getWhenClauses().isEmpty()) {
+                var last = cbr.getWhenClauses().get(cbr.getWhenClauses().size() - 1);
+                if (last.getOutputs().isEmpty()) {
+                    last.setDescription(description);
+                } else {
+                    var p = last.getOutputs().get(last.getOutputs().size() - 1);
+                    p.description(description);
+                }
+            } else {
+                cbr.setDescription(description);
+            }
+            return asType();
+        }
+
+        if (this instanceof OutputNode && getOutputs().isEmpty()) {
+            // set description on this
+            setDescription(description);
+        } else {
+            List<ProcessorDefinition<?>> outputs = null;
+            if (this instanceof NoOutputDefinition<Type>) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else if (this instanceof OutputExpressionNode) {
+                outputs = getOutputs();
+            } else if (this instanceof ExpressionNode) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else {
+                outputs = getOutputs();
+            }
+
+            // set it on last output as this is what the user means to do
+            // for Block(s) with non empty getOutputs() the id probably refers
+            // to the last definition in the current Block
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            if (outputs != null && !outputs.isEmpty()) {
+                // set description on last output
+                outputs.get(outputs.size() - 1).setDescription(description);
+            } else {
+                // the output could be empty
+                setDescription(description);
+            }
+        }
+
+        return asType();
+    }
+
+    /**
      * Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later
      * at runtime.
      */
