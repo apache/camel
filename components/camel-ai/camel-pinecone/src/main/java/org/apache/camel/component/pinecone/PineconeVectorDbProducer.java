@@ -19,6 +19,7 @@ package org.apache.camel.component.pinecone;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import com.google.protobuf.Struct;
 import io.pinecone.clients.Index;
 import io.pinecone.clients.Pinecone;
 import io.pinecone.proto.UpdateResponse;
@@ -245,7 +246,16 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         int topK = in.getHeader(PineconeVectorDb.Headers.QUERY_TOP_K, Integer.class);
         Index index = this.client.getIndexConnection(indexName);
 
-        QueryResponseWithUnsignedIndices result = index.queryByVector(topK, elements);
+        // Optional arguments, can be null
+        String namespace = in.getHeader(PineconeVectorDb.Headers.QUERY_NAMESPACE, String.class);
+        Struct filter = in.getHeader(PineconeVectorDb.Headers.QUERY_FILTER, Struct.class);
+        boolean includeValues = (in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class) == null)
+                ? false : in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class);
+        boolean includeMetadata = (in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, Boolean.class) == null)
+                ? false : in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, Boolean.class);
+
+        QueryResponseWithUnsignedIndices result
+                = index.queryByVector(topK, elements, namespace, filter, includeValues, includeMetadata);
 
         populateQueryResponse(result, exchange);
     }
@@ -264,7 +274,17 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         Index index = this.client.getIndexConnection(indexName);
 
         String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
-        QueryResponseWithUnsignedIndices result = index.queryByVectorId(topK, indexId);
+
+        // Optional arguments, can be null
+        String namespace = in.getHeader(PineconeVectorDb.Headers.QUERY_NAMESPACE, String.class);
+        Struct filter = in.getHeader(PineconeVectorDb.Headers.QUERY_FILTER, Struct.class);
+        boolean includeValues = (in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class) == null)
+                ? false : in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class);
+        boolean includeMetadata = (in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, Boolean.class) == null)
+                ? false : in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_METADATA, Boolean.class);
+
+        QueryResponseWithUnsignedIndices result
+                = index.queryByVectorId(topK, indexId, namespace, filter, includeValues, includeMetadata);
 
         populateQueryResponse(result, exchange);
     }

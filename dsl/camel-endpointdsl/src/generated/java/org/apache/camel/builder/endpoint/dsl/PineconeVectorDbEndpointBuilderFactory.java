@@ -502,6 +502,54 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         public String pineconeQueryTopK() {
             return "CamelPineconeQueryTopK";
         }
+        /**
+         * Query Namespace.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryNamespace}.
+         */
+        public String pineconeQueryNamespace() {
+            return "CamelPineconeQueryNamespace";
+        }
+        /**
+         * Query Filter.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryFilter}.
+         */
+        public String pineconeQueryFilter() {
+            return "CamelPineconeQueryFilter";
+        }
+        /**
+         * Query Include Values.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryIncludeValues}.
+         */
+        public String pineconeQueryIncludeValues() {
+            return "CamelPineconeQueryIncludeValues";
+        }
+        /**
+         * Query Include Metadata.
+         * 
+         * The option is a: {@code com.google.protobuf.Struct} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PineconeQueryIncludeMetadata}.
+         */
+        public String pineconeQueryIncludeMetadata() {
+            return "CamelPineconeQueryIncludeMetadata";
+        }
     }
     static PineconeVectorDbEndpointBuilder endpointBuilder(String componentName, String path) {
         class PineconeVectorDbEndpointBuilderImpl extends AbstractEndpointBuilder implements PineconeVectorDbEndpointBuilder, AdvancedPineconeVectorDbEndpointBuilder {
