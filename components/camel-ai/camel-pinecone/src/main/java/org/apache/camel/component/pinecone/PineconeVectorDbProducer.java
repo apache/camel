@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import com.google.protobuf.Struct;
 import io.pinecone.clients.Index;
 import io.pinecone.clients.Pinecone;
+import io.pinecone.proto.FetchResponse;
 import io.pinecone.proto.UpdateResponse;
 import io.pinecone.proto.UpsertResponse;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
@@ -85,6 +86,9 @@ public class PineconeVectorDbProducer extends DefaultProducer {
                     break;
                 case DELETE_COLLECTION:
                     deleteCollection(exchange);
+                    break;
+                case FETCH:
+                    fetch(exchange);
                     break;
                 case QUERY:
                     query(exchange);
@@ -202,9 +206,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
             indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
         }
         String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
+        String namespace = in.getHeader(PineconeVectorDb.Headers.NAMESPACE, String.class);
+
         Index index = this.client.getIndexConnection(indexName);
 
-        UpsertResponse result = index.upsert(indexId, elements);
+        UpsertResponse result = index.upsert(indexId, elements, namespace);
 
         populateUpsertResponse(result, exchange);
 
@@ -219,9 +225,10 @@ public class PineconeVectorDbProducer extends DefaultProducer {
             indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
         }
         String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
+        String namespace = in.getHeader(PineconeVectorDb.Headers.NAMESPACE, String.class);
         Index index = this.client.getIndexConnection(indexName);
 
-        UpdateResponse result = index.update(indexId, elements);
+        UpdateResponse result = index.update(indexId, elements, namespace);
 
         populateUpdateResponse(result, exchange);
 
@@ -243,6 +250,23 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         this.client.deleteCollection(collectionName);
     }
 
+    private void fetch(Exchange exchange) throws Exception {
+        final Message in = exchange.getMessage();
+        List elements = in.getMandatoryBody(List.class);
+        String indexName = getEndpoint().getConfiguration().getIndexName();
+
+        if (in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class) != null) {
+            indexName = in.getHeader(PineconeVectorDb.Headers.INDEX_NAME, String.class);
+        }
+
+        Index index = this.client.getIndexConnection(indexName);
+
+        FetchResponse result
+                = index.fetch(elements);
+
+        populateFetchResponse(result, exchange);
+    }
+
     private void query(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
@@ -256,7 +280,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         Index index = this.client.getIndexConnection(indexName);
 
         // Optional arguments, can be null
-        String namespace = in.getHeader(PineconeVectorDb.Headers.QUERY_NAMESPACE, String.class);
+        String namespace = in.getHeader(PineconeVectorDb.Headers.NAMESPACE, String.class);
         Struct filter = in.getHeader(PineconeVectorDb.Headers.QUERY_FILTER, Struct.class);
         boolean includeValues = (in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class) == null)
                 ? false : in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class);
@@ -285,7 +309,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         String indexId = in.getHeader(PineconeVectorDb.Headers.INDEX_ID, String.class);
 
         // Optional arguments, can be null
-        String namespace = in.getHeader(PineconeVectorDb.Headers.QUERY_NAMESPACE, String.class);
+        String namespace = in.getHeader(PineconeVectorDb.Headers.NAMESPACE, String.class);
         Struct filter = in.getHeader(PineconeVectorDb.Headers.QUERY_FILTER, Struct.class);
         boolean includeValues = (in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class) == null)
                 ? false : in.getHeader(PineconeVectorDb.Headers.QUERY_INCLUDE_VALUES, Boolean.class);
@@ -309,6 +333,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     }
 
     private void populateCollectionResponse(CollectionModel r, Exchange exchange) {
+        Message out = exchange.getMessage();
+        out.setBody(r);
+    }
+
+    private void populateFetchResponse(FetchResponse r, Exchange exchange) {
         Message out = exchange.getMessage();
         out.setBody(r);
     }
