@@ -211,6 +211,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.kubernetescm.";
                 } else if (file.getName().contains("HashicorpVault")) {
                     prefix = "camel.vault.hashicorp.";
+                } else if (file.getName().contains("IBMSecretsManagerVault")) {
+                    prefix = "camel.vault.ibm.";
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("StartupCondition")) {
@@ -321,6 +323,16 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + hashicorpVaultConfig + " due " + e.getMessage(), e);
         }
 
+        File ibmVaultConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/IBMSecretsManagerVaultConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(ibmVaultConfig);
+            model.forEach(m -> m.setName("camel.vault.ibm." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + ibmVaultConfig + " due " + e.getMessage(), e);
+        }
+
         // lets sort so they are always ordered (but camel.main in top)
         data.sort((o1, o2) -> {
             if (o1.getName().startsWith("camel.main.") && !o2.getName().startsWith("camel.main.")) {
@@ -394,6 +406,10 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     new MainGroupModel(
                             "camel.vault.hashicorp", "Camel Hashicorp Vault configurations",
                             "org.apache.camel.vault.HashicorpVaultConfiguration"));
+            model.getGroups().add(
+                    new MainGroupModel(
+                            "camel.vault.ibm", "Camel IBM Secrets Manager Vault configurations",
+                            "org.apache.camel.vault.IBMSecretsManagerVaultConfiguration"));
             model.getGroups().add(new MainGroupModel(
                     "camel.opentelemetry", "Camel OpenTelemetry configurations",
                     "org.apache.camel.main.OtelConfigurationProperties"));

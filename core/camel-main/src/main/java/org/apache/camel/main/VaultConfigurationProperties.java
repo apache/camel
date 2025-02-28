@@ -28,6 +28,7 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     private HashicorpVaultConfigurationProperties hashicorp;
     private KubernetesVaultConfigurationProperties kubernetes;
     private KubernetesConfigmapsVaultConfigurationProperties kubernetesConfigmaps;
+    private IBMSecretsManagerVaultConfigurationProperties ibmSecretsManager;
 
     public VaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -57,6 +58,9 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
         }
         if (kubernetesConfigmaps != null) {
             kubernetesConfigmaps.close();
+        }
+        if (ibmSecretsManager != null) {
+            ibmSecretsManager.close();
         }
     }
 
@@ -114,5 +118,13 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
             kubernetesConfigmaps = new KubernetesConfigmapsVaultConfigurationProperties(parent);
         }
         return kubernetesConfigmaps;
+    }
+
+    @Override
+    public IBMSecretsManagerVaultConfigurationProperties ibmSecretsManager() {
+        if (ibmSecretsManager == null) {
+            ibmSecretsManager = new IBMSecretsManagerVaultConfigurationProperties(parent);
+        }
+        return ibmSecretsManager;
     }
 }

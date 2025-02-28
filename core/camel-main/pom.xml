@@ -169,6 +169,8 @@
                                 <class>org.apache.camel.vault.KubernetesVaultConfiguration=org.apache.camel.main.KubernetesVaultConfiguration</class>
                                 <!-- we want to have configurer for KubernetesConfigMapVaultConfiguration in the package main to prevent a split packages issue -->
                                 <class>org.apache.camel.vault.KubernetesConfigMapVaultConfiguration=org.apache.camel.main.KubernetesConfigMapVaultConfiguration</class>
+                                <!-- we want to have configurer for IBMSecretsManagerVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.IBMSecretsManagerVaultConfiguration=org.apache.camel.main.IBMSecretsManagerVaultConfiguration</class>
                             </classes>
                         </configuration>
                     </execution>

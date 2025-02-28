@@ -467,6 +467,17 @@ The camel.vault.hashicorp supports 6 options, which are listed below.
 |===
 
 
+=== Camel IBM Secrets Manager Vault configurations
+The camel.vault.ibm supports 2 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.ibm.serviceUrl* | Service URL to access IBM Secrets Manager vault |  | String
+| *camel.vault.ibm.token* | Token to access IBM Secrets Manager vault |  | String
+|===
+
+
 === Camel OpenTelemetry configurations
 The camel.opentelemetry supports 10 options, which are listed below.
 

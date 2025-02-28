@@ -43,11 +43,11 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
-    <dependency>
-        <groupId>com.ibm.cloud</groupId>
-        <artifactId>secrets-manager</artifactId>
-	<version>${ibm-secrets-manager-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>com.ibm.cloud</groupId>
+            <artifactId>secrets-manager</artifactId>
+	        <version>${ibm-secrets-manager-version}</version>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
