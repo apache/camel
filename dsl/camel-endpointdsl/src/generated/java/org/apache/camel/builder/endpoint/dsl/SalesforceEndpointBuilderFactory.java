@@ -4100,18 +4100,6 @@ public interface SalesforceEndpointBuilderFactory {
             return "CamelSalesforceReplayId";
         }
         /**
-         * The Pub/Sub API replayId.
-         * 
-         * The option is a: {@code Object} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code SalesforcePubSubReplayId}.
-         */
-        public String salesforcePubSubReplayId() {
-            return "CamelSalesforcePubSubReplayId";
-        }
-        /**
          * The change event schema.
          * 
          * The option is a: {@code Object} type.
@@ -4314,6 +4302,30 @@ public interface SalesforceEndpointBuilderFactory {
          */
         public String salesforceClientId() {
             return "CamelSalesforceClientId";
+        }
+        /**
+         * The Pub/Sub API replayId.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforcePubSubReplayId}.
+         */
+        public String salesforcePubSubReplayId() {
+            return "CamelSalesforcePubSubReplayId";
+        }
+        /**
+         * The Pub/Sub API event id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforcePubSubEventId}.
+         */
+        public String salesforcePubSubEventId() {
+            return "CamelSalesforcePubSubEventId";
         }
         /**
          * Total number of records matching a query.
