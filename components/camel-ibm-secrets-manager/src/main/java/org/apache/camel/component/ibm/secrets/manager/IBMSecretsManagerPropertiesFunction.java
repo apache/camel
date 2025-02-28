@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.SecretsManager;
@@ -166,7 +165,7 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
         if (key != null) {
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
             }
         }
@@ -175,8 +174,7 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            String key, String subkey, String defaultValue, String version) {
 
         // capture name of secret
         secrets.add(key);
