@@ -102,7 +102,6 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
-        this.httpClient = endpoint.getHttpClient();
         this.httpContext = endpoint.getHttpContext();
         this.throwException = endpoint.isThrowExceptionOnFailure();
         this.transferException = endpoint.isTransferException();
@@ -111,6 +110,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        this.httpClient = getEndpoint().getHttpClient();
 
         String range = getEndpoint().getOkStatusCodeRange();
         parseStatusRange(range);

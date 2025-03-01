@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.util.json.DeserializationException;
@@ -48,7 +48,7 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
     private final boolean cacheTokens;
     private final Long cachedTokensDefaultExpirySeconds;
     private final Long cachedTokensExpirationMarginSeconds;
-    private final static Map<OAuth2URIAndCredentials, TokenCache> tokenCache = new HashMap<>();
+    private final static ConcurrentMap<OAuth2URIAndCredentials, TokenCache> tokenCache = new ConcurrentHashMap<>();
     private final String resourceIndicator;
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
