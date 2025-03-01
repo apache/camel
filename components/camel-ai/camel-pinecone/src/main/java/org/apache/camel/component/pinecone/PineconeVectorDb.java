@@ -66,8 +66,8 @@ public class PineconeVectorDb {
         @Metadata(description = "Query Top K", javaType = "Integer")
         public static final String QUERY_TOP_K = "CamelPineconeQueryTopK";
 
-        @Metadata(description = "Query Namespace", javaType = "String")
-        public static final String QUERY_NAMESPACE = "CamelPineconeQueryNamespace";
+        @Metadata(description = "Namespace for actions (query/upsert/etc)", javaType = "String")
+        public static final String NAMESPACE = "CamelPineconeNamespace";
 
         @Metadata(description = "Query Filter", javaType = "String")
         public static final String QUERY_FILTER = "CamelPineconeQueryFilter";

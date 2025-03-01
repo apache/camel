@@ -519,16 +519,16 @@ public interface PineconeVectorDbEndpointBuilderFactory {
             return "CamelPineconeQueryTopK";
         }
         /**
-         * Query Namespace.
+         * Namespace for actions (query/upsert/etc).
          * 
          * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code PineconeQueryNamespace}.
+         * @return the name of the header {@code PineconeNamespace}.
          */
-        public String pineconeQueryNamespace() {
-            return "CamelPineconeQueryNamespace";
+        public String pineconeNamespace() {
+            return "CamelPineconeNamespace";
         }
         /**
          * Query Filter.
