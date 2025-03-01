@@ -16,16 +16,16 @@
  */
 package org.apache.camel.main;
 
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.propertiesOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MainListenerTest {
 
@@ -93,4 +93,15 @@ public class MainListenerTest {
         }
     }
 
+    @Test
+    public void testLoadMainListenerWithServiceLoader() {
+      Main main = new Main();
+      try {
+        Assertions.assertNotNull(
+            main.getMainListeners().stream().filter(FooMainListener.class::isInstance).findAny()
+                .orElse(null), FooMainListener.class.getSimpleName() + " not loaded via SPI.");
+      } finally {
+        main.stop();
+      }
+    }
 }

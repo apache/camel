@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import static java.util.stream.Collectors.toCollection;
+import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -30,6 +33,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -42,7 +47,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CatalogCamelContext;
@@ -200,8 +204,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
-
 /**
  * Represents the context used to configure routes and the policies to use.
  */
@@ -218,10 +220,13 @@ public abstract class AbstractCamelContext extends BaseService
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
-    private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
+    private final List<StartupListener> startupListeners = ServiceLoader.load(StartupListener.class)
+        .stream().map(Provider::get).collect(toCollection(CopyOnWriteArrayList::new));
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
     private final Map<String, DataFormat> dataformats = new ConcurrentHashMap<>();
-    private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
+    private final List<LifecycleStrategy> lifecycleStrategies = ServiceLoader.load(
+            LifecycleStrategy.class).stream().map(Provider::get)
+        .collect(toCollection(CopyOnWriteArrayList::new));
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isLockModel = new ThreadLocal<>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();

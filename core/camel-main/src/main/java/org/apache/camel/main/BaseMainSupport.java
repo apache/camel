@@ -36,6 +36,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -116,6 +118,7 @@ import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toCollection;
 import static org.apache.camel.main.MainConstants.profilePropertyPlaceholderLocation;
 import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.optionKey;
@@ -140,7 +143,8 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
-    protected final List<MainListener> listeners = new ArrayList<>();
+    protected final List<MainListener> listeners = ServiceLoader.load(MainListener.class).stream()
+        .map(Provider::get).collect(toCollection(ArrayList::new));
     protected volatile CamelContext camelContext;
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected final OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();

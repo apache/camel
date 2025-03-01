@@ -16,11 +16,18 @@
  */
 package org.apache.camel.impl.engine;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
@@ -41,14 +48,6 @@ import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultCamelContextTest extends TestSupport {
 
@@ -437,6 +436,24 @@ public class DefaultCamelContextTest extends TestSupport {
             assertNotNull(oldEndpoint);
         }
 
+    }
+
+    @Test
+    public void testLoadStartupListenerWithServiceLoader() {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+
+        assertNotNull(
+            ctx.getStartupListeners().stream().filter(FooStartupListener.class::isInstance).findAny()
+                .orElse(null), FooStartupListener.class.getSimpleName() + " not loaded via SPI.");
+    }
+
+    @Test
+    public void testLoadLifecycleStrategyWithServiceLoader() {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+
+        assertNotNull(
+            ctx.getLifecycleStrategies().stream().filter(FooLifecycleStrategy.class::isInstance).findAny()
+                .orElse(null), FooLifecycleStrategy.class.getSimpleName() + " not loaded via SPI.");
     }
 
     private static class MyService extends ServiceSupport implements CamelContextAware {
