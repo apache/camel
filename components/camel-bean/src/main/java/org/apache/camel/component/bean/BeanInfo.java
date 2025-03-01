@@ -286,7 +286,7 @@ public class BeanInfo {
             // and therefore use arrayLength from ObjectHelper to return the array length field.
             Method method = org.apache.camel.util.ObjectHelper.class.getMethod("arrayLength", Object[].class);
             ParameterInfo pi = new ParameterInfo(
-                    0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
+                    0, Object[].class, false, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
             List<ParameterInfo> lpi = new ArrayList<>(1);
             lpi.add(pi);
             methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
@@ -447,6 +447,7 @@ public class BeanInfo {
         boolean hasHandlerAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
 
         int size = parameterTypes.length;
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", clazz, method, size);
         }
@@ -457,13 +458,15 @@ public class BeanInfo {
                     = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
+            // whether this parameter is vararg which must be last parameter
+            boolean varargs = method.isVarArgs() && i == size - 1;
 
-            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
+            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, varargs, parameterAnnotations, expression);
             LOG.trace("Parameter #{}: {}", i, parameterInfo);
             parameters.add(parameterInfo);
             if (expression == null) {
                 boolean bodyAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
-                LOG.trace("Parameter #{} has @Body annotation", i);
+                LOG.trace("Parameter #{} has @Body annotation: {}", i, bodyAnnotation);
                 hasCustomAnnotation |= bodyAnnotation;
                 if (bodyParameters.isEmpty()) {
                     // okay we have not yet set the body parameter and we have found
