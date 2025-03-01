@@ -21,7 +21,7 @@ import org.apache.camel.StartupListener;
 
 public class FooStartupListener implements StartupListener {
 
-  @Override
-  public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
-  }
+    @Override
+    public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
+    }
 }

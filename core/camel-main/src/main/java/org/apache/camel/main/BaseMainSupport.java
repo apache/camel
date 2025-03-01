@@ -144,7 +144,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
     protected final List<MainListener> listeners = ServiceLoader.load(MainListener.class).stream()
-        .map(Provider::get).collect(toCollection(ArrayList::new));
+            .map(Provider::get).collect(toCollection(ArrayList::new));
     protected volatile CamelContext camelContext;
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected final OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();

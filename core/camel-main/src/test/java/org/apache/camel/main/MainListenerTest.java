@@ -95,13 +95,14 @@ public class MainListenerTest {
 
     @Test
     public void testLoadMainListenerWithServiceLoader() {
-      Main main = new Main();
-      try {
-        Assertions.assertNotNull(
-            main.getMainListeners().stream().filter(FooMainListener.class::isInstance).findAny()
-                .orElse(null), FooMainListener.class.getSimpleName() + " not loaded via SPI.");
-      } finally {
-        main.stop();
-      }
+        Main main = new Main();
+        try {
+            Assertions.assertNotNull(
+                    main.getMainListeners().stream().filter(FooMainListener.class::isInstance).findAny()
+                            .orElse(null),
+                    FooMainListener.class.getSimpleName() + " not loaded via SPI.");
+        } finally {
+            main.stop();
+        }
     }
 }

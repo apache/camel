@@ -221,12 +221,12 @@ public abstract class AbstractCamelContext extends BaseService
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
     private final List<StartupListener> startupListeners = ServiceLoader.load(StartupListener.class)
-        .stream().map(Provider::get).collect(toCollection(CopyOnWriteArrayList::new));
+            .stream().map(Provider::get).collect(toCollection(CopyOnWriteArrayList::new));
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
     private final Map<String, DataFormat> dataformats = new ConcurrentHashMap<>();
     private final List<LifecycleStrategy> lifecycleStrategies = ServiceLoader.load(
             LifecycleStrategy.class).stream().map(Provider::get)
-        .collect(toCollection(CopyOnWriteArrayList::new));
+            .collect(toCollection(CopyOnWriteArrayList::new));
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isLockModel = new ThreadLocal<>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();

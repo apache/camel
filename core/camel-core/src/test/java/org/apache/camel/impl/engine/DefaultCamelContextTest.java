@@ -443,8 +443,9 @@ public class DefaultCamelContextTest extends TestSupport {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
 
         assertNotNull(
-            ctx.getStartupListeners().stream().filter(FooStartupListener.class::isInstance).findAny()
-                .orElse(null), FooStartupListener.class.getSimpleName() + " not loaded via SPI.");
+                ctx.getStartupListeners().stream().filter(FooStartupListener.class::isInstance).findAny()
+                        .orElse(null),
+                FooStartupListener.class.getSimpleName() + " not loaded via SPI.");
     }
 
     @Test
@@ -452,8 +453,9 @@ public class DefaultCamelContextTest extends TestSupport {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
 
         assertNotNull(
-            ctx.getLifecycleStrategies().stream().filter(FooLifecycleStrategy.class::isInstance).findAny()
-                .orElse(null), FooLifecycleStrategy.class.getSimpleName() + " not loaded via SPI.");
+                ctx.getLifecycleStrategies().stream().filter(FooLifecycleStrategy.class::isInstance).findAny()
+                        .orElse(null),
+                FooLifecycleStrategy.class.getSimpleName() + " not loaded via SPI.");
     }
 
     private static class MyService extends ServiceSupport implements CamelContextAware {
