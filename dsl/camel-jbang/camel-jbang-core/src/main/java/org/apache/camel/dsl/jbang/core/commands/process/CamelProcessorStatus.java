@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.tooling.model.Strings;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -319,7 +320,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String id = getId(r);
         if (description && r.description != null) {
             if (id != null) {
-                id = id + "\n  " + r.description;
+                id = id + "\n  " + Strings.wrapWords(r.description, " ", "\n  ", 55, true);
             } else {
                 id = r.description;
             }
