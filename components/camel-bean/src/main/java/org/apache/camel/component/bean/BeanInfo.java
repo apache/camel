@@ -458,8 +458,8 @@ public class BeanInfo {
                     = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
-            // whether this parameter is vararg which must be an object array type
-            boolean varargs = method.isVarArgs() && Object[].class == parameterType;
+            // whether this parameter is vararg which must be last parameter
+            boolean varargs = method.isVarArgs() && i == size - 1;
 
             ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, varargs, parameterAnnotations, expression);
             LOG.trace("Parameter #{}: {}", i, parameterInfo);
