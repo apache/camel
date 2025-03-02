@@ -19,6 +19,9 @@ package org.apache.camel.component.mina;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,8 +47,7 @@ public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
                     assertEquals("Hello World", e.getIn().getBody(String.class));
                     // MinaProducer has a default timeout of 3 seconds so we just wait 5 seconds
                     // (template.requestBody is a MinaProducer behind the doors)
-                    Thread.sleep(1000);
-
+                    await().pollDelay(1, TimeUnit.SECONDS).until(() -> true);
                     e.getMessage().setBody("Okay I will be faster in the future");
                 });
             }
