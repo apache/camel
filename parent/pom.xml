@@ -83,7 +83,7 @@
         <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.79</bouncycastle-version>
         <box-java-sdk-version>4.15.2</box-java-sdk-version>
-        <braintree-gateway-version>3.39.0</braintree-gateway-version>
+        <braintree-gateway-version>3.40.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.0</build-helper-maven-plugin-version>
         <bytebuddy-version>1.17.1</bytebuddy-version>
         <c3p0-version>0.10.2</c3p0-version>
