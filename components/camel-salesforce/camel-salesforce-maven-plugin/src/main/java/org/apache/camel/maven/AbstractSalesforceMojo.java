@@ -222,29 +222,29 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
     private void validateAuthenticationParameters() throws MojoExecutionException {
         if (clientSecret == null && keystoreResource == null) {
             throw new MojoExecutionException(
-                    "Either camelSalesforce.clientSecret or camelSalesforce.keystore.resource must be provided.");
+                    "Either property: clientSecret or property: keystoreResource must be provided.");
         } else if (clientSecret != null && keystoreResource != null) {
             throw new MojoExecutionException(
-                    "Only one of camelSalesforce.clientSecret or camelSalesforce.keystore.resource must be provided.");
+                    "Property: clientSecret or property: keystoreResource must be provided.");
         }
 
         if (clientSecret != null) {
             if (password == null) {
                 throw new MojoExecutionException(
-                        generateRequiredErrorMessage("camelSalesforce.password", "camelSalesforce.clientSecret"));
+                        generateRequiredErrorMessage("password", "clientSecret"));
             }
         }
 
         if (keystoreResource != null) {
             if (keystorePassword == null) {
                 throw new MojoExecutionException(
-                        generateRequiredErrorMessage("camelSalesforce.keystore.password", "camelSalesforce.keystore.resource"));
+                        generateRequiredErrorMessage("keystorePassword", "keystoreResource"));
             }
         }
     }
 
     private String generateRequiredErrorMessage(String parameter1, String parameter2) {
-        return String.format("%s must be provided when %s was provided.", parameter1, parameter2);
+        return String.format("Property: %s must be provided when property: %s was provided.", parameter1, parameter2);
     }
 
     private KeyStoreParameters generateKeyStoreParameters() {
