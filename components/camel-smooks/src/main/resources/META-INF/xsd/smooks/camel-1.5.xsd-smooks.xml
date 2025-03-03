@@ -65,11 +65,6 @@
         <param name="attribute">if</param>
         <param name="mapTo">condition</param>
     </resource-config>
-    
-    <resource-config selector="camel:route/to">
-        <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromText</resource>
-        <param name="mapTo">condition</param>
-    </resource-config>
 
     <resource-config selector="camel:route/to">
         <resource>org.smooks.engine.resource.config.loader.xml.extension.MapToResourceConfigFromAttribute</resource>
