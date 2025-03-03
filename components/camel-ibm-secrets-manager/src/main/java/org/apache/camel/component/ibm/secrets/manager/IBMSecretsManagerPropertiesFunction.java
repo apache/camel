@@ -56,24 +56,25 @@ import org.apache.camel.vault.IBMSecretsManagerVaultConfiguration;
  * <p/>
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
- * Properties Function are all prefixed with <tt>ibm:</tt>. For example asking for <tt>ibm:token</tt>, will return the
- * secret value associated to the secret named token on AWS Secrets Manager.
+ * Properties Function are all prefixed with <tt>ibm:</tt>. For example asking for <tt>ibm:default:token</tt>, will return the
+ * secret value associated to the secret named token on IBM Secrets Manager, in the Secret group "default".
  *
- * Another way of retrieving a secret value is using the following notation <tt>ibm:database/username</tt>: in this case
- * the field username of the secret database will be returned. As a fallback, the user could provide a default value,
+ * Another way of retrieving a secret value is using the following notation <tt>ibm:default:database/username</tt>: in this case
+ * the field username of the secret database, in the secret group "default", will be returned. As a fallback, the user could provide a default value,
  * which will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for example, if
  * a particular field of the secret doesn't exist. For using this feature, the user could use the following notation
- * <tt>ibm:database/username:admin</tt>. The admin value will be returned as default value, if the conditions above were
+ * <tt>ibm:default:database/username:admin</tt>. The admin value will be returned as default value, if the conditions above were
  * all met.
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("ibm")
 public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    private static final String CAMEL_AWS_VAULT_IBM_TOKEN_ENV = "CAMEL_VAULT_IBM_TOKEN";
-    private static final String CAMEL_AWS_VAULT_IBM_SERVICE_URL_ENV = "CAMEL_VAULT_IBM_SERVICE_URL";
+    private static final String CAMEL_VAULT_IBM_TOKEN_ENV = "CAMEL_VAULT_IBM_TOKEN";
+    private static final String CAMEL_VAULT_IBM_SERVICE_URL_ENV = "CAMEL_VAULT_IBM_SERVICE_URL";
 
     private CamelContext camelContext;
     private SecretsManager client;
+    private String secretGroup;
 
     private final Set<String> secrets = new HashSet<>();
 
@@ -90,8 +91,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
     protected void doStart() throws Exception {
         super.doStart();
 
-        String token = System.getenv(CAMEL_AWS_VAULT_IBM_TOKEN_ENV);
-        String serviceUrl = System.getenv(CAMEL_AWS_VAULT_IBM_SERVICE_URL_ENV);
+        String token = System.getenv(CAMEL_VAULT_IBM_TOKEN_ENV);
+        String serviceUrl = System.getenv(CAMEL_VAULT_IBM_SERVICE_URL_ENV);
         if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(serviceUrl)) {
             IBMSecretsManagerVaultConfiguration ibmVaultConfiguration
                     = getCamelContext().getVaultConfiguration().ibmSecretsManager();
@@ -121,7 +122,7 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
 
     @Override
     public String getName() {
-        return "aws";
+        return "ibm";
     }
 
     @Override
@@ -132,7 +133,9 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
         String defaultValue = null;
         String version = null;
         if (remainder.contains("#")) {
-            key = StringHelper.before(remainder, "#");
+            String keyRemainder = StringHelper.before(remainder, "#");
+            secretGroup = StringHelper.before(keyRemainder, ":");
+            key = StringHelper.after(keyRemainder, ":");
             subkey = StringHelper.after(remainder, "#");
             defaultValue = StringHelper.after(subkey, ":");
             if (ObjectHelper.isNotEmpty(defaultValue)) {
@@ -149,16 +152,28 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                 subkey = StringHelper.before(subkey, "@");
             }
         } else if (remainder.contains(":")) {
-            key = StringHelper.before(remainder, ":");
-            defaultValue = StringHelper.after(remainder, ":");
-            if (remainder.contains("@")) {
-                version = StringHelper.after(remainder, "@");
-                defaultValue = StringHelper.before(defaultValue, "@");
-            }
-        } else {
-            if (remainder.contains("@")) {
-                key = StringHelper.before(remainder, "@");
-                version = StringHelper.after(remainder, "@");
+            secretGroup = StringHelper.before(remainder, ":");
+            key = StringHelper.after(remainder, ":");
+            if (key.contains(":")) {
+                defaultValue = StringHelper.after(key, ":");
+                if (ObjectHelper.isNotEmpty(defaultValue)) {
+                    if (defaultValue.contains("@")) {
+                        version = StringHelper.after(defaultValue, "@");
+                        defaultValue = StringHelper.before(defaultValue, "@");
+                    }
+                }
+                if (key.contains(":")) {
+                    key = StringHelper.before(key, ":");
+                }
+                if (key.contains("@")) {
+                    version = StringHelper.after(key, "@");
+                    key = StringHelper.before(key, "@");
+                }
+            } else {
+                if (key.contains("@")) {
+                    version = StringHelper.after(key, "@");
+                    key = StringHelper.before(key, "@");
+                }
             }
         }
 
@@ -175,36 +190,68 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
 
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version) {
-
         // capture name of secret
         secrets.add(key);
-
         String returnValue = "";
-        Map<String, Object> data = Map.of();
-        GetSecretByNameTypeOptions.Builder secretRequestBuilder = new GetSecretByNameTypeOptions.Builder();
-        secretRequestBuilder.secretType(Secret.SecretType.KV).name(key);
-        secretRequestBuilder.secretGroupName("default");
-        Response<Secret> response = client.getSecretByNameType(secretRequestBuilder.build()).execute();
-        data = response.getResult().getData();
-        if (ObjectHelper.isNotEmpty(version)) {
-            GetSecretVersionOptions getSecretVersionOptions = new GetSecretVersionOptions.Builder()
-                    .secretId(response.getResult().getId())
-                    .id(version)
-                    .build();
+        try {
 
-            Response<SecretVersion> secVersion = client.getSecretVersion(getSecretVersionOptions).execute();
-            data = secVersion.getResult().getData();
-        }
-        if (ObjectHelper.isNotEmpty(data)) {
-            data = response.getResult().getData();
-        }
-        if (ObjectHelper.isNotEmpty(subkey)) {
-            returnValue = String.valueOf(data.get(subkey));
-        } else {
-            returnValue = null;
-        }
-        if (ObjectHelper.isEmpty(returnValue)) {
-            returnValue = defaultValue;
+            Map<String, Object> data = Map.of();
+            if (ObjectHelper.isNotEmpty(subkey)) {
+                GetSecretByNameTypeOptions.Builder secretRequestBuilder = new GetSecretByNameTypeOptions.Builder();
+                secretRequestBuilder.secretType(Secret.SecretType.KV).name(key);
+                secretRequestBuilder.secretGroupName(secretGroup);
+                Response<Secret> response = client.getSecretByNameType(secretRequestBuilder.build()).execute();
+                data = response.getResult().getData();
+                if (ObjectHelper.isNotEmpty(version)) {
+                    GetSecretVersionOptions getSecretVersionOptions = new GetSecretVersionOptions.Builder()
+                            .secretId(response.getResult().getId())
+                            .id(version)
+                            .build();
+
+                    Response<SecretVersion> secVersion = client.getSecretVersion(getSecretVersionOptions).execute();
+                    data = secVersion.getResult().getData();
+                }
+                if (ObjectHelper.isNotEmpty(data)) {
+                    data = response.getResult().getData();
+                }
+                if (ObjectHelper.isNotEmpty(subkey)) {
+                    returnValue = String.valueOf(data.get(subkey));
+                } else {
+                    returnValue = null;
+                }
+                if (ObjectHelper.isEmpty(returnValue)) {
+                    returnValue = defaultValue;
+                }
+            } else {
+                GetSecretByNameTypeOptions.Builder secretRequestBuilder = new GetSecretByNameTypeOptions.Builder();
+                secretRequestBuilder.secretType(Secret.SecretType.ARBITRARY).name(key);
+                secretRequestBuilder.secretGroupName(secretGroup);
+                Response<Secret> response = client.getSecretByNameType(secretRequestBuilder.build()).execute();
+                String payload = response.getResult().getPayload();
+                if (ObjectHelper.isNotEmpty(version)) {
+                    GetSecretVersionOptions getSecretVersionOptions = new GetSecretVersionOptions.Builder()
+                            .secretId(response.getResult().getId())
+                            .id(version)
+                            .build();
+
+                    Response<SecretVersion> secVersion = client.getSecretVersion(getSecretVersionOptions).execute();
+                    payload = secVersion.getResult().getPayload();
+                }
+                if (ObjectHelper.isNotEmpty(payload)) {
+                    returnValue = payload;
+                } else {
+                    returnValue = null;
+                }
+                if (ObjectHelper.isEmpty(returnValue)) {
+                    returnValue = defaultValue;
+                }
+            }
+        } catch (Exception ex) {
+            if (ObjectHelper.isNotEmpty(defaultValue)) {
+                returnValue = defaultValue;
+            } else {
+                throw ex;
+            }
         }
         return returnValue;
     }

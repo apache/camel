@@ -39,7 +39,7 @@ public class IBMSecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{ibm:authsecdb#username}}")).to("mock:bar");
+                from("direct:start").setBody(simple("{{ibm:default:authsecdb#username}}")).to("mock:bar");
             }
         });
         context.start();
@@ -58,7 +58,7 @@ public class IBMSecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{ibm:authsecdb#username@current}}")).to("mock:bar");
+                from("direct:start").setBody(simple("{{ibm:default:authsecdb#username@current}}")).to("mock:bar");
             }
         });
         context.start();
@@ -71,19 +71,59 @@ public class IBMSecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSuppo
     }
 
     @Test
-    public void testFunctionWithUnexistentVersion() throws Exception {
+    public void testFunctionWithExistentVersion() throws Exception {
         context.getVaultConfiguration().ibmSecretsManager().setToken(System.getProperty("camel.ibm.sm.token"));
         context.getVaultConfiguration().ibmSecretsManager().setServiceUrl(System.getProperty("camel.ibm.sm.serviceurl"));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{ibm:authsecdb#username@00221dc6-1911-c29e-fd7a-c4c5d88ce13f}}"))
+                from("direct:start").setBody(simple("{{ibm:default:authsecdb#username@00221dc6-1911-c29e-fd7a-c4c5d88ce13f}}"))
                         .to("mock:bar");
             }
         });
         context.start();
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
+
+        template.sendBody("direct:start", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testFunctionWithArbitrarySecret() throws Exception {
+        context.getVaultConfiguration().ibmSecretsManager().setToken(System.getProperty("camel.ibm.sm.token"));
+        context.getVaultConfiguration().ibmSecretsManager().setServiceUrl(System.getProperty("camel.ibm.sm.serviceurl"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").setBody(simple("{{ibm:default:pippo}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("sese");
+
+        template.sendBody("direct:start", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testFunctionWithArbitrarySecretNonExistentAndDefault() throws Exception {
+        context.getVaultConfiguration().ibmSecretsManager().setToken(System.getProperty("camel.ibm.sm.token"));
+        context.getVaultConfiguration().ibmSecretsManager().setServiceUrl(System.getProperty("camel.ibm.sm.serviceurl"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").setBody(simple("{{ibm:default:secsecret:sese}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("sese");
 
         template.sendBody("direct:start", "Hello World");
 
