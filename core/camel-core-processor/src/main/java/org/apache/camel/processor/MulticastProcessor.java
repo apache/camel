@@ -577,10 +577,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
 
         @Override
         public void run() {
-            doRun();
-        }
-
-        protected void doRun() {
             super.run();
 
             try {
