@@ -229,6 +229,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * from the parallel thread pool. However, if you want to use the original thread that called the splitter, then
      * make sure to enable the synchronous option as well.
      *
+     * In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks
+     * using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive
+     * routing engine to use as many threads as possible, which may be available due to sub-tasks using other
+     * thread-pools such as CompletableFuture.runAsync or others.
+     *
      * @return the builder
      */
     public SplitDefinition parallelProcessing() {
@@ -244,6 +249,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * from the parallel thread pool. However, if you want to use the original thread that called the splitter, then
      * make sure to enable the synchronous option as well.
      *
+     * In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks
+     * using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive
+     * routing engine to use as many threads as possible, which may be available due to sub-tasks using other
+     * thread-pools such as CompletableFuture.runAsync or others.
+     *
      * @return the builder
      */
     public SplitDefinition parallelProcessing(boolean parallelProcessing) {
@@ -258,6 +268,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread
      * from the parallel thread pool. However, if you want to use the original thread that called the splitter, then
      * make sure to enable the synchronous option as well.
+     *
+     * In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks
+     * using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive
+     * routing engine to use as many threads as possible, which may be available due to sub-tasks using other
+     * thread-pools such as CompletableFuture.runAsync or others.
      *
      * @return the builder
      */
