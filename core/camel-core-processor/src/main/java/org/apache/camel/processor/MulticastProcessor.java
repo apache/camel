@@ -186,7 +186,6 @@ public class MulticastProcessor extends AsyncProcessorSupport
     private final int cacheSize;
     private final Map<Processor, Processor> errorHandlers;
     private final boolean shareUnitOfWork;
-    private final AtomicInteger inflight = new AtomicInteger();
 
     public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors) {
         this(camelContext, route, processors, null);
