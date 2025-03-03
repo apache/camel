@@ -17,93 +17,68 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.openshift.client.OpenShiftClient;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.util.StringHelper;
+import org.codehaus.plexus.util.ExceptionUtils;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "delete", description = "Delete Camel application from Kubernetes", sortOptions = false)
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getKubernetesClient;
+
+@CommandLine.Command(name = "delete",
+                     description = "Delete Camel application from Kubernetes. This operation will delete all resources associated to this app, such as: Deployment, Routes, Services, etc. filtering by labels \"app.kubernetes.io/managed-by=camel-jbang\" and \"app=<app name>\".",
+                     sortOptions = false)
 public class KubernetesDelete extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file to delete. Integration name is derived from the file name.",
-                            arity = "0..1", paramLabel = "<file>")
-    String filePath;
-
-    @CommandLine.Option(names = { "--working-dir" },
-                        description = "The working directory where to find exported project sources.")
-    String workingDir;
-
-    @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift."
-                                      +
-                                      " If a target cluster type was set to create the project (run/export command), it needs to be set.")
-    protected String clusterType;
+    @CommandLine.Parameters(description = "The deployed application name", arity = "1", paramLabel = "<app name>")
+    String appName;
 
     public KubernetesDelete(CamelJBangMain main) {
         super(main);
-        projectNameSuppliers.add(() -> projectNameFromFilePath(() -> filePath));
     }
 
     public Integer doCall() throws Exception {
-
-        // First, try the explicit workingDir
-        File resolvedManifestDir = null;
-        if (workingDir != null) {
-            File resolvedWorkingDir = new File(workingDir);
-            File candidateDir = new File(resolvedWorkingDir, "target/kubernetes");
-            if (candidateDir.isDirectory()) {
-                resolvedManifestDir = candidateDir;
+        printer().printf("Deleting all resources from app: %s%n", appName);
+        Map<String, String> labels = new HashMap<>();
+        // this label is set in KubernetesRun command
+        labels.put(BaseTrait.KUBERNETES_LABEL_MANAGED_BY, "camel-jbang");
+        labels.put("app", appName);
+        List<StatusDetails> deleteStatuses = new ArrayList<>();
+        try {
+            // delete the most common resources
+            // delete Deployment cascades to pod
+            deleteStatuses.addAll(getKubernetesClient().apps().deployments().withLabels(labels).delete());
+            // delete service
+            deleteStatuses.addAll(getKubernetesClient().services().withLabels(labels).delete());
+            ClusterType clusterType = KubernetesHelper.discoverClusterType();
+            if (ClusterType.OPENSHIFT == clusterType) {
+                // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig casacade delete to Build and ConfigMap
+                OpenShiftClient ocpClient = getKubernetesClient().adapt(OpenShiftClient.class);
+                // BuildConfig
+                deleteStatuses.addAll(ocpClient.buildConfigs().withLabels(labels).delete());
+                // ImageStreams
+                deleteStatuses.addAll(ocpClient.imageStreams().withLabels(labels).delete());
+                // Route
+                deleteStatuses.addAll(ocpClient.routes().withLabels(labels).delete());
             }
-        }
-
-        String projectName = getProjectName();
-
-        // Next, try the project name in the run dir
-        if (resolvedManifestDir == null) {
-            File resolvedWorkingDir = new File(RUN_PLATFORM_DIR + "/" + projectName);
-            File candidateDir = new File(resolvedWorkingDir, "target/kubernetes");
-            if (candidateDir.isDirectory()) {
-                resolvedManifestDir = candidateDir;
+            if (deleteStatuses.size() > 0) {
+                deleteStatuses.forEach(
+                        s -> printer().printf("Deleted: %s '%s'%n", StringHelper.capitalize(s.getKind()), s.getName()));
+            } else {
+                printer().println("No deployment found with name: " + appName);
             }
-        }
-
-        // Next, try the project name in the current dir
-        if (resolvedManifestDir == null) {
-            File candidateDir = new File("./target/kubernetes");
-            if (candidateDir.isDirectory()) {
-                resolvedManifestDir = candidateDir;
-            }
-        }
-
-        if (resolvedManifestDir == null) {
-            printer().printErr("Failed to resolve exported project: %s".formatted(projectName));
+        } catch (Exception ex) {
+            // there could be various chained exceptions, so we want to get the root cause
+            printer().println("Error trying to delete the app: " + ExceptionUtils.getRootCause(ex));
             return 1;
         }
-
-        File manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, resolvedManifestDir);
-        printer().printf("Deleting resources from manifest: %s%n", manifest);
-
-        try (FileInputStream fis = new FileInputStream(manifest)) {
-            List<StatusDetails> status;
-            var loadedResources = client().load(fis);
-            if (!ObjectHelper.isEmpty(namespace)) {
-                status = loadedResources.inNamespace(namespace).delete();
-            } else {
-                // First, let the client choose the default namespace
-                status = loadedResources.delete();
-                // Next, explicitly name the default namespace
-                if (status.isEmpty()) {
-                    status = loadedResources.inNamespace("default").delete();
-                }
-            }
-            status.forEach(s -> printer().printf("Deleted: %s '%s'%n", StringHelper.capitalize(s.getKind()), s.getName()));
-        }
-
         return 0;
     }
 }
