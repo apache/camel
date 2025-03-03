@@ -425,7 +425,7 @@
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.12.Final</protostream-version>
         <prowide-version>SRU2024-10.2.6</prowide-version>
-        <pubnub-version>10.4.2</pubnub-version>
+        <pubnub-version>10.4.3</pubnub-version>
         <pulsar-version>3.3.3</pulsar-version>
         <qdrant-client-version>1.13.0</qdrant-client-version>
         <qpid-broker-version>9.2.0</qpid-broker-version>
