@@ -6,7 +6,9 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.10 to 4.11
 
-=== Recipient List, Split and Multicast EIP
+=== EIPs
+
+==== Recipient List, Split and Multicast EIP
 
 In parallel processing mode, you can also enable `synchronous=true` to force these EIPs to process
 the sub-tasks using the upper bounds of the thread-pool. If using `synchronous=false` then Camel
@@ -14,6 +16,12 @@ will allow its reactive routing engine to use as many threads as possible, which
 due to sub-tasks using other thread-pools such as `CompletableFuture.runAsync` or others.
 
 Setting `synchronous=true` is the same behaviour is in Camel 2 which did not have the reactive routing engine.
+
+==== WireTap and OnCompletion EIP
+
+When MDC is enabled, then the WireTap and OnCompletion (in parallel mode) will now propagate MDC
+context when creating threads to process the exchanges. This makes these EIPs similar to how
+other EIPs such as Multicast EIP already does this.
 
 === camel-api
 

@@ -17,12 +17,16 @@
 
 package org.apache.camel.processor;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.support.PatternHelper;
+import org.slf4j.MDC;
 
 final class ProcessorHelper {
 
@@ -69,5 +73,36 @@ final class ProcessorHelper {
             }
         }
         return null;
+    }
+
+    static Runnable prepareMDCParallelTask(CamelContext camelContext, Runnable runnable) {
+        Runnable answer = runnable;
+
+        // if MDC is enabled we need to propagate the information
+        // to the sub task which is executed on another thread from the thread pool
+        if (camelContext.isUseMDCLogging()) {
+            String pattern = camelContext.getMDCLoggingKeysPattern();
+            Map<String, String> mdc = MDC.getCopyOfContextMap();
+            if (mdc != null && !mdc.isEmpty()) {
+                answer = () -> {
+                    try {
+                        if (pattern == null || "*".equals(pattern)) {
+                            mdc.forEach(MDC::put);
+                        } else {
+                            final String[] patterns = pattern.split(",");
+                            mdc.forEach((k, v) -> {
+                                if (PatternHelper.matchPatterns(k, patterns)) {
+                                    MDC.put(k, v);
+                                }
+                            });
+                        }
+                    } finally {
+                        runnable.run();
+                    }
+                };
+            }
+        }
+
+        return answer;
     }
 }

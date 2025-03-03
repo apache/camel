@@ -201,7 +201,8 @@ public class WireTapProcessor extends AsyncProcessorSupport
         // send the exchange to the destination using an executor service
         try {
             // create task which has state used during routing
-            PooledExchangeTask task = taskFactory.acquire(target, null);
+            Runnable task = taskFactory.acquire(target, null);
+            task = ProcessorHelper.prepareMDCParallelTask(camelContext, task);
             executorService.submit(task);
         } catch (Exception e) {
             // in case the thread pool rejects or cannot submit the task then we need to catch
