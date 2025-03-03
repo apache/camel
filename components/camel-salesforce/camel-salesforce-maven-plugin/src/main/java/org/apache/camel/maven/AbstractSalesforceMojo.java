@@ -16,12 +16,18 @@
  */
 package org.apache.camel.maven;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -142,6 +148,30 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
     String userName;
 
     /**
+     * Salesforce JWT Audience.
+     */
+    @Parameter(property = "camelSalesforce.jwtAudience", defaultValue = "https://login.salesforce.com")
+    String jwtAudience;
+
+    /**
+     * Salesforce Keystore Path.
+     */
+    @Parameter(property = "camelSalesforce.keystore.resource")
+    String keystoreResource;
+
+    /**
+     * Salesforce Keystore Password.
+     */
+    @Parameter(property = "camelSalesforce.keystore.password")
+    String keystorePassword;
+
+    /**
+     * Salesforce Keystore Type.
+     */
+    @Parameter(property = "camelSalesforce.keystore.type", defaultValue = "jks")
+    String keystoreType;
+
+    /**
      * Salesforce API version.
      */
     @Parameter(property = "camelSalesforce.version", defaultValue = SalesforceEndpointConfig.DEFAULT_VERSION)
@@ -152,6 +182,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         try {
+            validateAuthenticationParameters();
             setup();
             execution.execute();
         } catch (Exception e) {
@@ -184,5 +215,56 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
         execution.setPassword(password);
         execution.setVersion(version);
         execution.setSslContextParameters(sslContextParameters);
+        execution.setJwtAudience(jwtAudience);
+        execution.setKeyStoreParameters(generateKeyStoreParameters());
+    }
+
+    private void validateAuthenticationParameters() throws MojoExecutionException {
+        if (clientSecret == null && keystoreResource == null) {
+            throw new MojoExecutionException(
+                    "Either property: clientSecret or property: keystoreResource must be provided.");
+        } else if (clientSecret != null && keystoreResource != null) {
+            throw new MojoExecutionException(
+                    "Property: clientSecret or property: keystoreResource must be provided.");
+        }
+
+        if (clientSecret != null) {
+            if (password == null) {
+                throw new MojoExecutionException(
+                        generateRequiredErrorMessage("password", "clientSecret"));
+            }
+        }
+
+        if (keystoreResource != null) {
+            if (keystorePassword == null) {
+                throw new MojoExecutionException(
+                        generateRequiredErrorMessage("keystorePassword", "keystoreResource"));
+            }
+        }
+    }
+
+    private String generateRequiredErrorMessage(String parameter1, String parameter2) {
+        return String.format("Property: %s must be provided when property: %s was provided.", parameter1, parameter2);
+    }
+
+    private KeyStoreParameters generateKeyStoreParameters() {
+        if (keystoreResource == null) {
+            return null;
+        }
+
+        KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
+        keyStoreParameters.setResource(keystoreResource);
+        keyStoreParameters.setPassword(keystorePassword);
+        keyStoreParameters.setType(keystoreType);
+
+        try (InputStream is = new FileInputStream(keystoreResource)) {
+            KeyStore ks = KeyStore.getInstance(keystoreType);
+            ks.load(is, keystorePassword.toCharArray());
+            keyStoreParameters.setKeyStore(ks);
+        } catch (IOException | GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+
+        return keyStoreParameters;
     }
 }
