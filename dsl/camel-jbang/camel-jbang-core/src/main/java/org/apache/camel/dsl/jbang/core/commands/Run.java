@@ -287,12 +287,17 @@ public class Run extends CamelCommand {
     @Option(names = { "--console" }, description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
     boolean console;
 
-    @Option(names = { "--health" }, description = "Health check at /q/health on local HTTP server (port 8080 by default)")
+    @Option(names = { "--health" },
+            description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
     boolean health;
 
     @Option(names = { "--metrics" },
-            description = "Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
+            description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
     boolean metrics;
+
+    @Option(names = { "--observe" },
+            description = "Enable observability services")
+    boolean observe;
 
     @Option(names = { "--modeline" }, defaultValue = "true",
             description = "Deprecated, to be removed: Enables Camel-K style modeline")
@@ -605,6 +610,10 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.quarkusVersion", quarkusVersion);
         writeSetting(main, profileProperties, "camel.jbang.quarkusGroupId", quarkusGroupId);
         writeSetting(main, profileProperties, "camel.jbang.quarkusArtifactId", quarkusArtifactId);
+
+        if (observe) {
+            main.addInitialProperty("camel.jbang.dependencies", "camel:observability-services");
+        }
 
         // command line arguments
         if (property != null) {

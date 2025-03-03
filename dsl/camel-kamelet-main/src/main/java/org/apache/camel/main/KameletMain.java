@@ -538,12 +538,14 @@ public class KameletMain extends MainCommandLineSupport {
             configure().httpServer().withEnabled(true);
             configure().httpServer().withInfoEnabled(true);
         }
+        // Deprecated: to be replaced by observe flag
         boolean health = "true".equals(getInitialProperties().get(getInstanceType() + ".health"));
         if (health) {
             configure().health().withEnabled(true);
             configure().httpServer().withEnabled(true);
             configure().httpServer().withHealthCheckEnabled(true);
         }
+        // Deprecated: to be replaced by observe flag
         boolean metrics = "true".equals(getInitialProperties().get(getInstanceType() + ".metrics"));
         if (metrics) {
             configure().metrics()
