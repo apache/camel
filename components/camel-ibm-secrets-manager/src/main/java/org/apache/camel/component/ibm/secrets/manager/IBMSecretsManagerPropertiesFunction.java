@@ -56,15 +56,15 @@ import org.apache.camel.vault.IBMSecretsManagerVaultConfiguration;
  * <p/>
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
- * Properties Function are all prefixed with <tt>ibm:</tt>. For example asking for <tt>ibm:default:token</tt>, will return the
- * secret value associated to the secret named token on IBM Secrets Manager, in the Secret group "default".
+ * Properties Function are all prefixed with <tt>ibm:</tt>. For example asking for <tt>ibm:default:token</tt>, will
+ * return the secret value associated to the secret named token on IBM Secrets Manager, in the Secret group "default".
  *
- * Another way of retrieving a secret value is using the following notation <tt>ibm:default:database/username</tt>: in this case
- * the field username of the secret database, in the secret group "default", will be returned. As a fallback, the user could provide a default value,
- * which will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for example, if
- * a particular field of the secret doesn't exist. For using this feature, the user could use the following notation
- * <tt>ibm:default:database/username:admin</tt>. The admin value will be returned as default value, if the conditions above were
- * all met.
+ * Another way of retrieving a secret value is using the following notation <tt>ibm:default:database/username</tt>: in
+ * this case the field username of the secret database, in the secret group "default", will be returned. As a fallback,
+ * the user could provide a default value, which will be returned in case the secret doesn't exist, the secret has been
+ * marked for deletion or, for example, if a particular field of the secret doesn't exist. For using this feature, the
+ * user could use the following notation <tt>ibm:default:database/username:admin</tt>. The admin value will be returned
+ * as default value, if the conditions above were all met.
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("ibm")
 public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
