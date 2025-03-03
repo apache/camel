@@ -604,8 +604,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                     // compute time taken if sending to another endpoint
                     StopWatch watch = beforeSend(pair);
 
-                    AsyncProcessor async = AsyncProcessorConverterHelper.convert(pair.getProcessor());
-                    async.process(exchange, doneSync -> {
+                    AsyncCallback taskCallback = (doneSync) -> {
                         afterSend(pair, watch);
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
@@ -640,7 +639,21 @@ public class MulticastProcessor extends AsyncProcessorSupport
                         if (hasNext && !isParallelProcessing()) {
                             schedule(this);
                         }
-                    });
+                    };
+
+                    AsyncProcessor async = AsyncProcessorConverterHelper.convert(pair.getProcessor());
+                    if (synchronous) {
+                        // force synchronous processing using await manager
+                        // to restrict total number of threads to be bound by the thread-pool of this EIP,
+                        // as otherwise in case of async processing then other thread pools can cause
+                        // unbounded thread use that cannot be controlled by Camel
+                        awaitManager.process(async, exchange);
+                        taskCallback.done(true);
+                    } else {
+                        // async processing in reactive-mode which can use as many threads as possible
+                        // if the downstream processors are async and use different threads
+                        async.process(exchange, taskCallback);
+                    }
                 });
                 // after submitting this pair then move on to the next pair (if in parallel mode)
                 if (hasNext && isParallelProcessing()) {
