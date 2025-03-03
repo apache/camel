@@ -57,3 +57,7 @@ The camel-kafka option `recordMetadata` has changed default from `true` to `fals
 
 The option `lazy-bean` has changed to be default `true` when exporting to make the export
 work in more situations out of the box.
+
+From this version onward the `export` command add the `camel-observability-services` dependency (which includes telemetry, metrics, health and JMX management services out of the box).
+
+The `--health` and `--metrics` flags of `run` command have been deprecated in favor of the newly `--observe` flag which add the `camel-observability-services` dependency (hence including telemetry, metrics, health and JMX management out of the box). For the run command, this has to be explicitly enabled (ie, `camel run  ... --observe`).
