@@ -72,9 +72,6 @@ The Java agent goal is to push those metrics to the OpenTelemetry compatible col
 Follow the instructions
 provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[OpenTelemetry Java Agent configuration].
 
-WARNING: Due to https://issues.apache.org/jira/browse/CAMEL-21460[a flaw in the alignment of OpenTelemetry dependencies in Spring Boot] runtime, you may hit a runtime error until the Spring Boot BOM dependencies is aligning the OpenTelemetry dependencies.
-Be mindful of the required workaround required for this to work until the issue is fixed.
-
 == JMX configuration
 
 The presence of this component implies the presence of `camel-management` component. This is in charge to include information about Camel application status in JMX format.
