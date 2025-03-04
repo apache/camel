@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.10.1-SNAPSHOT</version>
+        <version>4.10.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-base-engine</artifactId>
