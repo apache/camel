@@ -874,14 +874,12 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed files. Will by default use a memory based LRUCache
-         * that holds 1000 entries. If noop=true then idempotent will be enabled
-         * as well to avoid consuming the same files over and over again.
+         * Sets whether to eagerly add the filename to the idempotent repository
+         * or wait until the exchange is complete.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: filter
          * 
          * @param idempotentEager the value to set
@@ -892,15 +890,13 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed files. Will by default use a memory based LRUCache
-         * that holds 1000 entries. If noop=true then idempotent will be enabled
-         * as well to avoid consuming the same files over and over again.
+         * Sets whether to eagerly add the filename to the idempotent repository
+         * or wait until the exchange is complete.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
-         * Default: false
+         * Default: true
          * Group: filter
          * 
          * @param idempotentEager the value to set
