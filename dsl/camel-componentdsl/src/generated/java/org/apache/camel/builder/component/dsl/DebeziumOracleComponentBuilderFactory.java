@@ -912,6 +912,24 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * Active batch size will be also increased/decreased by this amount for
+         * tuning connector throughput when needed.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 20000
+         * Group: oracle
+         * 
+         * @param logMiningBatchSizeIncrement the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningBatchSizeIncrement(long logMiningBatchSizeIncrement) {
+            doSetProperty("logMiningBatchSizeIncrement", logMiningBatchSizeIncrement);
+            return this;
+        }
+    
+        
+        /**
          * The maximum SCN interval size that this connector will use when
          * reading from redo/archive logs.
          * 
@@ -931,9 +949,7 @@ public interface DebeziumOracleComponentBuilderFactory {
         
         /**
          * The minimum SCN interval size that this connector will try to read
-         * from redo/archive logs. Active batch size will be also
-         * increased/decreased by this amount for tuning connector throughput
-         * when needed.
+         * from redo/archive logs.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1775,9 +1791,9 @@ public interface DebeziumOracleComponentBuilderFactory {
         
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2490,6 +2506,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningArchiveLogOnlyMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyMode((boolean) value); return true;
             case "logMiningArchiveLogOnlyScnPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyScnPollIntervalMs((long) value); return true;
             case "logMiningBatchSizeDefault": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBatchSizeDefault((long) value); return true;
+            case "logMiningBatchSizeIncrement": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBatchSizeIncrement((long) value); return true;
             case "logMiningBatchSizeMax": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBatchSizeMax((long) value); return true;
             case "logMiningBatchSizeMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBatchSizeMin((long) value); return true;
             case "logMiningBufferDropOnStop": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferDropOnStop((boolean) value); return true;

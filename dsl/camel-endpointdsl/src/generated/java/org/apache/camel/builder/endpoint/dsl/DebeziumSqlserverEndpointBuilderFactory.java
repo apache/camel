@@ -1295,9 +1295,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1314,9 +1314,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

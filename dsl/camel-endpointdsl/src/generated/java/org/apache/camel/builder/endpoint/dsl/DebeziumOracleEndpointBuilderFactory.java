@@ -1054,6 +1054,38 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Active batch size will be also increased/decreased by this amount for
+         * tuning connector throughput when needed.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 20000
+         * Group: oracle
+         * 
+         * @param logMiningBatchSizeIncrement the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBatchSizeIncrement(long logMiningBatchSizeIncrement) {
+            doSetProperty("logMiningBatchSizeIncrement", logMiningBatchSizeIncrement);
+            return this;
+        }
+        /**
+         * Active batch size will be also increased/decreased by this amount for
+         * tuning connector throughput when needed.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 20000
+         * Group: oracle
+         * 
+         * @param logMiningBatchSizeIncrement the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBatchSizeIncrement(String logMiningBatchSizeIncrement) {
+            doSetProperty("logMiningBatchSizeIncrement", logMiningBatchSizeIncrement);
+            return this;
+        }
+        /**
          * The maximum SCN interval size that this connector will use when
          * reading from redo/archive logs.
          * 
@@ -1087,9 +1119,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The minimum SCN interval size that this connector will try to read
-         * from redo/archive logs. Active batch size will be also
-         * increased/decreased by this amount for tuning connector throughput
-         * when needed.
+         * from redo/archive logs.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1105,9 +1135,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The minimum SCN interval size that this connector will try to read
-         * from redo/archive logs. Active batch size will be also
-         * increased/decreased by this amount for tuning connector throughput
-         * when needed.
+         * from redo/archive logs.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2238,9 +2266,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2257,9 +2285,9 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * Controls what DDL will Debezium store in database schema history. By
-         * default (true) only DDL that manipulates a table from captured
-         * schema/database will be stored. If set to false, then Debezium will
-         * store all incoming DDL statements.
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a table from captured
+         * schema/database will be stored.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

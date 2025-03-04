@@ -100,6 +100,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningArchiveLogOnlyScnPollIntervalMs": target.getConfiguration().setLogMiningArchiveLogOnlyScnPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "logminingbatchsizedefault":
         case "logMiningBatchSizeDefault": target.getConfiguration().setLogMiningBatchSizeDefault(property(camelContext, long.class, value)); return true;
+        case "logminingbatchsizeincrement":
+        case "logMiningBatchSizeIncrement": target.getConfiguration().setLogMiningBatchSizeIncrement(property(camelContext, long.class, value)); return true;
         case "logminingbatchsizemax":
         case "logMiningBatchSizeMax": target.getConfiguration().setLogMiningBatchSizeMax(property(camelContext, long.class, value)); return true;
         case "logminingbatchsizemin":
@@ -362,6 +364,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningArchiveLogOnlyScnPollIntervalMs": return long.class;
         case "logminingbatchsizedefault":
         case "logMiningBatchSizeDefault": return long.class;
+        case "logminingbatchsizeincrement":
+        case "logMiningBatchSizeIncrement": return long.class;
         case "logminingbatchsizemax":
         case "logMiningBatchSizeMax": return long.class;
         case "logminingbatchsizemin":
@@ -625,6 +629,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningArchiveLogOnlyScnPollIntervalMs": return target.getConfiguration().getLogMiningArchiveLogOnlyScnPollIntervalMs();
         case "logminingbatchsizedefault":
         case "logMiningBatchSizeDefault": return target.getConfiguration().getLogMiningBatchSizeDefault();
+        case "logminingbatchsizeincrement":
+        case "logMiningBatchSizeIncrement": return target.getConfiguration().getLogMiningBatchSizeIncrement();
         case "logminingbatchsizemax":
         case "logMiningBatchSizeMax": return target.getConfiguration().getLogMiningBatchSizeMax();
         case "logminingbatchsizemin":
