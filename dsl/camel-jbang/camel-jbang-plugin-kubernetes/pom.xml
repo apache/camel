@@ -65,6 +65,11 @@
             <artifactId>openshift-model</artifactId>
             <version>${kubernetes-client-version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client</artifactId>
+            <version>${kubernetes-client-version}</version>
+        </dependency>
 
         <!-- Knative model -->
         <dependency>
@@ -96,12 +101,6 @@
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-server-mock</artifactId>
-            <version>${kubernetes-client-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>openshift-client</artifactId>
             <version>${kubernetes-client-version}</version>
             <scope>test</scope>
         </dependency>

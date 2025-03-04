@@ -354,6 +354,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private KubernetesExport configureExport(String workingDir) {
         detectCluster();
+        // jkube automatically sets the "app.kubernetes.io/managed-by: jkube" label
+        // given this is a deployment managed by this plugin, we will replace the value for "camel-jbang"
+        buildProperties.add("jkube.enricher.jkube-well-known-labels.managedBy=camel-jbang");
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
                 quarkusVersion,
@@ -438,7 +441,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
                 printer().printf("Reloading project due to file change: %s%n", FileUtil.stripPath(name));
 
-                String currentWorkingDir = getIndexedWorkingDir(projectName);
                 devModeReloadCount += 1;
 
                 String reloadWorkingDir = getIndexedWorkingDir(projectName);
@@ -459,8 +461,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                     // Undeploy/Delete current project
                     //
                     KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
-                    deleteCommand.workingDir = currentWorkingDir;
-                    deleteCommand.clusterType = clusterType;
                     deleteCommand.name = projectName;
                     deleteCommand.doCall();
 
@@ -530,13 +530,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
     private void installShutdownHook(String projectName, String workingDir) {
         devModeShutdownTask = new Thread(() -> {
             KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
-            deleteCommand.clusterType = clusterType;
-            deleteCommand.workingDir = workingDir;
             deleteCommand.name = projectName;
             try (var client = createKubernetesClientForShutdownHook()) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
-                CommandHelper.cleanExportDir(deleteCommand.workingDir, false);
+                CommandHelper.cleanExportDir(workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -585,6 +583,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // skip image build and push because we only want to build the Kubernetes manifest
         args.add("-Djkube.skip.build=true");
         args.add("-Djkube.skip.push=true");
+        // suppress maven transfer progress
+        args.add("-ntp");
 
         args.add("package");
 

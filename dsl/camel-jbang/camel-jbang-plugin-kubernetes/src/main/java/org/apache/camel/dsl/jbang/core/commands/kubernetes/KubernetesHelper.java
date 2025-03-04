@@ -80,7 +80,7 @@ public final class KubernetesHelper {
         if (kubernetesClient == null) {
             kubernetesClient = new KubernetesClientBuilder().build();
         }
-
+        setKubernetesClientProperties();
         return kubernetesClient;
     }
 
@@ -91,9 +91,23 @@ public final class KubernetesHelper {
         if (clients.containsKey(config)) {
             return clients.get(config);
         }
-
+        setKubernetesClientProperties();
         var client = new KubernetesClientBuilder().withConfig(config).build();
         return clients.put(config, client);
+    }
+
+    // set short timeouts to fail fast in case it's not connected to a cluster and don't waste time
+    // the user can override these values by setting the property in the cli
+    private static void setKubernetesClientProperties() {
+        if (System.getProperty("kubernetes.connection.timeout") == null) {
+            System.setProperty("kubernetes.connection.timeout", "2000");
+        }
+        if (System.getProperty("kubernetes.request.timeout") == null) {
+            System.setProperty("kubernetes.request.timeout", "2000");
+        }
+        if (System.getProperty("kubernetes.request.retry.backoffLimit") == null) {
+            System.setProperty("kubernetes.request.retry.backoffLimit", "1");
+        }
     }
 
     /**
@@ -125,10 +139,6 @@ public final class KubernetesHelper {
      */
     static ClusterType discoverClusterType() {
         ClusterType cluster = ClusterType.KUBERNETES;
-        // in case it's not connected to a cluster, don't waste time waiting for a response.
-        System.setProperty("kubernetes.connection.timeout", "2000");
-        System.setProperty("kubernetes.request.timeout", "2000");
-        System.setProperty("kubernetes.request.retry.backoffLimit", "1");
         if (isConnectedToOpenshift()) {
             cluster = ClusterType.OPENSHIFT;
         } else if (isConnectedToMinikube()) {
