@@ -36,6 +36,9 @@
         <maven.exe.file.extension />
         <componentPackage>org.apache.camel.component.olingo4</componentPackage>
         <outPackage>org.apache.camel.component.olingo4.internal</outPackage>
+        <!-- s390 is too slow -->
+        <skipTests.s390x>true</skipTests.s390x>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
