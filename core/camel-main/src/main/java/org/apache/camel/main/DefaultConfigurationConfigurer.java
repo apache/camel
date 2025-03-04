@@ -630,6 +630,13 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setKubernetesConfigMapVaultConfiguration(kubernetesConfigmaps);
         }
+
+        IBMSecretsManagerVaultConfiguration ibmSecretsManager
+                = getSingleBeanOfType(registry, IBMSecretsManagerVaultConfiguration.class);
+        if (ibmSecretsManager != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setIBMSecretsManagerVaultConfiguration(ibmSecretsManager);
+        }
         configureVaultRefresh(camelContext);
 
         // apply custom configurations if any
