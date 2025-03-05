@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stitch",
-    "version": "4.10.1-SNAPSHOT",
+    "version": "4.10.2-SNAPSHOT",
     "scheme": "stitch",
     "extendsScheme": "",
     "syntax": "stitch:tableName",

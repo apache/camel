@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.component.platform.http.main.MainHttpServerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-platform-http-main",
-    "version": "4.10.1-SNAPSHOT"
+    "version": "4.10.2-SNAPSHOT"
   }
 }
 

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-joor",
-    "version": "4.10.1-SNAPSHOT",
+    "version": "4.10.2-SNAPSHOT",
     "modelName": "java",
     "modelJavaType": "org.apache.camel.model.language.JavaExpression"
   },

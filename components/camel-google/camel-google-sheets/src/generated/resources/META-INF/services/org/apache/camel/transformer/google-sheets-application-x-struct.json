@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.google.sheets.transform.GoogleSheetsJsonStructDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-sheets",
-    "version": "4.10.1-SNAPSHOT"
+    "version": "4.10.2-SNAPSHOT"
   }
 }
 
