@@ -28,6 +28,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ExchangeHelper;
@@ -59,8 +60,12 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                     whenClause.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
                     when = createPredicate(whenClause.getExpression());
                     output = createOutputsProcessor(whenClause.getOutputs());
+                    if (output == null) {
+                        // when with no outputs, then its like its disabled
+                        output = new DisabledProcessor();
+                    }
                 }
-                if (when != null && output != null) {
+                if (when != null) {
                     filters.add(new FilterProcessor(camelContext, when, output));
                 }
             }
