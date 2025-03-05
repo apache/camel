@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hl7",
-    "version": "3.22.3-SNAPSHOT",
+    "version": "3.22.4-SNAPSHOT",
     "modelName": "hl7",
     "modelJavaType": "org.apache.camel.model.dataformat.HL7DataFormat"
   },

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-rocketmq",
-    "version": "3.22.3-SNAPSHOT",
+    "version": "3.22.4-SNAPSHOT",
     "scheme": "rocketmq",
     "extendsScheme": "",
     "syntax": "rocketmq:topicName",

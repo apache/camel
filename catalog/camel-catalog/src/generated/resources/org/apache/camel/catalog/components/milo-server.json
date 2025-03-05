@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-milo",
-    "version": "3.22.3-SNAPSHOT",
+    "version": "3.22.4-SNAPSHOT",
     "scheme": "milo-server",
     "extendsScheme": "",
     "syntax": "milo-server:itemId",

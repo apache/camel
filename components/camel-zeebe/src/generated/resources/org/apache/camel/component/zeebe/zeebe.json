@@ -11,7 +11,7 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zeebe",
-    "version": "3.22.3-SNAPSHOT",
+    "version": "3.22.4-SNAPSHOT",
     "scheme": "zeebe",
     "extendsScheme": "",
     "syntax": "zeebe:operationName",

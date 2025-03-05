@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-saga",
-    "version": "3.22.3-SNAPSHOT",
+    "version": "3.22.4-SNAPSHOT",
     "scheme": "saga",
     "extendsScheme": "",
     "syntax": "saga:action",

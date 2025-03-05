@@ -12,7 +12,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsch",
-    "version": "3.22.3-SNAPSHOT",
+    "version": "3.22.4-SNAPSHOT",
     "scheme": "scp",
     "extendsScheme": "ftp",
     "syntax": "scp:host:port\/directoryName",
