@@ -314,6 +314,13 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                 if (match) {
                     return filterOnMatch;
                 }
+                if (isLowerCase()) {
+                    String lower = headerName.toLowerCase(Locale.ENGLISH);
+                    match = lower.startsWith(s);
+                    if (match) {
+                        return filterOnMatch;
+                    }
+                }
             }
         }
 
@@ -324,6 +331,13 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                         || headerName.startsWith("org.apache.camel.");
                 if (match) {
                     return filterOnMatch;
+                }
+                if (isLowerCase()) {
+                    String lower = headerName.toLowerCase(Locale.ENGLISH);
+                    match = lower.startsWith("camel") || lower.startsWith("org.apache.camel.");
+                    if (match) {
+                        return true;
+                    }
                 }
             } else if (pattern.matcher(headerName).matches()) {
                 return filterOnMatch;
