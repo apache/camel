@@ -19,7 +19,7 @@ FROM docker.io/eclipse-temurin:21-jdk
 
 ENV JBANG_VERSION=0.121.0
 # /!\ Camel version must be changed in the entrypoint line too
-ENV CAMEL_VERSION=4.9.0
+ENV CAMEL_VERSION=4.10.1
 
 RUN wget -c https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | tar xv && \
     chmod +x jbang/bin/jbang
@@ -31,5 +31,5 @@ RUN jbang trust add https://github.com/apache/camel
 # used to initiliaze dependencies in the docker image
 RUN jbang -Dcamel.jbang.version=$CAMEL_VERSION camel@apache/camel version
     
-ENTRYPOINT [ "jbang", "-Dcamel.jbang.version=4.9.0", "camel@apache/camel"]
+ENTRYPOINT [ "jbang", "-Dcamel.jbang.version=4.10.1", "camel@apache/camel"]
 
