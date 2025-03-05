@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
-    "version": "4.8.4-SNAPSHOT",
+    "version": "4.8.5-SNAPSHOT",
     "scheme": "iec60870-client",
     "extendsScheme": "",
     "syntax": "iec60870-client:uriPath",

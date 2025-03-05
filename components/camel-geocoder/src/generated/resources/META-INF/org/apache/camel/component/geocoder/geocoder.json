@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-geocoder",
-    "version": "4.8.4-SNAPSHOT",
+    "version": "4.8.5-SNAPSHOT",
     "scheme": "geocoder",
     "extendsScheme": "",
     "syntax": "geocoder:address:latlng",
