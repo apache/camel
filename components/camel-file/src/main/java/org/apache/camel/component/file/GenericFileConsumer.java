@@ -269,10 +269,25 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         while (exchanges.size() > limit) {
             // must remove last
             Exchange exchange = exchanges.removeLast();
-            GenericFile<?> file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
+            GenericFile file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
+            // if we added eager to idempotent then we need to remove this
+            if (endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
+                removeExcessiveIdempotentFile(file, null);
+            }
             releaseExchange(exchange, true);
+        }
+    }
+
+    void removeExcessiveIdempotentFile(GenericFile file, Exchange dynamic) {
+        String key = file.getAbsoluteFilePath();
+        if (endpoint.getIdempotentKey() != null) {
+            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, () -> file);
+            key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+        }
+        if (key != null) {
+            endpoint.getIdempotentRepository().remove(key);
         }
     }
 
