@@ -201,7 +201,7 @@
         <greenmail-version>2.1.3</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.26</groovy-version>
-        <grpc-version>1.70.0</grpc-version>
+        <grpc-version>1.71.0</grpc-version>
         <grpc-google-auth-library-version>1.33.1</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
