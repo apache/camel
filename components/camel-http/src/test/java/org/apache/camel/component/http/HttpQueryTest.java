@@ -40,6 +40,12 @@ public class HttpQueryTest extends BaseHttpTest {
                 .register("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent()))
                 .register("/user/pass",
                         new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent()))
+                .register("/user/passwd",
+                        new BasicValidationHandler(
+                                GET.name(), "password='PasswordWithCharsThatNeedEscaping!≥≤!'&username=NotFromTheUSofA", null,
+                                getExpectedContent()))
+                .register("/danish-accepted/",
+                        new BasicValidationHandler(GET.name(), "characters='æøåÆØÅ'", null, getExpectedContent()))
                 .create();
         localServer.start();
 
@@ -82,6 +88,41 @@ public class HttpQueryTest extends BaseHttpTest {
     public void httpQueryWithUsernamePassword() {
         Exchange exchange = template.request(baseUrl + "/user/pass?password=baa&username=foo", exchange1 -> {
         });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpQueryWithPasswordContainingNonAsciiCharacter() {
+        Exchange exchange = template.request(
+                baseUrl + "/user/passwd?password='PasswordWithCharsThatNeedEscaping!≥≤!'&username=NotFromTheUSofA",
+                exchange1 -> {
+                });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpQueryWithPasswordContainingNonAsciiCharacterAsQueryParams() {
+        Exchange exchange = template.request(baseUrl + "/user/passwd",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY,
+                        "password='PasswordWithCharsThatNeedEscaping!≥≤!'&username=NotFromTheUSofA"));
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpDanishCharactersAcceptedInBaseURL() {
+        Exchange exchange = template.request(baseUrl + "/danish-accepted/?characters='æøåÆØÅ'", exchange1 -> {
+        });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpDanishCharactersAcceptedAsQueryParams() {
+        Exchange exchange = template.request(baseUrl + "/danish-accepted/",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "characters='æøåÆØÅ'"));
 
         assertExchange(exchange);
     }
