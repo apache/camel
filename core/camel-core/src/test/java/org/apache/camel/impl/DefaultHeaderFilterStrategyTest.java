@@ -25,7 +25,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.support.DefaultHeaderFilterStrategy.CAMEL_FILTER_PATTERN;
 import static org.apache.camel.support.DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH;
 import static org.junit.jupiter.api.Assertions.*;
 
