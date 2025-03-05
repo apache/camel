@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-parent</artifactId>
-        <version>3.22.4-SNAPSHOT</version>
+        <version>3.22.4</version>
     </parent>
 
     <artifactId>camel-aws2-lambda</artifactId>
