@@ -868,7 +868,8 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected String startupInfo() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Using Java ").append(System.getProperty("java.version"));
+        sb.append("Using Java ").append(System.getProperty("java.version")).append(" (")
+                .append(System.getProperty("java.vm.name")).append(")");
         sb.append(" with PID ").append(getPid());
         sb.append(". Started by ").append(System.getProperty("user.name"));
         sb.append(" in ").append(System.getProperty("user.dir"));
