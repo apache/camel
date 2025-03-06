@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
-import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.ObjectHelper;
 
 public class RegexRouter {
@@ -29,12 +28,12 @@ public class RegexRouter {
     public void process(
             @ExchangeProperty("regex") String regex, @ExchangeProperty("replacement") String replacement, Exchange ex) {
         Pattern regexPattern = Pattern.compile(regex);
-        String topicName = ex.getMessage().getHeader(KafkaConstants.TOPIC, String.class);
+        String topicName = ex.getMessage().getHeader("kafka.TOPIC", String.class);
         if (ObjectHelper.isNotEmpty(topicName)) {
             final Matcher matcher = regexPattern.matcher(topicName);
             if (matcher.matches()) {
                 final String topicUpdated = matcher.replaceFirst(replacement);
-                ex.getMessage().setHeader(KafkaConstants.OVERRIDE_TOPIC, topicUpdated);
+                ex.getMessage().setHeader("kafka.OVERRIDE_TOPIC", topicUpdated);
             }
         }
         String ceType = ex.getMessage().getHeader("ce-type", String.class);

@@ -23,7 +23,6 @@ public class DefaultKafkaManualAsyncCommit extends DefaultKafkaManualCommit impl
                                          KafkaManualCommitFactory.KafkaRecordPayload recordPayload,
                                          CommitManager commitManager) {
         super(camelExchangePayload, recordPayload);
-
         this.commitManager = commitManager;
     }
 

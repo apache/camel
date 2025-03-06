@@ -17,7 +17,6 @@
 package org.apache.camel.component.kamelet.utils.transform;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
@@ -42,10 +41,10 @@ class RegexRouterTest {
     void shouldReplaceFieldToPlainJson() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        exchange.getMessage().setHeader(KafkaConstants.TOPIC, topic);
+        exchange.getMessage().setHeader("kafka.TOPIC", topic);
 
         processor.process(".*ll.*", "newTopic", exchange);
 
-        Assertions.assertEquals("newTopic", exchange.getMessage().getHeader(KafkaConstants.OVERRIDE_TOPIC));
+        Assertions.assertEquals("newTopic", exchange.getMessage().getHeader("kafka.OVERRIDE_TOPIC"));
     }
 }

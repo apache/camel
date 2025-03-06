@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
-import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.ObjectHelper;
 
 public class TimestampRouter {
@@ -41,7 +40,7 @@ public class TimestampRouter {
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Long timestamp = null;
-        String topicName = ex.getMessage().getHeader(KafkaConstants.TOPIC, String.class);
+        String topicName = ex.getMessage().getHeader("kafka.TOPIC", String.class);
         Object rawTimestamp = ex.getMessage().getHeader(timestampHeaderName);
         if (rawTimestamp instanceof Long) {
             timestamp = (Long) rawTimestamp;
@@ -62,7 +61,7 @@ public class TimestampRouter {
                 replace1 = TOPIC.matcher(topicFormat).replaceAll(Matcher.quoteReplacement(""));
                 updatedTopic = TIMESTAMP.matcher(replace1).replaceAll(Matcher.quoteReplacement(formattedTimestamp));
             }
-            ex.getMessage().setHeader(KafkaConstants.OVERRIDE_TOPIC, updatedTopic);
+            ex.getMessage().setHeader("kafka.OVERRIDE_TOPIC", updatedTopic);
         }
     }
 
