@@ -37,6 +37,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.Sta
  * The return value is a {@link ComponentVerifierExtension.Result} of the verification
  *
  */
+@Deprecated(since = "4.11.0")
 public interface ComponentVerifierExtension extends ComponentExtension {
 
     /**
