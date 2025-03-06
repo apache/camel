@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "system-properties",
+    "title": "System Properties",
+    "description": "Displays Java System Properties",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.SystemPropertiesDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.11.0-SNAPSHOT"
+  }
+}
+
