@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 
+@Deprecated
 public class ManualCommit implements Processor {
 
     @Override

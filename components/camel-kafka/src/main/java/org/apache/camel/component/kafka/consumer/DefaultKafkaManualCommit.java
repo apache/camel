@@ -66,8 +66,6 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     /**
      * Gets the Camel Exchange payload
-     *
-     * @return
      */
     public KafkaManualCommitFactory.CamelExchangePayload getCamelExchangePayload() {
         return camelExchangePayload;
@@ -75,10 +73,14 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     /**
      * Gets the Kafka record payload
-     *
-     * @return
      */
     public KafkaManualCommitFactory.KafkaRecordPayload getKafkaRecordPayload() {
         return kafkaRecordPayload;
     }
+
+    @Override
+    public String toString() {
+        return "KafkaManualCommit[topic=" + getTopicName() + ", offset=" + getRecordOffset() + "]";
+    }
+
 }
