@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.support.SimpleTypeConverter;
 
 /**
@@ -84,12 +83,9 @@ public class KafkaHeaderDeserializer implements Processor {
 
     /**
      * Exclude special Kafka headers from auto deserialization.
-     *
-     * @param  entry
-     * @return
      */
     private boolean shouldDeserialize(Map.Entry<String, Object> entry) {
-        return !entry.getKey().equals(KafkaConstants.HEADERS) && !entry.getKey().equals(KafkaConstants.MANUAL_COMMIT);
+        return !entry.getKey().equals("kafka.HEADERS") && !entry.getKey().equals("CamelKafkaManualCommit");
     }
 
     public void setEnabled(String enabled) {
