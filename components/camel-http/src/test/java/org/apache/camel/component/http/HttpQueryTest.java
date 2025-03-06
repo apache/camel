@@ -29,6 +29,8 @@ public class HttpQueryTest extends BaseHttpTest {
     private HttpServer localServer;
 
     private String baseUrl;
+    
+    private final String DANISH_CHARACTERS_UNICODE = "\u00e6\u00f8\u00e5\u00C6\u00D8\u00C5";
 
     @Override
     public void setupResources() throws Exception {
@@ -40,6 +42,12 @@ public class HttpQueryTest extends BaseHttpTest {
                 .register("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent()))
                 .register("/user/pass",
                         new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent()))
+                .register("/user/passwd",
+                        new BasicValidationHandler(
+                                GET.name(), "password='PasswordWithCharsThatNeedEscaping!≥≤!'&username=NotFromTheUSofA", null,
+                                getExpectedContent()))
+                .register("/danish-accepted",
+                        new BasicValidationHandler(GET.name(), "characters='"+ DANISH_CHARACTERS_UNICODE +"'", null, getExpectedContent()))
                 .create();
         localServer.start();
 
@@ -82,6 +90,41 @@ public class HttpQueryTest extends BaseHttpTest {
     public void httpQueryWithUsernamePassword() {
         Exchange exchange = template.request(baseUrl + "/user/pass?password=baa&username=foo", exchange1 -> {
         });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpQueryWithPasswordContainingNonAsciiCharacter() {
+        Exchange exchange = template.request(
+                baseUrl + "/user/passwd?password='PasswordWithCharsThatNeedEscaping!≥≤!'&username=NotFromTheUSofA",
+                exchange1 -> {
+                });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpQueryWithPasswordContainingNonAsciiCharacterAsQueryParams() {
+        Exchange exchange = template.request(baseUrl + "/user/passwd",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY,
+                        "password='PasswordWithCharsThatNeedEscaping!≥≤!'&username=NotFromTheUSofA"));
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpDanishCharactersAcceptedInBaseURL() {
+        Exchange exchange = template.request(baseUrl + "/danish-accepted?characters='"+ DANISH_CHARACTERS_UNICODE +"'", exchange1 -> {
+        });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpDanishCharactersAcceptedAsQueryParams() {
+        Exchange exchange = template.request(baseUrl + "/danish-accepted",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "characters='"+ DANISH_CHARACTERS_UNICODE +"'"));
 
         assertExchange(exchange);
     }
