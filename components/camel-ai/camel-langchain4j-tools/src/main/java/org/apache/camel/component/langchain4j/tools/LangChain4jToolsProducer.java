@@ -104,6 +104,10 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             return null;
         }
 
+        if (!response.content().hasToolExecutionRequests()) {
+            return response.content().text();
+        }
+
         // Then, talk again to call the tools and compute the final response
         return chatWithLLMForToolCalling(chatMessages, exchange, response, toolPair);
     }
@@ -153,7 +157,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
         if (!response.content().hasToolExecutionRequests()) {
             exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
-            return null;
+            return response;
         }
 
         chatMessages.add(response.content());
