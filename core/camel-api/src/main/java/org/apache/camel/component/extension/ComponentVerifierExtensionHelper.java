@@ -27,6 +27,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Verificat
  * Package visible helper class holding implementation classes for constant like error code and attributes in
  * {@link ComponentVerifierExtension.VerificationError}
  */
+@Deprecated(since = "4.11.0")
 final class ComponentVerifierExtensionHelper {
 
     /**
