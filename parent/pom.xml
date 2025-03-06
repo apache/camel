@@ -394,7 +394,7 @@
         <openapi-generator-version>7.12.0</openapi-generator-version>
         <openjpa-version>4.0.1</openjpa-version>
         <opensearch-rest-client-version>2.19.1</opensearch-rest-client-version>
-        <opensearch-java-client-version>2.21.0</opensearch-java-client-version>
+        <opensearch-java-client-version>2.22.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.2</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
         <opentelemetry-version>1.47.0</opentelemetry-version>
