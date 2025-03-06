@@ -121,3 +121,11 @@ Here below we can keep track of the development iterations until completion:
 === Abstract `camel-telemetry` component (2025-01-28)
 
 Developed first draft component which cover this document specification. We have a base set of test covering the main features and a mock tracing implementation used to validate such test case scenarios.
+
+=== `camel-telemetry-dev` component (2025-02-11)
+
+Developed concrete mock/debugging component implementing the `camel-telemetry` specification that can be used for development purposes.
+
+=== `camel-telemetry2` component (2025-02-24)
+
+Developed concrete OpenTelemetry component implementing the `camel-telemetry` specification. This component will eventually replace `camel-opentelemetry` component.
