@@ -29,6 +29,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.EntityDetails;
@@ -40,6 +41,8 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class OAuth2ClientConfigurer implements HttpClientConfigurer {
+
+    private static final String BEARER = "Bearer ";
 
     private final String clientId;
     private final String clientSecret;
@@ -66,31 +69,34 @@ public class OAuth2ClientConfigurer implements HttpClientConfigurer {
 
     @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
-        HttpClient httpClient = clientBuilder.build();
-        clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
-            URI requestUri = getUriFromRequest(request);
-            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
-            if (cacheTokens) {
-                if (tokenCache.containsKey(uriAndCredentials)
-                        && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
-                    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenCache.get(uriAndCredentials).getToken());
+        try (CloseableHttpClient httpClient = clientBuilder.build()) {
+            clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
+                URI requestUri = getUriFromRequest(request);
+                OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
+                if (cacheTokens) {
+                    if (tokenCache.containsKey(uriAndCredentials)
+                            && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
+                        request.setHeader(HttpHeaders.AUTHORIZATION, BEARER + tokenCache.get(uriAndCredentials).getToken());
+                    } else {
+                        JsonObject accessTokenResponse = getAccessTokenResponse(httpClient);
+                        String accessToken = accessTokenResponse.getString("access_token");
+                        String expiresIn = accessTokenResponse.getString("expires_in");
+                        if (expiresIn != null && !expiresIn.isEmpty()) {
+                            tokenCache.put(uriAndCredentials, new TokenCache(accessToken, expiresIn));
+                        } else if (cachedTokensDefaultExpirySeconds > 0) {
+                            tokenCache.put(uriAndCredentials, new TokenCache(accessToken, cachedTokensDefaultExpirySeconds));
+                        }
+                        request.setHeader(HttpHeaders.AUTHORIZATION, BEARER + accessToken);
+                    }
                 } else {
                     JsonObject accessTokenResponse = getAccessTokenResponse(httpClient);
                     String accessToken = accessTokenResponse.getString("access_token");
-                    String expiresIn = accessTokenResponse.getString("expires_in");
-                    if (expiresIn != null && !expiresIn.isEmpty()) {
-                        tokenCache.put(uriAndCredentials, new TokenCache(accessToken, expiresIn));
-                    } else if (cachedTokensDefaultExpirySeconds > 0) {
-                        tokenCache.put(uriAndCredentials, new TokenCache(accessToken, cachedTokensDefaultExpirySeconds));
-                    }
-                    request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+                    request.setHeader(HttpHeaders.AUTHORIZATION, BEARER + accessToken);
                 }
-            } else {
-                JsonObject accessTokenResponse = getAccessTokenResponse(httpClient);
-                String accessToken = accessTokenResponse.getString("access_token");
-                request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-            }
-        });
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
