@@ -679,15 +679,24 @@ public abstract class BaseMainSupport extends BaseService {
                 || "java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
                 || mainConfigurationProperties.getStartupRecorder() == null) {
             // try to auto discover camel-jfr to use
-            StartupStepRecorder fr = ecc.getBootstrapFactoryFinder()
-                    .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
-            if (fr != null) {
-                LOG.debug("Discovered startup recorder: {} from classpath", fr);
-                fr.setRecording(mainConfigurationProperties.isStartupRecorderRecording());
-                fr.setStartupRecorderDuration(mainConfigurationProperties.getStartupRecorderDuration());
-                fr.setRecordingProfile(mainConfigurationProperties.getStartupRecorderProfile());
-                fr.setMaxDepth(mainConfigurationProperties.getStartupRecorderMaxDepth());
-                camelContext.getCamelContextExtension().setStartupStepRecorder(fr);
+            try {
+                StartupStepRecorder fr = ecc.getBootstrapFactoryFinder()
+                        .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
+                if (fr != null) {
+                    LOG.debug("Discovered startup recorder: {} from classpath", fr);
+                    fr.setRecording(mainConfigurationProperties.isStartupRecorderRecording());
+                    fr.setStartupRecorderDuration(mainConfigurationProperties.getStartupRecorderDuration());
+                    fr.setRecordingProfile(mainConfigurationProperties.getStartupRecorderProfile());
+                    fr.setMaxDepth(mainConfigurationProperties.getStartupRecorderMaxDepth());
+                    camelContext.getCamelContextExtension().setStartupStepRecorder(fr);
+                }
+            } catch (NoClassDefFoundError | Exception e) {
+                if (mainConfigurationProperties.getStartupRecorder() != null) {
+                    throw new IllegalArgumentException(
+                            "Flight recorder is not available in the JVM or camel-jfr is not available on the classpath due to: "
+                                                       + e.getMessage(),
+                            e);
+                }
             }
         }
     }
