@@ -103,6 +103,11 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         String scheme = getSchemeName(endpoint);
         span.setTag(TagConstants.URL_SCHEME, scheme);
 
+        final String routeId;
+        if (exchange != null && (routeId = exchange.getFromRouteId()) != null) {
+            span.setTag(TagConstants.ROUTE_ID, routeId);
+        }
+
         // Including the endpoint URI provides access to any options that may
         // have been provided, for subsequent analysis
         String uri = endpoint.toString(); // toString will sanitize
