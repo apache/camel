@@ -474,19 +474,20 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         public Object before(Exchange exchange) throws Exception {
             // move body to variable
             ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, name, exchange.getMessage());
+            // remember body
+            Object body = exchange.getMessage().getBody();
             exchange.getMessage().setBody(null);
-            return null;
+            return body;
         }
 
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
-            // noop
+            // restore body if body has not been changed
+            if (data != null && exchange.getMessage().getBody() == null) {
+                exchange.getMessage().setBody(data);
+            }
         }
 
-        @Override
-        public boolean hasState() {
-            return false;
-        }
     }
 
 }
