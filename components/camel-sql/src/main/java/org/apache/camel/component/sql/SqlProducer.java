@@ -52,12 +52,14 @@ public class SqlProducer extends DefaultProducer {
     private final boolean alwaysPopulateStatement;
     private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
     private final boolean useMessageBodyForSql;
+    private final boolean manualCommit;
     private int parametersCount;
 
     public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate,
                        SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
                        boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql) {
         super(endpoint);
+        this.manualCommit = endpoint.isBatchAutoCommitDisabled();
         this.jdbcTemplate = jdbcTemplate;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.query = query;
@@ -154,14 +156,38 @@ public class SqlProducer extends DefaultProducer {
                 try {
                     populateStatement(ps, exchange, sql, preparedQuery);
                     boolean isResultSet = false;
+                    boolean restoreAutoCommit = true;
 
                     if (batch) {
-                        int[] updateCounts = ps.executeBatch();
-                        int total = 0;
-                        for (int count : updateCounts) {
-                            total += count;
+                        if (manualCommit) {
+                            // optimize batch by turning off auto-commit
+                            restoreAutoCommit = ps.getConnection().getAutoCommit();
+                            ps.getConnection().setAutoCommit(false);
                         }
-                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
+                        try {
+                            int[] updateCounts = ps.executeBatch();
+                            int total = 0;
+                            for (int count : updateCounts) {
+                                total += count;
+                            }
+                            exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
+                            if (manualCommit) {
+                                // optimize batch by commit after done
+                                ps.getConnection().commit();
+                            }
+                        } catch (Exception e) {
+                            if (manualCommit) {
+                                // we failed so rollback
+                                ps.getConnection().rollback();
+                            }
+                            throw e;
+                        } finally {
+                            if (manualCommit && restoreAutoCommit) {
+                                // restore auto commit on connection as it may be used
+                                // in another kind of query (connection pooling)
+                                ps.getConnection().setAutoCommit(true);
+                            }
+                        }
                     } else {
                         isResultSet = ps.execute();
                         if (isResultSet) {
@@ -250,6 +276,11 @@ public class SqlProducer extends DefaultProducer {
 
     private void populateStatement(PreparedStatement ps, Exchange exchange, String sql, String preparedQuery)
             throws SQLException {
+
+        if (getEndpoint().getFetchSize() > 0) {
+            ps.setFetchSize(getEndpoint().getFetchSize());
+        }
+
         int expected;
         if (parametersCount > 0) {
             expected = parametersCount;
