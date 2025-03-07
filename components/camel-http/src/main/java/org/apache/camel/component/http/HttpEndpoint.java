@@ -357,7 +357,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
             httpActivityListener = new LoggingHttpActivityListener();
         }
         CamelContextAware.trySetCamelContext(httpActivityListener, getCamelContext());
-        ServiceHelper.startService(httpActivityListener);
+        ServiceHelper.startService(httpActivityListener, httpClientConfigurer);
     }
 
     @Override
@@ -369,7 +369,7 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
         if (httpClient instanceof Closeable closeable) {
             IOHelper.close(closeable);
         }
-        ServiceHelper.stopService(httpActivityListener);
+        ServiceHelper.stopService(httpActivityListener, httpClientConfigurer);
         super.doStop();
     }
 
