@@ -156,10 +156,12 @@ public class SqlProducer extends DefaultProducer {
                 try {
                     populateStatement(ps, exchange, sql, preparedQuery);
                     boolean isResultSet = false;
+                    boolean restoreAutoCommit = true;
 
                     if (batch) {
                         if (manualCommit) {
                             // optimize batch by turning off auto-commit
+                            restoreAutoCommit = ps.getConnection().getAutoCommit();
                             ps.getConnection().setAutoCommit(false);
                         }
                         try {
@@ -179,6 +181,12 @@ public class SqlProducer extends DefaultProducer {
                                 ps.getConnection().rollback();
                             }
                             throw e;
+                        } finally {
+                            if (manualCommit && restoreAutoCommit) {
+                                // restore auto commit on connection as it may be used
+                                // in another kind of query (connection pooling)
+                                ps.getConnection().setAutoCommit(true);
+                            }
                         }
                     } else {
                         isResultSet = ps.execute();
