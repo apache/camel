@@ -18,15 +18,12 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,36 +37,6 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         mock.expectedBodiesReceived("echo Hello World");
 
         template.sendBody("direct:echo", "Hello World");
-
-        assertMockEndpointsSatisfied();
-        assertNull(mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME),
-                "There should no Bean_METHOD_NAME header");
-    }
-
-    @Test
-    public void testEchoWithMethodHeaderHi() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("hi Hello World");
-        // header should be removed after usage
-        mock.message(0).header(Exchange.BEAN_METHOD_NAME).isNull();
-
-        // header overrule endpoint configuration, so we should invoke the hi
-        // method
-        template.sendBodyAndHeader("direct:echo", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testMixedBeanEndpoints() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("hi hi Hello World");
-        // header should be removed after usage
-        mock.message(0).header(Exchange.BEAN_METHOD_NAME).isNull();
-
-        // header overrule endpoint configuration, so we should invoke the hi
-        // method
-        template.sendBodyAndHeader("direct:mixed", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
 
         assertMockEndpointsSatisfied();
     }
@@ -149,8 +116,6 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                 from("direct:echo").bean("myBean", "echo").to("mock:result");
 
                 from("direct:hi").bean("myBean", "hi").to("mock:result");
-
-                from("direct:mixed").bean("myBean", "echo").bean("myBean", "hi").to("mock:result");
 
                 from("direct:fail").bean("myBean").to("mock:result");
             }

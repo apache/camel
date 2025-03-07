@@ -182,12 +182,15 @@ public class BeanInfo {
         return camelContext;
     }
 
-    public MethodInvocation createInvocation(Object pojo, Exchange exchange)
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange) {
+        return createInvocation(pojo, exchange, null);
+    }
+
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange, String methodName)
             throws AmbiguousMethodCallException, MethodNotFoundException {
 
         MethodInfo methodInfo = null;
 
-        String methodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
 
             // do not use qualifier for name

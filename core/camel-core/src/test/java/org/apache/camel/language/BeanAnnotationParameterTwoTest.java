@@ -17,7 +17,6 @@
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.bean.Bean;
 import org.apache.camel.spi.Registry;
@@ -47,15 +46,6 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBeanAnnotationThree() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello/Bonjour World");
-
-        template.sendBody("direct:three", "World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testBeanAnnotationFour() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived("Hello/Bonjour World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -80,9 +70,6 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
                 from("direct:one").bean(MyBean.class).to("mock:result");
 
                 from("direct:two").bean(MyBean.class, "callA").to("mock:result");
-
-                from("direct:three").setHeader(Exchange.BEAN_METHOD_NAME, constant("callA")).bean(MyBean.class)
-                        .to("mock:result");
 
                 from("direct:four").bean(MyBean.class, "callA").to("mock:middle").bean(MyBean.class, "callB").to("mock:result");
             }

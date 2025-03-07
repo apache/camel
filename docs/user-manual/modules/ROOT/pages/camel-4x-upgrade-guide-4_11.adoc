@@ -46,6 +46,16 @@ am.addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("sr
 The class `org.apache.camel.attachment.AttachmentMap` has been removed.
 Removed `getDelegateMessage` method from `org.apache.camel.attachment.AttachmentMessage`.
 
+=== camel-bean
+
+The header `Exchange.BEAN_METHOD_NAME` with constant value `CamelBeanMethodName` has been deprecated, and support for using this header has been removed.
+Instead, you can specify the `method` option directly as shown, or using any other header of your choosing as follows.
+
+[source,java]
+----
+    toD("bean:myBean?method=${header.myMethodName}");
+----
+
 === camel-main
 
 Remove the deprecated `camel.main.lightweight` option that was not in use.
