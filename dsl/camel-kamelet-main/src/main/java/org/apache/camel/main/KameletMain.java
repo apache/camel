@@ -525,8 +525,11 @@ public class KameletMain extends MainCommandLineSupport {
         if (console) {
             configure().setDevConsoleEnabled(true);
             configure().httpServer().withEnabled(true);
-            configure().httpServer().withInfoEnabled(true); // also enable info if console is enabled
             configure().httpServer().withDevConsoleEnabled(true);
+            // also include health,info and jolokia
+            configure().httpServer().withHealthCheckEnabled(true);
+            configure().httpServer().withInfoEnabled(true);
+            configure().httpServer().withJolokiaEnabled(true);
         }
         boolean tracing = "true".equals(getInitialProperties().get(getInstanceType() + ".backlogTracing"));
         if (tracing) {
