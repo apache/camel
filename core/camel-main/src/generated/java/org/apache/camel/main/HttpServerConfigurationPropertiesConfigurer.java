@@ -35,6 +35,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("Host", java.lang.String.class);
         map.put("InfoEnabled", boolean.class);
         map.put("JolokiaEnabled", boolean.class);
+        map.put("JolokiaPath", java.lang.String.class);
         map.put("JwtKeystorePassword", java.lang.String.class);
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
@@ -79,6 +80,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "infoEnabled": target.setInfoEnabled(property(camelContext, boolean.class, value)); return true;
         case "jolokiaenabled":
         case "jolokiaEnabled": target.setJolokiaEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jolokiapath":
+        case "jolokiaPath": target.setJolokiaPath(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": target.setJwtKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystorepath":
@@ -139,6 +142,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "infoEnabled": return boolean.class;
         case "jolokiaenabled":
         case "jolokiaEnabled": return boolean.class;
+        case "jolokiapath":
+        case "jolokiaPath": return java.lang.String.class;
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": return java.lang.String.class;
         case "jwtkeystorepath":
@@ -195,6 +200,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "infoEnabled": return target.isInfoEnabled();
         case "jolokiaenabled":
         case "jolokiaEnabled": return target.isJolokiaEnabled();
+        case "jolokiapath":
+        case "jolokiaPath": return target.getJolokiaPath();
         case "jwtkeystorepassword":
         case "jwtKeystorePassword": return target.getJwtKeystorePassword();
         case "jwtkeystorepath":

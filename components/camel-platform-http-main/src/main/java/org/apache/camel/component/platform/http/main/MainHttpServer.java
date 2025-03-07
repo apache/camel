@@ -134,6 +134,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private boolean downloadEnabled;
     private boolean sendEnabled;
     private String healthPath;
+    private String jolokiaPath;
 
     @Override
     public CamelContext getCamelContext() {
@@ -239,6 +240,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.jolokiaEnabled = jolokiaEnabledEnabled;
     }
 
+    @ManagedAttribute(description = "The context-path for serving health check status")
     public String getHealthPath() {
         return healthPath;
     }
@@ -248,6 +250,18 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
      */
     public void setHealthPath(String healthPath) {
         this.healthPath = healthPath;
+    }
+
+    @ManagedAttribute(description = "The context-path for serving Jolokia data")
+    public String getJolokiaPath() {
+        return jolokiaPath;
+    }
+
+    /**
+     * The path endpoint used to expose the Jolokia data.
+     */
+    public void setJolokiaPath(String jolokiaPath) {
+        this.jolokiaPath = jolokiaPath;
     }
 
     @ManagedAttribute(description = "Whether metrics is enabled")
@@ -298,7 +312,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         this.downloadEnabled = downloadEnabled;
     }
 
-    @ManagedAttribute(description = "Whether send message is enabled  (q/send)")
+    @ManagedAttribute(description = "Whether send message is enabled (q/send)")
     public boolean isSendEnabled() {
         return sendEnabled;
     }
@@ -805,14 +819,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 .orElseThrow(() -> new RuntimeException(
                         "JolokiaPlatformHttpPlugin not found. Please add camel-platform-http-jolokia dependency."));
 
-        Route jolokia = router.route("/q/jolokia/*");
+        Route jolokia = router.route(jolokiaPath + "/*");
         jolokia.method(HttpMethod.GET);
         jolokia.method(HttpMethod.POST);
 
         Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/jolokia", "GET,POST", null,
+        platformHttpComponent.addHttpEndpoint(jolokiaPath, "GET,POST", null,
                 "text/plain,application/json", null);
     }
 

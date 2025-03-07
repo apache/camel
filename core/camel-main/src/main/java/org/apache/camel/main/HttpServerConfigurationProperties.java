@@ -70,6 +70,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata(defaultValue = "/q/health")
     private String healthPath = "/q/health";
+    @Metadata(defaultValue = "/q/jolokia")
+    private String jolokiaPath = "/q/jolokia";
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -268,6 +270,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setHealthPath(String healthPath) {
         this.healthPath = healthPath;
+    }
+
+    public String getJolokiaPath() {
+        return jolokiaPath;
+    }
+
+    /**
+     * The path endpoint used to expose the jolokia data.
+     */
+    public void setJolokiaPath(String jolokiaPath) {
+        this.jolokiaPath = jolokiaPath;
     }
 
     public boolean isUploadEnabled() {
@@ -601,6 +614,22 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withJwtKeystorePassword(String jwtKeystorePassword) {
         this.jwtKeystorePassword = jwtKeystorePassword;
+        return this;
+    }
+
+    /**
+     * The path endpoint used to expose the health status
+     */
+    public HttpServerConfigurationProperties withHealthPath(String healthPath) {
+        this.healthPath = healthPath;
+        return this;
+    }
+
+    /**
+     * The path endpoint used to expose the jolokia data.
+     */
+    public HttpServerConfigurationProperties withJolokiaPath(String jolokiaPath) {
+        this.jolokiaPath = jolokiaPath;
         return this;
     }
 

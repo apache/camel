@@ -73,6 +73,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
         server.setHealthPath(configuration.getHealthPath());
         server.setJolokiaEnabled(configuration.isJolokiaEnabled());
+        server.setJolokiaPath(configuration.getJolokiaPath());
         server.setMetricsEnabled(configuration.isMetricsEnabled());
         server.setUploadEnabled(configuration.isUploadEnabled());
         server.setUploadSourceDir(configuration.getUploadSourceDir());
