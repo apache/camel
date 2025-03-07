@@ -138,7 +138,7 @@
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.6.3</dnsjava-version>
         <djl-version>0.32.0</djl-version>
-        <docker-java-version>3.4.1</docker-java-version>
+        <docker-java-version>3.4.2</docker-java-version>
         <dropbox-version>7.0.0</dropbox-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
