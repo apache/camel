@@ -23,6 +23,16 @@ When MDC is enabled, then the WireTap and OnCompletion (in parallel mode) will n
 context when creating threads to process the exchanges. This makes these EIPs similar to how
 other EIPs such as Multicast EIP already does this.
 
+=== camel-bean
+
+The header `Exchange.BEAN_METHOD_NAME` with constant value `CamelBeanMethodName` has been deprecated, and support for using this header has been removed.
+Instead, you can specify the `method` option directly as shown, or using any other header of your choosing as follows.
+
+[source,java]
+----
+    toD("bean:myBean?method=${header.myMethodName}");
+----
+
 === camel-sql
 
 When inserting or updating many rows in `batch=true` mode (producer) then this component

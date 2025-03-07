@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.dataformat.soap;
 
-public final class BeanConstants {
+public final class SoapConstants {
 
-    public static final String BEAN_METHOD_NAME = "CamelBeanMethodName";
+    public static String SOAP_METHOD_NAME = "CamelSoapMethodName";
 
-    private BeanConstants() {
-        // Utility class
+    private SoapConstants() {
     }
 }

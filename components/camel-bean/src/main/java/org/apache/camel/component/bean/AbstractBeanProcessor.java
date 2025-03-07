@@ -61,9 +61,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // do we have an explicit method name we always should invoke (either configured on endpoint or as a header)
-        final String explicitMethodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, method, String.class);
-
+        // do we have an explicit method name we always should invoke
+        final String explicitMethodName = method;
         final Object beanInstance;
         final BeanInfo beanInfo;
         try {
@@ -83,7 +82,6 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             final Processor target = getCustomAdapter(exchange, beanInstance);
             if (target != null) {
                 useCustomAdapter(exchange, callback, target);
-
                 return true;
             }
         }
@@ -95,22 +93,22 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             Exchange exchange, AsyncCallback callback, String explicitMethodName, BeanInfo beanInfo, Object beanInstance) {
         final Message in = exchange.getIn();
 
-        // set explicit method name to invoke as a header, which is how BeanInfo can detect it
+        // set explicit method name to invoke as a exchange property, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
-            in.setHeader(BeanConstants.BEAN_METHOD_NAME, explicitMethodName);
+            exchange.setProperty(BeanConstants.BEAN_METHOD_NAME, explicitMethodName);
         }
 
         final MethodInvocation invocation;
         try {
-            invocation = beanInfo.createInvocation(beanInstance, exchange);
+            invocation = beanInfo.createInvocation(beanInstance, exchange, explicitMethodName);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
         } finally {
-            // must remove headers as they were provisional
+            // must remove property as they were provisional
             if (explicitMethodName != null) {
-                in.removeHeader(Exchange.BEAN_METHOD_NAME);
+                exchange.removeProperty(BeanConstants.BEAN_METHOD_NAME);
             }
         }
 

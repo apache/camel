@@ -612,41 +612,6 @@ We can then create the simplest CXF service (note we didn't specify the `POJO` m
             });                                     
 ----
 
-For more dynamic implementation, we can create the implementation class as follows:
-
-[source,java]
-----
-
-package org.apache.camel.component.cxf.soap.server;
-
-import jakarta.jws.WebService;
-
-@WebService(name = "TextService", serviceName = "TextService", targetNamespace = "http://server.soap.cxf.component.camel.apache.org/")
-public class TextServiceImpl implements TextService {
-
-    @Override
-    public String upperCase(String text) {
-        return text.toUpperCase();
-    }
-
-    @Override
-    public String lowerCase(String text) {
-        return text.toLowerCase();
-    }
-}
-
-----
-
-
-Then we can use xref:components::quartz-component.adoc[Bean Component] (don't forget to add `camel-bean` dependency to your project) invocation based on requested operation name:
-
-[source,java]
-----
-    from("cxf:textServiceResponseFromImpl?serviceClass=org.apache.camel.component.cxf.soap.server.TextService&address=/text-impl")
-                .process(exchange -> exchange.getIn().setHeader(BeanConstants.BEAN_METHOD_NAME, exchange.getIn().getHeader(CxfConstants.OPERATION_NAME)))
-                .to("bean:org.apache.camel.component.cxf.soap.server.TextServiceImpl");
-----
-
 === How to prepare the message for the Camel CXF endpoint in POJO data format
 
 The Camel CXF endpoint producer is based on the

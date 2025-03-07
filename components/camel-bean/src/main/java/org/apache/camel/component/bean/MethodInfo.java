@@ -580,7 +580,7 @@ public class MethodInfo {
 
             // if there was an explicit method name to invoke, then we should support using
             // any provided parameter values in the method name
-            String methodName = exchange.getIn().getHeader(BeanConstants.BEAN_METHOD_NAME, String.class);
+            String methodName = exchange.getProperty(BeanConstants.BEAN_METHOD_NAME, String.class);
             // the parameter values is between the parenthesis
             String methodParameters = StringHelper.betweenOuterPair(methodName, '(', ')');
             // use an iterator to walk the parameter values
@@ -597,7 +597,7 @@ public class MethodInfo {
             // a @Bean expression which would by mistake read these headers. So the headers
             // must be removed at this point of time
             if (methodName != null) {
-                exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+                exchange.removeProperty(BeanConstants.BEAN_METHOD_NAME);
             }
 
             Object[] answer = evaluateParameterExpressions(exchange, body, it);

@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.bean.BeanConstants;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
@@ -407,7 +408,7 @@ public class BeanExpression implements Expression, Predicate {
         resultExchange.setPattern(ExchangePattern.InOut);
         // do not propagate any method name when using OGNL, as with OGNL we
         // compute and provide the method name to explicit to invoke
-        resultExchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+        resultExchange.removeProperty(BeanConstants.BEAN_METHOD_NAME);
 
         // current ognl path as we go along
         String ognlPath = "";
