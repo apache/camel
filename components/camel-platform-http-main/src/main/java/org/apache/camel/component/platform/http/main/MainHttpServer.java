@@ -634,22 +634,29 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 ctx.response().putHeader("content-type", "application/json");
 
                 JsonObject root = new JsonObject();
-                JsonObject jo = new JsonObject();
-                root.put("java", jo);
 
+                JsonObject jo = new JsonObject();
+                root.put("os", jo);
+                jo.put("name", System.getProperty("os.name"));
+                jo.put("version", System.getProperty("os.version"));
+                jo.put("arch", System.getProperty("os.arch"));
+
+                jo = new JsonObject();
+                root.put("java", jo);
                 RuntimeMXBean rmb = ManagementFactory.getRuntimeMXBean();
                 if (rmb != null) {
                     jo.put("pid", rmb.getPid());
                     jo.put("vendor", rmb.getVmVendor());
                     jo.put("name", rmb.getVmName());
+                    jo.put("vmVersion", rmb.getVmVersion());
                     jo.put("version", String.format("%s", System.getProperty("java.version")));
                     jo.put("user", System.getProperty("user.name"));
                     jo.put("dir", System.getProperty("user.dir"));
+                    jo.put("home", System.getProperty("user.home"));
                 }
 
                 jo = new JsonObject();
                 root.put("camel", jo);
-
                 jo.put("name", camelContext.getName());
                 jo.put("version", camelContext.getVersion());
                 if (camelContext.getCamelContextExtension().getProfile() != null) {
