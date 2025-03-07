@@ -23,6 +23,13 @@ When MDC is enabled, then the WireTap and OnCompletion (in parallel mode) will n
 context when creating threads to process the exchanges. This makes these EIPs similar to how
 other EIPs such as Multicast EIP already does this.
 
+=== camel-sql
+
+When inserting or updating many rows in `batch=true` mode (producer) then this component
+has been optimized to execute the entire batch operation in a single transaction; by turning off auto-commit
+on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
+on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.
+
 == Upgrading from 4.10.0 to 4.10.1
 
 === camel-api

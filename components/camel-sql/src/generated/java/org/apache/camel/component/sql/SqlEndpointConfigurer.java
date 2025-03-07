@@ -34,6 +34,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
+        case "batchautocommitdisabled":
+        case "batchAutoCommitDisabled": target.setBatchAutoCommitDisabled(property(camelContext, boolean.class, value)); return true;
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": target.setBreakBatchOnConsumeFail(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -47,6 +49,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "expectedupdatecount":
         case "expectedUpdateCount": target.setExpectedUpdateCount(property(camelContext, int.class, value)); return true;
+        case "fetchsize":
+        case "fetchSize": target.setFetchSize(property(camelContext, int.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -130,6 +134,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
         case "batch": return boolean.class;
+        case "batchautocommitdisabled":
+        case "batchAutoCommitDisabled": return boolean.class;
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": return boolean.class;
         case "bridgeerrorhandler":
@@ -143,6 +149,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "expectedupdatecount":
         case "expectedUpdateCount": return int.class;
+        case "fetchsize":
+        case "fetchSize": return int.class;
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
@@ -222,6 +230,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "batch": return target.isBatch();
+        case "batchautocommitdisabled":
+        case "batchAutoCommitDisabled": return target.isBatchAutoCommitDisabled();
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": return target.isBreakBatchOnConsumeFail();
         case "bridgeerrorhandler":
@@ -235,6 +245,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return target.getExchangePattern();
         case "expectedupdatecount":
         case "expectedUpdateCount": return target.getExpectedUpdateCount();
+        case "fetchsize":
+        case "fetchSize": return target.getFetchSize();
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
