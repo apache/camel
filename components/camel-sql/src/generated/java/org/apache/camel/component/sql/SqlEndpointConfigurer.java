@@ -34,6 +34,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
+        case "batchautocommitdisabled":
+        case "batchAutoCommitDisabled": target.setBatchAutoCommitDisabled(property(camelContext, boolean.class, value)); return true;
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": target.setBreakBatchOnConsumeFail(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -130,6 +132,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
         case "batch": return boolean.class;
+        case "batchautocommitdisabled":
+        case "batchAutoCommitDisabled": return boolean.class;
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": return boolean.class;
         case "bridgeerrorhandler":
@@ -222,6 +226,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "batch": return target.isBatch();
+        case "batchautocommitdisabled":
+        case "batchAutoCommitDisabled": return target.isBatchAutoCommitDisabled();
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": return target.isBreakBatchOnConsumeFail();
         case "bridgeerrorhandler":

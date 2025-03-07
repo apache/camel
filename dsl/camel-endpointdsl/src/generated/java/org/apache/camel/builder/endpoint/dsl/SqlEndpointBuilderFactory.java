@@ -1602,6 +1602,40 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to optimize batch by turning off auto-commit which can
+         * dramatic improve performance, and instead execute as a manual commit
+         * after the entire batch operation is complete.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param batchAutoCommitDisabled the value to set
+         * @return the dsl builder
+         */
+        default SqlEndpointProducerBuilder batchAutoCommitDisabled(boolean batchAutoCommitDisabled) {
+            doSetProperty("batchAutoCommitDisabled", batchAutoCommitDisabled);
+            return this;
+        }
+        /**
+         * Whether to optimize batch by turning off auto-commit which can
+         * dramatic improve performance, and instead execute as a manual commit
+         * after the entire batch operation is complete.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param batchAutoCommitDisabled the value to set
+         * @return the dsl builder
+         */
+        default SqlEndpointProducerBuilder batchAutoCommitDisabled(String batchAutoCommitDisabled) {
+            doSetProperty("batchAutoCommitDisabled", batchAutoCommitDisabled);
+            return this;
+        }
+        /**
          * If set, will ignore the results of the SQL query and use the existing
          * IN message as the OUT message for the continuation of processing.
          * 

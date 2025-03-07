@@ -95,6 +95,25 @@ public interface SqlComponentBuilderFactory {
     
         
         /**
+         * Whether to optimize batch by turning off auto-commit which can
+         * dramatic improve performance, and instead execute as a manual commit
+         * after the entire batch operation is complete.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param batchAutoCommitDisabled the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder batchAutoCommitDisabled(boolean batchAutoCommitDisabled) {
+            doSetProperty("batchAutoCommitDisabled", batchAutoCommitDisabled);
+            return this;
+        }
+    
+        
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -248,6 +267,7 @@ public interface SqlComponentBuilderFactory {
             switch (name) {
             case "dataSource": ((SqlComponent) component).setDataSource((javax.sql.DataSource) value); return true;
             case "bridgeErrorHandler": ((SqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "batchAutoCommitDisabled": ((SqlComponent) component).setBatchAutoCommitDisabled((boolean) value); return true;
             case "lazyStartProducer": ((SqlComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "rowMapperFactory": ((SqlComponent) component).setRowMapperFactory((org.apache.camel.component.sql.RowMapperFactory) value); return true;

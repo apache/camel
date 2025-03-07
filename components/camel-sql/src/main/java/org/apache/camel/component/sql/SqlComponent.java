@@ -49,6 +49,9 @@ public class SqlComponent extends HealthCheckComponent {
                             + " This option can be used to turn this off.",
               defaultValue = "true")
     private boolean serviceLocationEnabled = true;
+    @Metadata(label = "producer", defaultValue = "true",
+              description = "Whether to optimize batch by turning off auto-commit which can dramatic improve performance, and instead execute as a manual commit after the entire batch operation is complete")
+    private boolean batchAutoCommitDisabled = true;
 
     public SqlComponent() {
     }
@@ -106,6 +109,7 @@ public class SqlComponent extends HealthCheckComponent {
 
         // create endpoint
         SqlEndpoint endpoint = new SqlEndpoint(uri, this);
+        endpoint.setBatchAutoCommitDisabled(isBatchAutoCommitDisabled());
         endpoint.setServiceLocationEnabled(serviceLocationEnabled);
         endpoint.setQuery(query);
         endpoint.setPlaceholder(parameterPlaceholderSubstitute);
@@ -185,4 +189,15 @@ public class SqlComponent extends HealthCheckComponent {
         this.serviceLocationEnabled = serviceLocationEnabled;
     }
 
+    public boolean isBatchAutoCommitDisabled() {
+        return batchAutoCommitDisabled;
+    }
+
+    /**
+     * Whether to optimize batch by turning off auto-commit which can dramatic improve performance, and instead execute
+     * as a manual commit after the entire batch operation is complete
+     */
+    public void setBatchAutoCommitDisabled(boolean batchAutoCommitDisabled) {
+        this.batchAutoCommitDisabled = batchAutoCommitDisabled;
+    }
 }

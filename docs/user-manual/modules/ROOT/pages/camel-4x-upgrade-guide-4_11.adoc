@@ -78,3 +78,10 @@ work in more situations out of the box.
 From this version onward the `export` command add the `camel-observability-services` dependency (which includes telemetry, metrics, health and JMX management services out of the box).
 
 The `--health` and `--metrics` flags of `run` command have been deprecated in favor of the newly `--observe` flag which add the `camel-observability-services` dependency (hence including telemetry, metrics, health and JMX management out of the box). For the run command, this has to be explicitly enabled (ie, `camel run  ... --observe`).
+
+=== camel-sql
+
+When inserting or updating many rows in `batching=true` mode (producer) then this component
+has been optimized to execute the entire batch operation in a single transaction; by turning off auto-commit
+on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
+on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.

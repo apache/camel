@@ -52,12 +52,14 @@ public class SqlProducer extends DefaultProducer {
     private final boolean alwaysPopulateStatement;
     private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
     private final boolean useMessageBodyForSql;
+    private final boolean manualCommit;
     private int parametersCount;
 
     public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate,
                        SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
                        boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql) {
         super(endpoint);
+        this.manualCommit = endpoint.isBatchAutoCommitDisabled();
         this.jdbcTemplate = jdbcTemplate;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.query = query;
@@ -156,12 +158,28 @@ public class SqlProducer extends DefaultProducer {
                     boolean isResultSet = false;
 
                     if (batch) {
-                        int[] updateCounts = ps.executeBatch();
-                        int total = 0;
-                        for (int count : updateCounts) {
-                            total += count;
+                        if (manualCommit) {
+                            // optimize batch by turning off auto-commit
+                            ps.getConnection().setAutoCommit(false);
                         }
-                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
+                        try {
+                            int[] updateCounts = ps.executeBatch();
+                            int total = 0;
+                            for (int count : updateCounts) {
+                                total += count;
+                            }
+                            exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
+                            if (manualCommit) {
+                                // optimize batch by commit after done
+                                ps.getConnection().commit();
+                            }
+                        } catch (Exception e) {
+                            if (manualCommit) {
+                                // we failed so rollback
+                                ps.getConnection().rollback();
+                            }
+                            throw e;
+                        }
                     } else {
                         isResultSet = ps.execute();
                         if (isResultSet) {
