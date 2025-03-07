@@ -276,6 +276,11 @@ public class SqlProducer extends DefaultProducer {
 
     private void populateStatement(PreparedStatement ps, Exchange exchange, String sql, String preparedQuery)
             throws SQLException {
+
+        if (getEndpoint().getFetchSize() > 0) {
+            ps.setFetchSize(getEndpoint().getFetchSize());
+        }
+
         int expected;
         if (parametersCount > 0) {
             expected = parametersCount;

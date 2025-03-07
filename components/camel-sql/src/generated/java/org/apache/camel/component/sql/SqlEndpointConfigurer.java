@@ -49,6 +49,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "expectedupdatecount":
         case "expectedUpdateCount": target.setExpectedUpdateCount(property(camelContext, int.class, value)); return true;
+        case "fetchsize":
+        case "fetchSize": target.setFetchSize(property(camelContext, int.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -147,6 +149,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "expectedupdatecount":
         case "expectedUpdateCount": return int.class;
+        case "fetchsize":
+        case "fetchSize": return int.class;
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
@@ -241,6 +245,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangePattern": return target.getExchangePattern();
         case "expectedupdatecount":
         case "expectedUpdateCount": return target.getExpectedUpdateCount();
+        case "fetchsize":
+        case "fetchSize": return target.getFetchSize();
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();

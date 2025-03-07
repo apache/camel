@@ -31,6 +31,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
+        case "fetchsize":
+        case "fetchSize": target.setFetchSize(property(camelContext, int.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
@@ -63,6 +65,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return boolean.class;
         case "datasource":
         case "dataSource": return javax.sql.DataSource.class;
+        case "fetchsize":
+        case "fetchSize": return int.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
@@ -91,6 +95,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
         case "dataSource": return target.getDataSource();
+        case "fetchsize":
+        case "fetchSize": return target.getFetchSize();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":

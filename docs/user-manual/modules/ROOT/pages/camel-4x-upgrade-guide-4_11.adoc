@@ -81,7 +81,7 @@ The `--health` and `--metrics` flags of `run` command have been deprecated in fa
 
 === camel-sql
 
-When inserting or updating many rows in `batching=true` mode (producer) then this component
+When inserting or updating many rows in `batch=true` mode (producer) then this component
 has been optimized to execute the entire batch operation in a single transaction; by turning off auto-commit
 on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
 on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.
