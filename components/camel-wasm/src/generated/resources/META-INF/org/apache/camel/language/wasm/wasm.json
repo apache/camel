@@ -11,7 +11,7 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-wasm",
-    "version": "4.8.5-SNAPSHOT",
+    "version": "4.8.6-SNAPSHOT",
     "modelName": "wasm",
     "modelJavaType": "org.apache.camel.model.language.WasmExpression"
   },

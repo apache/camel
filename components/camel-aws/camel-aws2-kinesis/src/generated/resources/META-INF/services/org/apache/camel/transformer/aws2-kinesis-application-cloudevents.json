@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.aws2.kinesis.transform.KinesisCloudEventDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "4.8.5-SNAPSHOT"
+    "version": "4.8.6-SNAPSHOT"
   }
 }
 
