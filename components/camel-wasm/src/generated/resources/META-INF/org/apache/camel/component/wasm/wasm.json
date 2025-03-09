@@ -11,7 +11,7 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-wasm",
-    "version": "4.10.2-SNAPSHOT",
+    "version": "4.10.3-SNAPSHOT",
     "scheme": "wasm",
     "extendsScheme": "",
     "syntax": "wasm:functionName",

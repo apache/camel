@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-guava-eventbus",
-    "version": "4.10.2-SNAPSHOT",
+    "version": "4.10.3-SNAPSHOT",
     "scheme": "guava-eventbus",
     "extendsScheme": "",
     "syntax": "guava-eventbus:eventBusRef",

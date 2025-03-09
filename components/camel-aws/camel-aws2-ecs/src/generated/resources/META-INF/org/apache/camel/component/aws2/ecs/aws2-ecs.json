@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ecs",
-    "version": "4.10.2-SNAPSHOT",
+    "version": "4.10.3-SNAPSHOT",
     "scheme": "aws2-ecs",
     "extendsScheme": "",
     "syntax": "aws2-ecs:label",

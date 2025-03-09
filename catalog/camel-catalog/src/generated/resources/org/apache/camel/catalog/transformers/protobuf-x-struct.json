@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.jackson.protobuf.transform.ProtobufStructDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson-protobuf",
-    "version": "4.10.2-SNAPSHOT"
+    "version": "4.10.3-SNAPSHOT"
   }
 }
 

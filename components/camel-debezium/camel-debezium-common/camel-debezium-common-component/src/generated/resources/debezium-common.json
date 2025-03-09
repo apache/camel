@@ -9,6 +9,6 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-debezium-common",
-    "version": "4.10.2-SNAPSHOT"
+    "version": "4.10.3-SNAPSHOT"
   }
 }
