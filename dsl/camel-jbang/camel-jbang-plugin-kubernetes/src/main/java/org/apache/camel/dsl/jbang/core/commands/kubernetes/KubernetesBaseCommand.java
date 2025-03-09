@@ -60,8 +60,6 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
 
     List<Supplier<String>> projectNameSuppliers = new ArrayList<>();
 
-    private KubernetesClient kubernetesClient;
-
     public KubernetesBaseCommand(CamelJBangMain main) {
         super(main);
         projectNameSuppliers.add(() -> name);
@@ -130,22 +128,14 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
      * uses default client.
      */
     protected KubernetesClient client() {
-        if (kubernetesClient == null) {
-            if (kubeConfig != null) {
-                kubernetesClient = KubernetesHelper.getKubernetesClient(kubeConfig);
-            } else {
-                kubernetesClient = KubernetesHelper.getKubernetesClient();
-            }
-        }
-
-        return kubernetesClient;
+        return KubernetesHelper.getKubernetesClient();
     }
 
     /**
      * Sets the Kubernetes client.
      */
     public KubernetesBaseCommand withClient(KubernetesClient kubernetesClient) {
-        this.kubernetesClient = kubernetesClient;
+        KubernetesHelper.setKubernetesClient(kubernetesClient);
         return this;
     }
 }
