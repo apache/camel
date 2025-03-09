@@ -1,0 +1,95 @@
+---
+title: MDC logging
+authors:
+  - "@squakez"
+reviewers: []
+approvers: []
+creation-date: 2025-03-07
+last-updated: 2025-03-07
+status: draft
+see-also: []
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+Mapped Diagnostic Context (MDC) is a logging technique employed by most of the Java logging framework to store arbitrary properties and show these information along with any trace logged to the output stream. This technology has turned useful as many Apache Camel users are leveraging it to implement a finer logging and monitoring around their applications (ie, based on custom parameters).
+
+== Motivation
+
+The technology works fine when running in a single thread and the execution of Camel route does not swap between different threads. It has however certain downsides when it overlaps with the asynchronous execution in Camel due to how the framework manages multithreading and does not propagate the context out of the box.
+
+== Goals
+
+Goal of this proposal is to analyze the actual design, the challenges we are facing and provide an alternative design to have a simpler long term maintenance and a better user experience.
+
+== Context
+
+The MDC feature is not actually an organic part of the framework. We have certain features around MDC (above all on tracing components) that can be configured. We do miss the context propagation, so, whenever an asynchronous execution come in place, the result may not be in line with the user expectation (given the limitation of MDC when dealing with multi-threading).
+
+=== Actual design
+
+The core can creates a `MDCUnitOfWork` when the user explicitly asks for the usage of MDC (via `camel.main.useMdcLogging`). This is in charge to include a predefined set of variables into the MDC context. The user can include these information in the logging. Once the "Unit of work" is completed, then, the core clear the context.
+
+==== Inconsistent implementation
+
+Each asynchronous component or asynchronous part of the system is required to explicitly manage the context propagation, leading to a situation of possible inconsistency. At the moment we have certain components that can handle that, and others that don't. The necessity to explicitly include such context propagation is a maintenance problem we need to take in consideration.
+
+==== Fixed variables
+
+The problems we have with this approach are the fixed number of variables we are able to include.
+
+==== Low level of abstraction
+
+If the user wants to include an additional parameter he must access directly the low level MDC API via an additional Processor. And this would only be available if the user is programming in Java DSL. We miss a higher level abstraction to be able to expose and use the feature regardless of the DSL of choice.
+
+==== Obsolescence of the technology
+
+We must also consider that the MDC is an old technology that may not necessarily evolve favorably in the future. It is clear that there is space for certain use case, but, having it embedded directly in different core dependencies and other components, may pose challenges from a maintenance perspective if, in the future, this technology is deprecated.
+
+== Proposal
+
+We can leverage the component "plugin" approach in order to develop a sort of "MDC component" whose goal is to provide the major features expected by this technology. It would take care to set the values, let the logging system use them in their lifecycle and clear the values when the logging is over. We have something similar in place for telemetry components, where we extend the `LogListener` to capture the logging events:
+
+```java
+public interface LogListener {
+
+    /**
+     * Invoked right before Log component or Log EIP logs. Note that {@link CamelLogger} holds the {@link LoggingLevel}
+     * and {@link org.slf4j.Marker}. The listener can check {@link CamelLogger#getLevel()} to see in which log level
+     * this is going to be logged.
+     *
+     * @param  exchange    camel exchange
+     * @param  camelLogger {@link CamelLogger}
+     * @param  message     log message
+     * @return             log message, possibly enriched by the listener
+     */
+    String onLog(Exchange exchange, CamelLogger camelLogger, String message);
+
+}
+```
+
+We can include a couple of more methods such as `beforeLog()` (which it seems to be identical with the `onLog()` purpose) and `afterLog()` whose goal is to set and clear the MDC context accordingly, therefore making sure that the information is stored in the same thread that will write any log trace and cleared after its consumption.
+
+Of course, we should include the call of these new methods from the core, likely wrapping the existing `onLog()` execution. The presence of these new methods may open potential future features as it would make much more flexible the control of the logging lifecycle for any other `LogListener`s implementation (for example, the telemetry ones).
+
+=== Higher cohesion and abstraction
+
+The new component would take over entirely the logic around MDC. It could be more easily tested and maintained and it should be applicable to the regular lifecycle of Camel application, either it runs synchronously or asynchronously. With this mechanism we don't require any longer a context propagation, as, each execution of logging would be in charge to do the work on the same thread where it is executed.
+
+=== Include exchange values
+
+With this mechanism in place we should be also able to drive the setting of properties to include in the MDC with Camel Exchange headers or properties, instead of letting the user to handle that via lower level API. We should have a component parameter that will let the user choose which are the variables included in the MDC context.
+
+=== Available for any DSL
+
+With this higher level of abstraction, the usage of MDC would be possible through any DSL. Moreover it would be much more consistent and less error prone, as it's the same user the one that can set the required headers (with the canonical Camel way of setting headers), configure the MDC components with the headers to use and configure the logging system with the variables he wants to trace.
+
+=== Long term maintenance
+
+If the above is proven to work effectively, then, in any future major version we can remove all the existing parts in the core components which are related to the MDC, simplifying a lot the long term maintenance of the project.
+
+== Development
+
+This design proposals should not introduce any breaking compatibility changes. The old and new MDC mechanism can coexist, although it will be recommendable to deprecate the old one once the new one proves to work correctly.
