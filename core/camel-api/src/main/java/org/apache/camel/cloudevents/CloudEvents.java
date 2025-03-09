@@ -36,7 +36,7 @@ public enum CloudEvents implements CloudEvent {
             CloudEventAttributes.V1_0_ATTRIBUTES)),
 
     //
-    // V1.0.2 - https://github.com/cloudevents/spec/blob/v1.0.2/spec.md
+    // V1.0.2 - https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md
     //
     v1_0_2(new CloudEventImpl(
             "1.0.2",
