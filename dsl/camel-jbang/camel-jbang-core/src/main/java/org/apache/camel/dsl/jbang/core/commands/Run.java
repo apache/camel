@@ -442,7 +442,7 @@ public class Run extends CamelCommand {
         if (sourceDir == null && (files != null && files.size() == 1 && ".".equals(files.get(0)))) {
             files.clear();
             File[] fs = new File(".").listFiles();
-            if (fs != null && fs.length > 0) {
+            if (fs != null) {
                 for (File f : fs) {
                     // skip hidden files
                     if (f.isFile() && !f.isHidden()) {
