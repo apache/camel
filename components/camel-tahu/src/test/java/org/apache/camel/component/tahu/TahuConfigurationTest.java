@@ -72,7 +72,7 @@ public class TahuConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void checkBasicEdgeNodeOptionsMulipleDevices() throws Exception {
+    public void checkBasicEdgeNodeOptionsMultipleDevices() throws Exception {
         String uri
                 = TahuConstants.EDGE_NODE_SCHEME + "://Basic/EdgeNode?clientId=client1&primaryHostId=app1&deviceIds=D2,D3,D4";
 
