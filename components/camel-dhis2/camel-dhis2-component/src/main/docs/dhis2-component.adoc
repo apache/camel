@@ -90,26 +90,6 @@ YAML::
 ----
 ====
 
-* Fetch an organisation unit code by ID:
-+
-[source,java]
-----
-package org.camel.dhis2.example;
-
-import org.apache.camel.builder.RouteBuilder;
-
-public class MyRouteBuilder extends RouteBuilder {
-
-    public void configure() {
-        from("direct:getResource")
-            .to("dhis2://get/resource?path=organisationUnits/O6uvpzGd5pu&fields=code&username=admin&password=district&baseApiUrl=https://play.dhis2.org/40.2.2/api")
-            .unmarshal()
-            .json(org.hisp.dhis.api.model.v40_2_2.OrganisationUnit.class);
-    }
-}
-
-----
-
 * Fetch all organisation units:
 +
 [tabs]
