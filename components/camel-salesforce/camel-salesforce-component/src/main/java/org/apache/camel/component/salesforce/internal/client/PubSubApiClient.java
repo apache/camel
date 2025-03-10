@@ -104,6 +104,7 @@ public class PubSubApiClient extends ServiceSupport {
 
     private ReplayPreset initialReplayPreset;
     private String initialReplayId;
+    private int initialReplayIdTimeout;
 
     public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
                            int pubSubPort, long backoffIncrement, long maxBackoff, boolean allowUseProxyServer) {
@@ -149,10 +150,12 @@ public class PubSubApiClient extends ServiceSupport {
     }
 
     public void subscribe(
-            PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, boolean initialSubscribe) {
+            PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, int initialReplayIdTimeout,
+            boolean initialSubscribe) {
         LOG.debug("Starting subscribe {}", consumer.getTopic());
         this.initialReplayPreset = replayPreset;
         this.initialReplayId = initialReplayId;
+        this.initialReplayIdTimeout = initialReplayIdTimeout;
         if (replayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new RuntimeException("initialReplayId is required for ReplayPreset.CUSTOM");
         }
@@ -162,7 +165,7 @@ public class PubSubApiClient extends ServiceSupport {
         if (initialReplayId != null) {
             replayId = base64DecodeToByteString(initialReplayId);
             if (initialSubscribe) {
-                checkInitialReplayIdValidity(topic, replayId);
+                checkInitialReplayIdValidity(topic, replayId, initialReplayIdTimeout);
             }
         }
         LOG.info("Subscribing to topic: {}.", topic);
@@ -181,10 +184,9 @@ public class PubSubApiClient extends ServiceSupport {
         serverStream.onNext(fetchRequestBuilder.build());
     }
 
-    public void checkInitialReplayIdValidity(String topic, ByteString replayId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Checking initialReplayId {} for topic {}", base64EncodeByteString(replayId), topic);
-        }
+    public void checkInitialReplayIdValidity(String topic, ByteString replayId, int initialReplayIdTimeout) {
+        LOG.info("Checking initialReplayId: {} for topic: {}", base64EncodeByteString(replayId), topic);
+
         final AtomicReference<Throwable> error = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
         final StreamObserver<FetchResponse> responseObserver = new StreamObserver<>() {
@@ -219,8 +221,8 @@ public class PubSubApiClient extends ServiceSupport {
         serverStream.onNext(fetchRequestBuilder.build());
 
         try {
-            if (!Uninterruptibles.awaitUninterruptibly(latch, 10, TimeUnit.SECONDS)) {
-                throw new RuntimeException("timeout while checking initialReplayId.");
+            if (!Uninterruptibles.awaitUninterruptibly(latch, initialReplayIdTimeout, TimeUnit.SECONDS)) {
+                throw new RuntimeException("Timeout while checking initialReplayId.");
             }
         } finally {
             serverStream.onCompleted();
@@ -428,12 +430,12 @@ public class PubSubApiClient extends ServiceSupport {
                 throw new RuntimeException(e);
             }
             if (replayId != null) {
-                subscribe(consumer, ReplayPreset.CUSTOM, replayId, false);
+                subscribe(consumer, ReplayPreset.CUSTOM, replayId, initialReplayIdTimeout, false);
             } else {
                 if (initialReplayPreset == ReplayPreset.CUSTOM) {
-                    subscribe(consumer, initialReplayPreset, initialReplayId, false);
+                    subscribe(consumer, initialReplayPreset, initialReplayId, initialReplayIdTimeout, false);
                 } else {
-                    subscribe(consumer, initialReplayPreset, null, false);
+                    subscribe(consumer, initialReplayPreset, null, initialReplayIdTimeout, false);
                 }
             }
         }
