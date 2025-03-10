@@ -1098,6 +1098,24 @@ public interface SalesforceComponentBuilderFactory {
     
         
         /**
+         * Timeout in seconds to validate when a custom pubSubReplayId has been
+         * configured, when starting the Camel Salesforce consumer.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30
+         * Group: consumer (advanced)
+         * 
+         * @param initialReplyIdTimeout the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder initialReplyIdTimeout(int initialReplyIdTimeout) {
+            doSetProperty("initialReplyIdTimeout", initialReplyIdTimeout);
+            return this;
+        }
+    
+        
+        /**
          * Composite API option to indicate to rollback all records if any are
          * not successful.
          * 
@@ -1869,6 +1887,7 @@ public interface SalesforceComponentBuilderFactory {
             case "pubSubDeserializeType": getOrCreateConfiguration((SalesforceComponent) component).setPubSubDeserializeType((org.apache.camel.component.salesforce.PubSubDeserializeType) value); return true;
             case "pubSubPojoClass": getOrCreateConfiguration((SalesforceComponent) component).setPubSubPojoClass((java.lang.String) value); return true;
             case "replayPreset": getOrCreateConfiguration((SalesforceComponent) component).setReplayPreset((com.salesforce.eventbus.protobuf.ReplayPreset) value); return true;
+            case "initialReplyIdTimeout": ((SalesforceComponent) component).setInitialReplyIdTimeout((int) value); return true;
             case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;

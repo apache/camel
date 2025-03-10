@@ -36,6 +36,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
     private final String topic;
     private final ReplayPreset initialReplayPreset;
     private String initialReplayId;
+    private int initialReplayIdTimeout;
     private final SalesforceEndpoint endpoint;
 
     private final int batchSize;
@@ -52,6 +53,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.topic = endpoint.getTopicName();
         this.initialReplayPreset = endpoint.getConfiguration().getReplayPreset();
         this.initialReplayId = endpoint.getPubSubReplayId();
+        this.initialReplayIdTimeout = endpoint.getComponent().getInitialReplyIdTimeout();
         if (initialReplayPreset == ReplayPreset.CUSTOM && initialReplayId == null) {
             throw new IllegalArgumentException("pubSubReplayId option is required if ReplayPreset is CUSTOM.");
         }
@@ -90,7 +92,7 @@ public class PubSubApiConsumer extends DefaultConsumer {
         this.pubSubClient.setUsePlainTextConnection(this.usePlainTextConnection);
 
         ServiceHelper.startService(pubSubClient);
-        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId, true);
+        pubSubClient.subscribe(this, initialReplayPreset, initialReplayId, initialReplayIdTimeout, true);
     }
 
     @Override
