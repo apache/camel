@@ -153,7 +153,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
         if (!response.content().hasToolExecutionRequests()) {
             exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
-            return null;
+            return response;
         }
 
         chatMessages.add(response.content());
