@@ -19,41 +19,77 @@ package org.apache.camel.component.file.remote.sftp.integration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleConsumeWithAntIncludeIT extends SftpServerTestSupport {
 
-    @Test
-    public void testSftpSimpleConsume() throws Exception {
-        String expected = "Hello World";
-
-        // create file using regular file
-        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "subdir/hello.txt");
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "subdir/hello.txt");
-        mock.expectedBodiesReceived(expected);
-
-        context.getRouteController().startRoute("foo");
-
-        MockEndpoint.assertIsSatisfied(context);
+    @BeforeEach
+    void setup() {
+        testConfigurationBuilder.withUseRouteBuilder(false);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+    @Test
+    public void testSftpSimpleConsume() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
+                     + "?username=admin&password=admin&delay=10000&disconnect=true"
+                     + "&recursive=true&antInclude=hello.txt"
+                     + "&knownHostsFile="
+                     + service.getKnownHostsFile()).to("mock:result");
+            }
+        });
+        context.start();
+
+        try {
+            String expected = "Hello World";
+
+            // create file using regular file
+            template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
+
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+            mock.expectedBodiesReceived(expected);
+
+            MockEndpoint.assertIsSatisfied(context);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSftpSimpleConsumeWithSubdir() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true"
                      + "&recursive=true&antInclude=subdir/hello.txt"
                      + "&knownHostsFile="
-                     + service.getKnownHostsFile()).routeId("foo").noAutoStartup()
-                        .to("mock:result");
+                     + service.getKnownHostsFile()).to("mock:result");
             }
-        };
+        });
+        context.start();
+
+        try {
+            String expected = "Hello World";
+
+            // create file using regular file
+            template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "subdir/hello.txt");
+
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedMessageCount(1);
+            mock.expectedHeaderReceived(Exchange.FILE_NAME, "subdir/hello.txt");
+            mock.expectedBodiesReceived(expected);
+
+            MockEndpoint.assertIsSatisfied(context);
+        } finally {
+            context.stop();
+        }
     }
 }
