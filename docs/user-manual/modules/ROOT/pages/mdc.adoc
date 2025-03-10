@@ -1,0 +1,36 @@
+= Mapped Diagnostic Context (MDC)
+
+The Mapped Diagnostic Context is a technology used in Java to provide a set of customized information into each log trace. The major logging frameworks implements it, and, although it may have certain limitations, this technology is used to enhance the logging and monitoring of a Java application (Camel applications included).
+
+The main limitation of this technology is the fact that it stores values on a context that is available at thread level. Since Camel is an application that manages multiple thread, when it deals with asynchronous calls, the context propagation may not work correctly.
+
+NOTE: the framework should generally handle MDC correctly. However, there could be components (eg, tracing components) and other asynchronous parts of the system that still require the implementation of the context propagation: please report if you notice anything wrong.
+
+== How to configure in Camel application
+
+The first thing you need to do is to enable the `camel.main.useMdcLogging=true`. This flag will automatically include in the MDC context the following Exchange information:
+
+* camel.breadcrumbId
+* camel.exchangeId
+* camel.messageId
+* camel.correlationId
+* camel.routeId
+* camel.stepId
+* camel.contextId
+* camel.transactionKey
+
+You can use the above variables for MDC depending on the logging framework you're using. For example, if you're using log4j2, then, the variable will be like `%X{camel.exchangeId}`. Other logging frameworks should have a similar approach, just check its specific documentation.
+
+== User values
+
+If you're using Java DSL you can include any customized information by adding that using low level MDC API:
+
+```java
+        org.slf4j.MDC.put("myKey", "myValue");
+```
+
+Each MDC should be now able to include that information.
+
+== Context propagation
+
+If you're using some asynchronous component, then, you may need to configure the application to enable the MDC context propagation. For that reason you need to add the `camel.main.mdcLoggingKeysPattern` configuration. This configuration will drive the process of copying the MDC context on the thread that will execute your Exchange asynchronously.
