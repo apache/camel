@@ -366,9 +366,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private KubernetesExport configureExport(String workingDir) {
         detectCluster();
-        // jkube automatically sets the "app.kubernetes.io/managed-by: jkube" label
-        // given this is a deployment managed by this plugin, we will replace the value for "camel-jbang"
-        buildProperties.add("jkube.enricher.jkube-well-known-labels.managedBy=camel-jbang");
         KubernetesExport.ExportConfigurer configurer = new KubernetesExport.ExportConfigurer(
                 runtime,
                 quarkusVersion,
