@@ -59,6 +59,16 @@
             <artifactId>timeseries</artifactId>
             <version>${djl-version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.extjwnl</groupId>
+            <artifactId>extjwnl</artifactId>
+            <version>${extjwnl-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.extjwnl</groupId>
+            <artifactId>extjwnl-data-wn31</artifactId>
+            <version>${extjwnl-data-wn31-version}</version>
+        </dependency>
 
         <!-- DJL builtin model -->
         <dependency>
