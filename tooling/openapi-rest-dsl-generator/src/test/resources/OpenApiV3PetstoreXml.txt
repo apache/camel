@@ -13,7 +13,7 @@
             <param collectionFormat="multi" dataType="array" description="Status values that need to be considered for filter" name="status" type="query"/>
             <to uri="direct:findPetsByStatus"/>
         </get>
-        <get description="Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing." id="findPetsByTags" path="/pet/findByTags" produces="application/xml,application/json">
+        <get description="Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing." id="findPetsByTags" path="/pet/findByTags" produces="application/xml,application/json">
             <param collectionFormat="multi" dataType="array" description="Tags to filter by" name="tags" type="query"/>
             <to uri="direct:findPetsByTags"/>
         </get>

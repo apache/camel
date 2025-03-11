@@ -68,7 +68,7 @@ public final class MyRestRoute extends RouteBuilder {
 		rest("/api/v3")
 			.get("/pet/findByTags")
 				.id("findPetsByTags")
-				.description("Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.")
+				.description("Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.")
 				.produces("application/xml,application/json")
 				.param()
 					.name("tags")
