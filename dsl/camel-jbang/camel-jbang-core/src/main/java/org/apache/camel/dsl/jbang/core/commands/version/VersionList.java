@@ -87,8 +87,11 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
     String repo;
 
-    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases")
+    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
     boolean lts;
+
+    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
+    boolean eol = true;
 
     @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
     boolean patch = true;
@@ -96,11 +99,11 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
     boolean rc;
 
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
+                        defaultValue = "false")
     boolean fresh;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
     boolean jsonOutput;
 
     public VersionList(CamelJBangMain main) {
@@ -147,6 +150,22 @@ public class VersionList extends CamelCommand {
             rows.removeIf(r -> {
                 String last = StringHelper.afterLast(r.coreVersion, ".");
                 return !"0".equals(last);
+            });
+        }
+        if (!eol) {
+            SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD);
+            Date now = new Date();
+            rows.removeIf(r -> {
+                String eol = r.eolDate;
+                if (eol != null) {
+                    try {
+                        Date d = sdf.parse(r.eolDate);
+                        return d.before(now);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+                return false;
             });
         }
 
