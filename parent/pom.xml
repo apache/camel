@@ -303,7 +303,7 @@
         <johnzon-version>2.0.1</johnzon-version>
         <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>3.0.1</jsmpp-version>
-        <jsch-version>0.2.23</jsch-version>
+        <jsch-version>0.2.24</jsch-version>
         <javax-json-api-version>1.1.4</javax-json-api-version>
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>2.9.0</json-path-version>
