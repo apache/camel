@@ -25,41 +25,36 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.util.StringHelper;
 import org.codehaus.plexus.util.ExceptionUtils;
 import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getKubernetesClient;
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait.KUBERNETES_LABEL_NAME;
 
 @CommandLine.Command(name = "delete",
-                     description = "Delete Camel application from Kubernetes. This operation will delete all resources associated to this app, such as: Deployment, Routes, Services, etc. filtering by labels \"app.kubernetes.io/managed-by=camel-jbang\" and \"app=<app name>\".",
+                     description = "Delete Camel application from Kubernetes. This operation will delete all resources associated to this app, such as: Deployment, Routes, Services, etc. filtering by label \"app.kubernetes.io/name=<name>\".",
                      sortOptions = false)
 public class KubernetesDelete extends KubernetesBaseCommand {
-
-    @CommandLine.Parameters(description = "The deployed application name", arity = "1", paramLabel = "<app name>")
-    String appName;
 
     public KubernetesDelete(CamelJBangMain main) {
         super(main);
     }
 
     public Integer doCall() throws Exception {
-        printer().printf("Deleting all resources from app: %s%n", appName);
+        printer().printf("Deleting all resources from app: %s%n", name);
         Map<String, String> labels = new HashMap<>();
         // this label is set in KubernetesRun command
-        labels.put(BaseTrait.KUBERNETES_LABEL_MANAGED_BY, "camel-jbang");
-        labels.put("app", appName);
+        labels.put(KUBERNETES_LABEL_NAME, name);
         List<StatusDetails> deleteStatuses = new ArrayList<>();
         try {
             // delete the most common resources
-            // delete Deployment cascades to pod
             deleteStatuses.addAll(getKubernetesClient().apps().deployments().withLabels(labels).delete());
             // delete service
             deleteStatuses.addAll(getKubernetesClient().services().withLabels(labels).delete());
             ClusterType clusterType = KubernetesHelper.discoverClusterType();
             if (ClusterType.OPENSHIFT == clusterType) {
-                // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig casacade delete to Build and ConfigMap
+                // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig cascade delete to Build and ConfigMap
                 OpenShiftClient ocpClient = getKubernetesClient().adapt(OpenShiftClient.class);
                 // BuildConfig
                 deleteStatuses.addAll(ocpClient.buildConfigs().withLabels(labels).delete());
@@ -72,7 +67,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
                 deleteStatuses.forEach(
                         s -> printer().printf("Deleted: %s '%s'%n", StringHelper.capitalize(s.getKind()), s.getName()));
             } else {
-                printer().println("No deployment found with name: " + appName);
+                printer().println("No deployment found with name: " + name);
             }
         } catch (Exception ex) {
             // there could be various chained exceptions, so we want to get the root cause
