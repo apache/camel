@@ -272,7 +272,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return () -> {
             String relativePath = StringHelper.after(absolutePath, endpointPath);
             // skip trailing /
-            return FileUtil.stripLeadingSeparator(relativePath) + "/" + file.getFilename();
+            return FileUtil.stripLeadingSeparator(relativePath + "/") + file.getFilename();
         };
     }
 
