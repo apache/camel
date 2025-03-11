@@ -64,7 +64,7 @@ class KubernetesCommandTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", deployment.getMetadata().getLabels().get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertEquals("camel-jbang", matchLabels.get(BaseTrait.KUBERNETES_LABEL_MANAGED_BY));
+        Assertions.assertEquals("jkube", matchLabels.get(BaseTrait.KUBERNETES_LABEL_MANAGED_BY));
         Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("IfNotPresent",
