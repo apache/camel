@@ -97,7 +97,13 @@
                     <images>
                         <image>
                             <build>
-                                <from>${jkube.base.image}</from>
+                                <from>${jkube.container-image.from}</from>
+                                <entryPoint>
+                                    <exec>
+                                        <arg>/maven/quarkus/run-java.sh</arg>
+                                        <arg>run</arg>
+                                    </exec>
+                                </entryPoint>
                                 <assembly>
                                     <layers>
                                         <layer>
@@ -109,15 +115,27 @@
                                                 </fileSet>
                                             </fileSets>
                                         </layer>
+                                        <layer>
+                                            <id>entrypoint</id>
+                                            <files>
+                                                <file>
+                                                    <source>src/main/scripts/run-java.sh</source>
+                                                    <outputDirectory>./quarkus</outputDirectory>
+                                                    <fileMode>755</fileMode>
+                                                </file>
+                                            </files>
+                                        </layer>
+                                        <layer>
+                                            <id>tls</id>
+                                            <fileSets>
+                                                <fileSet>
+                                                    <directory>src/main/tls</directory>
+                                                    <outputDirectory>./quarkus/tls</outputDirectory>
+                                                </fileSet>
+                                            </fileSets>
+                                        </layer>
                                     </layers>
                                 </assembly>
-                                <entryPoint>
-                                    <exec>
-                                        <arg>java</arg>
-                                        <arg>-jar</arg>
-                                        <arg>/maven/quarkus/quarkus-run.jar</arg>
-                                    </exec>
-                                </entryPoint>
                             </build>
                         </image>
                     </images>

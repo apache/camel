@@ -670,6 +670,8 @@ public class Run extends CamelCommand {
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
+        StringJoiner sjScriptFiles = new StringJoiner(",");
+        StringJoiner sjTlsFiles = new StringJoiner(",");
         StringJoiner sjKamelets = new StringJoiner(",");
         StringJoiner sjJKubeFiles = new StringJoiner(",");
 
@@ -704,12 +706,20 @@ public class Run extends CamelCommand {
                 file = loadFromClipboard(file);
             } else if (skipFile(file)) {
                 continue;
+            } else if (isScriptFile(file)) {
+                // script files
+                sjScriptFiles.add(file);
+                continue;
+            } else if (isTlsFile(file)) {
+                // tls files
+                sjTlsFiles.add(file);
+                continue;
             } else if (jkubeFile(file)) {
                 // jkube
                 sjJKubeFiles.add(file);
                 continue;
             } else if (!knownFile(file) && !file.endsWith(".properties")) {
-                // non known files to be added on classpath
+                // unknown files to be added on classpath
                 sjClasspathFiles.add(file);
                 continue;
             }
@@ -807,6 +817,18 @@ public class Run extends CamelCommand {
             writeSettings("camel.jbang.classpathFiles", sjClasspathFiles.toString());
         } else {
             writeSetting(main, profileProperties, "camel.jbang.classpathFiles", () -> null);
+        }
+        if (sjScriptFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.scriptFiles", sjScriptFiles.toString());
+            writeSettings("camel.jbang.scriptFiles", sjScriptFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, "camel.jbang.scriptFiles", () -> null);
+        }
+        if (sjTlsFiles.length() > 0) {
+            main.addInitialProperty("camel.jbang.tlsFiles", sjTlsFiles.toString());
+            writeSettings("camel.jbang.tlsFiles", sjTlsFiles.toString());
+        } else {
+            writeSetting(main, profileProperties, "camel.jbang.tlsFiles", () -> null);
         }
         if (sjJKubeFiles.length() > 0) {
             main.addInitialProperty("camel.jbang.jkubeFiles", sjJKubeFiles.toString());
@@ -1678,7 +1700,6 @@ public class Run extends CamelCommand {
         if ("kamelet.yaml".equals(ext)) {
             return true;
         }
-
         String ext2 = FileUtil.onlyExt(file, true);
         if (ext2 != null) {
             SourceScheme sourceScheme = SourceScheme.fromUri(file);
@@ -1788,6 +1809,14 @@ public class Run extends CamelCommand {
             }
         }
         return false;
+    }
+
+    private boolean isScriptFile(String name) {
+        return name.endsWith(".sh");
+    }
+
+    private boolean isTlsFile(String name) {
+        return name.endsWith(".crt") || name.endsWith(".key") || name.endsWith(".pem");
     }
 
     private boolean jkubeFile(String name) {
