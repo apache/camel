@@ -27,7 +27,7 @@ import org.apache.camel.impl.engine.DefaultComponentResolver;
 
 public final class StubComponentResolver extends DefaultComponentResolver {
     private static final Set<String> ACCEPTED_STUB_NAMES = Set.of(
-            "stub", "bean", "class", "direct", "kamelet", "log", "rest", "rest-api", "seda", "vertx-http");
+            "stub", "bean", "class", "direct", "kamelet", "log", "platform-http", "rest", "rest-api", "seda", "vertx-http");
 
     private final Set<String> names;
     private final String stubPattern;

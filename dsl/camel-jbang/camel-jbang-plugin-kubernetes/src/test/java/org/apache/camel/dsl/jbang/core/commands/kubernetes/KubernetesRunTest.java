@@ -105,6 +105,17 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals("IfNotPresent", containers.get(0).getImagePullPolicy());
+
+        // verify the container health probes path to /observe accordingly to the camel-observability-services
+        if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe/health/live", containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/ready", containers.get(0).getReadinessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/started", containers.get(0).getStartupProbe().getHttpGet().getPath());
+        } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
+            // spring-boot doesn't set the startup probe
+            Assertions.assertEquals("/observe/health/liveness", containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/readiness", containers.get(0).getReadinessProbe().getHttpGet().getPath());
+        }
     }
 
     @ParameterizedTest
