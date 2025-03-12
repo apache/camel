@@ -56,7 +56,7 @@
         <sourcecheckExcludesComma />
 
         <!-- dependency versions -->
-        <activemq-version>5.18.6</activemq-version>
+        <activemq-version>5.19.0</activemq-version>
         <activemq6-version>6.1.6</activemq6-version>
         <activemq-artemis-version>2.39.0</activemq-artemis-version>
         <amazon-kinesis-client-version>2.6.0</amazon-kinesis-client-version>
