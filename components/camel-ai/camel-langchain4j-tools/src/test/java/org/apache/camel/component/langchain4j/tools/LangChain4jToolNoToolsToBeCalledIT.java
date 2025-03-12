@@ -90,7 +90,7 @@ public class LangChain4jToolNoToolsToBeCalledIT extends CamelTestSupport {
                 from("langchain4j-tools:test1?tags=user&description=Query user database by number&parameter.number=integer")
                         .setBody(simple("{\"name\": \"pippo\"}"));
 
-                from("langchain4j-tools:test1?tags=user&description=Does not do anything, really")
+                from("langchain4j-tools:test1?tags=user&description=Query user database by nickname&parameter.number=integer")
                         .setBody(simple("{\"name\": \"pippo\"}"));
 
                 from("direct:noResponse")
@@ -107,15 +107,16 @@ public class LangChain4jToolNoToolsToBeCalledIT extends CamelTestSupport {
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
                 """
-                        Your job is to help me test my code. When asked to call a tool you do not call anything.
+                        Your job is to help me test my code. Your job is to NOT call any tool. YOU MUST NOT CALL A TOOL.
                         """));
         messages.add(new UserMessage("""
-                How can you help?
+                How can you help? DO NOT CALL TOOLS.
                  """));
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(message).isNotNull();
         Assertions.assertThat(message.getMessage().getHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER)).isEqualTo(Boolean.TRUE);
+        Assertions.assertThat(message.getMessage().getBody()).isNotNull();
     }
 }
