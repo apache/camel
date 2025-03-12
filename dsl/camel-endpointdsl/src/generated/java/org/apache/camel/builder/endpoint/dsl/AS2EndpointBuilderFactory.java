@@ -228,6 +228,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The charset of the content type of EDI message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: us-ascii
+         * Group: common
+         * 
+         * @param ediMessageCharset the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder ediMessageCharset(String ediMessageCharset) {
+            doSetProperty("ediMessageCharset", ediMessageCharset);
+            return this;
+        }
+        /**
          * The transfer encoding of EDI message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -245,24 +260,7 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param ediMessageType the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder ediMessageType(org.apache.hc.core5.http.ContentType ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent, application/xml.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.hc.core5.http.ContentType</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -757,27 +755,10 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * a message integrity check (MIC) returned in message disposition
+         * notification (MDN). Multiple algorithms can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
-         * 
-         * Group: security
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -1186,6 +1167,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The charset of the content type of EDI message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: us-ascii
+         * Group: common
+         * 
+         * @param ediMessageCharset the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder ediMessageCharset(String ediMessageCharset) {
+            doSetProperty("ediMessageCharset", ediMessageCharset);
+            return this;
+        }
+        /**
          * The transfer encoding of EDI message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1203,24 +1199,7 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param ediMessageType the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder ediMessageType(org.apache.hc.core5.http.ContentType ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent, application/xml.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.hc.core5.http.ContentType</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -1715,27 +1694,10 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * a message integrity check (MIC) returned in message disposition
+         * notification (MDN). Multiple algorithms can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
-         * 
-         * Group: security
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 
@@ -2125,6 +2087,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The charset of the content type of EDI message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: us-ascii
+         * Group: common
+         * 
+         * @param ediMessageCharset the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder ediMessageCharset(String ediMessageCharset) {
+            doSetProperty("ediMessageCharset", ediMessageCharset);
+            return this;
+        }
+        /**
          * The transfer encoding of EDI message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2142,24 +2119,7 @@ public interface AS2EndpointBuilderFactory {
          * The content type of EDI message. One of application/edifact,
          * application/edi-x12, application/edi-consent, application/xml.
          * 
-         * The option is a: <code>org.apache.hc.core5.http.ContentType</code>
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param ediMessageType the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder ediMessageType(org.apache.hc.core5.http.ContentType ediMessageType) {
-            doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The content type of EDI message. One of application/edifact,
-         * application/edi-x12, application/edi-consent, application/xml.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.hc.core5.http.ContentType</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          * 
@@ -2654,27 +2614,10 @@ public interface AS2EndpointBuilderFactory {
         }
         /**
          * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
+         * a message integrity check (MIC) returned in message disposition
+         * notification (MDN). Multiple algorithms can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
-         * 
-         * Group: security
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option will be converted to a <code>java.lang.String[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          * 

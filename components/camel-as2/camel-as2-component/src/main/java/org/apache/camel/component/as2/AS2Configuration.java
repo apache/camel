@@ -34,7 +34,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.hc.core5.http.ContentType;
 
 /**
  * Component configuration for AS2 component.
@@ -67,8 +66,10 @@ public class AS2Configuration {
     private Integer serverPortNumber;
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
-    @UriParam
-    private ContentType ediMessageType;
+    @UriParam(enums = "application/edifact,application/edi-x12,application/edi-consent,application/xml")
+    private String ediMessageType;
+    @UriParam(defaultValue = "us-ascii")
+    private String ediMessageCharset;
     @UriParam
     private String ediMessageTransferEncoding;
     @UriParam
@@ -92,7 +93,7 @@ public class AS2Configuration {
     @UriParam
     private String dispositionNotificationTo;
     @UriParam(label = "security")
-    private String[] signedReceiptMicAlgorithms;
+    private String signedReceiptMicAlgorithms;
     @UriParam(label = "security")
     private AS2EncryptionAlgorithm encryptingAlgorithm;
     @UriParam(label = "security")
@@ -258,7 +259,7 @@ public class AS2Configuration {
         this.requestUri = requestUri;
     }
 
-    public ContentType getEdiMessageType() {
+    public String getEdiMessageType() {
         return ediMessageType;
     }
 
@@ -266,8 +267,19 @@ public class AS2Configuration {
      * The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent,
      * application/xml
      */
-    public void setEdiMessageType(ContentType ediMessageType) {
+    public void setEdiMessageType(String ediMessageType) {
         this.ediMessageType = ediMessageType;
+    }
+
+    public String getEdiMessageCharset() {
+        return ediMessageCharset;
+    }
+
+    /**
+     * The charset of the content type of EDI message.
+     */
+    public void setEdiMessageCharset(String ediMessageCharset) {
+        this.ediMessageCharset = ediMessageCharset;
     }
 
     public String getEdiMessageTransferEncoding() {
@@ -394,15 +406,15 @@ public class AS2Configuration {
         this.dispositionNotificationTo = dispositionNotificationTo;
     }
 
-    public String[] getSignedReceiptMicAlgorithms() {
+    public String getSignedReceiptMicAlgorithms() {
         return signedReceiptMicAlgorithms;
     }
 
     /**
      * The list of algorithms, in order of preference, requested to generate a message integrity check (MIC) returned in
-     * message dispostion notification (MDN)
+     * message disposition notification (MDN). Multiple algorithms can be separated by comma.
      */
-    public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
+    public void setSignedReceiptMicAlgorithms(String signedReceiptMicAlgorithms) {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
 

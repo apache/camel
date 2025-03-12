@@ -145,7 +145,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
     private static final String EXPECTED_AS2_VERSION = AS2_VERSION;
     private static final String EXPECTED_MDN_SUBJECT = MDN_SUBJECT_PREFIX + SUBJECT;
-    private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    private static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     private static final String DISPOSITION_NOTIFICATION_OPTIONS
             = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
     private static final int PARTNER_TARGET_PORT = 8888;
@@ -187,9 +187,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", encoding);
         // parameter type is String
@@ -271,9 +270,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
@@ -325,9 +323,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.from", FROM);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is String
@@ -420,9 +417,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.ENCRYPTED);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", encoding);
         // parameter type is String
@@ -522,9 +518,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.SIGNED);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", encoding);
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
@@ -631,9 +626,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.SIGNED);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_XML, StandardCharsets.US_ASCII)); // this line is the difference
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_XML);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
@@ -751,9 +745,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2To", AS2_NAME);
         // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN_COMPRESSED);
-        // parameter type is org.apache.http.entity.ContentType
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII));
+        // parameter type is String
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         // parameter type is String
         headers.put("CamelAs2.ediMessageTransferEncoding", encoding);
         // parameter type is org.apache.camel.component.as2.api.AS2CompressionAlgorithm

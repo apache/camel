@@ -33,8 +33,9 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ClientFqdn", java.lang.String.class);
         map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
         map.put("DispositionNotificationTo", java.lang.String.class);
+        map.put("EdiMessageCharset", java.lang.String.class);
         map.put("EdiMessageTransferEncoding", java.lang.String.class);
-        map.put("EdiMessageType", org.apache.hc.core5.http.ContentType.class);
+        map.put("EdiMessageType", java.lang.String.class);
         map.put("From", java.lang.String.class);
         map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("HttpConnectionPoolSize", java.lang.Integer.class);
@@ -59,7 +60,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
-        map.put("SignedReceiptMicAlgorithms", java.lang.String[].class);
+        map.put("SignedReceiptMicAlgorithms", java.lang.String.class);
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("SigningPrivateKey", java.security.PrivateKey.class);
@@ -91,10 +92,12 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "decryptingPrivateKey": target.getConfiguration().setDecryptingPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "dispositionnotificationto":
         case "dispositionNotificationTo": target.getConfiguration().setDispositionNotificationTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "edimessagecharset":
+        case "ediMessageCharset": target.getConfiguration().setEdiMessageCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": target.getConfiguration().setEdiMessageTransferEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "edimessagetype":
-        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, org.apache.hc.core5.http.ContentType.class, value)); return true;
+        case "ediMessageType": target.getConfiguration().setEdiMessageType(property(camelContext, java.lang.String.class, value)); return true;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": target.getConfiguration().setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
@@ -130,7 +133,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverportnumber":
         case "serverPortNumber": target.getConfiguration().setServerPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "signedreceiptmicalgorithms":
-        case "signedReceiptMicAlgorithms": target.getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String[].class, value)); return true;
+        case "signedReceiptMicAlgorithms": target.getConfiguration().setSignedReceiptMicAlgorithms(property(camelContext, java.lang.String.class, value)); return true;
         case "signingalgorithm":
         case "signingAlgorithm": target.getConfiguration().setSigningAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class, value)); return true;
         case "signingcertificatechain":
@@ -180,10 +183,12 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "decryptingPrivateKey": return java.security.PrivateKey.class;
         case "dispositionnotificationto":
         case "dispositionNotificationTo": return java.lang.String.class;
+        case "edimessagecharset":
+        case "ediMessageCharset": return java.lang.String.class;
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": return java.lang.String.class;
         case "edimessagetype":
-        case "ediMessageType": return org.apache.hc.core5.http.ContentType.class;
+        case "ediMessageType": return java.lang.String.class;
         case "encryptingalgorithm":
         case "encryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
         case "encryptingcertificatechain":
@@ -219,7 +224,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "serverportnumber":
         case "serverPortNumber": return java.lang.Integer.class;
         case "signedreceiptmicalgorithms":
-        case "signedReceiptMicAlgorithms": return java.lang.String[].class;
+        case "signedReceiptMicAlgorithms": return java.lang.String.class;
         case "signingalgorithm":
         case "signingAlgorithm": return org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class;
         case "signingcertificatechain":
@@ -265,6 +270,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "decryptingPrivateKey": return target.getConfiguration().getDecryptingPrivateKey();
         case "dispositionnotificationto":
         case "dispositionNotificationTo": return target.getConfiguration().getDispositionNotificationTo();
+        case "edimessagecharset":
+        case "ediMessageCharset": return target.getConfiguration().getEdiMessageCharset();
         case "edimessagetransferencoding":
         case "ediMessageTransferEncoding": return target.getConfiguration().getEdiMessageTransferEncoding();
         case "edimessagetype":

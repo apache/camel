@@ -103,7 +103,7 @@ public class AS2MessageTestBase {
     protected static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
     protected static final String DISPOSITION_NOTIFICATION_OPTIONS
             = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
-    protected static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    protected static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     protected static final String MDN_MESSAGE_TEMPLATE = "TBD";
     protected static final HttpDateGenerator DATE_GENERATOR = HttpDateGenerator.INSTANCE;
     protected static AS2ServerConnection testServer;

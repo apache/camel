@@ -26,7 +26,6 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
-import org.apache.hc.core5.util.CharArrayBuffer;
 
 public class RequestMDN implements HttpRequestInterceptor {
 
@@ -43,19 +42,15 @@ public class RequestMDN implements HttpRequestInterceptor {
         if (dispositionNotificationTo != null) {
             request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
 
-            String[] micAlgorithms = coreContext.getAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, String[].class);
+            String micAlgorithms = coreContext.getAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, String.class);
             if (micAlgorithms == null) {
                 // requesting unsigned receipt: indicate by not setting Disposition-Notification-Options header
             } else {
-
-                CharArrayBuffer options = new CharArrayBuffer(
-                        SIGNED_RECEIPT_PREFIX.length() + 5 * micAlgorithms.length);
-                options.append(SIGNED_RECEIPT_PREFIX);
-                for (String micAlgorithm : micAlgorithms) {
-                    options.append("," + micAlgorithm);
-                }
-
-                request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, options.toString());
+                StringBuilder sb = new StringBuilder();
+                sb.append(SIGNED_RECEIPT_PREFIX);
+                sb.append(",");
+                sb.append(micAlgorithms);
+                request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, sb.toString());
             }
         }
 

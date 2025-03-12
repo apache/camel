@@ -84,7 +84,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII),
+                AS2MessageStructure.PLAIN, AS2MediaType.APPLICATION_EDIFACT, null,
                 null, null, null, null, null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null,
                 "file.txt", null);
@@ -125,7 +125,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 null, null, null, AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null,
                 null, "file.txt", null);
@@ -172,7 +172,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII),
+                AS2MessageStructure.PLAIN, AS2MediaType.APPLICATION_EDIFACT, null,
                 null, null, null, null, null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null,
                 "file.txt", null);

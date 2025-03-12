@@ -17,7 +17,6 @@
 package org.apache.camel.component.as2;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -42,7 +41,6 @@ import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipar
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpRequest;
@@ -72,7 +70,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     protected static final String FROM = "mrAS@example.org";
     protected static final String CLIENT_FQDN = "example.org";
     protected static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
-    protected static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    protected static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     protected static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
                                                 + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
                                                 + "BGM+380+342459+9'\n"
@@ -218,7 +216,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
 
         return clientConnection().send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 structure,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 signingAlgorithm, signingCertificate, signingPrivateKey, compressionAlgorithm,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
                 encryptingCertificate, null, null);

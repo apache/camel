@@ -169,7 +169,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII),
+                AS2MessageStructure.SIGNED, AS2MediaType.APPLICATION_EDIFACT, null,
                 null, AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, "file.txt", null);
 
@@ -323,7 +323,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(), null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
                 certList.toArray(new Certificate[0]), "file.txt", null);
@@ -380,7 +380,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED_ENCRYPTED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(), null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
                 certList.toArray(new Certificate[0]), "file.txt", null);
@@ -444,7 +444,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         AS2ClientManager clientManager = createDefaultClientManager();
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII),
+                AS2MessageStructure.SIGNED, AS2MediaType.APPLICATION_EDIFACT, null,
                 null, AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, "file.txt", null);
 
@@ -555,7 +555,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
         HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), "base64",
+                AS2MediaType.APPLICATION_EDIFACT, null, "base64",
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null,
@@ -630,7 +630,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
         HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), "base64", null, null, null,
+                AS2MediaType.APPLICATION_EDIFACT, null, "base64", null, null, null,
                 AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
                 AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]), "file.txt", null);
 
@@ -699,7 +699,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         AS2ClientManager clientManager = createDefaultClientManager();
         HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.COMPRESSED_SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), "base64",
+                AS2MediaType.APPLICATION_EDIFACT, null, "base64",
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null,
@@ -735,7 +735,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         AS2ClientManager clientManager = createDefaultClientManager();
         HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED_SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
                 AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]), "file.txt", null);
@@ -780,7 +780,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
 
         HttpCoreContext httpContext = clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_SIGNED_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
                 AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]), "file.txt", null);

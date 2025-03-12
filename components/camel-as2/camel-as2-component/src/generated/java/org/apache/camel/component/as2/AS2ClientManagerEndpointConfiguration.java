@@ -15,7 +15,7 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "client", producerOnly = true,
            description = "Sends EDI Messages over HTTP",
-           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(Object ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, org.apache.hc.core5.http.ContentType ediMessageContentType, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String[] signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(Object ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, String ediMessageContentType, String ediMessageCharset, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
@@ -41,8 +41,11 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="EDI message to transport")})
     private Object ediMessage;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The charset of the EDI message")})
+    private String ediMessageCharset;
+    @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="The content type of EDI message")})
-    private org.apache.hc.core5.http.ContentType ediMessageContentType;
+    private String ediMessageContentType;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The transfer encoding used to transport EDI message")})
     private String ediMessageTransferEncoding;
@@ -63,7 +66,7 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     private String requestUri;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The senders list of signing algorithms for signing receipt, in preferred order, or null if requesting an unsigned receipt.")})
-    private String[] signedReceiptMicAlgorithms;
+    private String signedReceiptMicAlgorithms;
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The algorithm used to sign the message or null if sending EDI message unsigned")})
     private org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm;
@@ -133,11 +136,19 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
         this.ediMessage = ediMessage;
     }
 
-    public org.apache.hc.core5.http.ContentType getEdiMessageContentType() {
+    public String getEdiMessageCharset() {
+        return ediMessageCharset;
+    }
+
+    public void setEdiMessageCharset(String ediMessageCharset) {
+        this.ediMessageCharset = ediMessageCharset;
+    }
+
+    public String getEdiMessageContentType() {
         return ediMessageContentType;
     }
 
-    public void setEdiMessageContentType(org.apache.hc.core5.http.ContentType ediMessageContentType) {
+    public void setEdiMessageContentType(String ediMessageContentType) {
         this.ediMessageContentType = ediMessageContentType;
     }
 
@@ -189,11 +200,11 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
         this.requestUri = requestUri;
     }
 
-    public String[] getSignedReceiptMicAlgorithms() {
+    public String getSignedReceiptMicAlgorithms() {
         return signedReceiptMicAlgorithms;
     }
 
-    public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
+    public void setSignedReceiptMicAlgorithms(String signedReceiptMicAlgorithms) {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
 

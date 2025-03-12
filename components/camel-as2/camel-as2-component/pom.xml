@@ -125,6 +125,7 @@
                                         <nullableOption>encryptingCertificateChain</nullableOption>
                                         <nullableOption>attachedFileName</nullableOption>
                                         <nullableOption>receiptDeliveryOption</nullableOption>
+                                        <nullableOption>ediMessageCharset</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>
