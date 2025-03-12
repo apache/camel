@@ -36,7 +36,7 @@ public interface InfrastructureService extends AutoCloseable {
     void shutdown();
 
     @Override
-    default void close() {
+    default void close() throws Exception {
         shutdown();
     }
 }
