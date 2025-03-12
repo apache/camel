@@ -28,7 +28,7 @@ abstract class AbstractKeycloakTest {
     static final int port = 8080; // AvailablePortFinder.getNextAvailable();
 
     static final String APP_BASE_URL = "http://127.0.0.1:" + port + "/";
-    static final String KEYCLOAK_BASE_URL = "https://keycloak.local:30443/";
+    static final String KEYCLOAK_BASE_URL = "https://keycloak.local/kc/";
     static final String TEST_REALM = "camel";
     static final String TEST_CLIENT_ID = "camel-client";
     static final String TEST_CLIENT_SECRET = "camel-client-secret";
