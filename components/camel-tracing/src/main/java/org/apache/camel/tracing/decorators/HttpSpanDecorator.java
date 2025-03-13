@@ -27,6 +27,16 @@ public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
     private static final Pattern HTTP_METHOD_PATTERN = Pattern.compile("(?i)httpMethod=([A-Z]+)");
 
     @Override
+    public String getHttpMethod(Exchange exchange, Endpoint endpoint) {
+        //this component supports the httpMethod parameter, so we try to find it first
+        String methodFromParameters = getMethodFromParameters(exchange, endpoint);
+        if (methodFromParameters != null) {
+            return methodFromParameters;
+        }
+        return super.getHttpMethod(exchange, endpoint);
+    }
+
+    @Override
     public String getComponent() {
         return "http";
     }
@@ -36,8 +46,7 @@ public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
         return "org.apache.camel.component.http.HttpComponent";
     }
 
-    @Override
-    protected String getMethodFromParameters(Exchange exchange, Endpoint endpoint) {
+    private String getMethodFromParameters(Exchange exchange, Endpoint endpoint) {
         String queryStringHeader = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
         if (queryStringHeader != null) {
             String methodFromQuery = getMethodFromQueryString(queryStringHeader);

@@ -28,13 +28,7 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     public static final String GET_METHOD = "GET";
 
     public String getHttpMethod(Exchange exchange, Endpoint endpoint) {
-        //  1. Use method from httpMethod param, if present
-        String methodFromParameters = getMethodFromParameters(exchange, endpoint);
-        if (methodFromParameters != null) {
-            return methodFromParameters;
-        }
-
-        // 2. Use method provided in header.
+        // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
         if (method instanceof String) {
             return (String) method;
@@ -44,29 +38,23 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
             return exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, method);
         }
 
-        // 3. GET if query string is provided in header.
+        // 2. GET if query string is provided in header.
         if (exchange.getIn().getHeader(Exchange.HTTP_QUERY) != null) {
             return GET_METHOD;
         }
 
-        // 4. GET if endpoint is configured with a query string.
+        // 3. GET if endpoint is configured with a query string.
         if (endpoint.getEndpointUri().indexOf('?') != -1) {
             return GET_METHOD;
         }
 
-        // 5. POST if there is data to send (body is not null).
+        // 4. POST if there is data to send (body is not null).
         if (exchange.getIn().getBody() != null) {
             return POST_METHOD;
         }
 
-        // 6. GET otherwise.
+        // 5. GET otherwise.
         return GET_METHOD;
-    }
-
-    protected String getMethodFromParameters(Exchange exchange, Endpoint endpoint) {
-        // should be overriden by specific component decorators
-        // as each component might have different parameters for the http method
-        return null;
     }
 
     @Override
