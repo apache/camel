@@ -99,20 +99,22 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         }
 
         // First talk to the model to get the tools to be called
-        final Response<AiMessage> response = chatWithLLMForTools(chatMessages, toolPair, exchange);
-        if (response == null) {
-            return null;
-        }
+        do {
+            final Response<AiMessage> response = chatWithLLMForTools(chatMessages, toolPair, exchange);
+            if (!response.content().hasToolExecutionRequests()) {
+                return extractAiResponse(response);
+            }
 
-        if (!response.content().hasToolExecutionRequests()) {
-            return response.content().text();
-        }
+            // Then, talk again to call the tools and compute the final response
+            final Response<AiMessage> toolsCallResponse = chatWithLLMForToolCalling(chatMessages, exchange, response, toolPair);
+            if (!toolsCallResponse.content().hasToolExecutionRequests()) {
+                return extractAiResponse(toolsCallResponse);
+            }
 
-        // Then, talk again to call the tools and compute the final response
-        return chatWithLLMForToolCalling(chatMessages, exchange, response, toolPair);
+        } while (true);
     }
 
-    private String chatWithLLMForToolCalling(
+    private Response<AiMessage> chatWithLLMForToolCalling(
             List<ChatMessage> chatMessages, Exchange exchange, Response<AiMessage> response, ToolPair toolPair) {
         for (ToolExecutionRequest toolExecutionRequest : response.content().toolExecutionRequests()) {
             String toolName = toolExecutionRequest.name();
@@ -140,8 +142,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                     exchange.getIn().getBody(String.class)));
         }
 
-        final Response<AiMessage> generate = this.chatLanguageModel.generate(chatMessages);
-        return extractAiResponse(generate);
+        return this.chatLanguageModel.generate(chatMessages);
     }
 
     /**
