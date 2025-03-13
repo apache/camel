@@ -76,6 +76,15 @@ And if so, your custom code may need to be changed slightly as well.
 The file name header `Exchange.FILE_NAME` now includes the relative path such as `subdir/hello.txt`
 when using `recursive=true`, to be similar to how `camel-file` component behaves.
 
+=== camel-as2
+
+The `camel-as2` component has been made more tooling friendly to configure options.
+
+The option `signedReceiptMicAlgorithms` is changed from a `String[]` to a single `String` using comma to separate algorithm names.
+
+The option `ediMessageType` is changed from `ContentType` into two options as `String` fields.
+This allows to define the content-type and charset separately and more user-friendly.
+
 === camel-kafka
 
 The camel-kafka option `recordMetadata` has changed default from `true` to `false`.
@@ -95,3 +104,4 @@ When inserting or updating many rows in `batch=true` mode (producer) then this c
 has been optimized to execute the entire batch operation in a single transaction; by turning off auto-commit
 on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
 on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.
+

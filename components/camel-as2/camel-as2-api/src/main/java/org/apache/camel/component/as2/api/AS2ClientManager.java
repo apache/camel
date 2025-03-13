@@ -71,6 +71,11 @@ public class AS2ClientManager {
     public static final String EDI_MESSAGE_CONTENT_TYPE = CAMEL_AS2_CLIENT_PREFIX + "edi-message-content-type";
 
     /**
+     * The HTTP Context Attribute indicating the EDI message content charset to be sent.
+     */
+    public static final String EDI_MESSAGE_CHARSET = CAMEL_AS2_CLIENT_PREFIX + "edi-message-charset";
+
+    /**
      * The HTTP Context Attribute indicating the EDI message transfer encoding to be sent.
      */
     public static final String EDI_MESSAGE_TRANSFER_ENCODING = CAMEL_AS2_CLIENT_PREFIX + "edi-message-transfer-encoding";
@@ -178,6 +183,7 @@ public class AS2ClientManager {
      * @param  as2To                      - AS2 name of recipient
      * @param  as2MessageStructure        - the structure of AS2 to send; see {@link AS2MessageStructure}
      * @param  ediMessageContentType      - the content type of EDI message
+     * @param  ediMessageCharset          - the charset of the EDI message.
      * @param  ediMessageTransferEncoding - the transfer encoding used to transport EDI message
      * @param  signingAlgorithm           - the algorithm used to sign the message or <code>null</code> if sending EDI
      *                                    message unsigned
@@ -208,14 +214,15 @@ public class AS2ClientManager {
             String as2From,
             String as2To,
             AS2MessageStructure as2MessageStructure,
-            ContentType ediMessageContentType,
+            String ediMessageContentType,
+            String ediMessageCharset,
             String ediMessageTransferEncoding,
             AS2SignatureAlgorithm signingAlgorithm,
             Certificate[] signingCertificateChain,
             PrivateKey signingPrivateKey,
             AS2CompressionAlgorithm compressionAlgorithm,
             String dispositionNotificationTo,
-            String[] signedReceiptMicAlgorithms,
+            String signedReceiptMicAlgorithms,
             AS2EncryptionAlgorithm encryptingAlgorithm,
             Certificate[] encryptingCertificateChain,
             String attachedFileName,
@@ -240,6 +247,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.AS2_TO, as2To);
         httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, as2MessageStructure);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ediMessageContentType);
+        httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CHARSET, ediMessageCharset);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_TRANSFER_ENCODING, ediMessageTransferEncoding);
         httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM, signingAlgorithm);
         httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, signingCertificateChain);
@@ -258,18 +266,19 @@ public class AS2ClientManager {
         // Create Message Body
         ApplicationEntity applicationEntity;
         try {
+            ContentType ct = ContentType.create(ediMessageContentType, ediMessageCharset);
             byte[] msgBytes;
             if (ediMessage instanceof InputStream isMsg) {
                 msgBytes = isMsg.readAllBytes();
             } else if (ediMessage instanceof String strMsg) {
-                msgBytes = strMsg.getBytes(ediMessageContentType.getCharset() == null
-                        ? StandardCharsets.US_ASCII : ediMessageContentType.getCharset());
+                msgBytes = strMsg.getBytes(ct.getCharset() == null
+                        ? StandardCharsets.US_ASCII : ct.getCharset());
             } else {
                 throw new IllegalArgumentException(
                         "Message type not supported. Must be InputStream or String");
             }
             applicationEntity
-                    = EntityUtils.createEDIEntity(msgBytes, ediMessageContentType, ediMessageTransferEncoding, false,
+                    = EntityUtils.createEDIEntity(msgBytes, ct, ediMessageTransferEncoding, false,
                             attachedFileName);
         } catch (Exception e) {
             throw new HttpException("Failed to create EDI message entity", e);

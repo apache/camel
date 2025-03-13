@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.as2;
 
-import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +39,6 @@ import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpVersion;
@@ -68,7 +66,7 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, AS2EncryptionAlgorithm.AES128_CBC,
                 certList.toArray(new Certificate[0]), null, null);
 
@@ -142,7 +140,7 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED_SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
                 AS2EncryptionAlgorithm.AES128_CBC,

@@ -46,7 +46,6 @@ import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpResponse;
@@ -91,7 +90,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding, null, null, null,
+                AS2MediaType.APPLICATION_EDIFACT, null, encoding, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
@@ -185,7 +184,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding,
+                AS2MediaType.APPLICATION_EDIFACT, null, encoding,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
@@ -263,7 +262,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_XML, StandardCharsets.US_ASCII), null, // this line is the difference
+                AS2MediaType.APPLICATION_XML, null, null, // this line is the difference
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
@@ -353,7 +352,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 hackerSigningKP, hackerSigningDN, hackerIssueKP, hackerIssueDN);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { hackerSigningCert }, hackerSigningKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
                 SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
@@ -448,7 +447,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.COMPRESSED_SIGNED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), encoding,
+                AS2MediaType.APPLICATION_EDIFACT, null, encoding,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO,
@@ -485,7 +484,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
         HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
@@ -510,7 +509,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         //Testing MDN parameter defaults
         HttpCoreContext response
                 = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
-                        ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
+                        AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
                         null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
         assertEquals(new AS2Configuration().getServer(), response.getResponse().getFirstHeader(AS2Header.FROM).getValue(),
@@ -521,7 +520,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         //Testing MDN parameter overwrites
         response = clientManager.send(EDI_MESSAGE, REQUEST_URI + "mdnTest", SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
+                AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
 
         assertEquals("MdnTestFrom", response.getResponse().getFirstHeader(AS2Header.FROM).getValue(),

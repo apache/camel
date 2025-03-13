@@ -117,7 +117,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     private static AS2ServerConnection serverConnection;
     private static RequestHandler requestHandler;
-    private static final String[] SIGNED_RECEIPT_MIC_ALGORITHMS = new String[] { "sha1", "md5" };
+    private static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     private static KeyPair serverKP;
     private static X509Certificate serverCert;
     private static KeyPair clientKeyPair;
@@ -327,8 +327,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
         headers.put("CamelAs2.as2From", AS2_NAME);
         headers.put("CamelAs2.as2To", AS2_NAME);
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.PLAIN);
-        headers.put("CamelAs2.ediMessageContentType",
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII.name()));
+        headers.put("CamelAs2.ediMessageContentType", AS2MediaType.APPLICATION_EDIFACT);
         headers.put("CamelAs2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
         headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
 
