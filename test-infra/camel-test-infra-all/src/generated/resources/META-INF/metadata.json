@@ -260,15 +260,6 @@
   "artifactId" : "camel-test-infra-azure-storage-queue",
   "version" : "4.11.0-SNAPSHOT"
 }, {
-  "service" : "org.apache.camel.test.infra.etcd3.services.Etcd3InfraService",
-  "description" : "Key Value store etcd3",
-  "implementation" : "org.apache.camel.test.infra.etcd3.services.Etcd3LocalContainerInfraService",
-  "alias" : [ "etcd3" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-etcd3",
-  "version" : "4.11.0-SNAPSHOT"
-}, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded SFTP Server",
   "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedInfraService",

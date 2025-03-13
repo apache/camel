@@ -280,7 +280,6 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
-        <jetcd-version>0.8.5</jetcd-version>
         <jetty-version>12.0.17</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
@@ -1261,11 +1260,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-elytron</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-etcd3</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
