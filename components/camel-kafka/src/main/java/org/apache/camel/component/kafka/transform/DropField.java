@@ -14,72 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet.utils.transform;
+package org.apache.camel.component.kafka.transform;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
-import org.apache.camel.support.LanguageSupport;
 
-public class InsertField implements Processor {
+public class DropField implements Processor {
 
     String field;
-    String value;
 
     /**
      * Default constructor.
      */
-    public InsertField() {
+    public DropField() {
     }
 
     /**
      * Constructor using fields.
      *
-     * @param field the field name to insert.
-     * @param value the value of the new field.
+     * @param field the field name to drop.
      */
-    public InsertField(String field, String value) {
+    public DropField(String field, String value) {
         this.field = field;
-        this.value = value;
     }
 
     public void process(Exchange ex) throws InvalidPayloadException {
         JsonNode body = ex.getMessage().getBody(JsonNode.class);
-
         if (body == null) {
             throw new InvalidPayloadException(ex, JsonNode.class);
         }
 
-        String resolvedValue;
-        if (LanguageSupport.hasSimpleFunction(value)) {
-            resolvedValue = ex.getContext().resolveLanguage("simple").createExpression(value).evaluate(ex, String.class);
-        } else {
-            resolvedValue = value;
+        if (body.getNodeType().equals(JsonNodeType.OBJECT)) {
+            ((ObjectNode) body).remove(field);
+            ex.getMessage().setBody(body);
         }
-
-        switch (body.getNodeType()) {
-            case ARRAY:
-                ((ArrayNode) body).add(resolvedValue);
-                break;
-            case OBJECT:
-                ((ObjectNode) body).put(field, resolvedValue);
-                break;
-            default:
-                ((ObjectNode) body).put(field, resolvedValue);
-                break;
-        }
-
-        ex.getMessage().setBody(body);
     }
 
     public void setField(String field) {
         this.field = field;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }

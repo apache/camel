@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kamelet.utils.serialization.kafka;
+package org.apache.camel.component.kafka;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
