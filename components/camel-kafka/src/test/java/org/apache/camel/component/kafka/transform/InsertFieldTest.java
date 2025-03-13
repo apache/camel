@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet.utils.transform;
+package org.apache.camel.component.kafka.transform;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -25,34 +24,50 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class HoistFieldTest {
+class InsertFieldTest {
 
     private DefaultCamelContext camelContext;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private HoistField processor;
+    private InsertField processor;
 
-    private final String baseJson = "{" + "\n" +
-                                    "  \"name\" : \"Rajesh Koothrappali\"" + "\n" +
+    private final String baseJson = "{" +
+                                    "\"name\":\"Rajesh Koothrappali\"" +
                                     "}";
 
     @BeforeEach
     void setup() {
         camelContext = new DefaultCamelContext();
-        processor = new HoistField();
+        processor = new InsertField();
     }
 
     @Test
-    void shouldHoistField() throws Exception {
+    void shouldAddFieldToPlainJson() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.getMessage().setBody(mapper.readTree(baseJson));
 
-        JsonNode s = processor.process("element", exchange);
-        Assertions.assertEquals("{" + "\"element\"" + ":" + "{" +
-                                "\"name\":\"Rajesh Koothrappali\"" +
-                                "}" + "}",
-                s.toString());
+        processor = new InsertField("age", "29");
+        processor.process(exchange);
+
+        Assertions.assertEquals(exchange.getMessage().getBody(String.class), "{" + "\n" +
+                                                                             "  \"name\" : \"Rajesh Koothrappali\"," + "\n" +
+                                                                             "  \"age\" : \"29\"" + "\n" +
+                                                                             "}");
+    }
+
+    @Test
+    void shouldAddFieldToArrayJson() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        String arrayJson = "[\"batman\",\"spiderman\",\"wonderwoman\"]";
+        exchange.getMessage().setBody(mapper.readTree(arrayJson));
+
+        processor.setValue("green lantern");
+        processor.process(exchange);
+
+        Assertions.assertEquals(exchange.getMessage().getBody(String.class),
+                "[ \"batman\", \"spiderman\", \"wonderwoman\", \"green lantern\" ]");
     }
 }

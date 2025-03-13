@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kamelet.utils.transform;
+package org.apache.camel.component.kafka.transform;
 
 import java.util.ArrayList;
 import java.util.HashMap;

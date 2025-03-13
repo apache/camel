@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kamelet.utils.kafka;
+package org.apache.camel.component.kafka.transform;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.kamelet.utils.serialization.kafka.KafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.KafkaHeaderDeserializer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
