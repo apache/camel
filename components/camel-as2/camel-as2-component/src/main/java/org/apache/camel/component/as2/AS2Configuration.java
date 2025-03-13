@@ -114,10 +114,10 @@ public class AS2Configuration {
     private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
     @UriParam(label = "security")
     private Certificate[] validateSigningCertificateChain;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContext sslContext;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
-    @UriParam
+    @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
     @UriParam
     private Integer asyncMdnPortNumber;
@@ -535,8 +535,6 @@ public class AS2Configuration {
 
     /**
      * Set SSL context for connection to remote server.
-     *
-     * @param sslContext
      */
     public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
@@ -548,8 +546,6 @@ public class AS2Configuration {
 
     /**
      * Set hostname verifier for SSL session.
-     *
-     * @param hostnameVerifier
      */
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;

@@ -286,35 +286,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder hostnameVerifier(String hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
@@ -562,35 +533,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -754,6 +696,35 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The list of algorithms, in order of preference, requested to generate
          * a message integrity check (MIC) returned in message disposition
          * notification (MDN). Multiple algorithms can be separated by comma.
@@ -857,6 +828,35 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -1225,35 +1225,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder hostnameVerifier(String hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
@@ -1501,35 +1472,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1693,6 +1635,35 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The list of algorithms, in order of preference, requested to generate
          * a message integrity check (MIC) returned in message disposition
          * notification (MDN). Multiple algorithms can be separated by comma.
@@ -1796,6 +1767,35 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -2145,35 +2145,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
-         * Set hostname verifier for SSL session.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: common
-         * 
-         * @param hostnameVerifier the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder hostnameVerifier(String hostnameVerifier) {
-            doSetProperty("hostnameVerifier", hostnameVerifier);
-            return this;
-        }
-        /**
          * The maximum size of the connection pool for http connections (client
          * only).
          * 
@@ -2421,35 +2392,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
-         * Set SSL context for connection to remote server.
-         * 
-         * The option will be converted to a
-         * <code>javax.net.ssl.SSLContext</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sslContext the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder sslContext(String sslContext) {
-            doSetProperty("sslContext", sslContext);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2613,6 +2555,35 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder hostnameVerifier(javax.net.ssl.HostnameVerifier hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * Set hostname verifier for SSL session.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder hostnameVerifier(String hostnameVerifier) {
+            doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
          * The list of algorithms, in order of preference, requested to generate
          * a message integrity check (MIC) returned in message disposition
          * notification (MDN). Multiple algorithms can be separated by comma.
@@ -2716,6 +2687,35 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option is a: <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Set SSL context for connection to remote server.
+         * 
+         * The option will be converted to a
+         * <code>javax.net.ssl.SSLContext</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**

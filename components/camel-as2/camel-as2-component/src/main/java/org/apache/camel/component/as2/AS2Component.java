@@ -20,19 +20,28 @@ import java.security.Security;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component("as2")
-public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configuration, AS2ApiCollection> {
+public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configuration, AS2ApiCollection>
+        implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(AS2Component.class);
+
+    @Metadata(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public AS2Component() {
         super(AS2ApiName.class, AS2ApiCollection.getCollection());
@@ -72,4 +81,29 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
         // stop all connectors as they would no longer be in use
         AS2ConnectionHelper.closeAllConnections();
     }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
 }

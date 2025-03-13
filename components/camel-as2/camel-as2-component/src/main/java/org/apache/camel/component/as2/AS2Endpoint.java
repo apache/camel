@@ -50,6 +50,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
@@ -329,6 +330,21 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             as2AsyncMDNServerConnection = AS2ConnectionHelper.createAS2AsyncMDNServerConnection(configuration);
         } catch (IOException e) {
             throw new RuntimeCamelException("Async MDN Server HTTP connection failed", e);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getSslContext() == null) {
+            SSLContextParameters params = getComponent(AS2Component.class).getSslContextParameters();
+            if (params == null && getComponent(AS2Component.class).isUseGlobalSslContextParameters()) {
+                params = getComponent(AS2Component.class).retrieveGlobalSslContextParameters();
+            }
+            if (params != null) {
+                setSslContext(params.createSSLContext(getCamelContext()));
+            }
         }
     }
 }

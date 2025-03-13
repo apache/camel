@@ -140,6 +140,39 @@ public interface As2ComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+    
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default As2ComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default As2ComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
     }
 
     class As2ComponentBuilderImpl
@@ -159,6 +192,8 @@ public interface As2ComponentBuilderFactory {
             case "lazyStartProducer": ((AS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((AS2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((AS2Component) component).setConfiguration((org.apache.camel.component.as2.AS2Configuration) value); return true;
+            case "sslContextParameters": ((AS2Component) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((AS2Component) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

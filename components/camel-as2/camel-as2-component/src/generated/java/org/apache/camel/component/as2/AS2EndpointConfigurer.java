@@ -37,7 +37,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("EdiMessageTransferEncoding", java.lang.String.class);
         map.put("EdiMessageType", java.lang.String.class);
         map.put("From", java.lang.String.class);
-        map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("HttpConnectionPoolSize", java.lang.Integer.class);
         map.put("HttpConnectionPoolTtl", java.time.Duration.class);
         map.put("HttpConnectionTimeout", java.time.Duration.class);
@@ -49,7 +48,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("Server", java.lang.String.class);
         map.put("ServerFqdn", java.lang.String.class);
         map.put("ServerPortNumber", java.lang.Integer.class);
-        map.put("SslContext", javax.net.ssl.SSLContext.class);
         map.put("Subject", java.lang.String.class);
         map.put("TargetHostname", java.lang.String.class);
         map.put("TargetPortNumber", java.lang.Integer.class);
@@ -60,10 +58,12 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("SignedReceiptMicAlgorithms", java.lang.String.class);
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("SigningPrivateKey", java.security.PrivateKey.class);
+        map.put("SslContext", javax.net.ssl.SSLContext.class);
         map.put("ValidateSigningCertificateChain", java.security.cert.Certificate[].class);
         ALL_OPTIONS = map;
     }
