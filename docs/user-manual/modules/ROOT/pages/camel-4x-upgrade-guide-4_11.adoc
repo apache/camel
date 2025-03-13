@@ -105,3 +105,6 @@ has been optimized to execute the entire batch operation in a single transaction
 on the SQL Connection, and doing a manual `commit` or `rollback`. This can dramatically improve performance
 on some databases. The old behaviour can be restored by setting the `batchAutoCommitDisabled=false` on the component or endpoint.
 
+=== camel-etcd3
+
+This deprecated component was removed in this release.

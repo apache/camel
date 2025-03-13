@@ -1361,19 +1361,6 @@ public interface ComponentsBuilderFactory {
         return ElasticsearchRestClientComponentBuilderFactory.elasticsearchRestClient();
     }
     /**
-     * Etcd v3 (camel-etcd3)
-     * Get, set, delete or watch keys in etcd key-value store.
-     * 
-     * Category: clustering,database
-     * Since: 3.19
-     * Maven coordinates: org.apache.camel:camel-etcd3
-     * 
-     * @return the dsl builder
-     */
-    static Etcd3ComponentBuilderFactory.Etcd3ComponentBuilder etcd3() {
-        return Etcd3ComponentBuilderFactory.etcd3();
-    }
-    /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
      * 
