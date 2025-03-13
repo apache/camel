@@ -51,6 +51,16 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-langchain4j-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-hugging-face</artifactId>
+            <version>${langchain4j-version}</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
