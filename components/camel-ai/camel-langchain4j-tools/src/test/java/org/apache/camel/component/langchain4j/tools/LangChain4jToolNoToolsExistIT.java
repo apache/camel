@@ -84,7 +84,7 @@ public class LangChain4jToolNoToolsExistIT extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:test")
-                        .to("langchain4j-tools:test1?tags=user")
+                        .to("langchain4j-tools:test1?tags=other")
                         .log("response is: ${body}");
 
                 from("langchain4j-tools:test1?tags=user&description=Query user database by number&parameter.number=integer")
@@ -110,12 +110,13 @@ public class LangChain4jToolNoToolsExistIT extends CamelTestSupport {
                         Your job is to help me test my code. When asked to call a tool you do not call anything.
                         """));
         messages.add(new UserMessage("""
-                How can you help?
+                How can you help? DO NOT CALL TOOLS.
                  """));
 
         Exchange message = fluentTemplate.to("direct:test").withBody(messages).request(Exchange.class);
 
         Assertions.assertThat(message).isNotNull();
         Assertions.assertThat(message.getMessage().getHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER)).isEqualTo(Boolean.TRUE);
+
     }
 }
