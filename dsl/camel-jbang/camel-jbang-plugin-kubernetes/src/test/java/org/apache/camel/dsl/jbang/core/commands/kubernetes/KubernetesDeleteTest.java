@@ -60,7 +60,7 @@ class KubernetesDeleteTest {
     public void shouldDeleteNonExistentApp() throws Exception {
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
         command.withClient(client);
-        command.appName = "does-not-exist";
+        command.name = "does-not-exist";
         int exit = command.doCall();
         boolean errorOutput = printer.getOutput().contains("Error trying to delete the app");
         if (errorOutput) {
@@ -88,7 +88,7 @@ class KubernetesDeleteTest {
 
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
         command.withClient(client);
-        command.appName = "does-not-exist";
+        command.name = "does-not-exist";
         int exit = command.doCall();
         boolean errorOutput = printer.getOutput().contains("Error trying to delete the app");
         if (errorOutput) {
@@ -114,7 +114,7 @@ class KubernetesDeleteTest {
 
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
         command.withClient(client);
-        command.appName = "does-not-exist";
+        command.name = "does-not-exist";
         int exit = command.doCall();
         boolean errorOutput = printer.getOutput().contains("Error trying to delete the app");
         if (errorOutput) {
@@ -127,27 +127,27 @@ class KubernetesDeleteTest {
 
     @Test
     public void shouldDeleteOnKubernetes() throws Exception {
-        String appName = "my-route";
+        String name = "my-route";
 
         // Mock the delete request expectation
         serverDeleteExpect(
-                "/apis/apps/v1/namespaces/test/deployments?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/apis/apps/v1/namespaces/test/deployments?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
-                "/api/v1/namespaces/test/services?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/api/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
 
         // Execute delete command
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
         command.withClient(client);
         command.namespace = "test";
-        command.appName = appName;
+        command.name = name;
         int exit = command.doCall();
 
         // Verify command execution
         Assertions.assertEquals(0, exit, printer.getOutput());
 
         // Verify deployment was deleted
-        Assertions.assertNull(client.apps().deployments().withName(appName).get());
-        Assertions.assertNull(client.services().withName(appName).get());
+        Assertions.assertNull(client.apps().deployments().withName(name).get());
+        Assertions.assertNull(client.services().withName(name).get());
     }
 
     @Test
@@ -163,25 +163,25 @@ class KubernetesDeleteTest {
 
         serverExpect("/apis/config.openshift.io/v1/clusterversions/version", versionCR);
 
-        String appName = "my-route";
+        String name = "my-route";
 
         // Mock the delete request expectations for openshift resources
         serverDeleteExpect(
-                "/apis/apps/v1/namespaces/test/deployments?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/apis/apps/v1/namespaces/test/deployments?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
-                "/api/v1/namespaces/test/services?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/api/v1/namespaces/test/services?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
-                "/apis/build.openshift.io/v1/namespaces/test/buildconfigs?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/apis/build.openshift.io/v1/namespaces/test/buildconfigs?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
-                "/apis/image.openshift.io/v1/namespaces/test/imagestreams?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/apis/image.openshift.io/v1/namespaces/test/imagestreams?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
         serverDeleteExpect(
-                "/apis/route.openshift.io/v1/namespaces/test/routes?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+                "/apis/route.openshift.io/v1/namespaces/test/routes?labelSelector=app.kubernetes.io%2Fname%3Dmy-route");
 
         // Execute delete command
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
         command.withClient(client);
         command.namespace = "test";
-        command.appName = appName;
+        command.name = name;
         int exit = command.doCall();
 
         // Verify command execution
@@ -190,11 +190,11 @@ class KubernetesDeleteTest {
         OpenShiftClient ocpClient = client.adapt(OpenShiftClient.class);
 
         // Verify deployment was deleted
-        Assertions.assertNull(client.apps().deployments().withName(appName).get());
-        Assertions.assertNull(client.services().withName(appName).get());
-        Assertions.assertNull(ocpClient.buildConfigs().withName(appName).get());
-        Assertions.assertNull(ocpClient.imageStreams().withName(appName).get());
-        Assertions.assertNull(ocpClient.routes().withName(appName).get());
+        Assertions.assertNull(client.apps().deployments().withName(name).get());
+        Assertions.assertNull(client.services().withName(name).get());
+        Assertions.assertNull(ocpClient.buildConfigs().withName(name).get());
+        Assertions.assertNull(ocpClient.imageStreams().withName(name).get());
+        Assertions.assertNull(ocpClient.routes().withName(name).get());
     }
 
     private void serverDeleteExpect(String path) {
