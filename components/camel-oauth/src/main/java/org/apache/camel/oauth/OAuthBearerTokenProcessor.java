@@ -54,15 +54,14 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
         // Find or create the OAuth instance
         //
         var oauth = findOAuth(context).orElseGet(() -> {
-            var factory = OAuthFactory.getOAuthFactory(context);
-            return factory.createOAuth(exchange);
+            var factory = OAuthFactory.lookupFactory(context);
+            return factory.createOAuth();
         });
 
         // Authenticate the bearer's access token
         //
         var access_token = toks[1];
-        var userProfile = oauth.authenticate(new TokenCredentials()
-                .setToken(access_token));
+        var userProfile = oauth.authenticate(new TokenCredentials(access_token));
 
         // Get or create the OAuthSession
         //

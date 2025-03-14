@@ -26,17 +26,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
-class SSLCertTrustTest {
-
-    private static final String KEYCLOAK_SERVER_URL = "https://keycloak.local:30443/";
+class SSLCertTrustTest extends AbstractKeycloakTest {
 
     @Test
     void testTrustedCertificate() {
-
-        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_SERVER_URL));
+        var admin = new KeycloakAdmin(new KeycloakAdmin.AdminParams(KEYCLOAK_BASE_URL));
         Assumptions.assumeTrue(admin.isKeycloakRunning(), "Keycloak is not running");
-
-        Assertions.assertDoesNotThrow(() -> connectToUrl(KEYCLOAK_SERVER_URL), "Certificate should be trusted");
+        Assertions.assertDoesNotThrow(() -> connectToUrl(KEYCLOAK_BASE_URL), "Certificate should be trusted");
     }
 
     @Test
@@ -46,8 +42,8 @@ class SSLCertTrustTest {
     }
 
     private static void connectToUrl(String httpsUrl) throws IOException {
-        URL url = new URL(httpsUrl);
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.connect();
+        var url = new URL(httpsUrl);
+        var con = (HttpsURLConnection) url.openConnection();
+        con.connect();
     }
 }

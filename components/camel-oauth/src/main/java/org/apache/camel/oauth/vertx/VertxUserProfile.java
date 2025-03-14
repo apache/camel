@@ -16,11 +16,8 @@
  */
 package org.apache.camel.oauth.vertx;
 
-import java.text.ParseException;
-import java.util.Map;
-
-import com.nimbusds.jose.util.JSONObjectUtils;
-import io.vertx.core.json.JsonObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.vertx.ext.auth.User;
 import org.apache.camel.oauth.UserProfile;
 
@@ -29,7 +26,7 @@ public class VertxUserProfile extends UserProfile {
     private final User vtxUser;
 
     public VertxUserProfile(User vtxUser) {
-        super(deepMap(vtxUser.attributes()), deepMap(vtxUser.principal()));
+        super(toJsonObject(vtxUser.principal()), toJsonObject(vtxUser.attributes()));
         this.vtxUser = vtxUser;
     }
 
@@ -37,12 +34,7 @@ public class VertxUserProfile extends UserProfile {
         return this.vtxUser;
     }
 
-    private static Map<String, Object> deepMap(JsonObject obj) {
-        try {
-            return JSONObjectUtils.parse(obj.encode());
-        } catch (ParseException ex) {
-            throw new RuntimeException(ex);
-        }
+    private static JsonObject toJsonObject(io.vertx.core.json.JsonObject vtxJson) {
+        return JsonParser.parseString(vtxJson.encode()).getAsJsonObject();
     }
-
 }

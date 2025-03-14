@@ -19,26 +19,39 @@ package org.apache.camel.oauth;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
+import org.apache.camel.oauth.jakarta.ServletOAuthFactory;
 import org.apache.camel.oauth.vertx.VertxOAuthFactory;
+import org.apache.camel.support.CamelContextHelper;
 
 public abstract class OAuthFactory {
 
-    public static OAuthFactory getOAuthFactory(CamelContext ctx) {
+    protected final CamelContext context;
+
+    public OAuthFactory(CamelContext context) {
+        this.context = context;
+    }
+
+    public static OAuthFactory lookupFactory(CamelContext ctx) {
         var registry = ctx.getRegistry();
         var factory = registry.lookupByNameAndType(OAuthFactory.class.getName(), OAuthFactory.class);
         if (factory == null) {
-            // Note, different implementations would require a plugin mechanism
-            factory = new VertxOAuthFactory();
-            registry.bind(OAuthFactory.class.getName(), factory);
+            var vertxRouter = CamelContextHelper.lookup(ctx, "platform-http-router", VertxPlatformHttpRouter.class);
+            if (vertxRouter != null) {
+                factory = new VertxOAuthFactory(ctx);
+                registry.bind(OAuthFactory.class.getName(), factory);
+            } else {
+                factory = new ServletOAuthFactory(ctx);
+                registry.bind(OAuthFactory.class.getName(), factory);
+            }
         }
         return factory;
     }
 
-    public abstract OAuth createOAuth(Exchange exchange);
+    public abstract OAuth createOAuth();
 
-    public Optional<OAuth> findOAuth(CamelContext ctx) {
-        var registry = ctx.getRegistry();
+    public Optional<OAuth> findOAuth() {
+        var registry = context.getRegistry();
         var oauth = registry.lookupByNameAndType(OAuth.class.getName(), OAuth.class);
         return Optional.ofNullable(oauth);
     }

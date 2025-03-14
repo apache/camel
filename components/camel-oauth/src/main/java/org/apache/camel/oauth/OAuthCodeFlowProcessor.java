@@ -39,8 +39,8 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
         // Find or create the OAuth instance
         //
         var oauth = findOAuth(context).orElseGet(() -> {
-            var factory = OAuthFactory.getOAuthFactory(context);
-            return factory.createOAuth(exchange);
+            var factory = OAuthFactory.lookupFactory(context);
+            return factory.createOAuth();
         });
 
         // Get or create the OAuthSession
@@ -62,7 +62,7 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
             var postLoginUrl = msg.getHeader(Exchange.HTTP_URL, String.class);
             session.putValue("OAuthPostLoginUrl", postLoginUrl);
 
-            var redirectUri = getRequiredProperty(exchange, CAMEL_OAUTH_REDIRECT_URI);
+            var redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
             var params = new OAuthCodeFlowParams().setRedirectUri(redirectUri);
             var authRequestUrl = oauth.buildCodeFlowAuthRequestUrl(params);
 

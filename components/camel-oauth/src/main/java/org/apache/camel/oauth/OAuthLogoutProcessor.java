@@ -30,11 +30,9 @@ public class OAuthLogoutProcessor extends AbstractOAuthProcessor {
         findOAuth(context).ifPresent(oauth -> {
 
             var maybeSession = oauth.getSession(exchange);
-            maybeSession.flatMap(OAuthSession::getUserProfile).ifPresent(user -> {
+            maybeSession.flatMap(OAuthSession::removeUserProfile).ifPresent(user -> {
 
-                maybeSession.get().removeUserProfile();
-
-                var postLogoutUrl = getProperty(exchange, CAMEL_OAUTH_LOGOUT_REDIRECT_URI)
+                var postLogoutUrl = getProperty(exchange.getContext(), CAMEL_OAUTH_LOGOUT_REDIRECT_URI)
                         .orElse(null);
 
                 var params = new OAuthLogoutParams()

@@ -18,8 +18,24 @@ package org.apache.camel.oauth;
 
 public enum OAuthFlowType {
     AUTH_CODE("authorization_code"),
-    CLIENT_CREDS("client_credentials");
+    CLIENT("client_credentials");
 
-    OAuthFlowType(String flowType) {
+    private final String grantType;
+
+    OAuthFlowType(String grantType) {
+        this.grantType = grantType;
+    }
+
+    public String getGrantType() {
+        return this.grantType;
+    }
+
+    public static OAuthFlowType getOAuthFlowType(String grantType) {
+        for (OAuthFlowType flow : values()) {
+            if (flow.grantType.equals(grantType)) {
+                return flow;
+            }
+        }
+        return null;
     }
 }
