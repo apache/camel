@@ -16,6 +16,9 @@
  */
 package org.apache.camel.telemetry.decorators;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
 public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
 
     @Override
@@ -28,4 +31,12 @@ public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
         return "org.apache.camel.component.http.HttpComponent";
     }
 
+    @Override
+    public String getHttpMethod(Exchange exchange, Endpoint endpoint) {
+        String methodFromParameters = HttpMethodHelper.getHttpMethodFromParameters(exchange, endpoint);
+        if (methodFromParameters != null) {
+            return methodFromParameters;
+        }
+        return super.getHttpMethod(exchange, endpoint);
+    }
 }
