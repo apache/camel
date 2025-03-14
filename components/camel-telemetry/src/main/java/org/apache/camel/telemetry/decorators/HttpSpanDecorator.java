@@ -16,25 +16,10 @@
  */
 package org.apache.camel.telemetry.decorators;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
-
-    private static final Pattern HTTP_METHOD_PATTERN = Pattern.compile("(?i)httpMethod=([A-Z]+)");
-
-    @Override
-    public String getHttpMethod(Exchange exchange, Endpoint endpoint) {
-        //this component supports the httpMethod parameter, so we try to find it first
-        String methodFromParameters = getMethodFromParameters(exchange, endpoint);
-        if (methodFromParameters != null) {
-            return methodFromParameters;
-        }
-        return super.getHttpMethod(exchange, endpoint);
-    }
 
     @Override
     public String getComponent() {
@@ -46,33 +31,12 @@ public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
         return "org.apache.camel.component.http.HttpComponent";
     }
 
-    private String getMethodFromParameters(Exchange exchange, Endpoint endpoint) {
-        String queryStringHeader = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
-        if (queryStringHeader != null) {
-            String methodFromQuery = getMethodFromQueryString(queryStringHeader);
-            if (methodFromQuery != null) {
-                return methodFromQuery;
-            }
+    @Override
+    public String getHttpMethod(Exchange exchange, Endpoint endpoint) {
+        String methodFromParameters = HttpMethodHelper.getHttpMethodFromParameters(exchange, endpoint);
+        if (methodFromParameters != null) {
+            return methodFromParameters;
         }
-
-        // try to get the httpMethod parameter from the the query string in the uri
-        int queryIndex = endpoint.getEndpointUri().indexOf('?');
-        if (queryIndex != -1) {
-            String queryString = endpoint.getEndpointUri().substring(queryIndex + 1);
-            String methodFromQuery = getMethodFromQueryString(queryString);
-            if (methodFromQuery != null) {
-                return methodFromQuery;
-            }
-        }
-        return null;
+        return super.getHttpMethod(exchange, endpoint);
     }
-
-    private static String getMethodFromQueryString(String queryString) {
-        Matcher m = HTTP_METHOD_PATTERN.matcher(queryString);
-        if (m.find()) {
-            return m.group(1);
-        }
-        return null;
-    }
-
 }
