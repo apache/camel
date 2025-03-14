@@ -182,7 +182,7 @@ TIP: See the possible options by running: `camel kubernetes export --help` for m
 
 === Kubernetes Container Health Probes
 
-The xref:components::observability-services.adoc[Observability Services] component is set by default in the project created by the export command, then the health path probes are prefixed with the `/observe` endpoint, regardless if they are Quarkus or Spring Boot.
+The Observability Services component is set by default in the project created by the export command, then the health path probes are prefixed with the `/observe` endpoint, regardless if they are Quarkus or Spring Boot.
 
 These are the HTTP Container probe endpoints.
 
