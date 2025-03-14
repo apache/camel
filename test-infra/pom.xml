@@ -77,7 +77,6 @@
         <module>camel-test-infra-ignite</module>
         <module>camel-test-infra-hashicorp-vault</module>
         <module>camel-test-infra-jetty</module>
-        <module>camel-test-infra-etcd3</module>
         <module>camel-test-infra-core</module>
         <module>camel-test-infra-opensearch</module>
         <module>camel-test-infra-smb</module>
