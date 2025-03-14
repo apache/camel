@@ -16,6 +16,9 @@
  */
 package org.apache.camel.oauth.vertx;
 
+import java.net.URL;
+
+import com.nimbusds.jose.jwk.JWKSet;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.authentication.Credentials;
@@ -26,51 +29,32 @@ import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 import io.vertx.ext.auth.oauth2.OAuth2Options;
 import io.vertx.ext.auth.oauth2.Oauth2Credentials;
 import io.vertx.ext.auth.oauth2.providers.OpenIDConnectAuth;
-import org.apache.camel.Exchange;
-import org.apache.camel.oauth.AuthCodeCredentials;
-import org.apache.camel.oauth.InMemorySessionStore;
+import org.apache.camel.CamelContext;
 import org.apache.camel.oauth.OAuth;
 import org.apache.camel.oauth.OAuthCodeFlowParams;
 import org.apache.camel.oauth.OAuthConfig;
 import org.apache.camel.oauth.OAuthException;
 import org.apache.camel.oauth.OAuthLogoutParams;
-import org.apache.camel.oauth.OAuthSessionStore;
 import org.apache.camel.oauth.UserCredentials;
 import org.apache.camel.oauth.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_PROVIDER_BASE_URI;
 import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 public class VertxOAuth extends OAuth {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
     private final Vertx vertx;
-    private final OAuthSessionStore sessionStore;
-
     private OAuth2Auth oauth2;
-    private OAuthConfig config;
 
     public VertxOAuth(Vertx vertx) {
         this.vertx = vertx;
-        this.sessionStore = new InMemorySessionStore();
     }
 
     @Override
-    public OAuthSessionStore getSessionStore() {
-        return sessionStore;
-    }
-
-    @Override
-    public OAuthConfig discoverOAuthConfig(Exchange exchange) throws OAuthException {
+    public void discoverOAuthConfig(CamelContext ctx) throws OAuthException {
         if (config == null) {
-            var baseUrl = getRequiredProperty(exchange, CAMEL_OAUTH_PROVIDER_BASE_URI);
-            var clientId = getRequiredProperty(exchange, CAMEL_OAUTH_CLIENT_ID);
-            var clientSecret = getRequiredProperty(exchange, CAMEL_OAUTH_CLIENT_SECRET);
+            var baseUrl = getRequiredProperty(ctx, CAMEL_OAUTH_BASE_URI);
+            var clientId = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_ID);
+            var clientSecret = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_SECRET);
 
             var config = new OAuthConfig()
                     .setBaseUrl(baseUrl)
@@ -87,19 +71,22 @@ public class VertxOAuth extends OAuth {
                         .toCompletionStage()
                         .toCompletableFuture()
                         .get();
+                config.setAuthorizationPath(opts.getAuthorizationPath())
+                        .setTokenPath(opts.getTokenPath())
+                        .setRevocationPath(opts.getRevocationPath())
+                        .setLogoutPath(opts.getLogoutPath())
+                        .setUserInfoPath(opts.getUserInfoPath())
+                        .setIntrospectionPath(opts.getIntrospectionPath())
+                        .setJwksPath(opts.getJwkPath());
+                var jwksPath = config.getJwksPath();
+                if (!jwksPath.isBlank()) {
+                    config.setJWKSet(JWKSet.load(new URL(jwksPath)));
+                }
             } catch (Exception ex) {
                 throw new OAuthException("Cannot discover OAuth config from: " + baseUrl, ex);
             }
-
-            config.setAuthorizationPath(opts.getAuthorizationPath())
-                    .setTokenPath(opts.getTokenPath())
-                    .setRevocationPath(opts.getRevocationPath())
-                    .setLogoutPath(opts.getLogoutPath())
-                    .setUserInfoPath(opts.getUserInfoPath())
-                    .setIntrospectionPath(opts.getIntrospectionPath());
             this.config = config;
         }
-        return config;
     }
 
     @Override
@@ -160,32 +147,9 @@ public class VertxOAuth extends OAuth {
     }
 
     @Override
-    public UserProfile tokenRequest(AuthCodeCredentials creds) throws OAuthException {
-        UserProfile userProfile = authenticate(creds);
-        return userProfile;
-    }
-
-    @Override
-    public UserProfile refresh(UserProfile user) throws OAuthException {
-
-        log.info("Refresh user: {}", user.subject());
-
-        try {
-            User vtxUser = ((VertxUserProfile) user).getVertxUser();
-            vtxUser = oauth2.refresh(vtxUser)
-                    .toCompletionStage()
-                    .toCompletableFuture()
-                    .get();
-            return new VertxUserProfile(vtxUser);
-        } catch (Exception ex) {
-            throw new OAuthException("Cannot refresh user", ex);
-        }
-    }
-
-    @Override
     public String buildLogoutRequestUrl(OAuthLogoutParams params) {
 
-        var user = ((VertxUserProfile) params.getUser()).getVertxUser();
+        var user = ((VertxUserProfile) params.getUserProfile()).getVertxUser();
         String endSessionURL = oauth2.endSessionURL(user);
 
         var postLogoutUrl = params.getRedirectUri();

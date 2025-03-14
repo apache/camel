@@ -40,8 +40,8 @@ public class OAuthClientCredentialsProcessor extends AbstractOAuthProcessor {
         // Find or create the OAuth instance
         //
         var oauth = findOAuth(context).orElseGet(() -> {
-            var factory = OAuthFactory.getOAuthFactory(context);
-            return factory.createOAuth(exchange);
+            var factory = OAuthFactory.lookupFactory(context);
+            return factory.createOAuth();
         });
 
         // Get or create the OAuthSession
@@ -60,8 +60,8 @@ public class OAuthClientCredentialsProcessor extends AbstractOAuthProcessor {
         //
         if (session.getUserProfile().isEmpty()) {
 
-            var clientId = getRequiredProperty(exchange, CAMEL_OAUTH_CLIENT_ID);
-            var clientSecret = getRequiredProperty(exchange, CAMEL_OAUTH_CLIENT_SECRET);
+            var clientId = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_ID);
+            var clientSecret = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_SECRET);
 
             var userProfile = oauth.authenticate(new ClientCredentials()
                     .setClientSecret(clientSecret)
