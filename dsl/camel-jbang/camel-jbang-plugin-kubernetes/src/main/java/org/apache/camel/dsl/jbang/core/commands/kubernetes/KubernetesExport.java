@@ -331,6 +331,8 @@ public class KubernetesExport extends Export {
         var jkubeVersion = jkubeMavenPluginVersion(settings, mapBuildProperties());
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
+        setContainerHealthPaths();
+
         // Run export
         int exit = super.export();
         if (exit != 0) {
@@ -453,6 +455,30 @@ public class KubernetesExport extends Export {
         }
 
         return null;
+    }
+
+    private void setContainerHealthPaths() {
+        // the camel-observability-services artifact is set in the pom template
+        // it renames the container health base path to /observe, so this has to be in the container health probes http path
+        // only quarkus and sb runtimes, because there is no published health endpoints when using runtime=main
+        if (RuntimeType.quarkus == runtime) {
+            // jkube reads quarkus properties to set the container health probes path
+            buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
+        } else if (RuntimeType.springBoot == runtime) {
+            List<String> newProps = new ArrayList<>();
+            // jkube reads spring-boot properties to set the kubernetes container health probes path
+            // in this case, jkube reads from the application.properties and not from the build properties in pom.xml
+            newProps.add("management.endpoints.web.base-path=/observe");
+            // jkube uses the old property to enable the readiness/liveness probes
+            // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
+            newProps.add("management.health.probes.enabled=true");
+            if (applicationProperties == null) {
+                applicationProperties = newProps.toArray(new String[newProps.size()]);
+            } else {
+                newProps.addAll(Arrays.asList(applicationProperties));
+                applicationProperties = newProps.toArray(new String[newProps.size()]);
+            }
+        }
     }
 
     private String extractImageGroup(String image) {

@@ -69,6 +69,10 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));
         Assertions.assertNull(props.get("jkube.container-image.platforms"));
+
+        if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe/health", props.get("quarkus.smallrye-health.root-path"));
+        }
     }
 
     @ParameterizedTest
@@ -160,6 +164,11 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
         Assertions.assertEquals("bar", applicationProperties.get("foo"));
         Assertions.assertEquals("baz", applicationProperties.get("bar"));
+
+        if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertEquals("/observe", applicationProperties.get("management.endpoints.web.base-path"));
+            Assertions.assertEquals("true", applicationProperties.get("management.health.probes.enabled"));
+        }
     }
 
     @ParameterizedTest
