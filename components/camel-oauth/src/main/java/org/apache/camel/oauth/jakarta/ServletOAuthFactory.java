@@ -14,17 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.oauth;
+package org.apache.camel.oauth.jakarta;
 
-public class UserCredentials extends Credentials {
+import org.apache.camel.CamelContext;
+import org.apache.camel.oauth.OAuth;
+import org.apache.camel.oauth.OAuthFactory;
 
-    private final UserProfile userProfile;
+public final class ServletOAuthFactory extends OAuthFactory {
 
-    public UserCredentials(UserProfile userProfile) {
-        this.userProfile = userProfile;
+    public ServletOAuthFactory(CamelContext ctx) {
+        super(ctx);
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
+    public OAuth createOAuth() {
+        var oauth = new ServletOAuth();
+        oauth.discoverOAuthConfig(context);
+        var registry = context.getRegistry();
+        registry.bind(OAuth.class.getName(), oauth);
+        return oauth;
     }
 }
