@@ -19,17 +19,16 @@ package org.apache.camel.oauth;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
 
 public final class OAuthProperties {
 
-    public static Optional<String> getProperty(Exchange exchange, String key) {
-        var ctx = exchange.getContext();
+    public static Optional<String> getProperty(CamelContext ctx, String key) {
         return ctx.getPropertiesComponent().resolveProperty(key);
     }
 
-    public static String getRequiredProperty(Exchange exchange, String key) {
-        Optional<String> optval = getProperty(exchange, key);
+    public static String getRequiredProperty(CamelContext ctx, String key) {
+        Optional<String> optval = getProperty(ctx, key);
         return optval.orElseThrow(() -> new NoSuchElementException(key));
     }
 }

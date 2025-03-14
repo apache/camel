@@ -16,10 +16,14 @@
  */
 package org.apache.camel.oauth;
 
-public class ClientCredentials implements Credentials {
+public class ClientCredentials extends Credentials {
 
     private String clientId;
     private String clientSecret;
+
+    public ClientCredentials() {
+        setFlowType(OAuthFlowType.CLIENT);
+    }
 
     public String getClientId() {
         return clientId;

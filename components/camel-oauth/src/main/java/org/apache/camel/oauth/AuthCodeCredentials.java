@@ -16,10 +16,15 @@
  */
 package org.apache.camel.oauth;
 
-public class AuthCodeCredentials implements Credentials {
+public class AuthCodeCredentials extends Credentials {
 
     private String code;
+    private String state;
     private String redirectUri;
+
+    public AuthCodeCredentials() {
+        setFlowType(OAuthFlowType.AUTH_CODE);
+    }
 
     public String getCode() {
         return code;
@@ -27,6 +32,15 @@ public class AuthCodeCredentials implements Credentials {
 
     public AuthCodeCredentials setCode(String code) {
         this.code = code;
+        return this;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public AuthCodeCredentials setState(String state) {
+        this.state = state;
         return this;
     }
 
