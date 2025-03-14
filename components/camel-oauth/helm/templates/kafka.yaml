@@ -1,0 +1,176 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+{{- with .Values.deployments.kafka }}
+---
+
+# Kafka Scripts ConfigMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-scripts
+data:
+  functions.sh: |-
+    {{- $.Files.Get "scripts/functions.sh" | nindent 4 }}
+  simple_kafka_config.sh: |-
+    {{- $.Files.Get "scripts/simple_kafka_config.sh" | nindent 4 }}
+  start.sh: |-
+    {{- $.Files.Get "scripts/start.sh" | nindent 4 }}
+
+# Kafka Deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  labels:
+    app.kubernetes.io/name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kafka
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kafka
+    spec:
+      initContainers:
+        - name: kafka-init
+          image: busybox
+          command: ["sh", "-c", "cp /tmp/kafka/scripts/* /opt/kafka/scripts/ && chmod +x /opt/kafka/scripts/*.sh"]
+          volumeMounts:
+            - name: kafka-scripts-configmap
+              mountPath: /tmp/kafka/scripts
+            - name: kafka-scripts
+              mountPath: /opt/kafka/scripts
+      containers:
+        - name: kafka
+          image: quay.io/strimzi/kafka:latest-kafka-3.9.0
+          command: [ "/opt/kafka/scripts/start.sh", "--kraft" ]
+          ports:
+            - containerPort: 9091
+            - containerPort: 9092
+            - containerPort: 9093
+            - containerPort: 9094
+          env:
+            # KRaft settings
+            - name: KAFKA_NODE_ID
+              value: "0"
+            - name: KAFKA_PROCESS_ROLES
+              value: "broker,controller"
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: "0@kafka:9091"
+
+            # Listeners & Security
+            - name: KAFKA_LISTENERS
+              value: "CONTROLLER://:9091,INTERNPLAIN://:9092,INTERNSECURE://:9093,EXTERNSECURE://:9194"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "INTERNPLAIN://:9092,INTERNSECURE://kafka:9093,EXTERNSECURE://127.0.0.1:{{ $.Values.kafkaNodePort }}"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,INTERNPLAIN:PLAINTEXT,INTERNSECURE:SASL_PLAINTEXT,EXTERNSECURE:SASL_PLAINTEXT"
+            - name: KAFKA_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "INTERNPLAIN"
+
+            - name: KAFKA_LISTENER_NAME_INTERNSECURE_SASL_ENABLED_MECHANISMS
+              value: "OAUTHBEARER"
+            - name: KAFKA_LISTENER_NAME_EXTERNSECURE_SASL_ENABLED_MECHANISMS
+              value: "OAUTHBEARER"
+
+            - name: KAFKA_LISTENER_NAME_INTERNSECURE_OAUTHBEARER_SASL_JAAS_CONFIG
+              value: |-
+                org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
+                oauth.jwks.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/certs"
+                oauth.token.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/token"
+                oauth.check.issuer=false
+                unsecuredLoginStringClaim_sub="unused";
+            - name: KAFKA_LISTENER_NAME_EXTERNSECURE_OAUTHBEARER_SASL_JAAS_CONFIG
+              value: |-
+                org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
+                oauth.jwks.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/certs"
+                oauth.token.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/token"
+                oauth.check.issuer=false
+                unsecuredLoginStringClaim_sub="unused";
+
+            - name: KAFKA_LISTENER_NAME_INTERNSECURE_OAUTHBEARER_SASL_SERVER_CALLBACK_HANDLER_CLASS
+              value: "io.strimzi.kafka.oauth.server.JaasServerOauthValidatorCallbackHandler"
+            - name: KAFKA_LISTENER_NAME_EXTERNSECURE_OAUTHBEARER_SASL_SERVER_CALLBACK_HANDLER_CLASS
+              value: "io.strimzi.kafka.oauth.server.JaasServerOauthValidatorCallbackHandler"
+
+            - name: KAFKA_PRINCIPAL_BUILDER_CLASS
+              value: "io.strimzi.kafka.oauth.server.OAuthKafkaPrincipalBuilder"
+
+          volumeMounts:
+            - name: kafka-logs
+              mountPath: /opt/kafka/logs
+            - name: kafka-scripts
+              mountPath: /opt/kafka/scripts
+          securityContext:
+            runAsUser: 1001   # The UID of the kafka user
+            runAsGroup: 0     # The GID of the root group (since kafka is in root group)
+      volumes:
+        - name: kafka-scripts-configmap
+          configMap:
+            name: kafka-scripts
+        - name: kafka-logs
+          emptyDir: {}
+        - name: kafka-scripts
+          emptyDir: {}
+
+# Kafka Internal Services
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels:
+    app.kubernetes.io/name: kafka
+spec:
+  ports:
+    - name: ctrl
+      port: 9091
+      targetPort: 9091
+    - name: plain
+      port: 9092
+      targetPort: 9092
+    - name: secure
+      port: 9093
+      targetPort: 9093
+  selector:
+    app.kubernetes.io/name: kafka
+
+# Kafka External Services
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-extern
+  labels:
+    app.kubernetes.io/name: kafka-extern
+spec:
+  type: NodePort
+  ports:
+    - port: 9094
+      targetPort: 9094
+      nodePort: {{ $.Values.kafkaNodePort }}
+  selector:
+    app.kubernetes.io/name: kafka
+---
+{{- end }}

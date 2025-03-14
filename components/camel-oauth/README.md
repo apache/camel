@@ -21,33 +21,49 @@ Respective jbang projects live [here|https://github.com/tdiesler/camel-cloud-exa
 
 For Kafka we use strimzi kafka-oauth-client directly, which is documented [here|https://github.com/tdiesler/camel-cloud-examples/blob/main/camel-main/kafka-oauth/kafka-oauth-route.yaml].
 
-## Keycloak as the Identity Provider
+## Ingress with Traefik
 
-Currently, we use Keycloak as OIDC Provider - Hashicorp Vault is underway. 
+An Identity Provider should only be accessed with transport layer security (TLS) in place. This is in the nature
+of communicating privacy/security sensitive data over any communication channel.
 
-### Keycloak Certificate
+Therefore, we place Keycloak behind an TLS terminating proxy (Traefik). It has the advantage that any traffic 
+(i.e. not only for Keycloak) can be secured at ingress level.
+
+https://doc.traefik.io/traefik/
+
+```
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+helm install traefik traefik/traefik
+```
+
+## Ingress TLS Certificate
 
 ```
 # Generate TLS Certificate
-openssl req -x509 -newkey rsa:4096 -keyout ./helm/etc/keycloak.key -out ./helm/etc/keycloak.crt -days 365 -nodes -config ./helm/etc/san.cnf
+openssl req -x509 -newkey rsa:4096 -keyout ./helm/etc/cluster.key -out ./helm/etc/cluster.crt -days 365 -nodes -config ./helm/etc/san.cnf
 
 # Import TLS Certificate to Java Keystore (i.e. trust the certificate)
-sudo keytool -import -alias keycloak -file ./helm/etc/keycloak.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+sudo keytool -import -alias keycloak -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 
 # Remove TLS Certificate from Java Keystore
 sudo keytool -delete -alias keycloak -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 ```
 
-### Keycloak on Kubernetes
+### Verify with TLS access
 
-Deploy Keycloak as Identity Provider
+```
+helm upgrade --install traefik-secret ./helm -f ./helm/values-traefik-secret.yaml
+helm upgrade --install whoami ./helm -f ./helm/values-whoami.yaml
+```
 
-Admin:  admin/admin
-User:   alice/alice
+https://cluster.local/who
 
-https://keycloak.local:30443/
+## Keycloak as the Identity Provider
 
-Host 'keycloak.local' should be mapped (/etc/hosts) to your local k8s IP
+Currently, we use Keycloak as OIDC Provider - Hashicorp Vault is underway.
+
+Keycloak can be configured/deployed via Helm like this...
 
 ```
 kubectl config use-context docker-desktop \
@@ -58,12 +74,17 @@ kubectl config use-context docker-desktop \
 helm uninstall keycloak
 ```
 
+https://keycloak.local/kc
+
+Admin:  admin/admin
+User:   alice/alice
+
 ### Keycloak Admin Tasks
 
-Run this when realm 'camel' if not already imported
+Create realm 'camel' if not already imported
 
 ```
-kcadm config credentials --server https://keycloak.local:30443 --realm master --user admin --password admin
+kcadm config credentials --server https://keycloak.local/kc --realm master --user admin --password admin
 
 kcadm create realms -s realm=camel -s enabled=true
 
@@ -92,10 +113,35 @@ kcadm set-password -r camel --userid=${userid} --new-password alice
 kcadm delete realms/camel -r master
 ```
 
-Show client/user configuration
+Show realm, client, user configuration
 
 ```
+kcadm get realms | jq -r '.[] | select(.realm=="camel")'
+
 kcadm get clients -r camel | jq -r '.[] | select(.clientId=="camel-client")'
 
 kcadm get users -r camel | jq -r '.[] | select(.username=="alice")'
+```
+
+## Kafka on Kubernetes
+
+### Extract the Keycloak cert
+
+In this configuration, Keycloak is deployed behind Traefik, which is our TLS terminating proxy.
+The domain `keycloak.local` is mapped to an actual IP in `/etc/hosts`.
+
+```
+echo -n | openssl s_client -connect keycloak.local:443 -servername keycloak.local | openssl x509 > keycloak.crt
+cat keycloak.crt | openssl x509 -noout -text
+```
+
+Deploy a single node Kafka cluster
+
+```
+kubectl config use-context docker-desktop \
+    && helm upgrade --install kafka ./helm -f ./helm/values-kafka.yaml \
+    && kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=kafka --timeout=20s \
+    && kubectl logs --tail 400 -f -l app.kubernetes.io/name=kafka
+
+helm uninstall kafka
 ```

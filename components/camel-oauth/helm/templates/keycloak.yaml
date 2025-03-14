@@ -29,24 +29,8 @@ metadata:
     app.kubernetes.io/release: {{ $.Release.Name }}
     app.kubernetes.io/revision: '{{ $.Release.Revision }}'
 data:
-  demo-realm.json: |-
+  camel-realm.json: |-
     {{- $.Files.Get "etc/camel-realm.json" | nindent 4 }}
-
-# Keycloak TLS Secret
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: keycloak-tls
-  labels:
-    app.kubernetes.io/name: keycloak
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/release: {{ $.Release.Name }}
-    app.kubernetes.io/revision: '{{ $.Release.Revision }}'
-type: kubernetes.io/tls
-data:
-  tls.crt: {{ $.Files.Get "etc/keycloak.crt" | b64enc }}
-  tls.key: {{ $.Files.Get "etc/keycloak.key" | b64enc }}
 
 # Keycloak Deployment
 ---
@@ -77,10 +61,11 @@ spec:
           image: quay.io/keycloak/keycloak:{{ .version }}
           args:
             - "start-dev"
-            - "--https-port=8443"
-            - "--https-certificate-file=/etc/x509/https/tls.crt"
-            - "--https-certificate-key-file=/etc/x509/https/tls.key"
             - "--import-realm"
+            - "--http-enabled=true"
+            - "--http-relative-path=/kc"
+            - "--proxy-headers=xforwarded"
+            - "--proxy-protocol-enabled=false"
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: admin
@@ -88,18 +73,11 @@ spec:
               value: admin
           ports:
             - containerPort: 8080
-            - containerPort: 8443
           volumeMounts:
-            - name: keycloak-tls
-              mountPath: /etc/x509/https
-              readOnly: true
             - name: keycloak-realm-config
               mountPath: /opt/keycloak/data/import
               readOnly: true
       volumes:
-        - name: keycloak-tls
-          secret:
-            secretName: keycloak-tls
         - name: keycloak-realm-config
           configMap:
             name: keycloak-realm-config
@@ -113,15 +91,48 @@ metadata:
   labels:
     app.kubernetes.io/name: keycloak
 spec:
-  type: NodePort
   ports:
     - name: http
       port: 8080
-      nodePort: {{ .nodePortHttp }}
-    - name: https
-      port: 8443
-      nodePort: {{ .nodePortHttps }}
   selector:
     app.kubernetes.io/name: keycloak
+
+# Keycloak Ingress Http
+#---
+#apiVersion: traefik.io/v1alpha1
+#kind: IngressRoute
+#metadata:
+#  name: keycloak-http
+#  labels:
+#    app.kubernetes.io/name: keycloak-http
+#spec:
+#  entryPoints:
+#    - web
+#  routes:
+#    - match: PathPrefix(`/kc`)
+#      kind: Rule
+#      services:
+#        - name: keycloak
+#          port: 8080
+
+# Keycloak Ingress Https
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak-https
+  labels:
+    app.kubernetes.io/name: keycloak-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: PathPrefix(`/kc`)
+      kind: Rule
+      services:
+        - name: keycloak
+          port: 8080
+  tls:
+    secretName: traefik-tls
 ---
 {{- end }}

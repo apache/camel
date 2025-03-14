@@ -15,7 +15,8 @@
 # limitations under the License.
 #
 
-apiVersion: v2
-name: camel-oauth-infra
-description: A Helm chart to deploy Keycloak
-version: 0.1.0
+deployments:
+
+  whoami:
+    name: "whoami"
+
