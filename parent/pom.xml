@@ -232,7 +232,7 @@
 	<huaweicloud-sdk-version>3.1.139</huaweicloud-sdk-version>
 	<ibm-secrets-manager-version>2.0.20</ibm-secrets-manager-version>
         <ical4j-version>4.1.1</ical4j-version>
-        <icu4j-version>76.1</icu4j-version>
+        <icu4j-version>77.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
         <infinispan-version>15.1.7.Final</infinispan-version>
