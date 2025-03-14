@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "pinecone:rag",
+    "title": "Pinecone (Rag)",
+    "description": "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.pinecone.transform.PineconeReverseEmbeddingsDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-pinecone",
+    "version": "4.11.0-SNAPSHOT"
+  }
+}
+
