@@ -31,7 +31,7 @@ import org.apache.camel.spi.Transformer;
  * Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG
  */
 @DataTypeTransformer(name = "pinecone:rag",
-        description = "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG")
+                     description = "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG")
 public class PineconeReverseEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) throws Exception {
