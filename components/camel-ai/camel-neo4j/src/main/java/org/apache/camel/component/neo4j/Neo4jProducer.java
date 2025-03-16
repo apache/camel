@@ -223,7 +223,7 @@ public class Neo4jProducer extends DefaultProducer {
                                      "ON %s.embedding\n" +
                                      "OPTIONS { indexConfig: {\n" +
                                      " `vector.dimensions`: %s,\n" +
-                                     " `vector.similarity_function`: 'cosine'\n" +
+                                     " `vector.similarity_function`: '%s'\n" +
                                      "}}",
                 vectorIndexName, alias, label, alias, dimension, similarityFunction.name());
 
