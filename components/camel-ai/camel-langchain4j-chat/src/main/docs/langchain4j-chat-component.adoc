@@ -33,7 +33,7 @@ for this component:
 == URI format
 
 ----
-langchain4j-chat:chatIdId[?options]
+langchain4j-chat:chatId[?options]
 ----
 
 Where *chatId* can be any string to uniquely identify the endpoint
