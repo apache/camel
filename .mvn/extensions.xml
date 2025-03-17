@@ -10,9 +10,10 @@
         <artifactId>os-detector-maven-plugin</artifactId>
         <version>0.6.0</version>
     </extension>
-    <extension>
-        <groupId>com.gradle</groupId>
-        <artifactId>develocity-maven-extension</artifactId>
-        <version>1.23.2</version>
-    </extension>
+<!-- Temporarily disabled due to INFRA-26647 -->
+<!--    <extension>-->
+<!--        <groupId>com.gradle</groupId>-->
+<!--        <artifactId>develocity-maven-extension</artifactId>-->
+<!--        <version>1.23.2</version>-->
+<!--    </extension>-->
 </extensions>
