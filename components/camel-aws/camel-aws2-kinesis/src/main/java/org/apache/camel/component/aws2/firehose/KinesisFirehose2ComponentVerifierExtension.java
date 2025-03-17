@@ -77,7 +77,7 @@ public class KinesisFirehose2ComponentVerifierExtension extends DefaultComponent
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             FirehoseClientBuilder clientBuilder = FirehoseClient.builder();
-            try(FirehoseClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+            try (FirehoseClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
                     .region(Region.of(configuration.getRegion())).build()) {
                 client.listDeliveryStreams();
             }
