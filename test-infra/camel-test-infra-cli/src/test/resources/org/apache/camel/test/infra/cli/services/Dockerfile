@@ -54,7 +54,6 @@ ENV JAVA_HOME=/usr/lib/jvm/java
 RUN echo "Installing JBang..."
 RUN curl -Ls https://sh.jbang.dev | bash -s - app setup \
     && source ~/.bashrc \
-    && jbang version --update \
     && jbang trust add https://github.com/$CAMEL_REPO/ \
 
 RUN echo "Using JBang $CAMEL_JBANG_VERSION version from $CAMEL_REPO/$CAMEL_REF"
@@ -80,10 +79,14 @@ RUN echo "jbang:$SSH_PASSWORD" | chpasswd
 RUN chown jbang /opt/entrypoint.sh \
     && chmod +x /opt/entrypoint.sh
 
-RUN echo "Clearing JBang cache"
-RUN jbang cache clear
-
 EXPOSE 22
 
 USER jbang
+
+RUN echo "Updating jbang" \
+    && jbang version --update
+
+RUN echo "Clearing JBang cache" \
+    && jbang cache clear
+
 ENTRYPOINT ["/opt/entrypoint.sh"]
