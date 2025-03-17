@@ -317,7 +317,7 @@
         <jt400-version>21.0.0</jt400-version>
         <jte-version>3.1.16</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
-        <junit-jupiter-version>5.12.0</junit-jupiter-version>
+        <junit-jupiter-version>5.12.1</junit-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
         <jxmpp-version>1.1.0</jxmpp-version>
         <jython-version>2.7.4</jython-version>
