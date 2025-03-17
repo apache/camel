@@ -136,3 +136,14 @@ stepCollector.setIgnoreStepEvents(false);
 //Add the Event Notifier to the Camel Context
 context.getManagementStrategy().addEventNotifier(stepCollector);
 ----
+
+== Event Timestamps
+
+By default, event timestamps are not included and the getTimestamp() method returns 0. 
+
+Timestamps can be enabled from the CamelContext as follows:
+
+[source,java]
+----
+context.getManagementStrategy().getEventFactory().setTimestampEnabled(true);
+----
