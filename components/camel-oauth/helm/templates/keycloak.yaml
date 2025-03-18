@@ -97,32 +97,14 @@ spec:
   selector:
     app.kubernetes.io/name: keycloak
 
-# Keycloak Ingress Http
-#---
-#apiVersion: traefik.io/v1alpha1
-#kind: IngressRoute
-#metadata:
-#  name: keycloak-http
-#  labels:
-#    app.kubernetes.io/name: keycloak-http
-#spec:
-#  entryPoints:
-#    - web
-#  routes:
-#    - match: PathPrefix(`/kc`)
-#      kind: Rule
-#      services:
-#        - name: keycloak
-#          port: 8080
-
 # Keycloak Ingress Https
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: keycloak-https
+  name: keycloak
   labels:
-    app.kubernetes.io/name: keycloak-https
+    app.kubernetes.io/name: keycloak
 spec:
   entryPoints:
     - websecure
@@ -134,5 +116,6 @@ spec:
           port: 8080
   tls:
     secretName: traefik-tls
+
 ---
 {{- end }}
