@@ -644,7 +644,7 @@ public class AS2Configuration {
     }
 
     public String getMdnAccessToken() {
-        return accessToken;
+        return mdnAccessToken;
     }
 
     /**
