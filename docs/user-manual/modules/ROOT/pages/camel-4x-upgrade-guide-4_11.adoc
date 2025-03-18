@@ -108,3 +108,7 @@ on some databases. The old behaviour can be restored by setting the `batchAutoCo
 === camel-etcd3
 
 This deprecated component was removed in this release.
+
+=== camel-platform-http
+
+The `org.apache.camel.component.platform.http.PlatformHttpHeaderFilterStrategy` class has been removed. Use the `org.apache.camel.http.base.HttpHeaderFilterStrategy`
