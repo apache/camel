@@ -112,3 +112,7 @@ This deprecated component was removed in this release.
 === camel-platform-http
 
 The `org.apache.camel.component.platform.http.PlatformHttpHeaderFilterStrategy` class has been removed. Use the `org.apache.camel.http.base.HttpHeaderFilterStrategy`
+
+=== camel-undertow
+
+The `org.apache.camel.component.undertow.UndertowHeaderFilterStrategy` class has been deprecated. The default header filter strategy is now the `org.apache.camel.http.base.HttpHeaderFilterStrategy`
