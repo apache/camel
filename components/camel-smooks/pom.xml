@@ -66,7 +66,6 @@
         <dependency>
             <groupId>org.smooks.cartridges.edi</groupId>
             <artifactId>smooks-edi-cartridge</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.smooks</groupId>
