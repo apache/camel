@@ -75,9 +75,10 @@ public class KMS2ComponentVerifierExtension extends DefaultComponentVerifierExte
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             KmsClientBuilder clientBuilder = KmsClient.builder();
-            KmsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                    .region(Region.of(configuration.getRegion())).build();
-            client.listKeys();
+            try (KmsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build()) {
+                client.listKeys();
+            }
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder
                     = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())

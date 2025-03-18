@@ -19,6 +19,10 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.http.HttpUtil;
 
+/**
+ *
+ * @deprecated use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy} instead.
+ */
 public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public UndertowHeaderFilterStrategy() {
@@ -33,5 +37,6 @@ public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // filter headers begin with "Camel" or "org.apache.camel"
         // must ignore case for Http based transports
         setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }

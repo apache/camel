@@ -198,11 +198,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-etcd3</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-opensearch</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -452,12 +447,6 @@
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-hashicorp-vault</artifactId>
-                                    </dependency>
-                                </fileSet>
-                                <fileSet>
-                                    <dependency>
-                                        <groupId>org.apache.camel</groupId>
-                                        <artifactId>camel-test-infra-etcd3</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>

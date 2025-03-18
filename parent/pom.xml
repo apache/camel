@@ -58,7 +58,7 @@
         <!-- dependency versions -->
         <activemq-version>5.19.0</activemq-version>
         <activemq6-version>6.1.6</activemq6-version>
-        <activemq-artemis-version>2.39.0</activemq-artemis-version>
+        <activemq-artemis-version>2.40.0</activemq-artemis-version>
         <amazon-kinesis-client-version>2.6.0</amazon-kinesis-client-version>
         <angus-mail-version>2.0.3</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
@@ -76,7 +76,7 @@
         <avro-ipc-jetty-version>1.12.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.0</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.31.1</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.31.2</aws-java-sdk2-version>
         <aws-xray-version>2.18.2</aws-xray-version>
         <azure-sdk-bom-version>1.2.32</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.29</azure-storage-blob-changefeed-version>
@@ -134,7 +134,7 @@
         <debezium-mysql-connector-version>9.2.0</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
-        <directory-watcher-version>0.18.0</directory-watcher-version>
+        <directory-watcher-version>0.19.0</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.6.3</dnsjava-version>
         <djl-version>0.32.0</djl-version>
@@ -194,10 +194,10 @@
         <google-cloud-core-version>2.53.1</google-cloud-core-version>
         <google-cloud-functions-version>2.61.0</google-cloud-functions-version>
         <google-cloud-http-client-version>1.46.3</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.137.1</google-cloud-pubsub-version>
+        <google-cloud-pubsub-version>1.138.0</google-cloud-pubsub-version>
         <google-cloud-pubsublite-version>1.15.4</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.59.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.49.0</google-cloud-storage-version>
+        <google-cloud-storage-version>2.50.0</google-cloud-storage-version>
         <graaljs-version>24.1.2</graaljs-version>
         <graphql-java-version>22.3</graphql-java-version>
         <greenmail-version>2.1.3</greenmail-version>
@@ -251,7 +251,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>3.2.0</java-util-version>
-        <jnats-version>2.20.5</jnats-version>
+        <jnats-version>2.20.6</jnats-version>
         <javacc-maven-plugin-version>3.1.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
@@ -280,8 +280,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
-        <jetcd-version>0.8.5</jetcd-version>
-        <jetty-version>12.0.17</jetty-version>
+        <jetty-version>12.0.18</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -374,7 +373,7 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.17</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockito-version>5.16.0</mockito-version>
+        <mockito-version>5.16.1</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.3.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
@@ -406,8 +405,8 @@
         <optaplanner-version>10.0.0</optaplanner-version>
         <paho-version>1.2.5</paho-version>
         <parson-version>1.1.7</parson-version>
-        <parquet-common-version>1.15.0</parquet-common-version>
-        <parquet-avro-version>1.15.0</parquet-avro-version>
+        <parquet-common-version>1.15.1</parquet-common-version>
+        <parquet-avro-version>1.15.1</parquet-avro-version>
         <pdfbox-version>3.0.4</pdfbox-version>
         <pgjdbc-driver-version>42.7.5</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
@@ -423,7 +422,7 @@
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.5</protobuf-version>
-        <protobuf-maven-plugin-version>2.11.0</protobuf-maven-plugin-version>
+        <protobuf-maven-plugin-version>2.12.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>5.0.12.Final</protostream-version>
         <prowide-version>SRU2024-10.2.6</prowide-version>
@@ -438,7 +437,7 @@
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.7.4</reactor-version>
         <reactor-netty-version>1.2.4</reactor-netty-version>
-        <redisson-version>3.45.0</redisson-version>
+        <redisson-version>3.45.1</redisson-version>
         <resilience4j-version>2.3.0</resilience4j-version>
         <rest-assured-version>5.5.1</rest-assured-version>
         <roaster-version>2.30.1.Final</roaster-version>
@@ -472,8 +471,8 @@
         <spring-ldap-version>3.2.11</spring-ldap-version>
         <spring-vault-core-version>3.1.2</spring-vault-core-version>
         <spring-version>6.2.4</spring-version>
-        <spring-rabbitmq-version>3.2.3</spring-rabbitmq-version>
-        <spring-security-version>6.4.3</spring-security-version>
+        <spring-rabbitmq-version>3.2.4</spring-rabbitmq-version>
+        <spring-security-version>6.4.4</spring-security-version>
         <spring-ws-version>4.0.11</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
@@ -520,7 +519,7 @@
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.4</yasson-version>
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
-        <zeebe-version>8.6.11</zeebe-version>
+        <zeebe-version>8.6.12</zeebe-version>
         <zendesk-client-version>1.1.1</zendesk-client-version>
         <zookeeper-version>3.9.3</zookeeper-version>
         <zxing-version>3.5.3</zxing-version>
@@ -1261,11 +1260,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-elytron</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-etcd3</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

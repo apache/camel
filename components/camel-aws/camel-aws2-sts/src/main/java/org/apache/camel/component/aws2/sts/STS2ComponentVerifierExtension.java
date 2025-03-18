@@ -76,9 +76,10 @@ public class STS2ComponentVerifierExtension extends DefaultComponentVerifierExte
             }
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             StsClientBuilder clientBuilder = StsClient.builder();
-            StsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                    .region(Region.of(configuration.getRegion())).build();
-            client.serviceName();
+            try (StsClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build()) {
+                client.serviceName();
+            }
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder
                     = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
