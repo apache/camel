@@ -123,9 +123,9 @@ public class AS2Configuration {
     private Integer asyncMdnPortNumber;
     @UriParam
     private String receiptDeliveryOption;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "security", secret = true)
     private String accessToken;
@@ -651,6 +651,6 @@ public class AS2Configuration {
      * The access token that is used by the server when it sends an async MDN.
      */
     public void setMdnAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+        this.mdnAccessToken = accessToken;
     }
 }
