@@ -24,6 +24,7 @@ import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.camel.component.as2.api.protocol.RequestAsynchronousMDN;
+import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
@@ -89,14 +90,23 @@ public class AS2AsynchronousMDNManager {
     private Certificate[] signingCertificateChain;
     @SuppressWarnings("unused")
     private PrivateKey signingPrivateKey;
+    private String userName;
+    private String password;
+    private String accessToken;
 
     public AS2AsynchronousMDNManager(String as2Version,
                                      String userAgent,
                                      String senderFQDN,
                                      Certificate[] signingCertificateChain,
-                                     PrivateKey signingPrivateKey) {
+                                     PrivateKey signingPrivateKey,
+                                     String userName,
+                                     String password,
+                                     String accessToken) {
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
+        this.userName = userName;
+        this.password = password;
+        this.accessToken = accessToken;
 
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create().add(new RequestAsynchronousMDN(as2Version, senderFQDN))
@@ -131,6 +141,7 @@ public class AS2AsynchronousMDNManager {
 
             ClassicHttpRequest request = new BasicClassicHttpRequest("POST", uri);
             request.setHeader(AS2Header.CONTENT_TYPE, contentType);
+            AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
             httpContext.setAttribute(HttpCoreContext.HTTP_REQUEST, request);
             multipartMimeEntity.setMainBody(true);
             EntityUtils.setMessageEntity(request, multipartMimeEntity);

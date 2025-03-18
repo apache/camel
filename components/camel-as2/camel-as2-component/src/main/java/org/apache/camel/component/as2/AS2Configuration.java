@@ -123,6 +123,18 @@ public class AS2Configuration {
     private Integer asyncMdnPortNumber;
     @UriParam
     private String receiptDeliveryOption;
+    @UriParam(label = "security")
+    private String userName;
+    @UriParam(label = "security")
+    private String password;
+    @UriParam(label = "security", secret = true)
+    private String accessToken;
+    @UriParam(label = "security", secret = true)
+    private String mdnUserName;
+    @UriParam(label = "security", secret = true)
+    private String mdnPassword;
+    @UriParam(label = "security", secret = true)
+    private String mdnAccessToken;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -572,5 +584,73 @@ public class AS2Configuration {
      */
     public void setReceiptDeliveryOption(String receiptDeliveryOption) {
         this.receiptDeliveryOption = receiptDeliveryOption;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * The user-name that is used by the client for basic authentication. If options for basic authentication and bearer
+     * authentication are both set then basic authentication takes precedence.
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * The password that is used by the client for basic authentication.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    /**
+     * The access token that is used by the client for bearer authentication.
+     */
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getMdnUserName() {
+        return mdnUserName;
+    }
+
+    /**
+     * The user-name that is used by the server for basic authentication when it sends an async MDN. If options for
+     * basic authentication and bearer authentication are both set then basic authentication takes precedence.
+     */
+    public void setMdnUserName(String mdnUserName) {
+        this.mdnUserName = mdnUserName;
+    }
+
+    public String getMdnPassword() {
+        return mdnPassword;
+    }
+
+    /**
+     * The password that is used by the server for basic authentication when it sends an async MDN.
+     */
+    public void setMdnPassword(String mdnPassword) {
+        this.mdnPassword = mdnPassword;
+    }
+
+    public String getMdnAccessToken() {
+        return accessToken;
+    }
+
+    /**
+     * The access token that is used by the server when it sends an async MDN.
+     */
+    public void setMdnAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }
