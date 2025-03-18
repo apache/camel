@@ -608,6 +608,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The access token that is used by the client for bearer
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -722,6 +737,67 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder hostnameVerifier(String hostnameVerifier) {
             doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The access token that is used by the server when it sends an async
+         * MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnAccessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder mdnAccessToken(String mdnAccessToken) {
+            doSetProperty("mdnAccessToken", mdnAccessToken);
+            return this;
+        }
+        /**
+         * The password that is used by the server for basic authentication when
+         * it sends an async MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder mdnPassword(String mdnPassword) {
+            doSetProperty("mdnPassword", mdnPassword);
+            return this;
+        }
+        /**
+         * The user-name that is used by the server for basic authentication
+         * when it sends an async MDN. If options for basic authentication and
+         * bearer authentication are both set then basic authentication takes
+         * precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnUserName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder mdnUserName(String mdnUserName) {
+            doSetProperty("mdnUserName", mdnUserName);
+            return this;
+        }
+        /**
+         * The password that is used by the client for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -857,6 +933,22 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder sslContext(String sslContext) {
             doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * The user-name that is used by the client for basic authentication. If
+         * options for basic authentication and bearer authentication are both
+         * set then basic authentication takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -1547,6 +1639,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The access token that is used by the client for bearer
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -1661,6 +1768,67 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder hostnameVerifier(String hostnameVerifier) {
             doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The access token that is used by the server when it sends an async
+         * MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnAccessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder mdnAccessToken(String mdnAccessToken) {
+            doSetProperty("mdnAccessToken", mdnAccessToken);
+            return this;
+        }
+        /**
+         * The password that is used by the server for basic authentication when
+         * it sends an async MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder mdnPassword(String mdnPassword) {
+            doSetProperty("mdnPassword", mdnPassword);
+            return this;
+        }
+        /**
+         * The user-name that is used by the server for basic authentication
+         * when it sends an async MDN. If options for basic authentication and
+         * bearer authentication are both set then basic authentication takes
+         * precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnUserName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder mdnUserName(String mdnUserName) {
+            doSetProperty("mdnUserName", mdnUserName);
+            return this;
+        }
+        /**
+         * The password that is used by the client for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1796,6 +1964,22 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder sslContext(String sslContext) {
             doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * The user-name that is used by the client for basic authentication. If
+         * options for basic authentication and bearer authentication are both
+         * set then basic authentication takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -2467,6 +2651,21 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The access token that is used by the client for bearer
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -2581,6 +2780,67 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder hostnameVerifier(String hostnameVerifier) {
             doSetProperty("hostnameVerifier", hostnameVerifier);
+            return this;
+        }
+        /**
+         * The access token that is used by the server when it sends an async
+         * MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnAccessToken the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder mdnAccessToken(String mdnAccessToken) {
+            doSetProperty("mdnAccessToken", mdnAccessToken);
+            return this;
+        }
+        /**
+         * The password that is used by the server for basic authentication when
+         * it sends an async MDN.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnPassword the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder mdnPassword(String mdnPassword) {
+            doSetProperty("mdnPassword", mdnPassword);
+            return this;
+        }
+        /**
+         * The user-name that is used by the server for basic authentication
+         * when it sends an async MDN. If options for basic authentication and
+         * bearer authentication are both set then basic authentication takes
+         * precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param mdnUserName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder mdnUserName(String mdnUserName) {
+            doSetProperty("mdnUserName", mdnUserName);
+            return this;
+        }
+        /**
+         * The password that is used by the client for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder password(String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2716,6 +2976,22 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder sslContext(String sslContext) {
             doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * The user-name that is used by the client for basic authentication. If
+         * options for basic authentication and bearer authentication are both
+         * set then basic authentication takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
         /**
