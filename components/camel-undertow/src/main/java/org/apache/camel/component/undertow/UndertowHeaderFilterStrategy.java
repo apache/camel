@@ -19,6 +19,10 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.http.HttpUtil;
 
+/**
+ *
+ * @deprecated use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy} instead.
+ */
 public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public UndertowHeaderFilterStrategy() {
