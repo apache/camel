@@ -61,7 +61,7 @@ public class MicrometerRoutePolicyConfigurationTest extends AbstractMicrometerRo
         template.request("direct:foo", x -> {
         });
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(2, meters.size(), "additional counters does not disable");
+        assertEquals(3, meters.size(), "additional counters does not disable");
         Timer timer = (Timer) meters.stream().filter(it -> it instanceof Timer)
                 .findFirst().orElse(null);
 

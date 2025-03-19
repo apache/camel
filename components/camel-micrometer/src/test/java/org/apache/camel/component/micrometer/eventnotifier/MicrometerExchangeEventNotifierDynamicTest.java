@@ -72,7 +72,7 @@ public class MicrometerExchangeEventNotifierDynamicTest extends AbstractMicromet
         Set<MeterRegistry> set = meterRegistry.getRegistries();
         assertEquals(2, set.size());
         for (MeterRegistry mr : set) {
-            assertEquals(14, mr.getMeters().size());
+            assertEquals(15, mr.getMeters().size());
             int counter = 0;
             for (Meter m : mr.getMeters()) {
                 if (m.getId().getName().equals(MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME) &&
