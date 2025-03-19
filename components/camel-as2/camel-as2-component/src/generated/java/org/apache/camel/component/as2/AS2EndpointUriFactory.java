@@ -77,11 +77,13 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         props.add("userName");
         props.add("validateSigningCertificateChain");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(6);
         secretProps.add("accessToken");
         secretProps.add("mdnAccessToken");
         secretProps.add("mdnPassword");
         secretProps.add("mdnUserName");
+        secretProps.add("password");
+        secretProps.add("userName");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
