@@ -92,7 +92,23 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Test
     public void clientSendsBasicAuthHeader() throws Exception {
-        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, configureHeaders());
+        Map<String, Object> headers = configureNonAuthHeaders();
+        headers.put("CamelAs2.userName", USER_NAME);
+        headers.put("CamelAs2.password", PASSWORD);
+        headers.put("CamelAs2.accessToken", ACCESS_TOKEN);
+        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+
+        HttpRequest request = requestHandler.getRequest();
+        assertNotNull(request);
+        assertNotNull(request.getHeader("Authorization"));
+
+        String encodedCreds = Base64.getEncoder().encodeToString((USER_NAME + ":" + PASSWORD).getBytes());
+        assertEquals("Basic " + encodedCreds, request.getHeader("Authorization").getValue());
+    }
+
+    @Test
+    public void clientSendsBasicAuthHeaderRouteConfig() throws Exception {
+        requestBodyAndHeaders("direct://SEND2", EDI_MESSAGE, configureNonAuthHeaders());
 
         HttpRequest request = requestHandler.getRequest();
         assertNotNull(request);
@@ -105,7 +121,7 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
     // regression
     @Test
     public void clientSendsRequestMessage() {
-        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, configureHeaders());
+        requestBodyAndHeaders("direct://SEND2", EDI_MESSAGE, configureNonAuthHeaders());
 
         HttpRequest request = requestHandler.getRequest();
         assertNotNull(request);
@@ -124,7 +140,7 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
     // regression, verify that the returned mdn holds the expected entity parts
     @Test
     public void serverSendsMdnResponse() {
-        HttpEntity responseEntity = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, configureHeaders());
+        HttpEntity responseEntity = requestBodyAndHeaders("direct://SEND2", EDI_MESSAGE, configureNonAuthHeaders());
         assertNotNull(responseEntity);
         assertInstanceOf(DispositionNotificationMultipartReportEntity.class, responseEntity);
 
@@ -140,7 +156,7 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
         assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(), secondPart.getContentType());
     }
 
-    private Map<String, Object> configureHeaders() {
+    private Map<String, Object> configureNonAuthHeaders() {
         final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelAs2.requestUri", "/");
         headers.put("CamelAs2.subject", "Test Case");
@@ -153,11 +169,6 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
         headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         headers.put("CamelAs2.attachedFileName", "");
 
-        // for auth header
-        headers.put("CamelAs2.userName", USER_NAME);
-        headers.put("CamelAs2.password", PASSWORD);
-        headers.put("CamelAs2.accessToken", ACCESS_TOKEN);
-
         return headers;
     }
 
@@ -167,6 +178,11 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
             public void configure() {
                 from("direct://SEND")
                         .to("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
+
+                from("direct://SEND2")
+                        .toF("as2://client/send?userName=%s&password=%s&accessToken=%s" +
+                             "&inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m",
+                                USER_NAME, PASSWORD, ACCESS_TOKEN);
             }
         };
     }

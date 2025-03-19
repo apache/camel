@@ -83,7 +83,9 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Test
     public void clientSendsBasicAuthHeader() throws Exception {
-        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, configureHeaders());
+        Map<String, Object> headers = configureNonAuthHeaders();
+        headers.put("CamelAs2.accessToken", ACCESS_TOKEN);
+        requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
 
         HttpRequest request = requestHandler.getRequest();
         assertNotNull(request);
@@ -91,7 +93,17 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
         assertEquals("Bearer " + ACCESS_TOKEN, request.getHeader("Authorization").getValue());
     }
 
-    private Map<String, Object> configureHeaders() {
+    @Test
+    public void clientSendsBasicAuthHeaderRouteConfig() throws Exception {
+        requestBodyAndHeaders("direct://SEND2", EDI_MESSAGE, configureNonAuthHeaders());
+
+        HttpRequest request = requestHandler.getRequest();
+        assertNotNull(request);
+        assertNotNull(request.getHeader("Authorization"));
+        assertEquals("Bearer " + ACCESS_TOKEN, request.getHeader("Authorization").getValue());
+    }
+
+    private Map<String, Object> configureNonAuthHeaders() {
         final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelAs2.requestUri", "/");
         headers.put("CamelAs2.subject", "Test Case");
@@ -104,9 +116,6 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
         headers.put("CamelAs2.dispositionNotificationTo", "mrAS2@example.com");
         headers.put("CamelAs2.attachedFileName", "");
 
-        // for auth header
-        headers.put("CamelAs2.accessToken", ACCESS_TOKEN);
-
         return headers;
     }
 
@@ -116,6 +125,10 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
             public void configure() {
                 from("direct://SEND")
                         .to("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
+
+                from("direct://SEND2")
+                        .toF("as2://client/send?accessToken=%s" +
+                             "&inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m", ACCESS_TOKEN);
             }
         };
     }
