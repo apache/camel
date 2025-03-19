@@ -169,7 +169,7 @@ spec:
   ports:
     - port: 9094
       targetPort: 9094
-      nodePort: {{ $.Values.kafkaNodePort }}
+      nodePort: {{ .nodePort }}
   selector:
     app.kubernetes.io/name: kafka
 ---

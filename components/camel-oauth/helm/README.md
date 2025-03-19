@@ -28,6 +28,9 @@ Also, a Java app that wants to access Keycloak over TLS, must trust that certifi
 # Generate TLS Certificate
 openssl req -x509 -newkey rsa:4096 -keyout ./helm/etc/cluster.key -out ./helm/etc/cluster.crt -days 365 -nodes -config ./helm/etc/san.cnf
 
+# Show Certificate
+cat ./helm/etc/cluster.crt | openssl x509 -noout -text
+
 # Import TLS Certificate to Java Keystore (i.e. trust the certificate)
 sudo keytool -import -alias keycloak -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 
@@ -179,3 +182,31 @@ Most of our examples reference images that are deployed to the private registry 
 are not available in public registries). [camel-cloud-examples](https://github.com/tdiesler/camel-cloud-examples/tree/main)
 provides [Ansible playbooks](https://github.com/tdiesler/camel-cloud-examples/tree/main/ansible) that show how ton install 
 a private registry in K3S. There is also some documentation in K3S [directly](https://docs.k3s.io/installation/private-registry).
+
+
+# OpenShift
+
+First, we create a new project on the OpenShift cluster
+
+```
+oc new-project camel
+```
+
+## Installing Keycloak
+
+```
+OPENSHIFT_HOSTNAME=apps.rosa.k3vtk-sjmoe-pxo.xagb.p3.openshiftapps.com
+helm template --set openshift.hostName=${OPENSHIFT_HOSTNAME} ./helm -f ./helm/values-keycloak-openshift.yaml
+
+helm upgrade --install keycloak --namespace examples --set openshift.hostName=${OPENSHIFT_HOSTNAME} ./helm -f ./helm/values-keycloak-openshift.yaml \
+    && kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=keycloak --timeout=20s \
+    && kubectl logs --tail 400 -f -l app.kubernetes.io/name=keycloak
+
+helm uninstall keycloak
+```
+
+Verify access to the OIDC configuration
+
+```
+curl -k https://keycloak.${OPENSHIFT_HOSTNAME}/realms/camel/.well-known/openid-configuration
+```
