@@ -31,6 +31,7 @@ public class ContainerTrait extends BaseTrait {
     public static final int CONTAINER_TRAIT_ORDER = 1600;
     public static final int DEFAULT_CONTAINER_PORT = 8080;
     public static final String DEFAULT_CONTAINER_PORT_NAME = "http";
+    public static final String KNATIVE_CONTAINER_PORT_NAME = "h2c";
 
     public ContainerTrait() {
         super("container", CONTAINER_TRAIT_ORDER);
@@ -55,8 +56,11 @@ public class ContainerTrait extends BaseTrait {
         }
 
         if (containerTrait.getPort() != null || context.getService().isPresent() || context.getKnativeService().isPresent()) {
+            String portName = context.getKnativeService().isPresent()
+                    ? KNATIVE_CONTAINER_PORT_NAME
+                    : Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME);
             container.addToPorts(new ContainerPortBuilder()
-                    .withName(Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
+                    .withName(portName)
                     .withContainerPort(
                             Optional.ofNullable(containerTrait.getPort()).map(Long::intValue).orElse(DEFAULT_CONTAINER_PORT))
                     .withProtocol("TCP")
@@ -77,6 +81,18 @@ public class ContainerTrait extends BaseTrait {
             resourceRequirementsBuilder.addToLimits("cpu", new Quantity(containerTrait.getLimitCPU()));
         }
         container.withResources(resourceRequirementsBuilder.build());
+
+        io.fabric8.kubernetes.api.model.Container cc = container.build();
+        context.doWithKnativeServices(s -> s.editOrNewSpec()
+                .editOrNewTemplate()
+                .editOrNewMetadata()
+                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                .endMetadata()
+                .editOrNewSpec()
+                .addToContainers(cc)
+                .endSpec()
+                .endTemplate()
+                .endSpec());
 
         context.doWithDeployments(d -> d.editOrNewSpec()
                 .editOrNewTemplate()

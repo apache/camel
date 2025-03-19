@@ -481,6 +481,11 @@ The Knative service trait will create such a resource as part of the Kubernetes 
 
 NOTE: The `knative-service` trait is disabled by default, you need to enable the Knative service trait with `--trait knative-service.enabled=true` option. Otherwise, the Camel JBang export will always create an arbitrary Kubernetes service resource.
 
+NOTE: If you enable the knative-service trait and deploys to minikube and uses the docker builder to build the container image in the minikube registry addon, it's likely the container image published won't contain the digest value, and https://knative.dev/docs/serving/configuration/deployment/#skipping-tag-resolution[knative-serving has a verification to check the image digest], so the pod will fail to start with the error message `failed to resolve image to digest`, so for development purposes the kubernetes plugin will skip this validation by adding the property `registries-skipping-tag-resolving: localhost:5000` to the `configmap/config-deployment` in `knative-serving` namespace, if you want to disable this automatic setting, you can set the `--disable-auto` parameter to disable the automatic cluster configuration, however disabling it won't set other automatic configuration for the cluster. You may also want to manually set that property, so this plugin won't set it even with the automatic cluster detection.
+
+WARN: Currently knative-service doesn't work in OpenShift, work is underway to fix it.
+
+
 The trait offers following options for customization:
 
 [cols="2m,1m,5a"]
