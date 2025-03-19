@@ -58,6 +58,8 @@ public final class MicrometerConstants {
     public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "camel.routes.running";
     public static final String DEFAULT_CAMEL_ROUTES_RELOADED = "camel.routes.reloaded";
 
+    public static final String APP_INFO_METER_NAME = "app.info";
+
     public static final String ROUTE_ID_TAG = "routeId";
     public static final String NODE_ID_TAG = "nodeId";
     public static final String FAILED_TAG = "failed";

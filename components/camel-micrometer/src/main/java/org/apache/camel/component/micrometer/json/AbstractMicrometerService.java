@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.micrometer.json;
 
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
@@ -32,11 +34,14 @@ import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 
+import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
+
 public class AbstractMicrometerService extends ServiceSupport {
 
     private CamelContext camelContext;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint = true;
+    private boolean skipCamelInfo = false;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private Iterable<Tag> matchingTags = Tags.empty();
     private Predicate<String> matchingNames;
@@ -65,6 +70,14 @@ public class AbstractMicrometerService extends ServiceSupport {
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
     }
 
     public TimeUnit getDurationUnit() {
@@ -126,6 +139,10 @@ public class AbstractMicrometerService extends ServiceSupport {
             }
         }
 
+        if (!this.skipCamelInfo) {
+            registerAppInfo(meterRegistry);
+        }
+
         // json mapper
         this.mapper = new ObjectMapper()
                 .registerModule(new MicrometerModule(getDurationUnit(), getMatchingNames(), getMatchingTags()));
@@ -139,4 +156,71 @@ public class AbstractMicrometerService extends ServiceSupport {
     protected void doStop() {
         // noop
     }
+
+    // This method does a best effort attempt to recover information about versioning of the runtime.
+    // It is also in charge to include the information in the meterRegistry passed in.
+    private void registerAppInfo(MeterRegistry meterRegistry) {
+        Optional<RuntimeInfo> rt = RuntimeInfo.quarkus();
+        if (!rt.isPresent()) {
+            rt = RuntimeInfo.springboot();
+        }
+        if (!rt.isPresent()) {
+            // If not other runtime is available, we assume we're on Camel main
+            rt = Optional.of(new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
+        }
+        meterRegistry.gaugeCollectionSize(
+                APP_INFO_METER_NAME,
+                Tags.of(
+                        "camel.version", getCamelContext().getVersion(),
+                        "camel.context", getCamelContext().getName(),
+                        "camel.runtime.provider", rt.get().runtimeProvider,
+                        "camel.runtime.version", rt.get().runtimeVersion),
+                new ArrayList<String>());
+    }
+
+    private static class RuntimeInfo {
+        private static String QUARKUS = "Quarkus";
+        private static String SPRING_BOOT = "Spring-Boot";
+        private static String MAIN = "Main";
+
+        String runtimeProvider;
+        String runtimeVersion;
+
+        private RuntimeInfo(String runtimeProvider, String runtimeVersion) {
+            this.runtimeProvider = runtimeProvider;
+            this.runtimeVersion = runtimeVersion;
+        }
+
+        static Optional<RuntimeInfo> quarkus() {
+            Optional<String> version = scan("io.quarkus.runtime.Application");
+            if (version.isPresent()) {
+                return Optional.of(new RuntimeInfo(QUARKUS, version.get()));
+            }
+            return Optional.empty();
+        }
+
+        static Optional<RuntimeInfo> springboot() {
+            Optional<String> version = scan("org.springframework.boot.SpringApplication");
+            if (version.isPresent()) {
+                return Optional.of(new RuntimeInfo(SPRING_BOOT, version.get()));
+            }
+            return Optional.empty();
+        }
+
+        static Optional<String> scan(String fqn) {
+            try {
+                Class<?> clazz = Class.forName(fqn);
+                Package pkg = clazz.getPackage();
+
+                if (pkg != null) {
+                    return Optional.of(pkg.getImplementationVersion());
+                }
+            } catch (ClassNotFoundException e) {
+                // NOOP
+            }
+
+            return Optional.empty();
+        }
+    }
+
 }

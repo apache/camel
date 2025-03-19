@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 import java.util.List;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,8 +45,8 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
 
         // there should be 6 metrics per route
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(6 * context.getRouteDefinitions().size(), meters.size());
-        meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter));
+        assertEquals(6 * context.getRouteDefinitions().size() + 1, meters.size());
+        meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter || meter instanceof Gauge));
     }
 
     @Override

@@ -59,7 +59,7 @@ public class MicrometerExchangeEventNotifierStaticTest extends MicrometerExchang
         Set<MeterRegistry> set = meterRegistry.getRegistries();
         assertEquals(2, set.size());
         for (MeterRegistry mr : set) {
-            assertEquals(5, mr.getMeters().size());
+            assertEquals(6, mr.getMeters().size());
             int counter = 0;
             for (Meter m : mr.getMeters()) {
                 if (m.getId().getName().equals(MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME) &&
