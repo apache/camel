@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.infinispan.InfinispanManager;
 import org.apache.camel.component.infinispan.InfinispanUtil;
+import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.client.hotrod.RemoteCache;
@@ -37,14 +38,6 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
     private CamelContext camelContext;
     private RemoteCacheManager cacheContainer;
     private boolean isManagedCacheContainer;
-
-    public InfinispanRemoteManager() {
-        this(null, new InfinispanRemoteConfiguration());
-    }
-
-    public InfinispanRemoteManager(InfinispanRemoteConfiguration configuration) {
-        this(null, configuration);
-    }
 
     public InfinispanRemoteManager(CamelContext camelContext, InfinispanRemoteConfiguration configuration) {
         this.camelContext = camelContext;
@@ -64,6 +57,11 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
     @Override
     public void doStart() throws Exception {
         cacheContainer = configuration.getCacheContainer();
+
+        boolean embeddingStoreEnabled = EmbeddingStoreUtil.isEmbeddingStoreEnabled(camelContext, configuration);
+        if (embeddingStoreEnabled && configuration.getEmbeddingStoreDimension() <= 0) {
+            throw new IllegalArgumentException("embeddingStoreDimension must be configured");
+        }
 
         if (cacheContainer == null) {
             final Configuration containerConf = configuration.getCacheContainerConfiguration();
@@ -98,7 +96,6 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                         builder.security().authentication().serverName(configuration.getSecurityServerName());
                     }
                 }
-
                 Properties properties = new Properties();
 
                 // Properties can be set either via a properties file or via
@@ -119,10 +116,18 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                     builder.withProperties(properties);
                 }
 
+                if (embeddingStoreEnabled) {
+                    EmbeddingStoreUtil.configureMarshaller(configuration, builder);
+                }
+
                 cacheContainer = new RemoteCacheManager(builder.build(), true);
             }
 
             isManagedCacheContainer = true;
+        }
+
+        if (embeddingStoreEnabled && configuration.isEmbeddingStoreRegisterSchema()) {
+            EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
         }
     }
 

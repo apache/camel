@@ -70,6 +70,12 @@
             <version>${protostream-version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-core</artifactId>
+            <version>${langchain4j-version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- testing - camel -->
         <dependency>
@@ -142,6 +148,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-log</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stub</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

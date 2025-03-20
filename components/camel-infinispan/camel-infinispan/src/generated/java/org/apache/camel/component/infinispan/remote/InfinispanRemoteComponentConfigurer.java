@@ -47,6 +47,18 @@ public class InfinispanRemoteComponentConfigurer extends PropertyConfigurerSuppo
         case "customListener": getOrCreateConfiguration(target).setCustomListener(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener.class, value)); return true;
         case "defaultvalue":
         case "defaultValue": getOrCreateConfiguration(target).setDefaultValue(property(camelContext, java.lang.Object.class, value)); return true;
+        case "embeddingstoredimension":
+        case "embeddingStoreDimension": getOrCreateConfiguration(target).setEmbeddingStoreDimension(property(camelContext, int.class, value)); return true;
+        case "embeddingstoredistance":
+        case "embeddingStoreDistance": getOrCreateConfiguration(target).setEmbeddingStoreDistance(property(camelContext, int.class, value)); return true;
+        case "embeddingstoreenabled":
+        case "embeddingStoreEnabled": getOrCreateConfiguration(target).setEmbeddingStoreEnabled(property(camelContext, boolean.class, value)); return true;
+        case "embeddingstoreregisterschema":
+        case "embeddingStoreRegisterSchema": getOrCreateConfiguration(target).setEmbeddingStoreRegisterSchema(property(camelContext, boolean.class, value)); return true;
+        case "embeddingstoretypename":
+        case "embeddingStoreTypeName": getOrCreateConfiguration(target).setEmbeddingStoreTypeName(property(camelContext, java.lang.String.class, value)); return true;
+        case "embeddingstorevectorsimilarity":
+        case "embeddingStoreVectorSimilarity": getOrCreateConfiguration(target).setEmbeddingStoreVectorSimilarity(property(camelContext, org.infinispan.api.annotations.indexing.option.VectorSimilarity.class, value)); return true;
         case "eventtypes":
         case "eventTypes": getOrCreateConfiguration(target).setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "flags": getOrCreateConfiguration(target).setFlags(property(camelContext, java.lang.String.class, value)); return true;
@@ -102,6 +114,18 @@ public class InfinispanRemoteComponentConfigurer extends PropertyConfigurerSuppo
         case "customListener": return org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener.class;
         case "defaultvalue":
         case "defaultValue": return java.lang.Object.class;
+        case "embeddingstoredimension":
+        case "embeddingStoreDimension": return int.class;
+        case "embeddingstoredistance":
+        case "embeddingStoreDistance": return int.class;
+        case "embeddingstoreenabled":
+        case "embeddingStoreEnabled": return boolean.class;
+        case "embeddingstoreregisterschema":
+        case "embeddingStoreRegisterSchema": return boolean.class;
+        case "embeddingstoretypename":
+        case "embeddingStoreTypeName": return java.lang.String.class;
+        case "embeddingstorevectorsimilarity":
+        case "embeddingStoreVectorSimilarity": return org.infinispan.api.annotations.indexing.option.VectorSimilarity.class;
         case "eventtypes":
         case "eventTypes": return java.lang.String.class;
         case "flags": return java.lang.String.class;
@@ -153,6 +177,18 @@ public class InfinispanRemoteComponentConfigurer extends PropertyConfigurerSuppo
         case "customListener": return getOrCreateConfiguration(target).getCustomListener();
         case "defaultvalue":
         case "defaultValue": return getOrCreateConfiguration(target).getDefaultValue();
+        case "embeddingstoredimension":
+        case "embeddingStoreDimension": return getOrCreateConfiguration(target).getEmbeddingStoreDimension();
+        case "embeddingstoredistance":
+        case "embeddingStoreDistance": return getOrCreateConfiguration(target).getEmbeddingStoreDistance();
+        case "embeddingstoreenabled":
+        case "embeddingStoreEnabled": return getOrCreateConfiguration(target).isEmbeddingStoreEnabled();
+        case "embeddingstoreregisterschema":
+        case "embeddingStoreRegisterSchema": return getOrCreateConfiguration(target).isEmbeddingStoreRegisterSchema();
+        case "embeddingstoretypename":
+        case "embeddingStoreTypeName": return getOrCreateConfiguration(target).getEmbeddingStoreTypeName();
+        case "embeddingstorevectorsimilarity":
+        case "embeddingStoreVectorSimilarity": return getOrCreateConfiguration(target).getEmbeddingStoreVectorSimilarity();
         case "eventtypes":
         case "eventTypes": return getOrCreateConfiguration(target).getEventTypes();
         case "flags": return getOrCreateConfiguration(target).getFlags();

@@ -40,5 +40,9 @@ public final class LangChain4jEmbeddings {
 
         @Metadata(description = "A dense vector embedding of a text", javaType = "float[]")
         public static final String VECTOR = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR;
+
+        @Metadata(description = "A TextSegment representation of the vector embedding input text",
+                  javaType = " dev.langchain4j.data.segment.TextSegment")
+        public static final String TEXT_SEGMENT = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENT;
     }
 }

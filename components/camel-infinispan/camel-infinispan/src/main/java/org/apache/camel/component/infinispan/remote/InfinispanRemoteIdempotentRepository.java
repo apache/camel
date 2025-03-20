@@ -63,8 +63,7 @@ public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRe
             this.configuration = new InfinispanRemoteConfiguration();
         }
 
-        this.manager = new InfinispanRemoteManager(configuration);
-        this.manager.setCamelContext(getCamelContext());
+        this.manager = new InfinispanRemoteManager(getCamelContext(), configuration);
         this.cache = Suppliers.memorize(() -> getCacheWithFlags(manager, cacheName, Flag.FORCE_RETURN_VALUE));
         ServiceHelper.startService(manager);
     }

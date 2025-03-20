@@ -36,18 +36,6 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
     private InfinispanRemoteAggregationRepository aggregationRepository;
 
     @Override
-    public void setupResources() throws Exception {
-        super.setupResources();
-
-        InfinispanRemoteConfiguration configuration = new InfinispanRemoteConfiguration();
-        configuration.setCacheContainerConfiguration(getConfiguration().build());
-
-        aggregationRepository = new InfinispanRemoteAggregationRepository(getCacheName());
-        aggregationRepository.setConfiguration(configuration);
-        aggregationRepository.start();
-    }
-
-    @Override
     public void cleanupResources() throws Exception {
         super.cleanupResources();
 
@@ -65,8 +53,14 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
     }
 
     @BeforeEach
-    public void cleanup() {
-        // cleanup
+    public void beforeEach() {
+        InfinispanRemoteConfiguration configuration = new InfinispanRemoteConfiguration();
+        configuration.setCacheContainerConfiguration(getConfiguration().build());
+
+        aggregationRepository = new InfinispanRemoteAggregationRepository(getCacheName());
+        aggregationRepository.setCamelContext(context);
+        aggregationRepository.setConfiguration(configuration);
+        aggregationRepository.start();
         aggregationRepository.getCache().clear();
 
         Awaitility.await().atMost(Duration.ofSeconds(1)).until(() -> cacheContainer.isStarted());
