@@ -139,7 +139,7 @@ public class AbstractMicrometerService extends ServiceSupport {
             }
         }
 
-        if (!this.skipCamelInfo) {
+        if (!isSkipCamelInfo()) {
             registerAppInfo(meterRegistry);
         }
 

@@ -50,6 +50,7 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
     private boolean copyMessage;
     private String nodePattern;
     private boolean prettyPrint = true;
+    private boolean skipCamelInfo = false;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MicrometerMessageHistoryNamingStrategy namingStrategy = MicrometerMessageHistoryNamingStrategy.DEFAULT;
 
@@ -85,6 +86,17 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
      */
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
     }
 
     public TimeUnit getDurationUnit() {
@@ -166,6 +178,7 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
                     = camelContext.hasService(MicrometerMessageHistoryService.class);
             if (messageHistoryService == null) {
                 messageHistoryService = new MicrometerMessageHistoryService();
+                messageHistoryService.setPrettyPrint(isPrettyPrint());
                 messageHistoryService.setMeterRegistry(getMeterRegistry());
                 messageHistoryService.setPrettyPrint(isPrettyPrint());
                 messageHistoryService.setDurationUnit(getDurationUnit());

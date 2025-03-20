@@ -103,6 +103,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean enableInstrumentedThreadPoolFactory;
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
+    @Metadata(defaultValue = "false")
+    private boolean skipCamelInfo = false;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
@@ -227,6 +229,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         this.clearOnReload = clearOnReload;
     }
 
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
+    }
+
     public String getTextFormatVersion() {
         return textFormatVersion;
     }
@@ -295,6 +308,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
         if (isEnableRoutePolicy()) {
             MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+            factory.setSkipCamelInfo(isSkipCamelInfo());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
                 factory.setNamingStrategy(MicrometerRoutePolicyNamingStrategy.LEGACY);
             }
@@ -317,6 +331,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         if (isEnableExchangeEventNotifier()) {
             MicrometerExchangeEventNotifier notifier = new MicrometerExchangeEventNotifier();
+            notifier.setSkipCamelInfo(isSkipCamelInfo());
             notifier.setBaseEndpointURI(isBaseEndpointURIExchangeEventNotifier());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
                 notifier.setNamingStrategy(
@@ -331,6 +346,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
 
         if (isEnableRouteEventNotifier()) {
             MicrometerRouteEventNotifier notifier = new MicrometerRouteEventNotifier();
+            notifier.setSkipCamelInfo(isSkipCamelInfo());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
                 notifier.setNamingStrategy(MicrometerRouteEventNotifierNamingStrategy.LEGACY);
             }

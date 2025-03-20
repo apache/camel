@@ -45,6 +45,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipcamelinfo":
+        case "skipCamelInfo": target.setSkipCamelInfo(property(camelContext, boolean.class, value)); return true;
         case "textformatversion":
         case "textFormatVersion": target.setTextFormatVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -76,6 +78,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "path": return java.lang.String.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
+        case "skipcamelinfo":
+        case "skipCamelInfo": return boolean.class;
         case "textformatversion":
         case "textFormatVersion": return java.lang.String.class;
         default: return null;
@@ -108,6 +112,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "path": return target.getPath();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
+        case "skipcamelinfo":
+        case "skipCamelInfo": return target.isSkipCamelInfo();
         case "textformatversion":
         case "textFormatVersion": return target.getTextFormatVersion();
         default: return null;
