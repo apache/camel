@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "camel.component.kamelet.location",
             "camel.jbang.classpathFiles",
             "camel.jbang.localKameletDir",
+            "camel.jbang.scriptFiles",
+            "camel.jbang.tlsFiles",
             "camel.jbang.jkubeFiles",
             "kamelet"
     };
@@ -546,6 +549,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
             File srcKameletsResourcesDir, String packageName)
             throws Exception {
+
         // read the settings file and find the files to copy
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
@@ -591,43 +595,58 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             || "camel.jbang.localKameletDir".equals(k) || "kamelet.yaml".equalsIgnoreCase(ext2);
                     boolean camel = !kamelet && "camel.main.routesIncludePattern".equals(k);
                     boolean jkube = "camel.jbang.jkubeFiles".equals(k);
-                    boolean web = "html".equals(ext) || "js".equals(ext) || "css".equals(ext) || "jpeg".equals(ext)
-                            || "jpg".equals(ext) || "png".equals(ext) || "ico".equals(ext);
-                    File srcWeb = new File(srcResourcesDir, "META-INF/resources");
-                    File targetDir = java ? srcJavaDir : camel ? srcCamelResourcesDir : kamelet ? srcKameletsResourcesDir
-                            : web ? srcWeb : srcResourcesDir;
+                    boolean script = "camel.jbang.scriptFiles".equals(k);
+                    boolean tls = "camel.jbang.tlsFiles".equals(k);
+                    boolean web = ext != null && List.of("css", "html", "ico", "jpeg", "jpg", "js", "png").contains(ext);
+                    File targetDir;
+                    if (java) {
+                        targetDir = srcJavaDir;
+                    } else if (camel) {
+                        targetDir = srcCamelResourcesDir;
+                    } else if (kamelet) {
+                        targetDir = srcKameletsResourcesDir;
+                    } else if (script) {
+                        targetDir = new File(srcJavaDirRoot.getParentFile(), "scripts");
+                    } else if (tls) {
+                        targetDir = new File(srcJavaDirRoot.getParentFile(), "tls");
+                    } else if (web) {
+                        targetDir = new File(srcResourcesDir, "META-INF/resources");
+                    } else {
+                        targetDir = srcResourcesDir;
+                    }
                     targetDir.mkdirs();
 
-                    File source;
+                    Path source;
                     if ("kamelet".equals(k) && localKameletDir != null) {
                         // source is a local kamelet
-                        source = new File(localKameletDir, f + ".kamelet.yaml");
+                        source = Paths.get(localKameletDir, f + ".kamelet.yaml");
                     } else {
-                        source = new File(f);
+                        source = Paths.get(f);
                     }
                     File out;
-                    if (source.isDirectory()) {
+                    File srcFile = source.toFile();
+                    if (srcFile.isDirectory()) {
                         out = targetDir;
                     } else {
-                        out = new File(targetDir, source.getName());
+                        out = new File(targetDir, srcFile.getName());
                     }
                     if (!java) {
                         if (kamelet) {
-                            safeCopy(source, out, true);
+                            safeCopy(srcFile, out, true);
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
                             f = f.replace(".jkube.yaml", ".yaml");
                             f = f.replace(".jkube.yml", ".yml");
                             out = new File(srcCamelResourcesDir.getParentFile().getParentFile(), "jkube/" + f);
                             out.getParentFile().mkdirs();
-                            safeCopy(source, out, true);
+                            safeCopy(srcFile, out, true);
                         } else {
                             out.getParentFile().mkdirs();
-                            safeCopy(source, out, true);
+                            safeCopy(scheme, source, out, true);
                         }
                     } else {
                         // need to append package name in java source file
-                        List<String> lines = Files.readAllLines(source.toPath());
+                        List<String> lines = Files.readAllLines(source);
                         Optional<String> hasPackage = lines.stream().filter(l -> l.trim().startsWith("package ")).findFirst();
                         FileOutputStream fos;
 
@@ -636,13 +655,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             if (pn != null) {
                                 File dir = new File(srcJavaDirRoot, pn.replace('.', File.separatorChar));
                                 dir.mkdirs();
-                                out = new File(dir, source.getName());
+                                out = new File(dir, srcFile.getName());
                             } else {
                                 throw new IOException("Cannot determine package name from source: " + source);
                             }
                         } else {
                             if (javaLiveReload) {
-                                out = new File(srcJavaDirRoot, source.getName());
+                                out = new File(srcJavaDirRoot, srcFile.getName());
                             } else {
                                 if (packageName != null && !"false".equalsIgnoreCase(packageName)) {
                                     lines.add(0, "");
@@ -651,7 +670,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             }
                         }
                         if (javaLiveReload) {
-                            safeCopy(source, out, true);
+                            safeCopy(srcFile, out, true);
                         } else {
                             fos = new FileOutputStream(out);
                             for (String line : lines) {
@@ -772,17 +791,25 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void prepareUserProperties(Properties properties) {
-        if (this.applicationProperties != null) {
-            for (String s : this.applicationProperties) {
-                String[] kv = s.split("=");
-                if (kv.length != 2) {
-                    // likely a user mistake, we warn the user
-                    printer().println("WARN: property '" + s + "'' has a bad format (should be 'key=value'), skipping.");
-                } else {
-                    properties.put(kv[0], kv[1]);
+        properties.putAll(propertiesMap(this.applicationProperties));
+    }
+
+    protected Map<String, String> propertiesMap(String[]... propertySources) {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (propertySources != null) {
+            for (String[] props : Arrays.stream(propertySources).filter((arr) -> arr != null).toList()) {
+                for (String s : props) {
+                    String[] kv = s.split("=");
+                    if (kv.length != 2) {
+                        // likely a user mistake, we warn the user
+                        printer().println("WARN: property '" + s + "'' has a bad format (should be 'key=value'), skipping.");
+                    } else {
+                        result.put(kv[0], kv[1]);
+                    }
                 }
             }
         }
+        return result;
     }
 
     // Returns true if it has either an openapi spec or it uses contract-first DSL
@@ -935,6 +962,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
         return answer != null ? answer : "1.18.1";
+    }
+
+    private void safeCopy(String scheme, Path source, File target, boolean override) throws Exception {
+        if ("classpath".equals(scheme)) {
+            try (var ins = getClass().getClassLoader().getResourceAsStream(source.toString())) {
+                IOHelper.copy(ins, new FileOutputStream(target));
+            }
+        } else {
+            safeCopy(source.toFile(), target, override);
+        }
     }
 
     protected void safeCopy(File source, File target, boolean override) throws Exception {

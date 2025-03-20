@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
-public class OAuthCodeFlowCallbackProcessor extends AbstractOAuthProcessor {
+public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -51,8 +51,8 @@ public class OAuthCodeFlowCallbackProcessor extends AbstractOAuthProcessor {
 
         // Exchange the authorization code for access/refresh/id tokens
         //
-        String redirectUri = getRequiredProperty(exchange, CAMEL_OAUTH_REDIRECT_URI);
-        var userProfile = oauth.tokenRequest(new AuthCodeCredentials()
+        String redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
+        var userProfile = oauth.authenticate(new AuthCodeCredentials()
                 .setRedirectUri(redirectUri)
                 .setCode(authCode));
 
@@ -61,7 +61,7 @@ public class OAuthCodeFlowCallbackProcessor extends AbstractOAuthProcessor {
 
         var postLoginUrl = (String) session.removeValue("OAuthPostLoginUrl").orElse(null);
         if (postLoginUrl == null) {
-            postLoginUrl = getRequiredProperty(exchange, CAMEL_OAUTH_REDIRECT_URI);
+            postLoginUrl = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
             var lastSlashIdx = postLoginUrl.lastIndexOf('/');
             postLoginUrl = postLoginUrl.substring(0, lastSlashIdx + 1);
         }

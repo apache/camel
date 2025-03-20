@@ -34,8 +34,8 @@ public abstract class AbstractOAuthProcessor implements Processor {
 
     protected final String procName = getClass().getSimpleName();
 
-    protected Optional<OAuth> findOAuth(CamelContext camelContext) {
-        return OAuthFactory.getOAuthFactory(camelContext).findOAuth(camelContext);
+    protected Optional<OAuth> findOAuth(CamelContext context) {
+        return OAuthFactory.lookupFactory(context).findOAuth();
     }
 
     protected OAuth findOAuthOrThrow(CamelContext context) {
@@ -45,13 +45,14 @@ public abstract class AbstractOAuthProcessor implements Processor {
     protected void authenticateExistingUserProfile(OAuth oauth, OAuthSession session) {
         // Remove before attempting to re-authenticate
         var userProfile = session.removeUserProfile().orElseThrow();
-        if (userProfile.ttl() < 0L) {
-            userProfile = oauth.refresh(userProfile);
+        if (userProfile.expired()) {
+            var creds = new UserCredentials(userProfile);
+            userProfile = oauth.authenticate(creds);
             userProfile.logDetails("Refreshed");
         } else {
-            var creds = new UserCredentials(userProfile);
+            var creds = new TokenCredentials(userProfile.accessToken().orElseThrow());
             var updProfile = oauth.authenticate(creds);
-            updProfile.merge(updProfile);
+            userProfile.merge(updProfile);
             userProfile.logDetails("ReAuthenticated");
         }
         session.putUserProfile(userProfile);

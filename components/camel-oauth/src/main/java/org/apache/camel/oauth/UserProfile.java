@@ -16,32 +16,70 @@
  */
 package org.apache.camel.oauth;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jwt.SignedJWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UserProfile {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    static final Logger log = LoggerFactory.getLogger(UserProfile.class);
 
-    private final Map<String, Object> attributes;
-    private final Map<String, Object> principal;
+    private final JsonObject principal;
+    private final JsonObject attributes;
 
-    public UserProfile(Map<String, Object> attributes, Map<String, Object> principal) {
-        this.attributes = new LinkedHashMap<>(attributes);
-        this.principal = new LinkedHashMap<>(principal);
+    public UserProfile(JsonObject principal, JsonObject attributes) {
+        this.principal = principal;
+        this.attributes = attributes;
+    }
+
+    public static UserProfile fromJson(OAuthConfig config, JsonObject json) {
+        var principal = json.deepCopy();
+        var attributes = new JsonObject();
+        long now = System.currentTimeMillis() / 1000L;
+        if (principal.has("expires_in")) {
+            var expiresIn = json.get("expires_in").getAsLong();
+            attributes.addProperty("exp", now + expiresIn);
+            attributes.addProperty("iat", now);
+        }
+        if (principal.has("access_token")) {
+            var accessToken = json.get("access_token").getAsString();
+            var tokenJwt = verifyToken(config, accessToken, false);
+            attributes.add("accessToken", tokenJwt);
+            copyProperties(tokenJwt, attributes, true, "exp", "iat", "nbf", "sub");
+            attributes.add("rootClaim", new JsonPrimitive("accessToken"));
+        }
+        if (principal.has("id_token")) {
+            var idToken = json.get("id_token").getAsString();
+            var tokenJwt = verifyToken(config, idToken, true);
+            attributes.add("idToken", tokenJwt);
+            copyProperties(tokenJwt, attributes, false, "sub", "name", "email", "picture");
+            copyProperties(tokenJwt, principal, true, "amr");
+        }
+        return new UserProfile(principal, attributes);
     }
 
     public Map<String, Object> attributes() {
-        return Collections.unmodifiableMap(attributes);
+        return new Gson().fromJson(attributes, Map.class);
     }
 
     public Map<String, Object> principal() {
-        return Collections.unmodifiableMap(principal);
+        return new Gson().fromJson(principal, Map.class);
+    }
+
+    public boolean expired() {
+        return ttl() <= 0;
     }
 
     public long ttl() {
@@ -53,56 +91,62 @@ public class UserProfile {
         return ttl;
     }
 
-    @SuppressWarnings("unchecked")
     public String subject() {
-        if (principal().containsKey("username")) {
-            return principal().get("username").toString();
-        } else if (principal().containsKey("userHandle")) {
-            return principal().get("userHandle").toString();
+        if (principal.has("username")) {
+            return principal.get("username").getAsString();
+        } else if (principal.has("userHandle")) {
+            return principal.get("userHandle").getAsString();
         } else {
-            if (attributes().containsKey("idToken")) {
-                var idToken = (Map<String, Object>) attributes().get("idToken");
-                if (idToken.containsKey("sub")) {
-                    return idToken.get("sub").toString();
+            if (attributes.has("idToken")) {
+                var idToken = attributes.get("idToken").getAsJsonObject();
+                if (idToken.has("sub")) {
+                    return idToken.get("sub").getAsString();
                 }
             }
-            return getClaim("sub");
+            var maybeSub = Optional.ofNullable(getClaim("sub"));
+            return maybeSub.map(JsonElement::getAsString).orElse(null);
         }
     }
 
     public Optional<String> accessToken() {
-        return Optional.ofNullable(principal.get("access_token")).map(Object::toString);
+        var accessToken = principal.get("access_token");
+        return Optional.ofNullable(accessToken).map(JsonElement::getAsString);
     }
 
     public Optional<String> idToken() {
-        return Optional.ofNullable(principal.get("id_token")).map(Object::toString);
+        var idToken = principal.get("id_token");
+        return Optional.ofNullable(idToken).map(JsonElement::getAsString);
     }
 
     public Optional<String> refreshToken() {
-        return Optional.ofNullable(principal.get("refresh_token")).map(Object::toString);
+        var refreshToken = principal.get("refresh_token");
+        return Optional.ofNullable(refreshToken).map(JsonElement::getAsString);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getClaim(String key) {
-        var maybeRootClaim = Optional.ofNullable(attributes().get("rootClaim"))
-                .filter(Map.class::isInstance)
-                .map(Map.class::cast);
+    public JsonElement getClaim(String key) {
+        var maybeRootClaim = Optional.ofNullable(attributes.get("rootClaim"))
+                .filter(JsonObject.class::isInstance)
+                .map(JsonObject.class::cast);
         if (maybeRootClaim.isPresent()) {
             var rootClaim = maybeRootClaim.get();
-            if (rootClaim.containsKey(key)) {
-                return (T) rootClaim.get(key);
+            if (rootClaim.has(key)) {
+                return rootClaim.get(key);
             }
         }
-        if (attributes().containsKey(key)) {
-            return (T) attributes().get(key);
+        if (attributes.has(key)) {
+            return attributes.get(key);
         } else {
-            return (T) (principal().get(key));
+            return principal.get(key);
         }
     }
 
     public void merge(UserProfile other) {
-        attributes.putAll(other.attributes);
-        principal.putAll(other.principal);
+        other.principal.entrySet().forEach((en) -> {
+            principal.add(en.getKey(), en.getValue());
+        });
+        other.attributes.entrySet().forEach((en) -> {
+            attributes.add(en.getKey(), en.getValue());
+        });
     }
 
     public void logDetails(String prefix) {
@@ -111,5 +155,91 @@ public class UserProfile {
         attributes().forEach((k, v) -> log.debug("   {}: {}", k, v));
         log.debug("User Principal ...");
         principal().forEach((k, v) -> log.debug("   {}: {}", k, v));
+    }
+
+    private static JsonObject verifyToken(OAuthConfig config, String token, boolean idToken) throws OAuthException {
+        JsonObject tokenJwt;
+        try {
+            var signedJWT = SignedJWT.parse(token);
+            var keyID = signedJWT.getHeader().getKeyID();
+
+            // Fetch Keycloak public key
+            var jwkSet = config.getJWKSet();
+            if (!jwkSet.isEmpty()) {
+                var rsaKey = (RSAKey) jwkSet.getKeyByKeyId(keyID);
+                if (rsaKey == null) {
+                    throw new OAuthException("No matching key found for: " + keyID);
+                }
+                RSAPublicKey publicKey = rsaKey.toRSAPublicKey();
+                if (!signedJWT.verify(new RSASSAVerifier(publicKey))) {
+                    throw new OAuthException("Invalid token signature");
+                }
+            }
+
+            // Decode the payload into a JsonObject
+            var payload = signedJWT.getPayload().toString();
+            tokenJwt = JsonParser.parseString(payload).getAsJsonObject();
+
+            var target = new ArrayList<String>();
+            var jwtOptions = config.getJWTOptions();
+            if (tokenJwt.has("aud")) {
+                try {
+                    var aud = tokenJwt.get("aud");
+                    if (aud.isJsonPrimitive()) {
+                        target.add(aud.getAsString());
+                    } else {
+                        target.addAll(aud.getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList());
+                    }
+                } catch (RuntimeException ex) {
+                    throw new OAuthException("User audience isn't a JsonArray or String");
+                }
+            }
+            if (!target.isEmpty()) {
+                if (!idToken && jwtOptions.getAudience() != null) {
+                    for (String el : jwtOptions.getAudience()) {
+                        if (!target.contains(el)) {
+                            throw new OAuthException("Invalid JWT audience. expected: " + el);
+                        }
+                    }
+                } else if (!target.contains(config.getClientId())) {
+                    throw new OAuthException("Invalid JWT audience. expected: " + config.getClientId());
+                }
+            }
+            var issuer = jwtOptions.getIssuer();
+            if (issuer != null && !issuer.equals(tokenJwt.get("iss").getAsString())) {
+                throw new OAuthException("Invalid JWT issuer");
+            } else {
+                if (idToken && tokenJwt.has("azp")) {
+                    String clientId = config.getClientId();
+                    if (!clientId.equals(tokenJwt.get("azp").getAsString())) {
+                        throw new OAuthException("Invalid authorised party != config.clientID");
+                    }
+                    if (!target.isEmpty() && !target.contains(tokenJwt.get("azp").getAsString())) {
+                        throw new OAuthException("ID Token with multiple audiences, doesn't contain azp Claim value");
+                    }
+                }
+            }
+        } catch (OAuthException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new OAuthException("Invalid token", ex);
+        }
+        return tokenJwt;
+    }
+
+    private static void copyProperties(JsonObject source, JsonObject target, boolean overwrite, String... keys) {
+        if (keys.length > 0) {
+            for (String key : keys) {
+                if (source.has(key) && (!target.has(key) || overwrite)) {
+                    target.add(key, source.get(key));
+                }
+            }
+        } else {
+            for (var en : source.entrySet()) {
+                if (!target.has(en.getKey()) || overwrite) {
+                    target.add(en.getKey(), en.getValue());
+                }
+            }
+        }
     }
 }
