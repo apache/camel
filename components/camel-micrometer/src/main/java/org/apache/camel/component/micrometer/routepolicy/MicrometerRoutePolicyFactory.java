@@ -39,6 +39,7 @@ public class MicrometerRoutePolicyFactory extends ServiceSupport
     private MeterRegistry meterRegistry;
     private RouteMetric contextMetric;
     private boolean prettyPrint = true;
+    private boolean skipCamelInfo = false;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
     private MicrometerRoutePolicyConfiguration policyConfiguration = MicrometerRoutePolicyConfiguration.DEFAULT;
@@ -75,6 +76,17 @@ public class MicrometerRoutePolicyFactory extends ServiceSupport
      */
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
     }
 
     /**
@@ -122,6 +134,7 @@ public class MicrometerRoutePolicyFactory extends ServiceSupport
         MicrometerRoutePolicy answer = new MicrometerRoutePolicy(this);
         answer.setMeterRegistry(getMeterRegistry());
         answer.setPrettyPrint(isPrettyPrint());
+        answer.setSkipCamelInfo(isSkipCamelInfo());
         answer.setDurationUnit(getDurationUnit());
         answer.setNamingStrategy(getNamingStrategy());
         answer.setConfiguration(getPolicyConfiguration());
