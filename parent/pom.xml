@@ -274,7 +274,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.1.5</jedis-client-version>
         <jetcd-version>0.8.3</jetcd-version>
-        <jetty-version>12.0.16</jetty-version>
+        <jetty-version>12.0.18</jetty-version>
 		<jetty-for-solr-version>10.0.20</jetty-for-solr-version>        
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -328,7 +328,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.21.1</log4j2-version>
-        <logback-version>1.5.16</logback-version>
+        <logback-version>1.5.18</logback-version>
         <lucene-version>9.11.1</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.2.4</littleproxy-version>
@@ -438,7 +438,7 @@
         <shiro-version>2.0.1</shiro-version>
         <slack-api-model-version>1.42.0</slack-api-model-version>
         <slf4j-api-version>2.0.16</slf4j-api-version>
-        <slf4j-version>2.0.16</slf4j-version>
+        <slf4j-version>2.0.17</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.9.1</smallrye-config-version>
         <smallrye-health-version>4.1.0</smallrye-health-version>
@@ -453,13 +453,13 @@
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-batch-version>5.1.3</spring-batch-version>
-        <spring-data-redis-version>3.3.9</spring-data-redis-version>
+        <spring-data-redis-version>3.3.10</spring-data-redis-version>
         <spring-ldap-version>3.2.11</spring-ldap-version>
         <spring-vault-core-version>3.1.2</spring-vault-core-version>
-        <spring-version>6.1.17</spring-version>
+        <spring-version>6.1.18</spring-version>
         <spring-rabbitmq-version>3.1.7</spring-rabbitmq-version>
-        <spring-security-version>6.3.6</spring-security-version>
-        <spring-ws-version>4.0.11</spring-ws-version>
+        <spring-security-version>6.3.8</spring-security-version>
+        <spring-ws-version>4.0.12</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
