@@ -116,3 +116,8 @@ The `org.apache.camel.component.platform.http.PlatformHttpHeaderFilterStrategy` 
 === camel-undertow
 
 The `org.apache.camel.component.undertow.UndertowHeaderFilterStrategy` class has been deprecated. The default header filter strategy is now the `org.apache.camel.http.base.HttpHeaderFilterStrategy`
+
+=== camel-as2
+
+Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
+asynchronous MDN requests.

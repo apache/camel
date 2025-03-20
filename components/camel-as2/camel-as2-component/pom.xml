@@ -126,6 +126,9 @@
                                         <nullableOption>attachedFileName</nullableOption>
                                         <nullableOption>receiptDeliveryOption</nullableOption>
                                         <nullableOption>ediMessageCharset</nullableOption>
+                                        <nullableOption>userName</nullableOption>
+                                        <nullableOption>password</nullableOption>
+                                        <nullableOption>accessToken</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>

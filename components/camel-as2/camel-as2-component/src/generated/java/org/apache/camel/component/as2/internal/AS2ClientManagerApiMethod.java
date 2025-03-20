@@ -41,7 +41,10 @@ public enum AS2ClientManagerApiMethod implements ApiMethod {
         arg("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class),
         arg("encryptingCertificateChain", new java.security.cert.Certificate[0].getClass()),
         arg("attachedFileName", String.class),
-        arg("receiptDeliveryOption", String.class));
+        arg("receiptDeliveryOption", String.class),
+        arg("userName", String.class),
+        arg("password", String.class),
+        arg("accessToken", String.class));
 
     private final ApiMethod apiMethod;
 

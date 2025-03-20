@@ -61,7 +61,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
         testServer = new AS2ServerConnection(
                 AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, MDN_MESSAGE_TEMPLATE,
-                null, null);
+                null, null, null, null, null);
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
@@ -87,7 +87,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
                 AS2MessageStructure.PLAIN, AS2MediaType.APPLICATION_EDIFACT, null,
                 null, null, null, null, null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null,
-                "file.txt", null);
+                "file.txt", null, null, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals(METHOD, request.getMethod(), "Unexpected method value");
@@ -128,7 +128,8 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
                 AS2MediaType.APPLICATION_EDIFACT, null, null,
                 null, null, null, AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null,
-                null, "file.txt", null);
+                null, "file.txt", null,
+                null, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals(METHOD, request.getMethod(), "Unexpected method value");
@@ -175,7 +176,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
                 AS2MessageStructure.PLAIN, AS2MediaType.APPLICATION_EDIFACT, null,
                 null, null, null, null, null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null,
-                "file.txt", null);
+                "file.txt", null, null, null, null);
 
         HttpResponse response = httpContext.getResponse();
         assertEquals(HttpVersion.HTTP_1_1, response.getVersion(), "Unexpected method value");

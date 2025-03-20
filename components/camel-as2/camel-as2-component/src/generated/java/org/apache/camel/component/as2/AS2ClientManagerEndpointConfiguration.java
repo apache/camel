@@ -15,10 +15,13 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "client", producerOnly = true,
            description = "Sends EDI Messages over HTTP",
-           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(Object ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, String ediMessageContentType, String ediMessageCharset, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption)"})}, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "send", description="Send ediMessage to trading partner", signatures={"org.apache.hc.core5.http.protocol.HttpCoreContext send(Object ediMessage, String requestUri, String subject, String from, String as2From, String as2To, org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure, String ediMessageContentType, String ediMessageCharset, String ediMessageTransferEncoding, org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm, java.security.cert.Certificate[] signingCertificateChain, java.security.PrivateKey signingPrivateKey, org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm, String dispositionNotificationTo, String signedReceiptMicAlgorithms, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm, java.security.cert.Certificate[] encryptingCertificateChain, String attachedFileName, String receiptDeliveryOption, String userName, String password, String accessToken)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The access token that is used by the client for bearer authentication")})
+    private String accessToken;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="AS2 name of sender")})
     private String as2From;
@@ -59,7 +62,10 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="RFC2822 address of sender")})
     private String from;
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The password that is used by the client for basic authentication")})
+    private String password;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The return URL that the message receiver should send an asynchronous MDN to")})
     private String receiptDeliveryOption;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="Resource location to deliver message")})
@@ -79,6 +85,17 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "send", description="Message subject")})
     private String subject;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "send", description="The user-name that is used for basic authentication")})
+    private String userName;
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     public String getAs2From() {
         return as2From;
@@ -184,6 +201,14 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
         this.from = from;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getReceiptDeliveryOption() {
         return receiptDeliveryOption;
     }
@@ -238,5 +263,13 @@ public final class AS2ClientManagerEndpointConfiguration extends AS2Configuratio
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
