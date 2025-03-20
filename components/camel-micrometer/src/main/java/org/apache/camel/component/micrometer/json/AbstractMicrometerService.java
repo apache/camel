@@ -160,22 +160,24 @@ public class AbstractMicrometerService extends ServiceSupport {
     // This method does a best effort attempt to recover information about versioning of the runtime.
     // It is also in charge to include the information in the meterRegistry passed in.
     private void registerAppInfo(MeterRegistry meterRegistry) {
-        Optional<RuntimeInfo> rt = RuntimeInfo.quarkus();
-        if (!rt.isPresent()) {
-            rt = RuntimeInfo.springboot();
+        if (meterRegistry.find(APP_INFO_METER_NAME).gauge() == null) {
+            Optional<RuntimeInfo> rt = RuntimeInfo.quarkus();
+            if (!rt.isPresent()) {
+                rt = RuntimeInfo.springboot();
+            }
+            if (!rt.isPresent()) {
+                // If not other runtime is available, we assume we're on Camel main
+                rt = Optional.of(new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
+            }
+            meterRegistry.gaugeCollectionSize(
+                    APP_INFO_METER_NAME,
+                    Tags.of(
+                            "camel.version", getCamelContext().getVersion(),
+                            "camel.context", getCamelContext().getName(),
+                            "camel.runtime.provider", rt.get().runtimeProvider,
+                            "camel.runtime.version", rt.get().runtimeVersion),
+                    new ArrayList<String>());
         }
-        if (!rt.isPresent()) {
-            // If not other runtime is available, we assume we're on Camel main
-            rt = Optional.of(new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
-        }
-        meterRegistry.gaugeCollectionSize(
-                APP_INFO_METER_NAME,
-                Tags.of(
-                        "camel.version", getCamelContext().getVersion(),
-                        "camel.context", getCamelContext().getName(),
-                        "camel.runtime.provider", rt.get().runtimeProvider,
-                        "camel.runtime.version", rt.get().runtimeVersion),
-                new ArrayList<String>());
     }
 
     private static class RuntimeInfo {
