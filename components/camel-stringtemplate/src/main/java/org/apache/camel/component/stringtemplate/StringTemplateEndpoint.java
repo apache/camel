@@ -126,8 +126,9 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
                 log.debug("{} set to {} creating new endpoint to handle exchange",
                         StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI,
                         newResourceUri);
-                StringTemplateEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
-                newEndpoint.onExchange(exchange);
+                try (StringTemplateEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri)) {
+                    newEndpoint.onExchange(exchange);
+                }
                 return;
             }
             variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
