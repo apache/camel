@@ -852,6 +852,189 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         }
 
         /**
+         * The dimension size used to store vector embeddings. This should be
+         * equal to the dimension size of the model used to create the vector
+         * embeddings. This option is mandatory if the embedding store is
+         * enabled.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreDimension the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreDimension(int embeddingStoreDimension) {
+            doSetProperty("embeddingStoreDimension", embeddingStoreDimension);
+            return this;
+        }
+        /**
+         * The dimension size used to store vector embeddings. This should be
+         * equal to the dimension size of the model used to create the vector
+         * embeddings. This option is mandatory if the embedding store is
+         * enabled.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreDimension the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreDimension(String embeddingStoreDimension) {
+            doSetProperty("embeddingStoreDimension", embeddingStoreDimension);
+            return this;
+        }
+        /**
+         * The distance to use for kNN search queries in relation to the
+         * configured vector similarity.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 3
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreDistance the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreDistance(int embeddingStoreDistance) {
+            doSetProperty("embeddingStoreDistance", embeddingStoreDistance);
+            return this;
+        }
+        /**
+         * The distance to use for kNN search queries in relation to the
+         * configured vector similarity.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 3
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreDistance the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreDistance(String embeddingStoreDistance) {
+            doSetProperty("embeddingStoreDistance", embeddingStoreDistance);
+            return this;
+        }
+        /**
+         * Whether to enable the embedding store. When enabled, the embedding
+         * store will be configured automatically when Camel starts. Note that
+         * this feature requires camel-langchain4j-embeddings to be on the
+         * classpath.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreEnabled(boolean embeddingStoreEnabled) {
+            doSetProperty("embeddingStoreEnabled", embeddingStoreEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable the embedding store. When enabled, the embedding
+         * store will be configured automatically when Camel starts. Note that
+         * this feature requires camel-langchain4j-embeddings to be on the
+         * classpath.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreEnabled(String embeddingStoreEnabled) {
+            doSetProperty("embeddingStoreEnabled", embeddingStoreEnabled);
+            return this;
+        }
+        /**
+         * Whether to automatically register the proto schema for the types
+         * required by embedding store cache put and query operations.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreRegisterSchema the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreRegisterSchema(boolean embeddingStoreRegisterSchema) {
+            doSetProperty("embeddingStoreRegisterSchema", embeddingStoreRegisterSchema);
+            return this;
+        }
+        /**
+         * Whether to automatically register the proto schema for the types
+         * required by embedding store cache put and query operations.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreRegisterSchema the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreRegisterSchema(String embeddingStoreRegisterSchema) {
+            doSetProperty("embeddingStoreRegisterSchema", embeddingStoreRegisterSchema);
+            return this;
+        }
+        /**
+         * The name of the type used to store embeddings. The default is
+         * 'InfinispanRemoteEmbedding' suffixed with the value of the
+         * embeddingStoreDimension option. E.g.
+         * CamelInfinispanRemoteEmbedding384.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreTypeName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreTypeName(String embeddingStoreTypeName) {
+            doSetProperty("embeddingStoreTypeName", embeddingStoreTypeName);
+            return this;
+        }
+        /**
+         * The vector similarity algorithm used to store embeddings.
+         * 
+         * The option is a:
+         * <code>org.infinispan.api.annotations.indexing.option.VectorSimilarity</code> type.
+         * 
+         * Default: COSINE
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreVectorSimilarity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreVectorSimilarity(org.infinispan.api.annotations.indexing.option.VectorSimilarity embeddingStoreVectorSimilarity) {
+            doSetProperty("embeddingStoreVectorSimilarity", embeddingStoreVectorSimilarity);
+            return this;
+        }
+        /**
+         * The vector similarity algorithm used to store embeddings.
+         * 
+         * The option will be converted to a
+         * <code>org.infinispan.api.annotations.indexing.option.VectorSimilarity</code> type.
+         * 
+         * Default: COSINE
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreVectorSimilarity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreVectorSimilarity(String embeddingStoreVectorSimilarity) {
+            doSetProperty("embeddingStoreVectorSimilarity", embeddingStoreVectorSimilarity);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

@@ -21,6 +21,8 @@ import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.component.infinispan.InfinispanUtil;
+import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil;
+import org.apache.camel.component.infinispan.remote.embeddingstore.InfinispanVectorQueryBuilder;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.Search;
@@ -38,11 +40,16 @@ public final class InfinispanRemoteUtil extends InfinispanUtil {
     }
 
     public static Query<?> buildQuery(
-            InfinispanConfiguration configuration, RemoteCache<Object, Object> cache, Message message) {
+            InfinispanRemoteConfiguration configuration, RemoteCache<Object, Object> cache, Message message) {
 
         InfinispanQueryBuilder builder = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (builder == null) {
             builder = configuration.getQueryBuilder();
+        }
+
+        if (builder instanceof InfinispanVectorQueryBuilder vectorQueryBuilder) {
+            vectorQueryBuilder.setDistance(configuration.getEmbeddingStoreDistance());
+            vectorQueryBuilder.setTypeName(EmbeddingStoreUtil.getTypeName(configuration));
         }
 
         return buildQuery(builder, cache);

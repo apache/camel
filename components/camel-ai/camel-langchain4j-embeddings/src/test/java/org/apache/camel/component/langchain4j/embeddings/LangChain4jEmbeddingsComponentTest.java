@@ -17,6 +17,7 @@
 package org.apache.camel.component.langchain4j.embeddings;
 
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.store.embedding.CosineSimilarity;
 import dev.langchain4j.store.embedding.RelevanceScore;
@@ -51,6 +52,10 @@ public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
         Embedding firstEmbedding = first.getHeader(LangChain4jEmbeddings.Headers.VECTOR, Embedding.class);
         assertThat(firstEmbedding.vector()).hasSize(384);
 
+        TextSegment firstTextSegment = first.getHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, TextSegment.class);
+        assertThat(firstTextSegment).isNotNull();
+        assertThat(firstTextSegment.text()).isEqualTo("hi");
+
         Message second = fluentTemplate.to("langchain4j-embeddings:second")
                 .withBody("hello")
                 .request(Message.class);
@@ -60,5 +65,9 @@ public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
 
         double cosineSimilarity = CosineSimilarity.between(firstEmbedding, secondEmbedding);
         assertThat(RelevanceScore.fromCosineSimilarity(cosineSimilarity)).isGreaterThan(0.9);
+
+        TextSegment secondTextSegment = second.getHeader(LangChain4jEmbeddings.Headers.TEXT_SEGMENT, TextSegment.class);
+        assertThat(secondTextSegment).isNotNull();
+        assertThat(secondTextSegment.text()).isEqualTo("hello");
     }
 }

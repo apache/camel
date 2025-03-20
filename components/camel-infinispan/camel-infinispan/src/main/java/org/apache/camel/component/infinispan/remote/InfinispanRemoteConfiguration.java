@@ -24,6 +24,7 @@ import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.infinispan.api.annotations.indexing.option.VectorSimilarity;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
@@ -58,6 +59,18 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     private InfinispanRemoteCustomListener customListener;
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private Flag[] flags;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
+    private boolean embeddingStoreEnabled = true;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
+    private boolean embeddingStoreRegisterSchema = true;
+    @UriParam(label = "producer,advanced")
+    private int embeddingStoreDimension;
+    @UriParam(label = "producer,advanced", defaultValue = "COSINE")
+    private VectorSimilarity embeddingStoreVectorSimilarity = VectorSimilarity.COSINE;
+    @UriParam(label = "producer,advanced", defaultValue = "3")
+    private int embeddingStoreDistance = 3;
+    @UriParam(label = "producer,advanced")
+    private String embeddingStoreTypeName;
 
     public Configuration getCacheContainerConfiguration() {
         return cacheContainerConfiguration;
@@ -231,6 +244,76 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
 
     public boolean hasFlags() {
         return flags != null && flags.length > 0;
+    }
+
+    /**
+     * The dimension size used to store vector embeddings. This should be equal to the dimension size of the model used
+     * to create the vector embeddings. This option is mandatory if the embedding store is enabled.
+     */
+    public void setEmbeddingStoreDimension(int embeddingStoreDimension) {
+        this.embeddingStoreDimension = embeddingStoreDimension;
+    }
+
+    public long getEmbeddingStoreDimension() {
+        return embeddingStoreDimension;
+    }
+
+    /**
+     * The vector similarity algorithm used to store embeddings.
+     */
+    public void setEmbeddingStoreVectorSimilarity(VectorSimilarity embeddingStoreVectorSimilarity) {
+        this.embeddingStoreVectorSimilarity = embeddingStoreVectorSimilarity;
+    }
+
+    public VectorSimilarity getEmbeddingStoreVectorSimilarity() {
+        return embeddingStoreVectorSimilarity;
+    }
+
+    /**
+     * Whether to enable the embedding store. When enabled, the embedding store will be configured automatically when
+     * Camel starts. Note that this feature requires camel-langchain4j-embeddings to be on the classpath.
+     */
+    public void setEmbeddingStoreEnabled(boolean embeddingStoreEnabled) {
+        this.embeddingStoreEnabled = embeddingStoreEnabled;
+    }
+
+    public boolean isEmbeddingStoreEnabled() {
+        return embeddingStoreEnabled;
+    }
+
+    /**
+     * Whether to automatically register the proto schema for the types required by embedding store cache put and query
+     * operations.
+     */
+    public void setEmbeddingStoreRegisterSchema(boolean embeddingStoreRegisterSchema) {
+        this.embeddingStoreRegisterSchema = embeddingStoreRegisterSchema;
+    }
+
+    public boolean isEmbeddingStoreRegisterSchema() {
+        return embeddingStoreRegisterSchema;
+    }
+
+    /**
+     * The distance to use for kNN search queries in relation to the configured vector similarity.
+     */
+    public void setEmbeddingStoreDistance(int embeddingStoreDistance) {
+        this.embeddingStoreDistance = embeddingStoreDistance;
+    }
+
+    public int getEmbeddingStoreDistance() {
+        return embeddingStoreDistance;
+    }
+
+    /**
+     * The name of the type used to store embeddings. The default is 'InfinispanRemoteEmbedding' suffixed with the value
+     * of the embeddingStoreDimension option. E.g. CamelInfinispanRemoteEmbedding384.
+     */
+    public void setEmbeddingStoreTypeName(String embeddingStoreTypeName) {
+        this.embeddingStoreTypeName = embeddingStoreTypeName;
+    }
+
+    public String getEmbeddingStoreTypeName() {
+        return embeddingStoreTypeName;
     }
 
     @Override
