@@ -15,14 +15,14 @@
 # limitations under the License.
 #
 
-{{- with .Values.deployments.keycloak }}
+{{- with .Values.openshift.keycloak }}
 
 # Keycloak Realm ConfigMap
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: keycloak-realm-config
+  name: keycloak-realm-import
   labels:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/managed-by: Helm
@@ -63,7 +63,6 @@ spec:
             - "start-dev"
             - "--import-realm"
             - "--http-enabled=true"
-            - "--http-relative-path=/kc"
             - "--proxy-headers=xforwarded"
             - "--proxy-protocol-enabled=false"
           env:
@@ -74,13 +73,13 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: keycloak-realm-config
+            - name: keycloak-realm-import
               mountPath: /opt/keycloak/data/import
               readOnly: true
       volumes:
-        - name: keycloak-realm-config
+        - name: keycloak-realm-import
           configMap:
-            name: keycloak-realm-config
+            name: keycloak-realm-import
 
 # Keycloak Service
 ---
@@ -92,30 +91,28 @@ metadata:
     app.kubernetes.io/name: keycloak
 spec:
   ports:
-    - name: http
-      port: 8080
+    - port: 8080
+      targetPort: 8080
   selector:
     app.kubernetes.io/name: keycloak
 
-# Keycloak Ingress Https
+# Keycloak Route
 ---
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+apiVersion: route.openshift.io/v1
+kind: Route
 metadata:
   name: keycloak
   labels:
     app.kubernetes.io/name: keycloak
 spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: PathPrefix(`/kc`)
-      kind: Rule
-      services:
-        - name: keycloak
-          port: 8080
+  host: keycloak.{{ $.Values.openshift.hostName }}
+  to:
+    kind: Service
+    name: keycloak
+  port:
+    targetPort: 8080
   tls:
-    secretName: traefik-tls
-
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
 ---
 {{- end }}

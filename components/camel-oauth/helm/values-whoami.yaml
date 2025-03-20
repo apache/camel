@@ -18,5 +18,5 @@
 deployments:
 
   whoami:
-    name: "whoami"
+    version: latest
 

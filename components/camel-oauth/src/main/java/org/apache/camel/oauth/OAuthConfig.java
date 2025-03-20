@@ -16,6 +16,8 @@
  */
 package org.apache.camel.oauth;
 
+import com.nimbusds.jose.jwk.JWKSet;
+
 public class OAuthConfig {
 
     private String baseUrl;
@@ -27,6 +29,13 @@ public class OAuthConfig {
     private String logoutPath;
     private String userInfoPath;
     private String introspectionPath;
+    private String jwksPath;
+    private JWTOptions jwtOptions;
+    private JWKSet jwkSet;
+
+    public OAuthConfig() {
+        jwtOptions = new JWTOptions();
+    }
 
     public String getBaseUrl() {
         return baseUrl;
@@ -107,5 +116,26 @@ public class OAuthConfig {
     public OAuthConfig setIntrospectionPath(String introspectionPath) {
         this.introspectionPath = introspectionPath;
         return this;
+    }
+
+    public String getJwksPath() {
+        return jwksPath;
+    }
+
+    public OAuthConfig setJwksPath(String jwksPath) {
+        this.jwksPath = jwksPath;
+        return this;
+    }
+
+    public JWTOptions getJWTOptions() {
+        return jwtOptions;
+    }
+
+    public JWKSet getJWKSet() {
+        return jwkSet;
+    }
+
+    public void setJWKSet(JWKSet jwkSet) {
+        this.jwkSet = jwkSet;
     }
 }

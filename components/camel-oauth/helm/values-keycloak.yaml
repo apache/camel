@@ -16,10 +16,6 @@
 #
 
 deployments:
-
   keycloak:
-    name: "keycloak"
     version: 26.1.2
-    nodePortHttp:  30100
-    nodePortHttps: 30443
 

@@ -22,6 +22,10 @@ public class OAuthException extends RuntimeException {
         super(msg);
     }
 
+    public OAuthException(Throwable cause) {
+        super(cause);
+    }
+
     public OAuthException(String msg, Throwable cause) {
         super(msg, cause);
     }

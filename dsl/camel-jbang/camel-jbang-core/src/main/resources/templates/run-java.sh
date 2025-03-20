@@ -29,7 +29,7 @@
 #
 #
 # This script will pick up either a 'fat' jar which can be run with "-jar"
-# or you can sepcify a JAVA_MAIN_CLASS.
+# or you can specify a JAVA_MAIN_CLASS.
 #
 # Source and Documentation can be found
 # at https://github.com/fabric8io-images/run-java-sh/blob/v1.3.8/fish-pepper/run-java-sh/fp-files/run-java.sh
@@ -482,8 +482,52 @@ gc_options() {
 
 java_default_options() {
   # Echo options, trimming trailing and multiple spaces
-  echo "$(memory_options) $(jit_options) $(diagnostics_options) $(cpu_options) $(gc_options)" | awk '$1=$1'
+  echo "$(memory_options) $(jit_options) $(diagnostics_options) $(cpu_options) $(gc_options) $(ssl_options)" | awk '$1=$1'
+}
 
+# ==============================================================================
+
+has_ssl_certificates() {
+  truststoreCertFiles=""
+  # Loop through each file in the CSV string
+  for file in ${SSL_TRUSTSTORE_CERTIFICATES:-}; do
+    # If file is not an absolute path, prepend the script dir
+    if [ "${file#/}" = "$file" ]; then
+        file="$(script_dir)/$file"
+    fi
+    if [ -f "$file" ] && [ "${file##*.}" = "crt" ]; then
+        truststoreCertFiles="${truststoreCertFiles:+$truststoreCertFiles,}$file"
+        found=true
+        break
+    fi
+  done
+  if [ "${found:-false}" = true ]; then
+    truststoreFile=${JAVA_TRUSTSTORE_LOCATION:-/tmp/truststore.jks}
+    truststorePass=${JAVA_TRUSTSTORE_PASSWORD:-changeit}
+    return 0
+  else
+    return 1
+  fi
+}
+
+ssl_options() {
+  local opts=""
+  if has_ssl_certificates; then
+    opts="-Djavax.net.ssl.trustStore=${truststoreFile} -Djavax.net.ssl.trustStorePassword=${truststorePass}"
+  fi
+  echo $opts
+}
+
+ssl_truststore() {
+  IFS=','
+  if has_ssl_certificates; then
+    for crt in $truststoreCertFiles; do
+      alias=$(basename "$crt" .crt)
+      echo "Importing certificate: ${crt} to ${truststoreFile}" >&2
+      keytool -import -alias ${alias} -file ${crt} -keystore ${truststoreFile} -storepass ${truststorePass} -noprompt >&2
+    done
+  fi
+  IFS=' '
 }
 
 # ==============================================================================
@@ -542,7 +586,7 @@ exec_args() {
 
 # Combine all java options
 java_options() {
-  # Normalize spaces with awk (i.e. trim and elimate double spaces)
+  # Normalize spaces with awk (i.e. trim and eliminate double spaces)
   # See e.g. https://www.physicsforums.com/threads/awk-1-1-1-file-txt.658865/ for an explanation
   # of this awk idiom
   echo "${JAVA_OPTIONS:-} $(run_java_options) $(debug_options) $(proxy_options) $(java_default_options)" | awk '$1=$1'
@@ -618,6 +662,9 @@ options() {
     if [ $(hasflag --gc) ]; then
       ret="$ret $(gc_options)"
     fi
+    if [ $(hasflag --ssl) ]; then
+      ret="$ret $(ssl_options)"
+    fi
 
     echo $ret | awk '$1=$1'
 }
@@ -637,6 +684,10 @@ run() {
      echo "Either JAVA_MAIN_CLASS or JAVA_APP_JAR needs to be given"
      exit 1
   fi
+
+  # Optionally create an SSL truststore
+  ssl_truststore
+
   # Don't put ${args} in quotes, otherwise it would be interpreted as a single arg.
   # However it could be two args (see above). zsh doesn't like this btw, but zsh is not
   # supported anyway.

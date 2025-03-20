@@ -15,9 +15,10 @@
 # limitations under the License.
 #
 
-{{- with .Values.deployments.whoami }}
+{{- with .Values.openshift.whoami }}
 
 # Whoami Deployment
+# https://github.com/traefik/whoami
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -56,39 +57,23 @@ spec:
   selector:
     app.kubernetes.io/name: whoami
 
-# Whoami IngressRoute
+# Whoami Route
 ---
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
+apiVersion: route.openshift.io/v1
+kind: Route
 metadata:
   name: whoami
   labels:
     app.kubernetes.io/name: whoami
 spec:
-  entryPoints:
-    - web
-    - websecure
-  routes:
-    - match: PathPrefix(`/who`)
-      kind: Rule
-      services:
-        - name: whoami
-          port: 8080
-      middlewares:
-        - name: strip-prefix-who
+  host: whoami.{{ $.Values.openshift.hostName }}
+  to:
+    kind: Service
+    name: whoami
+  port:
+    targetPort: 8080
   tls:
-    secretName: traefik-tls
-
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-prefix-who
-  labels:
-    app.kubernetes.io/name: whoami
-spec:
-  stripPrefix:
-    prefixes:
-      - /who
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
 ---
 {{- end }}

@@ -16,5 +16,17 @@
 #
 
 deployments:
-  kafka:
-    nodePort: 30094
+  none:
+
+openshift:
+
+  hostName: apps.rosa.<cluster-name>.openshiftapps.com
+
+  backdoor:
+    version: latest
+
+  keycloak:
+    version: 26.1.2
+
+  whoami:
+    version: latest

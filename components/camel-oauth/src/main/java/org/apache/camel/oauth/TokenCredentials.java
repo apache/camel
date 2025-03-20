@@ -16,9 +16,13 @@
  */
 package org.apache.camel.oauth;
 
-public class TokenCredentials implements Credentials {
+public class TokenCredentials extends Credentials {
 
     private String token;
+
+    public TokenCredentials(String token) {
+        this.token = token;
+    }
 
     public String getToken() {
         return token;

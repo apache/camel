@@ -21,7 +21,7 @@ public class OAuthLogoutParams {
     private UserProfile user;
     private String redirectUri;
 
-    public UserProfile getUser() {
+    public UserProfile getUserProfile() {
         return user;
     }
 
