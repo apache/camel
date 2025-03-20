@@ -105,7 +105,7 @@
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.4</commons-collections4-version>
         <commons-compress-version>1.27.1</commons-compress-version>
-        <commons-csv-version>1.13.0</commons-csv-version>
+        <commons-csv-version>1.14.0</commons-csv-version>
         <commons-cli-version>1.4</commons-cli-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.13.0</commons-dbcp2-version>
