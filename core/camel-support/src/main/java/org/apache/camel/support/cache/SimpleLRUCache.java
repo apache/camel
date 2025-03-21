@@ -16,7 +16,7 @@
  */
 package org.apache.camel.support.cache;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,12 +25,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * {@code SimpleLRUCache} is a simple implementation of a cache of type Least Recently Used . The implementation doesn't
@@ -40,7 +42,7 @@ import java.util.function.Function;
  * @param <K> type of the key
  * @param <V> type of the value
  */
-public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
+public class SimpleLRUCache<K, V> implements Map<K, V> {
 
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
     /**
@@ -52,9 +54,9 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
      */
     private final AtomicBoolean eviction = new AtomicBoolean();
     /**
-     * The lock to prevent the addition of changes during the swap of queue of changes.
+     * The lock to prevent the addition of changes during the swap of queue of changes or the cache cleaning.
      */
-    private final ReadWriteLock swapLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
     /**
      * The maximum cache size.
      */
@@ -62,17 +64,26 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
     /**
      * The last changes recorded.
      */
-    private final AtomicReference<Deque<Entry<K, V>>> lastChanges = new AtomicReference<>(new ConcurrentLinkedDeque<>());
+    private final AtomicReference<Deque<Entry<K, ValueHolder<V>>>> lastChanges
+            = new AtomicReference<>(new ConcurrentLinkedDeque<>());
     /**
      * The function to call when an entry is evicted.
      */
     private final Consumer<V> evict;
+    /**
+     * The sequence number used to generate a unique id for each cache change.
+     */
+    private final AtomicLong sequence = new AtomicLong();
+    /**
+     * The underlying map.
+     */
+    private final Map<K, ValueHolder<V>> delegate;
 
     public SimpleLRUCache(int initialCapacity, int maximumCacheSize, Consumer<V> evicted) {
-        super(initialCapacity, DEFAULT_LOAD_FACTOR);
         if (maximumCacheSize <= 0) {
             throw new IllegalArgumentException("The maximum cache size must be greater than 0");
         }
+        this.delegate = new ConcurrentHashMap<>(initialCapacity, DEFAULT_LOAD_FACTOR);
         this.maximumCacheSize = maximumCacheSize;
         this.evict = Objects.requireNonNull(evicted);
     }
@@ -84,20 +95,66 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
      * @param  mappingFunction the mapping function to apply.
      * @return                 the result of the mapping function.
      */
-    private V addChange(OperationContext<K, V> context, Function<? super K, ? extends V> mappingFunction) {
+    private ValueHolder<V> addChange(OperationContext<K, V> context, Function<? super K, ? extends V> mappingFunction) {
         K key = context.key;
         V value = mappingFunction.apply(key);
         if (value == null) {
             return null;
         }
-        Entry<K, V> entry = Map.entry(key, value);
-        swapLock.readLock().lock();
-        try {
-            lastChanges.get().add(entry);
-        } finally {
-            swapLock.readLock().unlock();
+        ValueHolder<V> holder = newValue(value);
+        lastChanges.get().add(Map.entry(key, holder));
+        return holder;
+    }
+
+    @Override
+    public int size() {
+        return delegate.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return delegate.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return delegate.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        if (value == null)
+            throw new NullPointerException();
+        return delegate.values().stream()
+                .map(ValueHolder::get)
+                .anyMatch(v -> Objects.equals(v, value));
+    }
+
+    @Override
+    public V get(Object key) {
+        return extractValue(delegate.get(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean remove(Object key, Object value) {
+        if (key == null || value == null) {
+            throw new NullPointerException();
         }
-        return value;
+        K keyK = (K) key;
+        try (OperationContext<K, V> context = new OperationContext<>(this, keyK)) {
+            delegate.compute(
+                    keyK,
+                    (k, v) -> {
+                        V extractedValue = extractValue(v);
+                        if (Objects.equals(value, extractedValue)) {
+                            context.result = extractedValue;
+                            return null;
+                        }
+                        return v;
+                    });
+            return context.result != null;
+        }
     }
 
     @Override
@@ -106,14 +163,19 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            super.compute(
+            delegate.compute(
                     key,
                     (k, v) -> {
-                        context.result = v;
+                        context.result = extractValue(v);
                         return addChange(context, x -> value);
                     });
             return context.result;
         }
+    }
+
+    @Override
+    public V remove(Object key) {
+        return extractValue(delegate.remove(key));
     }
 
     @Override
@@ -122,10 +184,10 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            super.compute(
+            delegate.compute(
                     key,
                     (k, v) -> {
-                        context.result = v;
+                        context.result = extractValue(v);
                         if (v != null) {
                             return v;
                         }
@@ -141,7 +203,7 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return super.computeIfAbsent(key, k -> addChange(context, mappingFunction));
+            return extractValue(delegate.computeIfAbsent(key, k -> addChange(context, mappingFunction)));
         }
     }
 
@@ -151,7 +213,8 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return super.computeIfPresent(key, (k, v) -> addChange(context, x -> remappingFunction.apply(x, v)));
+            return extractValue(delegate.computeIfPresent(key,
+                    (k, v) -> addChange(context, x -> remappingFunction.apply(x, extractValue(v)))));
         }
     }
 
@@ -161,7 +224,8 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return super.compute(key, (k, v) -> addChange(context, x -> remappingFunction.apply(x, v)));
+            return extractValue(
+                    delegate.compute(key, (k, v) -> addChange(context, x -> remappingFunction.apply(x, extractValue(v)))));
         }
     }
 
@@ -171,12 +235,12 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return super.compute(
+            return extractValue(delegate.compute(
                     key,
                     (k, oldValue) -> {
-                        V newValue = (oldValue == null) ? value : remappingFunction.apply(oldValue, value);
+                        V newValue = (oldValue == null) ? value : remappingFunction.apply(oldValue.get(), value);
                         return addChange(context, x -> newValue);
-                    });
+                    }));
         }
     }
 
@@ -186,12 +250,13 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            super.computeIfPresent(
+            delegate.computeIfPresent(
                     key,
                     (k, v) -> {
-                        if (Objects.equals(oldValue, v)) {
-                            context.result = addChange(context, x -> newValue);
-                            return context.result;
+                        if (Objects.equals(oldValue, extractValue(v))) {
+                            ValueHolder<V> result = addChange(context, x -> newValue);
+                            context.result = extractValue(result);
+                            return result;
                         }
                         return v;
                     });
@@ -205,10 +270,10 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            super.computeIfPresent(
+            delegate.computeIfPresent(
                     key,
                     (k, v) -> {
-                        context.result = v;
+                        context.result = extractValue(v);
                         return addChange(context, x -> value);
                     });
             return context.result;
@@ -223,15 +288,47 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
     }
 
     @Override
+    public void clear() {
+        lock.writeLock().lock();
+        try {
+            lastChanges.getAndSet(new ConcurrentLinkedDeque<>());
+            delegate.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return delegate.keySet();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return delegate.values().stream().map(ValueHolder::get).toList();
+    }
+
+    @Override
     public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+        if (function == null) {
+            throw new NullPointerException();
+        }
         for (Entry<? extends K, ? extends V> e : entrySet()) {
-            replace(e.getKey(), e.getValue(), function.apply(e.getKey(), e.getValue()));
+            K key = e.getKey();
+            V value = e.getValue();
+            try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
+                delegate.computeIfPresent(
+                        key,
+                        (k, v) -> addChange(context, x -> function.apply(x, value)));
+            }
         }
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return Collections.unmodifiableSet(super.entrySet());
+        return delegate.entrySet().stream()
+                .map(entry -> new CacheEntry<>(this, entry.getKey(), entry.getValue().get()))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     /**
@@ -272,29 +369,42 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
     /**
      * @return the oldest existing change.
      */
-    private Entry<K, V> nextOldestChange() {
+    private Entry<K, ValueHolder<V>> nextOldestChange() {
         return lastChanges.get().poll();
     }
 
     /**
-     * Removes duplicates from the queue of changes.
+     * Removes duplicates from the queue of changes if the queue is full.
      */
-    private void compressChanges() {
-        Deque<Entry<K, V>> newChanges = new ConcurrentLinkedDeque<>();
-        Deque<Entry<K, V>> currentChanges;
-        swapLock.writeLock().lock();
+    private void compressChangesIfNeeded() {
+        Deque<Entry<K, ValueHolder<V>>> newChanges;
+        Deque<Entry<K, ValueHolder<V>>> currentChanges;
+        lock.writeLock().lock();
         try {
-            currentChanges = lastChanges.getAndSet(newChanges);
+            if (isQueueFull()) {
+                newChanges = new ConcurrentLinkedDeque<>();
+                currentChanges = lastChanges.getAndSet(newChanges);
+            } else {
+                return;
+            }
         } finally {
-            swapLock.writeLock().unlock();
+            lock.writeLock().unlock();
         }
         Set<K> keys = new HashSet<>();
-        Entry<K, V> entry;
+        Entry<K, ValueHolder<V>> entry;
         while ((entry = currentChanges.pollLast()) != null) {
             if (keys.add(entry.getKey())) {
                 newChanges.addFirst(entry);
             }
         }
+    }
+
+    private ValueHolder<V> newValue(V value) {
+        return new ValueHolder<>(sequence.incrementAndGet(), value);
+    }
+
+    private V extractValue(ValueHolder<V> holder) {
+        return holder == null ? null : holder.get();
     }
 
     /**
@@ -317,27 +427,102 @@ public class SimpleLRUCache<K, V> extends ConcurrentHashMap<K, V> {
         OperationContext(SimpleLRUCache<K, V> cache, K key) {
             this.cache = cache;
             this.key = key;
+            cache.lock.readLock().lock();
         }
 
         @Override
         public void close() {
+            cache.lock.readLock().unlock();
             if (cache.evictionNeeded() && cache.eviction.compareAndSet(false, true)) {
                 try {
                     do {
-                        cache.compressChanges();
+                        cache.compressChangesIfNeeded();
                         if (cache.isCacheFull()) {
-                            Entry<K, V> oldest = cache.nextOldestChange();
-                            if (oldest != null && cache.remove(oldest.getKey(), oldest.getValue())) {
-                                cache.evict.accept(oldest.getValue());
+                            Entry<K, ValueHolder<V>> oldest = cache.nextOldestChange();
+                            if (cache.delegate.remove(oldest.getKey(), oldest.getValue())) {
+                                cache.evict.accept(oldest.getValue().get());
                             }
-                        } else {
-                            break;
                         }
                     } while (cache.evictionNeeded());
                 } finally {
                     cache.eviction.set(false);
                 }
             }
+        }
+    }
+
+    /**
+     * A cache value holder that leverages a revision id to be able to distinguish the same key value pair that has been
+     * added several times to the cache.
+     *
+     * @param <V> the type of the value
+     */
+    private static class ValueHolder<V> {
+        private final long revision;
+        private final V value;
+
+        ValueHolder(long revision, V value) {
+            this.revision = revision;
+            this.value = value;
+        }
+
+        V get() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass())
+                return false;
+            ValueHolder<?> that = (ValueHolder<?>) o;
+            return revision == that.revision;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(revision);
+        }
+    }
+
+    /**
+     * A modifiable cache entry.
+     *
+     * @param <K> the type of the key
+     * @param <V> the type of the value
+     */
+    private static class CacheEntry<K, V> implements Entry<K, V> {
+
+        private final K key;
+        private V val;
+        /**
+         * The underlying cache.
+         */
+        private final SimpleLRUCache<K, V> cache;
+
+        CacheEntry(SimpleLRUCache<K, V> cache, K key, V value) {
+            this.cache = cache;
+            this.key = key;
+            this.val = value;
+        }
+
+        @Override
+        public K getKey() {
+            return key;
+        }
+
+        @Override
+        public V getValue() {
+            return val;
+        }
+
+        @Override
+        public V setValue(V value) {
+            if (value == null)
+                throw new NullPointerException();
+            V v = val;
+            val = value;
+            cache.put(key, value);
+            return v;
         }
     }
 }
