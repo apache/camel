@@ -111,6 +111,13 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      * Registers this {@link Tracer} on the {@link CamelContext} if not already registered.
      */
     public void init(CamelContext camelContext) {
+        if (hasOtherTracerType(camelContext)) {
+            LOG.warn("Could not add {} tracer type. Another tracer type, {}, was already registered. " +
+                     "Make sure to include only one tracing dependency type.",
+                    this.getClass(),
+                    camelContext.hasService(Tracer.class).getClass());
+            return;
+        }
         if (!camelContext.hasService(this)) {
             try {
                 // start this service eager so we init before Camel is starting up
@@ -119,6 +126,15 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
+    }
+
+    // Check if there is any other registered Tracer.
+    private boolean hasOtherTracerType(CamelContext camelContext) {
+        Tracer t = camelContext.hasService(Tracer.class);
+        if (t == null) {
+            return false;
+        }
+        return !this.getClass().equals(t.getClass());
     }
 
     @Override
