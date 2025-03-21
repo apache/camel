@@ -39,6 +39,7 @@ public class ServiceBusHeaderFilterStrategy extends DefaultHeaderFilterStrategy 
 
     public ServiceBusHeaderFilterStrategy() {
         super();
+        setLowerCase(true);
         setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
         setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
     }
