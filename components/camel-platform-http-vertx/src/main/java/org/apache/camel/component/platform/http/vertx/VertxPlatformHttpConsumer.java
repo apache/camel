@@ -110,6 +110,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
         if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
+        } else if (!getEndpoint().isHttpProxy() && !getEndpoint().isUseBodyHandler()) {
+            httpRequestBodyHandler = new NoOpHttpRequestBodyHandler(router.bodyHandler());
         } else {
             httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
         }
@@ -212,7 +214,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 handleProxy(ctx, exchange);
             }
 
-            populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+            if (getEndpoint().isUseBodyHandler()) {
+                populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+            }
 
             vertx.executeBlocking(() -> processExchange(exchange), false).onComplete(processExchangeResult -> {
                 if (processExchangeResult.succeeded()) {

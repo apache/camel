@@ -18,34 +18,23 @@ package org.apache.camel.component.platform.http.vertx;
 
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Message;
 
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
-
-/**
- * Default {@link HttpRequestBodyHandler} that will read the entire HTTP request body into memory if useBodyHandler is
- * enabled.
- */
-class DefaultHttpRequestBodyHandler extends HttpRequestBodyHandler {
-    DefaultHttpRequestBodyHandler(Handler<RoutingContext> delegate) {
+class NoOpHttpRequestBodyHandler extends HttpRequestBodyHandler {
+    NoOpHttpRequestBodyHandler(final Handler<RoutingContext> delegate) {
         super(delegate);
     }
 
     @Override
     void configureRoute(Route route) {
-        route.handler(delegate);
     }
 
     @Override
     Future<Void> handle(RoutingContext routingContext, Message message) {
-        if (!isMultiPartFormData(routingContext) && !isFormUrlEncoded(routingContext)) {
-            final RequestBody requestBody = routingContext.body();
-            message.setBody(requestBody.buffer());
-        }
+        routingContext.request().pause();
+        message.setBody(routingContext.request());
         return Future.succeededFuture();
     }
 }
