@@ -32,6 +32,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -186,6 +188,25 @@ public final class KubernetesHelper {
             // ignore it, since we try to discover the cluster and don't want the caller to handle any error
         }
         return minikube;
+    }
+
+    // when minikube is used with the registry addon exposed
+    // the build of images uses docker builder directly from the registry inside minikube
+    // that doesn't generate the container image digest in the registry
+    // that poses a problem when deploying a knative-service, since it validates the container image to have a digest
+    // then it fails with: failed to resolve image to digest
+    // so, for development purposes we disable this validation in minikube
+    // https://knative.dev/docs/serving/configuration/deployment/#skipping-tag-resolution
+    public static void skipKnativeImageTagResolutionInMinikube() {
+        ConfigMap cm = getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").get();
+        Map<String, String> data = cm.getData();
+        String skipTag = data.get("registries-skipping-tag-resolving");
+        if (skipTag == null || !skipTag.contains("localhost:5000")) {
+            // patch the cm/config-deployment in knative-serving namespace with
+            // registries-skipping-tag-resolving: localhost:5000
+            getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").edit(
+                    c -> new ConfigMapBuilder(c).addToData("registries-skipping-tag-resolving", "localhost:5000").build());
+        }
     }
 
     /**

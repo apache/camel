@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.codehaus.plexus.util.ExceptionUtils;
 import picocli.CommandLine;
@@ -46,6 +48,9 @@ public class KubernetesDelete extends KubernetesBaseCommand {
 
     public Integer doCall() throws Exception {
         printer().printf("Deleting all resources from app: %s%n", appName);
+        if (ObjectHelper.isEmpty(namespace)) {
+            namespace = getKubernetesClient().getNamespace();
+        }
         Map<String, String> labels = new HashMap<>();
         // this label is set in KubernetesRun command
         labels.put(BaseTrait.KUBERNETES_LABEL_MANAGED_BY, "camel-jbang");
@@ -54,23 +59,39 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         try {
             // delete the most common resources
             // delete Deployment cascades to pod
-            deleteStatuses.addAll(getKubernetesClient().apps().deployments().withLabels(labels).delete());
+            deleteStatuses
+                    .addAll(getKubernetesClient().apps().deployments().inNamespace(namespace).withLabels(labels).delete());
             // delete service
-            deleteStatuses.addAll(getKubernetesClient().services().withLabels(labels).delete());
+            deleteStatuses.addAll(getKubernetesClient().services().inNamespace(namespace).withLabels(labels).delete());
+            // delete knative-services
+            ResourceDefinitionContext knativeServices = new ResourceDefinitionContext.Builder()
+                    .withGroup("serving.knative.dev")
+                    .withVersion("v1")
+                    .withKind("Service")
+                    .withNamespaced(true)
+                    .build();
+            deleteStatuses
+                    .addAll(getKubernetesClient().genericKubernetesResources(knativeServices).inNamespace(namespace)
+                            .withLabels(labels).delete());
+            // delete configmap
+            deleteStatuses.addAll(getKubernetesClient().configMaps().inNamespace(namespace).withLabels(labels).delete());
+            // delete secrets
+            deleteStatuses.addAll(getKubernetesClient().secrets().inNamespace(namespace).withLabels(labels).delete());
             ClusterType clusterType = KubernetesHelper.discoverClusterType();
             if (ClusterType.OPENSHIFT == clusterType) {
                 // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig casacade delete to Build and ConfigMap
                 OpenShiftClient ocpClient = getKubernetesClient().adapt(OpenShiftClient.class);
                 // BuildConfig
-                deleteStatuses.addAll(ocpClient.buildConfigs().withLabels(labels).delete());
+                deleteStatuses.addAll(ocpClient.buildConfigs().inNamespace(namespace).withLabels(labels).delete());
                 // ImageStreams
-                deleteStatuses.addAll(ocpClient.imageStreams().withLabels(labels).delete());
+                deleteStatuses.addAll(ocpClient.imageStreams().inNamespace(namespace).withLabels(labels).delete());
                 // Route
-                deleteStatuses.addAll(ocpClient.routes().withLabels(labels).delete());
+                deleteStatuses.addAll(ocpClient.routes().inNamespace(namespace).withLabels(labels).delete());
             }
             if (deleteStatuses.size() > 0) {
                 deleteStatuses.forEach(
-                        s -> printer().printf("Deleted: %s '%s'%n", StringHelper.capitalize(s.getKind()), s.getName()));
+                        s -> printer().printf("Deleted: %s/%s '%s'%n", s.getGroup(), StringHelper.capitalize(s.getKind()),
+                                s.getName()));
             } else {
                 printer().println("No deployment found with name: " + appName);
             }

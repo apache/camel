@@ -75,7 +75,7 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTest {
         var labelsB = service.getSpec().getTemplate().getMetadata().getLabels();
         Map<String, String> annotations = service.getSpec().getTemplate().getMetadata().getAnnotations();
         Assertions.assertEquals("route-service", service.getMetadata().getName());
-        Assertions.assertEquals(3, labelsA.size());
+        Assertions.assertEquals(8, labelsA.size());
         Assertions.assertEquals("route-service", labelsA.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("true", labelsA.get("bindings.knative.dev/include"));
         Assertions.assertEquals("cluster-local", labelsA.get("networking.knative.dev/visibility"));

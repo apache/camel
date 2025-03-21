@@ -134,6 +134,12 @@ class KubernetesDeleteTest {
                 "/apis/apps/v1/namespaces/test/deployments?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
         serverDeleteExpect(
                 "/api/v1/namespaces/test/services?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+        serverDeleteExpect(
+                "/apis/serving.knative.dev/v1/namespaces/test/services?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+        serverDeleteExpect(
+                "/api/v1/namespaces/test/configmaps?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+        serverDeleteExpect(
+                "/api/v1/namespaces/test/secrets?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
 
         // Execute delete command
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
@@ -176,6 +182,12 @@ class KubernetesDeleteTest {
                 "/apis/image.openshift.io/v1/namespaces/test/imagestreams?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
         serverDeleteExpect(
                 "/apis/route.openshift.io/v1/namespaces/test/routes?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+        serverDeleteExpect(
+                "/apis/serving.knative.dev/v1/namespaces/test/services?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+        serverDeleteExpect(
+                "/api/v1/namespaces/test/configmaps?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
+        serverDeleteExpect(
+                "/api/v1/namespaces/test/secrets?labelSelector=app%3Dmy-route%2Capp.kubernetes.io%2Fmanaged-by%3Dcamel-jbang");
 
         // Execute delete command
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
