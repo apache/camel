@@ -27,21 +27,27 @@ import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSu
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 
 /**
- * Default {@link HttpRequestBodyHandler} that will read to read the entire HTTP request body into memory.
+ * Default {@link HttpRequestBodyHandler} that will read the entire HTTP request body into memory if useBodyHandler is
+ * enabled.
  */
 class DefaultHttpRequestBodyHandler extends HttpRequestBodyHandler {
-    DefaultHttpRequestBodyHandler(Handler<RoutingContext> delegate) {
+    final boolean useBodyHandler;
+
+    DefaultHttpRequestBodyHandler(Handler<RoutingContext> delegate, boolean useBodyHandler) {
         super(delegate);
+        this.useBodyHandler = useBodyHandler;
     }
 
     @Override
     void configureRoute(Route route) {
-        route.handler(delegate);
+        if (useBodyHandler) {
+            route.handler(delegate);
+        }
     }
 
     @Override
     Future<Void> handle(RoutingContext routingContext, Message message) {
-        if (!isMultiPartFormData(routingContext) && !isFormUrlEncoded(routingContext)) {
+        if (useBodyHandler && !isMultiPartFormData(routingContext) && !isFormUrlEncoded(routingContext)) {
             final RequestBody requestBody = routingContext.body();
             message.setBody(requestBody.buffer());
         }

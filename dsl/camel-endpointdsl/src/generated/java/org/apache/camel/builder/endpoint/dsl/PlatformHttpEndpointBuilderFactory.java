@@ -426,6 +426,38 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to use BodyHandler for the request. If set to false then the
+         * request will no be read and parsed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param useBodyHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder useBodyHandler(boolean useBodyHandler) {
+            doSetProperty("useBodyHandler", useBodyHandler);
+            return this;
+        }
+        /**
+         * Whether to use BodyHandler for the request. If set to false then the
+         * request will no be read and parsed.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param useBodyHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPlatformHttpEndpointBuilder useBodyHandler(String useBodyHandler) {
+            doSetProperty("useBodyHandler", useBodyHandler);
+            return this;
+        }
+        /**
          * Whether to enable the Cookie Handler that allows Cookie addition,
          * expiry, and retrieval (currently only supported by
          * camel-platform-http-vertx).
