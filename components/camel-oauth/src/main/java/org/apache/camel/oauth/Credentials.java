@@ -16,6 +16,15 @@
  */
 package org.apache.camel.oauth;
 
-public interface Credentials {
+public abstract class Credentials {
 
+    protected OAuthFlowType flowType;
+
+    public OAuthFlowType getFlowType() {
+        return flowType;
+    }
+
+    public void setFlowType(OAuthFlowType flowType) {
+        this.flowType = flowType;
+    }
 }
