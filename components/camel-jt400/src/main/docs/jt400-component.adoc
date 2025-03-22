@@ -133,7 +133,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
 will contain three strings that will be used as the arguments for the
-program “compute” in the library “assets”. This program will write the
+program “compute�? in the library “assets�?. This program will write the
 output values in the second and third parameters. All the parameters will be
 sent to the direct:play endpoint.
 

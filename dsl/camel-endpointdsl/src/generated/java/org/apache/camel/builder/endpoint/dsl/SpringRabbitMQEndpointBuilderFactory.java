@@ -2080,7 +2080,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * The exchange name determines the exchange to which the produced
          * messages will be sent to. In the case of consumers, the exchange name
          * determines the exchange the queue will be bound to. Note: to use
-         * default exchange then do not use empty name, but use default instead.
+         * default exchange then do not use empty name, but use default
+         * instead.
          * 
          * @param path exchangeName
          * @return the dsl builder
@@ -2103,7 +2104,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * The exchange name determines the exchange to which the produced
          * messages will be sent to. In the case of consumers, the exchange name
          * determines the exchange the queue will be bound to. Note: to use
-         * default exchange then do not use empty name, but use default instead.
+         * default exchange then do not use empty name, but use default
+         * instead.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

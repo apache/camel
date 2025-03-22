@@ -500,7 +500,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Syntax: <code>reactive-streams:stream</code>
          * 
          * Path parameter: stream
-         * Name of the stream channel used by the endpoint to exchange messages.
+         * Name of the stream channel used by the endpoint to exchange
+         * messages.
          * 
          * @param path stream
          * @return the dsl builder
@@ -520,7 +521,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Syntax: <code>reactive-streams:stream</code>
          * 
          * Path parameter: stream
-         * Name of the stream channel used by the endpoint to exchange messages.
+         * Name of the stream channel used by the endpoint to exchange
+         * messages.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

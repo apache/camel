@@ -306,7 +306,7 @@
   "version" : "4.11.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
-  "description" : "Distributed Database For High‑Performance Applications With In‑Memory Speed",
+  "description" : "Distributed Database For High?Performance Applications With In?Memory Speed",
   "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
   "alias" : [ "infinispan" ],
   "aliasImplementation" : [ ],

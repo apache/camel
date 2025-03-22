@@ -2514,7 +2514,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedActiveMQ6EndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -2531,7 +2532,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedActiveMQ6EndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(String waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -5070,7 +5072,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedActiveMQ6EndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -5087,7 +5090,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedActiveMQ6EndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(String waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -6797,7 +6801,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedActiveMQ6EndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -6814,7 +6819,8 @@ public interface ActiveMQ6EndpointBuilderFactory {
          * Default: 50
          * Group: advanced
          * 
-         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to
+         * set
          * @return the dsl builder
          */
         default AdvancedActiveMQ6EndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(String waitForProvisionCorrelationToBeUpdatedCounter) {

@@ -487,7 +487,8 @@ public interface SmppsComponentBuilderFactory {
         /**
          * Defines the type of number (TON) to be used in the SME. The following
          * TON values are defined: 0: Unknown 1: International 2: National 3:
-         * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
+         * Network Specific 4: Subscriber Number 5: Alphanumeric 6:
+         * Abbreviated.
          * 
          * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
@@ -619,7 +620,8 @@ public interface SmppsComponentBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option is a:
-         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 

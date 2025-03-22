@@ -33,7 +33,7 @@ include::partial$component-endpoint-options.adoc[]
 
 
 
-== Queue producer – to(“hazelcast-queue:foo”)
+== Queue producer – to(“hazelcast-queue:foo�?)
 
 The queue producer provides 12 operations:
 
@@ -156,7 +156,7 @@ from("direct:retainAll").setHeader(HazelcastConstants.OPERATION, constant(Hazelc
 String.format("hazelcast-%sbar", HazelcastConstants.QUEUE_PREFIX));
 --------------------------------------------------------------------------------------------
 
-== Queue consumer – from(“hazelcast-queue:foo”)
+== Queue consumer – from(“hazelcast-queue:foo�?)
 
 The queue consumer provides two different modes:
 

@@ -91,7 +91,8 @@ public interface RestOpenapiComponentBuilderFactory {
         }
     
         /**
-         * Sets the context-path to use for servicing the OpenAPI specification.
+         * Sets the context-path to use for servicing the OpenAPI
+         * specification.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

@@ -33,7 +33,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== List producer – to(“hazelcast-list:foo”)
+== List producer – to(“hazelcast-list:foo�?)
 
 The list producer provides eight operations:
 
@@ -91,7 +91,7 @@ Note that *CamelHazelcastObjectIndex* header is used for indexing
 purpose.
 
 
-== List consumer – from(“hazelcast-list:foo”)
+== List consumer – from(“hazelcast-list:foo�?)
 
 The list consumer provides two operations:
 * add

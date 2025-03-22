@@ -33,7 +33,7 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 
-== SEDA producer – to(“hazelcast-seda:foo”)
+== SEDA producer – to(“hazelcast-seda:foo�?)
 
 The SEDA producer provides no operations. You only send data to the
 specified queue.
@@ -65,7 +65,7 @@ Spring XML::
 
 ====
 
-== SEDA consumer – from(“hazelcast-seda:foo”)
+== SEDA consumer – from(“hazelcast-seda:foo�?)
 
 The SEDA consumer provides no operations. You only retrieve data from
 the specified queue.

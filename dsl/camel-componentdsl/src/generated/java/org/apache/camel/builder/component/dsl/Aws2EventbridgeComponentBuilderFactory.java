@@ -304,7 +304,8 @@ public interface Aws2EventbridgeComponentBuilderFactory {
     
         
         /**
-         * To define a proxy protocol when instantiating the Eventbridge client.
+         * To define a proxy protocol when instantiating the Eventbridge
+         * client.
          * 
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.

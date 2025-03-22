@@ -271,7 +271,8 @@ public interface RocketmqComponentBuilderFactory {
     
         
         /**
-         * Timeout milliseconds of receiving response when using in-out pattern.
+         * Timeout milliseconds of receiving response when using in-out
+         * pattern.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
