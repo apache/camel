@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -67,6 +68,10 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
     private final AtomicReference<Deque<Entry<K, ValueHolder<V>>>> lastChanges
             = new AtomicReference<>(new ConcurrentLinkedDeque<>());
     /**
+     * The total amount of changes recorded.
+     */
+    private final AtomicInteger totalChanges = new AtomicInteger();
+    /**
      * The function to call when an entry is evicted.
      */
     private final Consumer<V> evict;
@@ -103,6 +108,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
         }
         ValueHolder<V> holder = newValue(value);
         lastChanges.get().add(Map.entry(key, holder));
+        totalChanges.incrementAndGet();
         return holder;
     }
 
@@ -292,6 +298,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
         lock.writeLock().lock();
         try {
             lastChanges.getAndSet(new ConcurrentLinkedDeque<>());
+            totalChanges.set(0);
             delegate.clear();
         } finally {
             lock.writeLock().unlock();
@@ -335,7 +342,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
      * @return the size of the queue of changes.
      */
     int getQueueSize() {
-        return lastChanges.get().size();
+        return totalChanges.get();
     }
 
     /**
@@ -370,7 +377,9 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
      * @return the oldest existing change.
      */
     private Entry<K, ValueHolder<V>> nextOldestChange() {
-        return lastChanges.get().poll();
+        Entry<K, ValueHolder<V>> oldestChange = lastChanges.get().poll();
+        totalChanges.decrementAndGet();
+        return oldestChange;
     }
 
     /**
@@ -383,6 +392,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
         try {
             if (isQueueFull()) {
                 newChanges = new ConcurrentLinkedDeque<>();
+                totalChanges.set(0);
                 currentChanges = lastChanges.getAndSet(newChanges);
             } else {
                 return;
@@ -395,6 +405,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
         while ((entry = currentChanges.pollLast()) != null) {
             if (keys.add(entry.getKey())) {
                 newChanges.addFirst(entry);
+                totalChanges.incrementAndGet();
             }
         }
     }
