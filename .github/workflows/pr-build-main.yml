@@ -20,7 +20,7 @@ name: PR Build (Camel 4)
 on:
   pull_request:
     branches:
-      - main
+      - 4.10.x
     paths-ignore:
       - .github/**
       - README.md
