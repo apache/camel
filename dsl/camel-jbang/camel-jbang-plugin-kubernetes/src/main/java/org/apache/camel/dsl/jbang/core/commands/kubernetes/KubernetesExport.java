@@ -275,7 +275,6 @@ public class KubernetesExport extends Export {
             // Remove OpenAPI spec option to avoid duplicate handling by parent export command
             openapi = null;
         }
-        TraitHelper.configureProperties(traitsSpec, applicationProperties);
         TraitHelper.configureContainerImage(traitsSpec, image,
                 resolvedImageRegistry, resolvedImageGroup, projectName, getVersion());
         TraitHelper.configureEnvVars(traitsSpec, envVars);
