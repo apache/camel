@@ -128,3 +128,7 @@ app_info{camel_context="camel-1",camel_runtime_provider="Spring-Boot",camel_runt
 ```
 
 This information is evaluated at runtime startup and available through the usual metrics endpoint. To disable this metric you need to use the `camel.metrics.skipCamelInfo=true` property.
+
+=== camel-observability-services
+
+In this version we're moving the telemetry component from `camel-opentelemetry` to `camel-opentelemetry2`.
