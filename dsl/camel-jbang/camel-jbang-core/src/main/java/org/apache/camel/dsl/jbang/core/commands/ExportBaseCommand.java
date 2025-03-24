@@ -696,37 +696,36 @@ public abstract class ExportBaseCommand extends CamelCommand {
             File settings, File profile, File targetDir,
             Function<Properties, Object> customize)
             throws Exception {
-        Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
+        Properties settingsProps = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(settingsProps, settings);
 
-        Properties prop2 = new CamelCaseOrderedProperties();
+        Properties profileProps = new CamelCaseOrderedProperties();
         if (profile.exists()) {
-            RuntimeUtil.loadProperties(prop2, profile);
+            RuntimeUtil.loadProperties(profileProps, profile);
         }
-        prop2.putAll(prop);
-        prepareApplicationProperties(prop2);
+        profileProps.putAll(settingsProps);
+        prepareApplicationProperties(profileProps);
 
-        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+        for (Map.Entry<Object, Object> entry : settingsProps.entrySet()) {
             String key = entry.getKey().toString();
             boolean skip = !key.startsWith("camel.main")
                     || "camel.main.routesCompileDirectory".equals(key)
                     || "camel.main.routesReloadEnabled".equals(key);
             if (skip) {
-                prop2.remove(key);
+                profileProps.remove(key);
             }
         }
 
         if (customize != null) {
-            customize.apply(prop2);
+            customize.apply(profileProps);
         }
 
         // User properties
-        Properties prop3 = new CamelCaseOrderedProperties();
-        prepareUserProperties(prop3);
+        Properties userProps = new CamelCaseOrderedProperties();
+        prepareUserProperties(userProps);
 
-        FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
-        try {
-            for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
+        try (var fos = new FileOutputStream(new File(targetDir, "application.properties"), false)) {
+            for (Map.Entry<Object, Object> entry : profileProps.entrySet()) {
                 String k = entry.getKey().toString();
                 String v = entry.getValue().toString();
 
@@ -752,18 +751,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         fos.write("\n".getBytes(StandardCharsets.UTF_8));
                     }
                 }
-                for (Map.Entry<Object, Object> entryUserProp : prop3.entrySet()) {
-                    String uK = entryUserProp.getKey().toString();
-                    String uV = entryUserProp.getValue().toString();
-                    String line = applicationPropertyLine(uK, uV);
-                    if (line != null && !line.isBlank()) {
-                        fos.write(line.getBytes(StandardCharsets.UTF_8));
-                        fos.write("\n".getBytes(StandardCharsets.UTF_8));
-                    }
+            }
+            for (Map.Entry<Object, Object> entryUserProp : userProps.entrySet()) {
+                String uK = entryUserProp.getKey().toString();
+                String uV = entryUserProp.getValue().toString();
+                String line = applicationPropertyLine(uK, uV);
+                if (line != null && !line.isBlank()) {
+                    fos.write(line.getBytes(StandardCharsets.UTF_8));
+                    fos.write("\n".getBytes(StandardCharsets.UTF_8));
                 }
             }
-        } finally {
-            IOHelper.close(fos);
         }
     }
 
