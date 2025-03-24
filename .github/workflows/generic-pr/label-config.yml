@@ -18,8 +18,8 @@
 camel-4:
   - base-branch:
       - 'main'
-      - 'camel-4.4.x'
       - 'camel-4.8.x'
+      - 'camel-4.10.x'
 
 ci:
   - changed-files:
