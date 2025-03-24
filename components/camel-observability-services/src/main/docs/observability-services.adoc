@@ -34,7 +34,9 @@ The presence of this dependency will provide the following components:
 * camel-health
 * camel-management
 * camel-micrometer-prometheus
-* camel-opentelemetry
+* camel-opentelemetry2
+
+NOTE: mind that we're using the `camel-opentelemetry2` implementation which has slight differences from `camel-opentelemetry`.
 
 === List of known endpoints
 
