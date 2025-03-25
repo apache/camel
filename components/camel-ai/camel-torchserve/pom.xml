@@ -23,7 +23,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.10.3</version>
+        <version>4.10.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-torchserve</artifactId>
