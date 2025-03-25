@@ -38,6 +38,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoCreateTopic": getOrCreateConfiguration(target).setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batchenabled":
+        case "batchEnabled": getOrCreateConfiguration(target).setBatchEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sns.Sns2Configuration.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
@@ -106,6 +108,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoCreateTopic": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batchenabled":
+        case "batchEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.sns.Sns2Configuration.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
@@ -170,6 +174,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "autoCreateTopic": return getOrCreateConfiguration(target).isAutoCreateTopic();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batchenabled":
+        case "batchEnabled": return getOrCreateConfiguration(target).isBatchEnabled();
         case "configuration": return target.getConfiguration();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();

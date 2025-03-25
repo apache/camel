@@ -75,6 +75,36 @@ public interface Sns2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if we are publishing a single message or a batch.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batchEnabled the value to set
+         * @return the dsl builder
+         */
+        default Sns2EndpointBuilder batchEnabled(boolean batchEnabled) {
+            doSetProperty("batchEnabled", batchEnabled);
+            return this;
+        }
+        /**
+         * Define if we are publishing a single message or a batch.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batchEnabled the value to set
+         * @return the dsl builder
+         */
+        default Sns2EndpointBuilder batchEnabled(String batchEnabled) {
+            doSetProperty("batchEnabled", batchEnabled);
+            return this;
+        }
+        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:

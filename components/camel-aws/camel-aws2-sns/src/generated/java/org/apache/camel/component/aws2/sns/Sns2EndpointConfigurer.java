@@ -29,6 +29,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": target.getConfiguration().setAmazonSNSClient(property(camelContext, software.amazon.awssdk.services.sns.SnsClient.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": target.getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
+        case "batchenabled":
+        case "batchEnabled": target.getConfiguration().setBatchEnabled(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "kmsmasterkeyid":
@@ -92,6 +94,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": return software.amazon.awssdk.services.sns.SnsClient.class;
         case "autocreatetopic":
         case "autoCreateTopic": return boolean.class;
+        case "batchenabled":
+        case "batchEnabled": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "kmsmasterkeyid":
@@ -151,6 +155,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": return target.getConfiguration().getAmazonSNSClient();
         case "autocreatetopic":
         case "autoCreateTopic": return target.getConfiguration().isAutoCreateTopic();
+        case "batchenabled":
+        case "batchEnabled": return target.getConfiguration().isBatchEnabled();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "kmsmasterkeyid":
