@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.10.3-SNAPSHOT</version>
+        <version>4.10.3</version>
     </parent>
 
     <artifactId>camel-xchange</artifactId>
