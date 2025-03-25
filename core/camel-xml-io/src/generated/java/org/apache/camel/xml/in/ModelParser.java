@@ -1880,6 +1880,14 @@ public class ModelParser extends BaseParser {
         }
         return Optional.empty();
     }
+    protected DfdlDataFormat doParseDfdlDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new DfdlDataFormat(), (def, key, val) -> switch (key) {
+                case "rootElement": def.setRootElement(val); yield true;
+                case "rootNamespace": def.setRootNamespace(val); yield true;
+                case "schemaUri": def.setSchemaUri(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected FhirJsonDataFormat doParseFhirJsonDataFormat() throws IOException, XmlPullParserException {
         return doParse(new FhirJsonDataFormat(), fhirDataformatAttributeHandler(), noElementHandler(), noValueHandler());
     }
@@ -2933,6 +2941,7 @@ public class ModelParser extends BaseParser {
             case "crypto": return doParseCryptoDataFormat();
             case "csv": return doParseCsvDataFormat();
             case "custom": return doParseCustomDataFormat();
+            case "dfdl": return doParseDfdlDataFormat();
             case "fhirJson": return doParseFhirJsonDataFormat();
             case "fhirXml": return doParseFhirXmlDataFormat();
             case "flatpack": return doParseFlatpackDataFormat();

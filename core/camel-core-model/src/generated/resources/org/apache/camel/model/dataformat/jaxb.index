@@ -12,6 +12,7 @@ CryptoDataFormat
 CsvDataFormat
 CustomDataFormat
 DataFormatsDefinition
+DfdlDataFormat
 FhirJsonDataFormat
 FhirXmlDataFormat
 FlatpackDataFormat

@@ -35,6 +35,7 @@ import org.apache.camel.model.dataformat.ContentTypeHeaderAware;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.DfdlDataFormat;
 import org.apache.camel.model.dataformat.FhirDataformat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
@@ -198,6 +199,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new CsvDataFormatReifier(camelContext, definition);
         } else if (definition instanceof CustomDataFormat) {
             return new CustomDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof DfdlDataFormat) {
+            return new DfdlDataFormatReifier(camelContext, definition);
         } else if (definition instanceof FhirJsonDataFormat) {
             return new FhirJsonDataFormatReifier(camelContext, definition);
         } else if (definition instanceof FhirXmlDataFormat) {

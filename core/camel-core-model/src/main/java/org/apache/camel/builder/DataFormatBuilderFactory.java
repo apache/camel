@@ -26,6 +26,7 @@ import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.DfdlDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
@@ -133,6 +134,13 @@ public final class DataFormatBuilderFactory {
      */
     public CustomDataFormat.Builder custom() {
         return new CustomDataFormat.Builder();
+    }
+
+    /**
+     * Uses the DFDL data format
+     */
+    public DfdlDataFormat.Builder dfdl() {
+        return new DfdlDataFormat.Builder();
     }
 
     /**

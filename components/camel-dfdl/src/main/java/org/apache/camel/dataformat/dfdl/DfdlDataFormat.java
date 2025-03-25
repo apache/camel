@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dfdl;
+package org.apache.camel.dataformat.dfdl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.Channels;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.Category;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.component.dfdl.DfdlParseException;
+import org.apache.camel.component.dfdl.DfdlUnparseException;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.daffodil.japi.Daffodil;
 import org.apache.daffodil.japi.DataProcessor;
 import org.apache.daffodil.japi.Diagnostic;
@@ -41,33 +43,34 @@ import org.apache.daffodil.japi.infoset.W3CDOMInfosetInputter;
 import org.apache.daffodil.japi.infoset.W3CDOMInfosetOutputter;
 import org.apache.daffodil.japi.io.InputSourceDataInputStream;
 
-/**
- * Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
- */
-@UriEndpoint(firstVersion = "4.11.0", scheme = "dfdl", title = "DFDL", syntax = "dfdl:schemaUri", producerOnly = true,
-             category = { Category.TRANSFORMATION })
-public class DfdlEndpoint extends ProcessorEndpoint {
-
-    @UriPath
-    @Metadata(required = true, description = "The path to the DFDL schema file.")
+@Dataformat("dfdl")
+public class DfdlDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+    private CamelContext camelContext;
     private String schemaUri;
-
-    @UriParam
-    @Metadata(defaultValue = "PARSE", description = "Transform direction. Either PARSE or UNPARSE")
-    private ParseDirection parseDirection;
-
-    @UriParam(description = "The root element name of the schema to use. If not specified, the first root element in the schema will be used.",
-              label = "advanced", defaultValue = "")
     private String rootElement = "";
-
-    @UriParam(description = "The root namespace of the schema to use.", label = "advanced", defaultValue = "")
     private String rootNamespace = "";
-
     private DataProcessor daffodilProcessor;
 
-    public DfdlEndpoint(String uri, DfdlComponent component, String schemaFile) {
-        super(uri, component);
-        this.schemaUri = schemaFile;
+    @Override
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        Document xmlDocument = camelContext.getTypeConverter().mandatoryConvertTo(Document.class, exchange, graph);
+        W3CDOMInfosetInputter inputter = new W3CDOMInfosetInputter(xmlDocument);
+        UnparseResult result = this.daffodilProcessor.unparse(inputter, Channels.newChannel(stream));
+        if (result.isError()) {
+            exchange.setException(new DfdlUnparseException(result));
+        }
+    }
+
+    @Override
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        var inputStream = new InputSourceDataInputStream(stream);
+        var outputter = new W3CDOMInfosetOutputter();
+        ParseResult result = this.daffodilProcessor.parse(inputStream, outputter);
+        if (result.isError()) {
+            exchange.setException(new DfdlParseException(result));
+            return null;
+        }
+        return outputter.getResult();
     }
 
     @Override
@@ -83,7 +86,7 @@ public class DfdlEndpoint extends ProcessorEndpoint {
             processorFactory = Daffodil.compiler().compileSource(schemaResource.getURI());
         }
         if (processorFactory.isError()) {
-            StringBuilder buf = new StringBuilder("Failed to initialize dfdl endpoint: [");
+            StringBuilder buf = new StringBuilder("Failed to start dfdl dataformat: [");
             for (Diagnostic d : processorFactory.getDiagnostics()) {
                 buf.append(d.getMessage()).append("; ");
             }
@@ -94,40 +97,17 @@ public class DfdlEndpoint extends ProcessorEndpoint {
     }
 
     @Override
-    protected void onExchange(Exchange exchange) throws Exception {
-        if (getParseDirection() == ParseDirection.UNPARSE) {
-            Document xmlDocument = exchange.getIn().getBody(Document.class);
-            W3CDOMInfosetInputter inputter = new W3CDOMInfosetInputter(xmlDocument);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            UnparseResult result = this.daffodilProcessor.unparse(inputter, Channels.newChannel(bos));
-            if (result.isError()) {
-                exchange.setException(new DfdlUnparseException(result));
-                return;
-            }
-            exchange.getMessage().setBody(bos);
-        } else {
-            byte[] binary = exchange.getIn().getBody(byte[].class);
-            var inputStream = new InputSourceDataInputStream(binary);
-            var outputter = new W3CDOMInfosetOutputter();
-            ParseResult result = this.daffodilProcessor.parse(inputStream, outputter);
-            if (result.isError()) {
-                exchange.setException(new DfdlParseException(result));
-                return;
-            }
-            exchange.getMessage().setBody(outputter.getResult());
-        }
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
-    public ParseDirection getParseDirection() {
-        return parseDirection;
-    }
-
-    public void setParseDirection(ParseDirection direction) {
-        this.parseDirection = direction;
+    @Override
+    public CamelContext getCamelContext() {
+        return this.camelContext;
     }
 
     public String getSchemaUri() {
-        return schemaUri;
+        return this.schemaUri;
     }
 
     public void setSchemaUri(String schemaUri) {
