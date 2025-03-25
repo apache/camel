@@ -38,9 +38,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
-import software.amazon.awssdk.services.sns.model.PublishRequest;
-import software.amazon.awssdk.services.sns.model.PublishResponse;
+import software.amazon.awssdk.services.sns.model.*;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Notification Service
@@ -62,23 +60,32 @@ public class Sns2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        PublishRequest.Builder request = PublishRequest.builder();
+        if (!getEndpoint().getConfiguration().isBatchEnabled()) {
+            PublishRequest.Builder request = PublishRequest.builder();
 
-        request.topicArn(getConfiguration().getTopicArn());
-        request.subject(determineSubject(exchange));
-        request.messageStructure(determineMessageStructure(exchange));
-        request.message(exchange.getIn().getBody(String.class));
-        request.messageAttributes(this.translateAttributes(exchange.getIn().getHeaders(), exchange));
-        configureFifoAttributes(request, exchange);
+            request.topicArn(getConfiguration().getTopicArn());
+            request.subject(determineSubject(exchange));
+            request.messageStructure(determineMessageStructure(exchange));
+            request.message(exchange.getIn().getBody(String.class));
+            request.messageAttributes(this.translateAttributes(exchange.getIn().getHeaders(), exchange));
+            configureFifoAttributes(request, exchange);
 
-        LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
+            LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
 
-        PublishResponse result = getEndpoint().getSNSClient().publish(request.build());
+            PublishResponse result = getEndpoint().getSNSClient().publish(request.build());
 
-        LOG.trace("Received result [{}]", result);
+            LOG.trace("Received result [{}]", result);
 
-        Message message = getMessageForResponse(exchange);
-        message.setHeader(Sns2Constants.MESSAGE_ID, result.messageId());
+            Message message = getMessageForResponse(exchange);
+            message.setHeader(Sns2Constants.MESSAGE_ID, result.messageId());
+        } else {
+            PublishBatchRequest.Builder publishBatchRequestBuilder = PublishBatchRequest.builder();
+            publishBatchRequestBuilder.topicArn(getConfiguration().getTopicArn());
+            publishBatchRequestBuilder.publishBatchRequestEntries(exchange.getMessage().getBody(List.class));
+            PublishBatchResponse response = getEndpoint().getSNSClient().publishBatch(publishBatchRequestBuilder.build());
+            Message message = getMessageForResponse(exchange);
+            message.setBody(response);
+        }
     }
 
     private String determineSubject(Exchange exchange) {
