@@ -110,4 +110,13 @@ public class ExportITCase extends JBangTestSupport {
                 mountPoint()));
         assertFileInDataFolderContains("pom.xml", "<artifactId>camel-quarkus-cli-connector</artifactId>\n");
     }
+
+    @Test
+    public void testExportWithCamelConfig() throws IOException {
+        execute("config set gav=com.foo:acme:1.0-SNAPSHOT");
+        execute("config set runtime=quarkus");
+        execute("config set directory=" + mountPoint());
+        execute("export");
+        assertFileInDataFolderContains("pom.xml", "<groupId>org.apache.camel.quarkus</groupId>");
+    }
 }
