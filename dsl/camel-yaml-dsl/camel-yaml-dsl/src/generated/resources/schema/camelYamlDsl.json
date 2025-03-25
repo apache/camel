@@ -2852,6 +2852,8 @@
               }, {
                 "required" : [ "custom" ]
               }, {
+                "required" : [ "dfdl" ]
+              }, {
                 "required" : [ "fhirJson" ]
               }, {
                 "required" : [ "fhirXml" ]
@@ -2989,6 +2991,14 @@
             "properties" : {
               "custom" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.CustomDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "dfdl" ],
+            "properties" : {
+              "dfdl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
               }
             }
           }, {
@@ -3293,6 +3303,7 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
+          "dfdl" : { },
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
@@ -7770,6 +7781,7 @@
           "crypto" : { },
           "csv" : { },
           "custom" : { },
+          "dfdl" : { },
           "fhirJson" : { },
           "fhirXml" : { },
           "flatpack" : { },
@@ -7835,6 +7847,8 @@
                 "required" : [ "csv" ]
               }, {
                 "required" : [ "custom" ]
+              }, {
+                "required" : [ "dfdl" ]
               }, {
                 "required" : [ "fhirJson" ]
               }, {
@@ -7973,6 +7987,14 @@
             "properties" : {
               "custom" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.CustomDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "dfdl" ],
+            "properties" : {
+              "dfdl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.DfdlDataFormat"
               }
             }
           }, {
@@ -10702,6 +10724,39 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         }
+      },
+      "org.apache.camel.model.dataformat.DfdlDataFormat" : {
+        "title" : "DFDL",
+        "description" : "Handle DFDL (Data Format Description Language) transformation.",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "The id of this node"
+            },
+            "rootElement" : {
+              "type" : "string",
+              "title" : "Root Element",
+              "description" : "The root element name of the schema to use. If not specified, the first root element in the schema will be used."
+            },
+            "rootNamespace" : {
+              "type" : "string",
+              "title" : "Root Namespace",
+              "description" : "The root namespace of the schema to use."
+            },
+            "schemaUri" : {
+              "type" : "string",
+              "title" : "Schema Uri",
+              "description" : "The path to the DFDL schema file."
+            }
+          }
+        } ],
+        "required" : [ "schemaUri" ]
       },
       "org.apache.camel.model.dataformat.FhirJsonDataFormat" : {
         "title" : "FHIR JSon",

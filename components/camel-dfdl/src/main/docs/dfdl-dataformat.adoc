@@ -1,0 +1,100 @@
+= DFDL DataFormat
+:doctitle: DFDL
+:shortname: dfdl
+:artifactid: camel-dfdl
+:description: Handle DFDL (Data Format Description Language) transformation.
+:since: 4.11
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: dfdl
+
+*Since Camel {since}*
+
+The DFDL Data Format allows you to transform the fixed format data such as EDI message from/to XML
+using https://ogf.org/ogf/doku.php/standards/dfdl/dfdl.html[Data Format Description Language], also known as DFDL.
+DFDL schema is an XML schema annotated with DFDL elements and attributes.
+
+While DFDL schema defines the XML representation of the data structure,
+it also defines how the conversion between the fixed format and XML is processed using DFDL annotations.
+
+This component uses https://daffodil.apache.org/[Apache Daffodil] as an underlying DFDL
+implementation.
+
+Maven users will need to add the following dependency to their `pom.xml` for this data format:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dfdl</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Usage
+
+=== Unmarshal (Fixed format to XML)
+Below is an example of using the DFDL Data Format to unmarshal an EDI message into an XML DOM Document:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:unmarshal")
+    .unmarshal().dfdl("X12-837P.dfdl.xsd")
+    .log("Unmarshalled X12 837P message: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:unmarshal
+    steps:
+      - unmarshal:
+          dfdl:
+            schemaUri: X12-837P.dfdl.xsd
+      - log: "Unmarshalled X12 837P message: ${body}"
+----
+====
+
+=== Marshal (XML to fixed format)
+Below is an example of using the DFDL Data Format to unmarshal an EDI message into an XML DOM Document:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:marshal")
+    .marshal().dfdl("X12-837P.dfdl.xsd")
+    .log("Marshalled X12 837P message: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:marshal
+    steps:
+      - marshal:
+          dfdl:
+            schemaUri: X12-837P.dfdl.xsd
+      - log: "Marshalled X12 837P message: ${body}"
+----
+====
+
+== DFDL Data Format Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+include::spring-boot:partial$starter.adoc[]

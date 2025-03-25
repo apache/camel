@@ -31,7 +31,7 @@
     <artifactId>camel-dfdl</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: DFDL :: Parent</name>
+    <name>Camel :: DFDL</name>
     <description>Camel DFDL Component</description>
 
     <dependencies>

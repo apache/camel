@@ -12,6 +12,7 @@
 ** xref:cbor-dataformat.adoc[CBOR]
 ** xref:crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)]
 ** xref:csv-dataformat.adoc[CSV]
+** xref:dfdl-dataformat.adoc[DFDL]
 ** xref:fhirJson-dataformat.adoc[FHIR JSon]
 ** xref:fhirXml-dataformat.adoc[FHIR XML]
 ** xref:flatpack-dataformat.adoc[Flatpack]

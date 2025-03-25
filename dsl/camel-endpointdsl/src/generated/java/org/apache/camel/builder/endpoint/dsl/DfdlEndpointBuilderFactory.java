@@ -77,35 +77,6 @@ public interface DfdlEndpointBuilderFactory {
             doSetProperty("parseDirection", parseDirection);
             return this;
         }
-        /**
-         * The root element of the schema to use. If not specified, the first
-         * root element in the schema will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param rootElement the value to set
-         * @return the dsl builder
-         */
-        default DfdlEndpointBuilder rootElement(String rootElement) {
-            doSetProperty("rootElement", rootElement);
-            return this;
-        }
-        /**
-         * The root namespace of the schema to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param rootNamespace the value to set
-         * @return the dsl builder
-         */
-        default DfdlEndpointBuilder rootNamespace(String rootNamespace) {
-            doSetProperty("rootNamespace", rootNamespace);
-            return this;
-        }
     }
 
     /**
@@ -162,6 +133,35 @@ public interface DfdlEndpointBuilderFactory {
          */
         default AdvancedDfdlEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The root element name of the schema to use. If not specified, the
+         * first root element in the schema will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param rootElement the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDfdlEndpointBuilder rootElement(String rootElement) {
+            doSetProperty("rootElement", rootElement);
+            return this;
+        }
+        /**
+         * The root namespace of the schema to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param rootNamespace the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDfdlEndpointBuilder rootNamespace(String rootNamespace) {
+            doSetProperty("rootNamespace", rootNamespace);
             return this;
         }
     }

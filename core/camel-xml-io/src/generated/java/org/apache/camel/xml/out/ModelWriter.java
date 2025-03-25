@@ -472,6 +472,9 @@ public class ModelWriter extends BaseWriter {
     public void writeDataFormatsDefinition(DataFormatsDefinition def) throws IOException {
         doWriteDataFormatsDefinition("dataFormats", def);
     }
+    public void writeDfdlDataFormat(DfdlDataFormat def) throws IOException {
+        doWriteDfdlDataFormat("dfdl", def);
+    }
     public void writeFhirJsonDataFormat(FhirJsonDataFormat def) throws IOException {
         doWriteFhirJsonDataFormat("fhirJson", def);
     }
@@ -1187,6 +1190,7 @@ public class ModelWriter extends BaseWriter {
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) v);
                 case "CsvDataFormat" -> doWriteCsvDataFormat("csv", (CsvDataFormat) v);
                 case "CustomDataFormat" -> doWriteCustomDataFormat("custom", (CustomDataFormat) v);
+                case "DfdlDataFormat" -> doWriteDfdlDataFormat("dfdl", (DfdlDataFormat) v);
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
@@ -1945,6 +1949,7 @@ public class ModelWriter extends BaseWriter {
                 case "CryptoDataFormat" -> doWriteCryptoDataFormat("crypto", (CryptoDataFormat) v);
                 case "CsvDataFormat" -> doWriteCsvDataFormat("csv", (CsvDataFormat) v);
                 case "CustomDataFormat" -> doWriteCustomDataFormat("custom", (CustomDataFormat) v);
+                case "DfdlDataFormat" -> doWriteDfdlDataFormat("dfdl", (DfdlDataFormat) v);
                 case "FhirJsonDataFormat" -> doWriteFhirJsonDataFormat("fhirJson", (FhirJsonDataFormat) v);
                 case "FhirXmlDataFormat" -> doWriteFhirXmlDataFormat("fhirXml", (FhirXmlDataFormat) v);
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
@@ -2542,6 +2547,14 @@ public class ModelWriter extends BaseWriter {
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
             }
         });
+        endElement(name);
+    }
+    protected void doWriteDfdlDataFormat(String name, DfdlDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("rootElement", def.getRootElement(), null);
+        doWriteAttribute("schemaUri", def.getSchemaUri(), null);
+        doWriteAttribute("rootNamespace", def.getRootNamespace(), null);
         endElement(name);
     }
     protected void doWriteFhirDataformatAttributes(FhirDataformat def) throws IOException {

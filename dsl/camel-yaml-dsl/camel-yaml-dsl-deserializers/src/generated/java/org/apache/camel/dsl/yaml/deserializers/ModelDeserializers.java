@@ -146,6 +146,7 @@ import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.dataformat.DfdlDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
@@ -4975,6 +4976,69 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "dfdl",
+            inline = true,
+            types = org.apache.camel.model.dataformat.DfdlDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "DFDL",
+            description = "Handle DFDL (Data Format Description Language) transformation.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "rootElement", type = "string", description = "The root element name of the schema to use. If not specified, the first root element in the schema will be used.", displayName = "Root Element"),
+                    @YamlProperty(name = "rootNamespace", type = "string", description = "The root namespace of the schema to use.", displayName = "Root Namespace"),
+                    @YamlProperty(name = "schemaUri", type = "string", required = true, description = "The path to the DFDL schema file.", displayName = "Schema Uri")
+            }
+    )
+    public static class DfdlDataFormatDeserializer extends YamlDeserializerBase<DfdlDataFormat> {
+        public DfdlDataFormatDeserializer() {
+            super(DfdlDataFormat.class);
+        }
+
+        @Override
+        protected DfdlDataFormat newInstance() {
+            return new DfdlDataFormat();
+        }
+
+        @Override
+        protected DfdlDataFormat newInstance(String value) {
+            return new DfdlDataFormat(value);
+        }
+
+        @Override
+        protected boolean setProperty(DfdlDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "rootElement": {
+                    String val = asText(node);
+                    target.setRootElement(val);
+                    break;
+                }
+                case "rootNamespace": {
+                    String val = asText(node);
+                    target.setRootNamespace(val);
+                    break;
+                }
+                case "schemaUri": {
+                    String val = asText(node);
+                    target.setSchemaUri(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = {
                     "dns-service-discovery",
                     "dnsServiceDiscovery"
@@ -9644,6 +9708,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "dfdl", type = "object:org.apache.camel.model.dataformat.DfdlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
@@ -9750,6 +9815,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "custom": {
                     org.apache.camel.model.dataformat.CustomDataFormat val = asType(node, org.apache.camel.model.dataformat.CustomDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "dfdl": {
+                    org.apache.camel.model.dataformat.DfdlDataFormat val = asType(node, org.apache.camel.model.dataformat.DfdlDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -20016,6 +20086,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "dfdl", type = "object:org.apache.camel.model.dataformat.DfdlDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
@@ -20127,6 +20198,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "custom": {
                     org.apache.camel.model.dataformat.CustomDataFormat val = asType(node, org.apache.camel.model.dataformat.CustomDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "dfdl": {
+                    org.apache.camel.model.dataformat.DfdlDataFormat val = asType(node, org.apache.camel.model.dataformat.DfdlDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
