@@ -131,9 +131,6 @@ public class KnativeEndpoint extends DefaultEndpoint {
         Consumer consumer = getComponent().getOrCreateConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);
 
-        // signal that this path is exposed for knative
-        String path = service.getPath();
-
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
                 .withProperties(configuration.getTransportOptions())
