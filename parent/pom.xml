@@ -145,7 +145,7 @@
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.10.8</ehcache3-version>
         <elasticsearch-java-client-version>8.17.3</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>8.17.3</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-sniffer-version>8.17.4</elasticsearch-java-client-sniffer-version>
 	<elytron-web>4.1.0.Final</elytron-web>
 	<extjwnl-version>2.0.5</extjwnl-version>
 	<extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
