@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.8.6</version>
+        <version>4.8.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-amqp</artifactId>

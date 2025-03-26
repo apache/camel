@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.6</version>
+        <version>4.8.7-SNAPSHOT</version>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

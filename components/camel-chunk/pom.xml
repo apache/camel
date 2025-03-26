@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.8.6</version>
+        <version>4.8.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-chunk</artifactId>

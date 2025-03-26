@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel.tests.bundles</groupId>
         <artifactId>bundles-pom</artifactId>
-        <version>4.8.6</version>
+        <version>4.8.7-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.tests</groupId>
