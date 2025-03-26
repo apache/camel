@@ -37,6 +37,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -257,7 +259,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--disable-auto" }, description = "Disable automatic cluster type detection.")
+    @CommandLine.Option(names = { "--disable-auto" },
+                        description = "Disable automatic cluster type detection and automatic settings for cluster.")
     boolean disableAuto = false;
 
     // DevMode/Reload state
@@ -297,7 +300,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (output != null) {
-            exit = buildProject(workingDir);
+            Traits ptraits = TraitHelper.parseTraits(traits);
+            boolean ksvcEnabled = ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled();
+
+            exit = buildProjectOutput(workingDir);
             if (exit != 0) {
                 printer().printErr("Project build failed!");
                 return exit;
@@ -305,8 +311,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
             File manifest;
             switch (output) {
-                case "yaml" ->
-                    manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes");
+                case "yaml" -> {
+                    if (ksvcEnabled) {
+                        // trick the clusterType to be able to read from the jkube source directory
+                        manifest = KubernetesHelper.resolveKubernetesManifest("service", workingDir + "/src/main/jkube");
+                    } else {
+                        manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes");
+                    }
+                }
                 case "json" ->
                     manifest = KubernetesHelper.resolveKubernetesManifest(clusterType, workingDir + "/target/kubernetes",
                             "json");
@@ -558,7 +570,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return client;
     }
 
-    private Integer buildProject(String workingDir) throws IOException, InterruptedException {
+    // build the project locally to generate the artifacts in the target directory, but don't deploy it.
+    private Integer buildProjectOutput(String workingDir) throws IOException, InterruptedException {
         printer().println("Building Camel application ...");
 
         // Run build via Maven
@@ -585,6 +598,15 @@ public class KubernetesRun extends KubernetesBaseCommand {
         args.add("-Djkube.skip.push=true");
         // suppress maven transfer progress
         args.add("-ntp");
+
+        Traits ptraits = TraitHelper.parseTraits(traits);
+        if (ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled()) {
+            // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
+            // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
+            // and there is no need for the regular Deployment as the knative Service manifest, once deployed
+            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
+            args.add("-Djkube.skip.resource=true");
+        }
 
         args.add("package");
 
@@ -626,6 +648,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
         if (quiet || !verbose) {
             args.add("--quiet");
         }
+        // suppress maven transfer progress
+        args.add("-ntp");
         args.add("--file");
         args.add(workingDir);
 
@@ -644,7 +668,27 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
         var prefix = isOpenshift ? "oc" : "k8s";
-        args.add(prefix + ":deploy");
+        Traits ptraits = TraitHelper.parseTraits(traits);
+        if (ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled()) {
+            // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
+            // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
+            // and there is no need for the regular Deployment as the knative Service manifest, once deployed
+            // will generate the regular Deployment, so we have to disable the jkube resources task to not run and not generate the deployment.yml
+            // apply the knative service manifest and specify the knative service.yml
+            args.add("-Djkube.skip.resource=true");
+            args.add(prefix + ":build");
+            args.add(prefix + ":apply");
+            if (isOpenshift) {
+                args.add("-Djkube.openshiftManifest=src/main/jkube/service.yml");
+            } else {
+                args.add("-Djkube.kubernetesManifest=src/main/jkube/service.yml");
+            }
+            if (ClusterType.MINIKUBE.isEqualTo(clusterType) && !disableAuto) {
+                KubernetesHelper.skipKnativeImageTagResolutionInMinikube();
+            }
+        } else {
+            args.add(prefix + ":deploy");
+        }
 
         printer().println("Run: " + String.join(" ", args));
 

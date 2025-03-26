@@ -115,7 +115,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
-        assertEquals(3, meterRegistry.getMeters().size());
+        assertEquals(4, meterRegistry.getMeters().size());
 
         // there should be 3 mbeans
         Set<ObjectName> set = timerNames();

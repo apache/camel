@@ -485,12 +485,12 @@ public class DefaultModel implements Model {
             StringJoiner missingParameters = new StringJoiner(", ");
 
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
-                if (temp.getDefaultValue() != null) {
-                    addProperty(prop, temp.getName(), temp.getDefaultValue());
-                    addProperty(propDefaultValues, temp.getName(), temp.getDefaultValue());
-                } else if (routeTemplateContext.hasEnvironmentVariable(temp.getName())) {
+                if (routeTemplateContext.hasEnvironmentVariable(temp.getName())) {
                     // property is configured via environment variables
                     addProperty(prop, temp.getName(), routeTemplateContext.getEnvironmentVariable(temp.getName()));
+                } else if (temp.getDefaultValue() != null) {
+                    addProperty(prop, temp.getName(), temp.getDefaultValue());
+                    addProperty(propDefaultValues, temp.getName(), temp.getDefaultValue());
                 } else if (temp.isRequired() && !routeTemplateContext.hasParameter(temp.getName())) {
                     // this is a required parameter which is missing
                     missingParameters.add(temp.getName());

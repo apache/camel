@@ -17,6 +17,7 @@
 package org.apache.camel.support.cache;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -60,9 +61,12 @@ class SimpleLRUCacheTest {
         assertNull(map.put("1", "One"));
         assertEquals(1, map.size());
         assertEquals(1, map.getQueueSize());
+        assertEquals("One", map.get("1"));
         map.entrySet().iterator().next().setValue("bar");
         assertEquals(1, map.size());
         assertEquals(2, map.getQueueSize());
+        assertEquals("bar", map.get("1"));
+        assertThrows(NullPointerException.class, () -> map.entrySet().iterator().next().setValue(null));
     }
 
     @Test
@@ -79,6 +83,80 @@ class SimpleLRUCacheTest {
         map.put("1", "B");
         assertEquals(1, map.size());
         assertEquals(2, map.getQueueSize());
+        map.put("2", "A");
+        assertEquals(2, map.size());
+        assertEquals(3, map.getQueueSize());
+        map.put("3", "A");
+        assertEquals(3, map.size());
+        assertEquals(4, map.getQueueSize());
+        map.put("4", "A");
+        assertEquals(3, map.size());
+        assertEquals(3, map.getQueueSize());
+    }
+
+    @Test
+    void size() {
+        assertEquals(0, map.size());
+        assertNull(map.put("1", "One"));
+        assertEquals(1, map.size());
+    }
+
+    @Test
+    void isEmpty() {
+        assertTrue(map.isEmpty());
+        assertNull(map.put("1", "One"));
+        assertFalse(map.isEmpty());
+        map.remove("1");
+        assertTrue(map.isEmpty());
+    }
+
+    @Test
+    void containsKey() {
+        assertFalse(map.containsKey("1"));
+        assertNull(map.put("1", "One"));
+        assertTrue(map.containsKey("1"));
+        map.remove("1");
+        assertFalse(map.containsKey("1"));
+        assertThrows(NullPointerException.class, () -> map.containsKey(null));
+    }
+
+    @Test
+    void containsValue() {
+        assertFalse(map.containsValue("One"));
+        assertNull(map.put("1", "One"));
+        assertTrue(map.containsValue("One"));
+        map.remove("1");
+        assertFalse(map.containsValue("One"));
+        assertThrows(NullPointerException.class, () -> map.containsValue(null));
+    }
+
+    @Test
+    void remove() {
+        assertTrue(map.isEmpty());
+        map.remove("1");
+        assertTrue(map.isEmpty());
+        assertNull(map.put("1", "One"));
+        assertFalse(map.isEmpty());
+        map.remove("1");
+        assertTrue(map.isEmpty());
+        assertThrows(NullPointerException.class, () -> map.remove(null));
+    }
+
+    @Test
+    void removeWithValue() {
+        assertTrue(map.isEmpty());
+        map.remove("1", "One");
+        assertTrue(map.isEmpty());
+        assertNull(map.put("1", "One"));
+        assertFalse(map.isEmpty());
+        map.remove("1", "Two");
+        assertFalse(map.isEmpty());
+        map.remove("2", "One");
+        assertFalse(map.isEmpty());
+        map.remove("1", "One");
+        assertTrue(map.isEmpty());
+        assertThrows(NullPointerException.class, () -> map.remove(null, "A"));
+        assertThrows(NullPointerException.class, () -> map.remove("A", null));
     }
 
     @Test
@@ -101,6 +179,54 @@ class SimpleLRUCacheTest {
         assertEquals(1, consumed.size());
         assertTrue(map.containsKey("2"));
         assertEquals("Two v2", map.get("2"));
+        assertThrows(NullPointerException.class, () -> map.put("A", null));
+        assertThrows(NullPointerException.class, () -> map.put(null, "A"));
+    }
+
+    @Test
+    void putAll() {
+        assertEquals(0, map.size());
+        Map<String, String> data = new LinkedHashMap<>();
+        data.put("1", "One");
+        data.put("2", "Two");
+        data.put("3", "Three");
+        map.putAll(data);
+        assertEquals(3, map.size());
+        assertEquals(0, consumed.size());
+        data.clear();
+        data.put("4", "Four");
+        data.put("5", "Five");
+        map.putAll(data);
+        assertEquals(3, map.size());
+        assertEquals(2, consumed.size());
+        assertFalse(map.containsKey("1"));
+        assertFalse(map.containsKey("2"));
+        assertTrue(consumed.contains("One"));
+        assertTrue(consumed.contains("Two"));
+        assertThrows(NullPointerException.class, () -> map.putAll(null));
+    }
+
+    @Test
+    void clear() {
+        assertEquals(0, map.size());
+        map.putAll(Map.of("1", "One", "2", "Two", "3", "Three"));
+        assertEquals(3, map.size());
+        map.clear();
+        assertEquals(0, map.size());
+    }
+
+    @Test
+    void replaceAll() {
+        map.replaceAll((k, v) -> v + " v2");
+        assertEquals(0, map.size());
+        map.putAll(Map.of("1", "One", "2", "Two", "3", "Three"));
+        assertEquals(3, map.size());
+        map.replaceAll((k, v) -> v + " v2");
+        assertEquals(3, map.size());
+        assertEquals("One v2", map.get("1"));
+        assertEquals("Two v2", map.get("2"));
+        assertEquals("Three v2", map.get("3"));
+        assertThrows(NullPointerException.class, () -> map.replaceAll(null));
     }
 
     @Test
@@ -128,6 +254,8 @@ class SimpleLRUCacheTest {
         assertEquals(2, consumed.size());
         assertFalse(map.containsKey("2"));
         assertTrue(consumed.contains("Two"));
+        assertThrows(NullPointerException.class, () -> map.putIfAbsent("A", null));
+        assertThrows(NullPointerException.class, () -> map.putIfAbsent(null, "A"));
     }
 
     @Test
@@ -164,6 +292,8 @@ class SimpleLRUCacheTest {
         assertEquals("Five", map.computeIfAbsent("5", k -> null));
         assertEquals(3, map.size());
         assertEquals(2, consumed.size());
+        assertThrows(NullPointerException.class, () -> map.computeIfAbsent(null, k -> null));
+        assertThrows(NullPointerException.class, () -> map.computeIfAbsent("A", null));
     }
 
     @Test
@@ -189,6 +319,8 @@ class SimpleLRUCacheTest {
         assertEquals(2, map.size());
         assertEquals(0, consumed.size());
         assertFalse(map.containsKey("1"));
+        assertThrows(NullPointerException.class, () -> map.computeIfPresent(null, (k, v) -> null));
+        assertThrows(NullPointerException.class, () -> map.computeIfPresent("A", null));
     }
 
     @Test
@@ -215,6 +347,8 @@ class SimpleLRUCacheTest {
         assertEquals(2, map.size());
         assertEquals(1, consumed.size());
         assertFalse(map.containsKey("2"));
+        assertThrows(NullPointerException.class, () -> map.compute(null, (k, v) -> null));
+        assertThrows(NullPointerException.class, () -> map.compute("A", null));
     }
 
     @Test
@@ -238,6 +372,9 @@ class SimpleLRUCacheTest {
         assertNull(map.merge("2", "V2", (v1, v2) -> null));
         assertEquals(2, map.size());
         assertEquals(1, consumed.size());
+        assertThrows(NullPointerException.class, () -> map.merge("A", "B", null));
+        assertThrows(NullPointerException.class, () -> map.merge("A", null, (v1, v2) -> null));
+        assertThrows(NullPointerException.class, () -> map.merge(null, "A", (v1, v2) -> null));
     }
 
     @Test
@@ -259,6 +396,8 @@ class SimpleLRUCacheTest {
         assertEquals("Three v2", map.get("3"));
         assertEquals(3, map.size());
         assertEquals(0, consumed.size());
+        assertThrows(NullPointerException.class, () -> map.replace("A", null));
+        assertThrows(NullPointerException.class, () -> map.replace(null, "A"));
     }
 
     @Test
@@ -285,6 +424,9 @@ class SimpleLRUCacheTest {
         assertEquals("Three v2", map.get("3"));
         assertEquals(3, map.size());
         assertEquals(0, consumed.size());
+        assertThrows(NullPointerException.class, () -> map.replace("A", "B", null));
+        assertThrows(NullPointerException.class, () -> map.replace("A", null, "B"));
+        assertThrows(NullPointerException.class, () -> map.replace(null, "A", "B"));
     }
 
     @Test

@@ -19,12 +19,14 @@ package org.apache.camel.component.micrometer.routepolicy;
 import java.util.List;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME;
@@ -56,7 +58,7 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
 
         // there should be 6 metrics per route
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(6 * context.getRouteDefinitions().size(), meters.size());
+        assertEquals(6 * context.getRouteDefinitions().size() + 1, meters.size());
 
         meters.forEach(meter -> {
             String meterName = meter.getId().getName();
@@ -116,6 +118,10 @@ public class MicrometerRoutePolicyMulticastSubRouteTest extends AbstractMicromet
                             "Counter " + counter.getId() + " should have count of " + count);
                     break;
                 }
+                case APP_INFO_METER_NAME:
+                    Gauge gauge = (Gauge) meter;
+                    // It's enough to validate it does not throw a class cast exception
+                    break;
                 default: {
                     fail("Unexpected meter " + meterName);
                     break;

@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.knative;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ServiceTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitContext;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.KnativeService;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
@@ -94,6 +96,12 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
 
         Map<String, String> serviceLabels = new HashMap<>();
         serviceLabels.put(BaseTrait.KUBERNETES_LABEL_NAME, context.getName());
+        // add the same labels added by jkube, since for knative-serving the jkube resource generation is disabled
+        serviceLabels.put(BaseTrait.KUBERNETES_LABEL_MANAGED_BY, "camel-jbang");
+        serviceLabels.put("app", context.getName());
+        serviceLabels.put("app.kubernetes.io/version", context.getVersion());
+        serviceLabels.put("provider", "jkube");
+        serviceLabels.put("version", context.getVersion());
 
         // Make sure the Eventing webhook will select the source resource, in order to inject the sink information.
         // This is necessary for Knative environments, that are configured with SINK_BINDING_SELECTION_MODE=inclusion.
@@ -119,6 +127,15 @@ public class KnativeServiceTrait extends KnativeBaseTrait {
                 .endMetadata()
                 .endTemplate()
                 .endSpec();
+
+        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Optional.ofNullable(containerTrait.getImagePullSecrets()).orElseGet(List::of).forEach(sec -> service.editSpec()
+                .editOrNewTemplate()
+                .editOrNewSpec()
+                .addNewImagePullSecret(sec)
+                .endSpec()
+                .endTemplate()
+                .endSpec());
 
         if (serviceTrait.getTimeoutSeconds() != null && serviceTrait.getTimeoutSeconds() > 0) {
             service.editSpec()

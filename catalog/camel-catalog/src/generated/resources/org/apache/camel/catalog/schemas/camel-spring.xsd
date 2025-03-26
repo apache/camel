@@ -408,6 +408,15 @@ Rest DELETE command
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="dfdl" type="tns:dfdlDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Handle DFDL (Data Format Description Language) transformation.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="dnsServiceDiscovery" type="tns:dnsServiceCallServiceDiscoveryConfiguration">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -7470,6 +7479,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
             <xs:element ref="tns:custom"/>
+            <xs:element ref="tns:dfdl"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>
@@ -8454,6 +8464,40 @@ Whether the unmarshalling should capture the header record and store it in the m
             <xs:documentation xml:lang="en">
 <![CDATA[
 Reference to the custom org.apache.camel.spi.DataFormat to lookup from the Camel registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="dfdlDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="schemaUri" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The path to the DFDL schema file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rootElement" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The root element name of the schema to use. If not specified, the first root element in the schema will be used.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rootNamespace" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The root namespace of the schema to use.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14667,6 +14711,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
             <xs:element ref="tns:custom"/>
+            <xs:element ref="tns:dfdl"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>

@@ -1,0 +1,24 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "dfdl",
+    "title": "DFDL",
+    "description": "Handle DFDL (Data Format Description Language) transformation.",
+    "deprecated": false,
+    "firstVersion": "4.11.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.dataformat.dfdl.DfdlDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-dfdl",
+    "version": "4.11.0-SNAPSHOT",
+    "modelName": "dfdl",
+    "modelJavaType": "org.apache.camel.model.dataformat.DfdlDataFormat"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "schemaUri": { "index": 1, "kind": "attribute", "displayName": "Schema Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The path to the DFDL schema file." },
+    "rootElement": { "index": 2, "kind": "attribute", "displayName": "Root Element", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The root element name of the schema to use. If not specified, the first root element in the schema will be used." },
+    "rootNamespace": { "index": 3, "kind": "attribute", "displayName": "Root Namespace", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The root namespace of the schema to use." }
+  }
+}

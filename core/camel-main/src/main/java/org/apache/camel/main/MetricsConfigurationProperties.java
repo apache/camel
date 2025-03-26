@@ -46,6 +46,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private boolean enableInstrumentedThreadPoolFactory;
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
+    @Metadata(defaultValue = "false")
+    private boolean skipCamelInfo = false;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
@@ -184,6 +186,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.clearOnReload = clearOnReload;
     }
 
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
+    }
+
     public String getTextFormatVersion() {
         return textFormatVersion;
     }
@@ -307,6 +320,14 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties withClearOnReload(boolean clearOnReload) {
         this.clearOnReload = clearOnReload;
+        return this;
+    }
+
+    /**
+     * Skip the evaluation of "app.info" metric which contains runtime provider information (default, `false`).
+     */
+    public MetricsConfigurationProperties withSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
         return this;
     }
 

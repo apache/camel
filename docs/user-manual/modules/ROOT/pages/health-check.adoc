@@ -41,7 +41,7 @@ is named foo, then the ID is `consumer:foo`.
 
 == Readiness and Liveness
 
-Readiness and Liveness probes serve distinct purposes. Readiness indicates whether the application is ready to serve requests or traffic. 
+Readiness and Liveness probes serve distinct purposes. Readiness indicates whether the application is ready to serve requests or traffic.
 Liveness probes indicates whether the application is alive and functioning. A health check is by default usable for both readiness and liveness checks.
 
 To check wether a health check is usable for readiness or livesness:
@@ -98,6 +98,60 @@ if (consumersHealthCheckRepository != null) {
 }
 ----
 
+=== How to consume the health check
+
+Once you have the health check exposed as a service and the application is up and running, you can check it by accessing the related endpoint:
+
+```
+$ curl http://localhost:8080/q/health
+{
+    "status": "UP"
+,
+    "checks": [
+        {
+            "name": "context",
+            "status": "UP"        },
+        {
+            "name": "route:route1",
+            "status": "UP"        },
+        {
+            "name": "consumer:route1",
+            "status": "UP"        }
+    ]
+}
+```
+
+NOTE: the path can change depending on the runtime used and the configuration.
+
+When you're running on certain runtimes you will get more information by default. This is also possible in the `camel-main` runtime provider. However, you'll need to specify that as a request parameter:
+
+```
+$ curl http://localhost:8080/q/health?data=true
+{
+    "status": "UP"
+,
+    "checks": [
+        {
+            "name": "context",
+            "status": "UP",
+            "data": {
+                 "check.group": "camel",
+                 "check.id": "context",
+                 "check.kind": "ALL",
+                 "context.name": "camel-1",
+                 "context.phase": "5",
+                 "context.status": "Started",
+                 "context.version": "4.11.0-SNAPSHOT",
+                 "failure.count": "0",
+                 "invocation.count": "2",
+                 "invocation.time": "2025-03-20T09:43:01.870896479+01:00[Europe/Madrid]",
+                 "success.count": "2",
+                 "success.start.time": "2025-03-20T09:42:59.074646004+01:00[Europe/Madrid]",
+                 "success.time": "2025-03-20T09:43:01.870896479+01:00[Europe/Madrid]"
+            }
+        },
+...
+```
 
 === Configuring initial state
 

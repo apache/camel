@@ -2,11 +2,11 @@
 title: MDC logging
 authors:
   - "@squakez"
-reviewers: []
-approvers: []
+reviewers: ["@davsclaus"]
+approvers: ["@davsclaus"]
 creation-date: 2025-03-07
-last-updated: 2025-03-07
-status: draft
+last-updated: 2025-03-21
+status: implementable
 see-also: []
 replaces: []
 superseded-by: []

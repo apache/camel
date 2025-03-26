@@ -59,7 +59,7 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
 
         // there should be 13 names
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(13, meters.size());
+        assertEquals(14, meters.size());
 
         String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService",
                 context.getManagementName());

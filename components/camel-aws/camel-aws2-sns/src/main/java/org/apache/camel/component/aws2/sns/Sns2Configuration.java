@@ -86,6 +86,8 @@ public class Sns2Configuration implements Cloneable {
     @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
               enums = "useExchangeId,useContentBasedDeduplication")
     private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+    @UriParam
+    private boolean batchEnabled;
 
     public String getSubject() {
         return subject;
@@ -413,6 +415,17 @@ public class Sns2Configuration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    public boolean isBatchEnabled() {
+        return batchEnabled;
+    }
+
+    /**
+     * Define if we are publishing a single message or a batch
+     */
+    public void setBatchEnabled(boolean batchEnabled) {
+        this.batchEnabled = batchEnabled;
     }
 
     // *************************************************

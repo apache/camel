@@ -18,13 +18,18 @@ package org.apache.camel.oauth;
 
 import java.util.Optional;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class OAuth {
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     // Camel OAuth Properties
     //
-    public static final String CAMEL_OAUTH_PROVIDER_BASE_URI = "camel.oauth.baseUri";
+    public static final String CAMEL_OAUTH_BASE_URI = "camel.oauth.baseUri";
     public static final String CAMEL_OAUTH_CLIENT_ID = "camel.oauth.clientId";
     public static final String CAMEL_OAUTH_CLIENT_SECRET = "camel.oauth.clientSecret";
     public static final String CAMEL_OAUTH_LOGOUT_REDIRECT_URI = "camel.oauth.logout.redirectUri";
@@ -38,17 +43,24 @@ public abstract class OAuth {
     //
     public static final String CAMEL_OAUTH_COOKIE = "camel.oauth.session";
 
+    protected OAuthConfig config;
+    protected OAuthSessionStore sessionStore;
+
+    public OAuth() {
+        this.sessionStore = new InMemorySessionStore();
+    }
+
     // Provider Config -------------------------------------------------------------------------------------------------
 
-    public abstract OAuthConfig discoverOAuthConfig(Exchange exchange) throws OAuthException;
+    public abstract void discoverOAuthConfig(CamelContext ctx) throws OAuthException;
+
+    public OAuthConfig getOAuthConfig() {
+        return config;
+    }
 
     // OAuth & OIDC user authentication --------------------------------------------------------------------------------
 
     public abstract UserProfile authenticate(Credentials creds) throws OAuthException;
-
-    public abstract UserProfile refresh(UserProfile user) throws OAuthException;
-
-    public abstract UserProfile tokenRequest(AuthCodeCredentials params) throws OAuthException;
 
     // OAuth Logout ----------------------------------------------------------------------------------------------------
 
@@ -60,6 +72,10 @@ public abstract class OAuth {
 
     // Session management ----------------------------------------------------------------------------------------------
 
+    public OAuthSessionStore getSessionStore() {
+        return sessionStore;
+    }
+
     public Optional<OAuthSession> getSession(Exchange exchange) {
         return getSessionStore().getSession(exchange);
     }
@@ -67,6 +83,4 @@ public abstract class OAuth {
     public OAuthSession createSession(Exchange exchange) {
         return getSessionStore().createSession(exchange);
     }
-
-    public abstract OAuthSessionStore getSessionStore();
 }

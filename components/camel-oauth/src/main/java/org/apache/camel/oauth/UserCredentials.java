@@ -16,7 +16,7 @@
  */
 package org.apache.camel.oauth;
 
-public class UserCredentials implements Credentials {
+public class UserCredentials extends Credentials {
 
     private final UserProfile userProfile;
 

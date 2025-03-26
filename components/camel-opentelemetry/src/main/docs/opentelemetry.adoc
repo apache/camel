@@ -17,6 +17,8 @@ outgoing Camel messages using https://opentelemetry.io/[OpenTelemetry].
 Events (spans) are captured for incoming and outgoing messages being sent
 to/from Camel.
 
+NOTE: a new OpenTelemetry component `camel-opentelemetry2` is available. Learn more by looking the paragraph at the bottom of this document.
+
 == Configuration
 
 The configuration properties for the OpenTelemetry tracer are:
@@ -155,7 +157,6 @@ public SpanExporter logTraces() {
 
 Multiple `SpanExporters` can be used at the same time.
 
-
 == MDC Logging
 
 You can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. The configuration depends on the logging framework you're using.
@@ -188,3 +189,9 @@ public class MySpanCustomizer implements SpanCustomizer {
     }
 }
 ----
+
+== Camel OpenTelemetry2 component
+
+In version 4.11 we have introduced a new OpenTelemetry component whose goal is to replace `camel-opentelemetry`. While we don't plan to drop the support for `camel-opentelemetry` in the short term, it is plausible that this component will be replaced with the new `camel-opentelemetry2` component when moving to the next major version (ie, Camel 5).
+
+The new component is based on a more consistent design. There may be slight differences on the traces produced and the available features. We suggest to adopt the new component as soon as possible to benefit the new design and to report any new requirement.

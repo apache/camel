@@ -188,6 +188,39 @@ from("direct:start")
   .to("aws2-sns://camel-topic?subject=The+subject+message&autoCreateTopic=true");
 --------------------------------------------------------------------------------
 
+Sending batch to a topic
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+     .process(new Processor() {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+          PublishBatchRequestEntry publishBatchRequestEntry1 = PublishBatchRequestEntry.builder()
+               .id("message1")
+               .message("This is message 1")
+               .build();
+
+          PublishBatchRequestEntry publishBatchRequestEntry2 = PublishBatchRequestEntry.builder()
+               .id("message2")
+               .message("This is message 2")
+               .build();
+
+          PublishBatchRequestEntry publishBatchRequestEntry3 = PublishBatchRequestEntry.builder()
+               .id("message3")
+               .message("This is message 3")
+               .build();
+
+          List<PublishBatchRequestEntry> pubList = new ArrayList<>();
+          pubList.add(publishBatchRequestEntry1);
+          pubList.add(publishBatchRequestEntry2);
+          pubList.add(publishBatchRequestEntry3);
+          exchange.getIn().setBody(pubList);
+          }
+  })
+  .to("aws2-sns://camel-topic?subject=The+subject+message&autoCreateTopic=true&batchEnabled=true");
+--------------------------------------------------------------------------------
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.

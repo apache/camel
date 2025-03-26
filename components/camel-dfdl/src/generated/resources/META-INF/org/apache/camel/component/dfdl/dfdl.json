@@ -1,0 +1,37 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "dfdl",
+    "title": "DFDL",
+    "description": "Transforms fixed format data such as EDI message from\/to XML using a Data Format Description Language (DFDL).",
+    "deprecated": false,
+    "firstVersion": "4.11.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.dfdl.DfdlComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-dfdl",
+    "version": "4.11.0-SNAPSHOT",
+    "scheme": "dfdl",
+    "extendsScheme": "",
+    "syntax": "dfdl:schemaUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "schemaUri": { "index": 0, "kind": "path", "displayName": "Schema Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The path to the DFDL schema file." },
+    "parseDirection": { "index": 1, "kind": "parameter", "displayName": "Parse Direction", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.dfdl.ParseDirection", "enum": [ "PARSE", "UNPARSE" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "PARSE", "description": "Transform direction. Either PARSE or UNPARSE" },
+    "lazyStartProducer": { "index": 2, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "rootElement": { "index": 3, "kind": "parameter", "displayName": "Root Element", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The root element name of the schema to use. If not specified, the first root element in the schema will be used." },
+    "rootNamespace": { "index": 4, "kind": "parameter", "displayName": "Root Namespace", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The root namespace of the schema to use." }
+  }
+}

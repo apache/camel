@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.routepolicy;
 import java.util.List;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,9 +56,10 @@ public class ZMicrometerRoutePolicyExcludePatternTest extends AbstractMicrometer
         MockEndpoint.assertIsSatisfied(context);
 
         // there should be 6 metrics per route (only 1 route as bar is excluded)
+        // additionally one for App info gauge
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(6, meters.size());
-        meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter));
+        assertEquals(7, meters.size());
+        meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter || meter instanceof Gauge));
     }
 
     @Override

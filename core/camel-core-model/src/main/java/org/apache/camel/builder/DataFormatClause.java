@@ -34,6 +34,7 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.DfdlDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FuryDataFormat;
@@ -304,6 +305,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T custom(String ref) {
         return dataFormat(new CustomDataFormat(ref));
+    }
+
+    /**
+     * Uses the DFDL data format
+     */
+    public T dfdl(String schemaUri) {
+        return dataFormat(new DfdlDataFormat(schemaUri));
     }
 
     /**

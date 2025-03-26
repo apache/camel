@@ -39,7 +39,6 @@ public enum ClusterType {
         if (clusterType == null) {
             return false;
         }
-
-        return this == fromName(clusterType);
+        return this.name().equalsIgnoreCase(clusterType);
     }
 }

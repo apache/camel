@@ -58,6 +58,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private final MicrometerRoutePolicyFactory factory;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint;
+    private boolean skipCamelInfo;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
     private MicrometerRoutePolicyConfiguration configuration = MicrometerRoutePolicyConfiguration.DEFAULT;
@@ -246,6 +247,14 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         this.prettyPrint = prettyPrint;
     }
 
+    public boolean isSkipCamelInfo() {
+        return skipCamelInfo;
+    }
+
+    public void setSkipCamelInfo(boolean skipCamelInfo) {
+        this.skipCamelInfo = skipCamelInfo;
+    }
+
     public TimeUnit getDurationUnit() {
         return durationUnit;
     }
@@ -289,6 +298,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                     = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {
                 registryService = new MicrometerRoutePolicyService();
+                registryService.setSkipCamelInfo(isSkipCamelInfo());
                 registryService.setMeterRegistry(getMeterRegistry());
                 registryService.setPrettyPrint(isPrettyPrint());
                 registryService.setDurationUnit(getDurationUnit());
