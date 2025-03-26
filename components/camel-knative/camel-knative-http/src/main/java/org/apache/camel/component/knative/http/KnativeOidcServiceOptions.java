@@ -26,15 +26,13 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 
 /**
- * Knative client options are able to autoconfigure OpenID Connect authentication with the use of an access token. The
- * path to the OIDC access token is configurable via system property or environment variable settings. Usually the token
- * is mounted by a Kubernetes volume and gets refreshed over time. The options provide a procedure to renew the token.
- * Basically that means reading the token again from the given path to get the updated value. As an alternative to that
- * you can disable token caching so the token is read for each request.
+ * OpenID connect service options implementation grants access to the OIDC token that should be used to verify client
+ * requests.
  */
-public class KnativeOidcClientOptions extends KnativeSslClientOptions {
+public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
+    private static final String PROPERTY_PREFIX = "camel.knative.service.oidc.";
 
-    private static final String PROPERTY_PREFIX = "camel.knative.client.oidc.";
+    private CamelContext camelContext;
 
     private boolean oidcEnabled;
 
@@ -44,13 +42,18 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
 
     private boolean cacheTokens = true;
 
-    private boolean renewTokenOnForbidden = true;
-
-    public KnativeOidcClientOptions() {
+    public KnativeOidcServiceOptions() {
     }
 
-    public KnativeOidcClientOptions(CamelContext camelContext) {
-        super(camelContext);
+    public KnativeOidcServiceOptions(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        configureOptions(camelContext);
+    }
+
+    public void configureOptions() {
+        if (camelContext != null) {
+            configureOptions(camelContext);
+        }
     }
 
     /**
@@ -58,8 +61,6 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
      * Camel context.
      */
     public void configureOptions(CamelContext camelContext) {
-        super.configureOptions(camelContext);
-
         PropertiesComponent propertiesComponent = camelContext.getPropertiesComponent();
 
         boolean oidcEnabled = Boolean.parseBoolean(
@@ -69,11 +70,6 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
         if (oidcEnabled) {
             Optional<String> oidcTokenPath = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "token.path");
             oidcTokenPath.ifPresent(token -> this.oidcTokenPath = token);
-
-            boolean renewTokenOnForbidden = Boolean.parseBoolean(
-                    propertiesComponent.resolveProperty(PROPERTY_PREFIX + "renew.tokens.on.forbidden").orElse("true"));
-
-            setRenewTokenOnForbidden(renewTokenOnForbidden);
 
             boolean cacheTokens = Boolean.parseBoolean(
                     propertiesComponent.resolveProperty(PROPERTY_PREFIX + "cache.tokens").orElse("true"));
@@ -131,11 +127,14 @@ public class KnativeOidcClientOptions extends KnativeSslClientOptions {
         return oidcTokenPath;
     }
 
-    public void setRenewTokenOnForbidden(boolean enabled) {
-        this.renewTokenOnForbidden = enabled;
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        configureOptions();
     }
 
-    public boolean isRenewTokenOnForbidden() {
-        return this.renewTokenOnForbidden;
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 }
