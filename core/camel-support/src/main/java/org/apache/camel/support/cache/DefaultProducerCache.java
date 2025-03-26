@@ -351,6 +351,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producers);
+        // Clearing lastUsedProducer to remove reference to potentially stopped Producer
+        lastUsedProducer = null;
     }
 
     @Override
