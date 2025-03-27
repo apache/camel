@@ -18,6 +18,7 @@
 org.apache.camel.tracing.decorators.AhcSpanDecorator
 org.apache.camel.tracing.decorators.AmqpSpanDecorator
 org.apache.camel.tracing.decorators.AzureServiceBusSpanDecorator
+org.apache.camel.tracing.decorators.AzureStorageDataLakeSpanDecorator
 org.apache.camel.tracing.decorators.CometdSpanDecorator
 org.apache.camel.tracing.decorators.CometdsSpanDecorator
 org.apache.camel.tracing.decorators.CqlSpanDecorator
