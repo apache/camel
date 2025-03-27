@@ -17,14 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.config;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigUnsetTest extends CamelCommandBaseTest {
+class ConfigUnsetTest extends BaseConfigTest {
 
     @Test
     public void shouldUnsetConfig() throws Exception {
@@ -67,4 +66,23 @@ class ConfigUnsetTest extends CamelCommandBaseTest {
         });
     }
 
+    @Test
+    public void unsetLocalConfig() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                camel-version=local
+                foo=bar
+                """, true);
+
+        ConfigUnset command = new ConfigUnset(new CamelJBangMain().withPrinter(printer));
+        command.key = "foo";
+        command.local = true;
+        command.doCall();
+
+        Assertions.assertEquals("", printer.getOutput());
+
+        CommandLineHelper.loadProperties(properties -> {
+            Assertions.assertEquals(1, properties.size());
+            Assertions.assertEquals("local", properties.get("camel-version"));
+        }, true);
+    }
 }

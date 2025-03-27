@@ -19,13 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigListTest extends CamelCommandBaseTest {
+class ConfigListTest extends BaseConfigTest {
 
     @Test
     public void shouldHandleEmptyConfig() throws Exception {
@@ -55,4 +54,20 @@ class ConfigListTest extends CamelCommandBaseTest {
         Assertions.assertEquals("foo = bar", lines.get(2));
     }
 
+    @Test
+    public void shouldListLocalUserConfig() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                camel-version=local
+                kamelets-version=local
+                """, true);
+
+        ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
+        command.local = true;
+        command.doCall();
+
+        List<String> lines = printer.getLines();
+        Assertions.assertEquals(2, lines.size());
+        Assertions.assertEquals("camel-version = local", lines.get(0));
+        Assertions.assertEquals("kamelets-version = local", lines.get(1));
+    }
 }

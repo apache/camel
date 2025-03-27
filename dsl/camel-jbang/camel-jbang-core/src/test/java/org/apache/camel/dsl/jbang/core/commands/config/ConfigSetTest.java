@@ -17,14 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.config;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigSetTest extends CamelCommandBaseTest {
+class ConfigSetTest extends BaseConfigTest {
 
     @Test
     public void shouldSetConfig() throws Exception {
@@ -56,6 +55,21 @@ class ConfigSetTest extends CamelCommandBaseTest {
             Assertions.assertEquals(1, properties.size());
             Assertions.assertEquals("baz", properties.get("foo"));
         });
+    }
+
+    @Test
+    public void setLocalConfig() throws Exception {
+        ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
+        command.configuration = "foo=local";
+        command.local = true;
+        command.doCall();
+
+        Assertions.assertEquals("", printer.getOutput());
+
+        CommandLineHelper.loadProperties(properties -> {
+            Assertions.assertEquals(1, properties.size());
+            Assertions.assertEquals("local", properties.get("foo"));
+        }, true);
     }
 
 }
