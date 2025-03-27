@@ -111,6 +111,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             case "kv":
                 exchange.getMessage().setBody(getResp.getResult().getData());
                 break;
+            case "service_credentials":
+                exchange.getMessage().setBody(getResp.getResult());
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported Secret Type");
         }
