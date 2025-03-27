@@ -186,6 +186,10 @@ public class TraitContext {
                 .collect(Collectors.toList());
     }
 
+    public void addLabel(String name, String value) {
+        this.labels.put(name, value);
+    }
+
     public void addLabels(Map<String, String> labels) {
         this.labels.putAll(labels);
     }
