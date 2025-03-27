@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.util.ObjectHelper;
 
 public class ContainerTrait extends BaseTrait {
 
@@ -48,8 +49,11 @@ public class ContainerTrait extends BaseTrait {
         Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
 
         ContainerBuilder container = new ContainerBuilder()
-                .withName(Optional.ofNullable(containerTrait.getName()).orElse(context.getName()))
-                .withImage(containerTrait.getImage());
+                .withName(Optional.ofNullable(containerTrait.getName()).orElse(context.getName()));
+
+        if (ObjectHelper.isNotEmpty(containerTrait.getImage())) {
+            container.withImage(containerTrait.getImage());
+        }
 
         if (containerTrait.getImagePullPolicy() != null) {
             container.withImagePullPolicy(containerTrait.getImagePullPolicy().getValue());

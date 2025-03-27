@@ -278,22 +278,13 @@ public class KubernetesExport extends Export {
             openapi = null;
         }
         TraitHelper.configureContainerImage(traitsSpec, image,
-                resolvedImageRegistry, resolvedImageGroup, projectName, getVersion());
+                resolvedImageRegistry, resolvedImageGroup, projectName, getVersion(), buildProperties);
         TraitHelper.configureEnvVars(traitsSpec, envVars);
         TraitHelper.configureConnects(traitsSpec, connects);
 
         Container container = traitsSpec.getContainer();
-
-        buildProperties.add("jkube.image.name=%s".formatted(container.getImage()));
-        buildProperties.add("jkube.container-image.name=%s".formatted(container.getImage()));
-
         if (container.getName() != null && !container.getName().equals(projectName)) {
             printer().printf("Custom container name '%s' not supported%n".formatted(container.getName()));
-        }
-
-        if (container.getImagePullPolicy() != null) {
-            var imagePullPolicy = container.getImagePullPolicy().getValue();
-            buildProperties.add("jkube.container-image.imagePullPolicy=%s".formatted(imagePullPolicy));
         }
 
         buildProperties.add("jkube.skip.push=%b".formatted(!imagePush));
