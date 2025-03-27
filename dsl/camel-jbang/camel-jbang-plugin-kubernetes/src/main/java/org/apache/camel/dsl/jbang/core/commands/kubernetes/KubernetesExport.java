@@ -240,11 +240,13 @@ public class KubernetesExport extends Export {
         // app.kubernetes.io/name
         // app.kubernetes.io/version
         //
-        addLabel("app.kubernetes.io/runtime", "camel");
-        context.addLabels(Arrays.stream(labels)
-                .map(item -> item.split("="))
-                .filter(parts -> parts.length == 2)
-                .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
+        context.addLabel("app.kubernetes.io/runtime", "camel");
+        if (labels != null) {
+            context.addLabels(Arrays.stream(labels)
+                    .map(item -> item.split("="))
+                    .filter(parts -> parts.length == 2)
+                    .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1])));
+        }
 
         if (clusterType != null) {
             context.setClusterType(ClusterType.valueOf(clusterType.toUpperCase()));
@@ -297,6 +299,9 @@ public class KubernetesExport extends Export {
         buildProperties.add("jkube.skip.push=%b".formatted(!imagePush));
 
         if (ClusterType.OPENSHIFT.isEqualTo(clusterType)) {
+            // Displays the Camel logo as part the deployment
+            context.addLabel("app.openshift.io/runtime", "camel");
+
             if (!"docker".equals(imageBuilder)) {
                 printer().printf("OpenShift forcing --image-builder=docker%n");
                 imageBuilder = "docker";
@@ -426,16 +431,6 @@ public class KubernetesExport extends Export {
         if (!envList.contains(envEntry)) {
             envList.add(envEntry);
             envVars = envList.toArray(new String[0]);
-        }
-    }
-
-    private void addLabel(String key, String value) {
-        var labelArray = Optional.ofNullable(labels).orElse(new String[0]);
-        var labelList = new ArrayList<>(Arrays.asList(labelArray));
-        var labelEntry = "%s=%s".formatted(key, value);
-        if (!labelList.contains(labelEntry)) {
-            labelList.add(labelEntry);
-            labels = labelList.toArray(new String[0]);
         }
     }
 
