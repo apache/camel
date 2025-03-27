@@ -64,6 +64,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
         Properties props = model.getProperties();
         Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("examples/route:1.0.0", props.get("jkube.container-image.name"));
         Assertions.assertEquals("eclipse-temurin:17", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
@@ -106,6 +107,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
         Properties props = model.getProperties();
         Assertions.assertEquals("quay.io/camel-riders/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel-riders/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
         Assertions.assertEquals("mirror.gcr.io/my-base-image:latest", props.get("jkube.container-image.from"));
         Assertions.assertEquals("docker", props.get("jkube.build.strategy"));
         Assertions.assertEquals("quay.io", props.get("jkube.docker.push.registry"));
@@ -130,7 +132,16 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertNull(containers.get(0).getImage());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -155,7 +166,16 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertNull(containers.get(0).getImage());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("camel-test/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
@@ -187,10 +207,19 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
         Service service = getService(rt);
         List<ServicePort> ports = service.getSpec().getPorts();
@@ -218,10 +247,19 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
         Service service = getService(rt);
         List<ServicePort> ports = service.getSpec().getPorts();
@@ -258,10 +296,19 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
         Ingress ingress = getIngress(rt);
         Assertions.assertEquals("route-service", ingress.getMetadata().getName());
@@ -307,10 +354,19 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Container container = deployment.getSpec().getTemplate().getSpec().getContainers().get(0);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("route-service:1.0-SNAPSHOT", container.getImage());
+        Assertions.assertNull(container.getImage());
         Assertions.assertEquals(1, container.getPorts().size());
         Assertions.assertEquals("http", container.getPorts().get(0).getName());
         Assertions.assertEquals(8080, container.getPorts().get(0).getContainerPort());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("route-service:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
 
         Route route = getRoute(rt);
         Assertions.assertEquals("route-service", route.getMetadata().getName());
@@ -359,8 +415,7 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("route-service", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("camel-test/route-service:1.0.0",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertNull(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("IfNotPresent",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().size());
@@ -380,6 +435,15 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("512Mi",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getResources().getLimits().get("memory")
                         .toString());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("camel-test", model.getGroupId());
+        Assertions.assertEquals("route-service", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("camel-test/route-service:1.0.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("camel-test/route-service:1.0.0", props.get("jkube.container-image.name"));
 
         Service service = getService(rt);
         Assertions.assertEquals("route-service", service.getMetadata().getName());
@@ -553,7 +617,15 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Deployment deployment = getDeployment(rt);
         Assertions.assertEquals("demo-app", deployment.getMetadata().getName());
         Assertions.assertEquals(1, deployment.getSpec().getTemplate().getSpec().getContainers().size());
-        Assertions.assertEquals("quay.io/camel/demo-app:1.0",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertNull(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("demo-app", model.getArtifactId());
+        Assertions.assertEquals("1.0", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel/demo-app:1.0", props.get("jkube.container-image.name"));
     }
 }

@@ -275,12 +275,12 @@ public final class TraitHelper {
     }
 
     public static void configureContainerImage(
-            Traits traitsSpec, String image, String imageRegistry, String imageGroup, String imageName, String version) {
-        Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+            Traits traitsSpec, String image, String imageRegistry, String imageGroup,
+            String imageName, String version, List<String> buildProperties) {
+        String imageToUse;
         if (image != null) {
-            containerTrait.setImage(image);
-            traitsSpec.setContainer(containerTrait);
-        } else if (containerTrait.getImage() == null) {
+            imageToUse = image;
+        } else {
             String registryPrefix = "";
             if ("minikube".equals(imageRegistry) || "minikube-registry".equals(imageRegistry)) {
                 registryPrefix = "localhost:5000/";
@@ -290,18 +290,27 @@ public final class TraitHelper {
                 registryPrefix = imageRegistry + "/";
             }
 
-            var resolvedImageName = getResolvedImageName(imageGroup, imageName, version);
-            containerTrait.setImage("%s%s".formatted(registryPrefix, resolvedImageName));
-
-            // Plain export command always exposes a health endpoint on 8080.
-            // Skip this, when we decide that the health endpoint can be disabled.
-            if (containerTrait.getPort() == null) {
-                containerTrait.setPortName(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME);
-                containerTrait.setPort((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
-            }
-
-            traitsSpec.setContainer(containerTrait);
+            imageToUse = "%s%s".formatted(registryPrefix, getResolvedImageName(imageGroup, imageName, version));
         }
+
+        buildProperties.add("jkube.image.name=%s".formatted(imageToUse));
+        buildProperties.add("jkube.container-image.name=%s".formatted(imageToUse));
+
+        Container containerTrait = Optional.ofNullable(traitsSpec.getContainer()).orElseGet(Container::new);
+
+        if (containerTrait.getImagePullPolicy() != null) {
+            var imagePullPolicy = containerTrait.getImagePullPolicy().getValue();
+            buildProperties.add("jkube.container-image.imagePullPolicy=%s".formatted(imagePullPolicy));
+        }
+
+        // Plain export command always exposes a health endpoint on 8080.
+        // Skip this, when we decide that the health endpoint can be disabled.
+        if (containerTrait.getPort() == null) {
+            containerTrait.setPortName(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME);
+            containerTrait.setPort((long) ContainerTrait.DEFAULT_CONTAINER_PORT);
+        }
+
+        traitsSpec.setContainer(containerTrait);
     }
 
     public static String getResolvedImageName(String imageGroup, String imageName, String version) {
