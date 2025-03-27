@@ -17,13 +17,12 @@
 
 package org.apache.camel.dsl.jbang.core.commands.config;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigGetTest extends CamelCommandBaseTest {
+class ConfigGetTest extends BaseConfigTest {
 
     @Test
     public void shouldGetConfig() throws Exception {
@@ -45,6 +44,18 @@ class ConfigGetTest extends CamelCommandBaseTest {
         command.doCall();
 
         Assertions.assertEquals("foo key not found", printer.getOutput());
+    }
+
+    @Test
+    public void shouldGetLocalConfig() throws Exception {
+        UserConfigHelper.createUserConfig("foo=bar", true);
+
+        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        command.key = "foo";
+        command.local = true;
+        command.doCall();
+
+        Assertions.assertEquals("bar", printer.getOutput());
     }
 
 }

@@ -19,7 +19,10 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -41,22 +44,47 @@ public final class CommandLineHelper {
         super();
     }
 
-    public static void augmentWithUserConfiguration(CommandLine commandLine, String... args) {
-        File file = getUserPropertyFile();
+    public static void augmentWithUserConfiguration(CommandLine commandLine, boolean mergeConfigurations) {
+        File file = getUserConfigurationFile();
         if (file.isFile() && file.exists()) {
-            commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
+            Properties properties = new Properties();
+            try {
+                if (mergeConfigurations) {
+                    properties.load(new FileReader(getUserPropertyFile(false)));
+                }
+
+                properties.load(new FileReader(file));
+            } catch (IOException e) {
+                commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
+            }
+
+            commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(properties));
         }
     }
 
-    public static void createPropertyFile() throws IOException {
-        File file = getUserPropertyFile();
+    private static File getUserConfigurationFile() {
+        File file;
+        if (Files.exists(Path.of(USER_CONFIG))) {
+            file = new File(USER_CONFIG);
+        } else {
+            file = getUserPropertyFile(false);
+        }
+        return file;
+    }
+
+    public static void createPropertyFile(boolean local) throws IOException {
+        File file = getUserPropertyFile(local);
         if (!file.exists()) {
             file.createNewFile();
         }
     }
 
     public static void loadProperties(Consumer<Properties> consumer) {
-        File file = getUserPropertyFile();
+        loadProperties(consumer, false);
+    }
+
+    public static void loadProperties(Consumer<Properties> consumer, boolean local) {
+        File file = getUserPropertyFile(local);
         if (file.isFile() && file.exists()) {
             FileInputStream fis = null;
             try {
@@ -72,8 +100,8 @@ public final class CommandLineHelper {
         }
     }
 
-    public static void storeProperties(Properties properties, Printer printer) {
-        File file = getUserPropertyFile();
+    public static void storeProperties(Properties properties, Printer printer, boolean local) {
+        File file = getUserPropertyFile(local);
         if (file.isFile() && file.exists()) {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 properties.store(fos, null);
@@ -85,8 +113,18 @@ public final class CommandLineHelper {
         }
     }
 
-    private static File getUserPropertyFile() {
-        return new File(homeDir, USER_CONFIG);
+    /**
+     * Get the config file in current directory (local = true) or the default one
+     *
+     * @param  local
+     * @return
+     */
+    private static File getUserPropertyFile(boolean local) {
+        if (local) {
+            return new File(USER_CONFIG);
+        } else {
+            return new File(homeDir, USER_CONFIG);
+        }
     }
 
     /**
@@ -130,6 +168,10 @@ public final class CommandLineHelper {
 
         public CamelUserConfigDefaultValueProvider(File file) {
             super(file);
+        }
+
+        public CamelUserConfigDefaultValueProvider(Properties properties) {
+            super(properties);
         }
     }
 
