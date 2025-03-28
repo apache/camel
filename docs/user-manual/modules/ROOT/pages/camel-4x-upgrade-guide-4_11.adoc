@@ -132,8 +132,3 @@ This information is evaluated at runtime startup and available through the usual
 === camel-observability-services
 
 In this version we're moving the telemetry component from `camel-opentelemetry` to `camel-opentelemetry2`.
-
-=== camel-as2
-
-Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
-asynchronous MDN requests.
