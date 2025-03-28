@@ -123,26 +123,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <licenseSets>
-                        <licenseSet>
-                            <excludes>
-                                <exclude>helm/etc/*</exclude>
-                            </excludes>
-                        </licenseSet>
-                    </licenseSets>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
