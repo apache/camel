@@ -101,16 +101,11 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
     private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
         String bodyStr = "grant_type=client_credentials";
-        String url = tokenEndpoint;
         if (scope != null) {
-            String sep = "?";
-            if (url.contains("?")) {
-                sep = "&";
-            }
-            url = url + sep + "scope=" + scope;
+            bodyStr += "&scope=" + scope;
         }
 
-        final HttpPost httpPost = new HttpPost(url);
+        final HttpPost httpPost = new HttpPost(tokenEndpoint);
 
         httpPost.addHeader(HttpHeaders.AUTHORIZATION,
                 HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
