@@ -349,7 +349,7 @@
                                     <exclude>**/.camel-jbang-run/**</exclude>
                                     <exclude>**/camel-jbang-run.properties</exclude>
                                     <exclude>**/javax.annotations.processing.Processor</exclude>
-                                    <exclude>**/camel-oauth/helm/etc/**</exclude>
+                                    <exclude>**/helm/etc/**</exclude>
                                 </excludes>
                             </licenseSet>
                         </licenseSets>
