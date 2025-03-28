@@ -16,8 +16,6 @@
  */
 package org.apache.camel.oauth;
 
-import java.util.Optional;
-
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +43,7 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
 
         // Get or create the OAuthSession
         //
-        var session = oauth.getSession(exchange)
-                .or(() -> Optional.of(oauth.createSession(exchange)))
-                .get();
+        var session = oauth.getOrCreateSession(exchange);
 
         // Authenticate an existing UserProfile from the OAuthSession
         //

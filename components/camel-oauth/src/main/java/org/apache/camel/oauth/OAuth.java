@@ -29,11 +29,11 @@ public abstract class OAuth {
 
     // Camel OAuth Properties
     //
-    public static final String CAMEL_OAUTH_BASE_URI = "camel.oauth.baseUri";
-    public static final String CAMEL_OAUTH_CLIENT_ID = "camel.oauth.clientId";
-    public static final String CAMEL_OAUTH_CLIENT_SECRET = "camel.oauth.clientSecret";
-    public static final String CAMEL_OAUTH_LOGOUT_REDIRECT_URI = "camel.oauth.logout.redirectUri";
-    public static final String CAMEL_OAUTH_REDIRECT_URI = "camel.oauth.redirectUri";
+    public static final String CAMEL_OAUTH_BASE_URI = "camel.oauth.base-uri";
+    public static final String CAMEL_OAUTH_CLIENT_ID = "camel.oauth.client-id";
+    public static final String CAMEL_OAUTH_CLIENT_SECRET = "camel.oauth.client-secret";
+    public static final String CAMEL_OAUTH_LOGOUT_REDIRECT_URI = "camel.oauth.logout.redirect-uri";
+    public static final String CAMEL_OAUTH_REDIRECT_URI = "camel.oauth.redirect-uri";
 
     // Camel OAuth Headers
     //
@@ -78,6 +78,14 @@ public abstract class OAuth {
 
     public Optional<OAuthSession> getSession(Exchange exchange) {
         return getSessionStore().getSession(exchange);
+    }
+
+    public OAuthSession getOrCreateSession(Exchange exchange) {
+        var maybeSession = getSessionStore().getSession(exchange);
+        if (maybeSession.isEmpty()) {
+            maybeSession = Optional.of(createSession(exchange));
+        }
+        return maybeSession.get();
     }
 
     public OAuthSession createSession(Exchange exchange) {
