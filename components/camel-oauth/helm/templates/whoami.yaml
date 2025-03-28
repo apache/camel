@@ -37,9 +37,10 @@ spec:
     spec:
       containers:
         - name: whoami
-          image: traefik/whoami
+          image: traefik/whoami:{{ .version }}
+          args: [ "--port=8080" ]
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 
 # Whoami Service
 ---
@@ -48,13 +49,15 @@ kind: Service
 metadata:
   name: whoami
 spec:
+  type: ClusterIP
   ports:
-    - name: web
-      port: 80
-      targetPort: 80
+    - port: 8080
+      targetPort: 8080
   selector:
     app.kubernetes.io/name: whoami
+---
 
+{{- if eq $.Values.environment "k8s" }}
 # Whoami IngressRoute
 ---
 apiVersion: traefik.io/v1alpha1
@@ -72,7 +75,7 @@ spec:
       kind: Rule
       services:
         - name: whoami
-          port: 80
+          port: 8080
       middlewares:
         - name: strip-prefix-who
   tls:
@@ -90,4 +93,6 @@ spec:
     prefixes:
       - /who
 ---
+{{- end }} # environment == 'k8s'
+
 {{- end }}

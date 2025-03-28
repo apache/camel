@@ -17,12 +17,12 @@
 
 {{- with .Values.deployments.keycloak }}
 
-# Keycloak Realm ConfigMap
 ---
+# Keycloak Realm ConfigMap
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: keycloak-realm-config
+  name: keycloak-realm-import
   labels:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/managed-by: Helm
@@ -32,8 +32,8 @@ data:
   camel-realm.json: |-
     {{- $.Files.Get "etc/camel-realm.json" | nindent 4 }}
 
-# Keycloak Deployment
 ---
+# Keycloak Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -63,9 +63,9 @@ spec:
             - "start-dev"
             - "--import-realm"
             - "--http-enabled=true"
-            - "--http-relative-path=/kc"
             - "--proxy-headers=xforwarded"
-            - "--proxy-protocol-enabled=false"
+            - "--proxy-protocol-enabled=false"{{- if eq $.Values.environment "k8s" }}
+            - "--http-relative-path=/kc"{{- end }}
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: admin
@@ -74,16 +74,16 @@ spec:
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: keycloak-realm-config
+            - name: keycloak-realm-import
               mountPath: /opt/keycloak/data/import
               readOnly: true
       volumes:
-        - name: keycloak-realm-config
+        - name: keycloak-realm-import
           configMap:
-            name: keycloak-realm-config
+            name: keycloak-realm-import
 
-# Keycloak Service
 ---
+# Keycloak Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -96,33 +96,17 @@ spec:
       port: 8080
   selector:
     app.kubernetes.io/name: keycloak
-
-# Keycloak Ingress Http
-#---
-#apiVersion: traefik.io/v1alpha1
-#kind: IngressRoute
-#metadata:
-#  name: keycloak-http
-#  labels:
-#    app.kubernetes.io/name: keycloak-http
-#spec:
-#  entryPoints:
-#    - web
-#  routes:
-#    - match: PathPrefix(`/kc`)
-#      kind: Rule
-#      services:
-#        - name: keycloak
-#          port: 8080
-
-# Keycloak Ingress Https
 ---
+
+{{- if eq $.Values.environment "k8s" }}
+---
+# Keycloak Ingress Https
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: keycloak-https
+  name: keycloak
   labels:
-    app.kubernetes.io/name: keycloak-https
+    app.kubernetes.io/name: keycloak
 spec:
   entryPoints:
     - websecure
@@ -135,4 +119,28 @@ spec:
   tls:
     secretName: traefik-tls
 ---
+{{- end }} # environment == 'k8s'
+
+{{- if eq $.Values.environment "openshift" }}
+# Keycloak Route
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+spec:
+  host: keycloak.{{ $.Values.openshift.hostName }}
+  to:
+    kind: Service
+    name: keycloak
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+{{- end }} # environment == 'openshift'
+
 {{- end }}

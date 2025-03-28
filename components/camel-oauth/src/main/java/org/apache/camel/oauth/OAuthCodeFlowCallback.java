@@ -47,7 +47,7 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
         // Require an active OAuthSession
         //
         var oauth = findOAuthOrThrow(context);
-        var session = oauth.getSession(exchange).orElseThrow();
+        var session = oauth.getOrCreateSession(exchange);
 
         // Exchange the authorization code for access/refresh/id tokens
         //
