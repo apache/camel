@@ -844,7 +844,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private void runAsyncMDNTest() throws CamelException, HttpException {
         AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(
                 AS2_VERSION, ORIGIN_SERVER_NAME, SERVER_FQDN,
-                new Certificate[] { clientCert }, clientKeyPair.getPrivate());
+                new Certificate[] { clientCert }, clientKeyPair.getPrivate(), null, null, null);
 
         // Create plain edi request message to acknowledge
         ApplicationEntity ediEntity = EntityUtils
@@ -994,7 +994,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { serverCert }, serverKP.getPrivate(), null,
-                MDN_MESSAGE_TEMPLATE, null, null);
+                MDN_MESSAGE_TEMPLATE, null, null, null, null, null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

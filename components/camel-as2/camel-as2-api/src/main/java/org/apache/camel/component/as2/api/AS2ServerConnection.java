@@ -171,7 +171,8 @@ public class AS2ServerConnection {
                                 DispositionNotificationMultipartReportEntity.class);
                         AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
                                 as2Version,
-                                originServer, serverFqdn, signingCertificateChain, signingPrivateKey);
+                                originServer, serverFqdn, signingCertificateChain, signingPrivateKey,
+                                userName, password, accessToken);
 
                         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
                         AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
@@ -224,6 +225,9 @@ public class AS2ServerConnection {
     private final PrivateKey decryptingPrivateKey;
     private final Certificate[] validateSigningCertificateChain;
     private final AS2SignatureAlgorithm signingAlgorithm;
+    private final String userName;
+    private final String password;
+    private final String accessToken;
 
     public AS2ServerConnection(String as2Version,
                                String originServer,
@@ -235,8 +239,11 @@ public class AS2ServerConnection {
                                PrivateKey decryptingPrivateKey,
                                String mdnMessageTemplate,
                                Certificate[] validateSigningCertificateChain,
-                               SSLContext sslContext)
-                                                      throws IOException {
+                               SSLContext sslContext,
+                               String userName,
+                               String password,
+                               String accessToken)
+                                                   throws IOException {
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
@@ -245,6 +252,9 @@ public class AS2ServerConnection {
         this.signingPrivateKey = signingPrivateKey;
         this.decryptingPrivateKey = decryptingPrivateKey;
         this.validateSigningCertificateChain = validateSigningCertificateChain;
+        this.userName = userName;
+        this.password = password;
+        this.accessToken = accessToken;
 
         this.signingAlgorithm = signingAlgorithm;
         listenerThread = new RequestListenerThread(

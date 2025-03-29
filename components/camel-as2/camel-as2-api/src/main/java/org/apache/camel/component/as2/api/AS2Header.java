@@ -118,5 +118,9 @@ public interface AS2Header {
      * Message Header name for Disposition Notification Options
      */
     String DISPOSITION_NOTIFICATION_OPTIONS = "Disposition-Notification-Options";
+    /**
+     * Message Header name for Authorization
+     */
+    String AUTHORIZATION = "Authorization";
 
 }

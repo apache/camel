@@ -436,7 +436,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { serverCert }, serverKP.getPrivate(), null,
-                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null);
+                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null, null, null, null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

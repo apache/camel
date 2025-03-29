@@ -219,7 +219,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
                 AS2MediaType.APPLICATION_EDIFACT, null, null,
                 signingAlgorithm, signingCertificate, signingPrivateKey, compressionAlgorithm,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
-                encryptingCertificate, null, null);
+                encryptingCertificate, null, null, null, null, null);
     }
 
     protected AS2ClientManager clientConnection() throws IOException {
