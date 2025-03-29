@@ -111,7 +111,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
         } else {
-            httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler());
+            httpRequestBodyHandler = new DefaultHttpRequestBodyHandler(router.bodyHandler(), getEndpoint().isUseBodyHandler());
         }
         if (getEndpoint().isUseCookieHandler()) {
             cookieConfiguration = getEndpoint().getCookieConfiguration();
@@ -212,7 +212,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 handleProxy(ctx, exchange);
             }
 
-            populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+            if (getEndpoint().isUseBodyHandler()) {
+                populateMultiFormData(ctx, exchange.getIn(), getEndpoint().getHeaderFilterStrategy());
+            }
 
             vertx.executeBlocking(() -> processExchange(exchange), false).onComplete(processExchangeResult -> {
                 if (processExchangeResult.succeeded()) {
