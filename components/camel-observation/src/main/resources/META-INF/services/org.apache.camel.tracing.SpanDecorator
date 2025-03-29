@@ -15,10 +15,13 @@
 # limitations under the License.
 #
 
+org.apache.camel.tracing.decorators.ActiveMQ6SpanDecorator
+org.apache.camel.tracing.decorators.ActiveMQSpanDecorator
 org.apache.camel.tracing.decorators.AhcSpanDecorator
 org.apache.camel.tracing.decorators.AmqpSpanDecorator
 org.apache.camel.tracing.decorators.AzureServiceBusSpanDecorator
 org.apache.camel.tracing.decorators.AzureStorageDataLakeSpanDecorator
+org.apache.camel.tracing.decorators.AzureStorageQueueSpanDecorator
 org.apache.camel.tracing.decorators.CometdSpanDecorator
 org.apache.camel.tracing.decorators.CometdsSpanDecorator
 org.apache.camel.tracing.decorators.CqlSpanDecorator
@@ -26,6 +29,9 @@ org.apache.camel.tracing.decorators.DirectSpanDecorator
 org.apache.camel.tracing.decorators.DisruptorSpanDecorator
 org.apache.camel.tracing.decorators.DisruptorvmSpanDecorator
 org.apache.camel.tracing.decorators.ElasticsearchSpanDecorator
+org.apache.camel.tracing.decorators.FileSpanDecorator
+org.apache.camel.tracing.decorators.FtpSpanDecorator
+org.apache.camel.tracing.decorators.FtpsSpanDecorator
 org.apache.camel.tracing.decorators.HttpSpanDecorator
 org.apache.camel.tracing.decorators.HttpsSpanDecorator
 org.apache.camel.tracing.decorators.IronmqSpanDecorator
@@ -35,18 +41,22 @@ org.apache.camel.tracing.decorators.JmsSpanDecorator
 org.apache.camel.tracing.decorators.KafkaSpanDecorator
 org.apache.camel.tracing.decorators.LogSpanDecorator
 org.apache.camel.tracing.decorators.MongoDBSpanDecorator
-org.apache.camel.tracing.decorators.NettyHttpSpanDecorator
 org.apache.camel.tracing.decorators.NatsSpanDecorator
+org.apache.camel.tracing.decorators.NettyHttpSpanDecorator
+org.apache.camel.tracing.decorators.Paho5SpanDecorator
 org.apache.camel.tracing.decorators.PahoSpanDecorator
 org.apache.camel.tracing.decorators.PlatformHttpSpanDecorator
+org.apache.camel.tracing.decorators.RestOpenapiSpanDecorator
 org.apache.camel.tracing.decorators.RestSpanDecorator
+org.apache.camel.tracing.decorators.SchedulerSpanDecorator
 org.apache.camel.tracing.decorators.SedaSpanDecorator
 org.apache.camel.tracing.decorators.ServletSpanDecorator
-org.apache.camel.tracing.decorators.SjmsSpanDecorator
+org.apache.camel.tracing.decorators.SftpSpanDecorator
 org.apache.camel.tracing.decorators.Sjms2SpanDecorator
+org.apache.camel.tracing.decorators.SjmsSpanDecorator
+org.apache.camel.tracing.decorators.SpringRabbitmqSpanDecorator
 org.apache.camel.tracing.decorators.SqlSpanDecorator
 org.apache.camel.tracing.decorators.StompSpanDecorator
 org.apache.camel.tracing.decorators.TimerSpanDecorator
 org.apache.camel.tracing.decorators.UndertowSpanDecorator
 org.apache.camel.tracing.decorators.VertxHttpSpanDecorator
-
