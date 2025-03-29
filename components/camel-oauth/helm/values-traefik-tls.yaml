@@ -15,7 +15,11 @@
 # limitations under the License.
 #
 
+#
+# helm upgrade --install traefik-tls ./helm -f ./helm/values-traefik-tls.yaml
+# 
+
 deployments:
 
   traefik:
-    name: "traefik-secret"
+    name: "traefik-tls"

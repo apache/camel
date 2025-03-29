@@ -52,20 +52,21 @@ public class VertxOAuth extends OAuth {
     @Override
     public void discoverOAuthConfig(CamelContext ctx) throws OAuthException {
         if (config == null) {
-            var baseUrl = getRequiredProperty(ctx, CAMEL_OAUTH_BASE_URI);
+            var baseUri = getRequiredProperty(ctx, CAMEL_OAUTH_BASE_URI);
             var clientId = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_ID);
             var clientSecret = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_SECRET);
 
             var config = new OAuthConfig()
-                    .setBaseUrl(baseUrl)
+                    .setBaseUrl(baseUri)
                     .setClientId(clientId)
                     .setClientSecret(clientSecret);
 
             OAuth2Options opts = new OAuth2Options()
-                    .setSite(baseUrl)
+                    .setSite(baseUri)
                     .setClientId(config.getClientId())
                     .setClientSecret(config.getClientSecret());
 
+            var wellKnownUri = baseUri + "/.well-known/openid-configuration";
             try {
                 oauth2 = OpenIDConnectAuth.discover(vertx, opts)
                         .toCompletionStage()
@@ -83,7 +84,7 @@ public class VertxOAuth extends OAuth {
                     config.setJWKSet(JWKSet.load(new URL(jwksPath)));
                 }
             } catch (Exception ex) {
-                throw new OAuthException("Cannot discover OAuth config from: " + baseUrl, ex);
+                throw new OAuthException("Cannot discover OAuth config from: " + wellKnownUri, ex);
             }
             this.config = config;
         }

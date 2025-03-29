@@ -23,7 +23,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kafka-scripts
+  name: kafka-extra-files
 data:
   functions.sh: |-
     {{- $.Files.Get "scripts/functions.sh" | nindent 4 }}
@@ -53,10 +53,10 @@ spec:
       initContainers:
         - name: kafka-init
           image: busybox
-          command: ["sh", "-c", "cp /tmp/kafka/scripts/* /opt/kafka/scripts/ && chmod +x /opt/kafka/scripts/*.sh"]
+          command: ["sh", "-c", "cp /tmp/extra-files/*.sh /opt/kafka/scripts/ && chmod +x /opt/kafka/scripts/*.sh"]
           volumeMounts:
-            - name: kafka-scripts-configmap
-              mountPath: /tmp/kafka/scripts
+            - name: kafka-extra-files
+              mountPath: /tmp/extra-files
             - name: kafka-scripts
               mountPath: /opt/kafka/scripts
       containers:
@@ -81,7 +81,7 @@ spec:
             - name: KAFKA_LISTENERS
               value: "CONTROLLER://:9091,INTERNPLAIN://:9092,INTERNSECURE://:9093,EXTERNSECURE://:9194"
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "INTERNPLAIN://:9092,INTERNSECURE://kafka:9093,EXTERNSECURE://127.0.0.1:{{ $.Values.kafkaNodePort }}"
+              value: "INTERNPLAIN://:9092,INTERNSECURE://kafka:9093,EXTERNSECURE://127.0.0.1:{{ .nodePort }}"
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
               value: "CONTROLLER:PLAINTEXT,INTERNPLAIN:PLAINTEXT,INTERNSECURE:SASL_PLAINTEXT,EXTERNSECURE:SASL_PLAINTEXT"
             - name: KAFKA_CONTROLLER_LISTENER_NAMES
@@ -97,15 +97,15 @@ spec:
             - name: KAFKA_LISTENER_NAME_INTERNSECURE_OAUTHBEARER_SASL_JAAS_CONFIG
               value: |-
                 org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
-                oauth.jwks.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/certs"
-                oauth.token.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/token"
+                oauth.jwks.endpoint.uri="http://keycloak:8080/kc/realms/camel/protocol/openid-connect/certs"
+                oauth.token.endpoint.uri="http://keycloak:8080/kc/realms/camel/protocol/openid-connect/token"
                 oauth.check.issuer=false
                 unsecuredLoginStringClaim_sub="unused";
             - name: KAFKA_LISTENER_NAME_EXTERNSECURE_OAUTHBEARER_SASL_JAAS_CONFIG
               value: |-
                 org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required
-                oauth.jwks.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/certs"
-                oauth.token.endpoint.uri="http://keycloak.local/kc/realms/camel/protocol/openid-connect/token"
+                oauth.jwks.endpoint.uri="http://keycloak:8080/kc/realms/camel/protocol/openid-connect/certs"
+                oauth.token.endpoint.uri="http://keycloak:8080/kc/realms/camel/protocol/openid-connect/token"
                 oauth.check.issuer=false
                 unsecuredLoginStringClaim_sub="unused";
 
@@ -126,9 +126,9 @@ spec:
             runAsUser: 1001   # The UID of the kafka user
             runAsGroup: 0     # The GID of the root group (since kafka is in root group)
       volumes:
-        - name: kafka-scripts-configmap
+        - name: kafka-extra-files
           configMap:
-            name: kafka-scripts
+            name: kafka-extra-files
         - name: kafka-logs
           emptyDir: {}
         - name: kafka-scripts
@@ -169,7 +169,7 @@ spec:
   ports:
     - port: 9094
       targetPort: 9094
-      nodePort: {{ $.Values.kafkaNodePort }}
+      nodePort: {{ .nodePort }}
   selector:
     app.kubernetes.io/name: kafka
 ---
