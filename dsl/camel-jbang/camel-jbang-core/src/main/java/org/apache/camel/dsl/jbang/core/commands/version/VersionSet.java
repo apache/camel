@@ -43,13 +43,16 @@ public class VersionSet extends CamelCommand {
     @CommandLine.Option(names = { "--reset" }, description = "Reset by removing any custom version settings")
     boolean reset;
 
+    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
+    boolean local;
+
     public VersionSet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        CommandLineHelper.createPropertyFile();
+        CommandLineHelper.createPropertyFile(local);
 
         CommandLineHelper.loadProperties(properties -> {
             if (reset) {
@@ -67,8 +70,8 @@ public class VersionSet extends CamelCommand {
                     properties.put("runtime", runtime.runtime());
                 }
             }
-            CommandLineHelper.storeProperties(properties, printer());
-        });
+            CommandLineHelper.storeProperties(properties, printer(), local);
+        }, local);
 
         return 0;
     }

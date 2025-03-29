@@ -32,10 +32,19 @@ public final class UserConfigHelper {
     }
 
     public static void createUserConfig(String content) throws IOException {
-        CommandLineHelper.useHomeDir("target");
-        Path userConfigDir = Paths.get("target");
-        if (!userConfigDir.toFile().exists()) {
-            userConfigDir.toFile().mkdirs();
+        createUserConfig(content, false);
+    }
+
+    public static void createUserConfig(String content, boolean local) throws IOException {
+        Path userConfigDir;
+        if (!local) {
+            CommandLineHelper.useHomeDir("target");
+            userConfigDir = Paths.get("target");
+            if (!userConfigDir.toFile().exists()) {
+                userConfigDir.toFile().mkdirs();
+            }
+        } else {
+            userConfigDir = Paths.get(".");
         }
 
         Files.writeString(userConfigDir.resolve(CommandLineHelper.USER_CONFIG), content,

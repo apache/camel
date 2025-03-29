@@ -29,13 +29,16 @@ public class ConfigSet extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")
     String configuration;
 
+    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
+    boolean local;
+
     public ConfigSet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        CommandLineHelper.createPropertyFile();
+        CommandLineHelper.createPropertyFile(local);
 
         if (configuration.split("=").length == 1) {
             printer().println("Configuration parameter not in key=value format");
@@ -46,8 +49,8 @@ public class ConfigSet extends CamelCommand {
             String key = StringHelper.before(configuration, "=").trim();
             String value = StringHelper.after(configuration, "=").trim();
             properties.put(key, value);
-            CommandLineHelper.storeProperties(properties, printer());
-        });
+            CommandLineHelper.storeProperties(properties, printer(), local);
+        }, local);
 
         return 0;
     }
