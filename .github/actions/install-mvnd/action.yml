@@ -54,5 +54,5 @@ runs:
       run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}/bin" >> $GITHUB_OUTPUT
       shell: bash
     - id: mvnd-opts
-      run: echo "MVND_OPTS=-V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
+      run: echo "MVND_OPTS=-P apache-snapshots -V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
       shell: bash
