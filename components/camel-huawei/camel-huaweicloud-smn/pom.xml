@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-huawei-parent</artifactId>
-        <version>4.11.0-SNAPSHOT</version>
+        <version>4.11.0</version>
     </parent>
 
     <artifactId>camel-huaweicloud-smn</artifactId>

@@ -23,7 +23,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.11.0-SNAPSHOT</version>
+        <version>4.11.0</version>
     </parent>
 
     <artifactId>camel-tensorflow-serving</artifactId>
@@ -150,9 +150,7 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
-                                <replace token="@javax.annotation.Generated"
-                                    value="@jakarta.annotation.Generated"
-                                    dir="target/generated-sources/protobuf">
+                                <replace token="@javax.annotation.Generated" value="@jakarta.annotation.Generated" dir="target/generated-sources/protobuf">
                                     <include name="**/*.java" />
                                 </replace>
                             </target>
