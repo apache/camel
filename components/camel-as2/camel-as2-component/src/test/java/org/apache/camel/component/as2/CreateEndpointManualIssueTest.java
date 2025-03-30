@@ -72,7 +72,7 @@ public class CreateEndpointManualIssueTest {
         Throwable cause = out.getException();
         Assertions.assertNotNull(cause);
 
-        Assertions.assertTrue(cause.getMessage().contains("Missing properties for send, need one or more from (11 args)"));
+        Assertions.assertTrue(cause.getMessage().contains("Missing properties for send, need one or more from (14 args)"));
         Assertions.assertFalse(cause.getMessage().contains("ediMessageType"));
     }
 }

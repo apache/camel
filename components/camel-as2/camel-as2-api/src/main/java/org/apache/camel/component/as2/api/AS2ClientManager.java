@@ -29,6 +29,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedD
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.AS2HeaderUtils;
 import org.apache.camel.component.as2.api.util.CompressionUtils;
 import org.apache.camel.component.as2.api.util.EncryptingUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
@@ -202,6 +203,10 @@ public class AS2ClientManager {
      *                                    if sending EDI message unencrypted
      * @param  attachedFileName           - the name of the attached file or <code>null</code> if user doesn't want to
      *                                    specify it
+     * @param  receiptDeliveryOption      - the return URL that the message receiver should send an asynchronous MDN to
+     * @param  userName                   - the user-name that is used for basic authentication
+     * @param  password                   - the password that is used by the client for basic authentication
+     * @param  accessToken                - the access token that is used by the client for bearer authentication
      * @return                            {@link HttpCoreContext} containing request and response used to send EDI
      *                                    message
      * @throws HttpException              when things go wrong.
@@ -226,7 +231,10 @@ public class AS2ClientManager {
             AS2EncryptionAlgorithm encryptingAlgorithm,
             Certificate[] encryptingCertificateChain,
             String attachedFileName,
-            String receiptDeliveryOption)
+            String receiptDeliveryOption,
+            String userName,
+            String password,
+            String accessToken)
             throws HttpException {
 
         ObjectHelper.notNull(ediMessage, "EDI Message");
@@ -283,6 +291,8 @@ public class AS2ClientManager {
         } catch (Exception e) {
             throw new HttpException("Failed to create EDI message entity", e);
         }
+
+        AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
         switch (as2MessageStructure) {
             case PLAIN: {
                 plain(applicationEntity, request);

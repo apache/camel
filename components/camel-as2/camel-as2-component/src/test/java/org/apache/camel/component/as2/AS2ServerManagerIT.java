@@ -91,7 +91,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
         clientManager.send(msg, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
                 AS2MediaType.APPLICATION_EDIFACT, null, encoding, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -187,7 +188,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 AS2MediaType.APPLICATION_EDIFACT, null, encoding,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -265,7 +267,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 AS2MediaType.APPLICATION_XML, null, null, // this line is the difference
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -355,7 +358,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 AS2MediaType.APPLICATION_EDIFACT, null, null,
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { hackerSigningCert }, hackerSigningKP.getPrivate(), null, DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -451,7 +455,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         verifyMock(mockEndpoint);
@@ -485,7 +490,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN,
                 AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(0);
@@ -510,7 +516,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         HttpCoreContext response
                 = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
                         AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
-                        null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                        null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                        null, null, null);
 
         assertEquals(new AS2Configuration().getServer(), response.getResponse().getFirstHeader(AS2Header.FROM).getValue(),
                 "Default value for From header not set");
@@ -521,7 +528,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
         response = clientManager.send(EDI_MESSAGE, REQUEST_URI + "mdnTest", SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN,
                 AS2MediaType.APPLICATION_EDIFACT, null, null, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null);
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null, null,
+                null, null, null);
 
         assertEquals("MdnTestFrom", response.getResponse().getFirstHeader(AS2Header.FROM).getValue(),
                 "Configured value for From header not set");
