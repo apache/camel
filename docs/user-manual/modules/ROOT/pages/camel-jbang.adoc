@@ -3894,7 +3894,25 @@ Now, the run command picks the user configuration:
 camel run *
 ----
 
-The user configuration file is stored in `~/.camel-jbang-user.properties`
+=== Configuration Locations
+
+Camel JBang uses two possible configuration files:
+
+- Global configuration: ~/.camel-jbang-user.properties
+- Local configuration: ./camel-jbang-user.properties
+
+=== Configuration Precedence
+
+When both files exist, the local configuration takes precedence over the global configuration.
+
+=== Using Configuration Commands
+
+All camel config commands target the global configuration by default. To work with the local configuration instead, add the `--global=false` flag:
+[source,bash]
+----
+camel config <command> --global=false
+----
+This directs all configuration changes to the local ./camel-jbang-user.properties file.
 
 IMPORTANT: You cannot use both a set version via `camel config set` and also a version specified via `--camel-version` option,
 i.e., the following is not possible:
