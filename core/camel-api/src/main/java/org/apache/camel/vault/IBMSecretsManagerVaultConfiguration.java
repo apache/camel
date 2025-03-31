@@ -27,6 +27,22 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
     private String token;
     @Metadata
     private String serviceUrl;
+    @Metadata
+    private boolean refreshEnabled;
+    @Metadata(defaultValue = "30000")
+    private long refreshPeriod = 30000;
+    @Metadata
+    private String secrets;
+    @Metadata
+    private String eventStreamTopic;
+    @Metadata
+    private String eventStreamBootstrapServers;
+    @Metadata
+    private String eventStreamUsername;
+    @Metadata
+    private String eventStreamPassword;
+    @Metadata
+    private String eventStreamGroupId;
 
     public String getToken() {
         return token;
@@ -48,5 +64,94 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
      */
     public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
+    }
+
+    public boolean isRefreshEnabled() {
+        return refreshEnabled;
+    }
+
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in IBM.
+     */
+    public void setRefreshEnabled(boolean refreshEnabled) {
+        this.refreshEnabled = refreshEnabled;
+    }
+
+    public long getRefreshPeriod() {
+        return refreshPeriod;
+    }
+
+    /**
+     * The period (millis) between checking AWS for updated secrets.
+     */
+    public void setRefreshPeriod(long refreshPeriod) {
+        this.refreshPeriod = refreshPeriod;
+    }
+
+    public String getSecrets() {
+        return secrets;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public void setSecrets(String secrets) {
+        this.secrets = secrets;
+    }
+
+    public String getEventStreamTopic() {
+        return eventStreamTopic;
+    }
+
+    /**
+     * Specify the topic name for consuming notification on IBM Event Stream
+     */
+    public void setEventStreamTopic(String eventStreamTopic) {
+        this.eventStreamTopic = eventStreamTopic;
+    }
+
+    public String getEventStreamBootstrapServers() {
+        return eventStreamBootstrapServers;
+    }
+
+    /**
+     * Specify the Bootstrap servers for consuming notification on IBM Event Stream. Multiple servers can be separated
+     * by comma.
+     */
+    public void setEventStreamBootstrapServers(String eventStreamBootstrapServers) {
+        this.eventStreamBootstrapServers = eventStreamBootstrapServers;
+    }
+
+    public String getEventStreamUsername() {
+        return eventStreamUsername;
+    }
+
+    /**
+     * Specify the username to access IBM Event Stream
+     */
+    public void setEventStreamUsername(String eventStreamUsername) {
+        this.eventStreamUsername = eventStreamUsername;
+    }
+
+    public String getEventStreamPassword() {
+        return eventStreamPassword;
+    }
+
+    /**
+     * Specify the password to access IBM Event Stream
+     */
+    public void setEventStreamPassword(String eventStreamPassword) {
+        this.eventStreamPassword = eventStreamPassword;
+    }
+
+    public String getEventStreamGroupId() {
+        return eventStreamGroupId;
+    }
+
+    /**
+     * Specify the Consumer Group ID to access IBM Event Stream
+     */
+    public void setEventStreamGroupId(String eventStreamGroupId) {
+        this.eventStreamGroupId = eventStreamGroupId;
     }
 }

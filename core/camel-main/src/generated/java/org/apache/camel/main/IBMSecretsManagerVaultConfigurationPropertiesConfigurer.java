@@ -24,11 +24,19 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AwsVaultConfiguration", org.apache.camel.vault.AwsVaultConfiguration.class);
         map.put("AzureVaultConfiguration", org.apache.camel.vault.AzureVaultConfiguration.class);
+        map.put("EventStreamBootstrapServers", java.lang.String.class);
+        map.put("EventStreamGroupId", java.lang.String.class);
+        map.put("EventStreamPassword", java.lang.String.class);
+        map.put("EventStreamTopic", java.lang.String.class);
+        map.put("EventStreamUsername", java.lang.String.class);
         map.put("GcpVaultConfiguration", org.apache.camel.vault.GcpVaultConfiguration.class);
         map.put("HashicorpVaultConfiguration", org.apache.camel.vault.HashicorpVaultConfiguration.class);
         map.put("IBMSecretsManagerVaultConfiguration", org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class);
         map.put("KubernetesConfigMapVaultConfiguration", org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class);
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
+        map.put("RefreshEnabled", boolean.class);
+        map.put("RefreshPeriod", long.class);
+        map.put("Secrets", java.lang.String.class);
         map.put("ServiceUrl", java.lang.String.class);
         map.put("Token", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -42,6 +50,16 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "eventstreambootstrapservers":
+        case "eventStreamBootstrapServers": target.setEventStreamBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventstreamgroupid":
+        case "eventStreamGroupId": target.setEventStreamGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventstreampassword":
+        case "eventStreamPassword": target.setEventStreamPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventstreamtopic":
+        case "eventStreamTopic": target.setEventStreamTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventstreamusername":
+        case "eventStreamUsername": target.setEventStreamUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
@@ -52,6 +70,11 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
+        case "refreshenabled":
+        case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
+        case "refreshperiod":
+        case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
+        case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceurl":
         case "serviceUrl": target.setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -71,6 +94,16 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "eventstreambootstrapservers":
+        case "eventStreamBootstrapServers": return java.lang.String.class;
+        case "eventstreamgroupid":
+        case "eventStreamGroupId": return java.lang.String.class;
+        case "eventstreampassword":
+        case "eventStreamPassword": return java.lang.String.class;
+        case "eventstreamtopic":
+        case "eventStreamTopic": return java.lang.String.class;
+        case "eventstreamusername":
+        case "eventStreamUsername": return java.lang.String.class;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
@@ -81,6 +114,11 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
+        case "refreshenabled":
+        case "refreshEnabled": return boolean.class;
+        case "refreshperiod":
+        case "refreshPeriod": return long.class;
+        case "secrets": return java.lang.String.class;
         case "serviceurl":
         case "serviceUrl": return java.lang.String.class;
         case "token": return java.lang.String.class;
@@ -96,6 +134,16 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "eventstreambootstrapservers":
+        case "eventStreamBootstrapServers": return target.getEventStreamBootstrapServers();
+        case "eventstreamgroupid":
+        case "eventStreamGroupId": return target.getEventStreamGroupId();
+        case "eventstreampassword":
+        case "eventStreamPassword": return target.getEventStreamPassword();
+        case "eventstreamtopic":
+        case "eventStreamTopic": return target.getEventStreamTopic();
+        case "eventstreamusername":
+        case "eventStreamUsername": return target.getEventStreamUsername();
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
@@ -106,6 +154,11 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
+        case "refreshenabled":
+        case "refreshEnabled": return target.isRefreshEnabled();
+        case "refreshperiod":
+        case "refreshPeriod": return target.getRefreshPeriod();
+        case "secrets": return target.getSecrets();
         case "serviceurl":
         case "serviceUrl": return target.getServiceUrl();
         case "token": return target.getToken();

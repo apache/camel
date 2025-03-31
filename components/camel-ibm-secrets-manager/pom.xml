@@ -48,6 +48,18 @@
             <artifactId>secrets-manager</artifactId>
 	        <version>${ibm-secrets-manager-version}</version>
         </dependency>
+        
+        <!-- kafka java client -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
