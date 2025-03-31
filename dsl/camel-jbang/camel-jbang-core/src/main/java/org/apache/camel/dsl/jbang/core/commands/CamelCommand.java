@@ -17,8 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -131,17 +129,8 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     protected void printConfigurationValues(String header) {
         if (spec != null) {
-            Properties configProperties = new Properties();
-            Path userConfigInCurrentDirectory = Path.of(CommandLineHelper.USER_CONFIG);
-            if (main.isMergeUserConfigurations()) {
-                CommandLineHelper.loadProperties(configProperties::putAll, false);
-                if (Files.exists(userConfigInCurrentDirectory)) {
-                    CommandLineHelper.loadProperties(configProperties::putAll, true);
-                }
-            } else {
-                boolean isLocalConfiguration = Files.exists(userConfigInCurrentDirectory);
-                CommandLineHelper.loadProperties(configProperties::putAll, isLocalConfiguration);
-            }
+            final Properties configProperties = new Properties();
+            CommandLineHelper.loadProperties(configProperties::putAll);
             List<String> lines = new ArrayList<>();
             spec.options().forEach(opt -> {
                 if (Arrays.stream(opt.names()).anyMatch(name ->

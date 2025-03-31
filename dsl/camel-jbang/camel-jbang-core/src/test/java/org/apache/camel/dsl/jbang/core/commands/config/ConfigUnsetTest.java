@@ -75,7 +75,7 @@ class ConfigUnsetTest extends BaseConfigTest {
 
         ConfigUnset command = new ConfigUnset(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.local = true;
+        command.global = false;
         command.doCall();
 
         Assertions.assertEquals("", printer.getOutput());

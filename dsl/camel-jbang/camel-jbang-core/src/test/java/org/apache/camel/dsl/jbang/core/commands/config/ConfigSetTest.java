@@ -61,7 +61,7 @@ class ConfigSetTest extends BaseConfigTest {
     public void setLocalConfig() throws Exception {
         ConfigSet command = new ConfigSet(new CamelJBangMain().withPrinter(printer));
         command.configuration = "foo=local";
-        command.local = true;
+        command.global = false;
         command.doCall();
 
         Assertions.assertEquals("", printer.getOutput());

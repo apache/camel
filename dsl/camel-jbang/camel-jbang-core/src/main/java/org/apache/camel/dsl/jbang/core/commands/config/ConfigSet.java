@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.config;
 
+import java.io.IOException;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -29,8 +31,8 @@ public class ConfigSet extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")
     String configuration;
 
-    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
-    boolean local;
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    boolean global = true;
 
     public ConfigSet(CamelJBangMain main) {
         super(main);
@@ -38,6 +40,10 @@ public class ConfigSet extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        return setConfiguration(!global);
+    }
+
+    private int setConfiguration(boolean local) throws IOException {
         CommandLineHelper.createPropertyFile(local);
 
         if (configuration.split("=").length == 1) {

@@ -52,7 +52,7 @@ class ConfigGetTest extends BaseConfigTest {
 
         ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.local = true;
+        command.global = false;
         command.doCall();
 
         Assertions.assertEquals("bar", printer.getOutput());

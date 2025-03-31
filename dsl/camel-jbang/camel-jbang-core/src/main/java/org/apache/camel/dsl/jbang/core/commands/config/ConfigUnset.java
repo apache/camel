@@ -28,8 +28,8 @@ public class ConfigUnset extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
     String key;
 
-    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
-    boolean local;
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configurations")
+    boolean global = true;
 
     public ConfigUnset(CamelJBangMain main) {
         super(main);
@@ -39,8 +39,8 @@ public class ConfigUnset extends CamelCommand {
     public Integer doCall() throws Exception {
         CommandLineHelper.loadProperties(properties -> {
             properties.remove(key);
-            CommandLineHelper.storeProperties(properties, printer(), local);
-        }, local);
+            CommandLineHelper.storeProperties(properties, printer(), !global);
+        }, !global);
 
         return 0;
     }

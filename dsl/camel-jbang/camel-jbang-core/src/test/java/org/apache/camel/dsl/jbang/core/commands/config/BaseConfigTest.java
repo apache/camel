@@ -28,6 +28,6 @@ public class BaseConfigTest extends CamelCommandBaseTest {
 
     @AfterEach
     void removeLocalConfigFile() throws IOException {
-        Files.deleteIfExists(Paths.get(CommandLineHelper.USER_CONFIG));
+        Files.deleteIfExists(Paths.get(CommandLineHelper.LOCAL_USER_CONFIG));
     }
 }
