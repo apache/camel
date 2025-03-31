@@ -48,10 +48,11 @@ class ConfigListTest extends BaseConfigTest {
         command.doCall();
 
         List<String> lines = printer.getLines();
-        Assertions.assertEquals(3, lines.size());
-        Assertions.assertEquals("camel-version = latest", lines.get(0));
-        Assertions.assertEquals("kamelets-version = greatest", lines.get(1));
-        Assertions.assertEquals("foo = bar", lines.get(2));
+        Assertions.assertEquals(4, lines.size());
+        Assertions.assertEquals("----- Global -----", lines.get(0));
+        Assertions.assertEquals("camel-version = latest", lines.get(1));
+        Assertions.assertEquals("kamelets-version = greatest", lines.get(2));
+        Assertions.assertEquals("foo = bar", lines.get(3));
     }
 
     @Test
@@ -62,12 +63,33 @@ class ConfigListTest extends BaseConfigTest {
                 """, true);
 
         ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
-        command.local = true;
+        command.global = false;
         command.doCall();
 
         List<String> lines = printer.getLines();
-        Assertions.assertEquals(2, lines.size());
-        Assertions.assertEquals("camel-version = local", lines.get(0));
-        Assertions.assertEquals("kamelets-version = local", lines.get(1));
+        Assertions.assertEquals(3, lines.size());
+        Assertions.assertEquals("----- Local -----", lines.get(0));
+        Assertions.assertEquals("camel-version = local", lines.get(1));
+        Assertions.assertEquals("kamelets-version = local", lines.get(2));
+    }
+
+    @Test
+    public void shouldListGlobalAndLocalUserConfig() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                camel-version=local
+                """, true);
+        UserConfigHelper.createUserConfig("""
+                kamelets-version=global
+                """);
+
+        ConfigList command = new ConfigList(new CamelJBangMain().withPrinter(printer));
+        command.doCall();
+
+        List<String> lines = printer.getLines();
+        Assertions.assertEquals(4, lines.size());
+        Assertions.assertEquals("----- Local -----", lines.get(0));
+        Assertions.assertEquals("camel-version = local", lines.get(1));
+        Assertions.assertEquals("----- Global -----", lines.get(2));
+        Assertions.assertEquals("kamelets-version = global", lines.get(3));
     }
 }

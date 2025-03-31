@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -73,8 +71,6 @@ public class CamelJBangMain implements Callable<Integer> {
     public static void run(String... args) {
         run(new CamelJBangMain(), args);
     }
-
-    private static boolean mergeUserConfigurations;
 
     public static void run(CamelJBangMain main, String... args) {
         // set pid as system property as logging ${sys:pid} needs to be resolved on windows
@@ -196,32 +192,9 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
-        List<String> arguments = new ArrayList<>(args.length);
-        mergeUserConfigurations = isMergeUserConfigurations(args, mergeUserConfigurations, arguments);
-        args = arguments.toArray(new String[0]);
-        CommandLineHelper.augmentWithUserConfiguration(commandLine, mergeUserConfigurations);
+        CommandLineHelper.augmentWithUserConfiguration(commandLine);
         int exitCode = commandLine.execute(args);
         main.quit(exitCode);
-    }
-
-    /**
-     * The option --mergeConfigurations is used only during PicoCLI UserConfigDefaultProvider initialization if args
-     * contains the string --mergeConfigurations, it is removed, this way, it won't mess with PicoCLI @CommandLine.*
-     *
-     * @param  args
-     * @param  mergeConfigurations
-     * @param  arguments
-     * @return
-     */
-    private static boolean isMergeUserConfigurations(String[] args, boolean mergeConfigurations, List<String> arguments) {
-        for (String arg : args) {
-            if ("--mergeConfigurations".equals(arg)) {
-                mergeConfigurations = true;
-            } else {
-                arguments.add(arg);
-            }
-        }
-        return mergeConfigurations;
     }
 
     /**
@@ -270,9 +243,5 @@ public class CamelJBangMain implements Callable<Integer> {
 
     public static CommandLine getCommandLine() {
         return commandLine;
-    }
-
-    public boolean isMergeUserConfigurations() {
-        return mergeUserConfigurations;
     }
 }

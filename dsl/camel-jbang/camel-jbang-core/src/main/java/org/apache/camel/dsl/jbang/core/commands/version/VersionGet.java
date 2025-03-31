@@ -28,8 +28,8 @@ import picocli.CommandLine;
                      showDefaultValues = true)
 public class VersionGet extends CamelCommand {
 
-    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
-    boolean local;
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    boolean global = true;
 
     public VersionGet(CamelJBangMain main) {
         super(main);
@@ -66,7 +66,7 @@ public class VersionGet extends CamelCommand {
                     printer().println("    repos = " + repos);
                 }
             }
-        }, local);
+        }, !global);
 
         return 0;
     }

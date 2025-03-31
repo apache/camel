@@ -37,6 +37,7 @@ public final class UserConfigHelper {
 
     public static void createUserConfig(String content, boolean local) throws IOException {
         Path userConfigDir;
+        String configFileName = CommandLineHelper.USER_CONFIG;
         if (!local) {
             CommandLineHelper.useHomeDir("target");
             userConfigDir = Paths.get("target");
@@ -45,9 +46,10 @@ public final class UserConfigHelper {
             }
         } else {
             userConfigDir = Paths.get(".");
+            configFileName = CommandLineHelper.LOCAL_USER_CONFIG;
         }
 
-        Files.writeString(userConfigDir.resolve(CommandLineHelper.USER_CONFIG), content,
+        Files.writeString(userConfigDir.resolve(configFileName), content,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE,
                 StandardOpenOption.TRUNCATE_EXISTING);

@@ -24,8 +24,8 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false, showDefaultValues = true)
 public class ConfigList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
-    boolean local;
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    boolean global = true;
 
     public ConfigList(CamelJBangMain main) {
         super(main);
@@ -33,13 +33,26 @@ public class ConfigList extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        listConfigurations(true);
+        if (!global) {
+            return 0;
+        }
+
+        listConfigurations(false);
+        return 0;
+    }
+
+    private void listConfigurations(boolean local) {
         CommandLineHelper
                 .loadProperties(p -> {
+                    if (!p.stringPropertyNames().isEmpty()) {
+                        String configurationType = local ? "Local" : "Global";
+                        printer().println("----- " + configurationType + " -----");
+                    }
                     for (String k : p.stringPropertyNames()) {
                         String v = p.getProperty(k);
                         printer().printf("%s = %s%n", k, v);
                     }
                 }, local);
-        return 0;
     }
 }

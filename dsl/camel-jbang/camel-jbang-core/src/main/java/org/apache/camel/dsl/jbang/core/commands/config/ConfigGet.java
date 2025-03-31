@@ -30,8 +30,8 @@ public class ConfigGet extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
     String key;
 
-    @CommandLine.Option(names = { "--local" }, description = "Retrieve configurations from current directory")
-    boolean local;
+    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    boolean global = true;
 
     public ConfigGet(CamelJBangMain main) {
         super(main);
@@ -46,7 +46,7 @@ public class ConfigGet extends CamelCommand {
             } else {
                 printer().println(key + " key not found");
             }
-        }, local);
+        }, !global);
 
         return 0;
     }

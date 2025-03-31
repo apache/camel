@@ -37,6 +37,7 @@ public final class CommandLineHelper {
 
     private static volatile String homeDir = System.getProperty("user.home");
     public static final String USER_CONFIG = ".camel-jbang-user.properties";
+    public static final String LOCAL_USER_CONFIG = "camel-jbang-user.properties";
     public static final String CAMEL_DIR = ".camel";
     public static final String CAMEL_JBANG_WORK_DIR = ".camel-jbang";
 
@@ -44,15 +45,11 @@ public final class CommandLineHelper {
         super();
     }
 
-    public static void augmentWithUserConfiguration(CommandLine commandLine, boolean mergeConfigurations) {
+    public static void augmentWithUserConfiguration(CommandLine commandLine) {
         File file = getUserConfigurationFile();
         if (file.isFile() && file.exists()) {
             Properties properties = new Properties();
             try {
-                if (mergeConfigurations) {
-                    properties.load(new FileReader(getUserPropertyFile(false)));
-                }
-
                 properties.load(new FileReader(file));
             } catch (IOException e) {
                 commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
@@ -64,8 +61,8 @@ public final class CommandLineHelper {
 
     private static File getUserConfigurationFile() {
         File file;
-        if (Files.exists(Path.of(USER_CONFIG))) {
-            file = new File(USER_CONFIG);
+        if (Files.exists(Path.of(LOCAL_USER_CONFIG))) {
+            file = new File(LOCAL_USER_CONFIG);
         } else {
             file = getUserPropertyFile(false);
         }
@@ -109,7 +106,7 @@ public final class CommandLineHelper {
                 throw new RuntimeException(ex);
             }
         } else {
-            printer.println(USER_CONFIG + " does not exist");
+            printer.println(file.getName() + " does not exist");
         }
     }
 
@@ -121,7 +118,7 @@ public final class CommandLineHelper {
      */
     private static File getUserPropertyFile(boolean local) {
         if (local) {
-            return new File(USER_CONFIG);
+            return new File(LOCAL_USER_CONFIG);
         } else {
             return new File(homeDir, USER_CONFIG);
         }
