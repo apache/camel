@@ -62,14 +62,7 @@ public class SpanDecoratorManagerImpl implements SpanDecoratorManager {
 
     @Override
     public SpanDecorator get(Endpoint endpoint) {
-        SpanDecorator sd = null;
-
-        String uri = endpoint.getEndpointUri();
-        String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-        if (splitURI[1] != null) {
-            String scheme = splitURI[0];
-            sd = DECORATORS.get(scheme);
-        }
+        SpanDecorator sd = this.getFromUri(endpoint.getEndpointUri());
         if (sd == null && endpoint instanceof DefaultEndpoint de) {
             Component comp = de.getComponent();
             String fqn = comp.getClass().getName();
@@ -79,6 +72,18 @@ public class SpanDecoratorManagerImpl implements SpanDecoratorManager {
         }
         if (sd == null) {
             sd = SpanDecoratorManagerImpl.DEFAULT;
+        }
+
+        return sd;
+    }
+
+    SpanDecorator getFromUri(String uri) {
+        SpanDecorator sd = null;
+
+        String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
+        if (splitURI[1] != null) {
+            String scheme = splitURI[0];
+            sd = DECORATORS.get(scheme);
         }
 
         return sd;
