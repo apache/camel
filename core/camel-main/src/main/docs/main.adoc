@@ -469,11 +469,19 @@ The camel.vault.hashicorp supports 6 options, which are listed below.
 
 
 === Camel IBM Secrets Manager Vault configurations
-The camel.vault.ibm supports 2 options, which are listed below.
+The camel.vault.ibm supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.vault.ibm.eventStream{zwsp}BootstrapServers* | Specify the Bootstrap servers for consuming notification on IBM Event Stream. Multiple servers can be separated by comma. |  | String
+| *camel.vault.ibm.eventStream{zwsp}GroupId* | Specify the Consumer Group ID to access IBM Event Stream |  | String
+| *camel.vault.ibm.eventStream{zwsp}Password* | Specify the password to access IBM Event Stream |  | String
+| *camel.vault.ibm.eventStream{zwsp}Topic* | Specify the topic name for consuming notification on IBM Event Stream |  | String
+| *camel.vault.ibm.eventStream{zwsp}Username* | Specify the username to access IBM Event Stream |  | String
+| *camel.vault.ibm.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in IBM. | false | boolean
+| *camel.vault.ibm.refreshPeriod* | The period (millis) between checking AWS for updated secrets. | 30000 | long
+| *camel.vault.ibm.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.ibm.serviceUrl* | Service URL to access IBM Secrets Manager vault |  | String
 | *camel.vault.ibm.token* | Token to access IBM Secrets Manager vault |  | String
 |===

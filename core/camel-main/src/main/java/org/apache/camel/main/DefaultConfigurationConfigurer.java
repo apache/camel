@@ -749,6 +749,24 @@ public final class DefaultConfigurationConfigurer {
                 scheduler.scheduledTask(r);
             }
         }
+
+        if (vc.ibmSecretsManager().isRefreshEnabled()) {
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("ibm-secret-refresh", Runnable.class);
+            if (task.isPresent()) {
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} ", r);
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+                scheduler.scheduledTask(r);
+            }
+        }
     }
 
     public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
