@@ -116,10 +116,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
     boolean quiet;
 
-    @CommandLine.Option(names = { "--verbose" },
-                        defaultValue = "false",
-                        description = "Verbose output of build/deploy progress")
-    boolean verbose = false;
+    @CommandLine.Option(names = { "--verbose" }, description = "Verbose output of build/deploy progress")
+    boolean verbose;
 
     @CommandLine.Option(names = { "--cleanup" },
                         defaultValue = "true",
