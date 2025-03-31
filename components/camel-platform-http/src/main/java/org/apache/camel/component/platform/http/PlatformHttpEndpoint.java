@@ -129,6 +129,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
               description = "Whether to populate the message Body with a Map containing application/x-www-form-urlencoded form properties.")
     private boolean populateBodyWithForm = true;
 
+    @UriParam(label = "advanced,consumer", defaultValue = "true",
+              description = "Whether to use BodyHandler for the request. If set to false then the request will no be read and parsed.")
+    private boolean useBodyHandler = true;
+
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
         path = remaining;
@@ -319,5 +323,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setPopulateBodyWithForm(boolean populateBodyWithForm) {
         this.populateBodyWithForm = populateBodyWithForm;
+    }
+
+    public boolean isUseBodyHandler() {
+        return useBodyHandler;
+    }
+
+    public void setUseBodyHandler(final boolean useBodyHandler) {
+        this.useBodyHandler = useBodyHandler;
     }
 }
