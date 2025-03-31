@@ -394,7 +394,7 @@
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.6</ognl-version>
         <openapi-generator-version>7.12.0</openapi-generator-version>
-        <openjpa-version>4.0.1</openjpa-version>
+        <openjpa-version>4.1.0</openjpa-version>
         <opensearch-rest-client-version>2.19.1</opensearch-rest-client-version>
         <opensearch-java-client-version>2.22.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.3</opensearch-testcontainers-version>
