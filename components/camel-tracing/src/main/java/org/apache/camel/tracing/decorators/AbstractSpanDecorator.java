@@ -45,14 +45,18 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
      * @return          The stripped value from the URI
      */
     public static String stripSchemeAndOptions(Endpoint endpoint) {
-        int start = endpoint.getEndpointUri().indexOf(':');
+        return stripSchemeAndOptions(endpoint.getEndpointUri());
+    }
+
+    public static String stripSchemeAndOptions(String endpointUri) {
+        int start = endpointUri.indexOf(':');
         start++;
         // Remove any leading '/'
-        while (endpoint.getEndpointUri().charAt(start) == '/') {
+        while (endpointUri.length() > start && endpointUri.charAt(start) == '/') {
             start++;
         }
-        int end = endpoint.getEndpointUri().indexOf('?');
-        return end == -1 ? endpoint.getEndpointUri().substring(start) : endpoint.getEndpointUri().substring(start, end);
+        int end = endpointUri.indexOf('?');
+        return end == -1 ? endpointUri.substring(start) : endpointUri.substring(start, end);
     }
 
     public static Map<String, String> toQueryParameters(String uri) {

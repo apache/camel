@@ -210,14 +210,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     }
 
     protected SpanDecorator getSpanDecorator(Endpoint endpoint) {
-        SpanDecorator sd = null;
-
-        String uri = endpoint.getEndpointUri();
-        String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-        if (splitURI[1] != null) {
-            String scheme = splitURI[0];
-            sd = DECORATORS.get(scheme);
-        }
+        SpanDecorator sd = Tracer.getFromUri(endpoint.getEndpointUri());
         if (sd == null && endpoint instanceof DefaultEndpoint de) {
             Component comp = de.getComponent();
             String fqn = comp.getClass().getName();
@@ -227,6 +220,18 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         }
         if (sd == null) {
             sd = SpanDecorator.DEFAULT;
+        }
+
+        return sd;
+    }
+
+    static SpanDecorator getFromUri(String uri) {
+        SpanDecorator sd = null;
+
+        String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
+        if (splitURI[1] != null) {
+            String scheme = splitURI[0];
+            sd = DECORATORS.get(scheme);
         }
 
         return sd;
