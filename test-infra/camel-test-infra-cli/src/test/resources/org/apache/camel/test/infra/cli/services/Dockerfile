@@ -39,7 +39,7 @@ ADD 99-ssh-jbang.conf /etc/ssh/sshd_config.d/
 RUN	sed -i "s|#auth		sufficient	pam_wheel.so trust use_uid|auth		sufficient	pam_wheel.so trust use_uid|g" /etc/pam.d/su
 
 #create new user
-RUN groupadd -g $CUSTOM_GID jbang \
+RUN groupadd -f -g $CUSTOM_GID jbang \
     && useradd -u $CUSTOM_UID -g $CUSTOM_GID -s /bin/bash jbang
 
 #to avoid prompt su - root password
