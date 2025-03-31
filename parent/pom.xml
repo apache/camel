@@ -66,7 +66,7 @@
         <arangodb-java-version>7.17.1</arangodb-java-version>
         <as2-lib-version>5.1.3</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
-        <asm-version>9.7.1</asm-version>
+        <asm-version>9.8</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
         <assertj-version>3.27.3</assertj-version>
         <asterisk-java-version>3.41.0</asterisk-java-version>
