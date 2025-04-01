@@ -270,7 +270,7 @@
         <jakarta-xml-ws-api-version>4.0.2</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>4.0.5</glassfish-jaxb-runtime-version>
-        <jaxb2-maven-plugin-version>3.2.0</jaxb2-maven-plugin-version>
+        <jaxb2-maven-plugin-version>3.3.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.6.1.Final</jboss-logging-version>
