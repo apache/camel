@@ -251,6 +251,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                 "oauth2CacheTokens",
                 boolean.class,
                 configDefaults.isOauth2CacheTokens());
+        boolean addScopeToForm = getParameter(
+                parameters,
+                "addScopeToForm",
+                boolean.class,
+                configDefaults.isAddScopeToForm());
         long cachedTokensDefaultExpirySeconds = getParameter(
                 parameters,
                 "oauth2CachedTokensDefaultExpirySeconds",
@@ -272,7 +277,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             scope,
                             cacheTokens,
                             cachedTokensDefaultExpirySeconds,
-                            cachedTokensExpirationMarginSeconds));
+                            cachedTokensExpirationMarginSeconds,
+                            addScopeToForm));
         }
         return configurer;
     }

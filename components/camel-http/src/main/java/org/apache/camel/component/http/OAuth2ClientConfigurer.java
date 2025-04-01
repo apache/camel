@@ -48,6 +48,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private final String clientSecret;
     private final String tokenEndpoint;
     private final String scope;
+    private final boolean addScopeToForm;
     private final boolean cacheTokens;
     private final Long cachedTokensDefaultExpirySeconds;
     private final Long cachedTokensExpirationMarginSeconds;
@@ -57,7 +58,8 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
                                   String scope, boolean cacheTokens,
-                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds) {
+                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
+                                  boolean addScopeToForm) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
@@ -66,6 +68,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         this.cacheTokens = cacheTokens;
         this.cachedTokensDefaultExpirySeconds = cachedTokensDefaultExpirySeconds;
         this.cachedTokensExpirationMarginSeconds = cachedTokensExpirationMarginSeconds;
+        this.addScopeToForm = addScopeToForm;
     }
 
     @Override
@@ -102,7 +105,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
         String bodyStr = "grant_type=client_credentials";
         String url = tokenEndpoint;
-        if (scope != null) {
+        if (scope != null && !this.addScopeToForm) {
             String sep = "?";
             if (url.contains("?")) {
                 sep = "&";
@@ -115,7 +118,10 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         httpPost.addHeader(HttpHeaders.AUTHORIZATION,
                 HttpCredentialsHelper.generateBasicAuthHeader(clientId, clientSecret));
         if (null != resourceIndicator) {
-            bodyStr = String.join(bodyStr, "&resource=" + resourceIndicator);
+            bodyStr += "&resource=" + resourceIndicator;
+        }
+        if (null != scope && this.addScopeToForm) {
+            bodyStr += "&scope=" + scope;
         }
         httpPost.setEntity(new StringEntity(bodyStr, ContentType.APPLICATION_FORM_URLENCODED));
 
@@ -135,6 +141,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
             }
             return null;
         });
+
         return result.get();
     }
 

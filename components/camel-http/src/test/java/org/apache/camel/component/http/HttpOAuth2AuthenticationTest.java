@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
+import org.apache.camel.component.http.handler.OAuth2TokenScopeRequestHandler;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
     private static final String FAKE_TOKEN = "xxx.yyy.zzz";
+    private static final String FAKE_SCOPE = "someScope";
     private static final String clientId = "test-client";
     private static final String clientSecret = "test-secret";
 
@@ -55,6 +57,20 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
                                 null,
                                 null,
                                 expectedHeaders))
+                .register("/queryscopetoken",
+                        new OAuth2TokenScopeRequestHandler(
+                                FAKE_TOKEN,
+                                clientId,
+                                clientSecret,
+                                FAKE_SCOPE,
+                                false))
+                .register("/formscopetoken",
+                        new OAuth2TokenScopeRequestHandler(
+                                FAKE_TOKEN,
+                                clientId,
+                                clientSecret,
+                                FAKE_SCOPE,
+                                true))
                 .create();
 
         localServer.start();
@@ -69,6 +85,40 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
                 = template.request("http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
                                    + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint,
                         exchange1 -> {
+                        });
+
+        assertExchange(exchange);
+
+    }
+
+    @Test
+    public void scopeIsAddedToUrlQuery() {
+
+        String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/queryscopetoken";
+
+        Exchange exchange
+                = template.request("http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                                   + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                                   + "&oauth2Scope=" + FAKE_SCOPE,
+                        exchange1 -> {
+
+                        });
+
+        assertExchange(exchange);
+
+    }
+
+    @Test
+    public void scopeIsAddedToFormData() {
+
+        String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/formscopetoken";
+
+        Exchange exchange
+                = template.request("http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                                   + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2Scope=" + FAKE_SCOPE
+                                   + "&oauth2TokenEndpoint=" + tokenEndpoint + "&addScopeToForm=true",
+                        exchange1 -> {
+
                         });
 
         assertExchange(exchange);

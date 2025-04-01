@@ -42,6 +42,9 @@ public class HttpConfiguration implements Serializable {
     private String oauth2TokenEndpoint;
     @Metadata(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
+    @Metadata(label = "producer,security",defaultValue = "false",
+            description = "Indicate if the OAuth2 scope should be added as a query parameter or form encoded parameter.")
+    private boolean addScopeToForm;
     @Metadata(label = "producer,security", description = "OAuth2 Resource Indicator")
     private String oauth2ResourceIndicator;
     @UriParam(label = "producer,security", defaultValue = "false",
@@ -291,6 +294,17 @@ public class HttpConfiguration implements Serializable {
 
     public boolean isOauth2CacheTokens() {
         return oauth2CacheTokens;
+    }
+
+    /**
+     * Indicate if the OAuth2 scope should be added as a query parameter or form encoded parameter.
+     */
+    public void setAddScopeToForm(boolean addScopeToForm) {
+        this.addScopeToForm = addScopeToForm;
+    }
+
+    public boolean isAddScopeToForm() {
+        return addScopeToForm;
     }
 
     /**
