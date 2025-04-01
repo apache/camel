@@ -919,3 +919,52 @@ where `camel.vault.azure.eventhubConnectionString` is the eventhub connection st
 Note that `camel.vault.azure.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `azure:` prefix.
 
 The only requirement is adding the camel-azure-key-vault jar to your Camel application.
+
+==== Automatic Camel context reloading on Secret Refresh while using IBM Secrets Manager
+
+Being able to reload Camel context on a Secret Refresh could be done by specifying the IBM Event Streams credentials combined with the IBM Secrets Manager one (the same used for IBM Secrets Manager Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export CAMEL_VAULT_IBM_TOKEN=token
+export CAMEL_VAULT_IBM_SERVICE_URL=serviceUrl
+export CAMEL_VAULT_IBM_EVENTSTREAM_BOOTSTRAP_SERVERS=bootstrapServers
+export CAMEL_VAULT_IBM_EVENTSTREAM_TOPIC=topic
+export CAMEL_VAULT_IBM_EVENTSTREAM_USERNAME=token
+export CAMEL_VAULT_IBM_EVENTSTREAM_PASSWORD=password
+export CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUP_ID=groupId
+export CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT=3000
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.ibm.token = token
+camel.vault.ibm.serviceUrl = serviceUrl
+camel.vault.ibm.eventStreamBootstrapServers = bootstrapServers
+camel.vault.ibm.eventStreamTopic = topic
+camel.vault.ibm.eventStreamUsername = token
+camel.vault.ibm.eventStreamPassword = password
+camel.vault.ibm.eventStreamGroupId = groupId
+camel.vault.ibm.eventStreamConsumerPollTimeout=3000
+----
+
+To enable the automatic refresh, you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.ibm.refreshEnabled=true
+camel.vault.ibm.secrets=Secret
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.ibm.refreshEnabled` will enable the automatic context reload and `camel.vault.ibm.secrets` is a regex representing the secrets we want to track for updates.
+
+where `camel.vault.ibm.eventStreamBootstrapServers` is the comma-separated list of Bootstrap Servers for IBM Event Stream, `camel.vault.ibm.eventStreamTopic`, `camel.vault.ibm.eventStreamUsername`, `camel.vault.ibm.eventStreamPassword`, `camel.vault.ibm.eventStreamGroupId` and `camel.vault.ibm.eventStreamConsumerPollTimeout` are the IBM Event Stream parameters for connecting and consuming events related to Secrets.
+
+Note that `camel.vault.ibm.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `ibm:` prefix.
+
+The only requirement is adding the camel-ibm-secrets-manager jar to your Camel application.
