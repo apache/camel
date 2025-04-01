@@ -25,6 +25,7 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         map.put("AwsVaultConfiguration", org.apache.camel.vault.AwsVaultConfiguration.class);
         map.put("AzureVaultConfiguration", org.apache.camel.vault.AzureVaultConfiguration.class);
         map.put("EventStreamBootstrapServers", java.lang.String.class);
+        map.put("EventStreamConsumerPollTimeout", long.class);
         map.put("EventStreamGroupId", java.lang.String.class);
         map.put("EventStreamPassword", java.lang.String.class);
         map.put("EventStreamTopic", java.lang.String.class);
@@ -51,6 +52,8 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": target.setEventStreamBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventstreamconsumerpolltimeout":
+        case "eventStreamConsumerPollTimeout": target.setEventStreamConsumerPollTimeout(property(camelContext, long.class, value)); return true;
         case "eventstreamgroupid":
         case "eventStreamGroupId": target.setEventStreamGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "eventstreampassword":
@@ -93,6 +96,8 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return java.lang.String.class;
+        case "eventstreamconsumerpolltimeout":
+        case "eventStreamConsumerPollTimeout": return long.class;
         case "eventstreamgroupid":
         case "eventStreamGroupId": return java.lang.String.class;
         case "eventstreampassword":
@@ -131,6 +136,8 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return target.getEventStreamBootstrapServers();
+        case "eventstreamconsumerpolltimeout":
+        case "eventStreamConsumerPollTimeout": return target.getEventStreamConsumerPollTimeout();
         case "eventstreamgroupid":
         case "eventStreamGroupId": return target.getEventStreamGroupId();
         case "eventstreampassword":
