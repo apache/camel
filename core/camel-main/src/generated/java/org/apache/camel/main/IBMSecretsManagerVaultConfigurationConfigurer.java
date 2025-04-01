@@ -29,6 +29,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": target.setEventStreamBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventstreamconsumerpolltimeout":
+        case "eventStreamConsumerPollTimeout": target.setEventStreamConsumerPollTimeout(property(camelContext, long.class, value)); return true;
         case "eventstreamgroupid":
         case "eventStreamGroupId": target.setEventStreamGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "eventstreampassword":
@@ -66,6 +68,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return java.lang.String.class;
+        case "eventstreamconsumerpolltimeout":
+        case "eventStreamConsumerPollTimeout": return long.class;
         case "eventstreamgroupid":
         case "eventStreamGroupId": return java.lang.String.class;
         case "eventstreampassword":
@@ -104,6 +108,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return target.getEventStreamBootstrapServers();
+        case "eventstreamconsumerpolltimeout":
+        case "eventStreamConsumerPollTimeout": return target.getEventStreamConsumerPollTimeout();
         case "eventstreamgroupid":
         case "eventStreamGroupId": return target.getEventStreamGroupId();
         case "eventstreampassword":

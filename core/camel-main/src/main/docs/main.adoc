@@ -469,12 +469,13 @@ The camel.vault.hashicorp supports 6 options, which are listed below.
 
 
 === Camel IBM Secrets Manager Vault configurations
-The camel.vault.ibm supports 9 options, which are listed below.
+The camel.vault.ibm supports 10 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.ibm.eventStream{zwsp}BootstrapServers* | Specify the Bootstrap servers for consuming notification on IBM Event Stream. Multiple servers can be separated by comma. |  | String
+| *camel.vault.ibm.eventStream{zwsp}ConsumerPollTimeout* | Specify the Consumer Poll Timeout while consuming from IBM Event Stream Topic | 3000 | long
 | *camel.vault.ibm.eventStream{zwsp}GroupId* | Specify the Consumer Group ID to access IBM Event Stream |  | String
 | *camel.vault.ibm.eventStream{zwsp}Password* | Specify the password to access IBM Event Stream |  | String
 | *camel.vault.ibm.eventStream{zwsp}Topic* | Specify the topic name for consuming notification on IBM Event Stream |  | String

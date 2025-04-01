@@ -29,7 +29,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.SecretsManager;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -65,11 +64,11 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     private static final String CAMEL_VAULT_IBM_EVENTSTREAM_PASSWORD_ENV = "CAMEL_VAULT_IBM_EVENTSTREAM_PASSWORD";
     private static final String CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUPID_ENV
             = "CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUP_ID";
+    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV
+            = "CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT";
 
     private CamelContext camelContext;
 
-    private SecretsManager client;
-    private String secretGroup;
     private boolean reloadEnabled = true;
     private String secrets;
     private IBMSecretsManagerPropertiesFunction propertiesFunction;
@@ -79,6 +78,7 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     private final Map<String, Instant> updates = new HashMap<>();
     KafkaConsumer<String, String> kafkaConsumer;
     private static final String IBM_SECRETS_MANAGER_SECRET_ROTATED_EVENT = "secret_rotated";
+    protected long pollTimeout;
 
     private static final Logger LOG = LoggerFactory.getLogger(IBMEventStreamReloadTriggerTask.class);
 
@@ -104,6 +104,12 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
         String topic = System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_TOPIC_ENV);
         String username = System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_USERNAME_ENV);
         String password = System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_PASSWORD_ENV);
+        if (ObjectHelper.isNotEmpty(System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV))) {
+            pollTimeout = Long.parseLong(System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV));
+        } else {
+            pollTimeout = getCamelContext().getVaultConfiguration().getIBMSecretsManagerVaultConfiguration()
+                    .getEventStreamConsumerPollTimeout();
+        }
 
         if (ObjectHelper.isEmpty(bootstrapServers) && ObjectHelper.isEmpty(groupId) && ObjectHelper.isEmpty(topic)
                 && ObjectHelper.isEmpty(password)) {
@@ -156,7 +162,7 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
         ObjectMapper mapper = new ObjectMapper();
 
         while (true) {
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeout));
 
             for (ConsumerRecord<String, String> record : records) {
                 JsonNode recordJson;

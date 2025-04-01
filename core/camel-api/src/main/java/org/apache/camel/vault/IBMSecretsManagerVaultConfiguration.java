@@ -41,6 +41,8 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
     private String eventStreamPassword;
     @Metadata
     private String eventStreamGroupId;
+    @Metadata(defaultValue = "3000")
+    private long eventStreamConsumerPollTimeout = 3000;
 
     public String getToken() {
         return token;
@@ -140,5 +142,16 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
      */
     public void setEventStreamGroupId(String eventStreamGroupId) {
         this.eventStreamGroupId = eventStreamGroupId;
+    }
+
+    public long getEventStreamConsumerPollTimeout() {
+        return eventStreamConsumerPollTimeout;
+    }
+
+    /**
+     * Specify the Consumer Poll Timeout while consuming from IBM Event Stream Topic
+     */
+    public void setEventStreamConsumerPollTimeout(long eventStreamConsumerPollTimeout) {
+        this.eventStreamConsumerPollTimeout = eventStreamConsumerPollTimeout;
     }
 }
