@@ -29,8 +29,6 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
     private String serviceUrl;
     @Metadata
     private boolean refreshEnabled;
-    @Metadata(defaultValue = "30000")
-    private long refreshPeriod = 30000;
     @Metadata
     private String secrets;
     @Metadata
@@ -75,17 +73,6 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
      */
     public void setRefreshEnabled(boolean refreshEnabled) {
         this.refreshEnabled = refreshEnabled;
-    }
-
-    public long getRefreshPeriod() {
-        return refreshPeriod;
-    }
-
-    /**
-     * The period (millis) between checking AWS for updated secrets.
-     */
-    public void setRefreshPeriod(long refreshPeriod) {
-        this.refreshPeriod = refreshPeriod;
     }
 
     public String getSecrets() {
