@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-torchserve",
-    "version": "4.10.3-SNAPSHOT",
+    "version": "4.10.4-SNAPSHOT",
     "scheme": "torchserve",
     "extendsScheme": "",
     "syntax": "torchserve:api\/operation",

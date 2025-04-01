@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tahu",
-    "version": "4.10.3-SNAPSHOT",
+    "version": "4.10.4-SNAPSHOT",
     "scheme": "tahu-host",
     "extendsScheme": "",
     "syntax": "tahu-host:hostId",

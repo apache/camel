@@ -12,7 +12,7 @@
     "metadata": { "protocol": "http" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-grpc",
-    "version": "4.10.3-SNAPSHOT",
+    "version": "4.10.4-SNAPSHOT",
     "scheme": "grpc",
     "extendsScheme": "",
     "syntax": "grpc:host:port\/service",

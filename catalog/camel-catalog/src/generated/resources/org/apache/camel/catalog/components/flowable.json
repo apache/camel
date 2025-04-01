@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flowable",
-    "version": "4.10.3-SNAPSHOT",
+    "version": "4.10.4-SNAPSHOT",
     "scheme": "flowable",
     "extendsScheme": "",
     "syntax": "flowable:channelKey",
