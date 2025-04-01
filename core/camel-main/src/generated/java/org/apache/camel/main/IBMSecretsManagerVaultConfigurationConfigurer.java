@@ -49,8 +49,6 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "refreshenabled":
         case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
-        case "refreshperiod":
-        case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceurl":
         case "serviceUrl": target.setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
@@ -88,8 +86,6 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "refreshenabled":
         case "refreshEnabled": return boolean.class;
-        case "refreshperiod":
-        case "refreshPeriod": return long.class;
         case "secrets": return java.lang.String.class;
         case "serviceurl":
         case "serviceUrl": return java.lang.String.class;
@@ -128,8 +124,6 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "refreshenabled":
         case "refreshEnabled": return target.isRefreshEnabled();
-        case "refreshperiod":
-        case "refreshPeriod": return target.getRefreshPeriod();
         case "secrets": return target.getSecrets();
         case "serviceurl":
         case "serviceUrl": return target.getServiceUrl();

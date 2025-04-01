@@ -35,7 +35,6 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         map.put("KubernetesConfigMapVaultConfiguration", org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class);
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("RefreshEnabled", boolean.class);
-        map.put("RefreshPeriod", long.class);
         map.put("Secrets", java.lang.String.class);
         map.put("ServiceUrl", java.lang.String.class);
         map.put("Token", java.lang.String.class);
@@ -72,8 +71,6 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "refreshenabled":
         case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
-        case "refreshperiod":
-        case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceurl":
         case "serviceUrl": target.setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
@@ -116,8 +113,6 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "refreshenabled":
         case "refreshEnabled": return boolean.class;
-        case "refreshperiod":
-        case "refreshPeriod": return long.class;
         case "secrets": return java.lang.String.class;
         case "serviceurl":
         case "serviceUrl": return java.lang.String.class;
@@ -156,8 +151,6 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "refreshenabled":
         case "refreshEnabled": return target.isRefreshEnabled();
-        case "refreshperiod":
-        case "refreshPeriod": return target.getRefreshPeriod();
         case "secrets": return target.getSecrets();
         case "serviceurl":
         case "serviceUrl": return target.getServiceUrl();
