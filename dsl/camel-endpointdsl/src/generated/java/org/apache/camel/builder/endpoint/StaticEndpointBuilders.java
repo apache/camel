@@ -4009,7 +4009,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup,
+     * wikipedia
      * 
      * @param path dnsType
      * @return the dsl builder
@@ -4029,7 +4030,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup,
+     * wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5753,7 +5755,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>grape:defaultCoordinates</code>
      * 
      * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
+     * Maven coordinates to use as default to grab if the message body is
+     * empty.
      * 
      * @param path defaultCoordinates
      * @return the dsl builder
@@ -5774,7 +5777,8 @@ public class StaticEndpointBuilders {
      * Syntax: <code>grape:defaultCoordinates</code>
      * 
      * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
+     * Maven coordinates to use as default to grab if the message body is
+     * empty.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -273,7 +273,8 @@ public interface Aws2S3ComponentBuilderFactory {
         }
     
         /**
-         * Define the MD5 of Customer key to use in case CustomerKey is enabled.
+         * Define the MD5 of Customer key to use in case CustomerKey is
+         * enabled.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -654,7 +655,8 @@ public interface Aws2S3ComponentBuilderFactory {
         }
     
         /**
-         * The operation to do in case the user don't want to do only an upload.
+         * The operation to do in case the user don't want to do only an
+         * upload.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.s3.AWS2S3Operations&lt;/code&gt; type.

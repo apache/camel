@@ -722,7 +722,8 @@ public interface DynamicRouterEndpointBuilderFactory {
          * URI is dynamic-router://test, then the channel is test. Channels are
          * a way of keeping routing participants, their rules, and exchanges
          * logically separate from the participants, rules, and exchanges on
-         * other channels. This can be seen as analogous to VLANs in networking.
+         * other channels. This can be seen as analogous to VLANs in
+         * networking.
          * 
          * @param path channel
          * @return the dsl builder
@@ -746,7 +747,8 @@ public interface DynamicRouterEndpointBuilderFactory {
          * URI is dynamic-router://test, then the channel is test. Channels are
          * a way of keeping routing participants, their rules, and exchanges
          * logically separate from the participants, rules, and exchanges on
-         * other channels. This can be seen as analogous to VLANs in networking.
+         * other channels. This can be seen as analogous to VLANs in
+         * networking.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

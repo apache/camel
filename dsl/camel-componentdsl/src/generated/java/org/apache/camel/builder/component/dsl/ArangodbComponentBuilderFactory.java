@@ -215,7 +215,8 @@ public interface ArangodbComponentBuilderFactory {
         /**
          * To use an existing ArangDB client.
          * 
-         * The option is a: &lt;code&gt;com.arangodb.ArangoDB&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;com.arangodb.ArangoDB&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 

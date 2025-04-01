@@ -42,8 +42,8 @@ public class HttpConfiguration implements Serializable {
     private String oauth2TokenEndpoint;
     @Metadata(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
-    @Metadata(label = "producer,security",defaultValue = "false",
-            description = "Indicate if the OAuth2 scope should be added as a query parameter or form encoded parameter.")
+    @Metadata(label = "producer,security", defaultValue = "false",
+              description = "Indicate if the OAuth2 scope should be added as a query parameter or form encoded parameter.")
     private boolean addScopeToForm;
     @Metadata(label = "producer,security", description = "OAuth2 Resource Indicator")
     private String oauth2ResourceIndicator;

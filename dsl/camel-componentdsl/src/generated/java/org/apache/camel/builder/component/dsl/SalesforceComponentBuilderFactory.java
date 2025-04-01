@@ -1163,7 +1163,8 @@ public interface SalesforceComponentBuilderFactory {
         }
     
         /**
-         * Name of Platform Event, Change Data Capture Event, custom event, etc.
+         * Name of Platform Event, Change Data Capture Event, custom event,
+         * etc.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1541,7 +1542,8 @@ public interface SalesforceComponentBuilderFactory {
         
         /**
          * If set to true Digest authentication will be used when authenticating
-         * to the HTTP proxy, otherwise Basic authorization method will be used.
+         * to the HTTP proxy, otherwise Basic authorization method will be
+         * used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
