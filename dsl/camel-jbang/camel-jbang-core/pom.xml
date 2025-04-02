@@ -64,6 +64,27 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.camel-tooling</groupId>
+            <artifactId>camel-lsp-server</artifactId>
+            <version>${camel-lsp-version}</version>
+            <classifier>original</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.tyrus</groupId>
+                    <artifactId>tyrus-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.tyrus</groupId>
+                    <artifactId>tyrus-container-grizzly-server</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>${juniversalchardet-version}</version>
+        </dependency>
 
         <!-- yaml -->
         <dependency>

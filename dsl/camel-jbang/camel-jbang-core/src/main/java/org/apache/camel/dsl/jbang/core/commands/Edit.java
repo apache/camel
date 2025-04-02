@@ -21,7 +21,8 @@ import java.nio.file.Paths;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-import org.jline.builtins.Commands;
+import org.jline.builtins.Nano;
+import org.jline.builtins.Options;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine;
@@ -44,7 +45,16 @@ public class Edit extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
-            Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] { file }, null);
+            String[] argv = new String[] { file };
+            Options opt = Options.compile(Nano.usage()).parse(argv);
+            if (opt.isSet("help")) {
+                throw new Options.HelpException(opt.usage());
+            } else {
+                Path currentDir = workDir.get();
+                CamelNanoLspEditor edit = new CamelNanoLspEditor(terminal, currentDir, opt, null);
+                edit.open(opt.args());
+                edit.run();
+            }
         }
         return 0;
     }
