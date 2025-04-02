@@ -26,6 +26,19 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.boot.context.config.ConfigData;
 import org.springframework.core.env.PropertySource;
 
+/**
+ * A periodic task that monitors Spring Cloud Config properties for changes and triggers a Camel context reload
+ * when property values have changed.
+ * <p>
+ * It compares the current property values in Spring Cloud Config with cached values stored in {@link SpringConfigRemaindersCache}.
+ * When a property value has changed, it triggers the reload of the Camel context using the
+ * {@link ContextReloadStrategy} service.
+ * </p>
+ *
+ * @see ContextReloadStrategy
+ * @see SpringConfigRemaindersCache
+ * @see SpringConfigProvider
+ */
 @PeriodicTask("spring-config-refresh")
 public class SpringCloudConfigReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 

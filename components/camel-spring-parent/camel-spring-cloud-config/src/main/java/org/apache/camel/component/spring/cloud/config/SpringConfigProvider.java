@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.cloud.config;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.vault.SpringCloudConfigConfiguration;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.BootstrapRegistry;
 import org.springframework.boot.ConfigurableBootstrapContext;
@@ -32,18 +33,59 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Provider class that retrieves configuration data from a Spring Cloud Config Server.
+ * <p>
+ * This class serves as a bridge between Apache Camel and Spring Cloud Config,
+ * allowing Camel contexts to fetch their configuration from a centralized
+ * Spring Cloud Config Server. It handles the authentication and connection details
+ * necessary to communicate with the config server.
+ * <p>
+ * The configuration parameters are sourced from {@link SpringCloudConfigConfiguration}
+ * which is obtained from the Camel context's vault configuration.
+ *
+ * @see org.apache.camel.vault.SpringCloudConfigConfiguration
+ * @see org.springframework.cloud.config.client.ConfigServerConfigDataLoader
+ */
 public class SpringConfigProvider {
 
+    /**
+     * Retrieves configuration data from a Spring Cloud Config Server for the given Camel context.
+     * <p>
+     * This method sets up the necessary Spring Cloud Config components to connect to a
+     * config server using the parameters defined in the Camel context's Spring Cloud Config
+     * configuration. It handles authentication credentials, connection URIs, and other
+     * configuration properties.
+     *
+     * @param camelContext The Camel context for which to retrieve configuration data.
+     *                    This context is used to obtain configuration parameters and
+     *                    to identify the application name to be used when fetching
+     *                    configuration from the server.
+     * @return A {@link ConfigData} object containing the configuration properties retrieved
+     *         from the Spring Cloud Config Server.
+     *
+     * @see org.springframework.boot.context.config.ConfigData
+     * @see org.apache.camel.CamelContext
+     */
     public ConfigData getConfigData(CamelContext camelContext) {
+        SpringCloudConfigConfiguration configuration = camelContext.getVaultConfiguration().springConfig();
         ConfigServerConfigDataLoader configServerConfigDataLoader = new ConfigServerConfigDataLoader(new DeferredLogs());
 
         Environment camelEnvironment = new StandardEnvironment();
         ConfigClientProperties configClientProperties = new ConfigClientProperties(camelEnvironment);
         configClientProperties.setName(camelContext.getName());
+        configClientProperties.setUsername(configuration.getUsername());
+        configClientProperties.setPassword(configuration.getPassword());
+        configClientProperties.setToken(configuration.getToken());
 
-        String configServerUri = System.getProperty("spring.config.server.uri");
-        if (configServerUri != null) {
-            configClientProperties.setUri(new String[] { configServerUri });
+        if (configuration.getLabel() != null) {
+            configClientProperties.setLabel(configuration.getLabel());
+        }
+        if (configuration.getProfile() != null) {
+            configClientProperties.setProfile(configuration.getProfile());
+        }
+        if (configuration.getUris() != null && !configuration.getUris().isEmpty()) {
+            configClientProperties.setUri(configuration.getUris().split(","));
         }
 
         // Spring Cloud Config does not expose a plain Spring API easy to use

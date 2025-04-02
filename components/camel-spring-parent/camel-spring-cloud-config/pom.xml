@@ -32,7 +32,6 @@
 
     <properties>
         <firstVersion>4.11.0</firstVersion>
-        <spring-cloud-config-version>4.2.1</spring-cloud-config-version>
     </properties>
 
     <dependencyManagement>

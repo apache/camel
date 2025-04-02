@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.cloud.config;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.boot.context.config.ConfigData;
@@ -25,6 +26,24 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
+/**
+ * Properties Function implementation that provides integration with Spring Cloud Config.
+ * This class allows Camel to resolve property placeholders using values from Spring Cloud Config.
+ * <p>
+ * When a property placeholder with the prefix "spring-config:" is encountered in Camel routes or
+ * configuration, this function will be called to resolve the property value from Spring Cloud
+ * Config sources.
+ * <p>
+ * The implementation first attempts to resolve properties through the Spring {@link Environment}
+ * if available. If not available or the property is not found, it falls back to retrieving the
+ * configuration from Spring Config directly.
+ * <p>
+ * Usage example in Camel routes or configuration:
+ * <pre>
+ * {{spring-config:my.property.name}}
+ * </pre>
+ *
+ */
 @org.apache.camel.spi.annotations.PropertiesFunction("spring-config")
 public class SpringCloudConfigPropertiesFunction extends ServiceSupport
         implements PropertiesFunction, CamelContextAware, EnvironmentAware {
@@ -33,6 +52,21 @@ public class SpringCloudConfigPropertiesFunction extends ServiceSupport
 
     private Environment environment;
 
+    /**
+     * Resolves the specified property from Spring Cloud Config.
+     * <p>
+     * The resolution process follows these steps:
+     * <ol>
+     *   <li>If a Spring Environment is available, attempt to resolve the property from it</li>
+     *   <li>Otherwise, retrieve the configuration from Spring Config directly</li>
+     *   <li>Search through all available property sources for the property</li>
+     *   <li>Cache the result for future lookups by {@link SpringCloudConfigReloadTriggerTask}</li>
+     * </ol>
+     *
+     * @param remainder the property name to resolve (without the "spring-config:" prefix)
+     * @return the property value, or null if not found
+     * @throws RuntimeCamelException if the Spring Config data cannot be retrieved
+     */
     @Override
     public String apply(String remainder) {
         if (environment != null) {
@@ -40,6 +74,9 @@ public class SpringCloudConfigPropertiesFunction extends ServiceSupport
         }
 
         ConfigData configData = new SpringConfigProvider().getConfigData(getCamelContext());
+        if (configData == null) {
+            throw new RuntimeCamelException("Cannot retrieve any config data from Spring Config for property " + remainder);
+        }
 
         String result = null;
         for (PropertySource propertySource : configData.getPropertySources()) {

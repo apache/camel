@@ -28,6 +28,7 @@ public class VaultConfiguration {
     private KubernetesVaultConfiguration kubernetes;
     private KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
     private IBMSecretsManagerVaultConfiguration ibmSecretsManager;
+    private SpringCloudConfigConfiguration springConfig;
 
     /**
      * AWS Vault Configuration
@@ -99,6 +100,13 @@ public class VaultConfiguration {
         return ibmSecretsManager;
     }
 
+    public SpringCloudConfigConfiguration springConfig() {
+        if (springConfig == null) {
+            springConfig = new SpringCloudConfigConfiguration();
+        }
+        return springConfig;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -153,5 +161,13 @@ public class VaultConfiguration {
 
     public void setIBMSecretsManagerVaultConfiguration(IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
         this.ibmSecretsManager = ibmSecretsManager;
+    }
+
+    public SpringCloudConfigConfiguration getSpringCloudConfigConfiguration() {
+        return springConfig;
+    }
+
+    public void setSpringCloudConfigConfiguration(SpringCloudConfigConfiguration springCloudConfigConfiguration) {
+        this.springConfig = springCloudConfigConfiguration;
     }
 }
