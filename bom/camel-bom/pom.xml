@@ -1914,6 +1914,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-config</artifactId>
+        <version>4.12.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-jdbc</artifactId>
         <version>4.12.0-SNAPSHOT</version>
       </dependency>

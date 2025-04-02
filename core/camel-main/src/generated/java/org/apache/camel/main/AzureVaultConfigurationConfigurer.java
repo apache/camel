@@ -56,6 +56,8 @@ public class AzureVaultConfigurationConfigurer extends org.apache.camel.support.
         case "refreshperiod":
         case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "tenantid":
         case "tenantId": target.setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "vaultname":
@@ -100,6 +102,8 @@ public class AzureVaultConfigurationConfigurer extends org.apache.camel.support.
         case "refreshperiod":
         case "refreshPeriod": return long.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
         case "vaultname":
@@ -145,6 +149,8 @@ public class AzureVaultConfigurationConfigurer extends org.apache.camel.support.
         case "refreshperiod":
         case "refreshPeriod": return target.getRefreshPeriod();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "tenantid":
         case "tenantId": return target.getTenantId();
         case "vaultname":

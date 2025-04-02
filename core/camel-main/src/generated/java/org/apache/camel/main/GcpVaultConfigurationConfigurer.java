@@ -46,6 +46,8 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": target.setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultinstance":
@@ -80,6 +82,8 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secrets": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "subscriptionname":
         case "subscriptionName": return java.lang.String.class;
         case "usedefaultinstance":
@@ -115,6 +119,8 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secrets": return target.getSecrets();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "subscriptionname":
         case "subscriptionName": return target.getSubscriptionName();
         case "usedefaultinstance":

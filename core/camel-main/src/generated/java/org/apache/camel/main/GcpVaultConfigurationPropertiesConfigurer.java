@@ -34,6 +34,7 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("RefreshPeriod", long.class);
         map.put("Secrets", java.lang.String.class);
         map.put("ServiceAccountKey", java.lang.String.class);
+        map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("SubscriptionName", java.lang.String.class);
         map.put("UseDefaultInstance", boolean.class);
         ALL_OPTIONS = map;
@@ -66,6 +67,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "serviceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "subscriptionname":
         case "subscriptionName": target.setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultinstance":
@@ -105,6 +108,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secrets": return java.lang.String.class;
         case "serviceaccountkey":
         case "serviceAccountKey": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "subscriptionname":
         case "subscriptionName": return java.lang.String.class;
         case "usedefaultinstance":
@@ -140,6 +145,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secrets": return target.getSecrets();
         case "serviceaccountkey":
         case "serviceAccountKey": return target.getServiceAccountKey();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "subscriptionname":
         case "subscriptionName": return target.getSubscriptionName();
         case "usedefaultinstance":

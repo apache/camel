@@ -467,6 +467,7 @@
         <solr-zookeeper-version>3.9.3</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
+        <spring-cloud-config-version>4.2.1</spring-cloud-config-version>
         <spring-batch-version>5.2.2</spring-batch-version>
         <spring-data-redis-version>3.4.4</spring-data-redis-version>
         <spring-ldap-version>3.2.11</spring-ldap-version>
@@ -2351,6 +2352,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-spring-batch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-spring-cloud-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1927,6 +1927,9 @@ public abstract class BaseMainSupport extends BaseService {
             if ("kubernetescm".equalsIgnoreCase(name)) {
                 target = target.kubernetesConfigmaps();
             }
+            if ("springConfig".equalsIgnoreCase(name)) {
+                target = target.springConfig();
+            }
             if ("ibm".equalsIgnoreCase(name)) {
                 target = target.ibmSecretsManager();
             }

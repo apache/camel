@@ -40,6 +40,8 @@ public class KubernetesConfigMapVaultConfigurationConfigurer extends org.apache.
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "refreshenabled":
         case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         default: return false;
         }
     }
@@ -64,6 +66,8 @@ public class KubernetesConfigMapVaultConfigurationConfigurer extends org.apache.
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "refreshenabled":
         case "refreshEnabled": return boolean.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         default: return null;
         }
     }
@@ -89,6 +93,8 @@ public class KubernetesConfigMapVaultConfigurationConfigurer extends org.apache.
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "refreshenabled":
         case "refreshEnabled": return target.isRefreshEnabled();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         default: return null;
         }
     }
