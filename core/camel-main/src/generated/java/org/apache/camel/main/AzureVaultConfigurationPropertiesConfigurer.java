@@ -39,6 +39,7 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         map.put("RefreshEnabled", boolean.class);
         map.put("RefreshPeriod", long.class);
         map.put("Secrets", java.lang.String.class);
+        map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("TenantId", java.lang.String.class);
         map.put("VaultName", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -81,6 +82,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "refreshperiod":
         case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "tenantid":
         case "tenantId": target.setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "vaultname":
@@ -130,6 +133,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "refreshperiod":
         case "refreshPeriod": return long.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
         case "vaultname":
@@ -175,6 +180,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "refreshperiod":
         case "refreshPeriod": return target.getRefreshPeriod();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "tenantid":
         case "tenantId": return target.getTenantId();
         case "vaultname":

@@ -213,6 +213,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.vault.hashicorp.";
                 } else if (file.getName().contains("IBMSecretsManagerVault")) {
                     prefix = "camel.vault.ibm.";
+                } else if (file.getName().contains("SpringCloudConfig")) {
+                    prefix = "camel.vault.springConfig.";
                 } else if (file.getName().contains("Health")) {
                     prefix = "camel.health.";
                 } else if (file.getName().contains("StartupCondition")) {
@@ -300,6 +302,16 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             data.addAll(model);
         } catch (Exception e) {
             throw new MojoFailureException("Error parsing file " + kubernetesVaultConfig + " due " + e.getMessage(), e);
+        }
+
+        File springCloudConfigConfig
+                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/SpringCloudConfigConfiguration.java");
+        try {
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(springCloudConfigConfig);
+            model.forEach(m -> m.setName("camel.vault.springConfig." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + springCloudConfigConfig + " due " + e.getMessage(), e);
         }
 
         File kubernetesConfigmapsVaultConfig

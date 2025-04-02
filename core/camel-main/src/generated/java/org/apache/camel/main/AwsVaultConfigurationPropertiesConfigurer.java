@@ -39,6 +39,7 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         map.put("Region", java.lang.String.class);
         map.put("SecretKey", java.lang.String.class);
         map.put("Secrets", java.lang.String.class);
+        map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("SqsQueueUrl", java.lang.String.class);
         map.put("UriEndpointOverride", java.lang.String.class);
         map.put("UseSqsNotification", boolean.class);
@@ -81,6 +82,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "sqsqueueurl":
         case "sqsQueueUrl": target.setSqsQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "uriendpointoverride":
@@ -131,6 +134,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "sqsqueueurl":
         case "sqsQueueUrl": return java.lang.String.class;
         case "uriendpointoverride":
@@ -177,6 +182,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "secretkey":
         case "secretKey": return target.getSecretKey();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "sqsqueueurl":
         case "sqsQueueUrl": return target.getSqsQueueUrl();
         case "uriendpointoverride":

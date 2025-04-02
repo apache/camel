@@ -54,6 +54,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceurl":
         case "serviceUrl": target.setServiceUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -93,6 +95,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "secrets": return java.lang.String.class;
         case "serviceurl":
         case "serviceUrl": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -133,6 +137,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "secrets": return target.getSecrets();
         case "serviceurl":
         case "serviceUrl": return target.getServiceUrl();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();
         default: return null;
         }

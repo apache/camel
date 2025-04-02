@@ -29,6 +29,7 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     private KubernetesVaultConfigurationProperties kubernetes;
     private KubernetesConfigmapsVaultConfigurationProperties kubernetesConfigmaps;
     private IBMSecretsManagerVaultConfigurationProperties ibmSecretsManager;
+    private SpringCloudConfigConfigurationProperties springConfig;
 
     public VaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -61,6 +62,9 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
         }
         if (ibmSecretsManager != null) {
             ibmSecretsManager.close();
+        }
+        if (springConfig != null) {
+            springConfig.close();
         }
     }
 
@@ -126,5 +130,13 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
             ibmSecretsManager = new IBMSecretsManagerVaultConfigurationProperties(parent);
         }
         return ibmSecretsManager;
+    }
+
+    @Override
+    public SpringCloudConfigConfigurationProperties springConfig() {
+        if (springConfig == null) {
+            springConfig = new SpringCloudConfigConfigurationProperties(parent);
+        }
+        return springConfig;
     }
 }

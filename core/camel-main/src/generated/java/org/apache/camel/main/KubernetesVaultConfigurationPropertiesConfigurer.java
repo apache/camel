@@ -31,6 +31,7 @@ public class KubernetesVaultConfigurationPropertiesConfigurer extends org.apache
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("RefreshEnabled", boolean.class);
         map.put("Secrets", java.lang.String.class);
+        map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         ALL_OPTIONS = map;
     }
 
@@ -55,6 +56,8 @@ public class KubernetesVaultConfigurationPropertiesConfigurer extends org.apache
         case "refreshenabled":
         case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         default: return false;
         }
     }
@@ -84,6 +87,8 @@ public class KubernetesVaultConfigurationPropertiesConfigurer extends org.apache
         case "refreshenabled":
         case "refreshEnabled": return boolean.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         default: return null;
         }
     }
@@ -109,6 +114,8 @@ public class KubernetesVaultConfigurationPropertiesConfigurer extends org.apache
         case "refreshenabled":
         case "refreshEnabled": return target.isRefreshEnabled();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         default: return null;
         }
     }
