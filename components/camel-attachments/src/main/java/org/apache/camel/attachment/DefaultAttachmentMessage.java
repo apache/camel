@@ -212,7 +212,11 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
 
     @Override
     public void removeAttachment(String id) {
-        getAttachmentsMap().remove(id);
+        Map<String, Object> attachmentsMap = getAttachmentsMap();
+        attachmentsMap.remove(id);
+        if (attachmentsMap.isEmpty()) {
+            removeTrait(MessageTrait.ATTACHMENTS);
+        }
     }
 
     @Override
