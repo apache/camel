@@ -90,6 +90,7 @@
         <caffeine-version>3.2.0</caffeine-version>
         <californium-version>3.14.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
+        <camel-lsp-version>1.31.0</camel-lsp-version>
         <camunda-version>7.23.0</camunda-version>
         <cassandra-driver-version>4.19.0</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
@@ -319,6 +320,7 @@
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.12.2</junit-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
+        <juniversalchardet-version>1.0.3</juniversalchardet-version>
         <jxmpp-version>1.1.0</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <jzlib-version>1.1.3</jzlib-version>

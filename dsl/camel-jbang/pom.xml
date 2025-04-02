@@ -38,6 +38,7 @@
         <module>camel-jbang-core</module>
         <module>camel-jbang-main</module>
         <module>camel-jbang-plugin-generate</module>
+        <module>camel-jbang-plugin-edit</module>
         <module>camel-jbang-plugin-kubernetes</module>
         <module>camel-jbang-it</module>
     </modules>

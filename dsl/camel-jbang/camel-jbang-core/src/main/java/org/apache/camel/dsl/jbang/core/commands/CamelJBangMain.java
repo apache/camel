@@ -82,7 +82,7 @@ public class CamelJBangMain implements Callable<Integer> {
         }
 
         commandLine = new CommandLine(main)
-                .addSubcommand("edit", new CommandLine(new Edit(main)))
+                .addSubcommand("nano", new CommandLine(new Nano(main)))
                 .addSubcommand("shell", new CommandLine(new Shell(main)))
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
