@@ -142,7 +142,7 @@ Keycloak is already configured in such a way that below examples should run with
 
 == Camel OAuth Examples
 
-There is a comprehensive set of camel-oauth examples as part of https://github.com/tdiesler/camel-cloud-examples[camel-cloud-examples]. You'll find https://camel.apache.org/manual/camel-jbang.html[camel-jbang kubernetes] examples for every OAuth flow, for every runtime, on every supported cluster.
+There is a comprehensive set of camel-oauth examples as part of https://github.com/tdiesler/camel-cloud-examples[camel-cloud-examples]. You'll find xref:manual::camel-jbang.adoc[camel-jbang kubernetes] examples for every OAuth flow, for every runtime, on every supported cluster.
 
 For example ...
 
