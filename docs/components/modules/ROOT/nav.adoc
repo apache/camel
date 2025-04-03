@@ -255,6 +255,7 @@
 ** xref:netty-http-component.adoc[Netty HTTP]
 ** xref:nitrite-component.adoc[Nitrite]
 ** xref:oaipmh-component.adoc[OAI-PMH]
+** xref:oauth-component.adoc[OAuth]
 ** xref:olingo2-component.adoc[Olingo2]
 ** xref:olingo4-component.adoc[Olingo4]
 ** xref:opensearch-component.adoc[OpenSearch]
