@@ -15,8 +15,11 @@
 # limitations under the License.
 #
 
-environment: k8s
+environment: openshift
+
+hostName: apps.rosa.<cluster-name>.openshiftapps.com
 
 deployments:
-  kafka:
-    nodePort: 30094
+  keycloak:
+    version: 26.1.2
+

@@ -15,8 +15,9 @@
 # limitations under the License.
 #
 
-deployments:
+environment: k8s
 
+deployments:
   whoami:
-    name: "whoami"
+    version: latest
 

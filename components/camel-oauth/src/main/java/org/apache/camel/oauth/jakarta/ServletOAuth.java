@@ -51,18 +51,18 @@ public class ServletOAuth extends OAuth {
     @Override
     public void discoverOAuthConfig(CamelContext ctx) throws OAuthException {
         if (config == null) {
-            var baseUrl = getRequiredProperty(ctx, CAMEL_OAUTH_BASE_URI);
+            var baseUri = getRequiredProperty(ctx, CAMEL_OAUTH_BASE_URI);
             var clientId = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_ID);
             var clientSecret = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_SECRET);
 
             var config = new OAuthConfig()
-                    .setBaseUrl(baseUrl)
+                    .setBaseUrl(baseUri)
                     .setClientId(clientId)
                     .setClientSecret(clientSecret);
 
+            var wellKnownUri = baseUri + "/.well-known/openid-configuration";
             try {
-                var oidc_discovery_path = "/.well-known/openid-configuration";
-                var content = Request.get(baseUrl + oidc_discovery_path).execute().returnContent().asString();
+                var content = Request.get(wellKnownUri).execute().returnContent().asString();
                 var json = JsonParser.parseString(content).getAsJsonObject();
 
                 config.setAuthorizationPath(json.get("authorization_endpoint").getAsString())
@@ -81,7 +81,7 @@ public class ServletOAuth extends OAuth {
                     config.setJWKSet(JWKSet.load(new URL(jwksPath)));
                 }
             } catch (Exception ex) {
-                throw new OAuthException("Cannot discover OAuth config from: " + baseUrl, ex);
+                throw new OAuthException("Cannot discover OAuth config from: " + wellKnownUri, ex);
             }
             this.config = config;
         }
