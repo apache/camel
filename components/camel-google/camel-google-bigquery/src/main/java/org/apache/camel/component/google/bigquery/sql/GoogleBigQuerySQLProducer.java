@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.google.bigquery.sql;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryException;
+import com.google.cloud.bigquery.Field;
+import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.Job;
 import com.google.cloud.bigquery.JobException;
 import com.google.cloud.bigquery.JobId;
@@ -30,6 +34,7 @@ import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.JobStatistics;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.QueryParameterValue;
+import com.google.cloud.bigquery.Schema;
 import com.google.cloud.bigquery.StandardSQLTypeName;
 import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.Exchange;
@@ -79,13 +84,17 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         message.setHeader(GoogleBigQueryConstants.TRANSLATED_QUERY, translatedQuery);
         JobId jobId = message.getHeader(GoogleBigQueryConstants.JOB_ID, JobId.class);
 
-        Long affectedRows = executeSQL(jobId, translatedQuery, queryParameters);
+        Object queryResult = executeSQL(jobId, translatedQuery, queryParameters);
 
-        LOG.debug("The query {} affected {} rows", query, affectedRows);
-        message.setBody(affectedRows);
+        if (queryResult instanceof Long) {
+            LOG.debug("The query {} affected {} rows", query, queryResult);
+        } else {
+            LOG.debug("The query {} returned {} rows", query, ((List<?>) queryResult).size());
+        }
+        message.setBody(queryResult);
     }
 
-    private Long executeSQL(JobId jobId, String translatedQuery, Map<String, Object> queryParameters) throws Exception {
+    private Object executeSQL(JobId jobId, String translatedQuery, Map<String, Object> queryParameters) throws Exception {
         QueryJobConfiguration.Builder builder = QueryJobConfiguration.newBuilder(translatedQuery)
                 .setUseLegacySql(false);
 
@@ -118,8 +127,21 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             if (numAffectedRows != null) {
                 return numAffectedRows;
             }
-            //in other cases (SELECT), the number of affected rows is returned
-            return result.getTotalRows();
+            // Process SELECT query results
+            Schema schema = result.getSchema();
+            if (schema == null) {
+                LOG.debug("Query result schema is null. Unable to process the result set.");
+                return result.getTotalRows();
+            }
+            List<Map<String, Object>> rows = new ArrayList<>();
+            for (FieldValueList row : result.iterateAll()) {
+                Map<String, Object> rowMap = new HashMap<>();
+                for (Field field : schema.getFields()) {
+                    rowMap.put(field.getName(), row.get(field.getName()).getValue());
+                }
+                rows.add(rowMap);
+            }
+            return rows;
         } catch (JobException e) {
             throw new Exception("Query " + translatedQuery + " failed: " + e.getErrors(), e);
         } catch (BigQueryException e) {
