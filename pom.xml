@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -29,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.11.0-SNAPSHOT</version>
+    <version>4.11.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -90,7 +89,7 @@
         <connection>scm:git:http://gitbox.apache.org/repos/asf/camel.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/camel.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=camel.git;a=summary</url>
-        <tag>HEAD</tag>
+        <tag>camel-4.11.0</tag>
     </scm>
     <issueManagement>
         <system>jira</system>
@@ -118,7 +117,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2025-02-11T08:51:37Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2025-03-29T08:22:50Z</project.build.outputTimestamp>
 
         <cyclonedx-maven-plugin-version>2.9.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.7.0</flatten-maven-plugin-version>
