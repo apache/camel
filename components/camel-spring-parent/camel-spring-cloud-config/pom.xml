@@ -31,7 +31,7 @@
     <description>Camel Spring Cloud Config support</description>
 
     <properties>
-        <firstVersion>4.11.0</firstVersion>
+        <firstVersion>4.12.0</firstVersion>
     </properties>
 
     <dependencyManagement>

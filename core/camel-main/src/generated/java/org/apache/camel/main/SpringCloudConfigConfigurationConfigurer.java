@@ -48,7 +48,7 @@ public class SpringCloudConfigConfigurationConfigurer extends org.apache.camel.s
         case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         case "uris": target.setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -81,7 +81,7 @@ public class SpringCloudConfigConfigurationConfigurer extends org.apache.camel.s
         case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
         case "uris": return java.lang.String.class;
-        case "user": return java.lang.String.class;
+        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -115,7 +115,7 @@ public class SpringCloudConfigConfigurationConfigurer extends org.apache.camel.s
         case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();
         case "uris": return target.getUris();
-        case "user": return target.getUser();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

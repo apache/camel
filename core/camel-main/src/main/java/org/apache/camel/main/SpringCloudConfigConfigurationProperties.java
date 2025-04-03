@@ -46,7 +46,7 @@ public class SpringCloudConfigConfigurationProperties extends SpringCloudConfigC
     // --------------------------------------------------------------
 
     public SpringCloudConfigConfigurationProperties withUser(String user) {
-        setUser(user);
+        setUsername(user);
         return this;
     }
 

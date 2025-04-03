@@ -307,7 +307,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         File springCloudConfigConfig
                 = new File(camelApiDir, "src/main/java/org/apache/camel/vault/SpringCloudConfigConfiguration.java");
         try {
-           List<MainModel.MainOptionModel> model = parseConfigurationSource(springCloudConfigConfig);
+            List<MainModel.MainOptionModel> model = parseConfigurationSource(springCloudConfigConfig);
             model.forEach(m -> m.setName("camel.vault.springConfig." + m.getName()));
             data.addAll(model);
         } catch (Exception e) {

@@ -36,13 +36,12 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Provider class that retrieves configuration data from a Spring Cloud Config Server.
  * <p>
- * This class serves as a bridge between Apache Camel and Spring Cloud Config,
- * allowing Camel contexts to fetch their configuration from a centralized
- * Spring Cloud Config Server. It handles the authentication and connection details
+ * This class serves as a bridge between Apache Camel and Spring Cloud Config, allowing Camel contexts to fetch their
+ * configuration from a centralized Spring Cloud Config Server. It handles the authentication and connection details
  * necessary to communicate with the config server.
  * <p>
- * The configuration parameters are sourced from {@link SpringCloudConfigConfiguration}
- * which is obtained from the Camel context's vault configuration.
+ * The configuration parameters are sourced from {@link SpringCloudConfigConfiguration} which is obtained from the Camel
+ * context's vault configuration.
  *
  * @see org.apache.camel.vault.SpringCloudConfigConfiguration
  * @see org.springframework.cloud.config.client.ConfigServerConfigDataLoader
@@ -52,20 +51,18 @@ public class SpringConfigProvider {
     /**
      * Retrieves configuration data from a Spring Cloud Config Server for the given Camel context.
      * <p>
-     * This method sets up the necessary Spring Cloud Config components to connect to a
-     * config server using the parameters defined in the Camel context's Spring Cloud Config
-     * configuration. It handles authentication credentials, connection URIs, and other
-     * configuration properties.
+     * This method sets up the necessary Spring Cloud Config components to connect to a config server using the
+     * parameters defined in the Camel context's Spring Cloud Config configuration. It handles authentication
+     * credentials, connection URIs, and other configuration properties.
      *
-     * @param camelContext The Camel context for which to retrieve configuration data.
-     *                    This context is used to obtain configuration parameters and
-     *                    to identify the application name to be used when fetching
-     *                    configuration from the server.
-     * @return A {@link ConfigData} object containing the configuration properties retrieved
-     *         from the Spring Cloud Config Server.
+     * @param  camelContext The Camel context for which to retrieve configuration data. This context is used to obtain
+     *                      configuration parameters and to identify the application name to be used when fetching
+     *                      configuration from the server.
+     * @return              A {@link ConfigData} object containing the configuration properties retrieved from the
+     *                      Spring Cloud Config Server.
      *
-     * @see org.springframework.boot.context.config.ConfigData
-     * @see org.apache.camel.CamelContext
+     * @see                 org.springframework.boot.context.config.ConfigData
+     * @see                 org.apache.camel.CamelContext
      */
     public ConfigData getConfigData(CamelContext camelContext) {
         SpringCloudConfigConfiguration configuration = camelContext.getVaultConfiguration().springConfig();

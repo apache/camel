@@ -413,6 +413,6 @@
     { "name": "camel.vault.springConfig.refreshPeriod", "description": null, "sourceType": "org.apache.camel.vault.SpringCloudConfigConfiguration", "type": "integer", "javaType": "long", "defaultValue": 30000 },
     { "name": "camel.vault.springConfig.token", "description": null, "sourceType": "org.apache.camel.vault.SpringCloudConfigConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.springConfig.uris", "description": null, "sourceType": "org.apache.camel.vault.SpringCloudConfigConfiguration", "type": "string", "javaType": "java.lang.String", "defaultValue": "http:\/\/localhost:8888" },
-    { "name": "camel.vault.springConfig.user", "description": null, "sourceType": "org.apache.camel.vault.SpringCloudConfigConfiguration", "type": "string", "javaType": "java.lang.String", "defaultValue": "user" }
+    { "name": "camel.vault.springConfig.username", "description": null, "sourceType": "org.apache.camel.vault.SpringCloudConfigConfiguration", "type": "string", "javaType": "java.lang.String", "defaultValue": "user" }
   ]
 }
