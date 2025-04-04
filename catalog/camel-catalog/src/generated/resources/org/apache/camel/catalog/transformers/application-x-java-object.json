@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.jackson.transform.JsonPojoDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jackson",
-    "version": "4.11.0-SNAPSHOT"
+    "version": "4.12.0-SNAPSHOT"
   }
 }
 

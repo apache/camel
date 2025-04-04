@@ -9,6 +9,6 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-observability-services",
-    "version": "4.11.0-SNAPSHOT"
+    "version": "4.12.0-SNAPSHOT"
   }
 }

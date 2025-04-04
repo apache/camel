@@ -154,7 +154,7 @@ k8s-fetch-cert:
 
 k8s-export: k8s-fetch-cert
 	@$(CAMEL_CMD) kubernetes export platform-http-files/* tls/* \
-	--dep=org.apache.camel:camel-oauth:4.11.0-SNAPSHOT \
+	--dep=org.apache.camel:camel-oauth:4.12.0-SNAPSHOT \
 	--gav=examples:platform-http-oauth:1.0.0 \
 	--property=camel.oauth.base-uri=https://keycloak.local/kc/realms/camel \
 	--property=camel.oauth.redirect-uri=http://127.0.0.1:8080/auth \

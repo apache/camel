@@ -12,7 +12,7 @@
     "metadata": { "protocol": "http" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "4.11.0-SNAPSHOT",
+    "version": "4.12.0-SNAPSHOT",
     "scheme": "http",
     "extendsScheme": "",
     "alternativeSchemes": "http,https",

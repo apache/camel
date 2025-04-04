@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-files",
-    "version": "4.11.0-SNAPSHOT",
+    "version": "4.12.0-SNAPSHOT",
     "scheme": "azure-files",
     "extendsScheme": "file",
     "syntax": "azure-files:account\/share",

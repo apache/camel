@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-neo4j",
-    "version": "4.11.0-SNAPSHOT",
+    "version": "4.12.0-SNAPSHOT",
     "scheme": "neo4j",
     "extendsScheme": "",
     "syntax": "neo4j:name",

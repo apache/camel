@@ -141,7 +141,7 @@ $ curl http://localhost:8080/q/health?data=true
                  "context.name": "camel-1",
                  "context.phase": "5",
                  "context.status": "Started",
-                 "context.version": "4.11.0-SNAPSHOT",
+                 "context.version": "4.12.0-SNAPSHOT",
                  "failure.count": "0",
                  "invocation.count": "2",
                  "invocation.time": "2025-03-20T09:43:01.870896479+01:00[Europe/Madrid]",

@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.aws2.ddb.transform.Ddb2JsonDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ddb",
-    "version": "4.11.0-SNAPSHOT"
+    "version": "4.12.0-SNAPSHOT"
   }
 }
 

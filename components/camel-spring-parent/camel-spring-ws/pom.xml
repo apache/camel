@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-parent</artifactId>
-        <version>4.11.0-SNAPSHOT</version>
+        <version>4.12.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-ws</artifactId>
