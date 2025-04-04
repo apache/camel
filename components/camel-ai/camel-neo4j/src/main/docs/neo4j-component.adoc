@@ -4,7 +4,7 @@
 :artifactid: camel-neo4j
 :description: Perform operations on the Neo4j Graph Database
 :since: 4.10
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -291,5 +291,3 @@ NOTE: The retrieved embeddings must be ingested in Neo4j as LangChain4j embeddin
                         .transform(
                                 new DataType("neo4j:rag"));
 ----
-
-

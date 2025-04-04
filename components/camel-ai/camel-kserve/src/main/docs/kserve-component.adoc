@@ -4,7 +4,7 @@
 :artifactid: camel-kserve
 :description: Provide access to AI model servers with the KServe standard to run inference with remote models
 :since: 4.10
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

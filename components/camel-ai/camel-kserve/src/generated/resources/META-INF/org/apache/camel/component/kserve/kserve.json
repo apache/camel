@@ -8,7 +8,7 @@
     "firstVersion": "4.10.0",
     "label": "ai",
     "javaType": "org.apache.camel.component.kserve.KServeComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kserve",
     "version": "4.12.0-SNAPSHOT",
