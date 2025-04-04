@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Ordered;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.health.HealthCheckResultBuilder;
 
 /**
@@ -50,16 +51,36 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
         builder.unknown();
 
         if (getCamelContext() != null) {
-            builder.detail("context.name", getCamelContext().getName());
-            builder.detail("context.version", getCamelContext().getVersion());
-            builder.detail("context.status", getCamelContext().getStatus().name());
-            builder.detail("context.phase", getCamelContext().getCamelContextExtension().getStatusPhase());
+            ServiceStatus status = getCamelContext().getStatus();
+            byte phase = getCamelContext().getCamelContextExtension().getStatusPhase();
+            String name = getCamelContext().getName();
 
-            if (getCamelContext().getStatus().isStarted()) {
-                builder.up();
-            } else {
-                // not ready also during graceful shutdown
-                builder.down();
+            builder.detail("context.name", name);
+            builder.detail("context.version", getCamelContext().getVersion());
+            builder.detail("context.status", status);
+            builder.detail("context.phase", phase);
+
+            switch (status) {
+                case Initializing:
+                case Initialized:
+                case Starting:
+                    builder.message(
+                            "Camel Context '" + name + "' is starting. Status: '" + status + "', Phase: '" + phase
+                                    + "'. Please wait...");
+                    builder.down();
+                    break;
+                case Started:
+                    builder.up();
+                case Stopping:
+                case Stopped:
+                case Suspending:
+                case Suspended:
+                    builder.message("Camel Context '" + name + "' is shutting down. Status: '" + status + "', Phase: '" + phase
+                                    + "'. Please check the debug log");
+                    builder.down();
+                default:
+                    builder.message("Camel Context '" + name + "' has unknown Status: " + status);
+                    builder.down();
             }
         }
     }
