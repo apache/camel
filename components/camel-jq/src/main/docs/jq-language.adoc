@@ -50,6 +50,8 @@ The camel-jq adds the following functions:
 * `header`: allow accessing the Message header in a JQ expression.
 * `property`: allow accessing the Exchange property in a JQ expression.
 * `constant`: allow using a constant value as-is in a JQ expression.
+* `variable`: allow accessing the Exchange variable in a JQ expression.
+* `body`: the message body as a textual value.
 
 For example, to set the property foo with the value from the Message header `MyHeader':
 
@@ -80,6 +82,17 @@ from("direct:start")
         .jq(".foo = constant(\"Hello World\")")
     .to("mock:result");
 ----
+
+Or using an exchange variable:
+
+[source, java]
+----
+from("direct:start")
+    .transform()
+        .jq(".foo = variable(\"MyVar\")")
+    .to("mock:result");
+----
+
 
 === Transforming a JSon message
 
