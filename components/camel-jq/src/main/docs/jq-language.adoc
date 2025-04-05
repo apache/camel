@@ -93,6 +93,17 @@ from("direct:start")
     .to("mock:result");
 ----
 
+The `header`, `property` and `variable` functions also support returning a default value in case the key does not exist,
+as shown in the following:
+
+[source, java]
+----
+from("direct:start")
+    .transform()
+        .jq(".foo = header(\"MyHeader\", \"MyDefaultValue\")")
+    .to("mock:result");
+----
+
 
 === Transforming a JSon message
 
