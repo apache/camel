@@ -55,6 +55,8 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "sqsqueueurl":
         case "sqsQueueUrl": target.setSqsQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "uriendpointoverride":
@@ -100,6 +102,8 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "secrets": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "sqsqueueurl":
         case "sqsQueueUrl": return java.lang.String.class;
         case "uriendpointoverride":
@@ -146,6 +150,8 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "secretkey":
         case "secretKey": return target.getSecretKey();
         case "secrets": return target.getSecrets();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "sqsqueueurl":
         case "sqsQueueUrl": return target.getSqsQueueUrl();
         case "uriendpointoverride":

@@ -42,6 +42,8 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -69,6 +71,8 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "namespace": return java.lang.String.class;
         case "port": return java.lang.String.class;
         case "scheme": return java.lang.String.class;
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
         default: return null;
         }
@@ -97,6 +101,8 @@ public class HashicorpVaultConfigurationConfigurer extends org.apache.camel.supp
         case "namespace": return target.getNamespace();
         case "port": return target.getPort();
         case "scheme": return target.getScheme();
+        case "springcloudconfigconfiguration":
+        case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();
         default: return null;
         }
