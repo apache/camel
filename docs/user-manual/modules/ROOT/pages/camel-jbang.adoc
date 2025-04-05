@@ -1501,9 +1501,11 @@ camel stop 62506
 Stopping running Camel integration (pid: 62506)
 ----
 
-TIP: You do not have to type the full name, as the stop command will match using integrations
+NOTE: You do not have to type the full name, as the stop command will match using integrations
 that start with the input, for example, you can do `camel stop d` to stop all integrations
-starting with d.
+starting with d. If you have multiple integrations running with similar name such as `dude`, `dude2`, then
+if you type `camel stop dude` then Camel will stop both integrations. However, if you want to only
+stop a single integration then either stop via PID or use `camel stop dude!` with the `!` at the end.
 
 To stop all integrations, then execute without any pid:
 

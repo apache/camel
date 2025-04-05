@@ -44,8 +44,11 @@ abstract class ProcessBaseCommand extends CamelCommand {
         if (name.matches("\\d+")) {
             return List.of(Long.parseLong(name));
         } else {
-            // lets be open and match all that starts with this pattern
-            if (!name.endsWith("*")) {
+            if (name.endsWith("!")) {
+                // exclusive this name only
+                name = name.substring(0, name.length() - 1);
+            } else if (!name.endsWith("*")) {
+                // lets be open and match all that starts with this pattern
                 name = name + "*";
             }
         }
