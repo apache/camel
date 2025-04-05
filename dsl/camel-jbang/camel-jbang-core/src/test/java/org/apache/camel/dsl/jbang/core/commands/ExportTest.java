@@ -37,6 +37,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -107,6 +108,26 @@ class ExportTest {
             Assertions.assertTrue(containsDependency(model.getDependencyManagement().getDependencies(),
                     "org.apache.camel.springboot", "camel-spring-boot-bom", "4.8.3"));
         }
+    }
+
+    @Test
+    public void shouldExportQuarkusCustomParameters() throws Exception {
+        String rhrepo = "https://maven.repository.redhat.com/ga";
+        String rhgroup = "com.redhat.quarkus.platform";
+        String rhver = "3.15.3.SP2-redhat-00001";
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--quarkus-group-id=" + rhgroup, "--quarkus-version=" + rhver, "--repos=" + rhrepo);
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+        Assertions.assertEquals(rhgroup, model.getProperties().getProperty("quarkus.platform.group-id"));
+        Assertions.assertEquals(rhver, model.getProperties().getProperty("quarkus.platform.version"));
+        Assertions.assertEquals(1, model.getRepositories().stream().filter(r -> r.getUrl().equals(rhrepo)).count());
     }
 
     @ParameterizedTest
