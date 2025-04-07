@@ -71,6 +71,7 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
                     break;
                 case Started:
                     builder.up();
+                    break;
                 case Stopping:
                 case Stopped:
                 case Suspending:
@@ -78,6 +79,7 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
                     builder.message("Camel Context '" + name + "' is shutting down. Status: '" + status + "', Phase: '" + phase
                                     + "'. Please check the debug log");
                     builder.down();
+                    break;
                 default:
                     builder.message("Camel Context '" + name + "' has unknown Status: " + status);
                     builder.down();
