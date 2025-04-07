@@ -374,7 +374,7 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.17</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockito-version>5.16.1</mockito-version>
+        <mockito-version>5.17.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.4.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
