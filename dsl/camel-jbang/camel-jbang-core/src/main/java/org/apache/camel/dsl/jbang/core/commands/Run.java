@@ -1002,9 +1002,7 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies = this.dependencies;
-        if (!this.exportRun) {
-            eq.addDependencies("camel:cli-connector");
-        }
+        eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
         eq.quiet = true;
@@ -1018,7 +1016,7 @@ public class Run extends CamelCommand {
 
         // run export
         int exit = eq.export();
-        if (exit != 0 || this.exportRun) {
+        if (exit != 0) {
             return exit;
         }
 
@@ -1076,25 +1074,16 @@ public class Run extends CamelCommand {
             eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
         }
         eq.dependencies.addAll(this.dependencies);
-        if (!this.exportRun) {
-            eq.addDependencies("camel:cli-connector");
-        }
+        eq.addDependencies("camel:cli-connector");
         if (this.dev) {
             // hot-reload of spring-boot
             eq.addDependencies("mvn:org.springframework.boot:spring-boot-devtools");
         }
         eq.fresh = this.fresh;
         eq.download = this.download;
-        if (logging) {
-            eq.quiet = false;
-            eq.logging = true;
-            eq.loggingLevel = loggingLevel;
-            eq.verbose = verbose;
-        } else {
-            eq.quiet = true;
-            eq.logging = false;
-            eq.loggingLevel = "off";
-        }
+        eq.quiet = true;
+        eq.logging = false;
+        eq.loggingLevel = "off";
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
         eq.applicationProperties = this.property;
@@ -1103,7 +1092,7 @@ public class Run extends CamelCommand {
 
         // run export
         int exit = eq.export();
-        if (exit != 0 || exportRun) {
+        if (exit != 0) {
             return exit;
         }
 
