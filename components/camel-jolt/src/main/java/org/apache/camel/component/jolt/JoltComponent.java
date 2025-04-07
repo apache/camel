@@ -44,6 +44,7 @@ public class JoltComponent extends DefaultComponent {
         answer.setAllowTemplateFromHeader(allowTemplateFromHeader);
         answer.setContentCache(cache);
         answer.setTransform(transform);
+        setProperties(answer, parameters);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
@@ -71,7 +72,7 @@ public class JoltComponent extends DefaultComponent {
 
     /**
      * Whether to allow to use resource template from header or not (default false).
-     *
+     * <p>
      * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
      * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
