@@ -418,7 +418,7 @@
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
         <plexus-utils-version>4.0.2</plexus-utils-version>
-        <plexus-xml-version>3.0.1</plexus-xml-version>
+        <plexus-xml-version>4.1.0</plexus-xml-version>
         <pooled-jms-version>3.1.7</pooled-jms-version>
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
