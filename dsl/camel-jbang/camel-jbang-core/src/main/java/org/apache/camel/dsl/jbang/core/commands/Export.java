@@ -43,6 +43,11 @@ public class Export extends ExportBaseCommand {
     }
 
     @Override
+    public boolean disarrangeLogging() {
+        return false; // export logs specially to a camel-export.log
+    }
+
+    @Override
     protected Integer export() throws Exception {
         // application.properties
         doLoadAndInitProfileProperties(new File("application.properties"));
@@ -65,15 +70,16 @@ public class Export extends ExportBaseCommand {
             gav = "org.example.project:%s:%s".formatted(pn, getVersion());
         }
 
+        int answer;
         switch (runtime) {
             case springBoot -> {
-                return export(new ExportSpringBoot(getMain()));
+                answer = export(new ExportSpringBoot(getMain()));
             }
             case quarkus -> {
-                return export(new ExportQuarkus(getMain()));
+                answer = export(new ExportQuarkus(getMain()));
             }
             case main -> {
-                return export(new ExportCamelMain(getMain()));
+                answer = export(new ExportCamelMain(getMain()));
             }
             default -> {
                 printer().printErr("Unknown runtime: " + runtime);
@@ -81,6 +87,10 @@ public class Export extends ExportBaseCommand {
             }
         }
 
+        if (answer == 0 && !quiet) {
+            printer().println("Project export successful!");
+        }
+        return answer;
     }
 
     private void doLoadAndInitProfileProperties(File file) throws Exception {
@@ -160,6 +170,7 @@ public class Export extends ExportBaseCommand {
         cmd.excludes = this.excludes;
         cmd.ignoreLoadingError = this.ignoreLoadingError;
         cmd.lazyBean = this.lazyBean;
+        cmd.verbose = this.verbose;
         cmd.applicationProperties = this.applicationProperties;
         // run export
         return cmd.export();
