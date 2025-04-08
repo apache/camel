@@ -83,6 +83,9 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
 @Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true)
 public class Run extends CamelCommand {
 
+    // special template for running camel-jbang in docker containers
+    public static final String RUN_JAVA_SH = "classpath:templates/run-java.sh";
+
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
     private static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
@@ -501,8 +504,10 @@ public class Run extends CamelCommand {
             files.add(0, codeFile);
         }
 
+        boolean autoDetectFiles = files.isEmpty() || RUN_JAVA_SH.equals(files.get(0));
+
         // if no specific file to run then try to auto-detect
-        if (!empty && files.isEmpty()) {
+        if (!empty && autoDetectFiles) {
             if (sourceDir != null) {
                 // silent-run then auto-detect all initial files for source-dir
                 String[] allFiles = new File(sourceDir).list();

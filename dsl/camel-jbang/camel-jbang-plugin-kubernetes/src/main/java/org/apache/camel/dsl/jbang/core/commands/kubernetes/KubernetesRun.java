@@ -399,8 +399,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 true,
                 (quiet || output != null),
-                false,
-                "off");
+                true,
+                "info",
+                verbose);
         KubernetesExport export = new KubernetesExport(getMain(), configurer);
 
         export.image = image;

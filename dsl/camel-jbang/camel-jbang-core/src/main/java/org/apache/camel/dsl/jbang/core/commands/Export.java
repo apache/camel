@@ -49,6 +49,14 @@ public class Export extends ExportBaseCommand {
 
     @Override
     protected Integer export() throws Exception {
+        int answer = doExport();
+        if (answer == 0 && !quiet) {
+            printer().println("Project export successful!");
+        }
+        return answer;
+    }
+
+    protected Integer doExport() throws Exception {
         // application.properties
         doLoadAndInitProfileProperties(new File("application.properties"));
         if (profile != null) {
@@ -70,27 +78,21 @@ public class Export extends ExportBaseCommand {
             gav = "org.example.project:%s:%s".formatted(pn, getVersion());
         }
 
-        int answer;
         switch (runtime) {
             case springBoot -> {
-                answer = export(new ExportSpringBoot(getMain()));
+                return export(new ExportSpringBoot(getMain()));
             }
             case quarkus -> {
-                answer = export(new ExportQuarkus(getMain()));
+                return export(new ExportQuarkus(getMain()));
             }
             case main -> {
-                answer = export(new ExportCamelMain(getMain()));
+                return export(new ExportCamelMain(getMain()));
             }
             default -> {
                 printer().printErr("Unknown runtime: " + runtime);
                 return 1;
             }
         }
-
-        if (answer == 0 && !quiet) {
-            printer().println("Project export successful!");
-        }
-        return answer;
     }
 
     private void doLoadAndInitProfileProperties(File file) throws Exception {
