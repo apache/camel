@@ -3770,7 +3770,7 @@ camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:cli-c
 
 When exporting then Camel CLI performs a set of tasks which can go wrong.
 To see more activity during exporting you can turn on both `--verbose` and `--logging` that
-prints more information to the console.
+prints more information to the console. You can also set `--logging-level=DEBUG` to output even more details.
 
 If your Camel application cannot be exported, for example due to some custom Java code, you can
 try to export with `--ignore-loading-error`.
