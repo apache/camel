@@ -175,6 +175,7 @@ public class KubernetesExport extends Export {
         quiet = configurer.quiet;
         logging = configurer.logging;
         loggingLevel = configurer.loggingLevel;
+        verbose = configurer.verbose;
     }
 
     public Integer export() throws Exception {
@@ -328,7 +329,7 @@ public class KubernetesExport extends Export {
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         // Run export
-        int exit = super.export();
+        int exit = super.doExport();
         if (exit != 0) {
             printer().println("Project export failed");
             return exit;
@@ -541,6 +542,7 @@ public class KubernetesExport extends Export {
             boolean download,
             boolean quiet,
             boolean logging,
-            String loggingLevel) {
+            String loggingLevel,
+            boolean verbose) {
     }
 }
