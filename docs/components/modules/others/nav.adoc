@@ -2,6 +2,7 @@
 // make edits in docs/*nav.adoc.template files instead
 
 * xref:others:index.adoc[Miscellaneous Components]
+*** xref:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
 ** xref:attachments.adoc[Attachments]
 ** xref:aws-xray.adoc[AWS XRay]
 ** xref:azure-schema-registry.adoc[Azure Schema Registry]
