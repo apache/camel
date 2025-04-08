@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +29,12 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.util.ReflectionHelper;
 import org.cometd.client.BayeuxClient;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.REPLAY_EXTENSION;
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.determineReplayIdFor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.cometd.client.transport.ClientTransport.MAX_NETWORK_DELAY_OPTION;
@@ -187,4 +190,38 @@ public class SubscriptionHelperTest {
         MatcherAssert.assertThat(longPollingTimeout, instanceOf(Integer.class));
         MatcherAssert.assertThat((Integer) longPollingTimeout, greaterThan(110000));
     }
+
+    @Test
+    public void fallbackReplyId() throws Exception {
+        final SalesforceEndpointConfig componentConfig = new SalesforceEndpointConfig();
+        componentConfig.setFallBackReplayId(-2L);
+
+        final SalesforceEndpointConfig endpointConfig = new SalesforceEndpointConfig();
+        endpointConfig.setDefaultReplayId(-1L);
+        endpointConfig.setInitialReplayIdMap(Collections.singletonMap("my-topic-1", 2L));
+
+        final SalesforceComponent component = mock(SalesforceComponent.class);
+        when(component.getConfig()).thenReturn(componentConfig);
+
+        final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
+        when(endpoint.getReplayId()).thenReturn(null);
+        when(endpoint.getComponent()).thenReturn(component);
+        when(endpoint.getConfiguration()).thenReturn(endpointConfig);
+
+        assertEquals(Optional.of(2L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 2, from initial reply id map");
+
+        REPLAY_EXTENSION.setReplayIdIfAbsent("my-topic-1", 3L);
+        REPLAY_EXTENSION.setReplayIdIfAbsent("my-topic-1", 4L);
+
+        // should still be 3L
+        Field f = REPLAY_EXTENSION.getClass().getDeclaredField("dataMap");
+        Map m = (Map) ReflectionHelper.getField(f, REPLAY_EXTENSION);
+        assertEquals(3L, m.get("my-topic-1"));
+
+        // there is some subscription error due to INVALID_REPLAY_ID_PATTERN so we force setting another reply id
+        REPLAY_EXTENSION.setReplayId("my-topic-1", -2L);
+        assertEquals(-2L, m.get("my-topic-1"));
+    }
+
 }
