@@ -3,7 +3,7 @@
     <extension>
         <groupId>org.l2x6.cq</groupId>
         <artifactId>cq-alias-fastinstall-quickly-extension</artifactId>
-        <version>4.17.2</version>
+        <version>4.17.3</version>
     </extension>
     <extension>
         <groupId>com.tisonkun.os</groupId>
