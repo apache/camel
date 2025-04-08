@@ -127,11 +127,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     protected String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" },
+    @CommandLine.Option(names = { "--maven-central-enabled" }, defaultValue = "true",
                         description = "Whether downloading JARs from Maven Central repository is enabled")
     protected boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true",
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     protected boolean mavenApacheSnapshotEnabled = true;
 
@@ -198,7 +198,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
     protected String exportDir;
 
-    @CommandLine.Option(names = { "--clean-dir" },
+    @CommandLine.Option(names = { "--clean-dir" }, defaultValue = "false",
                         description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
     protected boolean cleanExportDir;
 
@@ -210,7 +210,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                                       + "Use false to turn off and not include package name in the Java source files.")
     protected String packageName;
 
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    @CommandLine.Option(names = { "--fresh" }, defaultValue = "false",
+                        description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
     @CommandLine.Option(names = { "--download" }, defaultValue = "true",
@@ -226,14 +227,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String[] applicationProperties;
 
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
+                        description = "Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory)")
     protected boolean logging;
 
     @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
                         description = "Will be quiet, only print when error occurs")
     protected boolean quiet;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" },
+    @CommandLine.Option(names = { "--verbose" }, defaultValue = "false",
+                        description = "Verbose output of startup activity (dependency resolution and downloading")
+    protected boolean verbose;
+
+    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
@@ -242,9 +247,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected boolean lazyBean = true;
 
     protected boolean symbolicLink;     // copy source files using symbolic link
-
     protected boolean javaLiveReload; // reload java codes in dev
-
     public String pomTemplateName;   // support for specialised pom templates
 
     public ExportBaseCommand(CamelJBangMain main) {
@@ -255,9 +258,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     public Integer doCall() throws Exception {
         // configure logging first
         if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, false, false, false, true, null, null);
+            // log to console instead of camel-export.log file
+            RuntimeUtil.configureLog(loggingLevel, false, false, false, false, null, null);
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, true, null, null);
+            RuntimeUtil.configureLog(loggingLevel, false, false, false, true, null, null);
         }
 
         if (!quiet) {
@@ -319,7 +323,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         return null;
     }
 
-    protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean) throws Exception {
+    protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.dependencies = dependencies;
@@ -338,9 +342,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.lazyBean = lazyBean;
         run.property = applicationProperties;
         run.repositories = repositories;
-        run.logging = false;
-        run.loggingLevel = "off";
-
+        run.verbose = verbose;
+        run.logging = logging;
         return run.runExport(ignoreLoadingError);
     }
 
