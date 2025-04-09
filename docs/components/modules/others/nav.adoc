@@ -48,6 +48,7 @@
 ** xref:resourceresolver-github.adoc[Resourceresolver Github]
 ** xref:rxjava.adoc[RxJava]
 ** xref:shiro.adoc[Shiro]
+*** xref:spring-cloud-config.adoc[Spring Cloud Config]
 ** xref:spring-main.adoc[Spring Main]
 ** xref:spring-security.adoc[Spring Security]
 ** xref:spring-xml.adoc[Spring XML]

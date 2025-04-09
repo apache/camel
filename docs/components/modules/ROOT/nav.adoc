@@ -311,7 +311,6 @@
 ** xref:splunk-hec-component.adoc[Splunk HEC]
 ** xref:spring-summary.adoc[Spring]
 *** xref:spring-batch-component.adoc[Spring Batch]
-*** xref:spring-cloud-config-component.adoc[Spring Cloud Config]
 *** xref:spring-event-component.adoc[Spring Event]
 *** xref:spring-jdbc-component.adoc[Spring JDBC]
 *** xref:spring-ldap-component.adoc[Spring LDAP]

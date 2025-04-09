@@ -2,11 +2,10 @@
 :doctitle: Spring Cloud Config
 :shortname: spring-cloud-config
 :artifactid: camel-spring-cloud-config
-:description: Retrieve configurations from a Spring Cloud Config Server.
-:since: 4.11.0
-:supportlevel: Stable
+:description: Camel Spring Cloud Config support
+:since: 4.12
+:supportlevel: Preview
 :tabs-sync-option:
-:component-header: Only PropertyFunctions is supported
 //Manually maintained attributes
 :group: Spring
 
@@ -20,6 +19,7 @@ This component includes a Properties Function implementation that allows Apache 
 directly from Spring Cloud Config.
 
 == Components
+
 This component provides the following features:
 
 - Property resolution from Spring Cloud Config via property placeholders
@@ -39,11 +39,11 @@ To use the Spring Cloud Config component in your project, add the following Mave
 ----
 
 == Property Function
-=== Overview
 
 This component provides a PropertiesFunction implementation that resolves property placeholders with the prefix spring-config: using values from a Spring Cloud Config Server.
 
 === Configuration
+
 The integration with Spring Cloud Config is configured through the Camel context's vault configuration. The following properties can be set:
 
 [options="header"]
@@ -60,9 +60,10 @@ The integration with Spring Cloud Config is configured through the Camel context
 These properties should be configured using the SpringCloudConfigConfiguration on the Camel context.
 
 === Usage
+
 To use the Spring Cloud Config property function in your Camel routes or configuration, use the following syntax:
 
-[source,java]
+[source,text]
 ----
 {{spring-config:myProperty}}
 ----
@@ -70,7 +71,8 @@ To use the Spring Cloud Config property function in your Camel routes or configu
 The property function will resolve `myProperty` from the Spring Cloud Config Server.
 
 === Example
-A simple example of using the Spring Cloud Config property function in a Camel route, 
+
+A simple example of using the Spring Cloud Config property function in a Camel route,
 given that a Spring Cloud Config Server is running at `config-server:8888` and Spring Security is enabled on the server:
 
 [source,properties]
@@ -85,12 +87,12 @@ camel.vault.spring-config.label=latest
 [source,java]
 ----
 from("direct")
-.setHeader("MyHeader", simple("{{spring-config:custom.property}}"))
-.to("log");
+  .setHeader("MyHeader", simple("{{spring-config:custom.property}}"))
+  .to("log");
 ----
 
 == Automatic Configuration Reload
-=== Overview
+
 The component includes a periodic task that monitors Spring Cloud Config properties for changes and triggers a Camel context reload when property values have changed.
 
 == See Also
