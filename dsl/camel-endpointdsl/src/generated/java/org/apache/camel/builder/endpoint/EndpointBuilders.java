@@ -355,6 +355,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.WeaviateVectorDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory,
