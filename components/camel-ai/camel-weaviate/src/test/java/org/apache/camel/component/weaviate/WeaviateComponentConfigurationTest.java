@@ -38,7 +38,7 @@ public class WeaviateComponentConfigurationTest extends CamelTestSupport {
         WeaviateVectorDbComponent component = context.getComponent("weaviate", WeaviateVectorDbComponent.class);
         WeaviateVectorDbEndpoint endpoint = (WeaviateVectorDbEndpoint) component
                 .createEndpoint(
-                        "pinecone://test-collection?host=localhost:7979&scheme=http&proxyHost=localhost&proxyPort=7777&proxyScheme=https&apiKey=foobar123");
+                        "weaviate://test-collection?host=localhost:7979&scheme=http&proxyHost=localhost&proxyPort=7777&proxyScheme=https&apiKey=foobar123");
         assertEquals("localhost:7979", endpoint.getConfiguration().getHost());
         assertEquals("http", endpoint.getConfiguration().getScheme());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());

@@ -35,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 
 public class WeaviateVectorDbProducer extends DefaultProducer {
     private WeaviateClient client;
@@ -104,7 +105,13 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void createCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+
+        String collectionName;
+        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        } else {
+            collectionName = getEndpoint().getCollection();
+        }
 
         WeaviateClass collection = WeaviateClass.builder().className(collectionName).build();
 
@@ -118,7 +125,6 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     private void create(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
-        String indexId = in.getHeader(WeaviateVectorDb.Headers.INDEX_ID, String.class);
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
@@ -145,7 +151,7 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     private void updateById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
         List elements = in.getMandatoryBody(List.class);
-        String indexId = in.getHeader(WeaviateVectorDb.Headers.INDEX_ID, String.class);
+        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDb.Headers.INDEX_ID, String.class);
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
@@ -170,9 +176,16 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void deleteById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
-        String indexId = in.getHeader(WeaviateVectorDb.Headers.INDEX_ID, String.class);
+        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDb.Headers.INDEX_ID, String.class);
 
+        // Check the headers for a collection name.   Use the endpoint's
+        // collection name by default
+        String collectionName;
+        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        } else {
+            collectionName = getEndpoint().getCollection();
+        }
         Result<Boolean> result = this.client.data().deleter()
                 .withClassName(collectionName)
                 .withID(indexId)
@@ -182,7 +195,13 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void deleteCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+
+        String collectionName;
+        if (in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class) != null) {
+            collectionName = in.getHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, String.class);
+        } else {
+            collectionName = getEndpoint().getCollection();
+        }
 
         Result<Boolean> result = this.client.schema().classDeleter()
                 .withClassName(collectionName)
@@ -246,7 +265,7 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
     private void queryById(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String indexId = in.getHeader(WeaviateVectorDb.Headers.INDEX_ID, String.class);
+        String indexId = ExchangeHelper.getMandatoryHeader(exchange, WeaviateVectorDb.Headers.INDEX_ID, String.class);
 
         // Check the headers for a collection name.   Use the endpoint's
         // collection name by default
