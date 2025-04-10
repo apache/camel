@@ -20,12 +20,42 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.converter.custom.MyBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ConvertBodyAllowNullTest extends ContextTestSupport {
 
-    // TODO: custom type converter with allow null
+    @Test
+    public void testConvertMyBean() throws Exception {
+        MyBean custom = context.getTypeConverter().convertTo(MyBean.class, "1:2");
+        Assertions.assertNotNull(custom);
+
+        custom = context.getTypeConverter().convertTo(MyBean.class, "");
+        Assertions.assertNull(custom);
+    }
+
+    @Test
+    public void testCustomConvertToAllowNullOptional() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        result.message(0).body().isInstanceOf(MyBean.class);
+
+        template.sendBody("direct:custom-optional", "1:2");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testCustomConvertToAllowNull() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        result.message(0).body().isNull();
+
+        template.sendBody("direct:custom-mandatory", "");
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Test
     public void testConvertAllowNull() throws Exception {
@@ -143,6 +173,9 @@ public class ConvertBodyAllowNullTest extends ContextTestSupport {
 
                 from("direct:var-optional").convertVariableTo("foo", Integer.class, false).to("mock:result");
                 from("direct:var-mandatory").convertVariableTo("foo", Integer.class).to("mock:result");
+
+                from("direct:custom-optional").convertBodyTo(MyBean.class, false).to("mock:result");
+                from("direct:custom-mandatory").convertBodyTo(MyBean.class).to("mock:result");
             }
         };
     }
