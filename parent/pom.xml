@@ -368,7 +368,7 @@
         <micrometer-tracing-version>1.4.4</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.1.2</microprofile-fault-tolerance-version>
-        <milvus-client-version>2.5.6</milvus-client-version>
+        <milvus-client-version>2.5.7</milvus-client-version>
         <mina-version>2.2.4</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
