@@ -449,7 +449,7 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.5</saxon-version>
         <scala-datasonnet-version>2.13.16</scala-datasonnet-version>
-        <shiro-version>2.0.2</shiro-version>
+        <shiro-version>2.0.3</shiro-version>
         <sisu-maven-plugin-version>0.9.0.M3</sisu-maven-plugin-version>
         <slack-api-model-version>1.45.3</slack-api-model-version>
         <slf4j-api-version>2.0.17</slf4j-api-version>
