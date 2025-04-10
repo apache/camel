@@ -54,7 +54,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
     public <T> T convertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {
         try {
             Object obj = doConvertTo(from, to, exchange, value);
-            if (obj == Void.class) {;
+            if (obj == Void.class) {
                 return null;
             } else {
                 return (T) obj;
