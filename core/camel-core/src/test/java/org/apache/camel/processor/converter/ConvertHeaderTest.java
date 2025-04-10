@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -118,10 +119,10 @@ public class ConvertHeaderTest extends ContextTestSupport {
     public void testConvertToIntegerNotMandatory() throws Exception {
         // mandatory should fail
         try {
-            template.sendBodyAndHeader("direct:start", null, "foo", Double.NaN);
+            template.sendBodyAndHeader("direct:start", null, "foo", "xxx");
             fail();
         } catch (Exception e) {
-            assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            assertIsInstanceOf(TypeConversionException.class, e.getCause());
         }
 
         // optional should cause null body
