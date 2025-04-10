@@ -228,10 +228,10 @@ public class SubscriptionHelper extends ServiceSupport {
         } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {
             abort = false;
             long fallBackReplayId
-                    = ((SalesforceEndpoint) firstConsumer.getEndpoint()).getConfiguration().getFallBackReplayId();
+                    = firstConsumer.getEndpoint().getConfiguration().getFallBackReplayId();
             LOG.warn(error);
             LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
-            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, fallBackReplayId);
+            REPLAY_EXTENSION.setReplayId(channelName, fallBackReplayId);
             for (var consumer : consumers) {
                 subscribe(consumer);
             }
