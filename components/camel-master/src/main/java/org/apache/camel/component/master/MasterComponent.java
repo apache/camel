@@ -166,7 +166,7 @@ public class MasterComponent extends DefaultComponent {
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (backOffThreadPool == null) {
+        if (backOffThreadPool != null) {
             getCamelContext().getExecutorServiceManager().shutdown(backOffThreadPool);
             backOffThreadPool = null;
         }
