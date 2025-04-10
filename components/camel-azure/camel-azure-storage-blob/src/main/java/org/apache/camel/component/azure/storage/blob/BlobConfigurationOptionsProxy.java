@@ -212,6 +212,15 @@ public class BlobConfigurationOptionsProxy {
         return getOption(BlobExchangeHeaders::getChangeFeedContextFromHeaders, configuration::getChangeFeedContext, exchange);
     }
 
+    public boolean getLeaseBlob(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getLeaseBlobFromHeaders, configuration::isLeaseBlob, exchange);
+    }
+
+    public Integer getLeaseDurationInSeconds(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getLeaseDurationInSecondsFromHeaders, configuration::getLeaseDurationInSeconds,
+                exchange);
+    }
+
     public BlobConfiguration getConfiguration() {
         return configuration;
     }

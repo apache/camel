@@ -201,6 +201,43 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Sets whether a lease should be acquired when accessing the blob. When
+         * set to true, the component will acquire a lease before performing
+         * blob operations that require exclusive access.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param leaseBlob the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder leaseBlob(boolean leaseBlob) {
+            doSetProperty("leaseBlob", leaseBlob);
+            return this;
+        }
+    
+        
+        /**
+         * Sets the lease duration in seconds. Use -1 for infinite or a value
+         * between 15 and 60 for fixed leases.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param leaseDurationInSeconds the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder leaseDurationInSeconds(java.lang.Integer leaseDurationInSeconds) {
+            doSetProperty("leaseDurationInSeconds", leaseDurationInSeconds);
+            return this;
+        }
+    
         /**
          * Specifies the maximum number of blobs to return, including all
          * BlobPrefix elements. If the request does not specify
@@ -720,6 +757,8 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "credentialType": getOrCreateConfiguration((BlobComponent) component).setCredentialType((org.apache.camel.component.azure.storage.blob.CredentialType) value); return true;
             case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
+            case "leaseBlob": getOrCreateConfiguration((BlobComponent) component).setLeaseBlob((boolean) value); return true;
+            case "leaseDurationInSeconds": getOrCreateConfiguration((BlobComponent) component).setLeaseDurationInSeconds((java.lang.Integer) value); return true;
             case "maxResultsPerPage": getOrCreateConfiguration((BlobComponent) component).setMaxResultsPerPage((java.lang.Integer) value); return true;
             case "maxRetryRequests": getOrCreateConfiguration((BlobComponent) component).setMaxRetryRequests((int) value); return true;
             case "prefix": getOrCreateConfiguration((BlobComponent) component).setPrefix((java.lang.String) value); return true;
