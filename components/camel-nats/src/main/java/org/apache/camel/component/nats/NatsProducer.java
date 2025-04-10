@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.nats;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-import io.nats.client.Connection;
+import io.nats.client.*;
 import io.nats.client.Connection.Status;
-import io.nats.client.Message;
+import io.nats.client.api.PublishAck;
+import io.nats.client.api.StreamConfiguration;
 import io.nats.client.impl.Headers;
 import io.nats.client.impl.NatsMessage;
 import org.apache.camel.AsyncCallback;
@@ -108,16 +108,50 @@ public class NatsProducer extends DefaultAsyncProducer {
         } else {
             LOG.debug("Publishing to topic: {}", config.getTopic());
 
-            final NatsMessage.Builder builder = NatsMessage.builder()
-                    .data(body)
-                    .subject(config.getTopic())
-                    .headers(this.buildHeaders(exchange));
+            if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
+                LOG.info("JetStream is available");
 
-            if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
-                final String replySubject = config.getReplySubject();
-                builder.replyTo(replySubject);
+                JetStreamManagement jsm = null;
+                try {
+                    jsm = this.connection.jetStreamManagement();
+                    jsm.addStream(StreamConfiguration.builder()
+                            .name(config.getJetstreamName())
+                            .subjects(config.getTopic())
+                            .build());
+                } catch (IOException | JetStreamApiException e) {
+                    throw new RuntimeException(e);
+                }
+                JetStream js = jsm.jetStream();
+                if (config.isJetstreamAsync()) {
+                    CompletableFuture<PublishAck> future = js.publishAsync(config.getTopic(), body);
+                    PublishAck pa = null;
+                    try {
+                        pa = future.get(1, TimeUnit.SECONDS);
+                    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                        throw new RuntimeException(e);
+                    }
+                    LOG.info("Publish Sequence async: {}", pa.getSeqno());
+                } else {
+                    PublishAck pa = null;
+                    try {
+                        pa = js.publish(config.getTopic(), body);
+                    } catch (IOException | JetStreamApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    LOG.info("Publish Sequence synchronously: {}", pa.getSeqno());
+                }
+            } else {
+                final NatsMessage.Builder builder = NatsMessage.builder()
+                        .data(body)
+                        .subject(config.getTopic())
+                        .headers(this.buildHeaders(exchange));
+
+                if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
+                    final String replySubject = config.getReplySubject();
+                    builder.replyTo(replySubject);
+                }
+                this.connection.publish(builder.build());
             }
-            this.connection.publish(builder.build());
             callback.done(true);
             return true;
         }
@@ -166,7 +200,7 @@ public class NatsProducer extends DefaultAsyncProducer {
         }
         this.scheduler
                 = this.executorServiceManager.newScheduledThreadPool(this,
-                        NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME, profile);
+                NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME, profile);
         super.doStart();
         LOG.debug("Starting Nats Producer");
 
