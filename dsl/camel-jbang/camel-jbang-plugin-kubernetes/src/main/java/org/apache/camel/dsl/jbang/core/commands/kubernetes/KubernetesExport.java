@@ -172,6 +172,7 @@ public class KubernetesExport extends Export {
         gradleWrapper = configurer.gradleWrapper;
         fresh = configurer.fresh;
         download = configurer.download;
+        packageScanJars = configurer.packageScanJars;
         quiet = configurer.quiet;
         logging = configurer.logging;
         loggingLevel = configurer.loggingLevel;
@@ -583,6 +584,7 @@ public class KubernetesExport extends Export {
             boolean gradleWrapper,
             boolean fresh,
             boolean download,
+            boolean packageScanJars,
             boolean quiet,
             boolean logging,
             String loggingLevel,

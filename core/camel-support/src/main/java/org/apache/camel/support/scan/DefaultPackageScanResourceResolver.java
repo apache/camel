@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.scan;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -174,8 +174,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                         LOG.trace("Loading from jar using file: {}", file);
                         stream = new FileInputStream(file);
                     }
-
-                    loadImplementationsInJar(packageName, subPattern, stream, urlPath, resources);
+                    loadImplementationsInJar(url, packageName, subPattern, stream, urlPath, resources);
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
@@ -195,6 +194,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
      * @param resources   the list to add loaded resources
      */
     protected void loadImplementationsInJar(
+            URL url,
             String packageName,
             String subPattern,
             InputStream stream,
@@ -207,9 +207,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             boolean match = PATH_MATCHER.match(subPattern, shortName);
             LOG.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
             if (match) {
-                final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
-
-                resources.add(loader.resolveResource(name));
+                Resource resource = new PackageScanJarResource("jar", url, name);
+                resources.add(resource);
             }
         }
     }
@@ -281,7 +280,6 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 LOG.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
                 if (match) {
                     final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
-
                     resources.add(loader.resolveResource("file:" + file.getPath()));
                 }
             }

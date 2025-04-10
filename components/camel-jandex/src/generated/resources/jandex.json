@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "jandex",
+    "title": "Jandex",
+    "description": "Custom class and resource loader using jandex.idx",
+    "deprecated": false,
+    "firstVersion": "4.12.0",
+    "label": "core",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jandex",
+    "version": "4.12.0-SNAPSHOT"
+  }
+}

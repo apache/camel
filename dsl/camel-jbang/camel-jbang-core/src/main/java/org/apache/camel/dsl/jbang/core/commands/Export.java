@@ -149,6 +149,7 @@ public class Export extends ExportBaseCommand {
         cmd.cleanExportDir = this.cleanExportDir;
         cmd.fresh = this.fresh;
         cmd.download = this.download;
+        cmd.packageScanJars = this.packageScanJars;
         cmd.javaVersion = this.javaVersion;
         cmd.camelVersion = this.camelVersion;
         cmd.kameletsVersion = this.kameletsVersion;

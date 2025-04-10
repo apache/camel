@@ -6,6 +6,18 @@ from both 4.0 to 4.1 and 4.1 to 4.2.
 
 == Upgrading Camel 4.11 to 4.12
 
+=== camel-core
+
+The package scan classes has moved from `camel-base-engine` to `camel-support` JAR and moved to a new package:
+
+- `org.apache.camel.impl.engine.DefaultPackageScanClassResolver` is moved to `org.apache.camel.support.scan.DefaultPackageScanClassResolver`
+- `org.apache.camel.impl.engine.DefaultPackageScanResourceResolver` is moved to `org.apache.camel.support.scan.DefaultPackageScanResourceResolver`
+- `org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter` is moved to `org.apache.camel.support.scan.AnnotatedWithAnyPackageScanFilter`
+- `org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter` is moved to `org.apache.camel.support.scan.AnnotatedWithPackageScanFilter`
+- `org.apache.camel.impl.scan.AssignableToPackageScanFilter` is moved to `org.apache.camel.support.scan.AssignableToPackageScanFilter`
+- `org.apache.camel.impl.scan.CompositePackageScanFilter` is moved to `org.apache.camel.support.scan.CompositePackageScanFilter`
+- `org.apache.camel.impl.scan.InvertingPackageScanFilter` is moved to `org.apache.camel.support.scan.InvertingPackageScanFilter`
+
 === camel-as2
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and

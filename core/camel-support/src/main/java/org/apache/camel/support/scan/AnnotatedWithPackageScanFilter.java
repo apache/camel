@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan;
+package org.apache.camel.support.scan;
 
 import java.lang.annotation.Annotation;
 
@@ -41,6 +41,10 @@ public class AnnotatedWithPackageScanFilter implements PackageScanFilter {
     @Override
     public boolean matches(Class<?> type) {
         return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
+    }
+
+    public Class<? extends Annotation> getAnnotation() {
+        return annotation;
     }
 
     @Override

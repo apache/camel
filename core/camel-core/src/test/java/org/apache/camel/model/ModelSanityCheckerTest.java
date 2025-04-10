@@ -27,9 +27,9 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

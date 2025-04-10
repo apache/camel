@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.junit.jupiter.api.BeforeEach;

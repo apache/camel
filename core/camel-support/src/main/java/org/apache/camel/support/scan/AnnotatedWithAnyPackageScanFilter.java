@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan;
+package org.apache.camel.support.scan;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -26,6 +26,7 @@ import org.apache.camel.util.ObjectHelper;
  * Package scan filter for testing if a given class is annotated with any of the annotations.
  */
 public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
+
     private final Set<Class<? extends Annotation>> annotations;
     private final boolean checkMetaAnnotations;
 
@@ -49,6 +50,10 @@ public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
             }
         }
         return false;
+    }
+
+    public Set<Class<? extends Annotation>> getAnnotations() {
+        return annotations;
     }
 
     @Override

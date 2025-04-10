@@ -28,10 +28,8 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverterLoaderException;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -69,11 +67,7 @@ public class AnnotationTransformerLoader extends Transformer implements Transfor
         ObjectHelper.notNull(camelContext, "camelContext");
 
         if (resolver == null) {
-            if (camelContext instanceof ExtendedCamelContext) {
-                resolver = PluginHelper.getPackageScanClassResolver(camelContext);
-            } else {
-                resolver = new DefaultPackageScanClassResolver();
-            }
+            resolver = PluginHelper.getPackageScanClassResolver(camelContext);
         }
 
         Set<String> packages = new HashSet<>();
