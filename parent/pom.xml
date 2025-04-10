@@ -508,7 +508,7 @@
         <wiremock-version>3.12.1</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>7.1.0</woodstox-core-version>
-        <xbean-spring-version>4.26</xbean-spring-version>
+        <xbean-spring-version>4.27</xbean-spring-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
         <xchange-version>5.2.2</xchange-version>
         <xerces-version>2.12.2</xerces-version>
