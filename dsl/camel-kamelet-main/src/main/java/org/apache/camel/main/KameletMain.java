@@ -119,6 +119,7 @@ public class KameletMain extends MainCommandLineSupport {
     protected final MainRegistry registry = new MainRegistry();
     private String profile = "dev";
     private boolean download = true;
+    private boolean packageScanJars;
     private String repositories;
     private boolean fresh;
     private boolean verbose;
@@ -226,6 +227,17 @@ public class KameletMain extends MainCommandLineSupport {
      */
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    public boolean isPackageScanJars() {
+        return packageScanJars;
+    }
+
+    /**
+     * Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang
+     */
+    public void setPackageScanJars(boolean packageScanJars) {
+        this.packageScanJars = packageScanJars;
     }
 
     public String getRepositories() {
@@ -489,8 +501,8 @@ public class KameletMain extends MainCommandLineSupport {
 
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
-        // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
 
+        // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
         boolean lazyBean = "true".equals(getInitialProperties().get(getInstanceType() + ".lazyBean"));
         new AnnotationDependencyInjection(answer, lazyBean);
 
@@ -714,6 +726,7 @@ public class KameletMain extends MainCommandLineSupport {
     private MavenDependencyDownloader createMavenDependencyDownloader(ClassLoader dynamicCL, DefaultCamelContext answer) {
         KnownReposResolver knownRepos = new KnownReposResolver();
         knownRepos.loadKnownDependencies();
+
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setDownload(download);
         downloader.setKnownReposResolver(knownRepos);
@@ -726,13 +739,12 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
         downloader.setMavenCentralEnabled(mavenCentralEnabled);
         downloader.setMavenApacheSnapshotEnabled(mavenApacheSnapshotEnabled);
-
         if (downloadListener != null) {
             downloader.addDownloadListener(downloadListener);
         }
         downloader.addDownloadListener(new AutoConfigureDownloadListener());
         downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
-        downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener());
+        downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener(packageScanJars));
 
         return downloader;
     }

@@ -221,11 +221,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     protected boolean download = true;
 
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    protected boolean packageScanJars;
+
     @CommandLine.Option(names = { "--build-property" },
                         description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--property" },
+    @CommandLine.Option(names = { "--prop", "--property" },
                         description = "Camel application properties, ex. --property=prop1=foo")
     protected String[] applicationProperties;
 
@@ -334,6 +338,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.excludes = excludes;
         run.openapi = openapi;
         run.download = download;
+        run.packageScanJars = packageScanJars;
         run.runtime = runtime;
         run.camelVersion = camelVersion;
         run.camelSpringBootVersion = camelSpringBootVersion;

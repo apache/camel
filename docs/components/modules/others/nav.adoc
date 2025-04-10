@@ -20,6 +20,7 @@
 *** xref:yaml-dsl.adoc[YAML DSL]
 ** xref:elytron.adoc[Elytron]
 ** xref:headersmap.adoc[Headersmap]
+** xref:jandex.adoc[Jandex]
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[JFR]
 ** xref:jta.adoc[JTA]

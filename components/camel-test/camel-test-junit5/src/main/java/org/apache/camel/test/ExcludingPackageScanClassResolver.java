@@ -19,9 +19,9 @@ package org.apache.camel.test;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
-import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
-import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.support.scan.AssignableToPackageScanFilter;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
+import org.apache.camel.support.scan.InvertingPackageScanFilter;
 
 public class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 

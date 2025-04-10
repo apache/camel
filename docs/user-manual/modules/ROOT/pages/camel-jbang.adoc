@@ -3853,6 +3853,12 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.mavenApacheSnapshotEnabled`
 |Whether downloading JARs from ASF Maven Snapshot repository is enabled
 
+|`camel.jbang.download`
+Whether to allow automatic downloading JAR dependencies (over the internet)
+
+|`camel.jbang.packageScanJars`
+Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang
+
 |`camel.jbang.exportDir`
 |Directory where the project will be exported
 

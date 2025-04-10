@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan;
+package org.apache.camel.support.scan;
 
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -26,6 +26,7 @@ import org.apache.camel.spi.PackageScanFilter;
  * Package scan filter for testing if a given class is assignable to another class.
  */
 public class AssignableToPackageScanFilter implements PackageScanFilter {
+
     private final Set<Class<?>> parents = new HashSet<>();
     private boolean includeAbstract;
 
@@ -38,6 +39,10 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
 
     public AssignableToPackageScanFilter(Set<Class<?>> parents) {
         this.parents.addAll(parents);
+    }
+
+    public Set<Class<?>> getParents() {
+        return parents;
     }
 
     public void addParentType(Class<?> parentType) {

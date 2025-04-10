@@ -213,6 +213,10 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    boolean packageScanJars;
+
     @Option(names = { "--jvm-debug" }, parameterConsumer = DebugConsumer.class, paramLabel = "<true|false|port>",
             description = "To enable JVM remote debugging on port 4004 by default. The supported values are true to " +
                           "enable the remote debugging, false to disable the remote debugging or a number to use a custom port")
@@ -552,6 +556,7 @@ public class Run extends CamelCommand {
             main.setRepositories(String.join(",", repositories));
         }
         main.setDownload(download);
+        main.setPackageScanJars(packageScanJars);
         main.setFresh(fresh);
         main.setMavenSettings(mavenSettings);
         main.setMavenSettingsSecurity(mavenSettingsSecurity);
@@ -1010,6 +1015,7 @@ public class Run extends CamelCommand {
         eq.addDependencies("camel:cli-connector");
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
@@ -1086,6 +1092,7 @@ public class Run extends CamelCommand {
         }
         eq.fresh = this.fresh;
         eq.download = this.download;
+        eq.packageScanJars = this.packageScanJars;
         eq.quiet = true;
         eq.logging = false;
         eq.loggingLevel = "off";
@@ -1223,6 +1230,8 @@ public class Run extends CamelCommand {
                     mavenApacheSnapshotEnabled ? "true" : "false"));
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
+            packageScanJars
+                    = "true".equals(answer.getProperty("camel.jbang.packageScanJars", packageScanJars ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
             backgroundWait = "true".equals(answer.getProperty("camel.jbang.backgroundWait", backgroundWait ? "true" : "false"));
             jvmDebugPort = parseJvmDebugPort(answer.getProperty("camel.jbang.jvmDebug", Integer.toString(jvmDebugPort)));

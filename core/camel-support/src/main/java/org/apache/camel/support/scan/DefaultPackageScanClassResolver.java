@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.scan;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,10 +35,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.apache.camel.NonManagedService;
-import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
-import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
-import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
-import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.LRUCacheFactory;

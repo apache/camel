@@ -20,15 +20,15 @@ import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
-import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
-import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
-import org.apache.camel.impl.scan.CompositePackageScanFilter;
-import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
+import org.apache.camel.support.scan.AnnotatedWithAnyPackageScanFilter;
+import org.apache.camel.support.scan.AnnotatedWithPackageScanFilter;
+import org.apache.camel.support.scan.AssignableToPackageScanFilter;
+import org.apache.camel.support.scan.CompositePackageScanFilter;
+import org.apache.camel.support.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
 import org.junit.jupiter.api.Test;
 

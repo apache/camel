@@ -1,0 +1,15 @@
+= Jandex Component
+:doctitle: Jandex
+:shortname: jandex
+:artifactid: camel-jandex
+:description: Custom class and resource loader using jandex.idx
+:since: 4.12
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Jandex component is class and resource loader that uses the META-INF/jandex.idx index file
+for fast classpath scanning.
+
+This allows much quicker classpath scanning of JARs that has been indexed.
