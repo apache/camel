@@ -45,7 +45,13 @@ public final class SalesforceReportResultsToListConverterLoader implements TypeC
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.List.class, org.apache.camel.component.salesforce.api.dto.analytics.reports.AbstractReportResultsBase.class, false,
-            (type, exchange, value) -> org.apache.camel.component.salesforce.api.SalesforceReportResultsToListConverter.convertToList((org.apache.camel.component.salesforce.api.dto.analytics.reports.AbstractReportResultsBase) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.salesforce.api.SalesforceReportResultsToListConverter.convertToList((org.apache.camel.component.salesforce.api.dto.analytics.reports.AbstractReportResultsBase) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

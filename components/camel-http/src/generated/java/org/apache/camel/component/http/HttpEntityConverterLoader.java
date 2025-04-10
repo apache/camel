@@ -45,11 +45,29 @@ public final class HttpEntityConverterLoader implements TypeConverterLoader, Cam
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.io.InputStream) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.io.InputStream) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

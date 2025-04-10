@@ -44,10 +44,22 @@ public final class ServiceBusTypeConverterLoader implements TypeConverterLoader,
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, com.azure.core.util.BinaryData.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toBinaryData((java.lang.String) value));
-        addTypeConverter(registry, java.lang.String.class, com.azure.core.util.BinaryData.class, false,
-            (type, exchange, value) -> org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toString((com.azure.core.util.BinaryData) value));
+        addTypeConverter(registry, com.azure.core.util.BinaryData.class, java.lang.String.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toBinaryData((java.lang.String) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, java.lang.String.class, com.azure.core.util.BinaryData.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.azure.servicebus.ServiceBusTypeConverter.toString((com.azure.core.util.BinaryData) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

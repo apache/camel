@@ -45,9 +45,21 @@ public final class SwiftMxTypeConvertersLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, com.prowidesoftware.swift.model.MxId.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.dataformat.swift.mx.SwiftMxTypeConverters.toMxId((byte[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.dataformat.swift.mx.SwiftMxTypeConverters.toMxId((byte[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.prowidesoftware.swift.model.MxId.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.dataformat.swift.mx.SwiftMxTypeConverters.toMxId((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.dataformat.swift.mx.SwiftMxTypeConverters.toMxId((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

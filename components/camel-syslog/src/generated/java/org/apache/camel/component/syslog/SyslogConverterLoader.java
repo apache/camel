@@ -45,9 +45,21 @@ public final class SyslogConverterLoader implements TypeConverterLoader, CamelCo
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.syslog.SyslogMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.syslog.SyslogConverter.toString((org.apache.camel.component.syslog.SyslogMessage) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.syslog.SyslogConverter.toString((org.apache.camel.component.syslog.SyslogMessage) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.syslog.SyslogMessage.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.syslog.SyslogConverter.toSyslogMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.syslog.SyslogConverter.toSyslogMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

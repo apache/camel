@@ -45,7 +45,13 @@ public final class AtomConverterLoader implements TypeConverterLoader, CamelCont
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.Date.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.atom.AtomConverter.toDate((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.atom.AtomConverter.toDate((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

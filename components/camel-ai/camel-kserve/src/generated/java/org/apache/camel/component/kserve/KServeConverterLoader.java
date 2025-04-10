@@ -45,17 +45,53 @@ public final class KServeConverterLoader implements TypeConverterLoader, CamelCo
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, inference.GrpcPredictV2.ModelInferRequest.class, inference.GrpcPredictV2.ModelInferRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.kserve.KServeConverter.toModelInferRequest((inference.GrpcPredictV2.ModelInferRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.kserve.KServeConverter.toModelInferRequest((inference.GrpcPredictV2.ModelInferRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, inference.GrpcPredictV2.ModelMetadataRequest.class, inference.GrpcPredictV2.ModelMetadataRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.kserve.KServeConverter.toModelMetadataRequest((inference.GrpcPredictV2.ModelMetadataRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.kserve.KServeConverter.toModelMetadataRequest((inference.GrpcPredictV2.ModelMetadataRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, inference.GrpcPredictV2.ModelReadyRequest.class, inference.GrpcPredictV2.ModelReadyRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.kserve.KServeConverter.toModelReadyRequest((inference.GrpcPredictV2.ModelReadyRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.kserve.KServeConverter.toModelReadyRequest((inference.GrpcPredictV2.ModelReadyRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, inference.GrpcPredictV2.ServerLiveRequest.class, inference.GrpcPredictV2.ServerLiveRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.kserve.KServeConverter.toServerLiveRequest((inference.GrpcPredictV2.ServerLiveRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.kserve.KServeConverter.toServerLiveRequest((inference.GrpcPredictV2.ServerLiveRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, inference.GrpcPredictV2.ServerMetadataRequest.class, inference.GrpcPredictV2.ServerMetadataRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.kserve.KServeConverter.toServerMetadataRequest((inference.GrpcPredictV2.ServerMetadataRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.kserve.KServeConverter.toServerMetadataRequest((inference.GrpcPredictV2.ServerMetadataRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, inference.GrpcPredictV2.ServerReadyRequest.class, inference.GrpcPredictV2.ServerReadyRequest.Builder.class, false,
-            (type, exchange, value) -> org.apache.camel.component.kserve.KServeConverter.toServerReadyRequest((inference.GrpcPredictV2.ServerReadyRequest.Builder) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.kserve.KServeConverter.toServerReadyRequest((inference.GrpcPredictV2.ServerReadyRequest.Builder) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

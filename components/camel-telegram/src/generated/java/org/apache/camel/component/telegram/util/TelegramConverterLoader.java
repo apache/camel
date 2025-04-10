@@ -45,15 +45,45 @@ public final class TelegramConverterLoader implements TypeConverterLoader, Camel
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.telegram.model.IncomingMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.IncomingMessage) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.IncomingMessage) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.telegram.model.Update.class, false,
-            (type, exchange, value) -> org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.Update) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.Update) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.telegram.model.OutgoingMessage.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.telegram.util.TelegramConverter.toOutgoingMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toOutgoingMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.telegram.model.OutgoingMessage.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.telegram.util.TelegramConverter.toOutgoingMessage(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toOutgoingMessage(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.camel.component.telegram.model.OutgoingMessage.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.telegram.util.TelegramConverter.toOutgoingMessage((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toOutgoingMessage((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

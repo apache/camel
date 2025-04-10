@@ -45,7 +45,13 @@ public final class ActiveMQConverterLoader implements TypeConverterLoader, Camel
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.activemq.command.ActiveMQDestination.class, java.lang.String.class, false,
-            (type, exchange, value) -> getActiveMQConverter().toDestination((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = getActiveMQConverter().toDestination((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
