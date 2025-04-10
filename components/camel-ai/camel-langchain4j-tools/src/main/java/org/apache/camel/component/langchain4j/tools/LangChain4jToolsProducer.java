@@ -107,7 +107,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         do {
             LOG.debug("Starting iteration {}", i);
             final Response<AiMessage> response = chatWithLLM(chatMessages, toolPair, exchange);
-            if (isDoneExecuting(response)) {
+            if (isDoneExecuting(response, exchange)) {
                 return extractAiResponse(response);
             }
 
@@ -118,7 +118,7 @@ public class LangChain4jToolsProducer extends DefaultProducer {
         } while (true);
     }
 
-    private boolean isDoneExecuting(Response<AiMessage> response) {
+    private boolean isDoneExecuting(Response<AiMessage> response, Exchange exchange) {
         if (!response.content().hasToolExecutionRequests()) {
             LOG.info("Finished executing tools because of there are no more execution requests");
             return true;
@@ -130,6 +130,11 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             if (response.finishReason() == FinishReason.STOP) {
                 return true;
             }
+        }
+
+        if (exchange.isRouteStop()) {
+            LOG.warn("The route has stopped routing messages");
+            return true;
         }
 
         return false;
@@ -155,9 +160,15 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
                 // Execute the consumer route
 
-                camelToolSpecification.getConsumer().getProcessor().process(exchange);
+                final LangChain4jToolsConsumer consumer = camelToolSpecification.getConsumer();
+                if (!consumer.isRunAllowed()) {
+                    LOG.warn("The consumer is not allowed to run anymore");
+                    return;
+                }
+                consumer.getProcessor().process(exchange);
                 i++;
             } catch (Exception e) {
+                LOG.info("Exception thrown: {}", e, e.getMessage());
                 // How to handle this exception?
                 exchange.setException(e);
             }
@@ -166,6 +177,12 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                     toolExecutionRequest.id(),
                     toolExecutionRequest.name(),
                     exchange.getIn().getBody(String.class)));
+
+            if (exchange.isRouteStop()) {
+                LOG.warn("The route has stopped routing messages");
+                return;
+            }
+
         }
     }
 
