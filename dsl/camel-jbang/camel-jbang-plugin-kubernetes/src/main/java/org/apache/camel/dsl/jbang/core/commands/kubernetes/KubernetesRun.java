@@ -193,6 +193,14 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
+
+    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
+                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    boolean packageScanJars;
+
     @CommandLine.Option(names = { "--maven-settings" },
                         description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                                       + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
@@ -397,7 +405,8 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 false,
                 true,
-                true,
+                download,
+                packageScanJars,
                 (quiet || output != null),
                 true,
                 "info",

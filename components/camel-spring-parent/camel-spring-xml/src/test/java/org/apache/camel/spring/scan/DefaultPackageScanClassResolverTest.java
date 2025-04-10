@@ -22,10 +22,10 @@ import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
+import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support.scan;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * WebSphere specific resolver to handle loading annotated resources in JAR files.
  */
+@Deprecated
 public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassResolver {
     private static final Logger LOG = LoggerFactory.getLogger(WebSpherePackageScanClassResolver.class);
 

@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-   <bean id="myPackageResolver" class="org.apache.camel.impl.engine.DefaultPackageScanClassResolver" >
+   <bean id="myPackageResolver" class="org.apache.camel.support.scan.DefaultPackageScanClassResolver" >
       <property name="AcceptableSchemes" value="test:;test2:"/>
     </bean>
 
