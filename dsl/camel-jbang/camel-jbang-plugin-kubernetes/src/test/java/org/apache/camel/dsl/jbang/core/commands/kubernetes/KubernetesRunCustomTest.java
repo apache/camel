@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import io.fabric8.kubernetes.api.model.APIGroup;
+import io.fabric8.kubernetes.api.model.APIGroupBuilder;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeBuilder;
@@ -34,8 +36,6 @@ import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
-import io.fabric8.openshift.api.model.config.v1.ClusterVersion;
-import io.fabric8.openshift.api.model.config.v1.ClusterVersionBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
@@ -94,11 +94,12 @@ class KubernetesRunCustomTest {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsOpenshift();
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml", "--verbose");
         int exit = command.doCall();
 
-        Assertions.assertEquals(0, exit);
-        Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase());
+        Assertions.assertEquals(0, exit, printer.getOutput());
+        Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(),
+                printer.getOutput());
 
         var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
@@ -210,18 +211,14 @@ class KubernetesRunCustomTest {
     }
 
     private void setupServerExpectsOpenshift() {
-        ClusterVersion versionCR = new ClusterVersionBuilder()
-                .withNewMetadata().withName("version").endMetadata()
-                .withNewStatus()
-                .withNewDesired()
-                .withVersion("4.14.5")
-                .endDesired()
-                .endStatus()
+        APIGroup apiGroup = new APIGroupBuilder()
+                .withApiVersion("v1")
+                .withName("config.openshift.io")
                 .build();
 
-        server.expect().get().withPath("/apis/config.openshift.io/v1/clusterversions/version")
-                .andReturn(HttpURLConnection.HTTP_OK, versionCR)
-                .once();
+        server.expect().get().withPath("/apis/config.openshift.io")
+                .andReturn(HttpURLConnection.HTTP_OK, apiGroup)
+                .always();
     }
 
     private KubernetesRun createCommand(String[] files, String... args) {
