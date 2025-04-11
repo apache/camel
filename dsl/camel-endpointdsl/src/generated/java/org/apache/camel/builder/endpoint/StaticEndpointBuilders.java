@@ -15438,6 +15438,46 @@ public class StaticEndpointBuilders {
         return WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * Syntax: <code>weaviate:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String path) {
+        return weaviate("weaviate", path);
+    }
+    /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * Syntax: <code>weaviate:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection Name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String componentName, String path) {
+        return WeaviateVectorDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
      * 

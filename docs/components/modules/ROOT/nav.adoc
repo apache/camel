@@ -18,6 +18,7 @@
 *** xref:qdrant-component.adoc[Qdrant]
 *** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
 *** xref:torchserve-component.adoc[TorchServe]
+*** xref:weaviate-component.adoc[weaviate]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]
