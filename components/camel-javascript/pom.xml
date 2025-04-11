@@ -26,6 +26,10 @@
         <version>4.12.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
+
     <artifactId>camel-javascript</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: JavaScript</name>
