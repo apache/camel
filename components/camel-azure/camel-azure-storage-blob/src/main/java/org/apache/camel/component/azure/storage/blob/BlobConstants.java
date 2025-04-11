@@ -72,6 +72,16 @@ public final class BlobConstants {
     @Metadata(label = "consumer", description = "The type of the blob.",
               javaType = "org.apache.camel.component.azure.storage.blob.BlobType")
     public static final String BLOB_TYPE = HEADER_PREFIX + "BlobType";
+    @Metadata(label = "common",
+              description = "Specifies whether blob leasing is enabled for the operation. When set to true, the component will acquire "
+                            +
+                            "an exclusive lease on the target blob to prevent concurrent processing by multiple routes or applications.",
+              javaType = "boolean")
+    public static final String LEASE_BLOB = HEADER_PREFIX + "LeaseBlob";
+    @Metadata(label = "common",
+              description = "Specifies the lease duration in seconds. Valid values are between 15 and 60 for fixed duration, or -1 for infinite duration.",
+              javaType = "java.lang.Integer")
+    public static final String LEASE_DURATION_IN_SECONDS = HEADER_PREFIX + "LeaseDurationInSeconds";
     @Metadata(label = "consumer", description = "Status of the lease on the blob.",
               javaType = "com.azure.storage.blob.models.LeaseStatusType")
     public static final String LEASE_STATUS = HEADER_PREFIX + "LeaseStatus";

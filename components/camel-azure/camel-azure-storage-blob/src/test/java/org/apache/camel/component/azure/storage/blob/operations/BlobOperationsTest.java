@@ -32,6 +32,7 @@ import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlockBlobItem;
+import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -53,8 +54,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -142,6 +147,37 @@ class BlobOperationsTest extends CamelTestSupport {
         assertEquals("testTag", operationResponse.getHeaders().get(BlobConstants.E_TAG));
         assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
                 .get("x-test-header").getValue());
+    }
+
+    @Test
+    void testUploadBlockBlobWithLease() throws Exception {
+        final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
+
+        when(client.uploadBlockBlob(any(), anyLong(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, blockBlobItem, null));
+        final BlobLeaseClient leaseClient = mock(BlobLeaseClient.class);
+        when(leaseClient.acquireLease(anyInt())).thenReturn("leaseId");
+        when(client.getLeaseClient()).thenReturn(leaseClient);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new ByteArrayInputStream("test".getBytes(Charset.defaultCharset())));
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        configuration.setLeaseBlob(true);
+        configuration.setLeaseDurationInSeconds(-1);
+
+        final BlobOperationResponse operationResponse = operations.uploadBlockBlob(exchange);
+
+        assertNotNull(operationResponse);
+        assertTrue((boolean) operationResponse.getBody());
+        assertNotNull(operationResponse.getHeaders());
+        assertEquals("testTag", operationResponse.getHeaders().get(BlobConstants.E_TAG));
+        assertEquals("123", ((HttpHeaders) operationResponse.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+
+        verify(client, times(1)).getLeaseClient();
+        verify(leaseClient, times(1)).acquireLease(-1);
     }
 
     @Test
