@@ -87,7 +87,10 @@ goto error
 set MAVEN_PROJECTBASEDIR=%MAVEN_BASEDIR%
 IF NOT "%MAVEN_PROJECTBASEDIR%"=="" goto endDetectBaseDir
 
+@REM https://issues.apache.org/jira/browse/MWRAPPER-82
+pushd %~dp0
 set EXEC_DIR=%CD%
+popd
 set WDIR=%EXEC_DIR%
 :findBaseDir
 IF EXIST "%WDIR%"\.mvn goto baseDirFound

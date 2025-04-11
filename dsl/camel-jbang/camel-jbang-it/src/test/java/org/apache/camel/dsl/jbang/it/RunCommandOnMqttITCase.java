@@ -58,6 +58,16 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
         checkLogContains("The temperature is 21");
     }
 
+    @Test
+    public void testStub() throws IOException {
+        copyResourceInDataFolder(TestResources.STUB_ROUTE);
+        final String ipAddr = getIpAddr(service.getContainer());
+        final String pid = executeBackground(String.format("run %s/%s --stub=jms",
+                mountPoint(), TestResources.STUB_ROUTE.getName()));
+        checkCommandOutputs("cmd send --body=\"Hello camel from stubbed jms\"" + pid, "jms://inbox : Sent (success)");
+        checkCommandOutputs("cmd stub --browse", "Hello camel from stubbed jms");
+    }
+
     private String getIpAddr(final GenericContainer container) {
         return container.getCurrentContainerInfo().getNetworkSettings().getNetworks().entrySet()
                 .stream().filter(entry -> "127.0.0.1" != entry.getValue().getIpAddress())

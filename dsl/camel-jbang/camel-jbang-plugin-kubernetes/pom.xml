@@ -86,6 +86,12 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <version>${junit-pioneer-version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -107,6 +113,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <!-- This is required for the @SetEnvironmentVariable usage of junit-pioneer in KubernetesRunCustomTest -->
+                    <argLine>
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                    </argLine>
                     <systemPropertyVariables>
                         <!-- Used in unit tests to resolve dependencies via Maven downloader -->
                         <camel.version>${project.version}</camel.version>

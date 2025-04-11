@@ -42,9 +42,7 @@ import org.junit.jupiter.api.TestInstance;
 public class KubernetesBaseTest {
 
     private KubernetesMockServer k8sServer;
-
     protected KubernetesClient kubernetesClient;
-
     protected StringPrinter printer;
 
     public static boolean isDockerAvailable() {
@@ -74,11 +72,11 @@ public class KubernetesBaseTest {
         k8sServer.destroy();
     }
 
-    protected InputStream getKubernetesManifestAsStream(String printerOutput) {
+    protected static InputStream getKubernetesManifestAsStream(String printerOutput) {
         return getKubernetesManifestAsStream(printerOutput, "yaml");
     }
 
-    protected InputStream getKubernetesManifestAsStream(String printerOutput, String output) {
+    protected static InputStream getKubernetesManifestAsStream(String printerOutput, String output) {
         if (output.equals("yaml")) {
             String manifest = StringHelper.after(printerOutput, "---");
             if (manifest == null) {

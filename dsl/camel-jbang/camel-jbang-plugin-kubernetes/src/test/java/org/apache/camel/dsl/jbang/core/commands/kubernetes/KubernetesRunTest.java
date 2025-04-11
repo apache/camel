@@ -66,7 +66,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @MethodSource("runtimeProvider")
     public void shouldHandleMissingSourceFile(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand(new String[] { "mickey-mouse.groovy" },
-                "--output=yaml", "--runtime=" + rt.runtime());
+                "--output=yaml", "--runtime=" + rt.runtime(), "--disable-auto");
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);
@@ -80,7 +80,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--trait", "container.image-pull-policy=IfNotPresent",
-                "--runtime=" + rt.runtime());
+                "--runtime=" + rt.runtime(), "--disable-auto");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -111,7 +111,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @MethodSource("runtimeProvider")
     public void shouldHandleUnsupportedOutputFormat(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
-                "--output=wrong", "--runtime=" + rt.runtime());
+                "--output=wrong", "--runtime=" + rt.runtime(), "--disable-auto");
 
         Assertions.assertEquals(1, command.doCall());
         Assertions.assertTrue(printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
@@ -123,7 +123,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--namespace", "custom",
-                "--runtime=" + rt.runtime());
+                "--runtime=" + rt.runtime(), "--disable-auto");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
