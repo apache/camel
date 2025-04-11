@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
@@ -227,6 +228,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             total = maxMessagesPerPoll;
         }
 
+        Queue<Object> notStarted = new ArrayDeque<>();
+
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even
@@ -254,15 +257,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             if (!started) {
                 answer--;
 
-                // Remove the idempotent key from the repository if the idempotence of the endpoint is eager
-                GenericFile file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
-                if (null != file && endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
-                    removeExcessiveIdempotentFile(file, exchange);
-                }
+                // this exchange was not started processing so remember to release it afterward
+                notStarted.add(exchange);
             }
         }
 
         // drain any in progress files as we are done with this batch
+        removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) notStarted, Exchange.class), 0);
         removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) exchanges, Exchange.class), 0);
 
         return answer;

@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class IdempotentReadLockT extends SftpServerTestSupport {
+class IdempotentReadLockIT extends SftpServerTestSupport {
     //    private static final String TEST_PATH = "test/IdempotentReadLock";
 
     private static Logger logger = LogManager.getLogger();
