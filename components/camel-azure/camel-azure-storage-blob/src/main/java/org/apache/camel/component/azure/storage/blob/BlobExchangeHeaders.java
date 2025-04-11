@@ -261,6 +261,14 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.CHANGE_FEED_CONTEXT, Context.class);
     }
 
+    public static Boolean getLeaseBlobFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.LEASE_BLOB, Boolean.class);
+    }
+
+    public static Integer getLeaseDurationInSecondsFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.LEASE_DURATION_IN_SECONDS, Integer.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }

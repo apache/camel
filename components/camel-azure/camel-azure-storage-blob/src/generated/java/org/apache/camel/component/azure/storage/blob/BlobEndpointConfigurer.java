@@ -80,6 +80,10 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "leaseblob":
+        case "leaseBlob": target.getConfiguration().setLeaseBlob(property(camelContext, boolean.class, value)); return true;
+        case "leasedurationinseconds":
+        case "leaseDurationInSeconds": target.getConfiguration().setLeaseDurationInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxresultsperpage":
         case "maxResultsPerPage": target.getConfiguration().setMaxResultsPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxretryrequests":
@@ -184,6 +188,10 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "initialDelay": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "leaseblob":
+        case "leaseBlob": return boolean.class;
+        case "leasedurationinseconds":
+        case "leaseDurationInSeconds": return java.lang.Integer.class;
         case "maxresultsperpage":
         case "maxResultsPerPage": return java.lang.Integer.class;
         case "maxretryrequests":
@@ -284,6 +292,10 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "leaseblob":
+        case "leaseBlob": return target.getConfiguration().isLeaseBlob();
+        case "leasedurationinseconds":
+        case "leaseDurationInSeconds": return target.getConfiguration().getLeaseDurationInSeconds();
         case "maxresultsperpage":
         case "maxResultsPerPage": return target.getConfiguration().getMaxResultsPerPage();
         case "maxretryrequests":

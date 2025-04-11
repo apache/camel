@@ -78,6 +78,10 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "leaseblob":
+        case "leaseBlob": getOrCreateConfiguration(target).setLeaseBlob(property(camelContext, boolean.class, value)); return true;
+        case "leasedurationinseconds":
+        case "leaseDurationInSeconds": getOrCreateConfiguration(target).setLeaseDurationInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxresultsperpage":
         case "maxResultsPerPage": getOrCreateConfiguration(target).setMaxResultsPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxretryrequests":
@@ -154,6 +158,10 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "leaseblob":
+        case "leaseBlob": return boolean.class;
+        case "leasedurationinseconds":
+        case "leaseDurationInSeconds": return java.lang.Integer.class;
         case "maxresultsperpage":
         case "maxResultsPerPage": return java.lang.Integer.class;
         case "maxretryrequests":
@@ -226,6 +234,10 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "leaseblob":
+        case "leaseBlob": return getOrCreateConfiguration(target).isLeaseBlob();
+        case "leasedurationinseconds":
+        case "leaseDurationInSeconds": return getOrCreateConfiguration(target).getLeaseDurationInSeconds();
         case "maxresultsperpage":
         case "maxResultsPerPage": return getOrCreateConfiguration(target).getMaxResultsPerPage();
         case "maxretryrequests":
