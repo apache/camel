@@ -171,12 +171,12 @@ public class SqlProducer extends DefaultProducer {
                                 total += count;
                             }
                             exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
-                            if (manualCommit) {
+                            if (manualCommit && !restoreAutoCommit) {
                                 // optimize batch by commit after done
                                 ps.getConnection().commit();
                             }
                         } catch (Exception e) {
-                            if (manualCommit) {
+                            if (manualCommit && !restoreAutoCommit) {
                                 // we failed so rollback
                                 ps.getConnection().rollback();
                             }
