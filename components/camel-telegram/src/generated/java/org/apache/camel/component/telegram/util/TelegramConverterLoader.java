@@ -46,7 +46,7 @@ public final class TelegramConverterLoader implements TypeConverterLoader, Camel
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.telegram.model.IncomingMessage.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.IncomingMessage) value);
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.IncomingMessage) value, exchange);
                 if (false && answer == null) {
                     answer = Void.class;
                 }
@@ -54,7 +54,7 @@ public final class TelegramConverterLoader implements TypeConverterLoader, Camel
             });
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.telegram.model.Update.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.Update) value);
+                Object answer = org.apache.camel.component.telegram.util.TelegramConverter.toString((org.apache.camel.component.telegram.model.Update) value, exchange);
                 if (false && answer == null) {
                     answer = Void.class;
                 }
