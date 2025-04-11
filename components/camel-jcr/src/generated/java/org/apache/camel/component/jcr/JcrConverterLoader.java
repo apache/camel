@@ -45,21 +45,69 @@ public final class JcrConverterLoader implements TypeConverterLoader, CamelConte
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, javax.jcr.Value.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toValue((javax.jcr.Value) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toValue((javax.jcr.Value) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Boolean.class, javax.jcr.Value.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toBoolean((javax.jcr.Value) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toBoolean((javax.jcr.Value) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, javax.jcr.Value.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toString((javax.jcr.Value) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toString((javax.jcr.Value) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.Calendar.class, javax.jcr.Value.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toCalendar((javax.jcr.Value) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toCalendar((javax.jcr.Value) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.jcr.Value.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toValue((java.io.InputStream) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toValue((java.io.InputStream) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.jcr.Value.class, java.lang.Boolean.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toValue((java.lang.Boolean) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toValue((java.lang.Boolean) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.jcr.Value.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toValue((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toValue((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.jcr.Value.class, java.util.Calendar.class, false,
-            (type, exchange, value) -> org.apache.camel.component.jcr.JcrConverter.toValue((java.util.Calendar) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.jcr.JcrConverter.toValue((java.util.Calendar) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

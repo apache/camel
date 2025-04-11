@@ -54,11 +54,7 @@ public final class StreamCacheBulkConverterLoader implements TypeConverterLoader
     public <T> T convertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {
         try {
             Object obj = doConvertTo(from, to, exchange, value);
-            if (obj == Void.class) {
-                return null;
-            } else {
-                return (T) obj;
-            }
+            return (T) obj;
         } catch (TypeConversionException e) {
             throw e;
         } catch (Exception e) {

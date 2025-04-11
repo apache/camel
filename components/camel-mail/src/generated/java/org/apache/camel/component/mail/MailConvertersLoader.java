@@ -46,13 +46,37 @@ public final class MailConvertersLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, jakarta.mail.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Message) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Message) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, jakarta.mail.Multipart.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Multipart) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Multipart) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, jakarta.mail.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Message) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Message) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, jakarta.mail.Multipart.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Multipart) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Multipart) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

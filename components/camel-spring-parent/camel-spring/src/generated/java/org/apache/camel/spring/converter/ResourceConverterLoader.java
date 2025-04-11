@@ -45,7 +45,13 @@ public final class ResourceConverterLoader implements TypeConverterLoader, Camel
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, org.springframework.core.io.Resource.class, false,
-            (type, exchange, value) -> org.apache.camel.spring.converter.ResourceConverter.convertToInputStream((org.springframework.core.io.Resource) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.spring.converter.ResourceConverter.convertToInputStream((org.springframework.core.io.Resource) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

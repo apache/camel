@@ -42,7 +42,7 @@ public final class DnsRecordConverter {
      * @param  ip like "192.168.1.1"
      * @return    the complete DNS record for that IP.
      */
-    @Converter
+    @Converter(allowNull = true)
     public static Record toRecord(String ip) throws IOException {
         Resolver res = new ExtendedResolver();
 

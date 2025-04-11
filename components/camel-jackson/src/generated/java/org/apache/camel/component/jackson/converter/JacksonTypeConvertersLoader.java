@@ -46,39 +46,141 @@ public final class JacksonTypeConvertersLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, byte[].class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toByteArray((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toByteArray((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, byte[].class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toJsonNode((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.io.File.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.io.File) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toJsonNode((java.io.File) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.io.InputStream) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toJsonNode((java.io.InputStream) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.io.Reader.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.io.Reader) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toJsonNode((java.io.Reader) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.lang.String.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.lang.String) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toJsonNode((java.lang.String) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.fasterxml.jackson.databind.JsonNode.class, java.util.Map.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toJsonNode((java.util.Map) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toJsonNode((java.util.Map) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.InputStream.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toInputStream((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toInputStream((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.Reader.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toReader((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toReader((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Boolean.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toBoolean((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toBoolean((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Boolean.class, com.fasterxml.jackson.databind.node.BooleanNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toBoolean((com.fasterxml.jackson.databind.node.BooleanNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toBoolean((com.fasterxml.jackson.databind.node.BooleanNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Double.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toDouble((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toDouble((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Float.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toFloat((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toFloat((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Integer.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toInteger((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toInteger((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.Long.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toLong((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toLong((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toString((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toString((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.Map.class, com.fasterxml.jackson.databind.JsonNode.class, false,
-            (type, exchange, value) -> getJacksonTypeConverters().toMap((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getJacksonTypeConverters().toMap((com.fasterxml.jackson.databind.JsonNode) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

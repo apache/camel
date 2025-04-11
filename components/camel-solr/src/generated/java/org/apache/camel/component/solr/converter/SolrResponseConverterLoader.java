@@ -45,13 +45,37 @@ public final class SolrResponseConverterLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.Map.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.solr.converter.SolrResponseConverter.createSolrResponseMap(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.solr.converter.SolrResponseConverter.createSolrResponseMap(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.solr.client.solrj.SolrResponse.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.solr.converter.SolrResponseConverter.createSolrResponse(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.solr.converter.SolrResponseConverter.createSolrResponse(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.solr.client.solrj.response.QueryResponse.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.solr.converter.SolrResponseConverter.createQueryResponse(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.solr.converter.SolrResponseConverter.createQueryResponse(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.solr.client.solrj.response.SolrPingResponse.class, java.lang.Object.class, false,
-            (type, exchange, value) -> org.apache.camel.component.solr.converter.SolrResponseConverter.createSolrPingResponse(value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.solr.converter.SolrResponseConverter.createSolrPingResponse(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

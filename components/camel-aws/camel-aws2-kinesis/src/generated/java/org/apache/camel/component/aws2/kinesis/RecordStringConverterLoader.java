@@ -49,7 +49,13 @@ public final class RecordStringConverterLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, software.amazon.awssdk.services.kinesis.model.Record.class, false,
-            (type, exchange, value) -> org.apache.camel.component.aws2.kinesis.RecordStringConverter.toString((software.amazon.awssdk.services.kinesis.model.Record) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.aws2.kinesis.RecordStringConverter.toString((software.amazon.awssdk.services.kinesis.model.Record) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

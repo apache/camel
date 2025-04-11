@@ -45,13 +45,37 @@ public final class FlatpackConverterLoader implements TypeConverterLoader, Camel
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, net.sf.flatpack.DataSet.class, false,
-            (type, exchange, value) -> org.apache.camel.component.flatpack.FlatpackConverter.toString((net.sf.flatpack.DataSet) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.flatpack.FlatpackConverter.toString((net.sf.flatpack.DataSet) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.List.class, net.sf.flatpack.DataSet.class, false,
-            (type, exchange, value) -> org.apache.camel.component.flatpack.FlatpackConverter.toList((net.sf.flatpack.DataSet) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.flatpack.FlatpackConverter.toList((net.sf.flatpack.DataSet) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.Map.class, net.sf.flatpack.Record.class, false,
-            (type, exchange, value) -> org.apache.camel.component.flatpack.FlatpackConverter.toMap((net.sf.flatpack.Record) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.flatpack.FlatpackConverter.toMap((net.sf.flatpack.Record) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.w3c.dom.Document.class, net.sf.flatpack.DataSet.class, false,
-            (type, exchange, value) -> org.apache.camel.component.flatpack.FlatpackConverter.toDocument((net.sf.flatpack.DataSet) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.flatpack.FlatpackConverter.toDocument((net.sf.flatpack.DataSet) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

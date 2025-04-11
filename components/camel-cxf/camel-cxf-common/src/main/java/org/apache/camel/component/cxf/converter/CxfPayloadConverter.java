@@ -93,7 +93,7 @@ public final class CxfPayloadConverter {
         return new NodeListWrapper(payload.getBody());
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static <T> Node cxfPayLoadToNode(CxfPayload<T> payload, Exchange exchange) {
         List<Element> payloadBodyElements = payload.getBody();
 
@@ -103,7 +103,7 @@ public final class CxfPayloadConverter {
         return null;
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static <T> Source cxfPayLoadToSource(CxfPayload<T> payload, Exchange exchange) {
         List<Source> payloadBody = payload.getBodySources();
 

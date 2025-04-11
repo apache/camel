@@ -76,8 +76,15 @@ public final class ${className} implements TypeConverterLoader, CamelContextAwar
     private void registerConverters(TypeConverterRegistry registry) {
     #foreach ( $to in $converters.getConverters().entrySet() )
         #foreach ( $from in $to.getValue().entrySet() )
-        addTypeConverter(registry, ${to.getKey()}.class, ${mojo.toString($from.getKey())}.class, ${mojo.isAllowNull($from.getValue())},
-            (type, exchange, value) -> ${mojo.toJava($from.getValue(), $converterClasses)});
+        #set ( $allowNull = ${mojo.isAllowNull($from.getValue())} )
+        addTypeConverter(registry, ${to.getKey()}.class, ${mojo.toString($from.getKey())}.class, $allowNull,
+            (type, exchange, value) -> {
+                Object answer = ${mojo.toJava($from.getValue(), $converterClasses)};
+                if ($allowNull && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         #end
     #end
     }

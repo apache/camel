@@ -45,9 +45,21 @@ public final class NitriteTypeConvertersLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.util.List.class, org.dizitart.no2.Cursor.class, false,
-            (type, exchange, value) -> org.apache.camel.component.nitrite.NitriteTypeConverters.fromCursorToList((org.dizitart.no2.Cursor) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.nitrite.NitriteTypeConverters.fromCursorToList((org.dizitart.no2.Cursor) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.dizitart.no2.Document.class, java.util.Map.class, false,
-            (type, exchange, value) -> org.apache.camel.component.nitrite.NitriteTypeConverters.fromMapToDocument((java.util.Map) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.nitrite.NitriteTypeConverters.fromMapToDocument((java.util.Map) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

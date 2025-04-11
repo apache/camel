@@ -45,41 +45,149 @@ public final class HL7GenericMessageConverterLoader implements TypeConverterLoad
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toGenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toGenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toGenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toGenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V21.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV21GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV21GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V21.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV21GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV21GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V22.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV22GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV22GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V22.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV22GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV22GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V23.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV23GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV23GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V23.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV23GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV23GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V231.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV231GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV231GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V231.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV231GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV231GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V24.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV24GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV24GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V24.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV24GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV24GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V25.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV25GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV25GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V25.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV25GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV25GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V251.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV251GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV251GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V251.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV251GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV251GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V26.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV26GenericMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV26GenericMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.GenericMessage.V26.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7GenericMessageConverter.toV26GenericMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7GenericMessageConverter.toV26GenericMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

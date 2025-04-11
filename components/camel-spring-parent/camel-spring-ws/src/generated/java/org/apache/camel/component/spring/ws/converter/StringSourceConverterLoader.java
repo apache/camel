@@ -45,9 +45,21 @@ public final class StringSourceConverterLoader implements TypeConverterLoader, C
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.camel.util.xml.StringSource.class, org.springframework.xml.transform.StringSource.class, false,
-            (type, exchange, value) -> org.apache.camel.component.spring.ws.converter.StringSourceConverter.toStringSourceFromSpring((org.springframework.xml.transform.StringSource) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.spring.ws.converter.StringSourceConverter.toStringSourceFromSpring((org.springframework.xml.transform.StringSource) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.springframework.xml.transform.StringSource.class, org.apache.camel.util.xml.StringSource.class, false,
-            (type, exchange, value) -> org.apache.camel.component.spring.ws.converter.StringSourceConverter.toStringSourceFromCamel((org.apache.camel.util.xml.StringSource) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.spring.ws.converter.StringSourceConverter.toStringSourceFromCamel((org.apache.camel.util.xml.StringSource) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

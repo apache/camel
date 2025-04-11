@@ -45,17 +45,53 @@ public final class DnsConverterLoader implements TypeConverterLoader, CamelConte
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, java.net.InetAddress.class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsConverter.toString((java.net.InetAddress) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsConverter.toString((java.net.InetAddress) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.xbill.DNS.Address.class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsConverter.toString((org.xbill.DNS.Address) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsConverter.toString((org.xbill.DNS.Address) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.xbill.DNS.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsConverter.toString((org.xbill.DNS.Message) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsConverter.toString((org.xbill.DNS.Message) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.xbill.DNS.Record.class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsConverter.toString((org.xbill.DNS.Record) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsConverter.toString((org.xbill.DNS.Record) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.net.InetAddress.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsConverter.toInetAddress((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsConverter.toInetAddress((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.util.List.class, org.xbill.DNS.Record[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.dns.types.DnsConverter.toList((org.xbill.DNS.Record[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.dns.types.DnsConverter.toList((org.xbill.DNS.Record[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

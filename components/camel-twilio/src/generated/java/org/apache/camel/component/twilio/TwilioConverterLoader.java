@@ -45,9 +45,21 @@ public final class TwilioConverterLoader implements TypeConverterLoader, CamelCo
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, com.twilio.type.Endpoint.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twilio.TwilioConverter.toPhoneNumber((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twilio.TwilioConverter.toPhoneNumber((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, com.twilio.type.Sip.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.twilio.TwilioConverter.toSip((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.twilio.TwilioConverter.toSip((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
