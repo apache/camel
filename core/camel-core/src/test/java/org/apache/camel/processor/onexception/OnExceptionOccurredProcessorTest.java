@@ -57,9 +57,9 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0)
                         .onExceptionOccurred(myProcessor));
 
-                from("direct:start").to("log:a").to("direct:foo").to("log:b");
+                from("direct:start").routeId("start").to("log:a").to("direct:foo").to("log:b");
 
-                from("direct:foo").throwException(new IllegalArgumentException("Forced"));
+                from("direct:foo").routeId("foo").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
@@ -71,6 +71,8 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
         @Override
         public void process(Exchange exchange) {
             invoked++;
+            String rid = exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.class);
+            assertEquals("foo", rid);
         }
 
         public int getInvoked() {
