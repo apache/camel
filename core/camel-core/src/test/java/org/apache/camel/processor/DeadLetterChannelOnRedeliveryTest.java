@@ -75,7 +75,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                         .redeliveryDelay(0L));
                 // END SNIPPET: e1
 
-                from("direct:start").process(new Processor() {
+                from("direct:start").routeId("myRoute").process(new Processor() {
                     public void process(Exchange exchange) {
                         // force some error so Camel will do redelivery
                         if (++counter <= 3) {
@@ -108,7 +108,12 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
             // the maximum redelivery was set to 5
             int max = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
             assertEquals(5, max);
+
+            // should be happening inside myRoute
+            String rid = exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.class);
+            assertEquals("myRoute", rid);
         }
+
     }
     // END SNIPPET: e2
 

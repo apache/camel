@@ -36,7 +36,7 @@
       <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
     </errorHandler>
 
-    <route>
+    <route id="foo">
       <from uri="direct:start"/>
       <throwException ref="forced"/>
     </route>
