@@ -45,7 +45,13 @@ public final class VertxConverterLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.lang.String.class, io.vertx.core.net.impl.SocketAddressImpl.class, false,
-            (type, exchange, value) -> org.apache.camel.component.platform.http.vertx.VertxConverter.fromSocket((io.vertx.core.net.impl.SocketAddressImpl) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.platform.http.vertx.VertxConverter.fromSocket((io.vertx.core.net.impl.SocketAddressImpl) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

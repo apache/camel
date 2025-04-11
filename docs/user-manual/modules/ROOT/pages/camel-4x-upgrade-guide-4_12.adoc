@@ -18,6 +18,14 @@ The package scan classes has moved from `camel-base-engine` to `camel-support` J
 - `org.apache.camel.impl.scan.CompositePackageScanFilter` is moved to `org.apache.camel.support.scan.CompositePackageScanFilter`
 - `org.apache.camel.impl.scan.InvertingPackageScanFilter` is moved to `org.apache.camel.support.scan.InvertingPackageScanFilter`
 
+==== Type Converters
+
+Using type converters that has been marked to allow null via (`@Converter(allow-null = true)`) has been improved
+to allow returning `null` as a positive answer when using `convertBodyTo` EIP and `mandatoryConvertTo` or `getMandatoryBody` etc.
+
+This behaviour was present in Camel v2 and some internal optimization in Camel v3 had changed
+this to not be the case. Using type converters that can return `null` is a rare use-case, and it's not a good practice.
+
 === camel-as2
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and

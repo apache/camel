@@ -45,7 +45,13 @@ public final class CamelInfluxDb2ConvertersLoader implements TypeConverterLoader
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, com.influxdb.client.write.Point.class, java.util.Map.class, false,
-            (type, exchange, value) -> org.apache.camel.component.influxdb2.converters.CamelInfluxDb2Converters.fromMapToPoint((java.util.Map) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.influxdb2.converters.CamelInfluxDb2Converters.fromMapToPoint((java.util.Map) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

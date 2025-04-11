@@ -45,9 +45,21 @@ public final class TahuEdgePayloadConverterLoader implements TypeConverterLoader
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.eclipse.tahu.message.model.SparkplugBPayload.class, org.apache.camel.Exchange.class, false,
-            (type, exchange, value) -> getTahuEdgePayloadConverter().exchangeToSparkplugBPayload((org.apache.camel.Exchange) value));
+            (type, exchange, value) -> {
+                Object answer = getTahuEdgePayloadConverter().exchangeToSparkplugBPayload((org.apache.camel.Exchange) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.eclipse.tahu.message.model.SparkplugBPayload.class, org.apache.camel.Message.class, false,
-            (type, exchange, value) -> getTahuEdgePayloadConverter().messageToSparkplugBPayload((org.apache.camel.Message) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = getTahuEdgePayloadConverter().messageToSparkplugBPayload((org.apache.camel.Message) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

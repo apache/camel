@@ -46,13 +46,37 @@ public final class GenericFileConverterLoader implements TypeConverterLoader, Ca
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, org.apache.camel.component.file.GenericFile.class, false,
-            (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToInputStream((org.apache.camel.component.file.GenericFile) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.file.GenericFileConverter.genericFileToInputStream((org.apache.camel.component.file.GenericFile) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.Reader.class, org.apache.camel.component.file.GenericFile.class, false,
-            (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToReader((org.apache.camel.component.file.GenericFile) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.file.GenericFileConverter.genericFileToReader((org.apache.camel.component.file.GenericFile) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.io.Serializable.class, org.apache.camel.component.file.GenericFile.class, false,
-            (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToSerializable((org.apache.camel.component.file.GenericFile) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.file.GenericFileConverter.genericFileToSerializable((org.apache.camel.component.file.GenericFile) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.file.GenericFile.class, false,
-            (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToString((org.apache.camel.component.file.GenericFile) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.file.GenericFileConverter.genericFileToString((org.apache.camel.component.file.GenericFile) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

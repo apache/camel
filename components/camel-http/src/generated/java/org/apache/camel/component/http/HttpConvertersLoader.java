@@ -45,13 +45,37 @@ public final class HttpConvertersLoader implements TypeConverterLoader, CamelCon
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.hc.core5.util.TimeValue.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeValue((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpConverters.toTimeValue((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.hc.core5.util.TimeValue.class, long.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeValue((long) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpConverters.toTimeValue((long) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.hc.core5.util.Timeout.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeout((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpConverters.toTimeout((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, org.apache.hc.core5.util.Timeout.class, long.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeout((long) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.http.HttpConverters.toTimeout((long) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

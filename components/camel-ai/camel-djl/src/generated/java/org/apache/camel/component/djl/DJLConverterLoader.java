@@ -45,27 +45,93 @@ public final class DJLConverterLoader implements TypeConverterLoader, CamelConte
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, ai.djl.modality.audio.Audio.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toAudio((byte[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toAudio((byte[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.audio.Audio.class, java.io.File.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toAudio((java.io.File) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toAudio((java.io.File) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.audio.Audio.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toAudio((java.io.InputStream) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toAudio((java.io.InputStream) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.audio.Audio.class, java.nio.file.Path.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toAudio((java.nio.file.Path) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toAudio((java.nio.file.Path) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.cv.Image.class, ai.djl.modality.cv.output.DetectedObjects.DetectedObject.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImage((ai.djl.modality.cv.output.DetectedObjects.DetectedObject) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toImage((ai.djl.modality.cv.output.DetectedObjects.DetectedObject) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.cv.Image.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImage((byte[]) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toImage((byte[]) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.cv.Image.class, java.io.File.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImage((java.io.File) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toImage((java.io.File) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.cv.Image.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImage((java.io.InputStream) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toImage((java.io.InputStream) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.cv.Image.class, java.nio.file.Path.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImage((java.nio.file.Path) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toImage((java.nio.file.Path) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ai.djl.modality.cv.Image[].class, ai.djl.modality.cv.output.DetectedObjects.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toImages((ai.djl.modality.cv.output.DetectedObjects) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toImages((ai.djl.modality.cv.output.DetectedObjects) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, byte[].class, ai.djl.modality.cv.Image.class, false,
-            (type, exchange, value) -> org.apache.camel.component.djl.DJLConverter.toBytes((ai.djl.modality.cv.Image) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.djl.DJLConverter.toBytes((ai.djl.modality.cv.Image) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

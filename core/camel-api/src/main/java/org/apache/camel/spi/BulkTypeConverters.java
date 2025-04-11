@@ -67,7 +67,11 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      */
     default <T> T tryConvertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {
         try {
-            convertTo(from, to, exchange, value);
+            Object t = convertTo(from, to, exchange, value);
+            if (t == Void.class) {
+                return null;
+            }
+            return (T) t;
         } catch (Exception e) {
             // ignore
         }
@@ -89,11 +93,13 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      */
     default <T> T mandatoryConvertTo(Class<?> from, Class<T> to, Exchange exchange, Object value)
             throws TypeConversionException, NoTypeConversionAvailableException {
-        T t = convertTo(from, to, exchange, value);
-        if (t == null) {
+        Object t = convertTo(from, to, exchange, value);
+        if (t == Void.class) {
+            return null;
+        } else if (t == null) {
             throw new NoTypeConversionAvailableException(value, to);
         } else {
-            return t;
+            return (T) t;
         }
     }
 

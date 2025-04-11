@@ -45,13 +45,37 @@ public final class HL7ConverterLoader implements TypeConverterLoader, CamelConte
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, byte[].class, ca.uhn.hl7v2.model.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7Converter.toByteArray((ca.uhn.hl7v2.model.Message) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7Converter.toByteArray((ca.uhn.hl7v2.model.Message) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.Message.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7Converter.toMessage((byte[]) value, exchange));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7Converter.toMessage((byte[]) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, ca.uhn.hl7v2.model.Message.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7Converter.toMessage((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7Converter.toMessage((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, java.lang.String.class, ca.uhn.hl7v2.model.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.hl7.HL7Converter.toString((ca.uhn.hl7v2.model.Message) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.hl7.HL7Converter.toString((ca.uhn.hl7v2.model.Message) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

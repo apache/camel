@@ -45,7 +45,13 @@ public final class ContentTypeConverterLoader implements TypeConverterLoader, Ca
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.hc.core5.http.ContentType.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.as2.converter.ContentTypeConverter.toContentType((java.lang.String) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.as2.converter.ContentTypeConverter.toContentType((java.lang.String) value);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

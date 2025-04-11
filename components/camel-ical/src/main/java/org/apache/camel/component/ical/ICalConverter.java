@@ -38,7 +38,7 @@ public final class ICalConverter {
         // Helper class
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static Date toDate(DateProperty property) {
         Temporal t = property.getDate();
         if (t instanceof Instant ins) {
@@ -47,7 +47,7 @@ public final class ICalConverter {
         return null;
     }
 
-    @Converter
+    @Converter(allowNull = true)
     public static Instant toInstant(DateProperty property) {
         Temporal t = property.getDate();
         if (t instanceof Instant ins) {

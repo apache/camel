@@ -21,9 +21,14 @@ import org.apache.camel.util.StringHelper;
 
 @Converter
 public class MyConverter {
-    @Converter
+
+    @Converter(allowNull = true)
     public MyBean fromString(String text) {
+        if (text.isBlank()) {
+            return null;
+        }
         String[] values = StringHelper.splitOnCharacter(text, ":", 2);
         return new MyBean(values[0], values[1]);
     }
+
 }

@@ -45,11 +45,29 @@ public final class ICalConverterLoader implements TypeConverterLoader, CamelCont
 
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.ByteArrayInputStream.class, net.fortuna.ical4j.model.Calendar.class, false,
-            (type, exchange, value) -> org.apache.camel.component.ical.ICalConverter.toStream((net.fortuna.ical4j.model.Calendar) value, exchange));
-        addTypeConverter(registry, java.time.Instant.class, net.fortuna.ical4j.model.property.DateProperty.class, false,
-            (type, exchange, value) -> org.apache.camel.component.ical.ICalConverter.toInstant((net.fortuna.ical4j.model.property.DateProperty) value));
-        addTypeConverter(registry, java.util.Date.class, net.fortuna.ical4j.model.property.DateProperty.class, false,
-            (type, exchange, value) -> org.apache.camel.component.ical.ICalConverter.toDate((net.fortuna.ical4j.model.property.DateProperty) value));
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.ical.ICalConverter.toStream((net.fortuna.ical4j.model.Calendar) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, java.time.Instant.class, net.fortuna.ical4j.model.property.DateProperty.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.ical.ICalConverter.toInstant((net.fortuna.ical4j.model.property.DateProperty) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
+        addTypeConverter(registry, java.util.Date.class, net.fortuna.ical4j.model.property.DateProperty.class, true,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.ical.ICalConverter.toDate((net.fortuna.ical4j.model.property.DateProperty) value);
+                if (true && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {

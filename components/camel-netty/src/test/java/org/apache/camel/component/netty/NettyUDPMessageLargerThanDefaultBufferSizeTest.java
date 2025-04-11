@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import io.netty.channel.ChannelOption;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -52,7 +51,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         sendMessage(2048);
     }
 
-    @BindToRegistry("RCVBUF_ALLOCATOR")
+    @BindToRegistry("myAllocator")
     public FixedRecvByteBufAllocator loadRecv() {
         FixedRecvByteBufAllocator fixedRecvByteBufAllocator = new FixedRecvByteBufAllocator(4096);
         return fixedRecvByteBufAllocator;
@@ -63,8 +62,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#"
-                     + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
+                from("netty:udp://localhost:{{port}}?option.RCVBUF_ALLOCATOR=#myAllocator").to("mock:result");
             }
         };
     }
