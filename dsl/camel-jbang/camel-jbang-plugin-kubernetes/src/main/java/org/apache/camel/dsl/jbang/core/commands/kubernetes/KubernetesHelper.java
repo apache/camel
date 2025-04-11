@@ -32,9 +32,9 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.fabric8.kubernetes.api.model.APIGroup;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
-import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -152,24 +152,17 @@ public final class KubernetesHelper {
     private static boolean isConnectedToOpenshift() {
         boolean ocp = false;
         try {
-            // set to openshift if there is clusterversions.config.openshift.io/version
-            ResourceDefinitionContext ocpVersion = new ResourceDefinitionContext.Builder()
-                    .withGroup("config.openshift.io")
-                    .withVersion("v1")
-                    .withKind("ClusterVersion")
-                    .withNamespaced(false)
-                    .build();
-            GenericKubernetesResource versioncr
-                    = getKubernetesClient().genericKubernetesResources(ocpVersion).withName("version").get();
-            ocp = versioncr != null;
+            APIGroup apiGroup = getKubernetesClient().getApiGroup("config.openshift.io");
+            ocp = apiGroup != null;
         } catch (RuntimeException e) {
-            // ignore it, since we try to discover the cluster and don't want the caller to handle any error
+            System.out.println("Failed to detect cluster: " + e.getMessage() + ", default to kubernetes.");
         }
         return ocp;
     }
 
     private static boolean isConnectedToMinikube() {
         boolean minikube = false;
+        boolean minikubeEnv = false;
         try {
             ResourceDefinitionContext nodecrd = new ResourceDefinitionContext.Builder()
                     .withVersion("v1")
@@ -182,12 +175,16 @@ public final class KubernetesHelper {
             minikube = list.getItems().size() > 0;
             // thse env properties are set when running eval $(minikube docker-env) in the console
             // this is important for the docker builder to actually build the image in the exposed docker from the minikube registry
-            minikube = minikube && System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
+            minikubeEnv = System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
                     && System.getenv("DOCKER_TLS_VERIFY") != null;
+            if (minikube && !minikubeEnv) {
+                System.out.println(
+                        "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
+            }
         } catch (Exception e) {
             // ignore it, since we try to discover the cluster and don't want the caller to handle any error
         }
-        return minikube;
+        return minikube && minikubeEnv;
     }
 
     // when minikube is used with the registry addon exposed
