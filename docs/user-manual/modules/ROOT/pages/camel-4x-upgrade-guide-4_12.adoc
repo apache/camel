@@ -12,6 +12,7 @@ The package scan classes has moved from `camel-base-engine` to `camel-support` J
 
 - `org.apache.camel.impl.engine.DefaultPackageScanClassResolver` is moved to `org.apache.camel.support.scan.DefaultPackageScanClassResolver`
 - `org.apache.camel.impl.engine.DefaultPackageScanResourceResolver` is moved to `org.apache.camel.support.scan.DefaultPackageScanResourceResolver`
+- `org.apache.camel.impl.engine.WebSpherePackageScanClassResolver` is moved to `org.apache.camel.support.scan.WebSpherePackageScanClassResolver`
 - `org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter` is moved to `org.apache.camel.support.scan.AnnotatedWithAnyPackageScanFilter`
 - `org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter` is moved to `org.apache.camel.support.scan.AnnotatedWithPackageScanFilter`
 - `org.apache.camel.impl.scan.AssignableToPackageScanFilter` is moved to `org.apache.camel.support.scan.AssignableToPackageScanFilter`
