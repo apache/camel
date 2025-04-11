@@ -253,6 +253,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // if we did not start process the file then decrement the counter
             if (!started) {
                 answer--;
+
+                // Remove the idempotent key from the repository if the idempotence of the endpoint is eager
+                GenericFile file = exchange.getProperty(ExchangePropertyKey.FILE_EXCHANGE_FILE, GenericFile.class);
+                if (null != file && endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
+                    removeExcessiveIdempotentFile(file, exchange);
+                }
             }
         }
 
