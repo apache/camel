@@ -43,6 +43,9 @@ public class GoogleBigQuerySQLConfiguration implements Cloneable {
     @Metadata(required = false)
     private String serviceAccountKey;
 
+    @UriParam(label = "producer", description = "Page token, returned by a previous call, to request the next page of results")
+    private String pageToken;
+
     public void parseRemaining(String remaining) {
         int indexOfColon = remaining.indexOf(':');
 
@@ -89,6 +92,15 @@ public class GoogleBigQuerySQLConfiguration implements Cloneable {
 
     public GoogleBigQuerySQLConfiguration setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
+        return this;
+    }
+
+    public String getPageToken() {
+        return pageToken;
+    }
+
+    public GoogleBigQuerySQLConfiguration setPageToken(String pageToken) {
+        this.pageToken = pageToken;
         return this;
     }
 
