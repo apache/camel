@@ -34,73 +34,61 @@ public class Traits {
 
     @JsonProperty("addons")
     @JsonPropertyDescription("The extension point with addon traits")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Map<String, Addons> addons;
 
     @JsonProperty("camel")
     @JsonPropertyDescription("The configuration of Camel trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Camel camel;
 
     @JsonProperty("container")
     @JsonPropertyDescription("The configuration of Container trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Container container;
 
     @JsonProperty("environment")
     @JsonPropertyDescription("The configuration of Environment trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Environment environment;
 
     @JsonProperty("ingress")
     @JsonPropertyDescription("The configuration of Ingress trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Ingress ingress;
 
     @JsonProperty("knative")
     @JsonPropertyDescription("The configuration of Knative trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Knative knative;
 
     @JsonProperty("knative-service")
     @JsonPropertyDescription("The configuration of Knative Service trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private KnativeService knativeService;
 
     @JsonProperty("mount")
     @JsonPropertyDescription("The configuration of Mount trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Mount mount;
 
     @JsonProperty("openapi")
     @JsonPropertyDescription("The configuration of OpenAPI trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Openapi openapi;
 
     @JsonProperty("route")
     @JsonPropertyDescription("The configuration of Route trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Route route;
 
     @JsonProperty("service")
     @JsonPropertyDescription("The configuration of Service trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Service service;
     @JsonProperty("service-binding")
     @JsonPropertyDescription("The configuration of Service Binding trait")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private ServiceBinding serviceBinding;
 
     public Map<String, Addons> getAddons() {

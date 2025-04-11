@@ -36,9 +36,9 @@ public class IngressTrait extends BaseTrait {
 
     public static final int IngressTrait = 2400;
 
-    public static final String INGRESS_CLASS_NAME = "nginx";
     public static final String DEFAULT_INGRESS_HOST = "";
     public static final String DEFAULT_INGRESS_PATH = "/";
+    public static final String DEFAULT_INGRESS_CLASS_NAME = "nginx";
     public static final Ingress.PathType DEFAULT_INGRESS_PATH_TYPE = Ingress.PathType.PREFIX;
 
     public IngressTrait() {
@@ -95,7 +95,7 @@ public class IngressTrait extends BaseTrait {
 
         ingressBuilder
                 .withNewSpec()
-                .withIngressClassName(INGRESS_CLASS_NAME)
+                .withIngressClassName(Optional.ofNullable(ingressTrait.getIngressClass()).orElse(DEFAULT_INGRESS_CLASS_NAME))
                 .withRules(rule)
                 .endSpec();
 

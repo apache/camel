@@ -30,50 +30,54 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "auto", "enabled", "host", "path", "pathType", "tlsHosts", "tlsSecretName" })
+        "ingressClass", "annotations", "auto", "enabled", "host", "path", "pathType", "tlsHosts", "tlsSecretName" })
 public class Ingress {
+    @JsonProperty("ingressClass")
+    @JsonPropertyDescription("To configure the ingress class (default to `nginx`).")
+    @JsonSetter(nulls = Nulls.SKIP)
+    private String ingressClass;
     @JsonProperty("annotations")
     @JsonPropertyDescription("The annotations added to the ingress. This can be used to set controller specific annotations, e.g., when using the NGINX Ingress controller: See https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Map<String, String> annotations;
     @JsonProperty("auto")
     @JsonPropertyDescription("To automatically add an ingress whenever the camel route uses an HTTP endpoint consumer.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean auto;
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
     @JsonProperty("host")
     @JsonPropertyDescription("To configure the host exposed by the ingress.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String host;
     @JsonProperty("path")
     @JsonPropertyDescription("To configure the path exposed by the ingress (default `/`).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String path;
     @JsonProperty("pathType")
     @JsonPropertyDescription("To configure the path type exposed by the ingress. One of `Exact`, `Prefix`, `ImplementationSpecific` (default to `Prefix`).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private PathType pathType;
     @JsonProperty("tlsHosts")
     @JsonPropertyDescription("To configure tls hosts")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> tlsHosts;
     @JsonProperty("tlsSecretName")
     @JsonPropertyDescription("To configure tls secret name")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsSecretName;
 
     public Ingress() {
+    }
+
+    public String getIngressClass() {
+        return ingressClass;
+    }
+
+    public void setIngressClass(String ingressClass) {
+        this.ingressClass = ingressClass;
     }
 
     public Map<String, String> getAnnotations() {
