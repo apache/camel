@@ -24,17 +24,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import io.fabric8.kubernetes.api.model.APIGroup;
+import io.fabric8.kubernetes.api.model.APIGroupBuilder;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeBuilder;
 import io.fabric8.kubernetes.api.model.NodeList;
 import io.fabric8.kubernetes.api.model.NodeListBuilder;
+import io.fabric8.kubernetes.api.model.Service;
+import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
-import io.fabric8.openshift.api.model.config.v1.ClusterVersion;
-import io.fabric8.openshift.api.model.config.v1.ClusterVersionBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.junit.jupiter.api.Assertions;
@@ -70,19 +74,7 @@ class KubernetesRunCustomTest {
     @Test
     public void disableAutomaticClusterDetection() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
-        ClusterVersion versionCR = new ClusterVersionBuilder()
-                .withNewMetadata().withName("version").endMetadata()
-                .withNewStatus()
-                .withNewDesired()
-                .withVersion("4.14.5")
-                .endDesired()
-                .endStatus()
-                .build();
-
-        server.expect().get().withPath("/apis/config.openshift.io/v1/clusterversions/version")
-                .andReturn(HttpURLConnection.HTTP_OK, versionCR)
-                .once();
-
+        setupServerExpectsOpenshift();
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--disable-auto");
@@ -100,25 +92,14 @@ class KubernetesRunCustomTest {
     @Test
     public void detectOpenshiftCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
-        ClusterVersion versionCR = new ClusterVersionBuilder()
-                .withNewMetadata().withName("version").endMetadata()
-                .withNewStatus()
-                .withNewDesired()
-                .withVersion("4.14.5")
-                .endDesired()
-                .endStatus()
-                .build();
-
-        server.expect().get().withPath("/apis/config.openshift.io/v1/clusterversions/version")
-                .andReturn(HttpURLConnection.HTTP_OK, versionCR)
-                .once();
-
+        setupServerExpectsOpenshift();
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml", "--verbose");
         int exit = command.doCall();
 
-        Assertions.assertEquals(0, exit);
-        Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase());
+        Assertions.assertEquals(0, exit, printer.getOutput());
+        Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(),
+                printer.getOutput());
 
         var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
@@ -131,19 +112,7 @@ class KubernetesRunCustomTest {
     @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
     public void detectMinikubeCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
-        Node nodeCR = new NodeBuilder()
-                .withNewMetadata()
-                .withName("minikube")
-                .withLabels(Collections.singletonMap("minikube.k8s.io/name", "minikube"))
-                .endMetadata()
-                .build();
-        NodeList nodeList = new NodeListBuilder().addToItems(nodeCR)
-                .build();
-
-        server.expect().get().withPath("/api/v1/nodes?labelSelector=minikube.k8s.io%2Fname")
-                .andReturn(HttpURLConnection.HTTP_OK, nodeList)
-                .once();
-
+        setupServerExpectsMinikube();
         KubernetesRun command = createCommand(new String[] { "classpath:route.yaml" },
                 "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
         int exit = command.doCall();
@@ -158,6 +127,66 @@ class KubernetesRunCustomTest {
 
         Assertions.assertFalse(command.imagePush);
         Assertions.assertEquals("docker", command.imageBuilder);
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "MINIKUBE_ACTIVE_DOCKERD", value = "foo")
+    @SetEnvironmentVariable(key = "DOCKER_TLS_VERIFY", value = "foo")
+    public void shouldGenerateRegularService() throws Exception {
+        KubernetesHelper.setKubernetesClient(client);
+        setupServerExpectsMinikube();
+        KubernetesRun command = createCommand(new String[] { "classpath:route-service.yaml" },
+                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Assertions.assertEquals(ClusterType.MINIKUBE.name().toLowerCase(), command.clusterType.toLowerCase());
+
+        var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        List<HasMetadata> resources = client.load(manifest).items();
+        // expects service and deployment only
+        Assertions.assertEquals(2, resources.size());
+
+        Service svc = resources.stream()
+                .filter(it -> Service.class.isAssignableFrom(it.getClass()))
+                .map(Service.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("Missing Service in Kubernetes manifest"));
+
+        Deployment deployment = resources.stream()
+                .filter(it -> Deployment.class.isAssignableFrom(it.getClass()))
+                .map(Deployment.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
+
+        var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
+        Assertions.assertEquals(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME, containers.get(0).getPorts().get(0).getName());
+        Assertions.assertEquals(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME, svc.getSpec().getPorts().get(0).getName());
+    }
+
+    private void setupServerExpectsMinikube() {
+        Node nodeCR = new NodeBuilder()
+                .withNewMetadata()
+                .withName("minikube")
+                .withLabels(Collections.singletonMap("minikube.k8s.io/name", "minikube"))
+                .endMetadata()
+                .build();
+        NodeList nodeList = new NodeListBuilder().addToItems(nodeCR)
+                .build();
+        server.expect().get().withPath("/api/v1/nodes?labelSelector=minikube.k8s.io%2Fname")
+                .andReturn(HttpURLConnection.HTTP_OK, nodeList)
+                .once();
+    }
+
+    private void setupServerExpectsOpenshift() {
+        APIGroup apiGroup = new APIGroupBuilder()
+                .withApiVersion("v1")
+                .withName("config.openshift.io")
+                .build();
+
+        server.expect().get().withPath("/apis/config.openshift.io")
+                .andReturn(HttpURLConnection.HTTP_OK, apiGroup)
+                .always();
     }
 
     private KubernetesRun createCommand(String[] files, String... args) {

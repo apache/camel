@@ -74,6 +74,7 @@ class KubernetesDeleteTest extends KubernetesBaseTest {
         run.imagePush = false;
         run.filePaths = new String[] { "classpath:route.yaml" };
         run.output = "yaml";
+        run.disableAuto = true;
         int exit = run.doCall();
         Assertions.assertEquals(0, exit);
 
