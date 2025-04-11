@@ -117,7 +117,7 @@
         <commons-math3-version>3.6.1</commons-math3-version>
         <commons-net-version>3.11.1</commons-net-version>
         <commons-pool2-version>2.12.1</commons-pool2-version>
-        <commons-text-version>1.13.0</commons-text-version>
+        <commons-text-version>1.13.1</commons-text-version>
         <commons-validator-version>1.9.0</commons-validator-version>
         <compress-lzf-version>1.1.2</compress-lzf-version>
         <consul-client-version>1.5.0</consul-client-version>
