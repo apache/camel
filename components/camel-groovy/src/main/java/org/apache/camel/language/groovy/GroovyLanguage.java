@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.groovy;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -199,7 +198,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         }
 
         public GroovyLanguage build() {
-            return new GroovyLanguage(Collections.unmodifiableMap(cache), false);
+            return new GroovyLanguage(cache, false);
         }
     }
 }
