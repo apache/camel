@@ -92,7 +92,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"processorClient", "senderClient"};
+        return new String[]{"processorClient", "senderClient", "tokenCredential"};
     }
 
     @Override

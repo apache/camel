@@ -168,6 +168,7 @@ class ServiceBusEndpointTest extends CamelTestSupport {
         assertEquals(10, endpoint.getConfiguration().getPrefetchCount());
         assertEquals(fullyQualifiedNamespace, endpoint.getConfiguration().getFullyQualifiedNamespace());
         assertEquals(credential, endpoint.getConfiguration().getTokenCredential());
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
