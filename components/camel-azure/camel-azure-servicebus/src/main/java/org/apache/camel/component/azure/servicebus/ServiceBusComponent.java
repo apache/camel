@@ -58,7 +58,9 @@ public class ServiceBusComponent extends DefaultComponent {
 
         // ensure we use default credential type if not configured
         if (endpoint.getConfiguration().getTokenCredential() == null) {
-            endpoint.getConfiguration().setCredentialType(CredentialType.CONNECTION_STRING);
+            if (endpoint.getConfiguration().getCredentialType() == null) {
+                endpoint.getConfiguration().setCredentialType(CredentialType.CONNECTION_STRING);
+            }
         } else {
             boolean azure = endpoint.getConfiguration().getTokenCredential() instanceof DefaultAzureCredential;
             endpoint.getConfiguration()
