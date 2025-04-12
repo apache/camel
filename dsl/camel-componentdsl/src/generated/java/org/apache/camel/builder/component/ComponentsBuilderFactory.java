@@ -4563,6 +4563,19 @@ public interface ComponentsBuilderFactory {
         return WeatherComponentBuilderFactory.weather();
     }
     /**
+     * weaviate (camel-weaviate)
+     * Perform operations on the Weaviate Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-weaviate
+     * 
+     * @return the dsl builder
+     */
+    static WeaviateComponentBuilderFactory.WeaviateComponentBuilder weaviate() {
+        return WeaviateComponentBuilderFactory.weaviate();
+    }
+    /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
      * 
