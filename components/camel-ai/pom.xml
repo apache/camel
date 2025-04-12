@@ -49,6 +49,7 @@
         <module>camel-qdrant</module>
         <module>camel-tensorflow-serving</module>
         <module>camel-torchserve</module>
+        <module>camel-weaviate</module>
     </modules>
 
 </project>
