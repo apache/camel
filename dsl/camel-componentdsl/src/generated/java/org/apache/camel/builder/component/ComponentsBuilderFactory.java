@@ -4567,7 +4567,7 @@ public interface ComponentsBuilderFactory {
      * Perform operations on the Weaviate Vector Database.
      * 
      * Category: database,ai
-     * Since: 4.11
+     * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-weaviate
      * 
      * @return the dsl builder

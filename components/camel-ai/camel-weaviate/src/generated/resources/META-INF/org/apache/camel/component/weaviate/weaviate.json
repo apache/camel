@@ -5,7 +5,7 @@
     "title": "weaviate",
     "description": "Perform operations on the Weaviate Vector Database.",
     "deprecated": false,
-    "firstVersion": "4.11.0",
+    "firstVersion": "4.12.0",
     "label": "database,ai",
     "javaType": "org.apache.camel.component.weaviate.WeaviateVectorDbComponent",
     "supportLevel": "Preview",

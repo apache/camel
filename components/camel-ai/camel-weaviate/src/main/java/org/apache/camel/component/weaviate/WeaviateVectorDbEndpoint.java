@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform operations on the Weaviate Vector Database.
  */
 @UriEndpoint(
-             firstVersion = "4.11.0",
+             firstVersion = "4.12.0",
              scheme = WeaviateVectorDb.SCHEME,
              title = "weaviate",
              syntax = "weaviate:collection",
