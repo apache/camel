@@ -83,7 +83,7 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"producerAsyncClient"};
+        return new String[]{"producerAsyncClient", "tokenCredential"};
     }
 
     @Override

@@ -118,6 +118,7 @@ class EventHubsComponentTest extends CamelTestSupport {
                 = context.getEndpoint("azure-eventhubs:name/hubName?tokenCredential=#tokenCredential", EventHubsEndpoint.class);
 
         assertSame(tokenCredential, endpoint2.getConfiguration().getTokenCredential());
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint2.getConfiguration().getCredentialType());
     }
 
     @Test
@@ -137,6 +138,7 @@ class EventHubsComponentTest extends CamelTestSupport {
         assertEquals(100, endpoint.getConfiguration().getPrefetchCount());
         assertEquals(100, endpoint.getConfiguration().getCheckpointBatchSize());
         assertEquals(1000, endpoint.getConfiguration().getCheckpointBatchTimeout());
+        assertEquals(CredentialType.CONNECTION_STRING, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
