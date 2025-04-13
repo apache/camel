@@ -49,11 +49,15 @@ public final class EventHubsClientFactory {
                 .transportType(configuration.getAmqpTransportType())
                 .retryOptions(configuration.getAmqpRetryOptions());
 
-        if (configuration.getCredentialType().equals(CredentialType.CONNECTION_STRING)) {
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.CONNECTION_STRING;
+        }
+        if (CredentialType.CONNECTION_STRING.equals(type)) {
             return eventHubClientBuilder
                     .connectionString(buildConnectionString(configuration))
                     .buildAsyncProducerClient();
-        } else if (configuration.getCredentialType().equals(CredentialType.TOKEN_CREDENTIAL)) {
+        } else if (CredentialType.TOKEN_CREDENTIAL.equals(type)) {
 
             checkTokenCredentialConfiguration(configuration);
             return eventHubClientBuilder
@@ -76,11 +80,15 @@ public final class EventHubsClientFactory {
                 .transportType(configuration.getAmqpTransportType())
                 .retryOptions(configuration.getAmqpRetryOptions());
 
-        if (configuration.getCredentialType().equals(CredentialType.CONNECTION_STRING)) {
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.CONNECTION_STRING;
+        }
+        if (CredentialType.CONNECTION_STRING.equals(type)) {
             return eventHubClientBuilder
                     .connectionString(buildConnectionString(configuration))
                     .buildAsyncConsumerClient();
-        } else if (configuration.getCredentialType().equals(CredentialType.TOKEN_CREDENTIAL)) {
+        } else if (CredentialType.TOKEN_CREDENTIAL.equals(type)) {
 
             checkTokenCredentialConfiguration(configuration);
             return eventHubClientBuilder
@@ -108,11 +116,15 @@ public final class EventHubsClientFactory {
                 .processError(processError)
                 .processEvent(processEvent);
 
-        if (configuration.getCredentialType().equals(CredentialType.CONNECTION_STRING)) {
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.CONNECTION_STRING;
+        }
+        if (CredentialType.CONNECTION_STRING.equals(type)) {
             return eventProcessorClientBuilder
                     .connectionString(buildConnectionString(configuration))
                     .buildEventProcessorClient();
-        } else if (configuration.getCredentialType().equals(CredentialType.TOKEN_CREDENTIAL)) {
+        } else if (CredentialType.TOKEN_CREDENTIAL.equals(type)) {
 
             checkTokenCredentialConfiguration(configuration);
             return eventProcessorClientBuilder
