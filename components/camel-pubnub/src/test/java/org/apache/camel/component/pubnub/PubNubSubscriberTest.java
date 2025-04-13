@@ -37,7 +37,7 @@ public class PubNubSubscriberTest extends PubNubTestBase {
                 .willReturn(aResponse()
                         .withBody(
                                 "{\"t\":{\"t\":\"14607577960932487\",\"r\":1},\"m\":[{\"a\":\"4\",\"f\":0,\"i\":\"Publisher-A\",\"p\":{\"t\":\"14607577960925503\",\"r\":1},\"o\":"
-                                  + "{\"t\":\"14737141991877032\",\"r\":2},\"k\":\"sub-c-4cec9f8e-01fa-11e6-8180-0619f8945a4f\",\"c\":\"mychannel\",\"d\":{\"text\":\"Message\"},\"b\":\"coolChannel\"}]}")));
+                                  + "{\"t\":\"14737141991877032\",\"r\":2},\"k\":\"sub-c-mykey\",\"c\":\"mychannel\",\"d\":{\"text\":\"Message\"},\"b\":\"coolChannel\"}]}")));
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
                 .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
 
