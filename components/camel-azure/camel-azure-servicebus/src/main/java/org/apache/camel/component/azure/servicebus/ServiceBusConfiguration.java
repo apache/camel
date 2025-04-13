@@ -32,8 +32,6 @@ import com.azure.messaging.servicebus.models.SubQueue;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.*;
 
-import static org.apache.camel.component.azure.servicebus.CredentialType.CONNECTION_STRING;
-
 @UriParams
 public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyAware {
 
@@ -46,6 +44,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private String connectionString;
     @UriParam(label = "security")
     private String fullyQualifiedNamespace;
+    @Metadata(autowired = true)
     @UriParam(label = "security", secret = true)
     private TokenCredential tokenCredential;
     @UriParam(label = "common")
@@ -89,7 +88,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private boolean binary;
     @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
               defaultValue = "CONNECTION_STRING")
-    private CredentialType credentialType = CONNECTION_STRING;
+    private CredentialType credentialType;
     // New fields for session support
     @UriParam(label = "consumer", defaultValue = "false", description = "Enable session support")
     private boolean sessionEnabled;

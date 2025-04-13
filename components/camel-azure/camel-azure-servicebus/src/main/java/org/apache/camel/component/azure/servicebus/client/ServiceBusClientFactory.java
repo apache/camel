@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.messaging.servicebus.*;
+import org.apache.camel.component.azure.servicebus.CredentialType;
 import org.apache.camel.component.azure.servicebus.ServiceBusConfiguration;
 import org.apache.camel.component.azure.servicebus.ServiceBusType;
 
@@ -36,7 +37,11 @@ public final class ServiceBusClientFactory {
         String fullyQualifiedNamespace = configuration.getFullyQualifiedNamespace();
         TokenCredential credential = configuration.getTokenCredential();
 
-        switch (configuration.getCredentialType()) {
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.CONNECTION_STRING;
+        }
+        switch (type) {
             case CONNECTION_STRING -> builder.connectionString(configuration.getConnectionString());
             case TOKEN_CREDENTIAL -> builder.credential(fullyQualifiedNamespace, credential);
             case AZURE_IDENTITY -> builder.credential(fullyQualifiedNamespace, new DefaultAzureCredentialBuilder().build());
