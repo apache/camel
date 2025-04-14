@@ -34,8 +34,11 @@ public final class QueueClientFactory {
     }
 
     public static QueueServiceClient createQueueServiceClient(final QueueConfiguration configuration) {
-        if (configuration.getCredentialType().equals(CredentialType.SHARED_KEY_CREDENTIAL)
-                || configuration.getCredentialType().equals(CredentialType.SHARED_ACCOUNT_KEY)) {
+        CredentialType type = configuration.getCredentialType();
+        if (type == null) {
+            type = CredentialType.SHARED_ACCOUNT_KEY;
+        }
+        if (CredentialType.SHARED_KEY_CREDENTIAL.equals(type) || CredentialType.SHARED_ACCOUNT_KEY.equals(type)) {
             return new QueueServiceClientBuilder()
                     .endpoint(buildAzureEndpointUri(configuration))
                     .credential(getCredentialForClient(configuration))

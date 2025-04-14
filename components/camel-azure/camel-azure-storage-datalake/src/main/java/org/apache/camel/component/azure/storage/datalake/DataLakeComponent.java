@@ -17,11 +17,7 @@
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.util.Map;
-import java.util.Set;
 
-import com.azure.core.credential.AzureSasCredential;
-import com.azure.identity.ClientSecretCredential;
-import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -67,7 +63,23 @@ public class DataLakeComponent extends HealthCheckComponent {
         final DataLakeEndpoint endpoint = new DataLakeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        setCredentialsFromRegistry(configuration);
+        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
+            // ensure we use default credential type if not configured
+            if (configuration.getSharedKeyCredential() == null && configuration.getSasCredential() == null
+                    && configuration.getClientSecretCredential() == null) {
+                if (configuration.getCredentialType() == null) {
+                    configuration.setCredentialType(CredentialType.CLIENT_SECRET);
+                }
+            } else {
+                if (configuration.getSharedKeyCredential() != null) {
+                    configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                } else if (configuration.getSasCredential() != null) {
+                    configuration.setCredentialType(CredentialType.AZURE_SAS);
+                } else if (configuration.getClientSecretCredential() != null) {
+                    configuration.setCredentialType(CredentialType.CLIENT_SECRET);
+                }
+            }
+        }
 
         return endpoint;
     }
@@ -80,24 +92,4 @@ public class DataLakeComponent extends HealthCheckComponent {
         this.configuration = configuration;
     }
 
-    private void setCredentialsFromRegistry(final DataLakeConfiguration configuration) {
-        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
-            final Set<StorageSharedKeyCredential> storageSharedKeyCredentials
-                    = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
-            final Set<ClientSecretCredential> clientSecretCredentials
-                    = getCamelContext().getRegistry().findByType(ClientSecretCredential.class);
-            final Set<AzureSasCredential> sasCredentials
-                    = getCamelContext().getRegistry().findByType(AzureSasCredential.class);
-
-            if (storageSharedKeyCredentials.size() == 1) {
-                configuration.setSharedKeyCredential(storageSharedKeyCredentials.stream().findFirst().get());
-            }
-            if (clientSecretCredentials.size() == 1) {
-                configuration.setClientSecretCredential(clientSecretCredentials.stream().findFirst().get());
-            }
-            if (sasCredentials.size() == 1) {
-                configuration.setSasCredential(sasCredentials.stream().findFirst().get());
-            }
-        }
-    }
 }
