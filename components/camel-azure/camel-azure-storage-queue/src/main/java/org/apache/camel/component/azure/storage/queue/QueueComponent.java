@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Azure Queue Storage component using azure java sdk v12.x
@@ -65,7 +66,16 @@ public class QueueComponent extends HealthCheckComponent {
         final QueueEndpoint endpoint = new QueueEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        checkCredentials(configuration);
+        if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
+            // ensure we use default credential type if not configured
+            if (configuration.getCredentials() == null) {
+                if (configuration.getCredentialType() == null) {
+                    configuration.setCredentialType(CredentialType.SHARED_ACCOUNT_KEY);
+                }
+            } else {
+                configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+            }
+        }
 
         return endpoint;
     }

@@ -87,7 +87,7 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"serviceClient"};
+        return new String[]{"credentials", "serviceClient"};
     }
 
     @Override
