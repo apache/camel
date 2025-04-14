@@ -316,6 +316,10 @@ The Solr component exchange headers have been renamed and extended. As a consequ
 
 All the solr headers has been renamed to use `CamelSolr` as prefix, such as `operation` -> `CamelSolrOperation`.
 
+=== camel-test-infra
+
+There are some API breaking changes with `org.apache.camel.test.infra.XXX.services..XXXContainerService`, they do not have anymore a constructor accessible, you need to use `org.apache.camel.test.infra.XXX.services.XXXServiceFactory.createLocalService`
+
 == camel-spring-boot
 
 The `camel-k-starter` has been removed.
