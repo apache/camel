@@ -31,8 +31,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.AZURE_IDENTITY;
-
 @UriParams
 public class BlobConfiguration implements Cloneable {
 
@@ -41,6 +39,7 @@ public class BlobConfiguration implements Cloneable {
     @UriPath
     private String containerName;
     @UriParam
+    @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
     @UriParam
     private String sasToken;
@@ -103,7 +102,7 @@ public class BlobConfiguration implements Cloneable {
     private String sourceBlobAccessKey;
     @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
               defaultValue = "AZURE_IDENTITY")
-    private CredentialType credentialType = AZURE_IDENTITY;
+    private CredentialType credentialType;
     @UriParam(label = "common")
     private boolean leaseBlob;
     @UriParam(label = "common", defaultValue = "60")
