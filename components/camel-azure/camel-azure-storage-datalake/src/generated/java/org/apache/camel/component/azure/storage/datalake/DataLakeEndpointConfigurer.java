@@ -122,7 +122,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"serviceClient"};
+        return new String[]{"clientSecretCredential", "sasCredential", "serviceClient", "sharedKeyCredential"};
     }
 
     @Override
