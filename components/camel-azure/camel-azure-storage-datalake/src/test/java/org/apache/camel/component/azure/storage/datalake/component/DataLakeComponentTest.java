@@ -64,6 +64,7 @@ class DataLakeComponentTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getServiceClient());
         assertEquals(DataLakeOperationsDefinition.upload, endpoint.getConfiguration().getOperation());
         assertEquals("test.txt", endpoint.getConfiguration().getFileName());
+        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test

@@ -30,8 +30,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.storage.datalake.CredentialType.CLIENT_SECRET;
-
 @UriParams
 public class DataLakeConfiguration implements Cloneable {
 
@@ -40,12 +38,14 @@ public class DataLakeConfiguration implements Cloneable {
     @UriPath(description = "name of filesystem to be used")
     private String fileSystemName;
     @UriParam(description = "shared key credential for azure data lake gen2")
+    @Metadata(autowired = true)
     private StorageSharedKeyCredential sharedKeyCredential;
     @UriParam(description = "directory of the file to be handled in component")
     private String directoryName;
     @UriParam(description = "name of file to be handled in component")
     private String fileName;
     @UriParam(label = "security", secret = true, description = "client secret credential for authentication")
+    @Metadata(autowired = true)
     private ClientSecretCredential clientSecretCredential;
     @UriParam(description = "data lake service client for azure storage data lake")
     @Metadata(autowired = true)
@@ -99,6 +99,7 @@ public class DataLakeConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true, description = "SAS token signature")
     private String sasSignature;
     @UriParam(label = "security", secret = true, description = "SAS token credential")
+    @Metadata(autowired = true)
     private AzureSasCredential sasCredential;
 
     @UriParam(label = "producer", enums = "listFileSystem, listFiles", defaultValue = "listFileSystem",
@@ -107,7 +108,7 @@ public class DataLakeConfiguration implements Cloneable {
 
     @UriParam(label = "common", enums = "CLIENT_SECRET,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS,SERVICE_CLIENT_INSTANCE",
               defaultValue = "CLIENT_SECRET")
-    private CredentialType credentialType = CLIENT_SECRET;
+    private CredentialType credentialType;
 
     public DataLakeOperationsDefinition getOperation() {
         return operation;
