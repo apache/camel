@@ -125,7 +125,7 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"serviceClient"};
+        return new String[]{"credentials", "serviceClient"};
     }
 
     @Override

@@ -17,10 +17,8 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.util.Map;
-import java.util.Set;
 
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -87,15 +85,13 @@ public class BlobComponent extends HealthCheckComponent {
         final BlobServiceClient client = configuration.getServiceClient();
 
         if (client == null) {
-            //default to AZURE_AD
-            if (configuration.getCredentialType() == null) {
-                configuration.setCredentialType(AZURE_IDENTITY);
-            } else if (SHARED_KEY_CREDENTIAL.equals(configuration.getCredentialType())) {
-                Set<StorageSharedKeyCredential> storageSharedKeyCredentials
-                        = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
-                storageSharedKeyCredentials.stream().findFirst().ifPresent(configuration::setCredentials);
-            } else if (AZURE_SAS.equals(configuration.getCredentialType())) {
-                configuration.setCredentialType(AZURE_SAS);
+            // ensure we use default credential type if not configured
+            if (configuration.getCredentials() == null) {
+                if (configuration.getCredentialType() == null) {
+                    configuration.setCredentialType(AZURE_IDENTITY);
+                }
+            } else {
+                configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
             }
         }
     }

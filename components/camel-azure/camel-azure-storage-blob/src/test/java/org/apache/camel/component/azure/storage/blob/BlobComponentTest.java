@@ -64,6 +64,19 @@ class BlobComponentTest extends CamelTestSupport {
                         "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL");
 
         doTestCreateEndpointWithMinConfig(endpoint, false);
+        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
+    }
+
+    @Test
+    void testCreateEndpointWithMinConfigAutowired() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
+
+        doTestCreateEndpointWithMinConfig(endpoint, false);
+        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
     }
 
     @Test
@@ -185,6 +198,26 @@ class BlobComponentTest extends CamelTestSupport {
         assertEquals(BlobOperationsDefinition.getChangeFeed, endpoint.getConfiguration().getOperation());
         assertEquals(OffsetDateTime.parse("2021-08-04T11:05Z"), endpoint.getConfiguration().getChangeFeedStartTime());
         assertEquals(OffsetDateTime.parse("2021-12-04T11:05Z"), endpoint.getConfiguration().getChangeFeedEndTime());
+        assertEquals(CredentialType.SHARED_KEY_CREDENTIAL, endpoint.getConfiguration().getCredentialType());
+    }
+
+    @Test
+    void testCreateEndpointWithMinConfigNoCredentialType() {
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob");
+
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("container", endpoint.getConfiguration().getContainerName());
+        assertEquals("blob", endpoint.getConfiguration().getBlobName());
+        assertNull(endpoint.getConfiguration().getCredentials());
+        assertEquals(BlobType.blockblob, endpoint.getConfiguration().getBlobType());
+        assertNull(endpoint.getConfiguration().getFileDir());
+        assertEquals(Long.valueOf(0L), endpoint.getConfiguration().getBlobOffset());
+        assertEquals(BlobOperationsDefinition.listBlobContainers, endpoint.getConfiguration().getOperation());
+        assertTrue(endpoint.getConfiguration().isCloseStreamAfterRead());
+        assertTrue(endpoint.getConfiguration().isCloseStreamAfterWrite());
+        assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
 
     private StorageSharedKeyCredential storageSharedKeyCredential() {
