@@ -103,9 +103,6 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |=======================================================================
 |Option |Description
 
-|--trait-profile
-|The trait profile to use for the deployment.
-
 |--service-account
 |The service account used to run the application.
 
@@ -1135,8 +1132,6 @@ spec:
 
 The Route trait enhances the Kubernetes manifest with a Route resource to expose the application to the outside world. This requires the presence in the Kubernetes manifest of a Service Resource.
 
-NOTE: You need to enable the OpenShift profile trait with `--trait-profile=openshift` option.
-
 The Route trait provides the following configuration options:
 
 [cols="2m,1m,5a"]
@@ -1193,7 +1188,7 @@ You may specify these options with the export command to customize the Route Res
 
 [source,bash]
 ----
-camel kubernetes export Sample.java --trait-profile=openshift -t route.enabled=true --trait route.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
+camel kubernetes export Sample.java --cluster-type=openshift -t route.enabled=true --trait route.host=example.com -t route.tls-termination=edge -t route.tls-certificate=file:/tmp/tls.crt -t route.tls-key=file:/tmp/tls.key
 ----
 
 

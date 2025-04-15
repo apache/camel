@@ -17,6 +17,7 @@
 package org.apache.camel.oauth;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,23 +50,46 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
         //
         if (session.getUserProfile().isPresent()) {
             authenticateExistingUserProfile(oauth, session);
+            log.info("{} - Done", procName);
         }
 
         // Fallback to the authorization code flow
         //
         if (session.getUserProfile().isEmpty()) {
 
-            var postLoginUrl = msg.getHeader(Exchange.HTTP_URL, String.class);
-            session.putValue("OAuthPostLoginUrl", postLoginUrl);
+            session.putValue("OAuthPostLoginUrl", getPostLoginUrl(msg));
 
             var redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
             var params = new OAuthCodeFlowParams().setRedirectUri(redirectUri);
             var authRequestUrl = oauth.buildCodeFlowAuthRequestUrl(params);
 
-            setSessionCookie(msg, session);
             sendRedirect(msg, authRequestUrl);
+            log.info("{} - Redirect to {}", procName, authRequestUrl);
         }
+    }
 
-        log.info("{} - Done", procName);
+    private String getPostLoginUrl(Message msg) {
+        String postLoginUrl;
+        var xProto = msg.getHeader("X-Forwarded-Proto", String.class);
+        var xHost = msg.getHeader("X-Forwarded-Host", String.class);
+        var xPort = msg.getHeader("X-Forwarded-Port", Integer.class);
+        if (xProto != null && xHost != null) {
+            postLoginUrl = xProto + "://" + xHost;
+            if (xPort != null) {
+                if (xProto.equals("https") && xPort != 443) {
+                    postLoginUrl += ":" + xPort;
+                }
+                if (xProto.equals("http") && xPort != 80) {
+                    postLoginUrl += ":" + xPort;
+                }
+            }
+            var httpPath = msg.getHeader(Exchange.HTTP_PATH, String.class);
+            if (httpPath != null && !httpPath.isEmpty()) {
+                postLoginUrl += httpPath;
+            }
+        } else {
+            postLoginUrl = msg.getHeader(Exchange.HTTP_URL, String.class);
+        }
+        return postLoginUrl;
     }
 }
