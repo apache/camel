@@ -436,7 +436,7 @@
         <quartz-version>2.5.0</quartz-version>
         <quickfixj-version>2.3.2</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
-        <reactor-version>3.7.4</reactor-version>
+        <reactor-version>3.7.5</reactor-version>
         <reactor-netty-version>1.2.4</reactor-netty-version>
         <redisson-version>3.45.1</redisson-version>
         <resilience4j-version>2.3.0</resilience4j-version>
