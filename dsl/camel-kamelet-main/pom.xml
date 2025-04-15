@@ -55,6 +55,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-console</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
