@@ -214,3 +214,24 @@ Verify access to the OIDC configuration
 ```
 curl -s https://keycloak.${OPENSHIFT_HOSTNAME}/realms/camel/.well-known/openid-configuration | jq .
 ```
+
+### Modify Keycloak OIDC Config for OpenShift
+
+```sh
+kcadm config credentials --server https://keycloak.${OPENSHIFT_HOSTNAME} --realm master --user admin --password admin
+
+# Show client config
+kcadm get clients -r camel | jq '.[] | select(.clientId=="camel-client")'
+
+CLIENT_ID=$(kcadm get clients -r camel --fields id,clientId | jq -r '.[] | select(.clientId=="camel-client").id')
+
+# Update redirect URIs
+kcadm update clients/$CLIENT_ID -r camel -s 'redirectUris=["https://webapp.'${OPENSHIFT_HOSTNAME}'/auth"]'
+
+# Update post-logout redirect URIs
+kcadm update clients/$CLIENT_ID -r camel -s 'attributes."post.logout.redirect.uris"="https://webapp.'${OPENSHIFT_HOSTNAME}'/"'
+
+kcadm get realms | jq '.[] | select(.realm=="camel")'
+
+kcadm get keys -r camel
+```

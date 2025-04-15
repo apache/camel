@@ -66,9 +66,8 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
             postLoginUrl = postLoginUrl.substring(0, lastSlashIdx + 1);
         }
 
-        setSessionCookie(msg, session);
         sendRedirect(msg, postLoginUrl);
 
-        log.info("{} - Done", procName);
+        log.info("{} - Redirect to {}", procName, postLoginUrl);
     }
 }

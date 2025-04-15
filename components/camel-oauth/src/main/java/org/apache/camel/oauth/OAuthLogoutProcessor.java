@@ -26,6 +26,7 @@ public class OAuthLogoutProcessor extends AbstractOAuthProcessor {
     @Override
     public void process(Exchange exchange) {
         var context = exchange.getContext();
+        var msg = exchange.getMessage();
 
         findOAuth(context).ifPresent(oauth -> {
 
@@ -41,10 +42,8 @@ public class OAuthLogoutProcessor extends AbstractOAuthProcessor {
 
                 var logoutUrl = oauth.buildLogoutRequestUrl(params);
 
-                log.info("OAuth logout: {}", logoutUrl);
-                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
-                exchange.getMessage().setHeader("Location", logoutUrl);
-                exchange.getMessage().setBody("");
+                log.info("{} - Logout, then {}", procName, postLogoutUrl);
+                sendRedirect(msg, logoutUrl);
             });
         });
     }
