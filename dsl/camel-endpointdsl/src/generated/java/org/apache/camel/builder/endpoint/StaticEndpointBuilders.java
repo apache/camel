@@ -11965,6 +11965,46 @@ public class StaticEndpointBuilders {
         return imap("pop3s", path);
     }
     /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Computing Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * Syntax: <code>pqc:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static PQCEndpointBuilderFactory.PQCEndpointBuilder pqc(String path) {
+        return pqc("pqc", path);
+    }
+    /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Computing Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * Syntax: <code>pqc:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static PQCEndpointBuilderFactory.PQCEndpointBuilder pqc(String componentName, String path) {
+        return PQCEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.

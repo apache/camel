@@ -57,6 +57,7 @@
 *** xref:aws2-step-functions-component.adoc[AWS StepFunctions]
 *** xref:aws2-timestream-component.adoc[AWS Timestream]
 *** xref:aws2-translate-component.adoc[AWS Translate]
+*** xref:pqc-component.adoc[PQC Algorithms]
 ** xref:azure-summary.adoc[Azure]
 *** xref:azure-cosmosdb-component.adoc[Azure CosmosDB]
 *** xref:azure-eventhubs-component.adoc[Azure Event Hubs]
