@@ -335,7 +335,7 @@ public class CamelContextConfiguration {
      * @param routeId
      * @param fromEndpoint
      */
-    void replaceRouteFromWith(String routeId, String fromEndpoint) {
+    public void replaceRouteFromWith(String routeId, String fromEndpoint) {
         fromEndpoints.put(routeId, fromEndpoint);
     }
 
