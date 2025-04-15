@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CmdStartStopITCase extends JBangTestSupport {
@@ -92,5 +93,19 @@ public class CmdStartStopITCase extends JBangTestSupport {
         execute("cmd start-route");
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started");
+    }
+
+    @Test
+    public void testCamelWatch() throws IOException {
+        copyResourceInDataFolder(TestResources.ROUTE2);
+        String PID = executeBackground(String.format("run %s/route2.yaml", mountPoint()));
+        newFileInDataFolder("watch-sleep", "nohup camel ps --watch&\n" +
+                                           "sleep 5\n" +
+                                           "echo \"q\"\n");
+        execInContainer(String.format("chmod +x %s/watch-sleep", mountPoint()));
+        Assertions.assertThat(
+                execInContainer(String.format("%s/watch-sleep", mountPoint())))
+                .as("watch command should output PID" + PID)
+                .contains(PID);
     }
 }
