@@ -1165,11 +1165,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
+        return endChoice(null);
+    }
+
+    public ChoiceDefinition endChoice(String id) {
         ProcessorDefinition<?> def = this;
 
-        // are we nested choice?
-        if (def.getParent() instanceof ChoiceDefinition cho) {
+        // are we already a choice
+        if (def instanceof ChoiceDefinition cho) {
             return cho;
+        }
+
+        // end and find the choice
+        def = end();
+        if (def instanceof RouteDefinition) {
+            // okay that was too far down so go back up
+            def = this;
         }
 
         // are we already a choice?
@@ -1177,9 +1188,40 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             return choice;
         }
 
+        //        ProcessorDefinition<?> def = this;
+
+        /*
+        // are we nested choice?
+        if (def.getParent() instanceof ChoiceDefinition cho) {
+            // are we in fact part of the parent
+            Collection<ChoiceDefinition> nested
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(cho.getOutputs(), ChoiceDefinition.class);
+            boolean found = nested.stream().anyMatch(this::equals);
+            if (found) {
+                if (def instanceof ChoiceDefinition choice) {
+                    return choice;
+                }
+                return cho;
+            }
+        }
+
+        // are we already a choice?
+        if (def instanceof ChoiceDefinition choice) {
+            Collection<ChoiceDefinition> nested
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), ChoiceDefinition.class);
+            if (nested.isEmpty()) {
+                return choice;
+            }
+        }
+        */
+
+        if (def.getParent() instanceof ChoiceDefinition cho) {
+            return cho;
+        }
+
         // okay end this and get back to the choice
-        def = end();
-        NamedNode p = def.getParent();
+        //        def = end();
+        NamedNode p = def;
         if ("when".equals(p.getShortName())) {
             return (ChoiceDefinition) p;
         } else if ("otherwise".equals(p.getShortName())) {

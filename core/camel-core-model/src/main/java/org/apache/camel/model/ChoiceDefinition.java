@@ -191,6 +191,14 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return this;
     }
 
+    // TODO: delete me
+    public ChoiceDefinition otherwise(String id) {
+        OtherwiseDefinition answer = new OtherwiseDefinition();
+        answer.setId(id);
+        addClause(answer);
+        return this;
+    }
+
     private void addClause(WhenDefinition when) {
         popBlock();
         addOutput(when);

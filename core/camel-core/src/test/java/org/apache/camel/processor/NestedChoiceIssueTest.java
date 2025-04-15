@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NestedChoiceIssueTest extends ContextTestSupport {
 
@@ -46,6 +49,12 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
 
     @Test
     public void testNestedChoiceLow() throws Exception {
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context,
+                context.getRouteDefinition("route1"));
+        assertNotNull(xml);
+        log.info(xml);
+        System.out.println(xml);
+
         getMockEndpoint("mock:low").expectedMessageCount(1);
         getMockEndpoint("mock:med").expectedMessageCount(0);
         getMockEndpoint("mock:big").expectedMessageCount(0);
@@ -61,8 +70,8 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").choice().when(header("foo").isGreaterThan(1)).choice().when(header("foo").isGreaterThan(5))
-                        .to("mock:big").otherwise().to("mock:med")
-                        .endChoice().otherwise().to("mock:low").end();
+                        .to("mock:big").otherwise("med").to("mock:med")
+                        .end().endChoice("low").otherwise("low").to("mock:low").end();
             }
         };
     }
