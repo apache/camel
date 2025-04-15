@@ -52,6 +52,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -240,6 +241,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setEntityResolver(getEntityResolver());
         xslt.setAllowStAX(allowStAX);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
+        xslt.setSource(ExpressionBuilder.singleInputExpression(getSource()));
 
         if (getXsltMessageLogger() != null) {
             xslt.setXsltMessageLogger(getXsltMessageLogger());

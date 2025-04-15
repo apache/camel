@@ -38,6 +38,54 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testOutputSourceHeader() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceHeader");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                                    + "</object>");
+        mock.message(0).body().isInstanceOf(String.class);
+
+        template.send("direct:sourceHeader", exchange -> {
+            exchange.getIn().setHeader("xmlSource", "{\"hello\": \"world!\"}");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testOutputSourceVariable() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceVariable");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                                    + "</object>");
+        mock.message(0).body().isInstanceOf(String.class);
+
+        template.send("direct:sourceVariable", exchange -> {
+            exchange.setVariable("xmlSource", "{\"hello\": \"world!\"}");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testOutputSourceProperty() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceProperty");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                    + "<object xmlns:xj=\"http://camel.apache.org/component/xj\" xj:type=\"object\">"
+                                    + "<object xj:name=\"hello\" xj:type=\"string\">world!</object>"
+                                    + "</object>");
+        mock.message(0).body().isInstanceOf(String.class);
+
+        template.send("direct:sourceProperty", exchange -> {
+            exchange.setProperty("xmlSource", "{\"hello\": \"world!\"}");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -46,6 +94,18 @@ public class J2XOutputIdentityTest extends CamelTestSupport {
                 from("direct:start")
                         .to("xj:identity?transformDirection=JSON2XML")
                         .to("mock:result");
+
+                from("direct:sourceHeader")
+                        .to("xj:identity?source=header:xmlSource&transformDirection=JSON2XML")
+                        .to("mock:sourceHeader");
+
+                from("direct:sourceVariable")
+                        .to("xj:identity?source=variable:xmlSource&transformDirection=JSON2XML")
+                        .to("mock:sourceVariable");
+
+                from("direct:sourceProperty")
+                        .to("xj:identity?source=property:xmlSource&transformDirection=JSON2XML")
+                        .to("mock:sourceProperty");
             }
         };
     }

@@ -29,6 +29,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.Expression;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
@@ -56,13 +57,13 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
     }
 
     @Override
-    public Source getSource(Exchange exchange) throws Exception {
+    public Source getSource(Exchange exchange, Expression source) throws Exception {
         // only convert to input stream if really needed
         if (isInputStreamNeeded(exchange)) {
             InputStream is = exchange.getIn().getBody(InputStream.class);
             return getSource(exchange, is);
         } else {
-            Object body = exchange.getIn().getBody();
+            Object body = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
             return getSource(exchange, body);
         }
     }
