@@ -1669,6 +1669,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pqc</artifactId>
+        <version>4.12.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-printer</artifactId>
         <version>4.12.0-SNAPSHOT</version>
       </dependency>
