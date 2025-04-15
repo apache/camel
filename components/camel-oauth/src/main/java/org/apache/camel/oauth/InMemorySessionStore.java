@@ -24,6 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,8 @@ public class InMemorySessionStore implements OAuthSessionStore {
 
         var msg = exchange.getMessage();
         log.info("New OAuthSession: {}", sessionId);
+
+        setSessionCookie(msg, session);
         msg.setHeader(OAuth.CAMEL_OAUTH_SESSION_ID, sessionId);
 
         return session;
@@ -92,5 +95,16 @@ public class InMemorySessionStore implements OAuthSessionStore {
                         arr -> arr.length > 1 ? arr[1] : ""));
 
         return cookieMap;
+    }
+
+    private void setSessionCookie(Message msg, OAuthSession session) {
+        var sessionId = session.getSessionId();
+        var cookieId = "%s=%s".formatted(CAMEL_OAUTH_COOKIE, sessionId);
+        if (msg.getHeader("Set-Cookie") != null) {
+            throw new IllegalStateException("Duplicate 'Set-Cookie' header");
+        }
+        var cookie = cookieId + "; Path=/; HttpOnly; SameSite=None; Secure";
+        msg.setHeader("Set-Cookie", cookie);
+        log.debug("Set-Cookie: {}", cookie);
     }
 }

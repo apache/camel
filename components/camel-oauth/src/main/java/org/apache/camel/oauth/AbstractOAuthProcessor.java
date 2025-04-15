@@ -26,8 +26,6 @@ import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_COOKIE;
-
 public abstract class AbstractOAuthProcessor implements Processor {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -70,12 +68,5 @@ public abstract class AbstractOAuthProcessor implements Processor {
         msg.setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
         msg.setHeader("Location", redirectUrl);
         msg.setBody("");
-    }
-
-    protected void setSessionCookie(Message msg, OAuthSession session) {
-        var sessionId = session.getSessionId();
-        var cookie = "%s=%s; Path=/; HttpOnly; SameSite=None; Secure".formatted(CAMEL_OAUTH_COOKIE, sessionId);
-        msg.setHeader("Set-Cookie", cookie);
-        log.debug("Set-Cookie: {}", cookie);
     }
 }
