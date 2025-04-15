@@ -1,0 +1,44 @@
+= PQC Algorithms Component
+:doctitle: PQC Algorithms
+:shortname: pqc
+:artifactid: camel-pqc
+:description: Post Quantum Computing Signature and Verification component.
+:since: 4.12
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: pqc
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The PQC component supports signing and verifying payload using Post Quantum Cryptography algorithms. 
+
+Prerequisites
+
+== URI Format
+
+-------------------------
+pqc://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END

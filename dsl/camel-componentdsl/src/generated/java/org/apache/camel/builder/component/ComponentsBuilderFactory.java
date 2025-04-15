@@ -3579,6 +3579,19 @@ public interface ComponentsBuilderFactory {
         return Pop3sComponentBuilderFactory.pop3s();
     }
     /**
+     * PQC Algorithms (camel-pqc)
+     * Post Quantum Computing Signature and Verification component.
+     * 
+     * Category: security
+     * Since: 4.12
+     * Maven coordinates: org.apache.camel:camel-pqc
+     * 
+     * @return the dsl builder
+     */
+    static PqcComponentBuilderFactory.PqcComponentBuilder pqc() {
+        return PqcComponentBuilderFactory.pqc();
+    }
+    /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.
