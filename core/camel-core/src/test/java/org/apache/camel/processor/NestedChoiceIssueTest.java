@@ -53,7 +53,6 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
                 context.getRouteDefinition("route1"));
         assertNotNull(xml);
         log.info(xml);
-        System.out.println(xml);
 
         getMockEndpoint("mock:low").expectedMessageCount(1);
         getMockEndpoint("mock:med").expectedMessageCount(0);
@@ -70,8 +69,8 @@ public class NestedChoiceIssueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").choice().when(header("foo").isGreaterThan(1)).choice().when(header("foo").isGreaterThan(5))
-                        .to("mock:big").otherwise("med").to("mock:med")
-                        .end().endChoice("low").otherwise("low").to("mock:low").end();
+                        .to("mock:big").otherwise().to("mock:med")
+                        .end().endChoice().otherwise().to("mock:low").end();
             }
         };
     }

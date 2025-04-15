@@ -1164,10 +1164,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the choice builder
      */
     public ChoiceDefinition endChoice() {
-        return endChoice(null);
-    }
-
-    public ChoiceDefinition endChoice(String id) {
         ProcessorDefinition<?> def = this;
 
         // are we already a choice
@@ -1186,7 +1182,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (def instanceof ChoiceDefinition choice) {
             return choice;
         } else {
-            throw new IllegalArgumentException("Cannot endChoice() to find current/parent choice DSL. If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
+            throw new IllegalArgumentException(
+                    "Cannot endChoice() to find current/parent choice DSL. If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
         }
     }
 

@@ -31,7 +31,6 @@ public class NestedChoiceOtherwiseIssueTest extends ContextTestSupport {
                 context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
-        System.out.println(xml);
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(0);
@@ -72,7 +71,7 @@ public class NestedChoiceOtherwiseIssueTest extends ContextTestSupport {
                             .choice()
                                 .when(header("bar"))
                                     .to("mock:bar")
-                                .endChoice("other2")
+                                .endChoice()
                                 .otherwise()
                                     .to("mock:other2")
                                 .end()
