@@ -608,6 +608,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
+                    if (!showExchangeVariables) {
+                        row.message.remove("exchangeVariables");
+                    }
                     if (!showExchangeProperties) {
                         row.message.remove("exchangeProperties");
                     }
