@@ -88,19 +88,19 @@ public class Debug extends Run {
     boolean source;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in traced messages")
+                        description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
     @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
-                        description = "Show exchange variables in traced messages")
+                        description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in traced messages")
+                        description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in traced messages")
+                        description = "Show message body in debug messages")
     boolean showBody = true;
 
     @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
@@ -401,6 +401,9 @@ public class Debug extends Run {
                         // we should exchangeId/pattern elsewhere
                         row.message.remove("exchangeId");
                         row.message.remove("exchangePattern");
+                        if (!showExchangeVariables) {
+                            row.message.remove("exchangeVariables");
+                        }
                         if (!showExchangeProperties) {
                             row.message.remove("exchangeProperties");
                         }
