@@ -151,7 +151,9 @@ class EipNode {
                     wrap.put(language, r);
                     answer.put(key, wrap);
                 } else {
-                    answer.put(key, r);
+                    JsonObject wrap = new JsonObject();
+                    wrap.put(language, r);
+                    answer.put("expression", wrap);
                 }
             }
         }

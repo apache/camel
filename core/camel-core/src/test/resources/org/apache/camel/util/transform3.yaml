@@ -23,21 +23,24 @@
       steps:
         - setBody:
             id: setBody
-            simple:
-              expression: "Hello Camel from ${routeId}"
+            expression:
+              simple:
+                expression: "Hello Camel from ${routeId}"
         - choice:
             id: choice
             when:
               - id: when
-                simple:
-                  expression: "${header.foo} == 'bar'"
+                expression:
+                  simple:
+                    expression: "${header.foo} == 'bar'"
                 steps:
                   - to:
                       id: to
                       uri: direct:bar
               - id: when
-                simple:
-                  expression: "${header.foo} == 'cake'"
+                expression:
+                  simple:
+                    expression: "${header.foo} == 'cake'"
                 steps:
                   - to:
                       id: to

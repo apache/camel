@@ -24,7 +24,8 @@
             logName: myLogger
             loggingLevel: WARN
         - setBody:
-            simple:
-              expression: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
         - to:
             uri: mock:result
