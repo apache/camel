@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
+import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -100,7 +101,11 @@ public final class Builder {
         if (value instanceof String str) {
             exp = new ConstantExpression(str);
         } else {
-            exp = ExpressionBuilder.constantExpression(value);
+            ConstantExpression ce = new ConstantExpression();
+            var def = ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value));
+            ce.setExpressionType(def);
+            ce.setExpression(String.valueOf(value));
+            exp = ce;
         }
         return new ValueBuilder(exp);
     }
@@ -124,7 +129,11 @@ public final class Builder {
             ce.setTrim(trim ? "true" : "false");
             exp = ce;
         } else {
-            exp = ExpressionBuilder.constantExpression(value);
+            ConstantExpression ce = new ConstantExpression();
+            ce.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value)));
+            ce.setExpression(String.valueOf(value));
+            ce.setTrim(trim ? "true" : "false");
+            exp = ce;
         }
         return new ValueBuilder(exp);
     }

@@ -28,7 +28,7 @@
                 <simple>${header.count}++</simple>
             </setHeader>
             <setBody id="setBody">
-                <expressionDefinition>1</expressionDefinition>
+                <constant>1</constant>
             </setBody>
             <log id="log" message="First when. Header is:${header.count} Body is:${body}"/>
             <to id="to" uri="direct:test"/>
@@ -39,7 +39,7 @@
                 <simple>${header.count}++</simple>
             </setHeader>
             <setBody id="setBody">
-                <expressionDefinition>2</expressionDefinition>
+                <constant>2</constant>
             </setBody>
             <log id="log" message="Second when. Header is:${header.count} Body is:${body}"/>
             <to id="to" uri="direct:test"/>
@@ -50,7 +50,7 @@
                 <simple>${header.count}++</simple>
             </setHeader>
             <setBody id="setBody">
-                <expressionDefinition>0</expressionDefinition>
+                <constant>0</constant>
             </setBody>
             <choice id="choice">
                 <when id="when">
@@ -68,7 +68,7 @@
                             <simple>${header.count} == 996</simple>
                             <log id="log" message="Deep choice log. Header is:${header.count}"/>
                             <setHeader id="setHeader" name="count">
-                                <expressionDefinition>998</expressionDefinition>
+                                <constant>998</constant>
                             </setHeader>
                         </when>
                     </choice>
