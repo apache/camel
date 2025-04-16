@@ -35,6 +35,45 @@ public class J2XOutputBytesTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testOutputSourceHeader() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceHeader");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+        mock.message(0).body().isInstanceOf(byte[].class);
+
+        template.send("direct:sourceHeader", exchange -> {
+            exchange.getIn().setHeader("xmlSource", "{\"hello\": \"world!\"}");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testOutputSourceVariable() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceVariable");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+        mock.message(0).body().isInstanceOf(byte[].class);
+
+        template.send("direct:sourceVariable", exchange -> {
+            exchange.setVariable("xmlSource", "{\"hello\": \"world!\"}");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testOutputSourceProperty() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceProperty");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+        mock.message(0).body().isInstanceOf(byte[].class);
+
+        template.send("direct:sourceProperty", exchange -> {
+            exchange.setProperty("xmlSource", "{\"hello\": \"world!\"}");
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -43,6 +82,18 @@ public class J2XOutputBytesTest extends CamelTestSupport {
                 from("direct:start")
                         .to("xj:hellojson2xml.xsl?transformDirection=JSON2XML&output=bytes")
                         .to("mock:result");
+
+                from("direct:sourceHeader")
+                        .to("xj:hellojson2xml.xsl?source=header:xmlSource&transformDirection=JSON2XML&output=bytes")
+                        .to("mock:sourceHeader");
+
+                from("direct:sourceVariable")
+                        .to("xj:hellojson2xml.xsl?source=variable:xmlSource&transformDirection=JSON2XML&output=bytes")
+                        .to("mock:sourceVariable");
+
+                from("direct:sourceProperty")
+                        .to("xj:hellojson2xml.xsl?source=property:xmlSource&transformDirection=JSON2XML&output=bytes")
+                        .to("mock:sourceProperty");
             }
         };
     }
