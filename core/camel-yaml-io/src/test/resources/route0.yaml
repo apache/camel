@@ -24,7 +24,8 @@
         includeMetadata: true
       steps:
         - setBody:
-            constant:
-              expression: Hello from yaml
+            expression:
+              constant:
+                expression: Hello from yaml
         - log:
             message: "${body}"

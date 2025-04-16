@@ -22,9 +22,10 @@
       steps:
         - split:
             streaming: "true"
-            simple:
-              resultType: int.class
-              expression: "${body}"
+            expression:
+              simple:
+                resultType: int.class
+                expression: "${body}"
             steps:
               - to:
                   uri: kafka:line

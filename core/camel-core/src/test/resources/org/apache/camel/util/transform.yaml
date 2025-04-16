@@ -23,8 +23,9 @@
       steps:
         - transform:
             id: transform
-            simple:
-              expression: "Hello ${body}"
+            expression:
+              simple:
+                expression: "Hello ${body}"
         - to:
             id: myMock
             uri: mock:result?failFast=false&retainFirst=5&browseLimit=123

@@ -25,8 +25,9 @@
         multipleConsumers: true
       steps:
         - transform:
-            simple:
-              expression: "Hello ${body}"
+            expression:
+              simple:
+                expression: "Hello ${body}"
         - to:
             id: myMock
             uri: mock
