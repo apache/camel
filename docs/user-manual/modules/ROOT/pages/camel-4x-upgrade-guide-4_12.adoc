@@ -27,6 +27,58 @@ to allow returning `null` as a positive answer when using `convertBodyTo` EIP an
 This behaviour was present in Camel v2 and some internal optimization in Camel v3 had changed
 this to not be the case. Using type converters that can return `null` is a rare use-case, and it's not a good practice.
 
+=== Java DSL
+
+When using Choice EIP then in some situations you may need to use `.endChoice()`
+to be able to either continue added more nodes to the current Choice EIP, or that you
+are working with nested Choice EIPs (choice inside choice), then you may also need to use `endChoice`
+to go back to the parent choice to continue from there.
+
+However, there has been some regressions from upgrading older Camel releases to 4.11, and therefore
+we have refactored `endChoice` to work more consistent.
+
+For example the following code
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo").isGreaterThan(1))
+            .choice()
+                .when(header("foo").isGreaterThan(5))
+                    .to("mock:big")
+                .otherwise()
+                    .to("mock:med")
+            .endChoice()
+        .otherwise()
+            .to("mock:low")
+        .end();
+----
+
+Should now be
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(header("foo").isGreaterThan(1))
+            .choice()
+                .when(header("foo").isGreaterThan(5))
+                    .to("mock:big")
+                .otherwise()
+                    .to("mock:med")
+            .end().endChoice()
+        .otherwise()
+            .to("mock:low")
+        .end();
+----
+
+Notice that the `endChoice` is changed to `end().endChoice()`. This is required to be consistent
+to end the current choice (inner) and then afterwards change the scope to be Choice EIP to be able to
+continue in the outer Choice. Otherwise the Java DSL cannot know the scope is Choice EIP and you would
+not be able to add the `otherwise` block to the outer Choice.
+
+
 === camel-as2
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
