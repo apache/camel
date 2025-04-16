@@ -34,9 +34,9 @@ public final class ComponentArtifactHelper {
 
     public static Properties loadComponentProperties(ClassLoader classLoader, Logger logger) {
         Properties answer = new Properties();
-        try {
+        try (InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component.properties")) {
             // load the component files using the recommended way by a component.properties file
-            InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component.properties");
+
             if (is != null) {
                 answer.load(is);
             }
@@ -47,8 +47,7 @@ public final class ComponentArtifactHelper {
     }
 
     public static String extractComponentJavaType(ClassLoader classLoader, String scheme, Logger logger) {
-        try {
-            InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme);
+        try (InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme)) {
             if (is != null) {
                 Properties props = new Properties();
                 props.load(is);
@@ -74,8 +73,7 @@ public final class ComponentArtifactHelper {
         }
 
         if (path != null) {
-            try {
-                InputStream is = classLoader.getResourceAsStream(path);
+            try (InputStream is = classLoader.getResourceAsStream(path)) {
                 if (is != null) {
                     answer = loadText(is);
                 }
