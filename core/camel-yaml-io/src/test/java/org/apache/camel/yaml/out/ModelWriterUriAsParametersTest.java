@@ -36,12 +36,12 @@ import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.IOHelper.stripLineComments;
@@ -207,7 +207,6 @@ public class ModelWriterUriAsParametersTest {
         Assertions.assertEquals(expected, out);
     }
 
-    @Disabled("TODO: https://issues.apache.org/jira/browse/CAMEL-21490")
     @Test
     public void testFromChoice() throws Exception {
         StringWriter sw = new StringWriter();
@@ -219,8 +218,17 @@ public class ModelWriterUriAsParametersTest {
         route.setInput(new FromDefinition("direct:start6"));
         ChoiceDefinition choice = new ChoiceDefinition();
         route.addOutput(choice);
-        choice.when().simple("${header.age} < 21").to("mock:young");
-        choice.when().simple("${header.age} > 21 && ${header.age} < 70").to("mock:work");
+
+        WhenDefinition when = new WhenDefinition();
+        when.setExpression(new SimpleExpression("${header.age} < 21"));
+        when.addOutput(new ToDefinition("mock:young"));
+        choice.addOutput(when);
+
+        when = new WhenDefinition();
+        when.setExpression(new SimpleExpression("${header.age} > 21 && ${header.age} < 70"));
+        when.addOutput(new ToDefinition("mock:work"));
+        choice.addOutput(when);
+
         choice.otherwise().to("mock:senior");
         ToDefinition to = new ToDefinition("mock:result");
         route.addOutput(to);
