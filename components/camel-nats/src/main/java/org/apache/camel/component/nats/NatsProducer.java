@@ -111,20 +111,24 @@ public class NatsProducer extends DefaultAsyncProducer {
             if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
                 LOG.info("JetStream is available");
 
-                JetStreamManagement jsm = null;
+                JetStreamManagement jsm;
+                JetStream js;
                 try {
                     jsm = this.connection.jetStreamManagement();
-                    jsm.addStream(StreamConfiguration.builder()
-                            .name(config.getJetstreamName())
-                            .subjects(config.getTopic())
-                            .build());
+                    js = jsm.jetStream();
+                    if(js == null) {
+                        jsm.addStream(StreamConfiguration.builder()
+                                .name(config.getJetstreamName())
+                                .subjects(config.getTopic())
+                                .build());
+                        js = jsm.jetStream();
+                    }
                 } catch (IOException | JetStreamApiException e) {
                     throw new RuntimeException(e);
                 }
-                JetStream js = jsm.jetStream();
+                PublishAck pa;
                 if (config.isJetstreamAsync()) {
                     CompletableFuture<PublishAck> future = js.publishAsync(config.getTopic(), body);
-                    PublishAck pa = null;
                     try {
                         pa = future.get(1, TimeUnit.SECONDS);
                     } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -132,7 +136,6 @@ public class NatsProducer extends DefaultAsyncProducer {
                     }
                     LOG.info("Publish Sequence async: {}", pa.getSeqno());
                 } else {
-                    PublishAck pa = null;
                     try {
                         pa = js.publish(config.getTopic(), body);
                     } catch (IOException | JetStreamApiException e) {
