@@ -23,10 +23,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.PredicateFactory;
+import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
@@ -117,7 +119,10 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         if (value instanceof String str) {
             return expression(new ConstantExpression(str));
         } else {
-            return expression(ExpressionBuilder.constantExpression(value));
+            ConstantExpression ce = new ConstantExpression();
+            ce.setExpressionType(new ExpressionDefinition(ExpressionBuilder.constantExpression(value)));
+            ce.setExpression(String.valueOf(value));
+            return expression(ce);
         }
     }
 
@@ -141,7 +146,11 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
             ce.setTrim(trim ? "true" : "false");
             return expression(ce);
         } else {
-            return expression(ExpressionBuilder.constantExpression(value));
+            ConstantExpression ce = new ConstantExpression();
+            ce.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value)));
+            ce.setExpression(String.valueOf(value));
+            ce.setTrim(trim ? "true" : "false");
+            return expression(ce);
         }
     }
 
