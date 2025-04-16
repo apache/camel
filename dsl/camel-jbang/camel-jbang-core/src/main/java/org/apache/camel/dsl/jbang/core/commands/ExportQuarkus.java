@@ -155,7 +155,13 @@ class ExportQuarkus extends Export {
                 v = Arrays.stream(v.split(","))
                         .filter(d -> !d.endsWith(".java")) // skip .java as they are in the src/main/java folder
                         .map(ExportQuarkus::removeScheme) // remove scheme and routes are in camel sub-folder
-                        .map(s -> "camel/" + s)
+                        .map(s -> {
+                            if (s.endsWith("kamelet.yaml")) {
+                                return "kamelets/" + s;
+                            } else {
+                                return "camel/" + s;
+                            }
+                        })
                         .collect(Collectors.joining(","));
                 sj.add(v);
             }
