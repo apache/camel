@@ -24,11 +24,13 @@
         includeMetadata: true
       steps:
         - setBody:
-            constant:
-              expression: Hello from yaml
+            expression:
+              constant:
+                expression: Hello from yaml
         - log:
             message: "${body}"
         - setHeader:
             name: Exchange.HTTP_RESPONSE_CODE
-            constant:
-              expression: 404
+            expression:
+              constant:
+                expression: 404

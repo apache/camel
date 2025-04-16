@@ -23,8 +23,9 @@
       steps:
         - split:
             id: split
-            simple:
-              expression: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
             steps:
               - to:
                   id: myMock
@@ -33,15 +34,17 @@
                   id: choice
                   when:
                     - id: when
-                      header:
-                        expression: foo
+                      expression:
+                        header:
+                          expression: foo
                       steps:
                         - to:
                             id: to
                             uri: mock:foo
                     - id: when
-                      header:
-                        expression: bar
+                      expression:
+                        header:
+                          expression: bar
                       steps:
                         - to:
                             id: to
