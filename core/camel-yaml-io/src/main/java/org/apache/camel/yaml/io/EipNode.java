@@ -156,19 +156,28 @@ class EipNode {
             }
         }
         if (outputs != null) {
-            // sort so otherwise is last
-            outputs.sort((o1, o2) -> {
-                if ("otherwise".equals(o1.name)) {
-                    return 1;
-                } else if ("otherwise".equals(o2.name)) {
-                    return -1;
-                }
-                return 0;
-            });
             if (("marshal".equals(name) || "unmarshal".equals(name)) && outputs.size() == 1) {
                 EipNode o = outputs.get(0);
                 JsonObject jo = o.asJsonObject();
                 answer.put(o.getName(), jo);
+            } else if ("choice".equals(name)) {
+                // special for choice
+                JsonArray arr = new JsonArray();
+                JsonObject otherwise = null;
+                for (EipNode o : outputs) {
+                    if ("otherwise".equals(o.getName())) {
+                        otherwise = o.asJsonObject();
+                    } else {
+                        arr.add(o.asJsonObject());
+                    }
+                }
+                if (!arr.isEmpty()) {
+                    answer.put("when", arr);
+                }
+                // otherwise should be last
+                if (otherwise != null) {
+                    answer.put("otherwise", otherwise);
+                }
             } else {
                 JsonArray arr = new JsonArray();
                 for (EipNode o : outputs) {
