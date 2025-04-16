@@ -19,6 +19,7 @@ package org.apache.camel.component.xslt;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 
 /**
  * Interface to be implemented by concrete source handlers/converters
@@ -29,8 +30,9 @@ public interface SourceHandlerFactory {
      * Creates a specific {@link Source} depending on the current message exchanged
      *
      * @param  exchange  the exchange
+     * @param  source    source to use, instead of message body.
      * @return           the source created from the message
      * @throws Exception if the source couldn't be created
      */
-    Source getSource(Exchange exchange) throws Exception;
+    Source getSource(Exchange exchange, Expression source) throws Exception;
 }
