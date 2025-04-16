@@ -14,29 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.edit;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-import org.jline.builtins.Commands;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.jline.builtins.Nano;
+import org.jline.builtins.Options;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "edit",
-                     description = "Edit file",
-                     footer = "Press Ctrl-X to exit.")
-public class Edit extends CamelCommand {
+@CommandLine.Command(name = "edit", description = "Edit Camel with suggestions and diagnostics")
+public class EditCommand extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of file", arity = "1",
                             paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
     private String file;
 
-    public Edit(CamelJBangMain main) {
+    public EditCommand(CamelJBangMain main) {
         super(main);
     }
 
@@ -44,14 +45,24 @@ public class Edit extends CamelCommand {
     public Integer doCall() throws Exception {
         Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
         try (Terminal terminal = TerminalBuilder.builder().build()) {
-            Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] { file }, null);
+            String[] argv = new String[] { file };
+            Options opt = Options.compile(Nano.usage()).parse(argv);
+            if (opt.isSet("help")) {
+                throw new Options.HelpException(opt.usage());
+            } else {
+                Path currentDir = workDir.get();
+                CamelNanoLspEditor edit
+                        = new CamelNanoLspEditor(terminal, currentDir, opt, null);
+                edit.open(opt.args());
+                edit.run();
+            }
         }
         return 0;
     }
 
-    static class FileConsumer extends ParameterConsumer<Edit> {
+    static class FileConsumer extends ParameterConsumer<EditCommand> {
         @Override
-        protected void doConsumeParameters(Stack<String> args, Edit cmd) {
+        protected void doConsumeParameters(Stack<String> args, EditCommand cmd) {
             cmd.file = args.pop();
         }
     }
