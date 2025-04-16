@@ -17,11 +17,9 @@
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
-import java.time.Duration;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class CustomJarsITCase extends JBangTestSupport {
@@ -29,23 +27,14 @@ public class CustomJarsITCase extends JBangTestSupport {
     @Test
     public void testCustomJars() throws IOException {
         copyResourceInDataFolder(TestResources.CIRCUIT_BREAKER);
-        try {
-            ProcessBuilder builder = new ProcessBuilder(
-                    "/bin/bash", "-c", String.format("camel run %s/CircuitBreakerRoute.java", mountPoint()));
-            builder.redirectErrorStream(true);
-            final Process process = builder.start();
-            Awaitility.await("process is running")
-                    .atMost(Duration.ofMinutes(2))
-                    .pollInterval(Duration.ofSeconds(1))
-                    .until(() -> !process.isAlive());
-            Assertions.assertThat(process.exitValue())
-                    .as("Running CircuitBreakerRoute.java without custom jar should fail")
-                    .isNotEqualTo(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        executeBackground(String.format("run %s/CircuitBreakerRoute.java --dep=camel-resilience4j", mountPoint()));
-        checkLogContains("resilience4j");
-
+        Assertions
+                .assertThatCode(() -> execute(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer", mountPoint())))
+                .as("the application without dependency will cause error")
+                .hasStackTraceContaining("Failed to create route circuitBreaker")
+                .hasStackTraceContaining(
+                        "Cannot find camel-resilience4j or camel-microprofile-fault-tolerance on the classpath.");
+        executeBackground(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer,camel-resilience4j", mountPoint()));
+        checkLogContains("timer called");
+        checkLogContains("Fallback message", 10);
     }
 }
