@@ -16,16 +16,9 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.security.Security;
-import java.security.Signature;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -34,13 +27,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PQCSignatureXMSSTest extends CamelTestSupport {
+public class PQCSignatureXMSSNoAutowiredTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
     protected MockEndpoint resultSign;
@@ -51,7 +43,7 @@ public class PQCSignatureXMSSTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureXMSSTest() throws NoSuchAlgorithmException {
+    public PQCSignatureXMSSNoAutowiredTest() throws NoSuchAlgorithmException {
     }
 
     @Override
@@ -59,7 +51,8 @@ public class PQCSignatureXMSSTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+                from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=XMSS").to("mock:sign")
+                        .to("pqc:verify?operation=verify&signatureAlgorithm=XMSS")
                         .to("mock:verify");
             }
         };
@@ -79,19 +72,5 @@ public class PQCSignatureXMSSTest extends CamelTestSupport {
         resultSign.assertIsSatisfied();
         resultVerify.assertIsSatisfied();
         assertTrue(resultVerify.getExchanges().get(0).getMessage().getHeader(PQCConstants.VERIFY, Boolean.class));
-    }
-
-    @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("XMSS", "BCPQC");
-        kpGen.initialize(new XMSSParameterSpec(10, XMSSParameterSpec.SHA256), new SecureRandom());
-        KeyPair kp = kpGen.generateKeyPair();
-        return kp;
-    }
-
-    @BindToRegistry("Signer")
-    public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance("XMSS");
-        return mlDsa;
     }
 }
