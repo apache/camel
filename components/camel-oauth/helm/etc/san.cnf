@@ -18,6 +18,8 @@ extendedKeyUsage    = serverAuth
 subjectAltName      = @alt_names
 
 [ alt_names ]
-DNS.1 = keycloak.local
-DNS.2 = keycloak.k3s
+DNS.1 = example.local
+DNS.2 = example.k3s
+DNS.3 = keycloak.local
+DNS.4 = keycloak.k3s
 IP.1  = 127.0.0.1

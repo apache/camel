@@ -32,10 +32,10 @@ openssl req -x509 -newkey rsa:4096 -keyout ./helm/etc/cluster.key -out ./helm/et
 cat ./helm/etc/cluster.crt | openssl x509 -noout -text
 
 # Import TLS Certificate to Java Keystore (i.e. trust the certificate)
-sudo keytool -import -alias keycloak -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+sudo keytool -import -alias camel-oauth -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 
 # Remove TLS Certificate from Java Keystore
-sudo keytool -delete -alias keycloak -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+sudo keytool -delete -alias camel-oauth -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
 
 # Trust this cert on macOS
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./helm/etc/cluster.crt
