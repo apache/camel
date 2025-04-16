@@ -47,7 +47,7 @@ class KubernetesCommandTest extends KubernetesBaseTest {
     @Test
     public void shouldPrintKubernetesManifest() {
         CamelJBangMain.run(createMain(), "kubernetes", "run", "classpath:route.yaml",
-                "--image-group", "camel-test", "--output", "yaml");
+                "--image-group", "camel-test", "--output", "yaml", "--disable-auto");
 
         List<HasMetadata> resources = kubernetesClient.load(getKubernetesManifestAsStream(printer.getOutput())).items();
         Assertions.assertEquals(2, resources.size());

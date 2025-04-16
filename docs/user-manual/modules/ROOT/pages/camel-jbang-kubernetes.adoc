@@ -1296,7 +1296,9 @@ camel kubernetes run route.yaml --image-registry=kind
 ----
 
 When connecting to a local Kubernetes cluster, you may need to specify the image registry where the application container image gets pushed to.
-The run command is able to automatically configure the local registry when using predefined names such as `kind` or `minikube`.
+The run command is able to automatically configure the local registry when using predefined names such as `kind` or `minikube`, there is a detection mechanism to set some properties accordingly to the cluster type, currently it can auto detect Openshift and Minikube. If you want to disable the cluster detection, you have to set the `--disable-auto` cli parameter.
+
+NOTE: When running minikube, the easiest way to push the image to the minikube container registry, is to enable the registry addon in minikube and to run `eval $(minikube docker-env)`.
 
 Use the `--image-group` or the `--image` option to customize the container image.
 
