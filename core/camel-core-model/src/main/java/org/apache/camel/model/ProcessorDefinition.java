@@ -41,7 +41,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DataFormatClause;
@@ -1089,25 +1088,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public ChoiceDefinition endChoice() {
         ProcessorDefinition<?> def = this;
 
-        // are we nested choice?
-        if (def.getParent() instanceof ChoiceDefinition cho) {
+        // are we already a choice
+        if (def instanceof ChoiceDefinition cho) {
             return cho;
+        }
+
+        // end and find the choice
+        def = end();
+        if (def instanceof RouteDefinition) {
+            // okay that was too far down so go back up
+            def = this;
         }
 
         // are we already a choice?
         if (def instanceof ChoiceDefinition choice) {
             return choice;
-        }
-
-        // okay end this and get back to the choice
-        def = end();
-        NamedNode p = def.getParent();
-        if ("when".equals(p.getShortName())) {
-            return (ChoiceDefinition) p;
-        } else if ("otherwise".equals(p.getShortName())) {
-            return (ChoiceDefinition) p;
         } else {
-            return (ChoiceDefinition) def;
+            throw new IllegalArgumentException(
+                    "Cannot endChoice() to find current/parent choice DSL. If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
         }
     }
 

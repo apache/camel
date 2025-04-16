@@ -26,7 +26,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <jmxAgent id="jmx" disabled="true"/>
-    <route>
+    <route id="route1">
       <from uri="direct:start"/>
       <choice>
         <when>

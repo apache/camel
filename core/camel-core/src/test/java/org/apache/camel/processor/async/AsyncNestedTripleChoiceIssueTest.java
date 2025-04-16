@@ -79,8 +79,8 @@ public class AsyncNestedTripleChoiceIssueTest extends ContextTestSupport {
 
                 from("direct:start").choice().when(header("foo").isGreaterThan(1)).to("async:bye:camel").choice()
                         .when(header("foo").isGreaterThan(5)).to("async:bye:camel2")
-                        .choice().when(header("foo").isGreaterThan(7)).to("mock:verybig").otherwise().to("mock:big").endChoice()
-                        .otherwise().to("mock:med").endChoice().otherwise()
+                        .choice().when(header("foo").isGreaterThan(7)).to("mock:verybig").otherwise().to("mock:big").end().endChoice()
+                        .otherwise().to("mock:med").end().endChoice().otherwise()
                         .to("mock:low").end();
             }
         };
