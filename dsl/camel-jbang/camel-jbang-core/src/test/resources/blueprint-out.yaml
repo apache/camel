@@ -30,10 +30,12 @@
               beanName: userService
               method: "getUser(${header.id})"
         - filter:
-            simple:
-              expression: "${body} == null"
+            expression:
+              simple:
+                expression: "${body} == null"
             steps:
               - setHeader:
                   name: Exchange.HTTP_RESPONSE_CODE
-                  constant:
-                    expression: 404
+                  expression:
+                    constant:
+                      expression: 404
