@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+
+<route xmlns="http://camel.apache.org/schema/spring" id="myRoute">
+    <from id="from" uri="direct:test"/>
+    <choice id="choice">
+        <when id="when">
+            <simple>${header.count} &lt; 1000 &amp;&amp; ${body} == 0</simple>
+            <setHeader id="setHeader" name="count">
+                <simple>${header.count}++</simple>
+            </setHeader>
+            <setBody id="setBody">
+                <expressionDefinition>1</expressionDefinition>
+            </setBody>
+            <log id="log" message="First when. Header is:${header.count} Body is:${body}"/>
+            <to id="to" uri="direct:test"/>
+        </when>
+        <when id="when">
+            <simple>${header.count} &lt; 1000 &amp;&amp; ${body} == 1</simple>
+            <setHeader id="setHeader" name="count">
+                <simple>${header.count}++</simple>
+            </setHeader>
+            <setBody id="setBody">
+                <expressionDefinition>2</expressionDefinition>
+            </setBody>
+            <log id="log" message="Second when. Header is:${header.count} Body is:${body}"/>
+            <to id="to" uri="direct:test"/>
+        </when>
+        <when id="when">
+            <simple>${header.count} &lt; 1000 &amp;&amp; ${body} == 2</simple>
+            <setHeader id="setHeader" name="count">
+                <simple>${header.count}++</simple>
+            </setHeader>
+            <setBody id="setBody">
+                <expressionDefinition>0</expressionDefinition>
+            </setBody>
+            <choice id="choice">
+                <when id="when">
+                    <simple>${header.count} &lt; 500</simple>
+                    <log id="log" message="Third when and small header. Header is:${header.count} Body is:${body}"/>
+                </when>
+                <when id="when">
+                    <simple>${header.count} &lt; 900</simple>
+                    <log id="log" message="Third when and big header. Header is:${header.count} Body is:${body}"/>
+                </when>
+                <otherwise id="otherwise">
+                    <log id="log" message="Third when and header over 900. Header is:${header.count} Body is:${body}"/>
+                    <choice id="choice">
+                        <when id="when">
+                            <simple>${header.count} == 996</simple>
+                            <log id="log" message="Deep choice log. Header is:${header.count}"/>
+                            <setHeader id="setHeader" name="count">
+                                <expressionDefinition>998</expressionDefinition>
+                            </setHeader>
+                        </when>
+                    </choice>
+                </otherwise>
+            </choice>
+            <to id="to" uri="direct:test"/>
+        </when>
+        <otherwise id="otherwise">
+            <log id="log" message="Header is:${header.count}"/>
+            <log id="log" message="Final Body is:${body}"/>
+        </otherwise>
+    </choice>
+</route>
