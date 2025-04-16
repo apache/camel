@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
+import java.security.Signature;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
