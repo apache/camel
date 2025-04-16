@@ -31,29 +31,27 @@
                   uri: mock:sub
               - choice:
                   id: choice
-                  steps:
-                    - when:
-                        id: when
-                        header:
-                          expression: foo
-                        steps:
-                          - to:
-                              id: to
-                              uri: mock:foo
-                    - when:
-                        id: when
-                        header:
-                          expression: bar
-                        steps:
-                          - to:
-                              id: to
-                              uri: mock:bar
-                    - otherwise:
-                        id: otherwise
-                        steps:
-                          - to:
-                              id: to
-                              uri: mock:other
+                  when:
+                    - id: when
+                      header:
+                        expression: foo
+                      steps:
+                        - to:
+                            id: to
+                            uri: mock:foo
+                    - id: when
+                      header:
+                        expression: bar
+                      steps:
+                        - to:
+                            id: to
+                            uri: mock:bar
+                  otherwise:
+                    id: otherwise
+                    steps:
+                      - to:
+                          id: to
+                          uri: mock:other
         - to:
             id: to
             uri: mock:last
