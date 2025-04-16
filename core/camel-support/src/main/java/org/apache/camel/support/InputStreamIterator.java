@@ -17,12 +17,14 @@
 package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.util.IOHelper;
 
 /**
  * An {@link InputStream} that wraps an {@link Iterator} which reads iterations as byte array data.
@@ -65,11 +67,18 @@ public final class InputStreamIterator extends InputStream {
 
     private InputStream nextChunk() throws IOException {
         if (it.hasNext()) {
+            Object next = null;
             try {
-                byte[] buf = converter.mandatoryConvertTo(byte[].class, it.next());
+                next = it.next();
+                byte[] buf = converter.mandatoryConvertTo(byte[].class, next);
                 return new ByteArrayInputStream(buf);
             } catch (NoTypeConversionAvailableException e) {
                 throw new IOException(e);
+            } finally {
+                // ensure the original object is closed if it was closeable
+                if (next != null && next instanceof Closeable closeableNext) {
+                    IOHelper.close(closeableNext);
+                }
             }
         } else {
             return null;

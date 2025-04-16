@@ -50,9 +50,11 @@ public final class StreamCacheConverter {
     public static StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
         // transfer the input stream to a cached output stream, and then creates a new stream cache view
         // of the data, which ensures the input stream is cached and re-readable.
-        CachedOutputStream cos = new CachedOutputStream(exchange);
-        IOHelper.copyAndCloseInput(stream, cos);
-        return cos.newStreamCache();
+        // Use try-with-resources to ensure the CachedOutputStream is closed automatically
+        try (CachedOutputStream cos = new CachedOutputStream(exchange)) {
+            IOHelper.copyAndCloseInput(stream, cos);
+            return cos.newStreamCache();
+        }
     }
 
     @Converter(order = 3)

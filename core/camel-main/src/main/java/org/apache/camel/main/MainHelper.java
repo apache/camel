@@ -497,22 +497,16 @@ public final class MainHelper {
     private String doGetVersion() {
         String version = null;
 
-        InputStream is = null;
         // try to load from maven properties first
-        try {
-            Properties p = new Properties();
-            is = MainHelper.class
-                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-main/pom.properties");
+        try (InputStream is = MainHelper.class
+                .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-main/pom.properties")) {
             if (is != null) {
+                Properties p = new Properties();
                 p.load(is);
                 version = p.getProperty("version", "");
             }
         } catch (Exception e) {
-            // ignore
-        } finally {
-            if (is != null) {
-                IOHelper.close(is);
-            }
+            LOG.warn("Error loading version information from pom.properties: {}", e.getMessage(), e);
         }
 
         // fallback to using Java API

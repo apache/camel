@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.builder;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -58,6 +59,7 @@ import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -1687,11 +1689,18 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                Object result = type.evaluate(exchange, Object.class);
-                if (result != null) {
-                    return expression.evaluate(exchange, result.getClass());
-                } else {
-                    return expression;
+                Object result = null;
+                try {
+                    result = type.evaluate(exchange, Object.class);
+                    if (result != null) {
+                        return expression.evaluate(exchange, result.getClass());
+                    } else {
+                        return expression;
+                    }
+                } finally {
+                    if (result instanceof Closeable closeableResult) {
+                        IOHelper.close(closeableResult, null);
+                    }
                 }
             }
 
