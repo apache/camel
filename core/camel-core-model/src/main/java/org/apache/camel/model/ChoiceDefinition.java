@@ -186,6 +186,11 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
      * @return the builder
      */
     public ChoiceDefinition otherwise() {
+        if (this.otherwise != null) {
+            throw new IllegalArgumentException(
+                    "Cannot add a 2nd otherwise to this choice: " + this
+                                               + ". If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
+        }
         OtherwiseDefinition answer = new OtherwiseDefinition();
         addClause(answer);
         return this;
