@@ -42,6 +42,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
@@ -75,6 +76,7 @@ public class XsltBuilder implements Processor {
     private ErrorListener errorListener;
     private EntityResolver entityResolver;
     private XsltMessageLogger xsltMessageLogger;
+    private Expression source;
 
     private final XMLConverterHelper converter = new XMLConverterHelper();
     private final Lock sourceHandlerFactoryLock = new ReentrantLock();
@@ -113,7 +115,7 @@ public class XsltBuilder implements Processor {
         // the underlying input stream, which we need to close to avoid locking files or other resources
         InputStream is = null;
         try {
-            Source source = getSourceHandlerFactory().getSource(exchange);
+            Source source = getSourceHandlerFactory().getSource(exchange, this.source);
 
             source = prepareSource(source);
 
@@ -500,6 +502,14 @@ public class XsltBuilder implements Processor {
                 transformer.setParameter(key, value);
             }
         }
+    }
+
+    public Expression getSource() {
+        return source;
+    }
+
+    public void setSource(Expression source) {
+        this.source = source;
     }
 
     private static final class XsltBuilderOnCompletion extends SynchronizationAdapter {
