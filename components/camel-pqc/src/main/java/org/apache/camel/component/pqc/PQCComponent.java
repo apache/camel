@@ -20,9 +20,14 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.pqc.crypto.PQCDefaultLMSMaterial;
+import org.apache.camel.component.pqc.crypto.PQCDefaultMLDSAMaterial;
+import org.apache.camel.component.pqc.crypto.PQCDefaultSLHDSAMaterial;
+import org.apache.camel.component.pqc.crypto.PQCDefaultXMSSMaterial;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Post Quantum Cryptography Algorithms
@@ -47,6 +52,29 @@ public class PQCComponent extends HealthCheckComponent {
                 = this.configuration != null ? this.configuration.copy() : new PQCConfiguration();
         PQCEndpoint endpoint = new PQCEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
+            switch (configuration.getSignatureAlgorithm()) {
+                case "MLDSA":
+                    configuration.setSigner(PQCDefaultMLDSAMaterial.signer);
+                    configuration.setKeyPair(PQCDefaultMLDSAMaterial.keyPair);
+                    break;
+                case "SLHDSA":
+                    configuration.setSigner(PQCDefaultSLHDSAMaterial.signer);
+                    configuration.setKeyPair(PQCDefaultSLHDSAMaterial.keyPair);
+                    break;
+                case "LMS":
+                    configuration.setSigner(PQCDefaultLMSMaterial.signer);
+                    configuration.setKeyPair(PQCDefaultLMSMaterial.keyPair);
+                    break;
+                case "XMSS":
+                    configuration.setSigner(PQCDefaultXMSSMaterial.signer);
+                    configuration.setKeyPair(PQCDefaultXMSSMaterial.keyPair);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         return endpoint;
     }
