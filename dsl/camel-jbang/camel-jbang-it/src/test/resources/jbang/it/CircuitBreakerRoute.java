@@ -19,12 +19,17 @@ import org.apache.camel.builder.RouteBuilder;
 public class CircuitBreakerRoute extends RouteBuilder {
     @Override
     public void configure() {
+        from("timer:x?repeatCount=1")
+                .log("timer called")
+                .to("direct:start");
+
         from("direct:start")
+                .routeId("circuitBreaker")
                 .circuitBreaker()
                 .to("http://localhost:8080/faulty")
                 .onFallback()
                 .transform().constant("Fallback message")
                 .end()
-                .to("mock:result");
+                .log("${body}");
     }
 }
