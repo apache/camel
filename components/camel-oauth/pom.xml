@@ -33,7 +33,7 @@
     <description>Camel OAuth (Preview)</description>
 
     <properties>
-        <keycloak.client.version>26.0.4</keycloak.client.version>
+        <keycloak.client.version>26.0.5</keycloak.client.version>
         <supportLevel>preview</supportLevel>
     </properties>
 
