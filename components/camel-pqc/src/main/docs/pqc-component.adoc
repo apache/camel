@@ -42,3 +42,197 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: START
 
 // endpoint options: END
+
+== Supported Algorithms
+
+The component supports the following algorithms for signature and verification.
+
+Standardized and implemented
+
+- ML-DSA
+- SLH-DSA
+- LMS
+- XMSS
+
+Experimental and non-standardized
+
+- Falcon
+- Picnic
+- Rainbow
+
+== Supported operations
+
+The component supports two operations
+
+- sign
+- verify
+
+== General Behavior
+
+The component expects to find a KeyPair and a Signature Objects in to the Camel Registry.
+
+In case the KeyPair and the Signature Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+This will be true for standardized algorithms and not for experimental ones.
+
+== Examples
+
+- ML-DSA
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature mlDsa = Signature.getInstance("ML-DSA");
+        return mlDsa;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=MLDSA")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultMLDSAMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `ML-DSA-65`.
+
+- SLH-DSA
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
+        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s);
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature slhDsa = Signature.getInstance("SLH-DSA");
+        return slhDsa;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=SLHDSA").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=SLHDSA")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultSLHDSAMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `SLH-DSA-SHA2-128s`.
+
+- LMS
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("LMS", "BC");
+        kpGen.initialize(new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w1));
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature lms = Signature.getInstance("LMS");
+        return lms;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=LMS").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=LMS")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultLMSMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Parameters used will be `LMS-SHA256-N32-H5` for the signature and `SHA256-n32-w1` for the one-time signature.
+
+- XMSS
+
+[source,java]
+--------------------------------------------------------------------------------
+    from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+      .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("XMSS", "BCPQC");
+        kpGen.initialize(new XMSSParameterSpec(10, XMSSParameterSpec.SHA256), new SecureRandom());
+        KeyPair kp = kpGen.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("Signer")
+    public Signature getSigner() throws NoSuchAlgorithmException {
+        Signature xmss = Signature.getInstance("XMSS");
+        return xmss;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `signatureAlgorithm` parameter in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=XMSS").to("mock:sign")
+    .to("pqc:verify?operation=verify&signatureAlgorithm=XMSS")
+    .to("mock:verify");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultXMSSMaterial`, which will create the Signature and KeyPair objects to be used.
+
+The Parameters used will be `10` as tree height and `SHA-256` for the tree digest.
