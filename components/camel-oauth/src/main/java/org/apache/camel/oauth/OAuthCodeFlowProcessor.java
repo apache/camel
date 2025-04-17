@@ -49,23 +49,27 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
         // Authenticate an existing UserProfile from the OAuthSession
         //
         if (session.getUserProfile().isPresent()) {
-            authenticateExistingUserProfile(oauth, session);
-            log.info("{} - Done", procName);
+            var userProfile = session.removeUserProfile().orElseThrow();
+            try {
+                userProfile = authenticateExistingUserProfile(oauth, userProfile);
+                session.putUserProfile(userProfile);
+                return;
+            } catch (OAuthException ex) {
+                log.error("Failed to authenticate: {}", userProfile.subject(), ex);
+            }
         }
 
         // Fallback to the authorization code flow
         //
-        if (session.getUserProfile().isEmpty()) {
+        var postLoginUrl = getPostLoginUrl(msg);
+        log.info("Register post login url: {}", postLoginUrl);
+        session.putValue("OAuthPostLoginUrl", postLoginUrl);
 
-            session.putValue("OAuthPostLoginUrl", getPostLoginUrl(msg));
+        var redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
+        var params = new OAuthCodeFlowParams().setRedirectUri(redirectUri);
+        var authRequestUrl = oauth.buildCodeFlowAuthRequestUrl(params);
 
-            var redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
-            var params = new OAuthCodeFlowParams().setRedirectUri(redirectUri);
-            var authRequestUrl = oauth.buildCodeFlowAuthRequestUrl(params);
-
-            sendRedirect(msg, authRequestUrl);
-            log.info("{} - Redirect to {}", procName, authRequestUrl);
-        }
+        sendRedirect(msg, authRequestUrl);
     }
 
     private String getPostLoginUrl(Message msg) {
@@ -83,9 +87,9 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
                     postLoginUrl += ":" + xPort;
                 }
             }
-            var httpPath = msg.getHeader(Exchange.HTTP_PATH, String.class);
-            if (httpPath != null && !httpPath.isEmpty()) {
-                postLoginUrl += httpPath;
+            var httpUri = msg.getHeader(Exchange.HTTP_URI, String.class);
+            if (httpUri != null && !httpUri.isEmpty()) {
+                postLoginUrl += httpUri;
             }
         } else {
             postLoginUrl = msg.getHeader(Exchange.HTTP_URL, String.class);
