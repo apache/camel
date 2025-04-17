@@ -64,10 +64,9 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
         // Get or create the OAuthSession
         //
         var session = oauth.getOrCreateSession(exchange);
-
         session.putUserProfile(userProfile);
-        userProfile.logDetails("Authenticated");
 
-        log.info("{} - Done", procName);
+        log.info("Authenticated {}", userProfile.subject());
+        userProfile.logDetails();
     }
 }

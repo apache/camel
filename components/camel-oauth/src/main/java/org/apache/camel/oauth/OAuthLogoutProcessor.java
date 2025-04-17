@@ -42,7 +42,7 @@ public class OAuthLogoutProcessor extends AbstractOAuthProcessor {
 
                 var logoutUrl = oauth.buildLogoutRequestUrl(params);
 
-                log.info("{} - Logout, then {}", procName, postLogoutUrl);
+                log.info("Logout then redirect to: {}", postLogoutUrl);
                 sendRedirect(msg, logoutUrl);
             });
         });

@@ -57,17 +57,17 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
                 .setCode(authCode));
 
         session.putUserProfile(userProfile);
-        userProfile.logDetails("Authenticated");
+        log.info("Authenticated {}", userProfile.subject());
+        userProfile.logDetails();
 
         var postLoginUrl = (String) session.removeValue("OAuthPostLoginUrl").orElse(null);
         if (postLoginUrl == null) {
             postLoginUrl = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
             var lastSlashIdx = postLoginUrl.lastIndexOf('/');
             postLoginUrl = postLoginUrl.substring(0, lastSlashIdx + 1);
+            log.warn("Cannot find OAuthPostLoginUrl, now using {}", postLoginUrl);
         }
 
         sendRedirect(msg, postLoginUrl);
-
-        log.info("{} - Redirect to {}", procName, postLoginUrl);
     }
 }

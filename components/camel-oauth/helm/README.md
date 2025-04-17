@@ -201,7 +201,7 @@ oc new-project camel
 ## Installing Keycloak
 
 ```
-export OPENSHIFT_HOSTNAME=apps.rosa.nxus7-dbdhd-pp7.vxfp.p3.openshiftapps.com
+export OPENSHIFT_HOSTNAME=apps.rosa.scvka-fwa2e-54s.9pbs.p3.openshiftapps.com
 helm upgrade --install keycloak --namespace examples --set openshift.hostName=${OPENSHIFT_HOSTNAME} ./helm -f ./helm/values-keycloak-openshift.yaml \
     && kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=keycloak --timeout=20s \
     && kubectl logs --tail 400 -f -l app.kubernetes.io/name=keycloak
@@ -223,15 +223,8 @@ kcadm config credentials --server https://keycloak.${OPENSHIFT_HOSTNAME} --realm
 # Show client config
 kcadm get clients -r camel | jq '.[] | select(.clientId=="camel-client")'
 
-CLIENT_ID=$(kcadm get clients -r camel --fields id,clientId | jq -r '.[] | select(.clientId=="camel-client").id')
-
 # Update redirect URIs
-kcadm update clients/$CLIENT_ID -r camel -s 'redirectUris=["https://webapp.'${OPENSHIFT_HOSTNAME}'/auth"]'
-
-# Update post-logout redirect URIs
-kcadm update clients/$CLIENT_ID -r camel -s 'attributes."post.logout.redirect.uris"="https://webapp.'${OPENSHIFT_HOSTNAME}'/"'
-
-kcadm get realms | jq '.[] | select(.realm=="camel")'
-
-kcadm get keys -r camel
+CLIENT_ID=$(kcadm get clients -r camel --fields id,clientId | jq -r '.[] | select(.clientId=="camel-client").id') \
+  && kcadm update clients/$CLIENT_ID -r camel -s 'redirectUris=["https://webapp.'${OPENSHIFT_HOSTNAME}'/auth"]' \
+  && kcadm update clients/$CLIENT_ID -r camel -s 'attributes."post.logout.redirect.uris"="https://webapp.'${OPENSHIFT_HOSTNAME}'/"'
 ```
