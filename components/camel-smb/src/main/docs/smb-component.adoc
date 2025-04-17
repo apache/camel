@@ -79,16 +79,14 @@ NOTE: you may also get the file contents as an InputStream using `exchange.getMe
 === Polling files (advanced)
 
 
-You can also get access to the file using the underlying `File` implementation provided by smbj. In that case, polling all the
+You can also get access to the file using the underlying `File` implementation provided by Camel. In that case, polling all the
 files from an SMB file share and reading their contents would look like this:
 
 [source,java]
 ----
 private void process(Exchange exchange) throws IOException {
-    final com.hierynomus.smbj.share.File file = exchange.getMessage().getBody(com.hierynomus.smbj.share.File.class);
-    try (InputStream inputStream = file.getInputStream()) {
-        LOG.debug("Read exchange: {}, with contents: {}", file.getFileInformation(), new String(inputStream.readAllBytes()));
-    }
+    final org.apache.camel.component.smb.SmbFile file = exchange.getMessage().getBody(org.apache.camel.component.smb.SmbFile.class);
+    LOG.debug("Read exchange: {}, with contents: {}", file.getFile(), new String((byte[]) file.getBody()));
 }
 
 public void configure() {
@@ -100,7 +98,7 @@ public void configure() {
 
 [NOTE]
 ====
-Beware that the File object provided is not a `java.io.File` instance, but, instead a `com.hierynomus.smbj.share.File` instance.
+Beware that the File object provided is not a `java.io.File` instance, but, instead a `org.apache.camel.component.smb.SmbFile` instance that extends Camel's `GenericFile`.
 Relying on the underlying implementation may make your code more susceptible to problems between version upgrades of the library
 used to implement this component.
 ====
