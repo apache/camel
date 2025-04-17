@@ -60,6 +60,7 @@ public final class KafkaServiceFactory {
 
         return builder.addLocalMapping(ContainerLocalKafkaService::kafka3Container)
                 .addMapping("local-strimzi-container", StrimziService::new)
+                .addMapping("local-confluent-container", ConfluentService::new)
                 .addRemoteMapping(RemoteKafkaService::new)
                 .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
                 .addMapping("local-redpanda-container", RedpandaService::new)
@@ -80,6 +81,8 @@ public final class KafkaServiceFactory {
                     .addRemoteMapping(RemoteKafkaService::new)
                     .addMapping("local-kafka3-container",
                             () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
+                    .addMapping("local-confluent-container",
+                            () -> new SingletonKafkaService(new ConfluentService(), "confluent"))
                     .addMapping("local-strimzi-container",
                             () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
                     .addMapping("local-redpanda-container",
@@ -102,6 +105,9 @@ public final class KafkaServiceFactory {
 
             return new ContainerLocalKafkaService(container);
         }
+    }
+
+    public static class ConfluentService extends ConfluentInfraService implements KafkaService {
     }
 
     public static class StrimziService extends StrimziInfraService implements KafkaService {
