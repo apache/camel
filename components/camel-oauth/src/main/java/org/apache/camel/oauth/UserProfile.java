@@ -149,8 +149,7 @@ public class UserProfile {
         });
     }
 
-    public void logDetails(String prefix) {
-        log.info("{}: {}", prefix, subject());
+    public void logDetails() {
         log.debug("User Attributes ...");
         attributes().forEach((k, v) -> log.debug("   {}: {}", k, v));
         log.debug("User Principal ...");

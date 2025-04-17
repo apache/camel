@@ -49,31 +49,32 @@ public class OAuthClientCredentialsProcessor extends AbstractOAuthProcessor {
         // Authenticate an existing UserProfile from the OAuthSession
         //
         if (session.getUserProfile().isPresent()) {
-            authenticateExistingUserProfile(oauth, session);
+            var userProfile = session.removeUserProfile().orElseThrow();
+            try {
+                userProfile = authenticateExistingUserProfile(oauth, userProfile);
+                session.putUserProfile(userProfile);
+                return;
+            } catch (OAuthException ex) {
+                log.error("Failed to authenticate: {}", userProfile.subject(), ex);
+            }
         }
 
         // Fallback to client credential grant
         //
-        if (session.getUserProfile().isEmpty()) {
+        var clientId = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_ID);
+        var clientSecret = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_SECRET);
 
-            var clientId = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_ID);
-            var clientSecret = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_SECRET);
+        var userProfile = oauth.authenticate(new ClientCredentials()
+                .setClientSecret(clientSecret)
+                .setClientId(clientId));
 
-            var userProfile = oauth.authenticate(new ClientCredentials()
-                    .setClientSecret(clientSecret)
-                    .setClientId(clientId));
-
-            session.putUserProfile(userProfile);
-            userProfile.logDetails("Authenticated");
-        }
+        session.putUserProfile(userProfile);
+        log.info("Authenticated {}", userProfile.subject());
+        userProfile.logDetails();
 
         // Add Authorization: Bearer <access-token>
         //
-        session.getUserProfile().ifPresent(userProfile -> {
-            var accessToken = userProfile.accessToken().orElseThrow(() -> new OAuthException("No access_token"));
-            msg.setHeader("Authorization", "Bearer " + accessToken);
-        });
-
-        log.info("{} - Done", procName);
+        var accessToken = userProfile.accessToken().orElseThrow(() -> new OAuthException("No access_token"));
+        msg.setHeader("Authorization", "Bearer " + accessToken);
     }
 }
