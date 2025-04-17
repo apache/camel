@@ -116,6 +116,10 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
+
     private volatile long pid;
 
     private MessageTableHelper tableHelper;
@@ -165,7 +169,7 @@ public class TransformMessageAction extends ActionWatchCommand {
                 printer().printErr("This requires Camel version 4.3 or newer");
                 return -1;
             }
-            exit = run.runTransformMessage(camelVersion);
+            exit = run.runTransformMessage(camelVersion, repositories);
             this.pid = run.spawnPid;
             if (exit == 0) {
                 exit = super.doCall();
