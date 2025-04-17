@@ -66,37 +66,41 @@ public class BeanDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
-        Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-        Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
-        keys.forEach(k -> {
-            Object bean = beans.get(k);
-            if (bean != null) {
-                boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
-                if (include) {
-                    sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
+        try {
+            Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
+            Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
+            keys.forEach(k -> {
+                Object bean = beans.get(k);
+                if (bean != null) {
+                    boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
+                    if (include) {
+                        sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
 
-                    Map<String, Object> values = new TreeMap<>();
-                    if (properties) {
-                        try {
-                            bi.getProperties(bean, values, null);
-                        } catch (Throwable e) {
-                            // ignore
-                        }
-                        values.forEach((pk, pv) -> {
-                            if (pv == null) {
-                                if (nulls) {
-                                    sb.append(String.format("        %s = null%n", pk));
-                                }
-                            } else {
-                                String t = pv.getClass().getName();
-                                sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
+                        Map<String, Object> values = new TreeMap<>();
+                        if (properties) {
+                            try {
+                                bi.getProperties(bean, values, null);
+                            } catch (Throwable e) {
+                                // ignore
                             }
-                        });
+                            values.forEach((pk, pv) -> {
+                                if (pv == null) {
+                                    if (nulls) {
+                                        sb.append(String.format("        %s = null%n", pk));
+                                    }
+                                } else {
+                                    String t = pv.getClass().getName();
+                                    sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
+                                }
+                            });
+                        }
                     }
                 }
-            }
-            sb.append("\n");
-        });
+                sb.append("\n");
+            });
+        } catch (Exception e) {
+            // ignore
+        }
 
         return sb.toString();
     }
@@ -113,58 +117,61 @@ public class BeanDevConsole extends AbstractDevConsole {
         root.put("beans", jo);
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
-        Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-        Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
+        try {
+            Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
+            Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
+            keys.forEach(k -> {
+                Object bean = beans.get(k);
+                if (bean != null) {
+                    boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
+                    if (include) {
+                        Map<String, Object> values = new TreeMap<>();
+                        if (properties) {
+                            try {
+                                bi.getProperties(bean, values, null);
+                            } catch (Throwable e) {
+                                // ignore
+                            }
+                        }
+                        JsonObject jb = new JsonObject();
+                        jb.put("name", k);
+                        jb.put("type", bean.getClass().getName());
+                        jo.put(k, jb);
 
-        keys.forEach(k -> {
-            Object bean = beans.get(k);
-            if (bean != null) {
-                boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
-                if (include) {
-                    Map<String, Object> values = new TreeMap<>();
-                    if (properties) {
-                        try {
-                            bi.getProperties(bean, values, null);
-                        } catch (Throwable e) {
-                            // ignore
+                        if (!values.isEmpty()) {
+                            JsonArray arr = new JsonArray();
+                            values.forEach((pk, pv) -> {
+                                Object value = pv;
+                                String type = pv != null ? pv.getClass().getName() : null;
+                                if (type != null) {
+                                    value = Jsoner.trySerialize(pv);
+                                    if (value == null) {
+                                        // cannot serialize so escape
+                                        value = Jsoner.escape(pv.toString());
+                                    } else {
+                                        // okay so use the value as-s
+                                        value = pv;
+                                    }
+                                }
+                                JsonObject jp = new JsonObject();
+                                jp.put("name", pk);
+                                if (type != null) {
+                                    jp.put("type", type);
+                                }
+                                jp.put("value", value);
+                                boolean accept = value != null || nulls;
+                                if (accept) {
+                                    arr.add(jp);
+                                }
+                            });
+                            jb.put("properties", arr);
                         }
                     }
-                    JsonObject jb = new JsonObject();
-                    jb.put("name", k);
-                    jb.put("type", bean.getClass().getName());
-                    jo.put(k, jb);
-
-                    if (!values.isEmpty()) {
-                        JsonArray arr = new JsonArray();
-                        values.forEach((pk, pv) -> {
-                            Object value = pv;
-                            String type = pv != null ? pv.getClass().getName() : null;
-                            if (type != null) {
-                                value = Jsoner.trySerialize(pv);
-                                if (value == null) {
-                                    // cannot serialize so escape
-                                    value = Jsoner.escape(pv.toString());
-                                } else {
-                                    // okay so use the value as-s
-                                    value = pv;
-                                }
-                            }
-                            JsonObject jp = new JsonObject();
-                            jp.put("name", pk);
-                            if (type != null) {
-                                jp.put("type", type);
-                            }
-                            jp.put("value", value);
-                            boolean accept = value != null || nulls;
-                            if (accept) {
-                                arr.add(jp);
-                            }
-                        });
-                        jb.put("properties", arr);
-                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            // ignore
+        }
 
         return root;
     }
