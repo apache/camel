@@ -125,6 +125,15 @@
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.12.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
+  "description" : "Apache Kafka, Distributed event streaming platform",
+  "implementation" : "org.apache.camel.test.infra.kafka.services.ConfluentInfraService",
+  "alias" : [ "kafka" ],
+  "aliasImplementation" : [ "confluent" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-kafka",
+  "version" : "4.12.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
   "description" : "Messaging Platform NATS",
   "implementation" : "org.apache.camel.test.infra.nats.services.NatsLocalContainerInfraService",
