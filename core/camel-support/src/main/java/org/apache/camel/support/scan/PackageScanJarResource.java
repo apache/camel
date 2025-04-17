@@ -60,7 +60,7 @@ public class PackageScanJarResource extends ResourceSupport {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        String loc = StringHelper.after(getLocation(), "!");
+        String loc = StringHelper.afterLast(getLocation(), "!");
         return uc.getResourceAsStream(loc);
     }
 
