@@ -1950,7 +1950,7 @@ public class CamelNanoLspEditor implements Editor {
                         buffer.nextSearch();
                         break;
                     case HELP:
-                        help("nano-main-help.txt");
+                        help("edit-help.txt");
                         break;
                     case CONSTANT_CURSOR:
                         constantCursor();
@@ -2107,7 +2107,7 @@ public class CamelNanoLspEditor implements Editor {
                     }
                     return false;
                 case HELP:
-                    help("nano-write-help.txt");
+                    help("/org/jline/builtins/nano-write-help.txt");
                     break;
                 case MAC_FORMAT:
                     buffer.format = (buffer.format == WriteFormat.MAC) ? WriteFormat.UNIX : WriteFormat.MAC;
@@ -2340,7 +2340,7 @@ public class CamelNanoLspEditor implements Editor {
                     this.shortcuts = standardShortcuts();
                     return;
                 case HELP:
-                    help("nano-read-help.txt");
+                    help("/org/jline/builtins/nano-read-help.txt");
                     break;
                 case NEW_BUFFER:
                     readNewBuffer = !readNewBuffer;
@@ -2431,7 +2431,7 @@ public class CamelNanoLspEditor implements Editor {
                     this.shortcuts = standardShortcuts();
                     return;
                 case HELP:
-                    help("nano-goto-help.txt");
+                    help("/org/jline/builtins/nano-goto-help.txt");
                     break;
                 default:
                     curPos = editInputBuffer(op, curPos);
@@ -2550,7 +2550,7 @@ public class CamelNanoLspEditor implements Editor {
 
     void help(String help) {
         Buffer org = this.buffer;
-        Buffer newBuf = new Buffer(null);
+        Buffer newBuf = new Buffer("");
         try (InputStream is = getClass().getResourceAsStream(help)) {
             newBuf.open(is);
         } catch (IOException e) {
@@ -2761,9 +2761,9 @@ public class CamelNanoLspEditor implements Editor {
                         return;
                     case HELP:
                         if (searchToReplace) {
-                            help("nano-search-replace-help.txt");
+                            help("/org/jline/builtins/nano-search-replace-help.txt");
                         } else {
-                            help("nano-search-help.txt");
+                            help("/org/jline/builtins/nano-search-help.txt");
                         }
                         break;
                     case FIRST_LINE:
@@ -2844,7 +2844,7 @@ public class CamelNanoLspEditor implements Editor {
                         patternHistory.add(replaceTerm);
                         return replaceTerm;
                     case HELP:
-                        help("nano-replace-help.txt");
+                        help("/org/jline/builtins/nano-replace-help.txt");
                         break;
                     case FIRST_LINE:
                         buffer.firstLine();
