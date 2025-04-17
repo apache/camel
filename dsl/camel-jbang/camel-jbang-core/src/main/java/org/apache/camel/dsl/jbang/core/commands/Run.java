@@ -379,11 +379,12 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    public Integer runTransformMessage(String camelVersion) throws Exception {
+    public Integer runTransformMessage(String camelVersion, String repositories) throws Exception {
         // just boot silently an empty camel in the background and exit
         this.transformMessageRun = true;
         this.background = true;
         this.camelVersion = camelVersion;
+        this.repositories = repositories;
         this.empty = true;
         this.ignoreLoadingError = true;
         this.name = "transform";
