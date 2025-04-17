@@ -32,6 +32,9 @@ public class DefaultSourceLoader implements SourceLoader {
     @Override
     public String loadResource(Resource resource) throws IOException {
         InputStream in = resource.getInputStream();
+        if (in == null) {
+            throw new IOException("No input stream for: " + resource.getLocation());
+        }
 
         StringBuilder builder = new StringBuilder();
         InputStreamReader isr = new InputStreamReader(in);
