@@ -20,5 +20,6 @@ public enum PQCOperations {
     sign,
     verify,
     generateSecretKeyEncapsulation,
-    extractSecretKeyEncapsulation
+    extractSecretKeyEncapsulation,
+    extractSecretKeyFromEncapsulation
 }
