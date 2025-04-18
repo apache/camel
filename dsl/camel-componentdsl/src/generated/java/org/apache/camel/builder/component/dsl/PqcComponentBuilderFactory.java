@@ -131,6 +131,38 @@ public interface PqcComponentBuilderFactory {
         }
     
         /**
+         * In case there is no keyGenerator, we specify an algorithm to build
+         * the KeyGenerator.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyEncapsulationAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyEncapsulationAlgorithm(java.lang.String keyEncapsulationAlgorithm) {
+            doSetProperty("keyEncapsulationAlgorithm", keyEncapsulationAlgorithm);
+            return this;
+        }
+    
+        /**
+         * The Key Generator to be used in encapsulation and extraction.
+         * 
+         * The option is a: &lt;code&gt;javax.crypto.KeyGenerator&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyGenerator the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyGenerator(javax.crypto.KeyGenerator keyGenerator) {
+            doSetProperty("keyGenerator", keyGenerator);
+            return this;
+        }
+    
+        /**
          * The KeyPair to be used.
          * 
          * The option is a: &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
@@ -174,6 +206,22 @@ public interface PqcComponentBuilderFactory {
          */
         default PqcComponentBuilder signer(java.security.Signature signer) {
             doSetProperty("signer", signer);
+            return this;
+        }
+    
+        /**
+         * In case we are using KEM operations, we need a Symmetric algorithm to
+         * be defined for the flow to work.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param symmetricKeyAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder symmetricKeyAlgorithm(java.lang.String symmetricKeyAlgorithm) {
+            doSetProperty("symmetricKeyAlgorithm", symmetricKeyAlgorithm);
             return this;
         }
     
@@ -239,9 +287,12 @@ public interface PqcComponentBuilderFactory {
             case "lazyStartProducer": ((PQCComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((PQCComponent) component).setOperation((org.apache.camel.component.pqc.PQCOperations) value); return true;
             case "autowiredEnabled": ((PQCComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "keyEncapsulationAlgorithm": getOrCreateConfiguration((PQCComponent) component).setKeyEncapsulationAlgorithm((java.lang.String) value); return true;
+            case "keyGenerator": getOrCreateConfiguration((PQCComponent) component).setKeyGenerator((javax.crypto.KeyGenerator) value); return true;
             case "keyPair": getOrCreateConfiguration((PQCComponent) component).setKeyPair((java.security.KeyPair) value); return true;
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
+            case "symmetricKeyAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyAlgorithm((java.lang.String) value); return true;
             case "healthCheckConsumerEnabled": ((PQCComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((PQCComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
