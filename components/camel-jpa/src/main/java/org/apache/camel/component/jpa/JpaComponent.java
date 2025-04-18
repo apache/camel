@@ -41,7 +41,7 @@ public class JpaComponent extends HealthCheckComponent {
 
     private ExecutorService pollingConsumerExecutorService;
 
-    @Metadata
+    @Metadata(autowired = true)
     private EntityManagerFactory entityManagerFactory;
     @Metadata
     private TransactionStrategy transactionStrategy;
@@ -166,30 +166,9 @@ public class JpaComponent extends HealthCheckComponent {
         return endpoint;
     }
 
-    private void initEntityManagerFactory() {
-        // lookup entity manager factory and use it if only one provided
-        if (entityManagerFactory == null) {
-            Map<String, EntityManagerFactory> map
-                    = getCamelContext().getRegistry().findByTypeWithName(EntityManagerFactory.class);
-            if (map != null) {
-                if (map.size() == 1) {
-                    entityManagerFactory = map.values().iterator().next();
-                    LOG.info("Using EntityManagerFactory found in registry with id [{}] {}",
-                            map.keySet().iterator().next(), entityManagerFactory);
-                } else {
-                    LOG.debug("Could not find a single EntityManagerFactory in registry as there was {} instances.",
-                            map.size());
-                }
-            }
-        } else {
-            LOG.info("Using EntityManagerFactory configured: {}", entityManagerFactory);
-        }
-    }
-
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        initEntityManagerFactory();
 
         // warn about missing configuration
         if (entityManagerFactory == null) {
