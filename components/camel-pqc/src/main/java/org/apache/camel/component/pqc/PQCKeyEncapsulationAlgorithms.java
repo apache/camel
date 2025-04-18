@@ -19,7 +19,8 @@ package org.apache.camel.component.pqc;
 public enum PQCKeyEncapsulationAlgorithms {
 
     // Standardized and implemented
-    MLKEM("ML-KEM");
+    MLKEM("ML-KEM"),
+    BIKE("BIKE");
 
     // Experimental and non-standardized
 

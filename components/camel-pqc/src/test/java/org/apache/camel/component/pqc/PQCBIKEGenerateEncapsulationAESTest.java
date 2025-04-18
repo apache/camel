@@ -28,27 +28,27 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PQCMLKEMGenerateEncapsulationAESTest extends CamelTestSupport {
+public class PQCBIKEGenerateEncapsulationAESTest extends CamelTestSupport {
 
-    @EndpointInject("mock:encapsulate")
-    protected MockEndpoint resultEncapsulate;
+    @EndpointInject("mock:sign")
+    protected MockEndpoint resultSign;
 
-    @Produce("direct:encapsulate")
-    protected ProducerTemplate templateEncapsulate;
+    @Produce("direct:sign")
+    protected ProducerTemplate templateSign;
 
-    @EndpointInject("mock:extract")
-    protected MockEndpoint resultExtract;
+    @EndpointInject("mock:verify")
+    protected MockEndpoint resultVerify;
 
-    public PQCMLKEMGenerateEncapsulationAESTest() throws NoSuchAlgorithmException {
+    public PQCBIKEGenerateEncapsulationAESTest() throws NoSuchAlgorithmException {
     }
 
     @Override
@@ -56,9 +56,9 @@ public class PQCMLKEMGenerateEncapsulationAESTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
-                        .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES").to("mock:extract");
+                from("direct:sign").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("mock:sign")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES").to("mock:verify");
             }
         };
     }
@@ -71,27 +71,27 @@ public class PQCMLKEMGenerateEncapsulationAESTest extends CamelTestSupport {
 
     @Test
     void testSignAndVerify() throws Exception {
-        resultEncapsulate.expectedMessageCount(1);
-        resultExtract.expectedMessageCount(1);
-        templateEncapsulate.sendBody("Hello");
-        resultEncapsulate.assertIsSatisfied();
-        assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
+        resultSign.expectedMessageCount(1);
+        resultVerify.expectedMessageCount(1);
+        templateSign.sendBody("Hello");
+        resultSign.assertIsSatisfied();
+        assertNotNull(resultSign.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
         assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
-                resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
+                resultSign.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
         SecretKeyWithEncapsulation secEncrypted
-                = resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
-        assertNotNull(resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
+                = resultSign.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
+        assertNotNull(resultVerify.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
         assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
-                resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
+                resultVerify.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
         SecretKeyWithEncapsulation secEncryptedExtracted
-                = resultExtract.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
+                = resultVerify.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class);
         assertTrue(Arrays.areEqual(secEncrypted.getEncoded(), secEncryptedExtracted.getEncoded()));
     }
 
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM", "BC");
-        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("BIKE", "BCPQC");
+        kpg.initialize(BIKEParameterSpec.bike192, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
     }
@@ -99,7 +99,7 @@ public class PQCMLKEMGenerateEncapsulationAESTest extends CamelTestSupport {
     @BindToRegistry("KeyGenerator")
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyGenerator kg = KeyGenerator.getInstance("ML-KEM", "BC");
+        KeyGenerator kg = KeyGenerator.getInstance("BIKE", "BCPQC");
         return kg;
     }
 }
