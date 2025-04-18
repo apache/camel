@@ -37,6 +37,10 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "keyencapsulationalgorithm":
+        case "keyEncapsulationAlgorithm": getOrCreateConfiguration(target).setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "keygenerator":
+        case "keyGenerator": getOrCreateConfiguration(target).setKeyGenerator(property(camelContext, javax.crypto.KeyGenerator.class, value)); return true;
         case "keypair":
         case "keyPair": getOrCreateConfiguration(target).setKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
         case "lazystartproducer":
@@ -45,13 +49,15 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": getOrCreateConfiguration(target).setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": getOrCreateConfiguration(target).setSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "symmetrickeyalgorithm":
+        case "symmetricKeyAlgorithm": getOrCreateConfiguration(target).setSymmetricKeyAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"keyPair", "signer"};
+        return new String[]{"keyGenerator", "keyPair", "signer"};
     }
 
     @Override
@@ -64,6 +70,10 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "keyencapsulationalgorithm":
+        case "keyEncapsulationAlgorithm": return java.lang.String.class;
+        case "keygenerator":
+        case "keyGenerator": return javax.crypto.KeyGenerator.class;
         case "keypair":
         case "keyPair": return java.security.KeyPair.class;
         case "lazystartproducer":
@@ -72,6 +82,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
+        case "symmetrickeyalgorithm":
+        case "symmetricKeyAlgorithm": return java.lang.String.class;
         default: return null;
         }
     }
@@ -87,6 +99,10 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "keyencapsulationalgorithm":
+        case "keyEncapsulationAlgorithm": return getOrCreateConfiguration(target).getKeyEncapsulationAlgorithm();
+        case "keygenerator":
+        case "keyGenerator": return getOrCreateConfiguration(target).getKeyGenerator();
         case "keypair":
         case "keyPair": return getOrCreateConfiguration(target).getKeyPair();
         case "lazystartproducer":
@@ -95,6 +111,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": return getOrCreateConfiguration(target).getSignatureAlgorithm();
         case "signer": return getOrCreateConfiguration(target).getSigner();
+        case "symmetrickeyalgorithm":
+        case "symmetricKeyAlgorithm": return getOrCreateConfiguration(target).getSymmetricKeyAlgorithm();
         default: return null;
         }
     }

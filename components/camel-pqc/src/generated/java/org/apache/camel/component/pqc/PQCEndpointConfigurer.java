@@ -23,6 +23,10 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PQCEndpoint target = (PQCEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "keyencapsulationalgorithm":
+        case "keyEncapsulationAlgorithm": target.getConfiguration().setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "keygenerator":
+        case "keyGenerator": target.getConfiguration().setKeyGenerator(property(camelContext, javax.crypto.KeyGenerator.class, value)); return true;
         case "keypair":
         case "keyPair": target.getConfiguration().setKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
         case "lazystartproducer":
@@ -31,18 +35,24 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": target.getConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": target.getConfiguration().setSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "symmetrickeyalgorithm":
+        case "symmetricKeyAlgorithm": target.getConfiguration().setSymmetricKeyAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"keyPair", "signer"};
+        return new String[]{"keyGenerator", "keyPair", "signer"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "keyencapsulationalgorithm":
+        case "keyEncapsulationAlgorithm": return java.lang.String.class;
+        case "keygenerator":
+        case "keyGenerator": return javax.crypto.KeyGenerator.class;
         case "keypair":
         case "keyPair": return java.security.KeyPair.class;
         case "lazystartproducer":
@@ -51,6 +61,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
+        case "symmetrickeyalgorithm":
+        case "symmetricKeyAlgorithm": return java.lang.String.class;
         default: return null;
         }
     }
@@ -59,6 +71,10 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PQCEndpoint target = (PQCEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "keyencapsulationalgorithm":
+        case "keyEncapsulationAlgorithm": return target.getConfiguration().getKeyEncapsulationAlgorithm();
+        case "keygenerator":
+        case "keyGenerator": return target.getConfiguration().getKeyGenerator();
         case "keypair":
         case "keyPair": return target.getConfiguration().getKeyPair();
         case "lazystartproducer":
@@ -67,6 +83,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": return target.getConfiguration().getSignatureAlgorithm();
         case "signer": return target.getConfiguration().getSigner();
+        case "symmetrickeyalgorithm":
+        case "symmetricKeyAlgorithm": return target.getConfiguration().getSymmetricKeyAlgorithm();
         default: return null;
         }
     }

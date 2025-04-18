@@ -135,6 +135,50 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * In case there is no keyGenerator, we specify an algorithm to build
+         * the KeyGenerator.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyEncapsulationAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyEncapsulationAlgorithm(String keyEncapsulationAlgorithm) {
+            doSetProperty("keyEncapsulationAlgorithm", keyEncapsulationAlgorithm);
+            return this;
+        }
+        /**
+         * The Key Generator to be used in encapsulation and extraction.
+         * 
+         * The option is a: <code>javax.crypto.KeyGenerator</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyGenerator the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyGenerator(javax.crypto.KeyGenerator keyGenerator) {
+            doSetProperty("keyGenerator", keyGenerator);
+            return this;
+        }
+        /**
+         * The Key Generator to be used in encapsulation and extraction.
+         * 
+         * The option will be converted to a
+         * <code>javax.crypto.KeyGenerator</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyGenerator the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyGenerator(String keyGenerator) {
+            doSetProperty("keyGenerator", keyGenerator);
+            return this;
+        }
+        /**
          * The KeyPair to be used.
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
@@ -205,6 +249,21 @@ public interface PQCEndpointBuilderFactory {
          */
         default AdvancedPQCEndpointBuilder signer(String signer) {
             doSetProperty("signer", signer);
+            return this;
+        }
+        /**
+         * In case we are using KEM operations, we need a Symmetric algorithm to
+         * be defined for the flow to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param symmetricKeyAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder symmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
+            doSetProperty("symmetricKeyAlgorithm", symmetricKeyAlgorithm);
             return this;
         }
     }

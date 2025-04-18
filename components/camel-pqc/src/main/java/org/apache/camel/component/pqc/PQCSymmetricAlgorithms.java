@@ -16,9 +16,19 @@
  */
 package org.apache.camel.component.pqc;
 
-public enum PQCOperations {
-    sign,
-    verify,
-    generateSecretKeyEncapsulation,
-    extractSecretKeyEncapsulation
+public enum PQCSymmetricAlgorithms {
+
+    // Standardized and implemented
+    AES("AES");
+
+    private final String algorithm;
+
+    PQCSymmetricAlgorithms(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
 }

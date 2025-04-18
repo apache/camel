@@ -19,6 +19,8 @@ package org.apache.camel.component.pqc;
 import java.security.KeyPair;
 import java.security.Signature;
 
+import javax.crypto.KeyGenerator;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +45,15 @@ public class PQCConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced")
     private String signatureAlgorithm;
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
+    private KeyGenerator keyGenerator;
+    @UriParam
+    @Metadata(label = "advanced")
+    private String keyEncapsulationAlgorithm;
+    @UriParam
+    @Metadata(label = "advanced")
+    private String symmetricKeyAlgorithm;
 
     public PQCOperations getOperation() {
         return operation;
@@ -86,6 +97,39 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
+    }
+
+    public KeyGenerator getKeyGenerator() {
+        return keyGenerator;
+    }
+
+    /**
+     * The Key Generator to be used in encapsulation and extraction
+     */
+    public void setKeyGenerator(KeyGenerator keyGenerator) {
+        this.keyGenerator = keyGenerator;
+    }
+
+    public String getKeyEncapsulationAlgorithm() {
+        return keyEncapsulationAlgorithm;
+    }
+
+    /**
+     * In case there is no keyGenerator, we specify an algorithm to build the KeyGenerator
+     */
+    public void setKeyEncapsulationAlgorithm(String keyEncapsulationAlgorithm) {
+        this.keyEncapsulationAlgorithm = keyEncapsulationAlgorithm;
+    }
+
+    public String getSymmetricKeyAlgorithm() {
+        return symmetricKeyAlgorithm;
+    }
+
+    /**
+     * In case we are using KEM operations, we need a Symmetric algorithm to be defined for the flow to work.
+     */
+    public void setSymmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
+        this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
     }
 
     // *************************************************
