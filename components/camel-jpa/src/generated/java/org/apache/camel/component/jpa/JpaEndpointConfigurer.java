@@ -38,6 +38,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "deletehandler":
         case "deleteHandler": target.setDeleteHandler(property(camelContext, org.apache.camel.component.jpa.DeleteHandler.class, value)); return true;
+        case "entitymanagerfactory":
+        case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, jakarta.persistence.EntityManagerFactory.class, value)); return true;
         case "entitymanagerproperties":
         case "entityManagerProperties": target.setEntityManagerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "exceptionhandler":
@@ -132,6 +134,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "delay": return long.class;
         case "deletehandler":
         case "deleteHandler": return org.apache.camel.component.jpa.DeleteHandler.class;
+        case "entitymanagerfactory":
+        case "entityManagerFactory": return jakarta.persistence.EntityManagerFactory.class;
         case "entitymanagerproperties":
         case "entityManagerProperties": return java.util.Map.class;
         case "exceptionhandler":
@@ -227,6 +231,8 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "delay": return target.getDelay();
         case "deletehandler":
         case "deleteHandler": return target.getDeleteHandler();
+        case "entitymanagerfactory":
+        case "entityManagerFactory": return target.getEntityManagerFactory();
         case "entitymanagerproperties":
         case "entityManagerProperties": return target.getEntityManagerProperties();
         case "exceptionhandler":
