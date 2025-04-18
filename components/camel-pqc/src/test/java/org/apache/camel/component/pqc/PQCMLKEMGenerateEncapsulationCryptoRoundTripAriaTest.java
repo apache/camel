@@ -35,9 +35,10 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestSupport {
+public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAriaTest extends CamelTestSupport {
 
     @EndpointInject("mock:encapsulate")
     protected MockEndpoint resultEncapsulate;
@@ -51,7 +52,7 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestS
     @EndpointInject("mock:unencrypted")
     protected MockEndpoint resultDecrypted;
 
-    public PQCMLKEMGenerateEncapsulationCryptoRoundTripTest() throws NoSuchAlgorithmException {
+    public PQCMLKEMGenerateEncapsulationCryptoRoundTripAriaTest() throws NoSuchAlgorithmException {
     }
 
     @Override
@@ -60,10 +61,10 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestS
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=ARIA")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=ARIA")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=ARIA")
                         .setHeader(CryptoDataFormat.KEY, body())
                         .setBody(constant("Hello"))
                         .marshal(cryptoFormat)
@@ -91,7 +92,7 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestS
         templateEncapsulate.sendBody("Hello");
         resultEncapsulate.assertIsSatisfied();
         assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
+        assertEquals(PQCSymmetricAlgorithms.ARIA.getAlgorithm(),
                 resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
         assertNotNull(resultEncrypted.getExchanges().get(0).getMessage().getBody());
         assertEquals("Hello", resultDecrypted.getExchanges().get(0).getMessage().getBody(String.class));

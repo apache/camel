@@ -19,6 +19,8 @@ package org.apache.camel.component.pqc;
 import java.security.*;
 
 import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -59,6 +61,9 @@ public class PQCProducer extends DefaultProducer {
                 break;
             case extractSecretKeyEncapsulation:
                 extractEncapsulation(exchange);
+                break;
+            case extractSecretKeyFromEncapsulation:
+                extractSecretKeyFromEncapsulation(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -167,6 +172,20 @@ public class PQCProducer extends DefaultProducer {
         SecretKeyWithEncapsulation secEnc2 = (SecretKeyWithEncapsulation) keyGenerator.generateKey();
 
         exchange.getMessage().setBody(secEnc2, SecretKeyWithEncapsulation.class);
+    }
+
+    private void extractSecretKeyFromEncapsulation(Exchange exchange)
+            throws InvalidPayloadException {
+        // initialise for creating an encapsulation and shared secret.
+        SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
+
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
+        SecretKey restoredKey = new SecretKeySpec(payload.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
+
+        exchange.getMessage().setBody(restoredKey, SecretKey.class);
     }
 
 }
