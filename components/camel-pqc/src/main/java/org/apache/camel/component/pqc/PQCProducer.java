@@ -143,7 +143,8 @@ public class PQCProducer extends DefaultProducer {
         keyGenerator.init(
                 new KEMGenerateSpec(
                         getEndpoint().getConfiguration().getKeyPair().getPublic(),
-                        getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(), 128),
+                        getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(),
+                        getEndpoint().getConfiguration().getSymmetricKeyLength()),
                 new SecureRandom());
         // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
         // methods on it for recovering the encapsulation as well.
@@ -165,7 +166,8 @@ public class PQCProducer extends DefaultProducer {
         keyGenerator.init(
                 new KEMExtractSpec(
                         getEndpoint().getConfiguration().getKeyPair().getPrivate(), payload.getEncapsulation(),
-                        PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(), 128),
+                        PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                        getEndpoint().getConfiguration().getSymmetricKeyLength()),
                 new SecureRandom());
 
         // initialise for extracting the shared secret from the encapsulation.

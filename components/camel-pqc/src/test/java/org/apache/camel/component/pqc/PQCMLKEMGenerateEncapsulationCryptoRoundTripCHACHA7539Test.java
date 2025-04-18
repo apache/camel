@@ -35,9 +35,10 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestSupport {
+public class PQCMLKEMGenerateEncapsulationCryptoRoundTripCHACHA7539Test extends CamelTestSupport {
 
     @EndpointInject("mock:encapsulate")
     protected MockEndpoint resultEncapsulate;
@@ -51,19 +52,22 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestS
     @EndpointInject("mock:unencrypted")
     protected MockEndpoint resultDecrypted;
 
-    public PQCMLKEMGenerateEncapsulationCryptoRoundTripTest() throws NoSuchAlgorithmException {
+    public PQCMLKEMGenerateEncapsulationCryptoRoundTripCHACHA7539Test() throws NoSuchAlgorithmException {
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES", null);
+        CryptoDataFormat cryptoFormat = new CryptoDataFormat("CHACHA7539", null);
+        byte[] initializationVector = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b };
+        cryptoFormat.setInitializationVector(initializationVector);
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                from("direct:encapsulate")
+                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=CHACHA7539&symmetricKeyLength=256")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=CHACHA7539&symmetricKeyLength=256")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=CHACHA7539&symmetricKeyLength=256")
                         .setHeader(CryptoDataFormat.KEY, body())
                         .setBody(constant("Hello"))
                         .marshal(cryptoFormat)
@@ -91,7 +95,7 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripTest extends CamelTestS
         templateEncapsulate.sendBody("Hello");
         resultEncapsulate.assertIsSatisfied();
         assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals(PQCSymmetricAlgorithms.AES.getAlgorithm(),
+        assertEquals(PQCSymmetricAlgorithms.CHACHA7539.getAlgorithm(),
                 resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
         assertNotNull(resultEncrypted.getExchanges().get(0).getMessage().getBody());
         assertEquals("Hello", resultDecrypted.getExchanges().get(0).getMessage().getBody(String.class));

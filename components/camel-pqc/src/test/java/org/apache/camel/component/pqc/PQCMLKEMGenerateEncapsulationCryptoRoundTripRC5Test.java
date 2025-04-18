@@ -20,7 +20,10 @@ import java.security.*;
 
 import javax.crypto.KeyGenerator;
 
-import org.apache.camel.*;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.crypto.CryptoDataFormat;
@@ -35,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAriaTest extends CamelTestSupport {
+public class PQCMLKEMGenerateEncapsulationCryptoRoundTripRC5Test extends CamelTestSupport {
 
     @EndpointInject("mock:encapsulate")
     protected MockEndpoint resultEncapsulate;
@@ -49,19 +52,20 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAriaTest extends CamelT
     @EndpointInject("mock:unencrypted")
     protected MockEndpoint resultDecrypted;
 
-    public PQCMLKEMGenerateEncapsulationCryptoRoundTripAriaTest() throws NoSuchAlgorithmException {
+    public PQCMLKEMGenerateEncapsulationCryptoRoundTripRC5Test() throws NoSuchAlgorithmException {
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        CryptoDataFormat cryptoFormat = new CryptoDataFormat("ARIA", null);
+        CryptoDataFormat cryptoFormat = new CryptoDataFormat("RC5", null);
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=ARIA")
+                from("direct:encapsulate")
+                        .to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=RC5")
                         .to("mock:encapsulate")
-                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=ARIA")
-                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=ARIA")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=RC5")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=RC5")
                         .setHeader(CryptoDataFormat.KEY, body())
                         .setBody(constant("Hello"))
                         .marshal(cryptoFormat)
@@ -89,7 +93,7 @@ public class PQCMLKEMGenerateEncapsulationCryptoRoundTripAriaTest extends CamelT
         templateEncapsulate.sendBody("Hello");
         resultEncapsulate.assertIsSatisfied();
         assertNotNull(resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class));
-        assertEquals(PQCSymmetricAlgorithms.ARIA.getAlgorithm(),
+        assertEquals(PQCSymmetricAlgorithms.RC5.getAlgorithm(),
                 resultEncapsulate.getExchanges().get(0).getMessage().getBody(SecretKeyWithEncapsulation.class).getAlgorithm());
         assertNotNull(resultEncrypted.getExchanges().get(0).getMessage().getBody());
         assertEquals("Hello", resultDecrypted.getExchanges().get(0).getMessage().getBody(String.class));

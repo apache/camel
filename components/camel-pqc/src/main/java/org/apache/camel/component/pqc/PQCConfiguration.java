@@ -54,6 +54,9 @@ public class PQCConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced")
     private String symmetricKeyAlgorithm;
+    @UriParam
+    @Metadata(label = "advanced", defaultValue = "128")
+    private int symmetricKeyLength = 128;
 
     public PQCOperations getOperation() {
         return operation;
@@ -130,6 +133,17 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setSymmetricKeyAlgorithm(String symmetricKeyAlgorithm) {
         this.symmetricKeyAlgorithm = symmetricKeyAlgorithm;
+    }
+
+    public int getSymmetricKeyLength() {
+        return symmetricKeyLength;
+    }
+
+    /**
+     * The required length of the symmetric key used
+     */
+    public void setSymmetricKeyLength(int symmetricKeyLength) {
+        this.symmetricKeyLength = symmetricKeyLength;
     }
 
     // *************************************************
