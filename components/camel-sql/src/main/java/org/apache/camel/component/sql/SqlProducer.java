@@ -159,7 +159,7 @@ public class SqlProducer extends DefaultProducer {
                     boolean restoreAutoCommit = true;
 
                     if (batch) {
-                        if (manualCommit) {
+                        if (!exchange.isTransacted() && manualCommit) {
                             // optimize batch by turning off auto-commit
                             restoreAutoCommit = ps.getConnection().getAutoCommit();
                             ps.getConnection().setAutoCommit(false);
@@ -171,18 +171,18 @@ public class SqlProducer extends DefaultProducer {
                                 total += count;
                             }
                             exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
-                            if (manualCommit) {
+                            if (!exchange.isTransacted() && manualCommit) {
                                 // optimize batch by commit after done
                                 ps.getConnection().commit();
                             }
                         } catch (Exception e) {
-                            if (manualCommit) {
+                            if (!exchange.isTransacted() && manualCommit) {
                                 // we failed so rollback
                                 ps.getConnection().rollback();
                             }
                             throw e;
                         } finally {
-                            if (manualCommit && restoreAutoCommit) {
+                            if (!exchange.isTransacted() && manualCommit && restoreAutoCommit) {
                                 // restore auto commit on connection as it may be used
                                 // in another kind of query (connection pooling)
                                 ps.getConnection().setAutoCommit(true);
