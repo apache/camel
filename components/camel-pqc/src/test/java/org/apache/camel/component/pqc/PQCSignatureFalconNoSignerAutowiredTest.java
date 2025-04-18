@@ -82,7 +82,8 @@ public class PQCSignatureFalconNoSignerAutowiredTest extends CamelTestSupport {
 
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("Falcon", "BCPQC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
+                PQCSignatureAlgorithms.FALCON.getBcProvider());
         kpGen.initialize(FalconParameterSpec.falcon_1024);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;

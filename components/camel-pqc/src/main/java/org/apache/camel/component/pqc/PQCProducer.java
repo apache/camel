@@ -135,7 +135,10 @@ public class PQCProducer extends DefaultProducer {
     private void generateEncapsulation(Exchange exchange)
             throws InvalidAlgorithmParameterException {
         // initialise for creating an encapsulation and shared secret.
-        keyGenerator.init(new KEMGenerateSpec(getEndpoint().getConfiguration().getKeyPair().getPublic(), "AES", 128),
+        keyGenerator.init(
+                new KEMGenerateSpec(
+                        getEndpoint().getConfiguration().getKeyPair().getPublic(),
+                        getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(), 128),
                 new SecureRandom());
         // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
         // methods on it for recovering the encapsulation as well.
