@@ -266,6 +266,36 @@ public interface PQCEndpointBuilderFactory {
             doSetProperty("symmetricKeyAlgorithm", symmetricKeyAlgorithm);
             return this;
         }
+        /**
+         * The required length of the symmetric key used.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 128
+         * Group: advanced
+         * 
+         * @param symmetricKeyLength the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder symmetricKeyLength(int symmetricKeyLength) {
+            doSetProperty("symmetricKeyLength", symmetricKeyLength);
+            return this;
+        }
+        /**
+         * The required length of the symmetric key used.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 128
+         * Group: advanced
+         * 
+         * @param symmetricKeyLength the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder symmetricKeyLength(String symmetricKeyLength) {
+            doSetProperty("symmetricKeyLength", symmetricKeyLength);
+            return this;
+        }
     }
 
     public interface PQCBuilders {
