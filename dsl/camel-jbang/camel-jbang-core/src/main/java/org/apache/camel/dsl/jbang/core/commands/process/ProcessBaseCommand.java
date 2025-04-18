@@ -66,6 +66,18 @@ abstract class ProcessBaseCommand extends CamelCommand {
                         pName = FileUtil.onlyName(pName);
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
                             pids.add(ph.pid());
+                        } else {
+                            // try camel context name
+                            JsonObject context = (JsonObject) root.get("context");
+                            if (context != null) {
+                                pName = context.getString("name");
+                                if ("CamelJBang".equals(pName)) {
+                                    pName = null;
+                                }
+                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                                    pids.add(ph.pid());
+                                }
+                            }
                         }
                     }
                 });
