@@ -45,6 +45,36 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointConsumerBuilder) this;
         }
         /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option is a:
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder entityManagerFactory(jakarta.persistence.EntityManagerFactory entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option will be converted to a
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointConsumerBuilder entityManagerFactory(String entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example, if you use LOCAL_RESOURCE
          * and join transaction doesn't work with your JPA provider. This option
@@ -1256,6 +1286,36 @@ public interface JpaEndpointBuilderFactory {
         }
 
         /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option is a:
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder entityManagerFactory(jakarta.persistence.EntityManagerFactory entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option will be converted to a
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointProducerBuilder entityManagerFactory(String entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example, if you use LOCAL_RESOURCE
          * and join transaction doesn't work with your JPA provider. This option
@@ -1837,6 +1897,36 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointBuilder) this;
         }
 
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option is a:
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointBuilder entityManagerFactory(jakarta.persistence.EntityManagerFactory entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
+        /**
+         * The EntityManagerFactory to use.
+         * 
+         * The option will be converted to a
+         * <code>jakarta.persistence.EntityManagerFactory</code> type.
+         * 
+         * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
+         */
+        default JpaEndpointBuilder entityManagerFactory(String entityManagerFactory) {
+            doSetProperty("entityManagerFactory", entityManagerFactory);
+            return this;
+        }
         /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example, if you use LOCAL_RESOURCE

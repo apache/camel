@@ -50,6 +50,7 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
              category = { Category.DATABASE }, headersClass = JpaConstants.class)
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
+    @UriParam
     private EntityManagerFactory entityManagerFactory;
     private TransactionStrategy transactionStrategy;
     private Expression producerExpression;
