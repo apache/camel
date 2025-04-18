@@ -227,6 +227,23 @@ public interface PqcComponentBuilderFactory {
     
         
         /**
+         * The required length of the symmetric key used.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 128
+         * Group: advanced
+         * 
+         * @param symmetricKeyLength the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder symmetricKeyLength(int symmetricKeyLength) {
+            doSetProperty("symmetricKeyLength", symmetricKeyLength);
+            return this;
+        }
+    
+        
+        /**
          * Used for enabling or disabling all consumer based health checks from
          * this component.
          * 
@@ -293,6 +310,7 @@ public interface PqcComponentBuilderFactory {
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
             case "symmetricKeyAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyAlgorithm((java.lang.String) value); return true;
+            case "symmetricKeyLength": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyLength((int) value); return true;
             case "healthCheckConsumerEnabled": ((PQCComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((PQCComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;

@@ -37,6 +37,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signer": target.getConfiguration().setSigner(property(camelContext, java.security.Signature.class, value)); return true;
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": target.getConfiguration().setSymmetricKeyAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "symmetrickeylength":
+        case "symmetricKeyLength": target.getConfiguration().setSymmetricKeyLength(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -63,6 +65,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signer": return java.security.Signature.class;
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": return java.lang.String.class;
+        case "symmetrickeylength":
+        case "symmetricKeyLength": return int.class;
         default: return null;
         }
     }
@@ -85,6 +89,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signer": return target.getConfiguration().getSigner();
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": return target.getConfiguration().getSymmetricKeyAlgorithm();
+        case "symmetrickeylength":
+        case "symmetricKeyLength": return target.getConfiguration().getSymmetricKeyLength();
         default: return null;
         }
     }
