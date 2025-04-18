@@ -19,24 +19,30 @@ package org.apache.camel.component.pqc;
 public enum PQCSignatureAlgorithms {
 
     // Standardized and implemented
-    MLDSA("ML-DSA"),
-    SLHDSA("SLH-DSA"),
-    LMS("LMS"),
-    XMSS("XMSS"),
+    MLDSA("ML-DSA", "BC"),
+    SLHDSA("SLH-DSA", "BC"),
+    LMS("LMS", "BC"),
+    XMSS("XMSS", "BCPQC"),
 
     // Experimental and non-standardized
-    FALCON("FALCON"),
-    PICNIC("PICNIC"),
-    RAINBOW("RAINBOW");
+    FALCON("FALCON", "BCPQC"),
+    PICNIC("PICNIC", "BCPQC"),
+    RAINBOW("RAINBOW", "BCPQC");
 
     private final String algorithm;
+    private final String bcProvider;
 
-    PQCSignatureAlgorithms(String algorithm) {
+    PQCSignatureAlgorithms(String algorithm, String bcProvider) {
         this.algorithm = algorithm;
+        this.bcProvider = bcProvider;
     }
 
     public String getAlgorithm() {
         return algorithm;
+    }
+
+    public String getBcProvider() {
+        return bcProvider;
     }
 
 }
