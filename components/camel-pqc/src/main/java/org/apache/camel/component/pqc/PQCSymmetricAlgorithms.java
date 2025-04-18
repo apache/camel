@@ -19,7 +19,8 @@ package org.apache.camel.component.pqc;
 public enum PQCSymmetricAlgorithms {
 
     // Standardized and implemented
-    AES("AES");
+    AES("AES"),
+    RC5("RC5");
 
     private final String algorithm;
 

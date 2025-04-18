@@ -80,7 +80,8 @@ public class PQCSignatureTest extends CamelTestSupport {
 
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
+                PQCSignatureAlgorithms.MLDSA.getBcProvider());
         kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -88,7 +89,7 @@ public class PQCSignatureTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance("ML-DSA");
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm());
         return mlDsa;
     }
 }

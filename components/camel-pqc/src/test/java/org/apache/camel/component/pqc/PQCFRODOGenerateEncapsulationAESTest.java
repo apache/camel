@@ -30,14 +30,14 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PQCBIKEGenerateEncapsulationAESTest extends CamelTestSupport {
+public class PQCFRODOGenerateEncapsulationAESTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
     protected MockEndpoint resultSign;
@@ -48,7 +48,7 @@ public class PQCBIKEGenerateEncapsulationAESTest extends CamelTestSupport {
     @EndpointInject("mock:verify")
     protected MockEndpoint resultVerify;
 
-    public PQCBIKEGenerateEncapsulationAESTest() throws NoSuchAlgorithmException {
+    public PQCFRODOGenerateEncapsulationAESTest() throws NoSuchAlgorithmException {
     }
 
     @Override
@@ -90,9 +90,9 @@ public class PQCBIKEGenerateEncapsulationAESTest extends CamelTestSupport {
 
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.BIKE.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.BIKE.getBcProvider());
-        kpg.initialize(BIKEParameterSpec.bike192, new SecureRandom());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider());
+        kpg.initialize(FrodoParameterSpec.frodokem976aes, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
         return kp;
     }
@@ -100,8 +100,8 @@ public class PQCBIKEGenerateEncapsulationAESTest extends CamelTestSupport {
     @BindToRegistry("KeyGenerator")
     public KeyGenerator setKeyGenerator()
             throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.BIKE.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.BIKE.getBcProvider());
+        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.FRODO.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.FRODO.getBcProvider());
         return kg;
     }
 }

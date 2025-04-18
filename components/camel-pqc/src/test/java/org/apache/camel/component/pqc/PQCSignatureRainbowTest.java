@@ -82,7 +82,8 @@ public class PQCSignatureRainbowTest extends CamelTestSupport {
 
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("RAINBOW", "BCPQC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.RAINBOW.getAlgorithm(),
+                PQCSignatureAlgorithms.RAINBOW.getBcProvider());
         kpGen.initialize(RainbowParameterSpec.rainbowVclassic);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -90,7 +91,7 @@ public class PQCSignatureRainbowTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance("RAINBOW");
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.RAINBOW.getAlgorithm());
         return mlDsa;
     }
 }

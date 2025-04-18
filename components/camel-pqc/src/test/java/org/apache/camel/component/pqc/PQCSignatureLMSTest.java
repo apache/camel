@@ -82,7 +82,8 @@ public class PQCSignatureLMSTest extends CamelTestSupport {
 
     @BindToRegistry("Keypair")
     public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("LMS", "BC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
+                PQCSignatureAlgorithms.LMS.getBcProvider());
         kpGen.initialize(new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w1));
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -90,7 +91,7 @@ public class PQCSignatureLMSTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance("LMS");
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm());
         return mlDsa;
     }
 }
