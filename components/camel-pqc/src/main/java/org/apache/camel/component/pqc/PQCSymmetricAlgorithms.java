@@ -20,7 +20,8 @@ public enum PQCSymmetricAlgorithms {
 
     // Standardized and implemented
     AES("AES"),
-    RC5("RC5");
+    RC5("RC5"),
+    ARIA("ARIA");
 
     private final String algorithm;
 
