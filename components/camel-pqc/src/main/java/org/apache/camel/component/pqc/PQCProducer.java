@@ -18,11 +18,16 @@ package org.apache.camel.component.pqc;
 
 import java.security.*;
 
+import javax.crypto.KeyGenerator;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.spec.KEMExtractSpec;
+import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +39,7 @@ public class PQCProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(PQCProducer.class);
 
     private Signature signer;
+    private KeyGenerator keyGenerator;
 
     public PQCProducer(Endpoint endpoint) {
         super(endpoint);
@@ -47,6 +53,12 @@ public class PQCProducer extends DefaultProducer {
                 break;
             case verify:
                 verification(exchange);
+                break;
+            case generateSecretKeyEncapsulation:
+                generateEncapsulation(exchange);
+                break;
+            case extractSecretKeyEncapsulation:
+                extractEncapsulation(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -74,11 +86,25 @@ public class PQCProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        signer = getEndpoint().getConfiguration().getSigner();
+        if (getConfiguration().getOperation().equals(PQCOperations.sign)
+                || getConfiguration().getOperation().equals(PQCOperations.verify)) {
+            signer = getEndpoint().getConfiguration().getSigner();
 
-        if (ObjectHelper.isEmpty(signer)) {
-            signer = Signature
-                    .getInstance(PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm()).getAlgorithm());
+            if (ObjectHelper.isEmpty(signer)) {
+                signer = Signature
+                        .getInstance(PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm()).getAlgorithm());
+            }
+        }
+
+        if (getConfiguration().getOperation().equals(PQCOperations.generateSecretKeyEncapsulation)
+                || getConfiguration().getOperation().equals(PQCOperations.extractSecretKeyEncapsulation)) {
+            keyGenerator = getEndpoint().getConfiguration().getKeyGenerator();
+
+            if (ObjectHelper.isEmpty(keyGenerator)) {
+                keyGenerator = KeyGenerator
+                        .getInstance(PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm())
+                                .getAlgorithm());
+            }
         }
     }
 
@@ -104,6 +130,40 @@ public class PQCProducer extends DefaultProducer {
         } else {
             exchange.getMessage().setHeader(PQCConstants.VERIFY, false);
         }
+    }
+
+    private void generateEncapsulation(Exchange exchange)
+            throws InvalidAlgorithmParameterException {
+        // initialise for creating an encapsulation and shared secret.
+        keyGenerator.init(new KEMGenerateSpec(getEndpoint().getConfiguration().getKeyPair().getPublic(), "AES", 128),
+                new SecureRandom());
+        // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
+        // methods on it for recovering the encapsulation as well.
+        SecretKeyWithEncapsulation secEnc1 = (SecretKeyWithEncapsulation) keyGenerator.generateKey();
+
+        exchange.getMessage().setBody(secEnc1, SecretKeyWithEncapsulation.class);
+    }
+
+    private void extractEncapsulation(Exchange exchange)
+            throws InvalidAlgorithmParameterException,
+            InvalidPayloadException {
+        // initialise for creating an encapsulation and shared secret.
+        SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
+
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
+        keyGenerator.init(
+                new KEMExtractSpec(
+                        getEndpoint().getConfiguration().getKeyPair().getPrivate(), payload.getEncapsulation(),
+                        PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(), 128),
+                new SecureRandom());
+
+        // initialise for extracting the shared secret from the encapsulation.
+        SecretKeyWithEncapsulation secEnc2 = (SecretKeyWithEncapsulation) keyGenerator.generateKey();
+
+        exchange.getMessage().setBody(secEnc2, SecretKeyWithEncapsulation.class);
     }
 
 }
