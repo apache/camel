@@ -74,7 +74,7 @@ public class WeaviateComponentIT extends CamelTestSupport {
         map.put("age", "34");
 
         Exchange result = fluentTemplate.to(
-                "weaviate:test-collection?scheme=https&host=ifugnkxslq42gscwfi1lg.c0.us-east1.gcp.weaviate.cloud&apiKey={{weaviate.apikey}}")
+                "weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}")
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.CREATE)
                 .withBody(elements)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
@@ -95,7 +95,7 @@ public class WeaviateComponentIT extends CamelTestSupport {
     public void queryById() {
 
         Exchange result = fluentTemplate.to(
-                "weaviate:test-collection?scheme=https&host=ifugnkxslq42gscwfi1lg.c0.us-east1.gcp.weaviate.cloud&apiKey={{weaviate.apikey}}")
+                "weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}")
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY_BY_ID)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
                 .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
@@ -126,16 +126,16 @@ public class WeaviateComponentIT extends CamelTestSupport {
         map.put("dog", "dachshund");
 
         Exchange result = fluentTemplate.to(
-                "weaviate:test-collection?scheme=https&host=ifugnkxslq42gscwfi1lg.c0.us-east1.gcp.weaviate.cloud&apiKey={{weaviate.apikey}}")
+                "weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}")
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.UPDATE_BY_ID)
                 .withBody(elements)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
+                .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
                 .withHeader(WeaviateVectorDb.Headers.PROPERTIES, map)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
 
-        assertThat(result).isNotNull();
         Result<Boolean> res = (Result<Boolean>) result.getIn().getBody();
         assertThat(!res.hasErrors());
         assertThat(res.getResult() == true);
@@ -152,7 +152,7 @@ public class WeaviateComponentIT extends CamelTestSupport {
         map.put("sky", "blue");
 
         Exchange result = fluentTemplate.to(
-                "weaviate:test-collection?scheme=https&host=ifugnkxslq42gscwfi1lg.c0.us-east1.gcp.weaviate.cloud&apiKey={{weaviate.apikey}}")
+                "weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}")
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.QUERY)
                 .withBody(
                         elements)
@@ -173,7 +173,7 @@ public class WeaviateComponentIT extends CamelTestSupport {
     public void deleteById() {
 
         Exchange result = fluentTemplate.to(
-                "weaviate:test-collection?scheme=https&host=ifugnkxslq42gscwfi1lg.c0.us-east1.gcp.weaviate.cloud&apiKey={{weaviate.apikey}}")
+                "weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}")
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_BY_ID)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
                 .withHeader(WeaviateVectorDb.Headers.INDEX_ID, CREATEID)
@@ -191,7 +191,7 @@ public class WeaviateComponentIT extends CamelTestSupport {
     @Order(10)
     public void deleteCollection() {
         Exchange result = fluentTemplate
-                .to("weaviate:test-collection?scheme=https&host=ifugnkxslq42gscwfi1lg.c0.us-east1.gcp.weaviate.cloud&apiKey={{weaviate.apikey}}")
+                .to("weaviate:test-collection?scheme={{weaviate.scheme}}&host={{weaviate.host}}&apiKey={{weaviate.apikey}}")
                 .withHeader(WeaviateVectorDb.Headers.ACTION, WeaviateVectorDbAction.DELETE_COLLECTION)
                 .withHeader(WeaviateVectorDb.Headers.COLLECTION_NAME, COLLECTION)
                 .request(Exchange.class);
