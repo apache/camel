@@ -124,6 +124,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
     private boolean infoEnabled;
     private boolean staticEnabled;
+    private String staticSourceDir;
     private String staticContextPath;
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
@@ -188,6 +189,15 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     public void setStaticEnabled(boolean staticEnabled) {
         this.staticEnabled = staticEnabled;
+    }
+
+    public String getStaticSourceDir() {
+        return staticSourceDir;
+    }
+
+    @ManagedAttribute(description = "The source dir for serving static content")
+    public void setStaticSourceDir(String staticSourceDir) {
+        this.staticSourceDir = staticSourceDir;
     }
 
     @ManagedAttribute(description = "The context-path for serving static content")
@@ -576,6 +586,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
                 InputStream is = null;
                 File f = new File(u);
+                if (!f.exists() && staticSourceDir != null) {
+                    f = new File(staticSourceDir, u);
+                }
                 if (f.exists()) {
                     // load directly from file system first
                     try {
@@ -588,6 +601,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     if (is == null) {
                         // common folder for java app servers like quarkus and spring-boot
                         is = camelContext.getClassResolver().loadResourceAsStream("META-INF/resources/" + u);
+                    }
+                    if (is == null && staticSourceDir != null) {
+                        is = camelContext.getClassResolver().loadResourceAsStream(staticSourceDir + "/" + u);
                     }
                 }
                 if (is != null) {
