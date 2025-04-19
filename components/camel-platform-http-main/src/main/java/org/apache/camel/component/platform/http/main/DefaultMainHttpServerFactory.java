@@ -69,6 +69,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setInfoEnabled(configuration.isInfoEnabled());
         server.setStaticEnabled(configuration.isStaticEnabled());
         server.setStaticContextPath(configuration.getStaticContextPath());
+        server.setStaticSourceDir(configuration.getStaticSourceDir());
         server.setDevConsoleEnabled(configuration.isDevConsoleEnabled());
         server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
         server.setHealthPath(configuration.getHealthPath());

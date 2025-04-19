@@ -45,6 +45,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("SendEnabled", boolean.class);
         map.put("StaticContextPath", java.lang.String.class);
         map.put("StaticEnabled", boolean.class);
+        map.put("StaticSourceDir", java.lang.String.class);
         map.put("UploadEnabled", boolean.class);
         map.put("UploadSourceDir", java.lang.String.class);
         map.put("UseGlobalSslContextParameters", boolean.class);
@@ -97,6 +98,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "staticContextPath": target.setStaticContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "staticenabled":
         case "staticEnabled": target.setStaticEnabled(property(camelContext, boolean.class, value)); return true;
+        case "staticsourcedir":
+        case "staticSourceDir": target.setStaticSourceDir(property(camelContext, java.lang.String.class, value)); return true;
         case "uploadenabled":
         case "uploadEnabled": target.setUploadEnabled(property(camelContext, boolean.class, value)); return true;
         case "uploadsourcedir":
@@ -157,6 +160,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "staticContextPath": return java.lang.String.class;
         case "staticenabled":
         case "staticEnabled": return boolean.class;
+        case "staticsourcedir":
+        case "staticSourceDir": return java.lang.String.class;
         case "uploadenabled":
         case "uploadEnabled": return boolean.class;
         case "uploadsourcedir":
@@ -213,6 +218,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "staticContextPath": return target.getStaticContextPath();
         case "staticenabled":
         case "staticEnabled": return target.isStaticEnabled();
+        case "staticsourcedir":
+        case "staticSourceDir": return target.getStaticSourceDir();
         case "uploadenabled":
         case "uploadEnabled": return target.isUploadEnabled();
         case "uploadsourcedir":

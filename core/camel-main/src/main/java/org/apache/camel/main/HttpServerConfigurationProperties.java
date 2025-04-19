@@ -44,6 +44,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String fileUploadDirectory;
     private boolean infoEnabled;
     private boolean staticEnabled;
+    private String staticSourceDir;
     @Metadata(defaultValue = "/")
     private String staticContextPath = "/";
     private boolean devConsoleEnabled;
@@ -197,6 +198,17 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setStaticEnabled(boolean staticEnabled) {
         this.staticEnabled = staticEnabled;
+    }
+
+    public String getStaticSourceDir() {
+        return staticSourceDir;
+    }
+
+    /**
+     * Additional directory that holds static content when static is enabled.
+     */
+    public void setStaticSourceDir(String staticSourceDir) {
+        this.staticSourceDir = staticSourceDir;
     }
 
     public String getStaticContextPath() {
@@ -469,6 +481,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withStaticEnabled(boolean staticEnabled) {
         this.staticEnabled = staticEnabled;
+        return this;
+    }
+
+    /**
+     * Additional directory that holds static content when static is enabled.
+     */
+    public HttpServerConfigurationProperties withStaticSourceDir(String staticSourceDir) {
+        this.staticSourceDir = staticSourceDir;
         return this;
     }
 
