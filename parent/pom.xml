@@ -504,7 +504,7 @@
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>4.5.13</vertx-version>
         <vysper-version>0.7</vysper-version>
-        <weaviate-client-version>4.7.0</weaviate-client-version>
+        <weaviate-client-version>5.2.0</weaviate-client-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
         <wildfly-elytron>2.2.2.Final</wildfly-elytron>
