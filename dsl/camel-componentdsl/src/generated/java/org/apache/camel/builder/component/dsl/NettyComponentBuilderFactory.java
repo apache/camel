@@ -971,6 +971,23 @@ public interface NettyComponentBuilderFactory {
     
         
         /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+    
+        
+        /**
          * Only used for TCP. You can transfer the exchange over the wire
          * instead of just the body. The following fields are transferred: In
          * body, Out body, fault body, In headers, Out headers, fault headers,
@@ -1531,6 +1548,7 @@ public interface NettyComponentBuilderFactory {
             case "receiveBufferSize": getOrCreateConfiguration((NettyComponent) component).setReceiveBufferSize((int) value); return true;
             case "receiveBufferSizePredictor": getOrCreateConfiguration((NettyComponent) component).setReceiveBufferSizePredictor((int) value); return true;
             case "sendBufferSize": getOrCreateConfiguration((NettyComponent) component).setSendBufferSize((int) value); return true;
+            case "shutdownTimeout": getOrCreateConfiguration((NettyComponent) component).setShutdownTimeout((int) value); return true;
             case "transferExchange": getOrCreateConfiguration((NettyComponent) component).setTransferExchange((boolean) value); return true;
             case "udpByteArrayCodec": getOrCreateConfiguration((NettyComponent) component).setUdpByteArrayCodec((boolean) value); return true;
             case "unixDomainSocketPath": getOrCreateConfiguration((NettyComponent) component).setUnixDomainSocketPath((java.lang.String) value); return true;

@@ -125,6 +125,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serverExceptionCaughtLogLevel": target.getConfiguration().setServerExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "serverinitializerfactory":
         case "serverInitializerFactory": target.getConfiguration().setServerInitializerFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
+        case "shutdowntimeout":
+        case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "ssl": target.getConfiguration().setSsl(property(camelContext, boolean.class, value)); return true;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": target.getConfiguration().setSslClientCertHeaders(property(camelContext, boolean.class, value)); return true;
@@ -266,6 +268,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serverExceptionCaughtLogLevel": return org.apache.camel.LoggingLevel.class;
         case "serverinitializerfactory":
         case "serverInitializerFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
+        case "shutdowntimeout":
+        case "shutdownTimeout": return int.class;
         case "ssl": return boolean.class;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": return boolean.class;
@@ -408,6 +412,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "serverExceptionCaughtLogLevel": return target.getConfiguration().getServerExceptionCaughtLogLevel();
         case "serverinitializerfactory":
         case "serverInitializerFactory": return target.getConfiguration().getServerInitializerFactory();
+        case "shutdowntimeout":
+        case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
         case "ssl": return target.getConfiguration().isSsl();
         case "sslclientcertheaders":
         case "sslClientCertHeaders": return target.getConfiguration().isSslClientCertHeaders();
