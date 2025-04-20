@@ -128,6 +128,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "serverInitializerFactory": target.setServerInitializerFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
         case "serverpipelinefactory":
         case "serverPipelineFactory": target.setServerPipelineFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
+        case "shutdowntimeout":
+        case "shutdownTimeout": target.setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "ssl": target.setSsl(property(camelContext, boolean.class, value)); return true;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": target.setSslClientCertHeaders(property(camelContext, boolean.class, value)); return true;
@@ -271,6 +273,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "serverInitializerFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
         case "serverpipelinefactory":
         case "serverPipelineFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
+        case "shutdowntimeout":
+        case "shutdownTimeout": return int.class;
         case "ssl": return boolean.class;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": return boolean.class;
@@ -415,6 +419,8 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "serverInitializerFactory": return target.getServerInitializerFactory();
         case "serverpipelinefactory":
         case "serverPipelineFactory": return target.getServerPipelineFactory();
+        case "shutdowntimeout":
+        case "shutdownTimeout": return target.getShutdownTimeout();
         case "ssl": return target.isSsl();
         case "sslclientcertheaders":
         case "sslClientCertHeaders": return target.isSslClientCertHeaders();

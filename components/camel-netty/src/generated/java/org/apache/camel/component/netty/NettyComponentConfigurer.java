@@ -135,6 +135,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "serverExceptionCaughtLogLevel": getOrCreateConfiguration(target).setServerExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "serverinitializerfactory":
         case "serverInitializerFactory": getOrCreateConfiguration(target).setServerInitializerFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
+        case "shutdowntimeout":
+        case "shutdownTimeout": getOrCreateConfiguration(target).setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "ssl": getOrCreateConfiguration(target).setSsl(property(camelContext, boolean.class, value)); return true;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": getOrCreateConfiguration(target).setSslClientCertHeaders(property(camelContext, boolean.class, value)); return true;
@@ -280,6 +282,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "serverExceptionCaughtLogLevel": return org.apache.camel.LoggingLevel.class;
         case "serverinitializerfactory":
         case "serverInitializerFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
+        case "shutdowntimeout":
+        case "shutdownTimeout": return int.class;
         case "ssl": return boolean.class;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": return boolean.class;
@@ -426,6 +430,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "serverExceptionCaughtLogLevel": return getOrCreateConfiguration(target).getServerExceptionCaughtLogLevel();
         case "serverinitializerfactory":
         case "serverInitializerFactory": return getOrCreateConfiguration(target).getServerInitializerFactory();
+        case "shutdowntimeout":
+        case "shutdownTimeout": return getOrCreateConfiguration(target).getShutdownTimeout();
         case "ssl": return getOrCreateConfiguration(target).isSsl();
         case "sslclientcertheaders":
         case "sslClientCertHeaders": return getOrCreateConfiguration(target).isSslClientCertHeaders();

@@ -115,6 +115,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     private int reconnectInterval = 10000;
     @UriParam(label = "advanced")
     private String unixDomainSocketPath;
+    @UriParam(label = "advanced", defaultValue = "100")
+    private int shutdownTimeout = 100;
 
     public String getAddress() {
         if (unixDomainSocketPath != null) {
@@ -582,6 +584,19 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
      */
     public void setUnixDomainSocketPath(String unixDomainSocketPath) {
         this.unixDomainSocketPath = unixDomainSocketPath;
+    }
+
+    public int getShutdownTimeout() {
+        return shutdownTimeout;
+    }
+
+    /**
+     * Shutdown await timeout in milliseconds
+     *
+     * @param shutdownTimeout
+     */
+    public void setShutdownTimeout(int shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
     }
 
     /**
