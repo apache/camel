@@ -1639,6 +1639,36 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder shutdownTimeout(String shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: <code>boolean</code> type.
@@ -3365,6 +3395,36 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointProducerBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointProducerBuilder shutdownTimeout(String shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used.
          * 
          * The option is a: <code>boolean</code> type.
@@ -4538,6 +4598,36 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder sendBufferSize(String sendBufferSize) {
             doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointBuilder shutdownTimeout(int shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
+         * Shutdown await timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointBuilder shutdownTimeout(String shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
             return this;
         }
         /**
