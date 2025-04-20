@@ -69,6 +69,14 @@ public final class CxfConverterLoader implements TypeConverterLoader, CamelConte
                 }
                 return answer;
             });
+        addTypeConverter(registry, java.lang.String.class, org.apache.cxf.message.MessageContentsList.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.cxf.converter.CxfConverter.toString((org.apache.cxf.message.MessageContentsList) value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, javax.xml.namespace.QName.class, java.lang.String.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.cxf.converter.CxfConverter.toQName((java.lang.String) value);
