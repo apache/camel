@@ -98,6 +98,11 @@ public final class CxfConverter {
         return DataFormat.valueOf(name.toUpperCase());
     }
 
+    @Converter
+    public static String toString(MessageContentsList value, Exchange exchange) {
+        return convertTo(String.class, exchange, value, exchange.getContext().getTypeConverterRegistry());
+    }
+
     /**
      * Use a fallback type converter so we can convert the embedded list element if the value is MessageContentsList.
      * The algorithm of this converter finds the first non-null list element from the list and applies conversion to the
