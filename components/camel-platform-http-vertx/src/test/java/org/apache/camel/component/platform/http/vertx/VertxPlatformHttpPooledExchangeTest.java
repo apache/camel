@@ -45,7 +45,8 @@ public class VertxPlatformHttpPooledExchangeTest {
         try {
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
+            assertThat(VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
+                    .isNotNull();
             assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
                 assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
             });

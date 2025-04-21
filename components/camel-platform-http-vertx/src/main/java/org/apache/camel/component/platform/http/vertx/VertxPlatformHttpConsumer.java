@@ -84,10 +84,12 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private VertxPlatformHttpRouter router;
     private HttpRequestBodyHandler httpRequestBodyHandler;
     private CookieConfiguration cookieConfiguration;
+    private final String routerName;
 
     public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
                                      Processor processor,
-                                     List<Handler<RoutingContext>> handlers) {
+                                     List<Handler<RoutingContext>> handlers,
+                                     String routerName) {
         super(endpoint, processor);
 
         this.handlers = handlers;
@@ -95,6 +97,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
         this.muteExceptions = endpoint.isMuteException();
         this.handleWriteResponseError = endpoint.isHandleWriteResponseError();
+        this.routerName = routerName;
     }
 
     @Override
@@ -107,7 +110,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         super.doInit();
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());
-        router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
+        router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), routerName);
         if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
         } else if (!getEndpoint().isHttpProxy() && !getEndpoint().isUseBodyHandler()) {

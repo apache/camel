@@ -90,7 +90,8 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         return new VertxPlatformHttpConsumer(
                 endpoint,
                 processor,
-                handlers);
+                handlers,
+                VertxPlatformHttpRouter.getRouterNameFromPort(getServerPort()));
     }
 
     @Override
@@ -108,12 +109,19 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
                 }
             }
             if (port == 0) {
-                VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(camelContext);
+                VertxPlatformHttpRouter router
+                        = CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpRouter.class);
                 if (router != null && router.getServer() != null && router.getServer().getServer() != null) {
                     port = router.getServer().getServer().actualPort();
                 }
             }
+
+            if (port == 0) {
+                //fallback to default
+                return 8080;
+            }
         }
+
         return port;
     }
 }

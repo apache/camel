@@ -435,9 +435,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
-
         ServiceHelper.startService(server, pluginRegistry, producer, consumer);
-        router = VertxPlatformHttpRouter.lookup(camelContext);
+        String routerName = VertxPlatformHttpRouter.getRouterNameFromPort(getPort());
+        router = VertxPlatformHttpRouter.lookup(camelContext, routerName);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         setupConsoles();

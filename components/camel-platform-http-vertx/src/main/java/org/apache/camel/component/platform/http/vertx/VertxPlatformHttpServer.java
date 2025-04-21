@@ -197,9 +197,10 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
 
         router.route(configuration.getPath() + "*").subRouter(subRouter);
 
+        String routerName = VertxPlatformHttpRouter.getRouterNameFromPort(configuration.getPort());
         context.getRegistry().bind(
-                VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
-                new VertxPlatformHttpRouter(this, vertx, subRouter) {
+                routerName,
+                new VertxPlatformHttpRouter(this, vertx, subRouter, routerName) {
                     @Override
                     public Handler<RoutingContext> bodyHandler() {
                         return createBodyHandler(getCamelContext(), configuration);
