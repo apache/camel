@@ -3304,6 +3304,48 @@ public class StaticEndpointBuilders {
         return CxfRsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * Syntax: <code>dapr:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Dapr building block operation to perform with this component
+     * There are 1 enums and the value can be one of: invokeService
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static DaprEndpointBuilderFactory.DaprEndpointBuilder dapr(String path) {
+        return dapr("dapr", path);
+    }
+    /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * Syntax: <code>dapr:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Dapr building block operation to perform with this component
+     * There are 1 enums and the value can be one of: invokeService
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static DaprEndpointBuilderFactory.DaprEndpointBuilder dapr(String componentName, String path) {
+        return DaprEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
      * 

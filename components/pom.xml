@@ -338,6 +338,7 @@
         <module>camel-jooq</module>
         <!-- observability-services requires the availability of other components -->
         <module>camel-observability-services</module>
+        <module>camel-dapr</module>
     </modules>
 
     <properties>

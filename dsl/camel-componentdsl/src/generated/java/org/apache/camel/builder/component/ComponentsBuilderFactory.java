@@ -1041,6 +1041,19 @@ public interface ComponentsBuilderFactory {
         return CxfrsComponentBuilderFactory.cxfrs();
     }
     /**
+     * Dapr (camel-dapr)
+     * Dapr component which interfaces with Dapr Building Blocks.
+     * 
+     * Category: cloud,saas
+     * Since: 4.11
+     * Maven coordinates: org.apache.camel:camel-dapr
+     * 
+     * @return the dsl builder
+     */
+    static DaprComponentBuilderFactory.DaprComponentBuilder dapr() {
+        return DaprComponentBuilderFactory.dapr();
+    }
+    /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
      * 

@@ -90,6 +90,7 @@
 ** xref:crypto-component.adoc[Crypto (JCE)]
 ** xref:cxf-component.adoc[CXF]
 ** xref:cxfrs-component.adoc[CXF-RS]
+** xref:dapr-component.adoc[Dapr]
 ** xref:dataformat-component.adoc[Data Format]
 ** xref:dataset-component.adoc[Dataset]
 ** xref:dataset-test-component.adoc[DataSet Test]

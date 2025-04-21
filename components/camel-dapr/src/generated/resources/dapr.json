@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "dapr",
+    "title": "Dapr",
+    "description": "Camel Dapr component",
+    "deprecated": false,
+    "firstVersion": "4.11.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-dapr",
+    "version": "4.12.0-SNAPSHOT"
+  }
+}
