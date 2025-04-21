@@ -127,7 +127,8 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
+            assertThat(VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
+                    .isNotNull();
             assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
                 assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
             });
@@ -678,7 +679,8 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.start();
 
-            VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(context);
+            VertxPlatformHttpRouter router
+                    = VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port));
             router.route().order(0).handler(basicAuthHandler);
 
             RestAssured.get("/secure")

@@ -1886,6 +1886,8 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
+        System.out.println("********* Starting server on port " + server.getPort());
+
         // auto-detect camel-platform-http-main on classpath
         MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
         // create http server as a service managed by camel context
@@ -1893,6 +1895,14 @@ public abstract class BaseMainSupport extends BaseService {
         // force eager starting as embedded http server is used for
         // container platform to check readiness and need to be started eager
         camelContext.addService(http, true, true);
+
+        // TODO just test POC
+        HttpServerConfigurationProperties server2 = mainConfigurationProperties.httpServer();
+        setPropertiesOnTarget(camelContext, server2, properties, "camel.server.",
+                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+        server2.setPort(9876);
+        Service http2 = sf.newHttpServer(camelContext, server2);
+        camelContext.addService(http2, true, true);
     }
 
     private void setVaultProperties(
