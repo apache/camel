@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import io.restassured.RestAssured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloudevents.CloudEvent;
 import org.apache.camel.component.knative.KnativeComponent;
@@ -60,14 +61,16 @@ public final class KnativeHttpTestSupport {
             @Override
             protected void doBuild() throws Exception {
                 super.doBuild();
-                this.setRouter(VertxPlatformHttpRouter.lookup(context));
+                this.setRouter(VertxPlatformHttpRouter.lookup(context,
+                        VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)));
             }
         });
         component.setProducerFactory(new KnativeHttpProducerFactory(context) {
             @Override
             protected void doBuild() throws Exception {
                 super.doBuild();
-                this.setVertx(VertxPlatformHttpRouter.lookup(context).vertx());
+                this.setVertx(VertxPlatformHttpRouter
+                        .lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)).vertx());
             }
         });
 
