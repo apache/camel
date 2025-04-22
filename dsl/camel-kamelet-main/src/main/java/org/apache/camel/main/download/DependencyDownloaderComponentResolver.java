@@ -92,6 +92,11 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             if (oa != null) {
                 downloadLoader(oa.getGroupId(), oa.getArtifactId(), oa.getVersion());
             }
+            // include producer component
+            ComponentModel http = catalog.componentModel("vertx-http");
+            if (http != null) {
+                downloadLoader(http.getGroupId(), http.getArtifactId(), http.getVersion());
+            }
         }
         if ("cron".equals(name)) {
             // include camel-quartz when using cron
