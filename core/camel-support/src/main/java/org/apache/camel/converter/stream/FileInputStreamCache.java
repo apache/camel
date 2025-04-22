@@ -331,6 +331,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                         ciphers = new CipherPair(strategy.getSpoolCipher());
                     }
                 } catch (GeneralSecurityException e) {
+                    IOHelper.close(out);
                     throw new IOException(e.getMessage(), e);
                 }
                 out = new CipherOutputStream(out, ciphers.getEncryptor()) {
