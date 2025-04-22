@@ -21,6 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
 import org.apache.camel.component.platform.http.main.authentication.BasicAuthenticationConfigurer;
 import org.apache.camel.component.platform.http.main.authentication.JWTAuthenticationConfigurer;
+import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.MainHttpServerFactory;
@@ -88,7 +89,48 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         return server;
     }
 
+    @Override
+    public Service newHttpManagementServer(
+            CamelContext camelContext, HttpManagementServerConfigurationProperties configuration) {
+        MainHttpServer server = new MainHttpServer();
+
+        server.setCamelContext(camelContext);
+        server.setHost(configuration.getHost());
+        server.setPort(configuration.getPort());
+        server.setPath(configuration.getPath());
+        if (configuration.getMaxBodySize() != null) {
+            server.setMaxBodySize(configuration.getMaxBodySize());
+        }
+        server.setUseGlobalSslContextParameters(configuration.isUseGlobalSslContextParameters());
+        server.setInfoEnabled(configuration.isInfoEnabled());
+        server.setDevConsoleEnabled(configuration.isDevConsoleEnabled());
+        server.setHealthCheckEnabled(configuration.isHealthCheckEnabled());
+        server.setHealthPath(configuration.getHealthPath());
+        server.setJolokiaEnabled(configuration.isJolokiaEnabled());
+        server.setJolokiaPath(configuration.getJolokiaPath());
+        server.setMetricsEnabled(configuration.isMetricsEnabled());
+        server.setSendEnabled(configuration.isSendEnabled());
+
+        if (configuration.isAuthenticationEnabled()) {
+            configureAuthentication(server, configuration);
+        }
+
+        return server;
+    }
+
     private void configureAuthentication(MainHttpServer server, HttpServerConfigurationProperties configuration) {
+        if (configuration.getBasicPropertiesFile() != null) {
+            BasicAuthenticationConfigurer auth = new BasicAuthenticationConfigurer();
+            auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
+        } else if (configuration.getJwtKeystoreType() != null) {
+            ObjectHelper.notNull(configuration.getJwtKeystorePath(), "jwtKeyStorePath");
+            ObjectHelper.notNull(configuration.getJwtKeystorePassword(), "jwtKeyStorePassword");
+            JWTAuthenticationConfigurer auth = new JWTAuthenticationConfigurer();
+            auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
+        }
+    }
+
+    private void configureAuthentication(MainHttpServer server, HttpManagementServerConfigurationProperties configuration) {
         if (configuration.getBasicPropertiesFile() != null) {
             BasicAuthenticationConfigurer auth = new BasicAuthenticationConfigurer();
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);

@@ -32,4 +32,14 @@ public interface MainHttpServerFactory {
      * @return               the server as a {@link Service} to be managed by {@link org.apache.camel.CamelContext}.
      */
     Service newHttpServer(CamelContext camelContext, HttpServerConfigurationProperties configuration);
+
+    /**
+     * Creates the embedded HTTP management server
+     *
+     * @param  camelContext  the camel context
+     * @param  configuration server configuration
+     * @return               the server as a {@link Service} to be managed by {@link org.apache.camel.CamelContext}.
+     */
+    Service newHttpManagementServer(CamelContext camelContext, HttpManagementServerConfigurationProperties configuration);
+
 }

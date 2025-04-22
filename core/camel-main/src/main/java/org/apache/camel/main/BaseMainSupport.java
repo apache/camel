@@ -136,7 +136,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
             "camel.lra.", "camel.opentelemetry2.", "camel.opentelemetry.",
-            "camel.telemetryDev.", "camel.metrics.", "camel.routeTemplate",
+            "camel.telemetryDev.", "camel.management.server.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
@@ -1263,6 +1263,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties devConsoleProperties = new OrderedLocationProperties();
         OrderedLocationProperties globalOptions = new OrderedLocationProperties();
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
+        OrderedLocationProperties httpManagementServerProperties = new OrderedLocationProperties();
         OrderedLocationProperties sslProperties = new OrderedLocationProperties();
         OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
@@ -1372,6 +1373,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 httpServerProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, "camel.management.server.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(24);
+                validateOptionAndValue(key, option, value);
+                httpManagementServerProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.ssl.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -1436,6 +1443,13 @@ public abstract class BaseMainSupport extends BaseService {
         if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
             LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
             setHttpServerProperties(camelContext, httpServerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!httpManagementServerProperties.isEmpty() || mainConfigurationProperties.hasHttpManagementServerConfiguration()) {
+            LOG.debug("Auto-configuring HTTP Management Server from loaded properties: {}",
+                    httpManagementServerProperties.size());
+            setHttpManagementServerProperties(camelContext, httpManagementServerProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -1607,6 +1621,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!httpServerProperties.isEmpty()) {
             httpServerProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.server.{}={}", k, v);
+            });
+        }
+        if (!httpManagementServerProperties.isEmpty()) {
+            httpManagementServerProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.management.server.{}={}", k, v);
             });
         }
 
@@ -1886,8 +1905,6 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
-        System.out.println("********* Starting server on port " + server.getPort());
-
         // auto-detect camel-platform-http-main on classpath
         MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
         // create http server as a service managed by camel context
@@ -1895,14 +1912,30 @@ public abstract class BaseMainSupport extends BaseService {
         // force eager starting as embedded http server is used for
         // container platform to check readiness and need to be started eager
         camelContext.addService(http, true, true);
+    }
 
-        // TODO just test POC
-        HttpServerConfigurationProperties server2 = mainConfigurationProperties.httpServer();
-        setPropertiesOnTarget(camelContext, server2, properties, "camel.server.",
+    private void setHttpManagementServerProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        HttpManagementServerConfigurationProperties server = mainConfigurationProperties.httpManagementServer();
+
+        setPropertiesOnTarget(camelContext, server, properties, "camel.management.server.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
-        server2.setPort(9876);
-        Service http2 = sf.newHttpServer(camelContext, server2);
-        camelContext.addService(http2, true, true);
+
+        if (!server.isEnabled()) {
+            // http management server is disabled
+            return;
+        }
+
+        // auto-detect camel-platform-http-main on classpath
+        MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
+        // create http management server as a service managed by camel context
+        Service http = sf.newHttpManagementServer(camelContext, server);
+        // force eager starting as embedded http management server is used for
+        // container platform to check readiness and need to be started eager
+        camelContext.addService(http, true, true);
     }
 
     private void setVaultProperties(
