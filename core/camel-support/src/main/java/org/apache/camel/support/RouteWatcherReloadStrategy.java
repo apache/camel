@@ -174,8 +174,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // load the properties, so we can update (remember location)
             InputStream is = resource.getInputStream();
             OrderedProperties tmp = new OrderedProperties();
-            tmp.load(is);
-            IOHelper.close(is);
+            try {
+                tmp.load(is);
+            } finally {
+                IOHelper.close(is);
+            }
             changed = new OrderedLocationProperties();
             changed.putAll(resource.getLocation(), tmp);
             // filter to only keep changed properties
