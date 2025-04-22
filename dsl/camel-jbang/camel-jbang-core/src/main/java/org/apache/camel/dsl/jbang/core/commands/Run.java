@@ -1111,7 +1111,11 @@ public class Run extends CamelCommand {
 
         // prepare spring-boot for logging to file
         InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml");
-        eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
+        try {
+            eq.safeCopy(is, new File(eq.exportDir + "/src/main/resources/logback.xml"));
+        } finally {
+            IOHelper.close(is);
+        }
 
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
