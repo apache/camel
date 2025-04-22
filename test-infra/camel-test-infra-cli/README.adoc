@@ -21,3 +21,4 @@ System variables are defined in link:{config-class}[CliProperties]
  - `cli.service.mvn.local` : path to the host folder mounted as container local maven repository
  - `cli.service.extra.hosts` : comma separated host=ip pairs to add in the hosts file
  - `cli.service.trusted.paths` : commas separated paths, relative to the host, of the files containing PEM trusted certificates
+ - `cli.service.docker.file` : path to a custom Dockerfile, by default the one in the classpath at _org/apache/camel/test/infra/cli/services/Dockerfile_ will be used
