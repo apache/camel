@@ -228,6 +228,7 @@
                 <cli.jbang.version>${project.version}</cli.jbang.version>
                 <cli.jbang.repo>apache/camel</cli.jbang.repo>
                 <cli.jbang.branch>main</cli.jbang.branch>
+                <cli.jbang.docker.file/>
                 <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
                 <x11.display>:0</x11.display>
             </properties>
@@ -273,6 +274,7 @@
                                 <cli.service.mvn.local>${shared.maven.local.repo}</cli.service.mvn.local>
                                 <cli.service.repo>${cli.jbang.repo}</cli.service.repo>
                                 <cli.service.branch>${cli.jbang.branch}</cli.service.branch>
+                                <cli.service.docker.file>${cli.jbang.docker.file}</cli.service.docker.file>
                                 <jbang.it.assert.wait.timeout>300</jbang.it.assert.wait.timeout>
                                 <DISPLAY>${x11.display}</DISPLAY>
                             </systemPropertyVariables>
