@@ -24,7 +24,7 @@ The following Camel components support the Rest DSL:
 * xref:components::rest-component.adoc[camel-rest] *required* contains the base rest component needed by Rest DSL
 * xref:components::netty-http-component.adoc[camel-netty-http]
 * xref:components::jetty-component.adoc[camel-jetty]
-* xref:components::platform-http-component.adoc[camel-platform-http]
+* xref:components::platform-http-component.adoc[camel-platform-http] (recommended)
 * xref:components::servlet-component.adoc[camel-servlet]
 * xref:components::undertow-component.adoc[camel-undertow]
 
@@ -199,6 +199,11 @@ if you have many rest services.
 When you use `direct` endpoints then you can enable Rest DSL to automatically _inline_ the direct
 route in the rest route, meaning that there is only one route per rest service.
 
+WARNING: When using inline-routes, then each REST endpoint should link 1:1 to a unique `direct` endpoint.
+The linked _direct_ routes are inlined and therefore does not **exists** as independent routes, and
+they cannot be called from other regular Camel routes. In other words the inlined routes are essentially
+moved inside the rest-dsl and does not exist as a route. See more detils further below.
+
 To do this you *MUST* use `direct` endpoints, and each endpoint must be unique name per service.
 And the option `inlineRoutes` must be enabled.
 
@@ -240,6 +245,43 @@ If you use Camel Main, Camel Spring Boot, Camel Quarkus or Camel JBang, you can 
 ----
 camel.rest.inline-routes = true
 ----
+
+Notice the REST services above each use a unique 1:1 linked direct endpoint (direct:customerDetail, direct:customerOrders direct:customerNewOrder).
+This means that you cannot call these routes from another route such as the following would not function:
+
+[source,java]
+----
+from("kafka:new-order")
+   .to("direct:customerNewOrder");
+----
+
+So if you desire to call common routes from both Rest DSL and other regular Camel routes
+then keep these in separate routes as shown:
+
+
+[source,java]
+----
+restConfiguration().inlineRoutes(true);
+
+rest("/customers/")
+    .get("/{id}").to("direct:customerDetail")
+    .get("/{id}/orders").to("direct:customerOrders")
+    .post("/neworder").to("direct:customerNewOrder");
+
+from("direct:customerNewOrder")
+  // do some stuff here
+  .to("direct:commonCustomerNewOrder"); // call common route
+
+from("direct:commonCustomerNewOrder")
+  // do stuff here
+  .log("Created new order");
+
+from("kafka:new-order")
+   .to("direct:commonCustomerNewOrder"); // make sure to call the common route
+----
+
+Notice how the common shared route is separated into the route `direct:commonCustomerNewOrder`.
+Which can be called from both Rest DSL and regular Camel routes.
 
 == Disabling REST services
 
