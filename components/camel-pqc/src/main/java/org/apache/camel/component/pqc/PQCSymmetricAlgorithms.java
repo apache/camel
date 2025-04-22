@@ -20,12 +20,23 @@ public enum PQCSymmetricAlgorithms {
 
     // Standardized and implemented
     AES("AES"),
+    RC2("RC2"),
     RC5("RC5"),
     ARIA("ARIA"),
     CAMELLIA("CAMELLIA"),
     CAST5("CAST5"),
     CAST6("CAST6"),
-    CHACHA7539("CHACHA7539");
+    CHACHA7539("CHACHA7539"),
+    DSTU7624("DSTU7624"),
+    GOST28147("GOST28147"),
+    GOST3412_2015("GOST3412-2015"),
+    GRAIN128("GRAIN128"),
+    HC128("HC128"),
+    HC256("HC256"),
+    SALSA20("SALSA20"),
+    SEED("SEED"),
+    SM4("SM4"),
+    DESEDE("DESede");
 
     private final String algorithm;
 
