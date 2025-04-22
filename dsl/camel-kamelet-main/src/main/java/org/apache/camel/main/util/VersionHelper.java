@@ -29,9 +29,9 @@ public final class VersionHelper {
     private static String camelVersion;
 
     private static final String KAMELETS_DEFAULT_VERSION = "4.8.0";
-    private static final Pattern KAMELETS_LIBRARY = Pattern.compile("camel-kamelets-(\\d[A-Z\\d.-]*).jar", Pattern.DOTALL);
+    private static final Pattern KAMELETS_LIBRARY = Pattern.compile("camel-kamelets-(\\d[\\w\\d.-]*).jar", Pattern.DOTALL);
     private static final Pattern CAMEL_BASE_ENGINE_LIBRARY
-            = Pattern.compile("camel-base-engine-(\\d[A-Z\\d.-]*).jar", Pattern.DOTALL);
+            = Pattern.compile("camel-base-engine-(\\d[\\w\\d.-]*).jar", Pattern.DOTALL);
 
     private static final String CP = System.getProperty("java.class.path");
 
