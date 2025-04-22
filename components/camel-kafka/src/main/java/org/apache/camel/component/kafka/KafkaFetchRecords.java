@@ -17,8 +17,10 @@
 package org.apache.camel.component.kafka;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
@@ -96,7 +98,7 @@ public class KafkaFetchRecords implements Runnable {
     private volatile long currentBackoffInterval;
     private volatile boolean reconnect; // The reconnect must be false at init (this is the policy whether to reconnect).
     private volatile boolean connected; // this is the state (connected or not)
-    private volatile State state = State.RUNNING;
+    private final AtomicReference<State> state = new AtomicReference<>(State.RUNNING);
 
     private final DevConsoleMetricsCollector metricsCollector;
 
@@ -337,7 +339,7 @@ public class KafkaFetchRecords implements Runnable {
         LOG.info("Searching for a custom subscribe adapter on the registry");
         final SubscribeAdapter adapter = resolveSubscribeAdapter(camelContext);
 
-        adapter.subscribe(consumer, listener, topicInfo);
+        adapter.subscribe(consumer, new PausePreservingRebalanceListener(listener), topicInfo);
     }
 
     private SubscribeAdapter resolveSubscribeAdapter(CamelContext camelContext) {
@@ -388,7 +390,7 @@ public class KafkaFetchRecords implements Runnable {
                 updateTaskState();
 
                 // when breakOnFirstError we want to unsubscribe from Kafka
-                if (result != null && result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
+                if (result != null && result.isBreakOnErrorHit() && !this.state.get().equals(State.PAUSED)) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
                     // force re-connect
                     setReconnect(true);
@@ -452,11 +454,11 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private void updateTaskState() {
-        switch (state) {
+        switch (state.get()) {
             case PAUSE_REQUESTED:
                 LOG.info("Pausing the consumer as a response to a pause request");
                 consumer.pause(consumer.assignment());
-                state = State.PAUSED;
+                state.set(State.PAUSED);
                 break;
             case RESUME_REQUESTED:
                 LOG.info("Resuming the consumer as a response to a resume request");
@@ -471,7 +473,7 @@ public class KafkaFetchRecords implements Runnable {
                     });
                 }
                 consumer.resume(consumer.assignment());
-                state = State.RUNNING;
+                state.set(State.RUNNING);
                 break;
             default:
                 break;
@@ -585,7 +587,7 @@ public class KafkaFetchRecords implements Runnable {
     public boolean isPaused() {
         // cannot use consumer directly as you can have ConcurrentModificationException as kafka client does not permit
         // multiple threads to use the client consumer, so we check the state only
-        return state == State.PAUSED;
+        return state.get() == State.PAUSED;
     }
 
     public void setConnected(boolean connected) {
@@ -652,7 +654,7 @@ public class KafkaFetchRecords implements Runnable {
      */
     public void pause() {
         LOG.info("A pause request was issued and the consumer thread will pause after current processing has finished");
-        state = State.PAUSE_REQUESTED;
+        state.set(State.PAUSE_REQUESTED);
     }
 
     /*
@@ -661,7 +663,7 @@ public class KafkaFetchRecords implements Runnable {
      */
     public void resume() {
         LOG.info("A resume request was issued and the consumer thread will resume after current processing has finished");
-        state = State.RESUME_REQUESTED;
+        state.set(State.RESUME_REQUESTED);
     }
 
     private void setLastError(Exception lastError) {
@@ -677,6 +679,32 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     String getState() {
-        return state.name();
+        return state.get().name();
+    }
+
+    private class PausePreservingRebalanceListener implements ConsumerRebalanceListener {
+        private final ConsumerRebalanceListener delegate;
+
+        PausePreservingRebalanceListener(ConsumerRebalanceListener delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+            delegate.onPartitionsRevoked(partitions);
+        }
+
+        @Override
+        public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+            if (state.compareAndSet(State.PAUSED, State.PAUSE_REQUESTED)) {
+                LOG.debug("Partitions were assigned while paused, the consumer will be re-paused");
+            }
+            delegate.onPartitionsAssigned(partitions);
+        }
+
+        @Override
+        public void onPartitionsLost(Collection<TopicPartition> partitions) {
+            delegate.onPartitionsLost(partitions);
+        }
     }
 }
