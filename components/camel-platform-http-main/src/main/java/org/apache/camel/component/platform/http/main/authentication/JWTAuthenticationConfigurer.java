@@ -25,6 +25,7 @@ import io.vertx.ext.web.handler.JWTAuthHandler;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationConfigEntry;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationHandlerFactory;
+import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -35,6 +36,35 @@ public class JWTAuthenticationConfigurer implements MainAuthenticationConfigurer
     public void configureAuthentication(
             AuthenticationConfig authenticationConfig,
             HttpServerConfigurationProperties properties) {
+
+        String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
+
+        AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
+        entry.setPath(path);
+        entry.setAuthenticationHandlerFactory(new AuthenticationHandlerFactory() {
+            @Override
+            public <T extends AuthenticationProvider> AuthenticationHandler createAuthenticationHandler(
+                    T authenticationProvider) {
+                JWTAuth authProvider = (JWTAuth) authenticationProvider;
+                return JWTAuthHandler.create(authProvider);
+            }
+        });
+        entry.setAuthenticationProviderFactory(vertx -> JWTAuth.create(
+                vertx,
+                new JWTAuthOptions(
+                        new JsonObject().put("keyStore", new JsonObject()
+                                .put("type", properties.getJwtKeystoreType())
+                                .put("path", properties.getJwtKeystorePath())
+                                .put("password", properties.getJwtKeystorePassword())))));
+
+        authenticationConfig.getEntries().add(entry);
+        authenticationConfig.setEnabled(true);
+    }
+
+    @Override
+    public void configureAuthentication(
+            AuthenticationConfig authenticationConfig,
+            HttpManagementServerConfigurationProperties properties) {
 
         String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
 

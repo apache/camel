@@ -299,6 +299,18 @@ public class VertxPlatformHttpRouter implements Router {
                 VertxPlatformHttpRouter.class);
     }
 
+    @Deprecated
+    /**
+     * Default router lookup method. Used for backward compatibility only. You should instead use @lookup(CamelContext,
+     * String)
+     *
+     * @param  camelContext
+     * @return              the default port router
+     */
+    public static VertxPlatformHttpRouter lookup(CamelContext camelContext) {
+        return lookup(camelContext, getRouterNameFromPort(8080));
+    }
+
     public static String getRouterNameFromPort(int port) {
         return VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME + "-" + port;
     }
