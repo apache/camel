@@ -42,16 +42,16 @@ public class PQCConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private Signature signer;
-    @UriParam
+    @UriParam(enums = "MLDSA,SLHDSA,LMS,XMSS,FALCON,PICNIC,RAINBOW")
     @Metadata(label = "advanced")
     private String signatureAlgorithm;
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private KeyGenerator keyGenerator;
-    @UriParam
+    @UriParam(enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime")
     @Metadata(label = "advanced")
     private String keyEncapsulationAlgorithm;
-    @UriParam
+    @UriParam(enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
     @Metadata(label = "advanced")
     private String symmetricKeyAlgorithm;
     @UriParam
