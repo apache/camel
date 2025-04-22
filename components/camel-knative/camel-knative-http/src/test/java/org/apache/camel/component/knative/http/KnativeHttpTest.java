@@ -51,7 +51,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -74,11 +73,6 @@ public class KnativeHttpTest {
     private ProducerTemplate template;
     private int platformHttpPort;
     private String platformHttpHost;
-
-    @BeforeAll
-    public static void beforeAll() {
-        System.setProperty("io.netty.handler.ssl.defaultEndpointVerificationAlgorithm", "NONE");
-    }
 
     // **************************
     //
