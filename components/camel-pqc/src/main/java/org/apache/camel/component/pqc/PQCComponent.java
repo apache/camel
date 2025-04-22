@@ -20,10 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.pqc.crypto.PQCDefaultLMSMaterial;
-import org.apache.camel.component.pqc.crypto.PQCDefaultMLDSAMaterial;
-import org.apache.camel.component.pqc.crypto.PQCDefaultSLHDSAMaterial;
-import org.apache.camel.component.pqc.crypto.PQCDefaultXMSSMaterial;
+import org.apache.camel.component.pqc.crypto.*;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
@@ -54,25 +51,40 @@ public class PQCComponent extends HealthCheckComponent {
         setProperties(endpoint, parameters);
 
         if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
-            switch (configuration.getSignatureAlgorithm()) {
-                case "MLDSA":
-                    configuration.setSigner(PQCDefaultMLDSAMaterial.signer);
-                    configuration.setKeyPair(PQCDefaultMLDSAMaterial.keyPair);
-                    break;
-                case "SLHDSA":
-                    configuration.setSigner(PQCDefaultSLHDSAMaterial.signer);
-                    configuration.setKeyPair(PQCDefaultSLHDSAMaterial.keyPair);
-                    break;
-                case "LMS":
-                    configuration.setSigner(PQCDefaultLMSMaterial.signer);
-                    configuration.setKeyPair(PQCDefaultLMSMaterial.keyPair);
-                    break;
-                case "XMSS":
-                    configuration.setSigner(PQCDefaultXMSSMaterial.signer);
-                    configuration.setKeyPair(PQCDefaultXMSSMaterial.keyPair);
-                    break;
-                default:
-                    break;
+            if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
+                switch (configuration.getSignatureAlgorithm()) {
+                    case "MLDSA":
+                        configuration.setSigner(PQCDefaultMLDSAMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultMLDSAMaterial.keyPair);
+                        break;
+                    case "SLHDSA":
+                        configuration.setSigner(PQCDefaultSLHDSAMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultSLHDSAMaterial.keyPair);
+                        break;
+                    case "LMS":
+                        configuration.setSigner(PQCDefaultLMSMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultLMSMaterial.keyPair);
+                        break;
+                    case "XMSS":
+                        configuration.setSigner(PQCDefaultXMSSMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultXMSSMaterial.keyPair);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        if (ObjectHelper.isEmpty(configuration.getKeyGenerator()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
+            if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
+                switch (configuration.getKeyEncapsulationAlgorithm()) {
+                    case "MLKEM":
+                        configuration.setKeyGenerator(PQCDefaultMLKEMMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultMLKEMMaterial.keyPair);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
