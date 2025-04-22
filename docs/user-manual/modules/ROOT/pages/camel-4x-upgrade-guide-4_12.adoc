@@ -19,6 +19,13 @@ The package scan classes has moved from `camel-base-engine` to `camel-support` J
 - `org.apache.camel.impl.scan.CompositePackageScanFilter` is moved to `org.apache.camel.support.scan.CompositePackageScanFilter`
 - `org.apache.camel.impl.scan.InvertingPackageScanFilter` is moved to `org.apache.camel.support.scan.InvertingPackageScanFilter`
 
+The `ExchangeHelper.copyResults` has been improved to also copy over exchange variables from the source to the target.
+
+==== Propagating variables in EIPs in seda/kamelet components
+
+The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
+will now also propagate exchange variables as well into the result (i.e. exchange properties and message headers is already being propagated).
+
 ==== Type Converters
 
 Using type converters that has been marked to allow null via (`@Converter(allow-null = true)`) has been improved
@@ -77,7 +84,6 @@ Notice that the `endChoice` is changed to `end().endChoice()`. This is required 
 to end the current choice (inner) and then afterwards change the scope to be Choice EIP to be able to
 continue in the outer Choice. Otherwise the Java DSL cannot know the scope is Choice EIP and you would
 not be able to add the `otherwise` block to the outer Choice.
-
 
 === camel-as2
 
