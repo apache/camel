@@ -17,12 +17,11 @@
 package org.apache.camel.component.netty;
 
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollIoHandler;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.kqueue.KQueue;
-import io.netty.channel.kqueue.KQueueIoHandler;
-import io.netty.channel.nio.NioIoHandler;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 /**
@@ -78,21 +77,21 @@ public final class NettyServerBossPoolBuilder {
     public EventLoopGroup build() {
         if (nativeTransport) {
             if (KQueue.isAvailable()) {
-                return new MultiThreadIoEventLoopGroup(
+                return new KQueueEventLoopGroup(
                         bossCount,
-                        new CamelThreadFactory(pattern, name, false), KQueueIoHandler.newFactory());
+                        new CamelThreadFactory(pattern, name, false));
             } else if (Epoll.isAvailable()) {
-                return new MultiThreadIoEventLoopGroup(
+                return new EpollEventLoopGroup(
                         bossCount,
-                        new CamelThreadFactory(pattern, name, false), EpollIoHandler.newFactory());
+                        new CamelThreadFactory(pattern, name, false));
             } else {
                 throw new IllegalStateException(
                         "Unable to use native transport - both Epoll and KQueue are not available");
             }
         } else {
-            return new MultiThreadIoEventLoopGroup(
+            return new NioEventLoopGroup(
                     bossCount,
-                    new CamelThreadFactory(pattern, name, false), NioIoHandler.newFactory());
+                    new CamelThreadFactory(pattern, name, false));
         }
     }
 }
