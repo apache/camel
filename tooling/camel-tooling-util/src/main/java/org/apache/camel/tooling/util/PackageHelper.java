@@ -51,7 +51,9 @@ public final class PackageHelper {
     }
 
     public static String loadText(Path file) throws IOException {
-        return loadText(Files.newInputStream(file));
+        try (InputStream is = Files.newInputStream(file)) {
+            return loadText(is);
+        }
     }
 
     public static void writeText(File file, String text) throws IOException {
