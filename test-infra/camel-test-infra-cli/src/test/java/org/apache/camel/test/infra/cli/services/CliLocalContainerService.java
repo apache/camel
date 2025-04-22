@@ -52,7 +52,8 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                 .setSshPassword(System.getProperty(CliProperties.SSH_PASSWORD, "jbang"))
                 .setExtraHosts(getHostsMap())
                 .setTrustedCertPaths(getCertPaths())
-                .setLocalMavenRepo(System.getProperty(CliProperties.MVN_LOCAL_REPO)),
+                .setLocalMavenRepo(System.getProperty(CliProperties.MVN_LOCAL_REPO))
+                .setDockerFile(System.getProperty(CliProperties.DOCKERFILE)),
              System.getProperty(CliProperties.FORCE_RUN_VERSION, ""), System.getProperty(CliProperties.MVN_REPOS));
     }
 

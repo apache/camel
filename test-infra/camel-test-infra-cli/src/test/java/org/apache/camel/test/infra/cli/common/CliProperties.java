@@ -19,6 +19,8 @@ package org.apache.camel.test.infra.cli.common;
 
 public final class CliProperties {
 
+    public static final String DOCKERFILE = "cli.service.docker.file";
+
     public static final String REPO = "cli.service.repo";
 
     public static final String BRANCH = "cli.service.branch";
