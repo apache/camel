@@ -20,6 +20,7 @@ import io.vertx.ext.auth.properties.PropertyFileAuthentication;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.AuthenticationConfigEntry;
+import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -30,6 +31,23 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
     public void configureAuthentication(
             AuthenticationConfig authenticationConfig,
             HttpServerConfigurationProperties properties) {
+        String authPropertiesFileName = properties.getBasicPropertiesFile();
+        String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
+
+        AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
+        entry.setPath(path);
+        entry.setAuthenticationHandlerFactory(BasicAuthHandler::create);
+        entry.setAuthenticationProviderFactory(
+                vertx -> PropertyFileAuthentication.create(vertx, authPropertiesFileName));
+
+        authenticationConfig.getEntries().add(entry);
+        authenticationConfig.setEnabled(true);
+    }
+
+    @Override
+    public void configureAuthentication(
+            AuthenticationConfig authenticationConfig,
+            HttpManagementServerConfigurationProperties properties) {
         String authPropertiesFileName = properties.getBasicPropertiesFile();
         String path = isEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : "/*";
 

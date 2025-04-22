@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http.main.authentication;
 
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
+import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
 /**
@@ -25,4 +26,8 @@ import org.apache.camel.main.HttpServerConfigurationProperties;
 public interface MainAuthenticationConfigurer {
 
     void configureAuthentication(AuthenticationConfig authenticationConfig, HttpServerConfigurationProperties properties);
+
+    void configureAuthentication(
+            AuthenticationConfig authenticationConfig, HttpManagementServerConfigurationProperties properties);
+
 }
