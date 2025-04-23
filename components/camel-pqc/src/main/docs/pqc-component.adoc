@@ -62,18 +62,21 @@ Experimental and non-standardized
 
 == Supported operations
 
-The component supports two operations
+The component supports five operations
 
 - sign
 - verify
+- generateSecretKeyEncapsulation
+- extractSecretKeyEncapsulation
+- extractSecretKeyFromEncapsulation
 
-== General Behavior
+== Signature and Verification
 
 The component expects to find a KeyPair and a Signature Objects in to the Camel Registry.
 
 In case the KeyPair and the Signature Objects are not in the registry, it will provide two instances of the Objects with default implementation.
 
-This will be true for standardized algorithms and not for experimental ones.
+This will be true for standardized algorithms and for experimental ones.
 
 == Examples
 
@@ -236,3 +239,89 @@ This could be done even without the Registry beans, by specifying the `signature
 With this approach the component will use the class `org.apache.camel.component.pqc.crypto.PQCDefaultXMSSMaterial`, which will create the Signature and KeyPair objects to be used.
 
 The Parameters used will be `10` as tree height and `SHA-256` for the tree digest.
+
+== Key Encapsulation and Extraction
+
+In Post Quantum Cryptography it has been introduced the concept of Key Encapsulation Algorithm.
+
+In this context there are three entities to consider:
+
+- A key generation algorithm which generates a public key and a private key (a keypair).
+
+- An encapsulation algorithm which takes as input a public key, and outputs a shared secret value and an “encapsulation” (a ciphertext) of this secret value.
+
+- A decapsulation algorithm which takes as input the encapsulation and the private key, and outputs the shared secret value.
+
+In the component we are supporting the three phases in generateSecretKeyEncapsulation, extractSecretKeyEncapsulation and extractSecretKeyFromEncapsulation
+
+The KEM Algorithm supported are the following:
+
+Standardized and implemented
+
+- ML-KEM 
+
+Experimental and non-standardized
+
+- BIKE
+- CMCE
+- HQC
+- FRODO
+- SABER
+- NTRU
+- NTRULPRime
+
+The component expects to find a KeyGenerator and a KeyPair in to the Camel Registry.
+
+In case the KeyPair and the KeyGenerator Objects are not in the registry, it will provide two instances of the Objects with default implementation.
+
+This will be true for standardized algorithms and for experimental ones.
+
+A possible flow of the operation could be the following:
+
+- ML-KEM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+  .to("mock:encapsulate")
+  .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES").to("mock:extract");
+--------------------------------------------------------------------------------
+
+With the following beans registered in the Registry
+
+[source,java]
+--------------------------------------------------------------------------------    
+    @BindToRegistry("Keypair")
+    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+        KeyPair kp = kpg.generateKeyPair();
+        return kp;
+    }
+
+    @BindToRegistry("KeyGenerator")
+    public KeyGenerator setKeyGenerator()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        return kg;
+    }
+--------------------------------------------------------------------------------
+
+This could be done even without the Registry beans, by specifying the `symmetricKeyAlgorithm` and `keyEncapsulationAlgorithm` parameters in the following way
+
+[source,java]
+--------------------------------------------------------------------------------
+   from("direct:encapsulate").to(
+     "pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=MLKEM")
+     .to("mock:encapsulate")
+     .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES&keyEncapsulationAlgorithm=MLKEM")
+     .to("mock:extract");
+--------------------------------------------------------------------------------
+
+With this approach the component will use the class `org.apache.camel.component.pqc.crypto.kem.PQCDefaultMLKEMMaterial`, which will create the KeyGenerator and KeyPair objects to be used.
+
+The Spec used for the KeyPair will be, in this case, `ML-KEM-512`.
+
+include::spring-boot:partial$starter.adoc[]
