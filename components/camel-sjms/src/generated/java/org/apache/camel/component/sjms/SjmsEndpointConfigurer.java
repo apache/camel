@@ -73,6 +73,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "includeAllJMSXProperties": target.setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": target.setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
+        case "jmsmessagetype":
+        case "jmsMessageType": target.setJmsMessageType(property(camelContext, org.apache.camel.component.sjms.jms.JmsMessageType.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mapjmsmessage":
@@ -165,6 +167,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "includeAllJMSXProperties": return boolean.class;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "jmsmessagetype":
+        case "jmsMessageType": return org.apache.camel.component.sjms.jms.JmsMessageType.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "mapjmsmessage":
@@ -258,6 +262,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "includeAllJMSXProperties": return target.isIncludeAllJMSXProperties();
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": return target.getJmsKeyFormatStrategy();
+        case "jmsmessagetype":
+        case "jmsMessageType": return target.getJmsMessageType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mapjmsmessage":

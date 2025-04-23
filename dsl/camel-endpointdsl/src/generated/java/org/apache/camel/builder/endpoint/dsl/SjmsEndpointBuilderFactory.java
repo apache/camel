@@ -911,6 +911,44 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allows you to force the use of a specific jakarta.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.JmsMessageType</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointConsumerBuilder jmsMessageType(org.apache.camel.component.sjms.jms.JmsMessageType jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
+         * Allows you to force the use of a specific jakarta.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.sjms.jms.JmsMessageType</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointConsumerBuilder jmsMessageType(String jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * See section about how mapping works below for more details.
@@ -2039,6 +2077,44 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allows you to force the use of a specific jakarta.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.JmsMessageType</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder jmsMessageType(org.apache.camel.component.sjms.jms.JmsMessageType jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
+         * Allows you to force the use of a specific jakarta.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.sjms.jms.JmsMessageType</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * See section about how mapping works below for more details.
@@ -2699,6 +2775,44 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder jmsKeyFormatStrategy(String jmsKeyFormatStrategy) {
             doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            return this;
+        }
+        /**
+         * Allows you to force the use of a specific jakarta.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.JmsMessageType</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointBuilder jmsMessageType(org.apache.camel.component.sjms.jms.JmsMessageType jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
+         * Allows you to force the use of a specific jakarta.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.sjms.jms.JmsMessageType</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointBuilder jmsMessageType(String jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**

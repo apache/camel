@@ -44,6 +44,7 @@ import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
+import org.apache.camel.component.sjms.jms.JmsMessageType;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
@@ -208,6 +209,11 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as jakarta.jms.TextMessage to a String etc."
                             + " See section about how mapping works below for more details.")
     private boolean mapJmsMessage = true;
+    @UriParam(label = "advanced", enums = "Bytes,Map,Object,Stream,Text",
+              description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
+                            + " Possible values are: Bytes, Map, Object, Stream, Text."
+                            + " By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it.")
+    private JmsMessageType jmsMessageType;
     @UriParam(label = "advanced",
               description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
@@ -286,6 +292,15 @@ public class SjmsEndpoint extends DefaultEndpoint
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new SjmsHeaderFilterStrategy(includeAllJMSXProperties);
         }
+    }
+
+    /**
+     * Should get overridden by implementations which support BlobMessages
+     *
+     * @return false
+     */
+    protected boolean supportBlobMessage() {
+        return false;
     }
 
     /**
@@ -449,7 +464,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     protected JmsBinding createBinding() {
         return new JmsBinding(
                 isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(),
-                getMessageCreatedStrategy());
+                getMessageCreatedStrategy(), getJmsMessageType());
     }
 
     public void setBinding(JmsBinding binding) {
@@ -812,5 +827,21 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public JmsMessageType getJmsMessageType() {
+        return jmsMessageType;
+    }
+
+    /**
+     * Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages. Possible
+     * values are: Bytes, Map, Object, Stream, Text. By default, Camel would determine which JMS message type to use
+     * from the In body type. This option allows you to specify it.
+     */
+    public void setJmsMessageType(JmsMessageType jmsMessageType) {
+        if (jmsMessageType == JmsMessageType.Blob && !supportBlobMessage()) {
+            throw new IllegalArgumentException("BlobMessage is not supported by this implementation");
+        }
+        this.jmsMessageType = jmsMessageType;
     }
 }
