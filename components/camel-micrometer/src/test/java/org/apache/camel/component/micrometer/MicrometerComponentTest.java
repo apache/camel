@@ -20,7 +20,6 @@ import java.util.Collections;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
@@ -75,7 +74,7 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateNewEndpointForCounter() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.COUNTER, "a name", Tags.empty());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.COUNTER, "a name");
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
@@ -83,14 +82,14 @@ public class MicrometerComponentTest {
     @Test
     public void testCreateNewEndpointForHistogram() {
         Endpoint endpoint
-                = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
+                = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name");
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
 
     @Test
     public void testCreateNewEndpointForTimer() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.TIMER, "a name", Tags.empty());
+        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.TIMER, "a name");
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }

@@ -89,3 +89,9 @@ not be able to add the `otherwise` block to the outer Choice.
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
 asynchronous MDN requests.
+
+=== camel-micrometer
+
+The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
+instead of configuring `tags=a=1&b=2` then this should be configured as `tags.a=1&tags.b=2` and so forth.
+

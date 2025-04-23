@@ -35,7 +35,9 @@ public class MicrometerEndpointUriFactory extends org.apache.camel.support.compo
         props.add("value");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("tags.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
@@ -52,7 +54,6 @@ public class MicrometerEndpointUriFactory extends org.apache.camel.support.compo
 
         uri = buildPathParameter(syntax, uri, "metricsType", null, true, copy);
         uri = buildPathParameter(syntax, uri, "metricsName", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "tags", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

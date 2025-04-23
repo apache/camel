@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.micrometer;
 
-import io.micrometer.core.instrument.Counter;
+import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -32,14 +34,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
-public class CounterRouteTest extends CamelSpringTestSupport {
+public class TimerRouteBackwardsCompatibleTagTest extends CamelSpringTestSupport {
+
+    private static final long DELAY = 20L;
 
     @EndpointInject("mock:out")
     private MockEndpoint endpoint;
@@ -53,16 +57,8 @@ public class CounterRouteTest extends CamelSpringTestSupport {
     @Produce("direct:in-3")
     private ProducerTemplate producer3;
 
-    @Produce("direct:in-4")
-    private ProducerTemplate producer4;
-
     @BindToRegistry(METRICS_REGISTRY_NAME)
     private MeterRegistry registry = new SimpleMeterRegistry();
-
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new AnnotationConfigApplicationContext();
-    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -70,23 +66,34 @@ public class CounterRouteTest extends CamelSpringTestSupport {
             @Override
             public void configure() {
                 from("direct:in-1")
-                        .to("micrometer:counter:A?increment=5")
+                        .setHeader(HEADER_METRIC_NAME, constant("B"))
+                        .to("micrometer:timer:A?action=start")
+                        .delay(DELAY)
+                        .setHeader(HEADER_METRIC_NAME, constant("B"))
+                        .to("micrometer:timer:A?action=stop")
                         .to("mock:out");
 
                 from("direct:in-2")
-                        .to("micrometer:counter:B?decrement=9")
+                        .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.start))
+                        .to("micrometer:timer:A")
+                        .delay(DELAY)
+                        .setHeader(HEADER_TIMER_ACTION, constant(MicrometerTimerAction.stop))
+                        .to("micrometer:timer:A")
                         .to("mock:out");
 
                 from("direct:in-3")
-                        .setHeader(HEADER_COUNTER_INCREMENT, constant(417L))
-                        .to("micrometer:counter:C")
-                        .to("mock:out");
-
-                from("direct:in-4")
-                        .to("micrometer:counter:D?increment=${body.length}&tags.a=${body.length}")
+                        .to("micrometer:timer:C?action=start")
+                        .delay(DELAY)
+                        // backwards compatible tags= parameter
+                        .to("micrometer:timer:C?action=stop&tags=a=${body}")
                         .to("mock:out");
             }
         };
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new AnnotationConfigApplicationContext();
     }
 
     @Override
@@ -96,44 +103,40 @@ public class CounterRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testOverrideMetricsName() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer1.sendBodyAndHeader(new Object(), HEADER_METRIC_NAME, "A1");
-        assertEquals(5.0D, registry.find("A1").counter().count(), 0.01D);
+        Object body = new Object();
+        endpoint.expectedBodiesReceived(body);
+        producer1.sendBody(body);
+        Timer timer = registry.find("B").timer();
+        assertEquals(1L, timer.count());
+        assertTrue(timer.max(TimeUnit.MILLISECONDS) > 0.0D);
         endpoint.assertIsSatisfied();
     }
 
     @Test
-    public void testOverrideIncrement() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer1.sendBodyAndHeader(new Object(), HEADER_COUNTER_INCREMENT, 14.0D);
-        assertEquals(14.0D, registry.find("A").counter().count(), 0.01D);
+    public void testOverrideNoAction() throws Exception {
+        Object body = new Object();
+        endpoint.expectedBodiesReceived(body);
+        producer2.sendBody(body);
+        Timer timer = registry.find("A").timer();
+        assertEquals(1L, timer.count());
+        assertTrue(timer.max(TimeUnit.MILLISECONDS) > 0.0D);
         endpoint.assertIsSatisfied();
     }
 
     @Test
-    public void testOverrideDecrement() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer2.sendBodyAndHeader(new Object(), HEADER_COUNTER_DECREMENT, 7.0D);
-        assertEquals(-7.0D, registry.find("B").counter().count(), 0.01D);
-        endpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testOverrideUsingConstantValue() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer3.sendBody(new Object());
-        assertEquals(417.0D, registry.find("C").counter().count(), 0.01D);
-        endpoint.assertIsSatisfied();
-    }
-
-    @Test
-    public void testUsingScriptEvaluation() throws Exception {
-        endpoint.expectedMessageCount(1);
-        String message = "Hello from Camel Metrics!";
-        producer4.sendBody(message);
-        Counter counter = registry.find("D").counter();
-        assertEquals(message.length(), counter.count(), 0.01D);
-        assertEquals(Integer.toString(message.length()), counter.getId().getTag("a"));
+    public void testNormal() throws Exception {
+        int count = 10;
+        String body = "Hello";
+        endpoint.expectedMessageCount(count);
+        for (int i = 0; i < count; i++) {
+            producer3.sendBody(body);
+        }
+        Timer timer = registry.find("C").timer();
+        assertEquals(count, timer.count());
+        assertTrue(timer.max(TimeUnit.MILLISECONDS) > DELAY);
+        assertTrue(timer.mean(TimeUnit.MILLISECONDS) > DELAY);
+        assertTrue(timer.totalTime(TimeUnit.MILLISECONDS) > DELAY * count);
+        assertEquals(body, timer.getId().getTag("a"));
         endpoint.assertIsSatisfied();
     }
 }
