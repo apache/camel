@@ -136,7 +136,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
             "camel.lra.", "camel.opentelemetry2.", "camel.opentelemetry.",
-            "camel.telemetryDev.", "camel.management.server.", "camel.metrics.", "camel.routeTemplate",
+            "camel.telemetryDev.", "camel.management.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
 
@@ -1373,10 +1373,10 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(13);
                 validateOptionAndValue(key, option, value);
                 httpServerProperties.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.management.server.")) {
+            } else if (startsWithIgnoreCase(key, "camel.management.")) {
                 // grab the value
                 String value = prop.getProperty(key);
-                String option = key.substring(24);
+                String option = key.substring(17);
                 validateOptionAndValue(key, option, value);
                 httpManagementServerProperties.put(loc, optionKey(option), value);
             } else if (startsWithIgnoreCase(key, "camel.ssl.")) {
@@ -1625,7 +1625,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (!httpManagementServerProperties.isEmpty()) {
             httpManagementServerProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.management.server.{}={}", k, v);
+                LOG.warn("Property not auto-configured: camel.management.{}={}", k, v);
             });
         }
 
@@ -1921,7 +1921,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         HttpManagementServerConfigurationProperties server = mainConfigurationProperties.httpManagementServer();
 
-        setPropertiesOnTarget(camelContext, server, properties, "camel.management.server.",
+        setPropertiesOnTarget(camelContext, server, properties, "camel.management.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
         if (!server.isEnabled()) {
