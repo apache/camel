@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.platform.http.main;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -34,15 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.impl.MimeMapping;
-import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -76,24 +68,16 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ReloadStrategy;
-import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExceptionHelper;
-import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.AntPathMatcher;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -102,19 +86,21 @@ import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ManagedResource(description = "Camel Main Embedded HTTP server")
-public class MainHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
+@ManagedResource(description = "Camel Management Embedded HTTP server")
+public class ManagementHttpServer extends ServiceSupport implements CamelContextAware, StaticService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainHttpServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManagementHttpServer.class);
+
     private static final int BODY_MAX_CHARS = 128 * 1024;
     private static final int DEFAULT_POLL_TIMEOUT = 20000;
 
     private final HeaderFilterStrategy filter = new HttpProtocolHeaderFilterStrategy();
-    private ProducerTemplate producer;
-    private ConsumerTemplate consumer;
 
     private VertxPlatformHttpServer server;
     private VertxPlatformHttpRouter router;
+
+    private ProducerTemplate producer;
+    private ConsumerTemplate consumer;
 
     private CamelContext camelContext;
     private PlatformHttpComponent platformHttpComponent;
@@ -122,27 +108,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     private JolokiaPlatformHttpPlugin jolokiaPlugin;
 
     private VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
-    @Deprecated(since = "4.12.0")
     private boolean infoEnabled;
-    private boolean staticEnabled;
-    private String staticSourceDir;
-    private String staticContextPath;
-    @Deprecated(since = "4.12.0")
     private boolean devConsoleEnabled;
-    @Deprecated(since = "4.12.0")
     private boolean healthCheckEnabled;
-    @Deprecated(since = "4.12.0")
     private boolean jolokiaEnabled;
-    @Deprecated(since = "4.12.0")
     private boolean metricsEnabled;
-    private boolean uploadEnabled;
-    private String uploadSourceDir;
-    private boolean downloadEnabled;
-    private boolean sendEnabled;
-    @Deprecated(since = "4.12.0")
     private String healthPath;
-    @Deprecated(since = "4.12.0")
     private String jolokiaPath;
+    private boolean sendEnabled;
 
     @Override
     public CamelContext getCamelContext() {
@@ -180,98 +153,58 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.getBodyHandler().setUploadsDirectory(fileUploadDirectory);
     }
 
-    @ManagedAttribute(description = "Whether info is enabled (/q/info)")
-    @Deprecated(since = "4.12.0")
+    @ManagedAttribute(description = "Whether info is enabled (/observe/info)")
     public boolean isInfoEnabled() {
         return infoEnabled;
     }
 
-    /**
-     * Deprecated: use ManagementHttpServer instead.
-     */
     public void setInfoEnabled(boolean infoEnabled) {
         this.infoEnabled = infoEnabled;
     }
 
-    @ManagedAttribute(description = "Whether serving static content is enabled (such as html pages)")
-    public boolean isStaticEnabled() {
-        return staticEnabled;
-    }
-
-    public void setStaticEnabled(boolean staticEnabled) {
-        this.staticEnabled = staticEnabled;
-    }
-
-    public String getStaticSourceDir() {
-        return staticSourceDir;
-    }
-
-    @ManagedAttribute(description = "The source dir for serving static content")
-    public void setStaticSourceDir(String staticSourceDir) {
-        this.staticSourceDir = staticSourceDir;
-    }
-
-    @ManagedAttribute(description = "The context-path for serving static content")
-    public String getStaticContextPath() {
-        return staticContextPath;
-    }
-
-    public void setStaticContextPath(String staticContextPath) {
-        this.staticContextPath = staticContextPath;
-    }
-
-    @ManagedAttribute(description = "Whether serving static content is enabled (such as html pages)")
-    public boolean isStaticFilePattern() {
-        return staticEnabled;
-    }
-
-    @ManagedAttribute(description = "Whether dev console is enabled (/q/dev)")
-    @Deprecated(since = "4.12.0")
+    @ManagedAttribute(description = "Whether dev console is enabled (/observe/dev)")
     public boolean isDevConsoleEnabled() {
         return devConsoleEnabled;
     }
 
     /**
-     * Whether developer web console is enabled (q/dev). Deprecated: use ManagementHttpServer instead.
+     * Whether developer web console is enabled (q/dev)
      */
     public void setDevConsoleEnabled(boolean devConsoleEnabled) {
         this.devConsoleEnabled = devConsoleEnabled;
     }
 
     @ManagedAttribute(description = "Whether health check is enabled")
-    @Deprecated(since = "4.12.0")
     public boolean isHealthCheckEnabled() {
         return healthCheckEnabled;
     }
 
-    @ManagedAttribute(description = "Whether Jolokia is enabled (q/jolokia)")
-    @Deprecated(since = "4.12.0")
+    @ManagedAttribute(description = "Whether Jolokia is enabled (observe/jolokia)")
     public boolean isJolokiaEnabled() {
         return jolokiaEnabled;
     }
 
     /**
-     * Whether health-check is enabled (q/health). Deprecated: use ManagementHttpServer instead.
+     * Whether health-check is enabled (q/health)
      */
     public void setHealthCheckEnabled(boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
     }
 
     /**
-     * Whether jolokia is enabled (q/jolokia). Deprecated: use ManagementHttpServer instead.
+     * Whether jolokia is enabled (q/jolokia)
      */
     public void setJolokiaEnabled(boolean jolokiaEnabledEnabled) {
         this.jolokiaEnabled = jolokiaEnabledEnabled;
     }
 
     @ManagedAttribute(description = "The context-path for serving health check status")
-    @Deprecated(since = "4.12.0")
     public String getHealthPath() {
         return healthPath;
     }
 
     /**
-     * The path endpoint used to expose the health status. Deprecated: use ManagementHttpServer instead.
+     * The path endpoint used to expose the health status.
      */
     public void setHealthPath(String healthPath) {
         this.healthPath = healthPath;
@@ -299,55 +232,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
      */
     public void setMetricsEnabled(boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
-    }
-
-    @ManagedAttribute(description = "Whether file upload is enabled (only for development) (q/upload)")
-    public boolean isUploadEnabled() {
-        return uploadEnabled;
-    }
-
-    /**
-     * Whether file upload is enabled (only for development) (q/upload)
-     */
-    public void setUploadEnabled(boolean uploadEnabled) {
-        this.uploadEnabled = uploadEnabled;
-    }
-
-    @ManagedAttribute(description = "Directory for upload.")
-    public String getUploadSourceDir() {
-        return uploadSourceDir;
-    }
-
-    /**
-     * Directory for upload.
-     */
-    public void setUploadSourceDir(String uploadSourceDir) {
-        this.uploadSourceDir = uploadSourceDir;
-    }
-
-    @ManagedAttribute(description = "Whether file download is enabled (q/download)")
-    public boolean isDownloadEnabled() {
-        return downloadEnabled;
-    }
-
-    /**
-     * Whether file download is enabled (q/download)
-     */
-    public void setDownloadEnabled(boolean downloadEnabled) {
-        this.downloadEnabled = downloadEnabled;
-    }
-
-    @ManagedAttribute(description = "Whether send message is enabled (q/send)")
-    public boolean isSendEnabled() {
-        return sendEnabled;
-    }
-
-    /**
-     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
-     * Camel endpoint URIs via HTTP.
-     */
-    public void setSendEnabled(boolean sendEnabled) {
-        this.sendEnabled = sendEnabled;
     }
 
     @ManagedAttribute(description = "HTTP server port number")
@@ -403,6 +287,19 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         configuration.setUseGlobalSslContextParameters(useGlobalSslContextParameters);
     }
 
+    @ManagedAttribute(description = "Whether send message is enabled (q/send)")
+    public boolean isSendEnabled() {
+        return sendEnabled;
+    }
+
+    /**
+     * Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to
+     * Camel endpoint URIs via HTTP.
+     */
+    public void setSendEnabled(boolean sendEnabled) {
+        this.sendEnabled = sendEnabled;
+    }
+
     public VertxPlatformHttpServerConfiguration.Cors getCors() {
         return configuration.getCors();
     }
@@ -444,13 +341,13 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             pluginRegistry.setCamelContext(getCamelContext());
             getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
-        ServiceHelper.initService(pluginRegistry, producer, consumer);
+        ServiceHelper.initService(pluginRegistry);
     }
 
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
-        ServiceHelper.startService(server, pluginRegistry, producer, consumer);
+        ServiceHelper.startService(server, pluginRegistry);
         String routerName = VertxPlatformHttpRouter.getRouterNameFromPort(getPort());
         router = VertxPlatformHttpRouter.lookup(camelContext, routerName);
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
@@ -461,7 +358,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(pluginRegistry, producer, consumer);
+        ServiceHelper.stopAndShutdownServices(pluginRegistry);
     }
 
     private boolean pluginsEnabled() {
@@ -472,9 +369,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         if (infoEnabled) {
             setupInfo();
         }
-        if (staticEnabled) {
-            setupStatic();
-        }
         if (devConsoleEnabled) {
             setupDevConsole();
         }
@@ -483,15 +377,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         }
         if (jolokiaEnabled) {
             setupJolokia();
-        }
-        if (uploadEnabled) {
-            if (uploadSourceDir == null) {
-                throw new IllegalArgumentException("UploadSourceDir must be configured when uploadEnabled=true");
-            }
-            setupUploadConsole(uploadSourceDir);
-        }
-        if (downloadEnabled) {
-            setupDownloadConsole();
         }
         if (sendEnabled) {
             setupSendConsole();
@@ -577,76 +462,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 });
             }
         });
-    }
-
-    protected void setupStatic() {
-        String path = staticContextPath;
-        if (!path.endsWith("*")) {
-            path = path + "*";
-        }
-        final Route web = router.route(path);
-        web.produces("*");
-        web.consumes("*");
-        web.order(Integer.MAX_VALUE); // run this last so all other are served first
-
-        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext ctx) {
-                String u = ctx.normalizedPath();
-                if (u.isBlank() || u.endsWith("/") || u.equals("index.html")) {
-                    u = "index.html";
-                } else {
-                    u = FileUtil.stripLeadingSeparator(u);
-                }
-
-                InputStream is = null;
-                File f = new File(u);
-                if (!f.exists() && staticSourceDir != null) {
-                    f = new File(staticSourceDir, u);
-                }
-                if (f.exists()) {
-                    // load directly from file system first
-                    try {
-                        is = new FileInputStream(f);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                } else {
-                    is = camelContext.getClassResolver().loadResourceAsStream(u);
-                    if (is == null) {
-                        // common folder for java app servers like quarkus and spring-boot
-                        is = camelContext.getClassResolver().loadResourceAsStream("META-INF/resources/" + u);
-                    }
-                    if (is == null && staticSourceDir != null) {
-                        is = camelContext.getClassResolver().loadResourceAsStream(staticSourceDir + "/" + u);
-                    }
-                }
-                if (is != null) {
-                    String mime = MimeMapping.getMimeTypeForFilename(f.getName());
-                    if (mime != null) {
-                        ctx.response().putHeader("content-type", mime);
-                    }
-                    String text = null;
-                    try {
-                        text = IOHelper.loadText(is);
-                    } catch (Exception e) {
-                        // ignore
-                    } finally {
-                        IOHelper.close(is);
-                    }
-                    ctx.response().setStatusCode(200);
-                    ctx.end(text);
-                } else {
-                    ctx.response().setStatusCode(404);
-                    ctx.end();
-                }
-            }
-        };
-
-        // use blocking handler as the task can take longer time to complete
-        web.handler(new BlockingHandlerDecorator(handler, true));
-
-        platformHttpComponent.addHttpEndpoint(staticContextPath, null, null, null, null);
     }
 
     protected void setupInfo() {
@@ -859,6 +674,34 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         platformHttpComponent.addHttpEndpoint(jolokiaPath, "GET,POST", null,
                 "text/plain,application/json", null);
+    }
+
+    protected void setupSendConsole() {
+        final Route send = router.route("/q/send/")
+                .produces("application/json")
+                .method(HttpMethod.GET).method(HttpMethod.POST)
+                // need body handler to have access to the body
+                .handler(BodyHandler.create(false));
+
+        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
+            @Override
+            public void handle(RoutingContext ctx) {
+                try {
+                    doSend(ctx);
+                } catch (Exception e) {
+                    LOG.warn("Error sending Camel message due to: " + e.getMessage(), e);
+                    if (!ctx.response().ended()) {
+                        ctx.response().setStatusCode(500);
+                        ctx.end();
+                    }
+                }
+            }
+        };
+        // use blocking handler as the task can take longer time to complete
+        send.handler(new BlockingHandlerDecorator(handler, true));
+
+        platformHttpComponent.addHttpEndpoint("/q/send", "GET,POST",
+                null, "application/json", null);
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
@@ -1101,227 +944,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
         platformHttpComponent.addHttpEndpoint("/q/dev", "GET", null,
                 "text/plain,application/json", null);
-    }
-
-    protected void setupUploadConsole(final String dir) {
-        final Route upload = router.route("/q/upload/:filename")
-                .method(HttpMethod.PUT)
-                // need body handler to handle file uploads
-                .handler(BodyHandler.create(true));
-
-        final Route uploadDelete = router.route("/q/upload/:filename");
-        uploadDelete.method(HttpMethod.DELETE);
-
-        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext ctx) {
-                String name = ctx.pathParam("filename");
-                if (name == null) {
-                    ctx.response().setStatusCode(400);
-                    ctx.end();
-                    return;
-                }
-
-                int status = 200;
-                boolean delete = HttpMethod.DELETE == ctx.request().method();
-                if (delete) {
-                    if (name.contains("*")) {
-                        if (name.equals("*")) {
-                            name = "**";
-                        }
-                        AntPathMatcher match = AntPathMatcher.INSTANCE;
-                        File[] files = new File(dir).listFiles();
-                        if (files != null) {
-                            for (File f : files) {
-                                if (f.getName().startsWith(".") || f.isHidden()) {
-                                    continue;
-                                }
-                                if (match.match(name, f.getName())) {
-                                    LOG.info("Deleting file: {}/{}", dir, name);
-                                    FileUtil.deleteFile(f);
-                                }
-                            }
-                        }
-                    } else {
-                        File f = new File(dir, name);
-                        if (f.exists() && f.isFile()) {
-                            LOG.info("Deleting file: {}/{}", dir, name);
-                            FileUtil.deleteFile(f);
-                        }
-                    }
-                } else {
-                    File f = new File(dir, name);
-                    boolean exists = f.isFile() && f.exists();
-                    LOG.info("{} file: {}/{}", exists ? "Updating" : "Creating", dir, name);
-
-                    File tmp = new File(dir, name + ".tmp");
-                    FileOutputStream fos = null;
-                    try {
-                        fos = new FileOutputStream(tmp, false);
-                        RequestBody rb = ctx.body();
-                        IOHelper.writeText(rb.asString(), fos);
-
-                        FileUtil.renameFileUsingCopy(tmp, f);
-                        FileUtil.deleteFile(tmp);
-                    } catch (Exception e) {
-                        // some kind of error
-                        LOG.warn("Error saving file: {}/{} due to: {}", dir, name, e.getMessage(), e);
-                        status = 500;
-                    } finally {
-                        IOHelper.close(fos);
-                        FileUtil.deleteFile(tmp);
-                    }
-                }
-
-                ctx.response().setStatusCode(status);
-                ctx.end();
-            }
-        };
-        // use blocking handler as the task can take longer time to complete
-        upload.handler(new BlockingHandlerDecorator(handler, true));
-        uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
-
-        platformHttpComponent.addHttpEndpoint("/q/upload", "PUT,DELETE",
-                "multipart/form-data", null, null);
-    }
-
-    protected void setupDownloadConsole() {
-        final Route download = router.route("/q/download/*")
-                .produces("text/plain")
-                .produces("application/octet-stream")
-                .method(HttpMethod.GET);
-
-        final AntPathMatcher matcher = AntPathMatcher.INSTANCE;
-        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext ctx) {
-                String name = StringHelper.after(ctx.normalizedPath(), "/q/download/");
-                boolean cp = "true".equals(ctx.queryParams().get("classpath"));
-                if (name == null || name.isBlank() || matcher.isPattern(name)) {
-                    Set<String> names = new TreeSet<>();
-                    if (cp) {
-                        // also look inside classpath
-                        PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
-                        resolver.addClassLoader(camelContext.getApplicationContextClassLoader());
-                        try {
-                            String pattern = "**/*";
-                            if (name != null && !name.isBlank()) {
-                                pattern = "**/" + name;
-                            }
-                            for (Resource res : resolver.findResources(pattern)) {
-                                String loc = res.getLocation();
-                                loc = LoggerHelper.sourceNameOnly(loc);
-                                names.add(loc);
-                            }
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
-                    // always include routes
-                    for (org.apache.camel.Route route : camelContext.getRoutes()) {
-                        String loc = route.getSourceLocation();
-                        if (loc != null) {
-                            loc = LoggerHelper.sourceNameOnly(loc);
-                            if (name == null || name.isBlank() || matcher.match(name, loc)) {
-                                names.add(loc);
-                            }
-                        }
-                    }
-
-                    String acp = ctx.request().getHeader("Accept");
-                    boolean html = acp != null && acp.contains("html");
-                    StringJoiner sj;
-                    if (html) {
-                        String prefix = StringHelper.after(ctx.normalizedPath(), "/q/download/");
-                        if (prefix == null) {
-                            prefix = "/q/download/";
-                        } else {
-                            prefix = "";
-                        }
-                        ctx.response().putHeader("Content-Type", "text/html");
-                        sj = new StringJoiner("<br/>");
-                        for (String n : names) {
-                            sj.add("<a href=" + prefix + n + ">" + n + "</a>");
-                        }
-                    } else {
-                        ctx.response().putHeader("Content-Type", "text/plain");
-                        sj = new StringJoiner("\n");
-                        names.forEach(sj::add);
-                    }
-                    ctx.response().setStatusCode(200);
-                    ctx.end(sj.toString());
-                } else {
-                    // load file as resource (try both classpath and file)
-                    ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
-                    Resource res = loader.resolveResource("classpath:" + name);
-                    if (res == null || !res.exists()) {
-                        // attempt without path
-                        res = loader.resolveResource("classpath:" + FileUtil.stripPath(name));
-                    }
-                    if (res == null || !res.exists()) {
-                        for (org.apache.camel.Route route : camelContext.getRoutes()) {
-                            String loc = route.getSourceLocation();
-                            if (loc != null) {
-                                loc = LoggerHelper.sourceNameOnly(loc);
-                                if (matcher.match(name, loc)) {
-                                    res = route.getSourceResource();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (res != null && res.exists()) {
-                        ctx.response().putHeader("Content-Type", "application/octet-stream");
-                        ctx.response().putHeader("Content-Disposition",
-                                "attachment; filename=\"" + FileUtil.stripPath(name) + "\"");
-                        ctx.response().setStatusCode(200);
-                        String data = null;
-                        try {
-                            data = IOHelper.loadText(res.getInputStream());
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                        ctx.end(data);
-                    } else {
-                        ctx.response().setStatusCode(204);
-                        ctx.end();
-                    }
-                }
-            }
-        };
-        // use blocking handler as the task can take longer time to complete
-        download.handler(new BlockingHandlerDecorator(handler, true));
-
-        platformHttpComponent.addHttpEndpoint("/q/download", "GET",
-                null, "text/plain,application/octet-stream", null);
-    }
-
-    protected void setupSendConsole() {
-        final Route send = router.route("/q/send/")
-                .produces("application/json")
-                .method(HttpMethod.GET).method(HttpMethod.POST)
-                // need body handler to have access to the body
-                .handler(BodyHandler.create(false));
-
-        Handler<RoutingContext> handler = new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext ctx) {
-                try {
-                    doSend(ctx);
-                } catch (Exception e) {
-                    LOG.warn("Error sending Camel message due to: " + e.getMessage(), e);
-                    if (!ctx.response().ended()) {
-                        ctx.response().setStatusCode(500);
-                        ctx.end();
-                    }
-                }
-            }
-        };
-        // use blocking handler as the task can take longer time to complete
-        send.handler(new BlockingHandlerDecorator(handler, true));
-
-        platformHttpComponent.addHttpEndpoint("/q/send", "GET,POST",
-                null, "application/json", null);
     }
 
     protected void doSend(RoutingContext ctx) {

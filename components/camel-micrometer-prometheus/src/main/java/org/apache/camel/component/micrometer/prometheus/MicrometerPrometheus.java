@@ -51,6 +51,7 @@ import org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyNa
 import org.apache.camel.component.micrometer.spi.InstrumentedThreadPoolFactory;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
+import org.apache.camel.component.platform.http.main.ManagementHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMetricsService;
@@ -59,7 +60,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.JdkService;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
@@ -77,8 +77,14 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private static final String CONTENT_TYPE_004 = "text/plain; version=0.0.4; charset=utf-8";
     private static final String CONTENT_TYPE_100 = "application/openmetrics-text; version=1.0.0; charset=utf-8";
 
-    private MainHttpServer server;
-    private VertxPlatformHttpRouter router;
+    @Deprecated
+    // Use managementServer instead
+    private MainHttpServer mainServer;
+    private ManagementHttpServer managementServer;
+    @Deprecated
+    // Use managementRouter instead
+    private VertxPlatformHttpRouter mainRouter;
+    private VertxPlatformHttpRouter managementRouter;
     private PlatformHttpComponent platformHttpComponent;
 
     private CamelContext camelContext;
@@ -417,15 +423,33 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     protected void doStart() throws Exception {
         super.doStart();
 
-        server = camelContext.hasService(MainHttpServer.class);
-        router = CamelContextHelper.lookup(camelContext, "platform-http-router", VertxPlatformHttpRouter.class);
+        boolean enabled = false;
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
-        if (server != null && server.isMetricsEnabled() && router != null && platformHttpComponent != null) {
-            setupHttpScraper();
-            LOG.info("MicrometerPrometheus enabled with HTTP scraping on {}", path);
-        } else {
-            LOG.info("MicrometerPrometheus enabled");
+        mainServer = camelContext.hasService(MainHttpServer.class);
+        if (mainServer != null && mainServer.isMetricsEnabled() && platformHttpComponent != null) {
+            mainRouter = mainServer.getRouter();
+            if (mainRouter != null) {
+                setupHttpScraper(mainRouter);
+                LOG.info("MicrometerPrometheus enabled with HTTP scraping on port {} on path {}",
+                        mainServer.getPort(), path);
+                enabled = true;
+            }
+        }
+
+        managementServer = camelContext.hasService(ManagementHttpServer.class);
+        if (managementServer != null && managementServer.isMetricsEnabled() && platformHttpComponent != null) {
+            managementRouter = managementServer.getRouter();
+            if (managementRouter != null) {
+                setupHttpScraper(managementRouter);
+                LOG.info("MicrometerPrometheus enabled with HTTP scraping on port {} on path {}",
+                        managementServer.getPort(), path);
+                enabled = true;
+            }
+        }
+
+        if (!enabled) {
+            LOG.info("MicrometerPrometheus not enabled");
         }
     }
 
@@ -456,7 +480,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         createdBinders.clear();
     }
 
-    protected void setupHttpScraper() {
+    protected void setupHttpScraper(VertxPlatformHttpRouter router) {
         Route metrics = router.route(path);
         metrics.method(HttpMethod.GET);
 
