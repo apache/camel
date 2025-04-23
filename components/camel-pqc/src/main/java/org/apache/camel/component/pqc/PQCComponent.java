@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pqc.crypto.*;
+import org.apache.camel.component.pqc.crypto.kem.*;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
@@ -81,6 +82,26 @@ public class PQCComponent extends HealthCheckComponent {
                     case "MLKEM":
                         configuration.setKeyGenerator(PQCDefaultMLKEMMaterial.keyGenerator);
                         configuration.setKeyPair(PQCDefaultMLKEMMaterial.keyPair);
+                        break;
+                    case "BIKE":
+                        configuration.setKeyGenerator(PQCDefaultBIKEMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultBIKEMaterial.keyPair);
+                        break;
+                    case "HQC":
+                        configuration.setKeyGenerator(PQCDefaultHQCMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultHQCMaterial.keyPair);
+                        break;
+                    case "CMCE":
+                        configuration.setKeyGenerator(PQCDefaultCMCEMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultCMCEMaterial.keyPair);
+                        break;
+                    case "SABER":
+                        configuration.setKeyGenerator(PQCDefaultSABERMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultSABERMaterial.keyPair);
+                        break;
+                    case "FRODO":
+                        configuration.setKeyGenerator(PQCDefaultFRODOMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultFRODOMaterial.keyPair);
                         break;
                     default:
                         break;
