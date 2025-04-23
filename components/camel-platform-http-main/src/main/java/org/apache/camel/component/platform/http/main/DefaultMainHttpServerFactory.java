@@ -92,7 +92,7 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
     @Override
     public Service newHttpManagementServer(
             CamelContext camelContext, HttpManagementServerConfigurationProperties configuration) {
-        MainHttpServer server = new MainHttpServer();
+        ManagementHttpServer server = new ManagementHttpServer();
 
         server.setCamelContext(camelContext);
         server.setHost(configuration.getHost());
@@ -109,7 +109,6 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         server.setJolokiaEnabled(configuration.isJolokiaEnabled());
         server.setJolokiaPath(configuration.getJolokiaPath());
         server.setMetricsEnabled(configuration.isMetricsEnabled());
-        server.setSendEnabled(configuration.isSendEnabled());
 
         if (configuration.isAuthenticationEnabled()) {
             configureAuthentication(server, configuration);
@@ -130,7 +129,8 @@ public class DefaultMainHttpServerFactory implements CamelContextAware, MainHttp
         }
     }
 
-    private void configureAuthentication(MainHttpServer server, HttpManagementServerConfigurationProperties configuration) {
+    private void configureAuthentication(
+            ManagementHttpServer server, HttpManagementServerConfigurationProperties configuration) {
         if (configuration.getBasicPropertiesFile() != null) {
             BasicAuthenticationConfigurer auth = new BasicAuthenticationConfigurer();
             auth.configureAuthentication(server.getConfiguration().getAuthenticationConfig(), configuration);
