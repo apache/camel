@@ -43,7 +43,7 @@ from("activemq:cheese")
     .pipeline()
         .to("bean:foo")
         .to("bean:bar")
-        .to("acitvemq:wine");
+        .to("activemq:wine");
 ----
 
 XML::
