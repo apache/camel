@@ -24,6 +24,7 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Signature;
 
+import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 
 public class PQCDefaultMLDSAMaterial {
@@ -35,7 +36,7 @@ public class PQCDefaultMLDSAMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance("ML-DSA");
+            signer = Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +44,8 @@ public class PQCDefaultMLDSAMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
+                PQCSignatureAlgorithms.MLDSA.getBcProvider());
         kpGen.initialize(MLDSAParameterSpec.ml_dsa_65, new SecureRandom());
         return kpGen;
     }
