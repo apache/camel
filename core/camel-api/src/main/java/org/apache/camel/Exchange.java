@@ -102,7 +102,7 @@ public interface Exchange extends VariableAware {
     String BATCH_INDEX = "CamelBatchIndex";
     String BATCH_SIZE = "CamelBatchSize";
     String BATCH_COMPLETE = "CamelBatchComplete";
-    @Deprecated
+    @Deprecated(since = "4.11.0")
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BINDING = "CamelBinding";
     // do not prefix with Camel and use a lower-case starting letter as it's a shared key
@@ -149,10 +149,8 @@ public interface Exchange extends VariableAware {
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     @Deprecated(since = "3.1.0")
     String EXTERNAL_REDELIVERED = "CamelExternalRedelivered";
-
     @Deprecated(since = "4.0.0")
     String FAILURE_HANDLED = "CamelFailureHandled";
-
     @Metadata(label = "doCatch,doFinally,errorHandler,onException",
               description = "Endpoint URI where the Exchange failed during processing",
               javaType = "String")
@@ -223,10 +221,6 @@ public interface Exchange extends VariableAware {
               javaType = "int")
     String LOOP_SIZE = "CamelLoopSize";
 
-    // Long running action (saga): using "Long-Running-Action" as header value allows sagas
-    // to be propagated to any remote system supporting the LRA framework
-    String SAGA_LONG_RUNNING_ACTION = "Long-Running-Action";
-
     String MAXIMUM_CACHE_POOL_SIZE = "CamelMaximumCachePoolSize";
     String MAXIMUM_ENDPOINT_CACHE_SIZE = "CamelMaximumEndpointCacheSize";
     String MAXIMUM_SIMPLE_CACHE_SIZE = "CamelMaximumSimpleCacheSize";
@@ -275,12 +269,11 @@ public interface Exchange extends VariableAware {
     @Deprecated(since = "3.1.0")
     String ROUTE_STOP = "CamelRouteStop";
 
-    String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
-    String COMPILE_SCRIPT = "CamelCompileScript";
-
+    // Long running action (saga): using "Long-Running-Action" as header value allows sagas
+    // to be propagated to any remote system supporting the LRA framework
+    String SAGA_LONG_RUNNING_ACTION = "Long-Running-Action";
     @Deprecated(since = "3.15.0")
     String SAXPARSER_FACTORY = "CamelSAXParserFactory";
-
     String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
     @Deprecated(since = "3.15.0")
     String SOAP_ACTION = "CamelSoapAction";

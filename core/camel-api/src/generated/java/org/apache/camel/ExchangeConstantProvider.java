@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(161);
+        Map<String, String> map = new HashMap<>(159);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -37,7 +37,6 @@ public class ExchangeConstantProvider {
         map.put("CHARSET_NAME", "CamelCharsetName");
         map.put("CIRCUIT_BREAKER_STATE", "CamelCircuitBreakerState");
         map.put("CLAIM_CHECK_REPOSITORY", "CamelClaimCheckRepository");
-        map.put("COMPILE_SCRIPT", "CamelCompileScript");
         map.put("CONTENT_ENCODING", "Content-Encoding");
         map.put("CONTENT_LENGTH", "Content-Length");
         map.put("CONTENT_SCHEMA", "CamelContentSchema");
@@ -138,7 +137,6 @@ public class ExchangeConstantProvider {
         map.put("REST_HTTP_QUERY", "CamelRestHttpQuery");
         map.put("REST_HTTP_URI", "CamelRestHttpUri");
         map.put("REST_OPENAPI", "CamelRestOpenAPI");
-        map.put("REUSE_SCRIPT_ENGINE", "CamelReuseScripteEngine");
         map.put("ROLLBACK_ONLY", "CamelRollbackOnly");
         map.put("ROLLBACK_ONLY_LAST", "CamelRollbackOnlyLast");
         map.put("ROUTE_STOP", "CamelRouteStop");
