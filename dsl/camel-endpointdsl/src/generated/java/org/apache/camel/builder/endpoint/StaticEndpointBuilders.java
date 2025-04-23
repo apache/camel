@@ -10102,9 +10102,6 @@ public class StaticEndpointBuilders {
      * Path parameter: metricsName (required)
      * Name of metrics
      * 
-     * Path parameter: tags
-     * Tags of metrics
-     * 
      * @param path metricsType:metricsName
      * @return the dsl builder
      */
@@ -10128,9 +10125,6 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
-     * 
-     * Path parameter: tags
-     * Tags of metrics
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

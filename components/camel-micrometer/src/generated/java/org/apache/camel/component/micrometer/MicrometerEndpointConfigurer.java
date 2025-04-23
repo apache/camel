@@ -30,6 +30,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "metricsdescription":
         case "metricsDescription": target.setMetricsDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "tags": target.setTags(property(camelContext, java.util.Map.class, value)); return true;
         case "value": target.setValue(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -45,6 +46,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return boolean.class;
         case "metricsdescription":
         case "metricsDescription": return java.lang.String.class;
+        case "tags": return java.util.Map.class;
         case "value": return java.lang.String.class;
         default: return null;
         }
@@ -61,7 +63,16 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "metricsdescription":
         case "metricsDescription": return target.getMetricsDescription();
+        case "tags": return target.getTags();
         case "value": return target.getValue();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "tags": return java.lang.String.class;
         default: return null;
         }
     }

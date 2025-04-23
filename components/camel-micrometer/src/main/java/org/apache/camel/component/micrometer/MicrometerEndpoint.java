@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -49,8 +53,8 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     protected final String metricsName;
     @UriParam(description = "Description of metrics")
     protected String metricsDescription;
-    @UriPath(description = "Tags of metrics")
-    protected final Iterable<Tag> tags;
+    @UriParam(description = "Tags of metrics", multiValue = true, prefix = "tags.")
+    protected Map<String, String> tags;
     @UriParam(description = "Action expression when using timer type", enums = "start,stop")
     private String action;
     @UriParam(description = "Value expression when using histogram type")
@@ -61,12 +65,11 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     private String decrement;
 
     public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, Meter.Type metricsType,
-                              String metricsName, Iterable<Tag> tags) {
+                              String metricsName) {
         super(uri, component);
         this.registry = registry;
         this.metricsType = metricsType;
         this.metricsName = metricsName;
-        this.tags = tags;
     }
 
     @Override
@@ -92,16 +95,23 @@ public class MicrometerEndpoint extends DefaultEndpoint {
         }
     }
 
+    Iterable<Tag> createTags() {
+        if (tags != null && !tags.isEmpty()) {
+            List<Tag> answer = new ArrayList<>();
+            tags.forEach((k, v) -> {
+                answer.add(Tag.of(k, v));
+            });
+            return answer;
+        }
+        return null;
+    }
+
     public MeterRegistry getRegistry() {
         return registry;
     }
 
     public String getMetricsName() {
         return metricsName;
-    }
-
-    public Iterable<Tag> getTags() {
-        return tags;
     }
 
     public Meter.Type getMetricsType() {
@@ -114,6 +124,14 @@ public class MicrometerEndpoint extends DefaultEndpoint {
 
     public void setMetricsDescription(String metricsDescription) {
         this.metricsDescription = metricsDescription;
+    }
+
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
     }
 
     public String getAction() {
