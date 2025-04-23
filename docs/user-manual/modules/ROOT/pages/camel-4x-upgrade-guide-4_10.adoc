@@ -57,6 +57,11 @@ to end the current choice (inner) and then afterwards change the scope to be Cho
 continue in the outer Choice. Otherwise the Java DSL cannot know the scope is Choice EIP and you would
 not be able to add the `otherwise` block to the outer Choice.
 
+=== camel-micrometer
+
+The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
+instead of configuring `tags=a=1&b=2` then this should be configured as `tags.a=1&tags.b=2` and so forth.
+
 == Upgrading from 4.10.2 to 4.10.3
 
 No changes
