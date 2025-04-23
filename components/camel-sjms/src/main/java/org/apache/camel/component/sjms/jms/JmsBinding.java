@@ -70,15 +70,17 @@ public class JmsBinding {
     private final HeaderFilterStrategy headerFilterStrategy;
     private final JmsKeyFormatStrategy jmsJmsKeyFormatStrategy;
     private final MessageCreatedStrategy messageCreatedStrategy;
+    private final JmsMessageType jmsMessageType;
 
     public JmsBinding(boolean mapJmsMessage, boolean allowNullBody,
                       HeaderFilterStrategy headerFilterStrategy, JmsKeyFormatStrategy jmsJmsKeyFormatStrategy,
-                      MessageCreatedStrategy messageCreatedStrategy) {
+                      MessageCreatedStrategy messageCreatedStrategy, JmsMessageType jmsMessageType) {
         this.mapJmsMessage = mapJmsMessage;
         this.allowNullBody = allowNullBody;
         this.headerFilterStrategy = headerFilterStrategy;
         this.jmsJmsKeyFormatStrategy = jmsJmsKeyFormatStrategy;
         this.messageCreatedStrategy = messageCreatedStrategy;
+        this.jmsMessageType = jmsMessageType;
     }
 
     /**
@@ -373,7 +375,11 @@ public class JmsBinding {
             Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context)
             throws JMSException {
 
-        JmsMessageType type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
+        JmsMessageType type = jmsMessageType;
+        if (type == null) {
+            // no explicit type so determine via body
+            type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
+        }
 
         // create the JmsMessage based on the type
         if (type != null) {
