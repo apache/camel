@@ -232,7 +232,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                 } else if (file.getName().contains("HttpServer")) {
                     prefix = "camel.server.";
                 } else if (file.getName().contains("HttpManagementServer")) {
-                    prefix = "camel.management.server.";
+                    prefix = "camel.management.";
                 } else if (file.getName().contains("ThreadPoolProfileConfigurationProperties")) {
                     // skip this file
                     continue;
@@ -375,7 +375,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
                     "org.apache.camel.main.HttpServerConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
-                    "camel.management.server",
+                    "camel.management",
                     "Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations",
                     "org.apache.camel.main.HttpManagementServerConfigurationProperties"));
             model.getGroups()

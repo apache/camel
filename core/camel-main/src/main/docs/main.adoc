@@ -224,31 +224,31 @@ The camel.server supports 28 options, which are listed below.
 
 
 === Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.management.server supports 20 options, which are listed below.
+The camel.management supports 20 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.management.server.authentication{zwsp}Enabled* | Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or Quarkus). | false | boolean
-| *camel.management.server.authentication{zwsp}Path* | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
-| *camel.management.server.basic{zwsp}PropertiesFile* | Name of the file that contains basic authentication info for Vert.x file auth provider. |  | String
-| *camel.management.server.dev{zwsp}ConsoleEnabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
-| *camel.management.server.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
-| *camel.management.server.health{zwsp}CheckEnabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health (default) | false | boolean
-| *camel.management.server.health{zwsp}Path* | The path endpoint used to expose the health status | /observe/health | String
-| *camel.management.server.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
-| *camel.management.server.info{zwsp}Enabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
-| *camel.management.server.jolokia{zwsp}Enabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
-| *camel.management.server.jolokia{zwsp}Path* | The path endpoint used to expose the jolokia data. | /observe/jolokia | String
-| *camel.management.server.jwt{zwsp}KeystorePassword* | Password from the keystore used for JWT tokens validation. |  | String
-| *camel.management.server.jwt{zwsp}KeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
-| *camel.management.server.jwt{zwsp}KeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
-| *camel.management.server.max{zwsp}BodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
-| *camel.management.server.metrics{zwsp}Enabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default) | false | boolean
-| *camel.management.server.path* | Context-path to use for embedded HTTP server | / | String
-| *camel.management.server.port* | Port to use for binding embedded HTTP server | 9876 | int
-| *camel.management.server.send{zwsp}Enabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean
-| *camel.management.server.use{zwsp}GlobalSslContextParameters* | Whether to use global SSL configuration for securing the embedded HTTP server. | false | boolean
+| *camel.management.authentication{zwsp}Enabled* | Whether to enable HTTP authentication for embedded server (for standalone applications; not Spring Boot or Quarkus). | false | boolean
+| *camel.management.authentication{zwsp}Path* | Set HTTP url path of embedded server that is protected by authentication configuration. |  | String
+| *camel.management.basic{zwsp}PropertiesFile* | Name of the file that contains basic authentication info for Vert.x file auth provider. |  | String
+| *camel.management.devConsole{zwsp}Enabled* | Whether to enable developer console (not intended for production use). Dev console must also be enabled on CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code camelContext.setDevConsole(true); If enabled then you can access a basic developer console on context-path: /q/dev. | false | boolean
+| *camel.management.enabled* | Whether embedded HTTP server is enabled. By default, the server is not enabled. | false | boolean
+| *camel.management.healthCheck{zwsp}Enabled* | Whether to enable health-check console. If enabled then you can access health-check status on context-path: /q/health (default) | false | boolean
+| *camel.management.healthPath* | The path endpoint used to expose the health status | /observe/health | String
+| *camel.management.host* | Hostname to use for binding embedded HTTP server | 0.0.0.0 | String
+| *camel.management.infoEnabled* | Whether to enable info console. If enabled then you can see some basic Camel information at /q/info | false | boolean
+| *camel.management.jolokia{zwsp}Enabled* | Whether to enable jolokia. If enabled then you can access jolokia api on context-path: /q/jolokia | false | boolean
+| *camel.management.jolokiaPath* | The path endpoint used to expose the jolokia data. | /observe/jolokia | String
+| *camel.management.jwtKeystore{zwsp}Password* | Password from the keystore used for JWT tokens validation. |  | String
+| *camel.management.jwtKeystore{zwsp}Path* | Path to the keystore file used for JWT tokens validation. |  | String
+| *camel.management.jwtKeystore{zwsp}Type* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
+| *camel.management.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
+| *camel.management.metrics{zwsp}Enabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /q/metrics (default) | false | boolean
+| *camel.management.path* | Context-path to use for embedded HTTP server | / | String
+| *camel.management.port* | Port to use for binding embedded HTTP server | 9876 | int
+| *camel.management.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean
+| *camel.management.useGlobalSsl{zwsp}ContextParameters* | Whether to use global SSL configuration for securing the embedded HTTP server. | false | boolean
 |===
 
 
