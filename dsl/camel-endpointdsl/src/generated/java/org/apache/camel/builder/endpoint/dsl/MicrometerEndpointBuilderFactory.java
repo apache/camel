@@ -102,6 +102,43 @@ public interface MicrometerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Tags of metrics.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the tags(String, Object)
+         * method to add a value (call the method multiple times to set more
+         * values).
+         * 
+         * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default MicrometerEndpointBuilder tags(String key, Object value) {
+            doSetMultiValueProperty("tags", "tags." + key, value);
+            return this;
+        }
+        /**
+         * Tags of metrics.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the tags(String, Object)
+         * method to add a value (call the method multiple times to set more
+         * values).
+         * 
+         * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default MicrometerEndpointBuilder tags(Map values) {
+            doSetMultiValueProperties("tags", "tags.", values);
+            return this;
+        }
+        /**
          * Value expression when using histogram type.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -209,9 +246,6 @@ public interface MicrometerEndpointBuilderFactory {
          * Path parameter: metricsName (required)
          * Name of metrics
          * 
-         * Path parameter: tags
-         * Tags of metrics
-         * 
          * @param path metricsType:metricsName
          * @return the dsl builder
          */
@@ -236,9 +270,6 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
-         * 
-         * Path parameter: tags
-         * Tags of metrics
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

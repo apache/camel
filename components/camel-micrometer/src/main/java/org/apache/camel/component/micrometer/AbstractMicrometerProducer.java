@@ -39,8 +39,16 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
 
     private static final String HEADER_PATTERN = HEADER_PREFIX + "*";
 
+    private Iterable<Tag> tags;
+
     protected AbstractMicrometerProducer(MicrometerEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+        this.tags = getEndpoint().createTags();
     }
 
     @Override
@@ -55,9 +63,8 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         String finalMetricsName = getStringHeader(in, HEADER_METRIC_NAME, defaultMetricsName);
         String defaultMetricsDescription = simple(exchange, getEndpoint().getMetricsDescription(), String.class);
         String finalMetricsDescription = getStringHeader(in, HEADER_METRIC_DESCRIPTION, defaultMetricsDescription);
-        Iterable<Tag> defaultTags = getEndpoint().getTags();
         Iterable<Tag> headerTags = getTagHeader(in, HEADER_METRIC_TAGS, Tags.empty());
-        Iterable<Tag> finalTags = Tags.concat(defaultTags, headerTags).stream()
+        Iterable<Tag> finalTags = Tags.concat(tags, headerTags).stream()
                 .map(tag -> Tag.of(
                         simple(exchange, tag.getKey(), String.class),
                         simple(exchange, tag.getValue(), String.class)))
