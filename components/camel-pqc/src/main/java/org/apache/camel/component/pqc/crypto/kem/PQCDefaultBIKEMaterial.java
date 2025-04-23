@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pqc.crypto;
+package org.apache.camel.component.pqc.crypto.kem;
 
 import java.security.*;
 
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
-import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 
-public class PQCDefaultMLKEMMaterial {
+public class PQCDefaultBIKEMaterial {
 
     public static final KeyPair keyPair;
     public static final KeyGenerator keyGenerator;
@@ -41,15 +41,15 @@ public class PQCDefaultMLKEMMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
-        kpg.initialize(MLKEMParameterSpec.ml_kem_512, new SecureRandom());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.BIKE.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.BIKE.getBcProvider());
+        kpg.initialize(BIKEParameterSpec.bike192, new SecureRandom());
         return kpg;
     }
 
     protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.MLKEM.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
+        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.BIKE.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.BIKE.getBcProvider());
         return kg;
     }
 }
