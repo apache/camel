@@ -24,6 +24,7 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Signature;
 
+import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 public class PQCDefaultXMSSMaterial {
@@ -35,7 +36,7 @@ public class PQCDefaultXMSSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance("XMSS");
+            signer = Signature.getInstance(PQCSignatureAlgorithms.XMSS.getAlgorithm());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +44,8 @@ public class PQCDefaultXMSSMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("XMSS", "BCPQC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.XMSS.getAlgorithm(),
+                PQCSignatureAlgorithms.XMSS.getBcProvider());
         kpGen.initialize(new XMSSParameterSpec(10, XMSSParameterSpec.SHA256), new SecureRandom());
         return kpGen;
     }

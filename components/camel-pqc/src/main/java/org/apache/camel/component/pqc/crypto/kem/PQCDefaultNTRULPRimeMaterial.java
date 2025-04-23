@@ -14,30 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pqc.crypto;
+package org.apache.camel.component.pqc.crypto.kem;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Signature;
+import java.security.*;
 
-import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
-import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
-import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
+import javax.crypto.KeyGenerator;
 
-public class PQCDefaultLMSMaterial {
+import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
+
+public class PQCDefaultNTRULPRimeMaterial {
+
     public static final KeyPair keyPair;
-    public static final Signature signer;
+    public static final KeyGenerator keyGenerator;
+    public static final KeyPairGenerator generator;
 
     static {
-        KeyPairGenerator generator;
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm());
+            keyGenerator = prepareKeyGenerator();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -45,9 +41,15 @@ public class PQCDefaultLMSMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
-                PQCSignatureAlgorithms.LMS.getBcProvider());
-        kpGen.initialize(new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w1));
-        return kpGen;
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRULPRime.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.NTRULPRime.getBcProvider());
+        kpg.initialize(NTRULPRimeParameterSpec.ntrulpr761, new SecureRandom());
+        return kpg;
+    }
+
+    protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRULPRime.getAlgorithm(),
+                PQCKeyEncapsulationAlgorithms.NTRULPRime.getBcProvider());
+        return kg;
     }
 }
