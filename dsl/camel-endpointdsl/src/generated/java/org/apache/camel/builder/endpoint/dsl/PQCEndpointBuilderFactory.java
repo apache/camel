@@ -252,6 +252,38 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * In the context of extractSecretKeyFromEncapsulation operation, this
+         * option define if we want to have the key set as header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param storeExtractedSecretKeyAsHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder storeExtractedSecretKeyAsHeader(boolean storeExtractedSecretKeyAsHeader) {
+            doSetProperty("storeExtractedSecretKeyAsHeader", storeExtractedSecretKeyAsHeader);
+            return this;
+        }
+        /**
+         * In the context of extractSecretKeyFromEncapsulation operation, this
+         * option define if we want to have the key set as header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param storeExtractedSecretKeyAsHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder storeExtractedSecretKeyAsHeader(String storeExtractedSecretKeyAsHeader) {
+            doSetProperty("storeExtractedSecretKeyAsHeader", storeExtractedSecretKeyAsHeader);
+            return this;
+        }
+        /**
          * In case we are using KEM operations, we need a Symmetric algorithm to
          * be defined for the flow to work.
          * 
@@ -399,6 +431,19 @@ public interface PQCEndpointBuilderFactory {
          */
         public String pQCVerification() {
             return "CamelPQCVerification";
+        }
+        /**
+         * The extracted key in case of extractSecretKeyFromEncapsulation
+         * operation and storeExtractedSecretKeyAsHeader option enabled.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCSecretKey}.
+         */
+        public String pQCSecretKey() {
+            return "CamelPQCSecretKey";
         }
     }
     static PQCEndpointBuilder endpointBuilder(String componentName, String path) {

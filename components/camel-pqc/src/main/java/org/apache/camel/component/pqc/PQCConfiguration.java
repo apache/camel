@@ -57,6 +57,9 @@ public class PQCConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced", defaultValue = "128")
     private int symmetricKeyLength = 128;
+    @UriParam
+    @Metadata(label = "advanced", defaultValue = "false")
+    private boolean storeExtractedSecretKeyAsHeader = false;
 
     public PQCOperations getOperation() {
         return operation;
@@ -144,6 +147,18 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setSymmetricKeyLength(int symmetricKeyLength) {
         this.symmetricKeyLength = symmetricKeyLength;
+    }
+
+    public boolean isStoreExtractedSecretKeyAsHeader() {
+        return storeExtractedSecretKeyAsHeader;
+    }
+
+    /**
+     * In the context of extractSecretKeyFromEncapsulation operation, this option define if we want to have the key set
+     * as header
+     */
+    public void setStoreExtractedSecretKeyAsHeader(boolean storeExtractedSecretKeyAsHeader) {
+        this.storeExtractedSecretKeyAsHeader = storeExtractedSecretKeyAsHeader;
     }
 
     // *************************************************

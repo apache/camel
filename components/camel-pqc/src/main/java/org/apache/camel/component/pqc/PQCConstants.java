@@ -30,4 +30,8 @@ public interface PQCConstants {
 
     @Metadata(description = "The result of verification of a Body signature", javaType = "Boolean")
     String VERIFY = "CamelPQCVerification";
+
+    @Metadata(description = "The extracted key in case of extractSecretKeyFromEncapsulation operation and storeExtractedSecretKeyAsHeader option enabled",
+              javaType = "Boolean")
+    String SECRET_KEY = "CamelPQCSecretKey";
 }

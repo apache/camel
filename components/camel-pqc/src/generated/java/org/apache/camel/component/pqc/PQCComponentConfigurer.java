@@ -49,6 +49,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": getOrCreateConfiguration(target).setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": getOrCreateConfiguration(target).setSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "storeextractedsecretkeyasheader":
+        case "storeExtractedSecretKeyAsHeader": getOrCreateConfiguration(target).setStoreExtractedSecretKeyAsHeader(property(camelContext, boolean.class, value)); return true;
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": getOrCreateConfiguration(target).setSymmetricKeyAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "symmetrickeylength":
@@ -84,6 +86,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
+        case "storeextractedsecretkeyasheader":
+        case "storeExtractedSecretKeyAsHeader": return boolean.class;
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": return java.lang.String.class;
         case "symmetrickeylength":
@@ -115,6 +119,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": return getOrCreateConfiguration(target).getSignatureAlgorithm();
         case "signer": return getOrCreateConfiguration(target).getSigner();
+        case "storeextractedsecretkeyasheader":
+        case "storeExtractedSecretKeyAsHeader": return getOrCreateConfiguration(target).isStoreExtractedSecretKeyAsHeader();
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": return getOrCreateConfiguration(target).getSymmetricKeyAlgorithm();
         case "symmetrickeylength":

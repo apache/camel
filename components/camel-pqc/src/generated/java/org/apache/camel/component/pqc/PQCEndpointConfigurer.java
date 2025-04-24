@@ -35,6 +35,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": target.getConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": target.getConfiguration().setSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "storeextractedsecretkeyasheader":
+        case "storeExtractedSecretKeyAsHeader": target.getConfiguration().setStoreExtractedSecretKeyAsHeader(property(camelContext, boolean.class, value)); return true;
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": target.getConfiguration().setSymmetricKeyAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "symmetrickeylength":
@@ -63,6 +65,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
+        case "storeextractedsecretkeyasheader":
+        case "storeExtractedSecretKeyAsHeader": return boolean.class;
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": return java.lang.String.class;
         case "symmetrickeylength":
@@ -87,6 +91,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": return target.getConfiguration().getSignatureAlgorithm();
         case "signer": return target.getConfiguration().getSigner();
+        case "storeextractedsecretkeyasheader":
+        case "storeExtractedSecretKeyAsHeader": return target.getConfiguration().isStoreExtractedSecretKeyAsHeader();
         case "symmetrickeyalgorithm":
         case "symmetricKeyAlgorithm": return target.getConfiguration().getSymmetricKeyAlgorithm();
         case "symmetrickeylength":
