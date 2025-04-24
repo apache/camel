@@ -240,6 +240,8 @@ public class SmbOperations implements SmbFileOperations {
                     throw new GenericFileOperationFailedException(e.getMessage(), e);
                 }
             }
+
+            exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
         }
         return true;
     }
