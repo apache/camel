@@ -376,7 +376,7 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
         if (source.hasVariables()) {
-            source.getVariables().forEach(result::setVariable);
+            result.getVariables().putAll(source.getVariables());
         }
 
         final ExchangeExtension sourceExtension = source.getExchangeExtension();
