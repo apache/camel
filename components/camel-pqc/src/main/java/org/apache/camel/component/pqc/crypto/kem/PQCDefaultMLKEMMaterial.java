@@ -22,6 +22,8 @@ import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 public class PQCDefaultMLKEMMaterial {
 
@@ -30,6 +32,12 @@ public class PQCDefaultMLKEMMaterial {
     public static final KeyPairGenerator generator;
 
     static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastlePQCProvider());
+        }
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();

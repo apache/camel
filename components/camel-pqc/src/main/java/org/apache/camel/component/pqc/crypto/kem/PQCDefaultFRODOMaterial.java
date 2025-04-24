@@ -21,6 +21,8 @@ import java.security.*;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 
 public class PQCDefaultFRODOMaterial {
@@ -30,6 +32,12 @@ public class PQCDefaultFRODOMaterial {
     public static final KeyPairGenerator generator;
 
     static {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastlePQCProvider());
+        }
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
