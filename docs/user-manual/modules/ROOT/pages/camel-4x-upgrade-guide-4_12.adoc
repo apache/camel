@@ -21,8 +21,6 @@ The package scan classes has moved from `camel-base-engine` to `camel-support` J
 
 The `ExchangeHelper.copyResults` has been improved to also copy over exchange variables from the source to the target.
 
-The `Exchange.getVariables()` now return a read-only map. Use the other APIs put/remove variables from the Exchange.
-
 ==== Propagating variables in EIPs in seda/kamelet components
 
 The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
