@@ -52,6 +52,10 @@ The presence of this dependency will expose the following endpoints:
 
 |====
 
+The endpoints are exposed in the management port (default `9876`) in order to avoid interfering with the regular business running on any other port.
+
+NOTE: the management port is available since version 4.12.0. In previous version the endpoints were exposed in the regular business port (default `8080`).
+
 == OpenTelemetry configuration
 
 The presence of this component will provide the required instrumentation to easily enable the collection of OpenTelemetry metrics.

@@ -103,7 +103,7 @@ if (consumersHealthCheckRepository != null) {
 Once you have the health check exposed as a service and the application is up and running, you can check it by accessing the related endpoint:
 
 ```
-$ curl http://localhost:8080/q/health
+$ curl http://localhost:9876/observe/health
 {
     "status": "UP"
 ,
@@ -121,12 +121,12 @@ $ curl http://localhost:8080/q/health
 }
 ```
 
-NOTE: the path can change depending on the runtime used and the configuration.
+NOTE: the port and the path can change depending on the runtime used and the configuration.
 
 When you're running on certain runtimes you will get more information by default. This is also possible in the `camel-main` runtime provider. However, you'll need to specify that as a request parameter:
 
 ```
-$ curl http://localhost:8080/q/health?data=true
+$ curl http://localhost:9876/observe/health?data=true
 {
     "status": "UP"
 ,
