@@ -45,12 +45,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-processor</artifactId>
         </dependency>
-        <!-- https://github.com/IBM/cloudant-java-sdk/issues/681 -->
-        <dependency>
-            <groupId>com.ibm.cloud</groupId>
-            <artifactId>sdk-core</artifactId>
-            <version>9.23.1</version>
-        </dependency>
         <dependency>
             <groupId>com.ibm.cloud</groupId>
             <artifactId>cloudant</artifactId>
