@@ -209,6 +209,24 @@ public interface PqcComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * In the context of extractSecretKeyFromEncapsulation operation, this
+         * option define if we want to have the key set as header.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param storeExtractedSecretKeyAsHeader the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder storeExtractedSecretKeyAsHeader(boolean storeExtractedSecretKeyAsHeader) {
+            doSetProperty("storeExtractedSecretKeyAsHeader", storeExtractedSecretKeyAsHeader);
+            return this;
+        }
+    
         /**
          * In case we are using KEM operations, we need a Symmetric algorithm to
          * be defined for the flow to work.
@@ -309,6 +327,7 @@ public interface PqcComponentBuilderFactory {
             case "keyPair": getOrCreateConfiguration((PQCComponent) component).setKeyPair((java.security.KeyPair) value); return true;
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
+            case "storeExtractedSecretKeyAsHeader": getOrCreateConfiguration((PQCComponent) component).setStoreExtractedSecretKeyAsHeader((boolean) value); return true;
             case "symmetricKeyAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyAlgorithm((java.lang.String) value); return true;
             case "symmetricKeyLength": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyLength((int) value); return true;
             case "healthCheckConsumerEnabled": ((PQCComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

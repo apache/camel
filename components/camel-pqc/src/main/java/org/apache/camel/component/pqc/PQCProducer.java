@@ -187,7 +187,11 @@ public class PQCProducer extends DefaultProducer {
 
         SecretKey restoredKey = new SecretKeySpec(payload.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
 
-        exchange.getMessage().setBody(restoredKey, SecretKey.class);
+        if (!getConfiguration().isStoreExtractedSecretKeyAsHeader()) {
+            exchange.getMessage().setBody(restoredKey, SecretKey.class);
+        } else {
+            exchange.getMessage().setHeader(PQCConstants.SECRET_KEY, restoredKey);
+        }
     }
 
 }
