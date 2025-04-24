@@ -23,12 +23,6 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "httpextension":
         case "httpExtension": target.getConfiguration().setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
         case "lazystartproducer":
@@ -50,12 +44,6 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
-        case "exceptionhandler":
-        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
-        case "exchangepattern":
-        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
         case "lazystartproducer":
@@ -73,12 +61,6 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "exceptionhandler":
-        case "exceptionHandler": return target.getExceptionHandler();
-        case "exchangepattern":
-        case "exchangePattern": return target.getExchangePattern();
         case "httpextension":
         case "httpExtension": return target.getConfiguration().getHttpExtension();
         case "lazystartproducer":

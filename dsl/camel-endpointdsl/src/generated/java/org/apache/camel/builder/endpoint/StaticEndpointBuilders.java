@@ -3308,7 +3308,7 @@ public class StaticEndpointBuilders {
      * Dapr component which interfaces with Dapr Building Blocks.
      * 
      * Category: cloud,saas
-     * Since: 4.11
+     * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
      * 
      * Syntax: <code>dapr:operation</code>
@@ -3328,7 +3328,7 @@ public class StaticEndpointBuilders {
      * Dapr component which interfaces with Dapr Building Blocks.
      * 
      * Category: cloud,saas
-     * Since: 4.11
+     * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
      * 
      * Syntax: <code>dapr:operation</code>

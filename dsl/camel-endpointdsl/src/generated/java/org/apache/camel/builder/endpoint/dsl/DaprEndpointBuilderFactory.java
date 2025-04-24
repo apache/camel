@@ -35,152 +35,13 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface DaprEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint consumers for the Dapr component.
+     * Builder for endpoint for the Dapr component.
      */
-    public interface DaprEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedDaprEndpointConsumerBuilder advanced() {
-            return (AdvancedDaprEndpointConsumerBuilder) this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Dapr component.
-     */
-    public interface AdvancedDaprEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default DaprEndpointConsumerBuilder basic() {
-            return (DaprEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDaprEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDaprEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDaprEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDaprEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDaprEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDaprEndpointConsumerBuilder exchangePattern(String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Dapr component.
-     */
-    public interface DaprEndpointProducerBuilder
+    public interface DaprEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedDaprEndpointProducerBuilder advanced() {
-            return (AdvancedDaprEndpointProducerBuilder) this;
+        default AdvancedDaprEndpointBuilder advanced() {
+            return (AdvancedDaprEndpointBuilder) this;
         }
 
         /**
@@ -196,7 +57,7 @@ public interface DaprEndpointBuilderFactory {
          * @param httpExtension the value to set
          * @return the dsl builder
          */
-        default DaprEndpointProducerBuilder httpExtension(io.dapr.client.domain.HttpExtension httpExtension) {
+        default DaprEndpointBuilder httpExtension(io.dapr.client.domain.HttpExtension httpExtension) {
             doSetProperty("httpExtension", httpExtension);
             return this;
         }
@@ -213,7 +74,7 @@ public interface DaprEndpointBuilderFactory {
          * @param httpExtension the value to set
          * @return the dsl builder
          */
-        default DaprEndpointProducerBuilder httpExtension(String httpExtension) {
+        default DaprEndpointBuilder httpExtension(String httpExtension) {
             doSetProperty("httpExtension", httpExtension);
             return this;
         }
@@ -227,7 +88,7 @@ public interface DaprEndpointBuilderFactory {
          * @param methodToInvoke the value to set
          * @return the dsl builder
          */
-        default DaprEndpointProducerBuilder methodToInvoke(String methodToInvoke) {
+        default DaprEndpointBuilder methodToInvoke(String methodToInvoke) {
             doSetProperty("methodToInvoke", methodToInvoke);
             return this;
         }
@@ -242,7 +103,7 @@ public interface DaprEndpointBuilderFactory {
          * @param serviceToInvoke the value to set
          * @return the dsl builder
          */
-        default DaprEndpointProducerBuilder serviceToInvoke(String serviceToInvoke) {
+        default DaprEndpointBuilder serviceToInvoke(String serviceToInvoke) {
             doSetProperty("serviceToInvoke", serviceToInvoke);
             return this;
         }
@@ -257,18 +118,20 @@ public interface DaprEndpointBuilderFactory {
          * @param verb the value to set
          * @return the dsl builder
          */
-        default DaprEndpointProducerBuilder verb(String verb) {
+        default DaprEndpointBuilder verb(String verb) {
             doSetProperty("verb", verb);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint producers for the Dapr component.
+     * Advanced builder for endpoint for the Dapr component.
      */
-    public interface AdvancedDaprEndpointProducerBuilder extends EndpointProducerBuilder {
-        default DaprEndpointProducerBuilder basic() {
-            return (DaprEndpointProducerBuilder) this;
+    public interface AdvancedDaprEndpointBuilder
+            extends
+                EndpointProducerBuilder {
+        default DaprEndpointBuilder basic() {
+            return (DaprEndpointBuilder) this;
         }
 
         /**
@@ -290,7 +153,7 @@ public interface DaprEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AdvancedDaprEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedDaprEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -313,36 +176,10 @@ public interface DaprEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AdvancedDaprEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedDaprEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
-    }
-
-    /**
-     * Builder for endpoint for the Dapr component.
-     */
-    public interface DaprEndpointBuilder
-            extends
-                DaprEndpointConsumerBuilder,
-                DaprEndpointProducerBuilder {
-        default AdvancedDaprEndpointBuilder advanced() {
-            return (AdvancedDaprEndpointBuilder) this;
-        }
-
-    }
-
-    /**
-     * Advanced builder for endpoint for the Dapr component.
-     */
-    public interface AdvancedDaprEndpointBuilder
-            extends
-                AdvancedDaprEndpointConsumerBuilder,
-                AdvancedDaprEndpointProducerBuilder {
-        default DaprEndpointBuilder basic() {
-            return (DaprEndpointBuilder) this;
-        }
-
     }
 
     public interface DaprBuilders {
@@ -351,7 +188,7 @@ public interface DaprEndpointBuilderFactory {
          * Dapr component which interfaces with Dapr Building Blocks.
          * 
          * Category: cloud,saas
-         * Since: 4.11
+         * Since: 4.12
          * Maven coordinates: org.apache.camel:camel-dapr
          * 
          * @return the dsl builder for the headers' name.
@@ -364,7 +201,7 @@ public interface DaprEndpointBuilderFactory {
          * Dapr component which interfaces with Dapr Building Blocks.
          * 
          * Category: cloud,saas
-         * Since: 4.11
+         * Since: 4.12
          * Maven coordinates: org.apache.camel:camel-dapr
          * 
          * Syntax: <code>dapr:operation</code>
@@ -384,7 +221,7 @@ public interface DaprEndpointBuilderFactory {
          * Dapr component which interfaces with Dapr Building Blocks.
          * 
          * Category: cloud,saas
-         * Since: 4.11
+         * Since: 4.12
          * Maven coordinates: org.apache.camel:camel-dapr
          * 
          * Syntax: <code>dapr:operation</code>

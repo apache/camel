@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Dapr component which interfaces with Dapr Building Blocks.
  */
-@UriEndpoint(firstVersion = "4.11.0", scheme = "dapr", title = "Dapr", syntax = "dapr:operation",
+@UriEndpoint(firstVersion = "4.12.0", scheme = "dapr", title = "Dapr", syntax = "dapr:operation", producerOnly = true,
              category = { Category.CLOUD, Category.SAAS }, headersClass = DaprConstants.class)
 public class DaprEndpoint extends DefaultEndpoint {
 
@@ -42,10 +42,12 @@ public class DaprEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DaprProducer(this, configuration);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }

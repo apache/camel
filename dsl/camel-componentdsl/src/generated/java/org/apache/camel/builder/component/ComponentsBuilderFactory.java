@@ -1045,7 +1045,7 @@ public interface ComponentsBuilderFactory {
      * Dapr component which interfaces with Dapr Building Blocks.
      * 
      * Category: cloud,saas
-     * Since: 4.11
+     * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
      * 
      * @return the dsl builder

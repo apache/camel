@@ -130,6 +130,7 @@
         <cxf-xjc-plugin-version>4.1.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.1.0</cxf-xjc-utils-version>
         <daffodil-version>3.10.0</daffodil-version>
+        <dapr-version>1.13.1</dapr-version>
         <datasonnet-mapper-version>3.0.0</datasonnet-mapper-version>
         <debezium-version>3.0.8.Final</debezium-version>
         <debezium-mysql-connector-version>9.2.0</debezium-mysql-connector-version>

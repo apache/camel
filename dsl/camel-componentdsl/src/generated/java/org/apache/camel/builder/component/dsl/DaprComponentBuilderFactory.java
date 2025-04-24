@@ -36,7 +36,7 @@ public interface DaprComponentBuilderFactory {
      * Dapr component which interfaces with Dapr Building Blocks.
      * 
      * Category: cloud,saas
-     * Since: 4.11
+     * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
      * 
      * @return the dsl builder
@@ -56,41 +56,13 @@ public interface DaprComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.dapr.DaprConfiguration&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @param configuration the value to set
          * @return the dsl builder
          */
         default DaprComponentBuilder configuration(org.apache.camel.component.dapr.DaprConfiguration configuration) {
             doSetProperty("configuration", configuration);
-            return this;
-        }
-    
-        
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default DaprComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     
@@ -228,7 +200,6 @@ public interface DaprComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((DaprComponent) component).setConfiguration((org.apache.camel.component.dapr.DaprConfiguration) value); return true;
-            case "bridgeErrorHandler": ((DaprComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "httpExtension": getOrCreateConfiguration((DaprComponent) component).setHttpExtension((io.dapr.client.domain.HttpExtension) value); return true;
             case "lazyStartProducer": ((DaprComponent) component).setLazyStartProducer((boolean) value); return true;
             case "methodToInvoke": getOrCreateConfiguration((DaprComponent) component).setMethodToInvoke((java.lang.String) value); return true;

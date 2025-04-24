@@ -3,10 +3,10 @@
 :shortname: dapr
 :artifactid: camel-dapr
 :description: Dapr component which interfaces with Dapr Building Blocks.
-:since: 4.11
+:since: 4.12
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: dapr
 
@@ -41,6 +41,35 @@ include::partial$component-endpoint-options.adoc[]
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
+
+=== Dapr Producer operations
+
+Camel Dapr component provides a wide range of operations on the producer side:
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`invokeService`  |Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
+|===
+
+== Examples
+
+=== Producer Operations Examples
+- `invokeService`:
+
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.VERB, "GET");
+  })
+  .to("dapr:invokeService?serviceToInvoke=myService&methodToInvoke=myMethod")
+  .to("mock:result");
+--------------------------------------------------------------------------------
 
 
 include::spring-boot:partial$starter.adoc[]

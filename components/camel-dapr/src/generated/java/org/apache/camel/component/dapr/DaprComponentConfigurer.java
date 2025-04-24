@@ -32,8 +32,6 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.dapr.DaprConfiguration.class, value)); return true;
         case "httpextension":
         case "httpExtension": getOrCreateConfiguration(target).setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
@@ -58,8 +56,6 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.dapr.DaprConfiguration.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
@@ -80,8 +76,6 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
         case "httpextension":
         case "httpExtension": return getOrCreateConfiguration(target).getHttpExtension();

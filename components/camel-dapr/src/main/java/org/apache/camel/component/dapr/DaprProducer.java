@@ -38,13 +38,15 @@ public class DaprProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        LOG.info("Processing operation: {}", configurationOptionsProxy.getOperation());
+        LOG.debug("Processing operation: {}", configurationOptionsProxy.getOperation());
         setResponse(exchange, manager.process(exchange, getEndpoint().getClient()));
     }
 
     private void setResponse(Exchange exchange, DaprOperationResponse response) {
-        exchange.getMessage().setBody(response.getBody(), String.class);
-        exchange.getMessage().setHeaders(response.getHeaders());
+        if (response != null) {
+            exchange.getMessage().setBody(response.getBody(), String.class);
+            exchange.getMessage().setHeaders(response.getHeaders());
+        }
     }
 
     @Override

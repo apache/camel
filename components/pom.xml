@@ -115,6 +115,7 @@
         <module>camel-crypto-pgp</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
+        <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
         <module>camel-debezium</module>
@@ -338,7 +339,6 @@
         <module>camel-jooq</module>
         <!-- observability-services requires the availability of other components -->
         <module>camel-observability-services</module>
-        <module>camel-dapr</module>
     </modules>
 
     <properties>
