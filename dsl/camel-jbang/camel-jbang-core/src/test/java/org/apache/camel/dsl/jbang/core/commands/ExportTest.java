@@ -551,7 +551,7 @@ class ExportTest {
         Assertions.assertEquals("route", model.getArtifactId());
         Assertions.assertEquals("1.0.0", model.getVersion());
 
-        /*        if (rt == RuntimeType.main) {
+        if (rt == RuntimeType.main) {
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-groovy", null));
         } else if (rt == RuntimeType.springBoot) {
             Assertions.assertTrue(
@@ -559,7 +559,7 @@ class ExportTest {
         } else if (rt == RuntimeType.quarkus) {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-groovy", null));
-        }*/
+        }
 
         File f = workingDir.toPath().resolve("src/main/resources/demo.groovy").toFile();
         Assertions.assertTrue(f.isFile());

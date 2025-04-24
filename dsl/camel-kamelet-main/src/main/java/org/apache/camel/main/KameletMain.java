@@ -58,6 +58,7 @@ import org.apache.camel.main.download.DependencyDownloaderRoutesLoader;
 import org.apache.camel.main.download.DependencyDownloaderStrategy;
 import org.apache.camel.main.download.DependencyDownloaderTransformerResolver;
 import org.apache.camel.main.download.DependencyDownloaderUriFactoryResolver;
+import org.apache.camel.main.download.DownloadEndpointStrategy;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.download.DownloadModelineParser;
 import org.apache.camel.main.download.ExportPropertiesParser;
@@ -641,6 +642,7 @@ public class KameletMain extends MainCommandLineSupport {
                     ff, answer, Optional.ofNullable(camelVersion).map(Object::toString).orElse(null), export);
             answer.getCamelContextExtension().addContextPlugin(PeriodTaskResolver.class, ptr);
 
+            answer.getCamelContextExtension().registerEndpointCallback(new DownloadEndpointStrategy(answer, silent));
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     new DependencyDownloaderComponentResolver(answer, stubPattern, silent, transform));
             answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
