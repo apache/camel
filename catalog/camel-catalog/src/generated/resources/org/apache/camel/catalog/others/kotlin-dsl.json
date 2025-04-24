@@ -11,6 +11,6 @@
     "metadata": { "routes.language": "kotlin" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-kotlin-dsl",
-    "version": "4.8.6-SNAPSHOT"
+    "version": "4.8.7-SNAPSHOT"
   }
 }

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-huaweicloud-functiongraph",
-    "version": "4.8.6-SNAPSHOT",
+    "version": "4.8.7-SNAPSHOT",
     "scheme": "hwcloud-functiongraph",
     "extendsScheme": "",
     "syntax": "hwcloud-functiongraph:operation",

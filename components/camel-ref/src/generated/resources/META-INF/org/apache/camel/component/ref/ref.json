@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ref",
-    "version": "4.8.6-SNAPSHOT",
+    "version": "4.8.7-SNAPSHOT",
     "scheme": "ref",
     "extendsScheme": "",
     "syntax": "ref:name",

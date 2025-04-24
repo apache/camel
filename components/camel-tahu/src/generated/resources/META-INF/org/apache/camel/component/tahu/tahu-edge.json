@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tahu",
-    "version": "4.8.6-SNAPSHOT",
+    "version": "4.8.7-SNAPSHOT",
     "scheme": "tahu-edge",
     "extendsScheme": "",
     "syntax": "tahu-edge:groupId\/edgeNode",

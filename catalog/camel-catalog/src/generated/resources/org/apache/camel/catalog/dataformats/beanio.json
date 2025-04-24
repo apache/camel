@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-beanio",
-    "version": "4.8.6-SNAPSHOT",
+    "version": "4.8.7-SNAPSHOT",
     "modelName": "beanio",
     "modelJavaType": "org.apache.camel.model.dataformat.BeanioDataFormat"
   },

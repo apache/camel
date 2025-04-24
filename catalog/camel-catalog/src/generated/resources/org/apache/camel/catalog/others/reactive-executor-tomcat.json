@@ -10,6 +10,6 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-reactive-executor-tomcat",
-    "version": "4.8.6-SNAPSHOT"
+    "version": "4.8.7-SNAPSHOT"
   }
 }

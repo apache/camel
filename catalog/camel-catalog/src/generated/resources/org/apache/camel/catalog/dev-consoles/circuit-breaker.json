@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.impl.console.CircuitBreakerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
-    "version": "4.8.6-SNAPSHOT"
+    "version": "4.8.7-SNAPSHOT"
   }
 }
 

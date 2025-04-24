@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-olingo2",
-    "version": "4.8.6-SNAPSHOT",
+    "version": "4.8.7-SNAPSHOT",
     "scheme": "olingo2",
     "extendsScheme": "",
     "syntax": "olingo2:apiName\/methodName",

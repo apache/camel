@@ -11,6 +11,6 @@
     "metadata": { "routes.language": "js" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-js-dsl",
-    "version": "4.8.6-SNAPSHOT"
+    "version": "4.8.7-SNAPSHOT"
   }
 }
