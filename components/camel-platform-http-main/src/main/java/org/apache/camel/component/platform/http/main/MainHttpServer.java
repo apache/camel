@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,13 +54,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.StartupListener;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.plugin.JolokiaPlatformHttpPlugin;
 import org.apache.camel.component.platform.http.spi.PlatformHttpPluginRegistry;
@@ -74,7 +71,6 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
-import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ReloadStrategy;
@@ -87,7 +83,6 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
-import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -456,7 +451,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         setupConsoles();
-        setupStartupSummary();
     }
 
     @Override
@@ -497,86 +491,6 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
             setupSendConsole();
         }
         // metrics will be setup in camel-micrometer-prometheus
-    }
-
-    protected void setupStartupSummary() throws Exception {
-        camelContext.addStartupListener(new StartupListener() {
-
-            private volatile Set<HttpEndpointModel> last;
-
-            private void logSummary() {
-                Set<HttpEndpointModel> endpoints = platformHttpComponent.getHttpEndpoints();
-                if (endpoints.isEmpty()) {
-                    return;
-                }
-
-                // log only if changed
-                if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
-                    LOG.info("HTTP endpoints summary");
-                    int longestEndpoint = 0;
-                    for (HttpEndpointModel u : endpoints) {
-                        String endpoint = getEndpoint(u);
-                        if (endpoint.length() > longestEndpoint) {
-                            longestEndpoint = endpoint.length();
-                        }
-                    }
-
-                    int spacing = 3;
-                    String formatTemplate = "%-" + (longestEndpoint + spacing) + "s %-8s %s";
-                    for (HttpEndpointModel u : endpoints) {
-                        String endpoint = getEndpoint(u);
-                        String formattedVerbs = "";
-                        if (u.getVerbs() != null) {
-                            formattedVerbs = "(" + u.getVerbs() + ")";
-                        }
-                        String formattedMediaTypes = "";
-                        if (u.getConsumes() != null || u.getProduces() != null) {
-                            formattedMediaTypes = String.format("(%s%s%s)",
-                                    u.getConsumes() != null ? "accept:" + u.getConsumes() : "",
-                                    u.getProduces() != null && u.getConsumes() != null ? " " : "",
-                                    u.getProduces() != null ? "produce:" + u.getProduces() : "");
-                        }
-                        LOG.info("    {}", String.format(formatTemplate, endpoint, formattedVerbs, formattedMediaTypes));
-                    }
-                }
-
-                // use a defensive copy of last known endpoints
-                last = new HashSet<>(endpoints);
-            }
-
-            private String getEndpoint(HttpEndpointModel httpEndpointModel) {
-                return "http://0.0.0.0:" + (server != null ? server.getPort() : getPort()) + httpEndpointModel.getUri();
-            }
-
-            @Override
-            public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) {
-                if (alreadyStarted) {
-                    logSummary();
-                }
-                camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
-
-                    @Override
-                    public boolean isEnabled(CamelEvent event) {
-                        return event instanceof CamelEvent.CamelContextStartedEvent
-                                || event instanceof CamelEvent.RouteReloadedEvent;
-                    }
-
-                    @Override
-                    public void notify(CamelEvent event) {
-                        // when reloading then there may be more routes in the same batch, so we only want
-                        // to log the summary at the end
-                        if (event instanceof CamelEvent.RouteReloadedEvent) {
-                            CamelEvent.RouteReloadedEvent re = (CamelEvent.RouteReloadedEvent) event;
-                            if (re.getIndex() < re.getTotal()) {
-                                return;
-                            }
-                        }
-
-                        logSummary();
-                    }
-                });
-            }
-        });
     }
 
     protected void setupStatic() {
