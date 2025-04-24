@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a parameter as being an injection point of the variables
+ * Marks a parameter as being an injection point of the variables (read-only)
  *
  * @see Exchange#getVariables()
  */

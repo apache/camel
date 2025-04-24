@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,6 +44,27 @@ final class ExchangeVariableRepository extends AbstractVariableRepository {
     void copyFrom(ExchangeVariableRepository source) {
         setVariables(source.getVariables());
         this.headers.putAll(source.headers);
+    }
+
+    @Override
+    public Map<String, Object> getVariables() {
+        Map<String, Object> answer;
+        if (headers.isEmpty()) {
+            answer = super.getVariables();
+        } else {
+            answer = new HashMap<>(super.getVariables());
+            // flatten headers
+            headers.forEach((k, v) -> {
+                answer.put("header:" + k, v);
+            });
+        }
+        return Collections.unmodifiableMap(answer);
+    }
+
+    @Override
+    public void setVariables(Map<String, Object> map) {
+        super.setVariables(map);
+        this.headers.clear();
     }
 
     @Override

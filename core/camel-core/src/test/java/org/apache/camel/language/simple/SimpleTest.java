@@ -946,7 +946,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testVariables() {
-        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().getHeaders().forEach(exchange::setVariable);
         exchange.getMessage().removeHeaders("*");
 
         Map<String, Object> variables = exchange.getVariables();
@@ -991,11 +991,11 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testVariableKeyWithSpace() {
-        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().getHeaders().forEach(exchange::setVariable);
         exchange.getMessage().removeHeaders("*");
 
         Map<String, Object> variables = exchange.getVariables();
-        variables.put("some key", "Some Value");
+        exchange.setVariable("some key", "Some Value");
         assertEquals(4, variables.size());
 
         assertExpression("${variableAs(foo,String)}", "abc");
@@ -1015,7 +1015,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testVariableAs() {
-        exchange.getVariables().putAll(exchange.getMessage().getHeaders());
+        exchange.getMessage().getHeaders().forEach(exchange::setVariable);
         exchange.getMessage().removeHeaders("*");
 
         assertExpression("${variableAs(foo,String)}", "abc");

@@ -46,6 +46,7 @@ public class VariableTest extends LanguageTestSupport {
 
     @Test
     public void testVariableHeaders() {
+        exchange.removeVariable("cheese");
         exchange.setVariable("header:myKey.foo", "abc");
         exchange.setVariable("header:myKey.bar", 123);
         exchange.setVariable("myOtherKey", "Hello Again");
@@ -58,6 +59,13 @@ public class VariableTest extends LanguageTestSupport {
         assertEquals(2, map.size());
         assertEquals("abc", map.get("foo"));
         assertEquals(123, map.get("bar"));
+
+        // getVariables should also include the headers
+        map = exchange.getVariables();
+        assertEquals(3, map.size());
+        assertEquals("Hello Again", map.get("myOtherKey"));
+        assertEquals("abc", map.get("header:myKey.foo"));
+        assertEquals(123, map.get("header:myKey.bar"));
     }
 
     @Test

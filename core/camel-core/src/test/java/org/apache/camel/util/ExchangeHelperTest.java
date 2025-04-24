@@ -158,8 +158,10 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertSame(exchange.getMessage(), map.get("response"));
         assertSame(exchange.getIn().getHeaders(), map.get("headers"));
         assertSame(exchange.getIn().getHeaders(), map.get("header"));
-        assertSame(exchange.getVariables(), map.get("variable"));
-        assertSame(exchange.getVariables(), map.get("variables"));
+        Map vars = (Map) map.get("variable");
+        assertEquals(exchange.getVariables().size(), vars.size());
+        vars = (Map) map.get("variables");
+        assertEquals(exchange.getVariables().size(), vars.size());
         assertSame(exchange.getIn().getBody(), map.get("body"));
         assertSame(exchange.getContext(), map.get("camelContext"));
     }

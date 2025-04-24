@@ -59,6 +59,8 @@ not be able to add the `otherwise` block to the outer Choice.
 
 === Propagating variables in EIPs in seda/kamelet components
 
+The `Exchange.getVariables()` now return a read-only map. Use the other APIs put/remove variables from the Exchange.
+
 The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
 will now also propagate exchange variables as well into the result (i.e. exchange properties and message headers is already being propagated).
 
