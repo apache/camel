@@ -33,7 +33,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver {
 
     private static final String ACCEPTED_STUB_NAMES
-            = "constant,exchangeProperty,header,ref,simple";
+            = "constant,exchangeProperty,header,ref,simple,variable";
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
