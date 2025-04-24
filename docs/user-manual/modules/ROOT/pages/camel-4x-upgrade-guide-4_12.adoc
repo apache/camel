@@ -31,7 +31,7 @@ will now also propagate exchange variables as well into the result (i.e. exchang
 Using type converters that has been marked to allow null via (`@Converter(allow-null = true)`) has been improved
 to allow returning `null` as a positive answer when using `convertBodyTo` EIP and `mandatoryConvertTo` or `getMandatoryBody` etc.
 
-This behaviour was present in Camel v2 and some internal optimization in Camel v3 had changed
+This behavior was present in Camel v2 and some internal optimization in Camel v3 had changed
 this to not be the case. Using type converters that can return `null` is a rare use-case, and it's not a good practice.
 
 === Java DSL
@@ -95,3 +95,10 @@ asynchronous MDN requests.
 The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
 instead of configuring `tags=a=1&b=2` then this should be configured as `tags.a=1&tags.b=2` and so forth.
 
+=== camel-main
+
+We have introduced the possibility to use a management server where to expose management endpoints (such as health, metrics, etcetera). The new server will be available by default on port `9876`. This and other several configuration can be changed using `camel.management` application properties group. In order to avoid breaking compatibility, the previous services running on business port (default `8080`) will be still running on the old port AND on the new port for a few future releases. However, you're invited to move your configuration and adopt the new `camel.management` embedded server for management services as soon as possible.
+
+=== camel-observability-services
+
+As seen in `camel-main` change, the component is now adopting the new management port to expose its services. However, it will be still possible to use also the old port to avoid introducing any breaking compatibility. Mind that this possibility will be removed in future versions.
