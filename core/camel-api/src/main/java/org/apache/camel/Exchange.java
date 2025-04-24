@@ -534,7 +534,7 @@ public interface Exchange extends VariableAware {
     /**
      * Returns the variables from the current exchange
      *
-     * @return the variables from the current exchange in a Map
+     * @return the variables from the current exchange in a Map.
      */
     Map<String, Object> getVariables();
 
