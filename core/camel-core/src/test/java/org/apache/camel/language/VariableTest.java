@@ -66,6 +66,10 @@ public class VariableTest extends LanguageTestSupport {
         assertEquals("Hello Again", map.get("myOtherKey"));
         assertEquals("abc", map.get("header:myKey.foo"));
         assertEquals(123, map.get("header:myKey.bar"));
+
+        exchange.removeVariable("header:myKey");
+        map = exchange.getVariables();
+        assertEquals(1, map.size());
     }
 
     @Test

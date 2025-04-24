@@ -26,29 +26,48 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-public class BeanWithVariablesAndBodyInject3Test extends ContextTestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+public class BeanWithVariablesAndBodyInject3Test extends ContextTestSupport {
     private final MyBean myBean = new MyBean();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .setVariable("cheese", constant("gauda"))
-                        .to("bean:myBean?method=doSomething").to("mock:finish");
+                from("direct:start").to("bean:myBean?method=doSomething").to("mock:finish");
             }
         };
     }
 
     @Test
-    public void testVariables() throws Exception {
+    public void testInOnly() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:finish");
-        end.expectedBodiesReceived("Hello 1");
+        end.expectedBodiesReceived("Hello!");
 
         sendBody("direct:start", "Test Input");
 
         assertMockEndpointsSatisfied();
+
+        assertNotNull(end.getExchanges().get(0).getIn().getBody());
+        assertEquals("Hello!", end.getExchanges().get(0).getIn().getBody());
+    }
+
+    @Test
+    public void testInOut() throws Exception {
+        MockEndpoint end = getMockEndpoint("mock:finish");
+        end.expectedBodiesReceived("Hello!");
+        end.expectedVariableReceived("out", 123);
+
+        String out = template.requestBody("direct:start", "Test Input", String.class);
+        assertEquals("Hello!", out);
+
+        assertMockEndpointsSatisfied();
+
+        assertNotNull(end.getExchanges().get(0).getIn().getBody());
+        assertEquals("Hello!", end.getExchanges().get(0).getIn().getBody());
+        assertEquals(123, end.getExchanges().get(0).getVariable("out"));
     }
 
     @Override
@@ -61,7 +80,8 @@ public class BeanWithVariablesAndBodyInject3Test extends ContextTestSupport {
     public static class MyBean {
 
         public String doSomething(@Body String body, @Variables Map<String, Object> variables) {
-            return "Hello " + variables.size();
+            variables.put("out", 123);
+            return "Hello!";
         }
     }
 }

@@ -532,9 +532,9 @@ public interface Exchange extends VariableAware {
     Object removeVariable(String name);
 
     /**
-     * Returns the variables from the current exchange (read-only)
+     * Returns the variables from the current exchange
      *
-     * @return the variables from the current exchange in a Map (read-only).
+     * @return the variables from the current exchange in a Map
      */
     Map<String, Object> getVariables();
 
