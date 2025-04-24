@@ -48,6 +48,7 @@ public class SmbComponentIT extends CamelTestSupport {
     public void testSmbRead() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(100);
+        mock.expectedHeaderValuesReceivedInAnyOrder("CamelSmbUncPath", "\\\\localhost\\data-rw\\1.txt");
 
         mock.assertIsSatisfied();
     }
