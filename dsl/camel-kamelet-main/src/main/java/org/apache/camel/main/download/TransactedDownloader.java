@@ -31,6 +31,7 @@ import org.apache.camel.spi.TransactedPolicy;
  * When using transacted then we need to download the runtime implementation
  */
 public class TransactedDownloader {
+
     private static final String[] TRANSACTED_POLICIES = new String[] {
             "PROPAGATION_REQUIRED",
             "PROPAGATION_REQUIRES_NEW",
@@ -45,7 +46,6 @@ public class TransactedDownloader {
     }
 
     public static void registerDownloadReifiers(KameletMain main) {
-
         ProcessorReifier.registerReifier(TransactedDefinition.class,
                 (route, processorDefinition) -> {
                     if (processorDefinition instanceof TransactedDefinition) {
@@ -62,9 +62,9 @@ public class TransactedDownloader {
     }
 
     private static class DummyTransactedPolicy implements TransactedPolicy {
+
         @Override
         public void beforeWrap(final Route route, final NamedNode definition) {
-
         }
 
         @Override

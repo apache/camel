@@ -126,8 +126,7 @@ public final class GitHubHelper {
                         properties.add(u);
                     } else if (routes != null) {
                         if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                                || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)
-                                || "groovy".equalsIgnoreCase(ext) || "js".equalsIgnoreCase(ext)) {
+                                || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
                             String htmlUrl = c.get("html_url").asText();
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);

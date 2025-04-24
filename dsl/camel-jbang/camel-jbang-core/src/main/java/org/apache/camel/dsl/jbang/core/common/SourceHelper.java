@@ -38,7 +38,7 @@ import org.apache.camel.util.IOHelper;
 public class SourceHelper {
 
     private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "java", "groovy", "js", "xml", "yaml" };
+            = new String[] { "java", "xml", "yaml" };
 
     public static Source resolveSource(String source) {
         List<Source> resolved = resolveSources(Collections.singletonList(source));

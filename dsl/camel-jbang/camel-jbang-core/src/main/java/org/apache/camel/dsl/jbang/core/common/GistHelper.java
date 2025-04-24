@@ -103,8 +103,7 @@ public final class GistHelper {
                     properties.add(u);
                 } else if (routes != null) {
                     if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
-                            || "yaml".equalsIgnoreCase(ext)
-                            || "groovy".equalsIgnoreCase(ext) || "js".equalsIgnoreCase(ext)) {
+                            || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
                         String rawUrl = c.get("raw_url").asText();
                         String u = asGistSingleUrl(rawUrl);
                         routes.add(u);
