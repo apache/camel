@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * Post Quantum Computing Signature and Verification component.
@@ -62,14 +63,22 @@ public class PQCEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        Security.addProvider(new BouncyCastleProvider());
-        Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastlePQCProvider());
+        }
     }
 
     @Override
     public void doStop() throws Exception {
-        Security.removeProvider("BC");
-        Security.removeProvider("BCPQC");
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) != null) {
+            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        }
+        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) != null) {
+            Security.removeProvider(BouncyCastlePQCProvider.PROVIDER_NAME);
+        }
         super.doStop();
     }
 
