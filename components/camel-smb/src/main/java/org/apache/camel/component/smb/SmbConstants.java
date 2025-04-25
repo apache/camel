@@ -81,4 +81,6 @@ public class SmbConstants {
               javaType = "org.apache.camel.component.file.GenericFileExist")
     @Deprecated
     public static final String SMB_FILE_EXISTS = "CamelSmbFileExists";
+    @Metadata(label = "consumer", description = "UNC path to the retrieved file", javaType = "String")
+    public static final String SMB_UNC_PATH = "CamelSmbUncPath";
 }

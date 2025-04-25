@@ -240,6 +240,8 @@ public class SmbOperations implements SmbFileOperations {
                     throw new GenericFileOperationFailedException(e.getMessage(), e);
                 }
             }
+
+            exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
         }
         return true;
     }
@@ -291,6 +293,8 @@ public class SmbOperations implements SmbFileOperations {
                     // store content as a file in the local work directory in the temp handle
                     java.nio.file.Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
+
+                exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
             }
         } catch (IOException e) {
 
@@ -508,6 +512,7 @@ public class SmbOperations implements SmbFileOperations {
                 SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
         InputStream is = shareFile.getInputStream();
         exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
+        exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
         return is;
     }
 
