@@ -1791,7 +1791,7 @@ public class CamelNanoLspEditor implements Editor {
         if (vsusp > 0) {
             attributes.setControlChar(ControlChar.VSUSP, vsusp);
         }
-        newAttr.setLocalFlags(EnumSet.of(LocalFlag.ICANON, LocalFlag.ECHO, LocalFlag.IEXTEN), false);
+        newAttr.setLocalFlags(EnumSet.of(LocalFlag.ICANON, LocalFlag.ECHO, LocalFlag.IEXTEN, LocalFlag.ISIG), false);
         newAttr.setInputFlags(EnumSet.of(InputFlag.IXON, InputFlag.ICRNL, InputFlag.INLCR), false);
         newAttr.setControlChar(ControlChar.VMIN, 1);
         newAttr.setControlChar(ControlChar.VTIME, 0);
