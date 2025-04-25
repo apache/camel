@@ -99,7 +99,7 @@ public class KafkaConsumer extends DefaultConsumer
         return UUID.randomUUID().toString();
     }
 
-    Properties getProps() {
+    Properties getProps(int i) {
         KafkaConfiguration configuration = endpoint.getConfiguration();
 
         Properties props = configuration.createConsumerProperties();
@@ -112,7 +112,7 @@ public class KafkaConsumer extends DefaultConsumer
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
         ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),
-                v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
+                v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, (configuration.getConsumersCount() > 1? v+"-"+i : v)));
 
         return props;
     }
@@ -157,7 +157,7 @@ public class KafkaConsumer extends DefaultConsumer
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, bridge, topic, pattern, i + "", getProps(), consumerListener);
+                    this, bridge, topic, pattern, i + "", getProps(i), consumerListener);
 
             executor.submit(task);
 

@@ -51,7 +51,7 @@ public class KafkaConsumerTest {
         when(clientFactory.getBrokers(any())).thenThrow(new IllegalArgumentException());
         final KafkaConsumer kafkaConsumer = new KafkaConsumer(endpoint, processor);
 
-        assertThrows(IllegalArgumentException.class, () -> kafkaConsumer.getProps());
+        assertThrows(IllegalArgumentException.class, () -> kafkaConsumer.getProps(0));
     }
 
     @Test
