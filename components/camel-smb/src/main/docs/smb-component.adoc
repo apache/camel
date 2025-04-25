@@ -101,6 +101,8 @@ public void configure() {
 Beware that the File object provided is not a `java.io.File` instance, but, instead a `org.apache.camel.component.smb.SmbFile` instance that extends Camel's `GenericFile`.
 Relying on the underlying implementation may make your code more susceptible to problems between version upgrades of the library
 used to implement this component.
+
+To maintain backward compatibility, a new Camel Header `CamelSmbUncPath` has been introduced that provides the full absolute path when a File is consumed from the SMB server.
 ====
 
 
