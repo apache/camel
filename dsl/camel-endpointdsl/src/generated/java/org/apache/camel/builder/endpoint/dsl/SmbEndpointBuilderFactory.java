@@ -3909,6 +3909,18 @@ public interface SmbEndpointBuilderFactory {
         public String smbFileExists() {
             return "CamelSmbFileExists";
         }
+        /**
+         * UNC path to the retrieved file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SmbUncPath}.
+         */
+        public String smbUncPath() {
+            return "CamelSmbUncPath";
+        }
     }
     static SmbEndpointBuilder endpointBuilder(String componentName, String path) {
         class SmbEndpointBuilderImpl extends AbstractEndpointBuilder implements SmbEndpointBuilder, AdvancedSmbEndpointBuilder {
