@@ -604,6 +604,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-dapr</artifactId>
+        <version>4.12.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-dataformat</artifactId>
         <version>4.12.0-SNAPSHOT</version>
       </dependency>
