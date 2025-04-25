@@ -1,0 +1,1 @@
+../../../../../components/camel-dapr/src/main/docs/dapr-component.adoc
