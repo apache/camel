@@ -308,7 +308,7 @@ public class VertxPlatformHttpRouter implements Router {
      * @return              the default port router
      */
     public static VertxPlatformHttpRouter lookup(CamelContext camelContext) {
-        return lookup(camelContext, getRouterNameFromPort(8080));
+        return lookup(camelContext, getRouterNameFromPort(VertxPlatformHttpServerConfiguration.DEFAULT_BIND_PORT));
     }
 
     public static String getRouterNameFromPort(int port) {

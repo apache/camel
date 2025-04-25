@@ -118,7 +118,7 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
 
             if (port == 0) {
                 //fallback to default
-                return 8080;
+                return VertxPlatformHttpServerConfiguration.DEFAULT_BIND_PORT;
             }
         }
 
