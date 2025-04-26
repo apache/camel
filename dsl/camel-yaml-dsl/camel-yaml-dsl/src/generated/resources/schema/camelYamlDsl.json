@@ -11297,7 +11297,7 @@
             "title" : "Library",
             "description" : "Which json library to use.",
             "default" : "Jackson",
-            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb" ]
+            "enum" : [ "Fastjson", "Gson", "Jackson", "Jsonb" ]
           },
           "moduleClassNames" : {
             "type" : "string",
