@@ -186,6 +186,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "sourceinfoStructMaker": getOrCreateConfiguration(target).setSourceinfoStructMaker(property(camelContext, java.lang.String.class, value)); return true;
         case "streamingdelayms":
         case "streamingDelayMs": getOrCreateConfiguration(target).setStreamingDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "streamingfetchsize":
+        case "streamingFetchSize": getOrCreateConfiguration(target).setStreamingFetchSize(property(camelContext, int.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -365,6 +367,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "sourceinfoStructMaker": return java.lang.String.class;
         case "streamingdelayms":
         case "streamingDelayMs": return long.class;
+        case "streamingfetchsize":
+        case "streamingFetchSize": return int.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -545,6 +549,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "sourceinfoStructMaker": return getOrCreateConfiguration(target).getSourceinfoStructMaker();
         case "streamingdelayms":
         case "streamingDelayMs": return getOrCreateConfiguration(target).getStreamingDelayMs();
+        case "streamingfetchsize":
+        case "streamingFetchSize": return getOrCreateConfiguration(target).getStreamingFetchSize();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":

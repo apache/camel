@@ -23,7 +23,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(88);
+        Set<String> props = new HashSet<>(89);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -104,6 +104,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("snapshotTablesOrderByRowCount");
         props.add("sourceinfoStructMaker");
         props.add("streamingDelayMs");
+        props.add("streamingFetchSize");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");
