@@ -1546,6 +1546,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
+         * Specifies the maximum number of rows that should be read in one go
+         * from each table while streaming. The connector will read the table
+         * contents in multiple batches of this size. Defaults to 0 which means
+         * no limit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param streamingFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder streamingFetchSize(int streamingFetchSize) {
+            doSetProperty("streamingFetchSize", streamingFetchSize);
+            return this;
+        }
+    
+        /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
@@ -1794,6 +1812,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "snapshotTablesOrderByRowCount": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotTablesOrderByRowCount((java.lang.String) value); return true;
             case "sourceinfoStructMaker": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceinfoStructMaker((java.lang.String) value); return true;
             case "streamingDelayMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setStreamingDelayMs((long) value); return true;
+            case "streamingFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setStreamingFetchSize((int) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIncludeList((java.lang.String) value); return true;
