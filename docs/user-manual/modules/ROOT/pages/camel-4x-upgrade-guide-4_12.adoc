@@ -90,6 +90,11 @@ not be able to add the `otherwise` block to the outer Choice.
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
 asynchronous MDN requests.
 
+=== camel-jackson / camel-jacksonxml
+
+The default unmarshalType has been changed from `HashMap` to `LinkedHashMap` that keeps ordering of the elements
+so they have similar order as the input document.
+
 === camel-micrometer
 
 The `tags` parameter has been _fixed_ to be multivalued and tooling friendly. So
