@@ -21,6 +21,9 @@ The package scan classes has moved from `camel-base-engine` to `camel-support` J
 
 The `ExchangeHelper.copyResults` has been improved to also copy over exchange variables from the source to the target.
 
+Removed unused `Johnzon` in `org.apache.camel.model.dataformat.JsonLibrary` enum as `camel-johnzon` is not supported
+in Camel v4. This removal also means `johnzon` was removed from XSD and YAML DSL schemas.
+
 ==== Propagating variables in EIPs in seda/kamelet components
 
 The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
