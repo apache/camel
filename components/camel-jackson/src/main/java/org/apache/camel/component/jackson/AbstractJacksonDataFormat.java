@@ -22,8 +22,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -390,11 +390,11 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     }
 
     /**
-     * Uses {@link HashMap} when unmarshalling.
+     * Uses {@link LinkedHashMap} when unmarshalling.
      */
     public void useMap() {
         setCollectionType(null);
-        setUnmarshalType(HashMap.class);
+        setUnmarshalType(LinkedHashMap.class);
     }
 
     /**

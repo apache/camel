@@ -22,8 +22,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -91,7 +91,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
      * Use the default Jackson {@link XmlMapper} and {@link Map}
      */
     public JacksonXMLDataFormat() {
-        this(HashMap.class);
+        this(LinkedHashMap.class);
     }
 
     /**
@@ -375,11 +375,11 @@ public class JacksonXMLDataFormat extends ServiceSupport
     }
 
     /**
-     * Uses {@link java.util.HashMap} when unmarshalling.
+     * Uses {@link java.util.LinkedHashMap} when unmarshalling.
      */
     public void useMap() {
         setCollectionType(null);
-        setUnmarshalType(HashMap.class);
+        setUnmarshalType(LinkedHashMap.class);
     }
 
     /**
@@ -533,7 +533,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
     @Override
     protected void doInit() throws Exception {
-        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == HashMap.class)) {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == LinkedHashMap.class)) {
             unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
         }
         if (jsonViewTypeName != null && jsonView == null) {
