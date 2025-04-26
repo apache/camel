@@ -29,7 +29,6 @@ public enum JsonLibrary {
     Fastjson("fastjson"),
     Gson("gson"),
     Jackson("jackson"),
-    Johnzon("johnzon"),
     Jsonb("jsonb");
 
     private final String dataFormatName;
