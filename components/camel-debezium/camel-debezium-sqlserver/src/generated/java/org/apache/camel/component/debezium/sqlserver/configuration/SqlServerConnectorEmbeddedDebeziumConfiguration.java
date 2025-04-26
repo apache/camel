@@ -72,6 +72,8 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private String columnPropagateSourceType;
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
     private int errorsMaxRetries = -1;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int streamingFetchSize = 0;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
     @UriParam(label = LABEL_NAME)
@@ -557,6 +559,19 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
 
     public int getErrorsMaxRetries() {
         return errorsMaxRetries;
+    }
+
+    /**
+     * Specifies the maximum number of rows that should be read in one go from
+     * each table while streaming. The connector will read the table contents in
+     * multiple batches of this size. Defaults to 0 which means no limit.
+     */
+    public void setStreamingFetchSize(int streamingFetchSize) {
+        this.streamingFetchSize = streamingFetchSize;
+    }
+
+    public int getStreamingFetchSize() {
+        return streamingFetchSize;
     }
 
     /**
@@ -1196,6 +1211,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "column.propagate.source.type", columnPropagateSourceType);
         addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
+        addPropertyIfNotNull(configBuilder, "streaming.fetch.size", streamingFetchSize);
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);

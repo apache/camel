@@ -1954,6 +1954,42 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum number of rows that should be read in one go
+         * from each table while streaming. The connector will read the table
+         * contents in multiple batches of this size. Defaults to 0 which means
+         * no limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param streamingFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder streamingFetchSize(int streamingFetchSize) {
+            doSetProperty("streamingFetchSize", streamingFetchSize);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of rows that should be read in one go
+         * from each table while streaming. The connector will read the table
+         * contents in multiple batches of this size. Defaults to 0 which means
+         * no limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         * 
+         * @param streamingFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder streamingFetchSize(String streamingFetchSize) {
+            doSetProperty("streamingFetchSize", streamingFetchSize);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
