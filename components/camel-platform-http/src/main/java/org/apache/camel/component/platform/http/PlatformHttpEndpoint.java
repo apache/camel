@@ -248,6 +248,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     public void setConsumes(String consumes) {
+        // url encoding turns + into space
+        if (consumes != null) {
+            consumes = consumes.replace(' ', '+');
+        }
         this.consumes = consumes;
     }
 
@@ -256,6 +260,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     public void setProduces(String produces) {
+        // url encoding turns + into space
+        if (produces != null) {
+            produces = produces.replace(' ', '+');
+        }
         this.produces = produces;
     }
 
