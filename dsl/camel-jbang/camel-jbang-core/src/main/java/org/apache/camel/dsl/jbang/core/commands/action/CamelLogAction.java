@@ -57,6 +57,7 @@ public class CamelLogAction extends ActionBaseCommand {
     private static final int NAME_MIN_WIDTH = 10;
 
     private static final String TIMESTAMP_MAIN = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static final String TIMESTAMP_SB = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     private CommandHelper.ReadConsoleTask waitUserTask;
 
@@ -489,15 +490,24 @@ public class CamelLogAction extends ActionBaseCommand {
         // if using spring boot then adjust the timestamp to uniform camel-main style
         String ts = StringHelper.before(line, "  ");
         if (ts != null && ts.contains("T")) {
-            ts = ts.replace('T', ' ');
-            int dot = ts.indexOf('.');
-            if (dot != -1) {
-                int pos1 = dot + 3; // skip these 6 chars
-                int pos2 = dot + 9;
-                ts = ts.substring(0, pos1) + ts.substring(pos2);
+            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_SB);
+            try {
+                // the log can be in color or not so we need to unescape always
+                sdf.parse(unescapeAnsi(ts));
+                int dot = ts.indexOf('.');
+                if (dot != -1) {
+                    int pos1 = dot + 3; // skip millis and timezone
+                    int pos2 = dot + 9;
+                    if (pos2 < ts.length()) {
+                        ts = ts.substring(0, pos1) + ts.substring(pos2);
+                        String after = StringHelper.after(line, "  ");
+                        ts = ts.replace('T', ' ');
+                        return ts + "  " + after;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
             }
-            String after = StringHelper.after(line, "  ");
-            return ts + "  " + after;
         }
         return line;
     }
