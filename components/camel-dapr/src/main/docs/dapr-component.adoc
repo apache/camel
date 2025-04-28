@@ -46,17 +46,28 @@ include::partial$component-endpoint-headers.adoc[]
 
 Camel Dapr component provides a wide range of operations on the producer side:
 
+=== 1. *invokeService*:
+Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
+
+=== 2. *state*:
+State management in Dapr allows your application to save, get and delete key-value pairs in a reliable and consistent way. For these operations `stateStore` is required.
+
+==== State Operations
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Operation |Description
-|`invokeService`  |Using service invocation, your application can reliably and securely communicate with other applications using the standard HTTP protocol. For this operation `serviceToInvoke` and `methodToInvoke` are mandatory.
+|`save` |Store or update a single key-value pair in the state store. For this operation `payload` and `key` are required.
+|`saveBulk` |Store or update multiple key-value pairs in the state store in a single operation. For this operation (List<State<?>>) `states` is a required field.
+|`get` |Retrieve the value of a specific key from the state store. For this operation `key` is a required field.
+|`getBulk` |Retrieve values for multiple keys from the state store in a single request. For this operation (List<String>) `keys` is a required field.
+|`delete` |Remove a specific key and its associated value from the state store. For this operation `key` is a required field.
+|`executeTransaction` |Execute a batch of operations (save or delete) atomically within a transaction. For this operation (List<TransactionalStateOperation<?>>) `transactions` is a required field.
 |===
 
 == Examples
 
 === Producer Operations Examples
-- `invokeService`:
-
+- `invokeService` -
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -71,5 +82,96 @@ from("direct:start")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+- `state: save` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the payload you want to save as state
+    exchange.getIn().setBody("myValue");
+  })
+  .to("dapr:state?stateOperation=save&stateStore=myStore&key=myKey")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: saveBulk` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the list of states you want to save
+    State<String> state1 = new State<>("key1", "val1", "etag1");
+    State<String> state2 = new State<>("key2", "val1", "etag2");
+    List<State<?>> states = List.of(state1, state2);
+    exchange.getMessage().setHeader(DaprConstants.STATES, states);
+  })
+  .to("dapr:state?stateOperation=saveBulk&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: get` -
+
+[source,java]
+--------------------------------------------------------------------------------
+import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.CONCURRENCY, "FIRST_WRITE");
+    exchange.getIn().setHeader(DaprConstants.CONSISTENCY, "EVENTUAL");
+  })
+  .to("dapr:state?stateOperation=get&stateStore=myStore&key=myKey")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: getBulk` -
+
+[source,java]
+--------------------------------------------------------------------------------
+import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.KEYS, List.of("key1", "key2"));
+  })
+  .to("dapr:state?stateOperation=getBulk&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: delete` -
+
+[source,java]
+--------------------------------------------------------------------------------
+import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.METADATA, Map.of("partitionKey", "myPartitionKey"));
+  })
+  .to("dapr:state?stateOperation=delete&stateStore=myStore&key=myKey")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `state: executeTransaction` -
+
+[source,java]
+--------------------------------------------------------------------------------
+import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
+    List<TransactionalStateOperation<?>> transactions = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+    exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
+  })
+  .to("dapr:state?stateOperation=executeTransaction&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
 
 include::spring-boot:partial$starter.adoc[]

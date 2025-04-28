@@ -17,6 +17,8 @@
 package org.apache.camel.component.dapr;
 
 import io.dapr.client.domain.HttpExtension;
+import io.dapr.client.domain.StateOptions.Concurrency;
+import io.dapr.client.domain.StateOptions.Consistency;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -26,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DaprConfiguration implements Cloneable {
 
-    @UriPath(label = "producer", enums = "invokeService")
+    @UriPath(label = "producer", enums = "invokeService, state")
     @Metadata(required = true)
     private DaprOperation operation;
     @UriParam(label = "producer", description = "Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint, " +
@@ -41,6 +43,21 @@ public class DaprConfiguration implements Cloneable {
                             + "Creates a minimal HttpExtension with no headers or query params. Takes precedence over verb")
     @Metadata(autowired = true)
     private HttpExtension httpExtension;
+    @UriParam(label = "producer", enums = "save, saveBulk, get, getBulk, delete, executeTransaction", defaultValue = "get",
+              description = "The state operation to perform on the state store. Required for DaprOperation.state operation")
+    private StateOperation stateOperation = StateOperation.get;
+    @UriParam(label = "producer",
+              description = "The name of the Dapr state store to interact with, defined in statestore.yaml config")
+    private String stateStore;
+    @UriParam(label = "producer", description = "The key used to identify the state object within the specified state store")
+    private String key;
+    @UriParam(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations")
+    private String eTag;
+    @UriParam(label = "producer", description = "Concurrency mode to use with state operations",
+              enums = "FIRST_WRITE, LAST_WRITE")
+    private Concurrency concurrency;
+    @UriParam(label = "producer", description = "Consistency level to use with state operations", enums = "EVENTUAL, STRONG")
+    private Consistency consistency;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -110,6 +127,85 @@ public class DaprConfiguration implements Cloneable {
 
     public void setHttpExtension(HttpExtension httpExtension) {
         this.httpExtension = httpExtension;
+    }
+
+    /**
+     * The <b>state operation</b> to perform on the state store. enums: save, saveBulk, get, getBulk, delete,
+     * executeTransaction
+     */
+    public StateOperation getStateOperation() {
+        return stateOperation;
+    }
+
+    public void setStateOperation(StateOperation stateOperation) {
+        this.stateOperation = stateOperation;
+    }
+
+    /**
+     * The name of the Dapr <b>state store</b> to interact with.
+     * <p>
+     * Required for all state management operations.
+     */
+    public String getStateStore() {
+        return stateStore;
+    }
+
+    public void setStateStore(String stateStore) {
+        this.stateStore = stateStore;
+    }
+
+    /**
+     * The key used to identify the <b>state object</b> within the specified state store.
+     * <p>
+     * Required for all state management operations.
+     */
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    /**
+     * ETag used for <b>optimistic concurrency</b> during state save or delete operations.
+     * <p>
+     * Ensures the operation is applied only if the ETag matches the current state version.
+     */
+    public String getETag() {
+        return eTag;
+    }
+
+    public void setETag(String eTag) {
+        this.eTag = eTag;
+    }
+
+    /**
+     * <b>Concurrency</b> mode to use with state operations.
+     * <p>
+     * 'FIRST_WRITE' enforces that only the first write succeeds 'LAST_WRITE' allows the latest write to overwrite
+     * previous versions
+     */
+    public Concurrency getConcurrency() {
+        return concurrency;
+    }
+
+    public void setConcurrency(Concurrency concurrency) {
+        this.concurrency = concurrency;
+    }
+
+    /**
+     * <b>Consistency</b> level to use with state operations.
+     * <p>
+     * 'EVENTUAL' allows for faster, potentially out-of-order writes 'STRONG' ensures writes are immediately visible and
+     * consistent
+     */
+    public Consistency getConsistency() {
+        return consistency;
+    }
+
+    public void setConsistency(Consistency consistency) {
+        this.consistency = consistency;
     }
 
     public DaprConfiguration copy() {
