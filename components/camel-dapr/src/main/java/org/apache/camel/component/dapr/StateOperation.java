@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.dapr;
 
-public enum DaprOperation {
-    invokeService,
-    state
+public enum StateOperation {
+    save,
+    saveBulk,
+    get,
+    getBulk,
+    delete,
+    executeTransaction
 }

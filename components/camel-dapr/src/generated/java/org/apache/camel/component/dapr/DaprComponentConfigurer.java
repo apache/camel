@@ -32,15 +32,24 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "concurrency": getOrCreateConfiguration(target).setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.dapr.DaprConfiguration.class, value)); return true;
+        case "consistency": getOrCreateConfiguration(target).setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
+        case "etag":
+        case "eTag": getOrCreateConfiguration(target).setETag(property(camelContext, java.lang.String.class, value)); return true;
         case "httpextension":
         case "httpExtension": getOrCreateConfiguration(target).setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
+        case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "methodtoinvoke":
         case "methodToInvoke": getOrCreateConfiguration(target).setMethodToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
         case "serviceToInvoke": getOrCreateConfiguration(target).setServiceToInvoke(property(camelContext, java.lang.String.class, value)); return true;
+        case "stateoperation":
+        case "stateOperation": getOrCreateConfiguration(target).setStateOperation(property(camelContext, org.apache.camel.component.dapr.StateOperation.class, value)); return true;
+        case "statestore":
+        case "stateStore": getOrCreateConfiguration(target).setStateStore(property(camelContext, java.lang.String.class, value)); return true;
         case "verb": getOrCreateConfiguration(target).setVerb(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -56,15 +65,24 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
         case "configuration": return org.apache.camel.component.dapr.DaprConfiguration.class;
+        case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
+        case "etag":
+        case "eTag": return java.lang.String.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
+        case "key": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "methodtoinvoke":
         case "methodToInvoke": return java.lang.String.class;
         case "servicetoinvoke":
         case "serviceToInvoke": return java.lang.String.class;
+        case "stateoperation":
+        case "stateOperation": return org.apache.camel.component.dapr.StateOperation.class;
+        case "statestore":
+        case "stateStore": return java.lang.String.class;
         case "verb": return java.lang.String.class;
         default: return null;
         }
@@ -76,15 +94,24 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "concurrency": return getOrCreateConfiguration(target).getConcurrency();
         case "configuration": return target.getConfiguration();
+        case "consistency": return getOrCreateConfiguration(target).getConsistency();
+        case "etag":
+        case "eTag": return getOrCreateConfiguration(target).getETag();
         case "httpextension":
         case "httpExtension": return getOrCreateConfiguration(target).getHttpExtension();
+        case "key": return getOrCreateConfiguration(target).getKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "methodtoinvoke":
         case "methodToInvoke": return getOrCreateConfiguration(target).getMethodToInvoke();
         case "servicetoinvoke":
         case "serviceToInvoke": return getOrCreateConfiguration(target).getServiceToInvoke();
+        case "stateoperation":
+        case "stateOperation": return getOrCreateConfiguration(target).getStateOperation();
+        case "statestore":
+        case "stateStore": return getOrCreateConfiguration(target).getStateStore();
         case "verb": return getOrCreateConfiguration(target).getVerb();
         default: return null;
         }

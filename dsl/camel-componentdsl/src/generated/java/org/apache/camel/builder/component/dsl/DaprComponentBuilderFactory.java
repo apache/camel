@@ -51,6 +51,22 @@ public interface DaprComponentBuilderFactory {
     interface DaprComponentBuilder extends ComponentBuilder<DaprComponent> {
     
         /**
+         * Concurrency mode to use with state operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.dapr.client.domain.StateOptions.Concurrency&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param concurrency the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder concurrency(io.dapr.client.domain.StateOptions.Concurrency concurrency) {
+            doSetProperty("concurrency", concurrency);
+            return this;
+        }
+    
+        /**
          * The component configurations.
          * 
          * The option is a:
@@ -63,6 +79,38 @@ public interface DaprComponentBuilderFactory {
          */
         default DaprComponentBuilder configuration(org.apache.camel.component.dapr.DaprConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        /**
+         * Consistency level to use with state operations.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.dapr.client.domain.StateOptions.Consistency&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param consistency the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder consistency(io.dapr.client.domain.StateOptions.Consistency consistency) {
+            doSetProperty("consistency", consistency);
+            return this;
+        }
+    
+        /**
+         * The eTag for optimistic concurrency during state save or delete
+         * operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param eTag the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder eTag(java.lang.String eTag) {
+            doSetProperty("eTag", eTag);
             return this;
         }
     
@@ -81,6 +129,22 @@ public interface DaprComponentBuilderFactory {
          */
         default DaprComponentBuilder httpExtension(io.dapr.client.domain.HttpExtension httpExtension) {
             doSetProperty("httpExtension", httpExtension);
+            return this;
+        }
+    
+        /**
+         * The key used to identify the state object within the specified state
+         * store.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder key(java.lang.String key) {
+            doSetProperty("key", key);
             return this;
         }
     
@@ -137,6 +201,41 @@ public interface DaprComponentBuilderFactory {
          */
         default DaprComponentBuilder serviceToInvoke(java.lang.String serviceToInvoke) {
             doSetProperty("serviceToInvoke", serviceToInvoke);
+            return this;
+        }
+    
+        
+        /**
+         * The state operation to perform on the state store. Required for
+         * DaprOperation.state operation.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.dapr.StateOperation&lt;/code&gt; type.
+         * 
+         * Default: get
+         * Group: producer
+         * 
+         * @param stateOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder stateOperation(org.apache.camel.component.dapr.StateOperation stateOperation) {
+            doSetProperty("stateOperation", stateOperation);
+            return this;
+        }
+    
+        /**
+         * The name of the Dapr state store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param stateStore the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder stateStore(java.lang.String stateStore) {
+            doSetProperty("stateStore", stateStore);
             return this;
         }
     
@@ -199,11 +298,17 @@ public interface DaprComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "concurrency": getOrCreateConfiguration((DaprComponent) component).setConcurrency((io.dapr.client.domain.StateOptions.Concurrency) value); return true;
             case "configuration": ((DaprComponent) component).setConfiguration((org.apache.camel.component.dapr.DaprConfiguration) value); return true;
+            case "consistency": getOrCreateConfiguration((DaprComponent) component).setConsistency((io.dapr.client.domain.StateOptions.Consistency) value); return true;
+            case "eTag": getOrCreateConfiguration((DaprComponent) component).setETag((java.lang.String) value); return true;
             case "httpExtension": getOrCreateConfiguration((DaprComponent) component).setHttpExtension((io.dapr.client.domain.HttpExtension) value); return true;
+            case "key": getOrCreateConfiguration((DaprComponent) component).setKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((DaprComponent) component).setLazyStartProducer((boolean) value); return true;
             case "methodToInvoke": getOrCreateConfiguration((DaprComponent) component).setMethodToInvoke((java.lang.String) value); return true;
             case "serviceToInvoke": getOrCreateConfiguration((DaprComponent) component).setServiceToInvoke((java.lang.String) value); return true;
+            case "stateOperation": getOrCreateConfiguration((DaprComponent) component).setStateOperation((org.apache.camel.component.dapr.StateOperation) value); return true;
+            case "stateStore": getOrCreateConfiguration((DaprComponent) component).setStateStore((java.lang.String) value); return true;
             case "verb": getOrCreateConfiguration((DaprComponent) component).setVerb((java.lang.String) value); return true;
             case "autowiredEnabled": ((DaprComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

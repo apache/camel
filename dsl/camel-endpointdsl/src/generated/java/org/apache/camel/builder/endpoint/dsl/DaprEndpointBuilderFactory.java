@@ -45,6 +45,81 @@ public interface DaprEndpointBuilderFactory {
         }
 
         /**
+         * Concurrency mode to use with state operations.
+         * 
+         * The option is a:
+         * <code>io.dapr.client.domain.StateOptions.Concurrency</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param concurrency the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder concurrency(io.dapr.client.domain.StateOptions.Concurrency concurrency) {
+            doSetProperty("concurrency", concurrency);
+            return this;
+        }
+        /**
+         * Concurrency mode to use with state operations.
+         * 
+         * The option will be converted to a
+         * <code>io.dapr.client.domain.StateOptions.Concurrency</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param concurrency the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder concurrency(String concurrency) {
+            doSetProperty("concurrency", concurrency);
+            return this;
+        }
+        /**
+         * Consistency level to use with state operations.
+         * 
+         * The option is a:
+         * <code>io.dapr.client.domain.StateOptions.Consistency</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param consistency the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder consistency(io.dapr.client.domain.StateOptions.Consistency consistency) {
+            doSetProperty("consistency", consistency);
+            return this;
+        }
+        /**
+         * Consistency level to use with state operations.
+         * 
+         * The option will be converted to a
+         * <code>io.dapr.client.domain.StateOptions.Consistency</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param consistency the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder consistency(String consistency) {
+            doSetProperty("consistency", consistency);
+            return this;
+        }
+        /**
+         * The eTag for optimistic concurrency during state save or delete
+         * operations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param eTag the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder eTag(String eTag) {
+            doSetProperty("eTag", eTag);
+            return this;
+        }
+        /**
          * HTTP method to use when invoking the service. Accepts verbs like GET,
          * POST, PUT, DELETE, etc. Creates a minimal HttpExtension with no
          * headers or query params. Takes precedence over verb.
@@ -79,6 +154,21 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
+         * The key used to identify the state object within the specified state
+         * store.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder key(String key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
          * The name of the method or route to invoke on the target service.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -105,6 +195,55 @@ public interface DaprEndpointBuilderFactory {
          */
         default DaprEndpointBuilder serviceToInvoke(String serviceToInvoke) {
             doSetProperty("serviceToInvoke", serviceToInvoke);
+            return this;
+        }
+        /**
+         * The state operation to perform on the state store. Required for
+         * DaprOperation.state operation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.dapr.StateOperation</code> type.
+         * 
+         * Default: get
+         * Group: producer
+         * 
+         * @param stateOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder stateOperation(org.apache.camel.component.dapr.StateOperation stateOperation) {
+            doSetProperty("stateOperation", stateOperation);
+            return this;
+        }
+        /**
+         * The state operation to perform on the state store. Required for
+         * DaprOperation.state operation.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.dapr.StateOperation</code> type.
+         * 
+         * Default: get
+         * Group: producer
+         * 
+         * @param stateOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder stateOperation(String stateOperation) {
+            doSetProperty("stateOperation", stateOperation);
+            return this;
+        }
+        /**
+         * The name of the Dapr state store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param stateStore the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder stateStore(String stateStore) {
+            doSetProperty("stateStore", stateStore);
             return this;
         }
         /**
@@ -208,7 +347,7 @@ public interface DaprEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The Dapr building block operation to perform with this component
-         * There are 1 enums and the value can be one of: invokeService
+         * There are 2 enums and the value can be one of: invokeService, state
          * 
          * @param path operation
          * @return the dsl builder
@@ -228,7 +367,7 @@ public interface DaprEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The Dapr building block operation to perform with this component
-         * There are 1 enums and the value can be one of: invokeService
+         * There are 2 enums and the value can be one of: invokeService, state
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -323,6 +462,133 @@ public interface DaprEndpointBuilderFactory {
          */
         public String daprHttpExtension() {
             return "CamelDaprHttpExtension";
+        }
+        /**
+         * The state operation to perform on the state store. Required for
+         * DaprOperation.state operation.
+         * 
+         * The option is a: {@code StateOperation} type.
+         * 
+         * Default: get
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprStateOperation}.
+         */
+        public String daprStateOperation() {
+            return "CamelDaprStateOperation";
+        }
+        /**
+         * The name of the Dapr state store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprStateStore}.
+         */
+        public String daprStateStore() {
+            return "CamelDaprStateStore";
+        }
+        /**
+         * The key used to identify the state object within the specified state
+         * store.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprKey}.
+         */
+        public String daprKey() {
+            return "CamelDaprKey";
+        }
+        /**
+         * The eTag for optimistic concurrency during state save or delete
+         * operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprETag}.
+         */
+        public String daprETag() {
+            return "CamelDaprETag";
+        }
+        /**
+         * Concurrency mode to use with state operations.
+         * 
+         * The option is a: {@code
+         * io.dapr.client.domain.StateOptions.Concurrency} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprConcurrency}.
+         */
+        public String daprConcurrency() {
+            return "CamelDaprConcurrency";
+        }
+        /**
+         * Consistency level to use with state operations.
+         * 
+         * The option is a: {@code
+         * io.dapr.client.domain.StateOptions.Consistency} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprConsistency}.
+         */
+        public String daprConsistency() {
+            return "CamelDaprConsistency";
+        }
+        /**
+         * Additional key-value pairs to be passed to the state store.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprMetadata}.
+         */
+        public String daprMetadata() {
+            return "CamelDaprMetadata";
+        }
+        /**
+         * List of states for bulk save operation.
+         * 
+         * The option is a: {@code List<State<?>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprStates}.
+         */
+        public String daprStates() {
+            return "CamelDaprStates";
+        }
+        /**
+         * List of keys for bulk get operation.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprKeys}.
+         */
+        public String daprKeys() {
+            return "CamelDaprKeys";
+        }
+        /**
+         * List of transactions for execute transactions state operations.
+         * 
+         * The option is a: {@code List<TransactionalStateOperation<?>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprTransactions}.
+         */
+        public String daprTransactions() {
+            return "CamelDaprTransactions";
         }
     }
     static DaprEndpointBuilder endpointBuilder(String componentName, String path) {
