@@ -160,6 +160,10 @@ public class RestEndpoint extends DefaultEndpoint {
      * of types.
      */
     public void setConsumes(String consumes) {
+        // url encoding turns + into space
+        if (consumes != null) {
+            consumes = consumes.replace(' ', '+');
+        }
         this.consumes = consumes;
     }
 
@@ -171,6 +175,10 @@ public class RestEndpoint extends DefaultEndpoint {
      * Media type such as: 'text/xml', or 'application/json' this REST service returns.
      */
     public void setProduces(String produces) {
+        // url encoding turns + into space
+        if (produces != null) {
+            produces = produces.replace(' ', '+');
+        }
         this.produces = produces;
     }
 
