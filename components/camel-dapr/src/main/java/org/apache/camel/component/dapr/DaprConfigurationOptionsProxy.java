@@ -22,6 +22,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import io.dapr.client.domain.HttpExtension;
+import io.dapr.client.domain.State;
+import io.dapr.client.domain.StateOptions.Concurrency;
+import io.dapr.client.domain.StateOptions.Consistency;
+import io.dapr.client.domain.TransactionalStateOperation;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
@@ -63,6 +67,46 @@ public class DaprConfigurationOptionsProxy {
 
     public HttpExtension getHttpExtension(final Exchange exchange) {
         return getOption(DaprExchangeHeaders::getHttpExtensionFromHeaders, configuration::getHttpExtension, exchange);
+    }
+
+    public StateOperation getStateOperation(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getStateOperationFromHeaders, configuration::getStateOperation, exchange);
+    }
+
+    public String getStateStore(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getStateStoreFromHeaders, configuration::getStateStore, exchange);
+    }
+
+    public String getKey(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getKeyFromHeaders, configuration::getKey, exchange);
+    }
+
+    public String getETag(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getETagFromHeaders, configuration::getETag, exchange);
+    }
+
+    public Concurrency getConcurrency(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getConcurrencyFromHeaders, configuration::getConcurrency, exchange);
+    }
+
+    public Consistency getConsistency(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getConsistencyFromHeaders, configuration::getConsistency, exchange);
+    }
+
+    public Map<String, String> getMetadata(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getMetadataFromHeaders, () -> null, exchange);
+    }
+
+    public List<State<?>> getStates(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getStatesFromHeaders, () -> null, exchange);
+    }
+
+    public List<String> getKeys(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getKeysFromHeaders, () -> null, exchange);
+    }
+
+    public List<TransactionalStateOperation<?>> getTransactions(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getTransactionsFromHeaders, () -> null, exchange);
     }
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {

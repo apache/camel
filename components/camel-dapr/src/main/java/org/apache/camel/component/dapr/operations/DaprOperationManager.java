@@ -31,6 +31,7 @@ public class DaprOperationManager {
     public DaprOperationManager(DaprConfigurationOptionsProxy configurationOptionsProxy) {
         this.configurationOptionsProxy = configurationOptionsProxy;
         handlerMap.put(DaprOperation.invokeService, new DaprServiceInvocationHandler(configurationOptionsProxy));
+        handlerMap.put(DaprOperation.state, new DaprStateHandler(configurationOptionsProxy));
     }
 
     public DaprOperationResponse process(Exchange exchange, DaprClient client) throws Exception {

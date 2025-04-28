@@ -3315,7 +3315,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The Dapr building block operation to perform with this component
-     * There are 1 enums and the value can be one of: invokeService
+     * There are 2 enums and the value can be one of: invokeService, state
      * 
      * @param path operation
      * @return the dsl builder
@@ -3335,7 +3335,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The Dapr building block operation to perform with this component
-     * There are 1 enums and the value can be one of: invokeService
+     * There are 2 enums and the value can be one of: invokeService, state
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

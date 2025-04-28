@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import io.dapr.client.domain.HttpExtension;
+import io.dapr.client.domain.State;
+import io.dapr.client.domain.StateOptions.Concurrency;
+import io.dapr.client.domain.StateOptions.Consistency;
+import io.dapr.client.domain.TransactionalStateOperation;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
@@ -49,6 +53,50 @@ public class DaprExchangeHeaders {
 
     public static HttpExtension getHttpExtensionFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, DaprConstants.HTTP_EXTENSION, HttpExtension.class);
+    }
+
+    public static StateOperation getStateOperationFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.STATE_OPERATION, StateOperation.class);
+    }
+
+    public static String getStateStoreFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.STATE_STORE, String.class);
+    }
+
+    public static String getKeyFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.KEY, String.class);
+    }
+
+    public static String getETagFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.E_TAG, String.class);
+    }
+
+    public static Concurrency getConcurrencyFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.CONCURRENCY, Concurrency.class);
+    }
+
+    public static Consistency getConsistencyFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.CONSISTENCY, Consistency.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> getMetadataFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.METADATA, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<State<?>> getStatesFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.STATES, List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<String> getKeysFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.KEYS, List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<TransactionalStateOperation<?>> getTransactionsFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.TRANSACTIONS, List.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {

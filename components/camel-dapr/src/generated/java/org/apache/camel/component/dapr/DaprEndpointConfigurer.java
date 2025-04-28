@@ -23,14 +23,23 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
+        case "consistency": target.getConfiguration().setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
+        case "etag":
+        case "eTag": target.getConfiguration().setETag(property(camelContext, java.lang.String.class, value)); return true;
         case "httpextension":
         case "httpExtension": target.getConfiguration().setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
+        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "methodtoinvoke":
         case "methodToInvoke": target.getConfiguration().setMethodToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
         case "serviceToInvoke": target.getConfiguration().setServiceToInvoke(property(camelContext, java.lang.String.class, value)); return true;
+        case "stateoperation":
+        case "stateOperation": target.getConfiguration().setStateOperation(property(camelContext, org.apache.camel.component.dapr.StateOperation.class, value)); return true;
+        case "statestore":
+        case "stateStore": target.getConfiguration().setStateStore(property(camelContext, java.lang.String.class, value)); return true;
         case "verb": target.getConfiguration().setVerb(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -44,14 +53,23 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
+        case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
+        case "etag":
+        case "eTag": return java.lang.String.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
+        case "key": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "methodtoinvoke":
         case "methodToInvoke": return java.lang.String.class;
         case "servicetoinvoke":
         case "serviceToInvoke": return java.lang.String.class;
+        case "stateoperation":
+        case "stateOperation": return org.apache.camel.component.dapr.StateOperation.class;
+        case "statestore":
+        case "stateStore": return java.lang.String.class;
         case "verb": return java.lang.String.class;
         default: return null;
         }
@@ -61,14 +79,23 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "concurrency": return target.getConfiguration().getConcurrency();
+        case "consistency": return target.getConfiguration().getConsistency();
+        case "etag":
+        case "eTag": return target.getConfiguration().getETag();
         case "httpextension":
         case "httpExtension": return target.getConfiguration().getHttpExtension();
+        case "key": return target.getConfiguration().getKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "methodtoinvoke":
         case "methodToInvoke": return target.getConfiguration().getMethodToInvoke();
         case "servicetoinvoke":
         case "serviceToInvoke": return target.getConfiguration().getServiceToInvoke();
+        case "stateoperation":
+        case "stateOperation": return target.getConfiguration().getStateOperation();
+        case "statestore":
+        case "stateStore": return target.getConfiguration().getStateStore();
         case "verb": return target.getConfiguration().getVerb();
         default: return null;
         }

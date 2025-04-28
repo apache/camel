@@ -39,4 +39,35 @@ public class DaprConstants {
     @Metadata(label = "producer", description = "The HttpExtension object for service invocation. Takes precedence over verb",
               javaType = "HttpExtension")
     public static final String HTTP_EXTENSION = HEADER_PREFIX + "HttpExtension";
+    @Metadata(label = "producer", description = "The state operation to perform on the state store. " +
+                                                "Required for DaprOperation.state operation",
+              javaType = "StateOperation", defaultValue = "get",
+              enums = "save, saveBulk, get, getBulk, delete, executeTransaction")
+    public static final String STATE_OPERATION = HEADER_PREFIX + "StateOperation";
+    @Metadata(label = "producer",
+              description = "The name of the Dapr state store to interact with, defined in statestore.yaml config",
+              javaType = "String")
+    public static final String STATE_STORE = HEADER_PREFIX + "StateStore";
+    @Metadata(label = "producer", description = "The key used to identify the state object within the specified state store",
+              javaType = "String")
+    public static final String KEY = HEADER_PREFIX + "Key";
+    @Metadata(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations",
+              javaType = "String")
+    public static final String E_TAG = HEADER_PREFIX + "ETag";
+    @Metadata(label = "producer", description = "Concurrency mode to use with state operations",
+              javaType = "io.dapr.client.domain.StateOptions.Concurrency")
+    public static final String CONCURRENCY = HEADER_PREFIX + "Concurrency";
+    @Metadata(label = "producer", description = "Consistency level to use with state operations",
+              javaType = "io.dapr.client.domain.StateOptions.Consistency")
+    public static final String CONSISTENCY = HEADER_PREFIX + "Consistency";
+    @Metadata(label = "producer", description = "Additional key-value pairs to be passed to the state store",
+              javaType = "Map<String, String>")
+    public static final String METADATA = HEADER_PREFIX + "Metadata";
+    @Metadata(label = "producer", description = "List of states for bulk save operation", javaType = "List<State<?>>")
+    public static final String STATES = HEADER_PREFIX + "States";
+    @Metadata(label = "producer", description = "List of keys for bulk get operation", javaType = "List<String>")
+    public static final String KEYS = HEADER_PREFIX + "Keys";
+    @Metadata(label = "producer", description = "List of transactions for execute transactions state operations",
+              javaType = "List<TransactionalStateOperation<?>>")
+    public static final String TRANSACTIONS = HEADER_PREFIX + "Transactions";
 }
