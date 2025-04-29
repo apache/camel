@@ -32,6 +32,15 @@
 
     <dependencies>
         <dependency>
+            <!--
+                Likely needed when running tests in IntelliJ
+                https://issues.apache.org/jira/browse/CAMEL-21860
+            -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>

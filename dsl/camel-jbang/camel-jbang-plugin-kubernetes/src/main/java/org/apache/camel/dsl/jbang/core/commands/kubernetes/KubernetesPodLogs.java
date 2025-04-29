@@ -138,7 +138,12 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
     }
 
     private boolean isPodTerminated(PodResource podRes) {
-        var phase = Optional.ofNullable(podRes).map(pr -> getPodPhase(pr.get())).orElse("Unknown");
+        var phase = "Unknown";
+        try {
+            phase = Optional.ofNullable(podRes).map(pr -> getPodPhase(pr.get())).orElse(phase);
+        } catch (RuntimeException ex) {
+            printer().printErr(ex);
+        }
         return "Terminated".equals(phase);
     }
 
