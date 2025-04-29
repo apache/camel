@@ -324,4 +324,36 @@ With this approach the component will use the class `org.apache.camel.component.
 
 The Spec used for the KeyPair will be, in this case, `ML-KEM-512`.
 
+== Extract Secret Key from Encapsulation for downstream usage
+
+Once you have the encapsulation you're able to decapsulate the secret key by using private key.
+
+All of this could be done to use the secret key coming from the encapsulation in the downstream route.
+
+As example you could use the secret key to dynamically instruct the CryptoDataFormat to use it, like in the following route.
+
+[source,java]
+--------------------------------------------------------------------------------
+        CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES", null);
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:encapsulate").to("pqc:keyenc?operation=generateSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("mock:encapsulate")
+                        .to("pqc:keyenc?operation=extractSecretKeyEncapsulation&symmetricKeyAlgorithm=AES")
+                        .to("pqc:keyenc?operation=extractSecretKeyFromEncapsulation&symmetricKeyAlgorithm=AES")
+                        .setHeader(CryptoDataFormat.KEY, body())
+                        .setBody(constant("Hello"))
+                        .marshal(cryptoFormat)
+                        .log("Encrypted ${body}")
+                        .to("mock:encrypted")
+                        .unmarshal(cryptoFormat)
+                        .log("Unencrypted ${body}")
+                        .to("mock:unencrypted");
+                ;
+            }
+--------------------------------------------------------------------------------
+
+This could be used to generate a secret key, protect it through Encapsulation and KEM approach and re-use it once extracted.
+
 include::spring-boot:partial$starter.adoc[]
