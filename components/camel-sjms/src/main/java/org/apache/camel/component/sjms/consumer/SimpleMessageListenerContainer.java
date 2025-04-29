@@ -244,6 +244,12 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        closeConnection(connection);
+        this.connection = null;
+    }
+
     protected void initConsumers() throws Exception {
         consumerLock.lock();
         try {
