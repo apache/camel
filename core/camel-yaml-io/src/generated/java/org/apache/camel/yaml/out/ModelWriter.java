@@ -1015,18 +1015,17 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("delay", def.getDelay(), "5000");
+        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute("typedGuard", def.getTypedGuard(), null);
         doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute("timeoutScheduledExecutorService", def.getTimeoutScheduledExecutorService(), null);
         doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
         doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
         doWriteAttribute("timeoutPoolSize", def.getTimeoutPoolSize(), "10");
         doWriteAttribute("successThreshold", def.getSuccessThreshold(), "1");
         doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute("bulkheadExecutorService", def.getBulkheadExecutorService(), null);
-        doWriteAttribute("delay", def.getDelay(), "5000");
-        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
-        doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
+        doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
         doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
     }
     protected void doWriteFaultToleranceConfigurationCommon(String name, FaultToleranceConfigurationCommon def) throws IOException {

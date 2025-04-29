@@ -110,3 +110,16 @@ We have introduced the possibility to use a management server where to expose ma
 === camel-observability-services
 
 As seen in `camel-main` change, the component is now adopting the new management port to expose its services. However, it will be still possible to use also the old port to avoid introducing any breaking compatibility. Mind that this possibility will be removed in future versions.
+
+=== camel-microprofile-fault-tolerance
+
+Some options on the `faultToleranceConfiguration` DSL have been removed:
+
+* `bulkheadExecutorService`
+* `timeoutScheduledExecutorService`
+
+They are replaced with a new option `threadOffloadExecutorService` as a general purpose custom `ExecutorService` for fault tolerance thread offloading.
+
+Similarly, there is now only a single `camel-main` configuration option for the fault tolerance `ExecutorService` named `camel.faulttolerance.threadOffloadExecutorService`.
+
+`faultToleranceConfiguration` option  `circuitBreaker` is replaced by `typedGuard` and it's `camel-main` configuration option is `camel.main.faulttolerance.typedGuard`.
