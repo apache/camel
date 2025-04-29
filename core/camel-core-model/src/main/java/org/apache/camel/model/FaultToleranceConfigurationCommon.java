@@ -27,7 +27,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
 
     @XmlAttribute
     @Metadata(label = "advanced")
-    private String circuitBreaker;
+    private String typedGuard;
     @XmlAttribute
     @Metadata(defaultValue = "5000", javaType = "java.time.Duration")
     private String delay;
@@ -50,9 +50,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String timeoutPoolSize;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
-    private String timeoutScheduledExecutorService;
-    @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String bulkheadEnabled;
     @XmlAttribute
@@ -63,13 +60,13 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     private String bulkheadWaitingTaskQueue;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
-    private String bulkheadExecutorService;
+    private String threadOffloadExecutorService;
 
     public FaultToleranceConfigurationCommon() {
     }
 
     protected FaultToleranceConfigurationCommon(FaultToleranceConfigurationCommon source) {
-        this.circuitBreaker = source.circuitBreaker;
+        this.typedGuard = source.typedGuard;
         this.delay = source.delay;
         this.successThreshold = source.successThreshold;
         this.requestVolumeThreshold = source.requestVolumeThreshold;
@@ -77,11 +74,9 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.timeoutEnabled = source.timeoutEnabled;
         this.timeoutDuration = source.timeoutDuration;
         this.timeoutPoolSize = source.timeoutPoolSize;
-        this.timeoutScheduledExecutorService = source.timeoutScheduledExecutorService;
         this.bulkheadEnabled = source.bulkheadEnabled;
         this.bulkheadMaxConcurrentCalls = source.bulkheadMaxConcurrentCalls;
-        this.bulkheadWaitingTaskQueue = source.bulkheadWaitingTaskQueue;
-        this.bulkheadExecutorService = source.bulkheadExecutorService;
+        this.threadOffloadExecutorService = source.threadOffloadExecutorService;
     }
 
     public FaultToleranceConfigurationCommon copyDefinition() {
@@ -91,16 +86,16 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     // Getter/Setter
     // -------------------------------------------------------------------------
 
-    public String getCircuitBreaker() {
-        return circuitBreaker;
+    public String getTypedGuard() {
+        return typedGuard;
     }
 
     /**
-     * Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use
-     * from the registry. When using this, then any other circuit breaker options are not in use.
+     * Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry.
+     * When using this, then any other TypedGuard circuit breaker options are not in use.
      */
-    public void setCircuitBreaker(String circuitBreaker) {
-        this.circuitBreaker = circuitBreaker;
+    public void setTypedGuard(String typedGuard) {
+        this.typedGuard = typedGuard;
     }
 
     public String getDelay() {
@@ -183,17 +178,6 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.timeoutPoolSize = timeoutPoolSize;
     }
 
-    public String getTimeoutScheduledExecutorService() {
-        return timeoutScheduledExecutorService;
-    }
-
-    /**
-     * References to a custom thread pool to use when timeout is enabled
-     */
-    public void setTimeoutScheduledExecutorService(String timeoutScheduledExecutorService) {
-        this.timeoutScheduledExecutorService = timeoutScheduledExecutorService;
-    }
-
     public String getBulkheadEnabled() {
         return bulkheadEnabled;
     }
@@ -227,14 +211,14 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
         this.bulkheadWaitingTaskQueue = bulkheadWaitingTaskQueue;
     }
 
-    public String getBulkheadExecutorService() {
-        return bulkheadExecutorService;
+    public String getThreadOffloadExecutorService() {
+        return threadOffloadExecutorService;
     }
 
     /**
-     * References to a custom thread pool to use when bulkhead is enabled.
+     * References a custom thread pool to use when offloading a guarded action to another thread.
      */
-    public void setBulkheadExecutorService(String bulkheadExecutorService) {
-        this.bulkheadExecutorService = bulkheadExecutorService;
+    public void setThreadOffloadExecutorService(String threadOffloadExecutorService) {
+        this.threadOffloadExecutorService = threadOffloadExecutorService;
     }
 }

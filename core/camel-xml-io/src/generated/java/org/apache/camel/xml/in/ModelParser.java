@@ -397,18 +397,17 @@ public class ModelParser extends BaseParser {
     protected <T extends FaultToleranceConfigurationCommon> AttributeHandler<T> faultToleranceConfigurationCommonAttributeHandler() {
         return (def, key, val) -> switch (key) {
             case "bulkheadEnabled": def.setBulkheadEnabled(val); yield true;
-            case "bulkheadExecutorService": def.setBulkheadExecutorService(val); yield true;
             case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(val); yield true;
             case "bulkheadWaitingTaskQueue": def.setBulkheadWaitingTaskQueue(val); yield true;
-            case "circuitBreaker": def.setCircuitBreaker(val); yield true;
             case "delay": def.setDelay(val); yield true;
             case "failureRatio": def.setFailureRatio(val); yield true;
             case "requestVolumeThreshold": def.setRequestVolumeThreshold(val); yield true;
             case "successThreshold": def.setSuccessThreshold(val); yield true;
+            case "threadOffloadExecutorService": def.setThreadOffloadExecutorService(val); yield true;
             case "timeoutDuration": def.setTimeoutDuration(val); yield true;
             case "timeoutEnabled": def.setTimeoutEnabled(val); yield true;
             case "timeoutPoolSize": def.setTimeoutPoolSize(val); yield true;
-            case "timeoutScheduledExecutorService": def.setTimeoutScheduledExecutorService(val); yield true;
+            case "typedGuard": def.setTypedGuard(val); yield true;
             default: yield identifiedTypeAttributeHandler().accept(def, key, val);
         };
     }

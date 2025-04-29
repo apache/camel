@@ -55,13 +55,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
-            <artifactId>microprofile-fault-tolerance-api</artifactId>
-            <version>${microprofile-fault-tolerance-version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.smallrye</groupId>
-            <artifactId>smallrye-fault-tolerance</artifactId>
+            <artifactId>smallrye-fault-tolerance-standalone</artifactId>
             <version>${smallrye-fault-tolerance-version}</version>
         </dependency>
 

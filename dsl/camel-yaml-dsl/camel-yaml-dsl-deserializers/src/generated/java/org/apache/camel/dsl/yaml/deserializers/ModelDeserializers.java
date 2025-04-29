@@ -5666,19 +5666,18 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "bulkheadEnabled", type = "boolean", description = "Whether bulkhead is enabled or not on the circuit breaker. Default is false.", displayName = "Bulkhead Enabled"),
-                    @YamlProperty(name = "bulkheadExecutorService", type = "string", description = "References to a custom thread pool to use when bulkhead is enabled.", displayName = "Bulkhead Executor Service"),
                     @YamlProperty(name = "bulkheadMaxConcurrentCalls", type = "number", defaultValue = "10", description = "Configures the max amount of concurrent calls the bulkhead will support.", displayName = "Bulkhead Max Concurrent Calls"),
                     @YamlProperty(name = "bulkheadWaitingTaskQueue", type = "number", defaultValue = "10", description = "Configures the task queue size for holding waiting tasks to be processed by the bulkhead.", displayName = "Bulkhead Waiting Task Queue"),
-                    @YamlProperty(name = "circuitBreaker", type = "string", description = "Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use.", displayName = "Circuit Breaker"),
                     @YamlProperty(name = "delay", type = "string", defaultValue = "5000", description = "Control how long the circuit breaker stays open. The default is 5 seconds.", displayName = "Delay"),
                     @YamlProperty(name = "failureRatio", type = "number", defaultValue = "50", description = "Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage.", displayName = "Failure Ratio"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "requestVolumeThreshold", type = "number", defaultValue = "20", description = "Controls the size of the rolling window used when the circuit breaker is closed", displayName = "Request Volume Threshold"),
                     @YamlProperty(name = "successThreshold", type = "number", defaultValue = "1", description = "Controls the number of trial calls which are allowed when the circuit breaker is half-open", displayName = "Success Threshold"),
+                    @YamlProperty(name = "threadOffloadExecutorService", type = "string", description = "References a custom thread pool to use when offloading a guarded action to another thread.", displayName = "Thread Offload Executor Service"),
                     @YamlProperty(name = "timeoutDuration", type = "string", defaultValue = "1000", description = "Configures the thread execution timeout. Default value is 1 second.", displayName = "Timeout Duration"),
                     @YamlProperty(name = "timeoutEnabled", type = "boolean", description = "Whether timeout is enabled or not on the circuit breaker. Default is false.", displayName = "Timeout Enabled"),
                     @YamlProperty(name = "timeoutPoolSize", type = "number", defaultValue = "10", description = "Configures the pool size of the thread pool when timeout is enabled. Default value is 10.", displayName = "Timeout Pool Size"),
-                    @YamlProperty(name = "timeoutScheduledExecutorService", type = "string", description = "References to a custom thread pool to use when timeout is enabled", displayName = "Timeout Scheduled Executor Service")
+                    @YamlProperty(name = "typedGuard", type = "string", description = "Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry. When using this, then any other TypedGuard circuit breaker options are not in use.", displayName = "Typed Guard")
             }
     )
     public static class FaultToleranceConfigurationDefinitionDeserializer extends YamlDeserializerBase<FaultToleranceConfigurationDefinition> {
@@ -5701,11 +5700,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setBulkheadEnabled(val);
                     break;
                 }
-                case "bulkheadExecutorService": {
-                    String val = asText(node);
-                    target.setBulkheadExecutorService(val);
-                    break;
-                }
                 case "bulkheadMaxConcurrentCalls": {
                     String val = asText(node);
                     target.setBulkheadMaxConcurrentCalls(val);
@@ -5714,11 +5708,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "bulkheadWaitingTaskQueue": {
                     String val = asText(node);
                     target.setBulkheadWaitingTaskQueue(val);
-                    break;
-                }
-                case "circuitBreaker": {
-                    String val = asText(node);
-                    target.setCircuitBreaker(val);
                     break;
                 }
                 case "delay": {
@@ -5746,6 +5735,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSuccessThreshold(val);
                     break;
                 }
+                case "threadOffloadExecutorService": {
+                    String val = asText(node);
+                    target.setThreadOffloadExecutorService(val);
+                    break;
+                }
                 case "timeoutDuration": {
                     String val = asText(node);
                     target.setTimeoutDuration(val);
@@ -5761,9 +5755,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setTimeoutPoolSize(val);
                     break;
                 }
-                case "timeoutScheduledExecutorService": {
+                case "typedGuard": {
                     String val = asText(node);
-                    target.setTimeoutScheduledExecutorService(val);
+                    target.setTypedGuard(val);
                     break;
                 }
                 default: {
