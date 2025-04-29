@@ -1854,11 +1854,6 @@
             "title" : "Bulkhead Enabled",
             "description" : "Whether bulkhead is enabled or not on the circuit breaker. Default is false."
           },
-          "bulkheadExecutorService" : {
-            "type" : "string",
-            "title" : "Bulkhead Executor Service",
-            "description" : "References to a custom thread pool to use when bulkhead is enabled."
-          },
           "bulkheadMaxConcurrentCalls" : {
             "type" : "number",
             "title" : "Bulkhead Max Concurrent Calls",
@@ -1870,11 +1865,6 @@
             "title" : "Bulkhead Waiting Task Queue",
             "description" : "Configures the task queue size for holding waiting tasks to be processed by the bulkhead.",
             "default" : "10"
-          },
-          "circuitBreaker" : {
-            "type" : "string",
-            "title" : "Circuit Breaker",
-            "description" : "Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use."
           },
           "delay" : {
             "type" : "string",
@@ -1905,6 +1895,11 @@
             "description" : "Controls the number of trial calls which are allowed when the circuit breaker is half-open",
             "default" : "1"
           },
+          "threadOffloadExecutorService" : {
+            "type" : "string",
+            "title" : "Thread Offload Executor Service",
+            "description" : "References a custom thread pool to use when offloading a guarded action to another thread."
+          },
           "timeoutDuration" : {
             "type" : "string",
             "title" : "Timeout Duration",
@@ -1922,10 +1917,10 @@
             "description" : "Configures the pool size of the thread pool when timeout is enabled. Default value is 10.",
             "default" : "10"
           },
-          "timeoutScheduledExecutorService" : {
+          "typedGuard" : {
             "type" : "string",
-            "title" : "Timeout Scheduled Executor Service",
-            "description" : "References to a custom thread pool to use when timeout is enabled"
+            "title" : "Typed Guard",
+            "description" : "Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry. When using this, then any other TypedGuard circuit breaker options are not in use."
           }
         }
       },

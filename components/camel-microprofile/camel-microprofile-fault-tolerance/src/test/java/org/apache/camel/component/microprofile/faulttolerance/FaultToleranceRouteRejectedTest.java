@@ -59,7 +59,7 @@ public class FaultToleranceRouteRejectedTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .circuitBreaker().id("myFaultTolerance")
+                        .circuitBreaker().id("myFaultToleranceRejectedTest")
                         .faultToleranceConfiguration().failureRatio(100).successThreshold(1).requestVolumeThreshold(1).end()
                         .process(e -> {
                             if (counter++ < 1) {

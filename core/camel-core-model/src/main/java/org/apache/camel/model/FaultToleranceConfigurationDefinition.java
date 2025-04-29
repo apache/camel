@@ -56,11 +56,11 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     // -------------------------------------------------------------------------
 
     /**
-     * Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the
-     * registry. When using this, then any other circuit breaker options are not in use.
+     * Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry.
+     * When using this, then any other TypedGuard circuit breaker options are not in use.
      */
-    public FaultToleranceConfigurationDefinition circuitBreaker(String circuitBreaker) {
-        setCircuitBreaker(circuitBreaker);
+    public FaultToleranceConfigurationDefinition typedGuard(String typedGuard) {
+        setTypedGuard(typedGuard);
         return this;
     }
 
@@ -140,14 +140,6 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * References to a custom thread pool to use when timeout is enabled
-     */
-    public FaultToleranceConfigurationDefinition timeoutScheduledExecutorService(String executorService) {
-        setTimeoutScheduledExecutorService(executorService);
-        return this;
-    }
-
-    /**
      * Whether bulkhead is enabled or not on the circuit breaker. Default is false.
      */
     public FaultToleranceConfigurationDefinition bulkheadEnabled(boolean bulkheadEnabled) {
@@ -172,10 +164,10 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * References to a custom thread pool to use when bulkhead is enabled
+     * References a custom thread pool to use when offloading a guarded action to another thread.
      */
-    public FaultToleranceConfigurationDefinition bulkheadExecutorService(String executorService) {
-        setBulkheadExecutorService(executorService);
+    public FaultToleranceConfigurationDefinition threadOffloadExecutorService(String threadOffloadExecutorService) {
+        setThreadOffloadExecutorService(threadOffloadExecutorService);
         return this;
     }
 
