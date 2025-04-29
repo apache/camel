@@ -17,8 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -78,6 +80,13 @@ public class Export extends ExportBaseCommand {
             gav = "org.example.project:%s:%s".formatted(pn, getVersion());
         }
 
+        try {
+            verifyExportFiles();
+        } catch (FileNotFoundException ex) {
+            printer().println(ex.getMessage());
+            return 1;
+        }
+
         switch (runtime) {
             case springBoot -> {
                 return export(new ExportSpringBoot(getMain()));
@@ -91,6 +100,25 @@ public class Export extends ExportBaseCommand {
             default -> {
                 printer().printErr("Unknown runtime: " + runtime);
                 return 1;
+            }
+        }
+    }
+
+    private void verifyExportFiles() throws FileNotFoundException {
+        for (var fn : files) {
+            if (fn.indexOf(':') < 0 || fn.startsWith("file:")) {
+                if (fn.startsWith("file:")) {
+                    fn = fn.substring(5);
+                    if (fn.startsWith("//")) {
+                        fn = fn.substring(2);
+                    }
+                }
+                if (fn.endsWith("/*")) {
+                    fn = fn.substring(0, fn.length() - 2);
+                }
+                if (!Paths.get(fn).toFile().exists()) {
+                    throw new FileNotFoundException("Path does not exist: " + fn);
+                }
             }
         }
     }
