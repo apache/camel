@@ -4995,12 +4995,12 @@ Configures whether cancel is called on the running future. Defaults to true. Def
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="circuitBreaker" type="xs:string">
+        <xs:attribute name="typedGuard" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the
-registry. When using this, then any other circuit breaker options are not in use.
+Refers to an existing io.smallrye.faulttolerance.api.TypedGuard instance to lookup and use from the registry. When using
+this, then any other TypedGuard circuit breaker options are not in use.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -5070,15 +5070,6 @@ Configures the pool size of the thread pool when timeout is enabled. Default val
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="timeoutScheduledExecutorService" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-References to a custom thread pool to use when timeout is enabled.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="bulkheadEnabled" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -5106,11 +5097,11 @@ Configures the task queue size for holding waiting tasks to be processed by the 
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="bulkheadExecutorService" type="xs:string">
+        <xs:attribute name="threadOffloadExecutorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-References to a custom thread pool to use when bulkhead is enabled.
+References a custom thread pool to use when offloading a guarded action to another thread.
 ]]>
             </xs:documentation>
           </xs:annotation>
