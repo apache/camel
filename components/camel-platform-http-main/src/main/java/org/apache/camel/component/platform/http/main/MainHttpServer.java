@@ -773,7 +773,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
         platformHttpComponent.addHttpEndpoint(jolokiaPath, "GET,POST", null,
-                "text/plain,application/json", null);
+                "application/json", null);
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
