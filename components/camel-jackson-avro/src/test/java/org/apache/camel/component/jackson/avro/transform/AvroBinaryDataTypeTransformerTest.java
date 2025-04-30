@@ -21,6 +21,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import org.apache.avro.NameValidator;
+import org.apache.avro.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.transform.Json;
@@ -60,8 +62,9 @@ class AvroBinaryDataTypeTransformerTest {
     void shouldHandlePojo() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        AvroSchema avroSchema
-                = Avro.mapper().schemaFrom(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
+        AvroSchema avroSchema = new AvroSchema(
+                new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                        .parse(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.getMessage().setBody(new Person("Mickey", 20));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
@@ -114,6 +117,8 @@ class AvroBinaryDataTypeTransformerTest {
     }
 
     private AvroSchema getSchema() throws IOException {
-        return Avro.mapper().schemaFrom(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
+        return new AvroSchema(
+                new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                        .parse(AvroBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
     }
 }
