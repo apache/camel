@@ -451,6 +451,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         setupConsoles();
+        setupStartupSummary();
     }
 
     @Override
@@ -1395,6 +1396,14 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                             .getMap("exception"));
         }
         ctx.end(jo.toJson());
+    }
+
+    protected void setupStartupSummary() throws Exception {
+        MainHttpServerUtil.setupStartupSummary(
+                camelContext,
+                platformHttpComponent.getHttpEndpoints(),
+                (server != null ? server.getPort() : getPort()),
+                "HTTP endpoints summary");
     }
 
 }
