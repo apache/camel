@@ -16,7 +16,26 @@
  */
 package org.apache.camel.util;
 
+import java.util.StringJoiner;
+
 public class MimeTypeHelper {
+
+    /**
+     * Sanitizes the mime types after URL encoding to convert space into plus sign.
+     *
+     * @param  types mime types such as from HTTP Accept header
+     * @return       the sanitized mime types
+     */
+    public static String sanitizeMimeType(String types) {
+        if (types != null) {
+            StringJoiner sj = new StringJoiner(",");
+            for (String part : types.split(",")) {
+                sj.add(part.trim().replace(' ', '+'));
+            }
+            types = sj.toString();
+        }
+        return types;
+    }
 
     /**
      * Probes the file name to determine the mime type (such as application/xml, text/plain).

@@ -91,7 +91,7 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals(14, created.getId());
 
         petstore.verify(
-                postRequestedFor(urlEqualTo("/api/v3/pet")).withHeader("Accept", equalTo("application/xml, application/json"))
+                postRequestedFor(urlEqualTo("/api/v3/pet")).withHeader("Accept", equalTo("application/xml,application/json"))
                         .withHeader("Content-Type", equalTo("application/xml")));
     }
 
@@ -108,7 +108,7 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-                equalTo("application/xml, application/json")));
+                equalTo("application/xml,application/json")));
     }
 
     @ParameterizedTest
@@ -124,7 +124,7 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-                equalTo("application/xml, application/json")));
+                equalTo("application/xml,application/json")));
     }
 
     @ParameterizedTest
@@ -143,7 +143,7 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(
-                getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept", equalTo("application/xml, application/json"))
+                getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept", equalTo("application/xml,application/json"))
                         .withHeader("api_key", equalTo("dolphins")));
     }
 
@@ -163,7 +163,7 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14?api_key=dolphins")).withHeader("Accept",
-                equalTo("application/xml, application/json")));
+                equalTo("application/xml,application/json")));
     }
 
     @ParameterizedTest
@@ -180,7 +180,7 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
 
         petstore.verify(
                 getRequestedFor(urlPathEqualTo("/api/v3/pet/findByStatus")).withQueryParam("status", equalTo("available"))
-                        .withHeader("Accept", equalTo("application/xml, application/json")));
+                        .withHeader("Accept", equalTo("application/xml,application/json")));
     }
 
     @Override

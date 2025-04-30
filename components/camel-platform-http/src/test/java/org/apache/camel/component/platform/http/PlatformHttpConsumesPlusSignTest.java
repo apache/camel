@@ -37,6 +37,9 @@ public class PlatformHttpConsumesPlusSignTest extends AbstractPlatformHttpTest {
                 .header("User-Agent", (String) null)
                 .when()
                 .get("/get");
+
+        PlatformHttpEndpoint phe = (PlatformHttpEndpoint) getContext().getEndpoints().iterator().next();
+        Assertions.assertEquals("application/fhir+json,text/plain", phe.getConsumes());
     }
 
     @Override
@@ -44,7 +47,7 @@ public class PlatformHttpConsumesPlusSignTest extends AbstractPlatformHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/get?consumes=application/fhir+json")
+                from("platform-http:/get?consumes=application/fhir+json, text/plain")
                         .process(e -> {
                             Assertions.assertEquals("application/fhir+json", e.getMessage().getHeader("Accept"));
                             Assertions.assertEquals("User-Agent-Camel", e.getMessage().getHeader("User-Agent"));
