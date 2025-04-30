@@ -18,6 +18,7 @@
 package org.apache.camel.component.jackson.avro.transform;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import org.apache.avro.NameValidator;
 import org.apache.avro.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.SchemaHelper;
@@ -40,7 +41,8 @@ class AvroSchemaResolverTest {
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
 
-        Schema raw = new Schema.Parser().setValidate(true).parse(this.getClass().getResourceAsStream("Person.avsc"));
+        Schema raw
+                = new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(this.getClass().getResourceAsStream("Person.avsc"));
         AvroSchema avroSchema = new AvroSchema(raw);
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.getMessage().setBody(person);
