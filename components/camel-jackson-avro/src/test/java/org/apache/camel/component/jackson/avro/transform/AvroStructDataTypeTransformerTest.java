@@ -22,6 +22,8 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import org.apache.avro.NameValidator;
+import org.apache.avro.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jackson.SchemaHelper;
 import org.apache.camel.component.jackson.transform.Json;
@@ -112,6 +114,8 @@ class AvroStructDataTypeTransformerTest {
     }
 
     private AvroSchema getSchema() throws IOException {
-        return Avro.mapper().schemaFrom(AvroStructDataTypeTransformerTest.class.getResourceAsStream("Person.avsc"));
+        return new AvroSchema(
+                new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                        .parse(AvroStructDataTypeTransformerTest.class.getResourceAsStream("Person.avsc")));
     }
 }
