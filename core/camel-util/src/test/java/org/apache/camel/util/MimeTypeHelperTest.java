@@ -24,6 +24,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class MimeTypeHelperTest {
 
     @Test
+    void testSanitizeMimeTypes() {
+        assertNull(MimeTypeHelper.sanitizeMimeType(null));
+        assertEquals("application/json", MimeTypeHelper.sanitizeMimeType("application/json"));
+        assertEquals("application/xslt+xml", MimeTypeHelper.sanitizeMimeType("application/xslt xml"));
+        assertEquals("application/xslt+xml,application/xml",
+                MimeTypeHelper.sanitizeMimeType("application/xslt xml , application/xml"));
+    }
+
+    @Test
     void testMimeType() {
         assertEquals("application/xslt+xml", MimeTypeHelper.probeMimeType("xslt"));
         assertEquals("application/json", MimeTypeHelper.probeMimeType("json"));
