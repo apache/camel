@@ -196,6 +196,10 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
             return AttributeValue.builder().n(value.toString()).build();
         }
 
+        if (value instanceof Double) {
+            return AttributeValue.builder().n(value.toString()).build();
+        }
+
         if (value instanceof Boolean) {
             return AttributeValue.builder().bool((Boolean) value).build();
         }
