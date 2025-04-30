@@ -348,6 +348,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         platformHttpComponent = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         setupConsoles();
+        setupStartupSummary();
     }
 
     @Override
@@ -495,7 +496,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // use blocking handler as the task can take longer time to complete
         info.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/info", "GET", null,
+        platformHttpComponent.addHttpManagementEndpoint("/q/info", "GET", null,
                 "application/json", null);
     }
 
@@ -569,7 +570,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         live.handler(new BlockingHandlerDecorator(handler, true));
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint(this.healthPath, "GET", null,
+        platformHttpComponent.addHttpManagementEndpoint(this.healthPath, "GET", null,
                 "application/json", null);
     }
 
@@ -586,7 +587,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint(jolokiaPath, "GET,POST", null,
+        platformHttpComponent.addHttpManagementEndpoint(jolokiaPath, "GET,POST", null,
                 "text/plain,application/json", null);
     }
 
@@ -614,7 +615,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // use blocking handler as the task can take longer time to complete
         send.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/send", "GET,POST",
+        platformHttpComponent.addHttpManagementEndpoint("/q/send", "GET,POST",
                 null, "application/json", null);
     }
 
@@ -856,7 +857,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         dev.handler(new BlockingHandlerDecorator(handler, true));
         devSub.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint("/q/dev", "GET", null,
+        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET", null,
                 "text/plain,application/json", null);
     }
 
@@ -1017,6 +1018,14 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                             .getMap("exception"));
         }
         ctx.end(jo.toJson());
+    }
+
+    protected void setupStartupSummary() throws Exception {
+        MainHttpServerUtil.setupStartupSummary(
+                camelContext,
+                platformHttpComponent.getHttpManagementEndpoints(),
+                (server != null ? server.getPort() : getPort()),
+                "HTTP Management endpoints summary");
     }
 
 }

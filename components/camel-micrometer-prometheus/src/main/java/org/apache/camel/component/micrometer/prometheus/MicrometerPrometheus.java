@@ -430,7 +430,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         if (mainServer != null && mainServer.isMetricsEnabled() && platformHttpComponent != null) {
             mainRouter = mainServer.getRouter();
             if (mainRouter != null) {
-                setupHttpScraper(mainRouter);
+                setupHttpScraper(mainRouter, false);
                 LOG.info("MicrometerPrometheus enabled with HTTP scraping on port {} on path {}",
                         mainServer.getPort(), path);
                 enabled = true;
@@ -441,8 +441,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         if (managementServer != null && managementServer.isMetricsEnabled() && platformHttpComponent != null) {
             managementRouter = managementServer.getRouter();
             if (managementRouter != null) {
-                setupHttpScraper(managementRouter);
-                LOG.info("MicrometerPrometheus enabled with HTTP scraping on port {} on path {}",
+                setupHttpScraper(managementRouter, true);
+                LOG.info("MicrometerPrometheus enabled with HTTP scraping on management port {} on path {}",
                         managementServer.getPort(), path);
                 enabled = true;
             }
@@ -480,7 +480,7 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         createdBinders.clear();
     }
 
-    protected void setupHttpScraper(VertxPlatformHttpRouter router) {
+    protected void setupHttpScraper(VertxPlatformHttpRouter router, boolean isManagementPort) {
         Route metrics = router.route(path);
         metrics.method(HttpMethod.GET);
 
@@ -507,7 +507,12 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         // use blocking handler as the task can take longer time to complete
         metrics.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpEndpoint(path, "GET",
-                null, format, null);
+        if (isManagementPort) {
+            platformHttpComponent.addHttpManagementEndpoint(path, "GET",
+                    null, format, null);
+        } else {
+            platformHttpComponent.addHttpEndpoint(path, "GET",
+                    null, format, null);
+        }
     }
 }
