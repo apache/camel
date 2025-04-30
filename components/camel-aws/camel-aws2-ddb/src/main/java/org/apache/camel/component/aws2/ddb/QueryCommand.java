@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,12 @@ public class QueryCommand extends AbstractDdbCommand {
         // Check if we have set an Index Name
         if (exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class) != null) {
             query.indexName(exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class));
+        }
+
+        //skip adding attribute-to-get from 'CamelAwsDdbAttributeNames' if the header is null or empty list.
+        if (exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES) != null &&
+                !exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES, Collection.class).isEmpty()) {
+            query.attributesToGet(determineAttributeNames());
         }
 
         QueryResponse result = ddbClient.query(query.build());

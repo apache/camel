@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ public class ScanCommand extends AbstractDdbCommand {
     public void execute() {
         ScanResponse result = ddbClient.scan(ScanRequest.builder().tableName(determineTableName()).limit(determineLimit())
                 .exclusiveStartKey(determineExclusiveStartKey())
+                .attributesToGet(determineAttributesToGet())
                 .scanFilter(determineScanFilter()).build());
 
         Map<Object, Object> tmp = new HashMap<>();
@@ -49,5 +51,10 @@ public class ScanCommand extends AbstractDdbCommand {
     @SuppressWarnings("unchecked")
     private Map<String, Condition> determineScanFilter() {
         return exchange.getIn().getHeader(Ddb2Constants.SCAN_FILTER, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection<String> determineAttributesToGet() {
+        return exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES, Collection.class);
     }
 }
