@@ -89,6 +89,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "logHttpActivity": target.setLogHttpActivity(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "multipartupload":
+        case "multipartUpload": target.setMultipartUpload(property(camelContext, boolean.class, value)); return true;
+        case "multipartuploadname":
+        case "multipartUploadName": target.setMultipartUploadName(property(camelContext, java.lang.String.class, value)); return true;
         case "oauth2cachetokens":
         case "oauth2CacheTokens": target.setOauth2CacheTokens(property(camelContext, boolean.class, value)); return true;
         case "oauth2cachedtokensdefaultexpiryseconds":
@@ -214,6 +218,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "logHttpActivity": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
+        case "multipartupload":
+        case "multipartUpload": return boolean.class;
+        case "multipartuploadname":
+        case "multipartUploadName": return java.lang.String.class;
         case "oauth2cachetokens":
         case "oauth2CacheTokens": return boolean.class;
         case "oauth2cachedtokensdefaultexpiryseconds":
@@ -340,6 +348,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "logHttpActivity": return target.isLogHttpActivity();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "multipartupload":
+        case "multipartUpload": return target.isMultipartUpload();
+        case "multipartuploadname":
+        case "multipartUploadName": return target.getMultipartUploadName();
         case "oauth2cachetokens":
         case "oauth2CacheTokens": return target.isOauth2CacheTokens();
         case "oauth2cachedtokensdefaultexpiryseconds":
