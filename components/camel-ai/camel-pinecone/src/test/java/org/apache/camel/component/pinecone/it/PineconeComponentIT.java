@@ -41,7 +41,6 @@ public class PineconeComponentIT extends CamelTestSupport {
     @Test
     @Order(1)
     public void createServerlessIndex() {
-
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
                 .withBody(
@@ -158,8 +157,7 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDb.Headers.ACTION, PineconeVectorDbAction.DELETE_INDEX)
-                .withBody(
-                        "test")
+                .withBody("test")
                 .withHeader(PineconeVectorDb.Headers.INDEX_NAME, "test-serverless-index")
                 .request(Exchange.class);
 
