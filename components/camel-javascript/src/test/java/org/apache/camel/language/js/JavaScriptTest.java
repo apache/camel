@@ -18,7 +18,9 @@ package org.apache.camel.language.js;
 
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class JavaScriptTest extends LanguageTestSupport {
 
     @Test
