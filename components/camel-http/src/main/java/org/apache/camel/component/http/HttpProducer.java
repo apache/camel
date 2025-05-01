@@ -57,10 +57,12 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.utils.URIUtils;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -705,17 +707,19 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
         Message in = exchange.getIn();
         Object body = in.getBody();
+        boolean multipart = getEndpoint().isMultipartUpload();
+        String multipartName = getEndpoint().getMultipartUploadName();
         try {
             if (body == null) {
                 return NullEntity.INSTANCE;
             } else if (body instanceof HttpEntity entity) {
                 answer = entity;
                 // special optimized for using these 3 type converters for common message payload types
-            } else if (body instanceof byte[] bytes) {
+            } else if (!multipart && body instanceof byte[] bytes) {
                 answer = HttpEntityConverter.toHttpEntity(bytes, exchange);
-            } else if (body instanceof InputStream is) {
+            } else if (!multipart && body instanceof InputStream is) {
                 answer = HttpEntityConverter.toHttpEntity(is, exchange);
-            } else if (body instanceof String content) {
+            } else if (!multipart && body instanceof String content) {
                 answer = HttpEntityConverter.toHttpEntity(content, exchange);
             }
         } catch (Exception e) {
@@ -760,7 +764,21 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                         // file based (could potentially also be a FTP file etc)
                         File file = in.getBody(File.class);
                         if (file != null) {
-                            answer = new FileEntity(file, contentType);
+                            if (contentType == null) {
+                                String type = MimeTypeHelper.probeMimeType(file.getName());
+                                if (type != null) {
+                                    contentType = ContentType.parseLenient(type);
+                                }
+                                if (contentType == null) {
+                                    contentType = ContentType.DEFAULT_BINARY;
+                                }
+                            }
+                            if (multipart) {
+                                answer = MultipartEntityBuilder.create()
+                                        .addBinaryBody(multipartName, file, contentType, file.getName()).build();
+                            } else {
+                                answer = new FileEntity(file, contentType);
+                            }
                         }
                     } else if (data instanceof String content) {
                         // be a bit careful with String as any type can most likely be converted to String
@@ -781,15 +799,27 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             contentType = ContentType.parse(contentType + ";charset=" + charset);
                         }
 
-                        answer = new StringEntity(content, contentType, false);
+                        if (multipart) {
+                            if (contentType != null) {
+                                answer = MultipartEntityBuilder.create().addTextBody(multipartName, content, contentType)
+                                        .build();
+                            } else {
+                                answer = MultipartEntityBuilder.create().addTextBody(multipartName, content).build();
+                            }
+                        } else {
+                            answer = new StringEntity(content, contentType, false);
+                        }
                     }
 
                     // fallback as input stream
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
-
-                        answer = new InputStreamEntity(is, -1, contentType);
+                        if (multipart) {
+                            answer = MultipartEntityBuilder.create().addBinaryBody(multipartName, is).build();
+                        } else {
+                            answer = new InputStreamEntity(is, -1, contentType);
+                        }
                     }
                 }
             } catch (UnsupportedEncodingException e) {

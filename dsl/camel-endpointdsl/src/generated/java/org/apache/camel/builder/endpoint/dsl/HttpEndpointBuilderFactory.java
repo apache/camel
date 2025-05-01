@@ -239,6 +239,59 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to
+         * build the form.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUpload(boolean multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to
+         * build the form.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUpload(String multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * The name of the multipart/form-data when multipartUpload is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: data
+         * Group: producer
+         * 
+         * @param multipartUploadName the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder multipartUploadName(String multipartUploadName) {
+            doSetProperty("multipartUploadName", multipartUploadName);
+            return this;
+        }
+        /**
          * Whether to skip mapping all the Camel headers as HTTP request
          * headers. If there are no data from Camel headers needed to be
          * included in the HTTP request then this can avoid parsing overhead

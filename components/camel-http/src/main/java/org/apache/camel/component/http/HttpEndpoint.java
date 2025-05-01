@@ -132,7 +132,6 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
                             + "with message multiplexing.",
               javaType = "org.apache.hc.core5.util.Timeout")
     private Timeout responseTimeout = Timeout.ofMilliseconds(0);
-
     @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
                                                          + " By default the BasicCookieStore is used which is an in-memory only cookie store."
                                                          + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
@@ -183,6 +182,12 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @UriParam(label = "producer",
               description = "To enable logging HTTP request and response. You can use a custom LoggingHttpActivityListener as httpActivityListener to control logging options.")
     private boolean logHttpActivity;
+    @UriParam(label = "producer",
+              description = "Whether to force using multipart/form-data for easy file uploads. This is only to be used for uploading the message body as a single entity form-data. For uploading multiple entries then use org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder to build the form.")
+    private boolean multipartUpload;
+    @UriParam(label = "producer", defaultValue = "data",
+              description = "The name of the multipart/form-data when multipartUpload is enabled.")
+    private String multipartUploadName = "data";
 
     public HttpEndpoint() {
     }
@@ -742,6 +747,22 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
 
     public void setLogHttpActivity(boolean logHttpActivity) {
         this.logHttpActivity = logHttpActivity;
+    }
+
+    public boolean isMultipartUpload() {
+        return multipartUpload;
+    }
+
+    public void setMultipartUpload(boolean multipartUpload) {
+        this.multipartUpload = multipartUpload;
+    }
+
+    public String getMultipartUploadName() {
+        return multipartUploadName;
+    }
+
+    public void setMultipartUploadName(String multipartUploadName) {
+        this.multipartUploadName = multipartUploadName;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")
