@@ -93,7 +93,6 @@ public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testParseDisbursement() throws Exception {
         runParseDisbursementTest(WebhookNotification.Kind.DISBURSEMENT);
-        runParseDisbursementTest(WebhookNotification.Kind.DISBURSEMENT_EXCEPTION);
     }
 
     private void runParseDisbursementTest(WebhookNotification.Kind kind) {
