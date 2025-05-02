@@ -38,7 +38,6 @@ public class MerchantAccountGatewayEndpointConfigurationConfigurer extends org.a
         map.put("ProxyHost", java.lang.String.class);
         map.put("ProxyPort", java.lang.Integer.class);
         map.put("PublicKey", java.lang.String.class);
-        map.put("Request", com.braintreegateway.MerchantAccountRequest.class);
         ALL_OPTIONS = map;
     }
 
@@ -75,7 +74,6 @@ public class MerchantAccountGatewayEndpointConfigurationConfigurer extends org.a
         case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "publickey":
         case "publicKey": target.setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "request": target.setRequest(property(camelContext, com.braintreegateway.MerchantAccountRequest.class, value)); return true;
         default: return false;
         }
     }
@@ -117,7 +115,6 @@ public class MerchantAccountGatewayEndpointConfigurationConfigurer extends org.a
         case "proxyPort": return java.lang.Integer.class;
         case "publickey":
         case "publicKey": return java.lang.String.class;
-        case "request": return com.braintreegateway.MerchantAccountRequest.class;
         default: return null;
         }
     }
@@ -155,7 +152,6 @@ public class MerchantAccountGatewayEndpointConfigurationConfigurer extends org.a
         case "proxyPort": return target.getProxyPort();
         case "publickey":
         case "publicKey": return target.getPublicKey();
-        case "request": return target.getRequest();
         default: return null;
         }
     }

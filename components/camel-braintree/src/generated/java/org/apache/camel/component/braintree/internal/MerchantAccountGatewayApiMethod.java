@@ -23,11 +23,6 @@ public enum MerchantAccountGatewayApiMethod implements ApiMethod {
         com.braintreegateway.PaginatedCollection.class,
         "all"),
 
-    CREATE(
-        com.braintreegateway.Result.class,
-        "create",
-        arg("request", com.braintreegateway.MerchantAccountRequest.class)),
-
     CREATE_FOR_CURRENCY(
         com.braintreegateway.Result.class,
         "createForCurrency",
@@ -41,13 +36,7 @@ public enum MerchantAccountGatewayApiMethod implements ApiMethod {
     FIND(
         com.braintreegateway.MerchantAccount.class,
         "find",
-        arg("id", String.class)),
-
-    UPDATE(
-        com.braintreegateway.Result.class,
-        "update",
-        arg("id", String.class),
-        arg("request", com.braintreegateway.MerchantAccountRequest.class));
+        arg("id", String.class));
 
     private final ApiMethod apiMethod;
 
