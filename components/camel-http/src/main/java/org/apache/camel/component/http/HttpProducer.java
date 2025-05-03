@@ -41,7 +41,7 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.http.helper.HttpMethodHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.base.cookie.CookieHandler;
@@ -760,7 +760,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             HttpHelper.writeObjectToStream(bos, obj);
                             answer = new ByteArrayEntity(bos.toByteArray(), HttpConstants.JAVA_SERIALIZED_OBJECT);
                         }
-                    } else if (data instanceof File || data instanceof GenericFile) {
+                    } else if (data instanceof File || data instanceof WrappedFile<?>) {
                         // file based (could potentially also be a FTP file etc)
                         File file = in.getBody(File.class);
                         if (file != null) {

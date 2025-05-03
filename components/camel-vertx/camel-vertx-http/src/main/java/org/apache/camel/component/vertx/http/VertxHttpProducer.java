@@ -17,6 +17,9 @@
 package org.apache.camel.component.vertx.http;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -33,9 +36,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.vertx.common.VertxBufferConverter;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_FORM_URLENCODED;
@@ -72,28 +77,55 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                 request.send(resultHandler);
             } else {
                 String contentType = MessageHelper.getContentType(message);
+                boolean multipart = getEndpoint().getConfiguration().isMultipartUpload();
+                String multipartName = getEndpoint().getConfiguration().getMultipartUploadName();
 
-                // Handle the request body payload
-                if (body instanceof MultiMap) {
-                    request.sendForm((MultiMap) body, resultHandler);
-                } else if (body instanceof MultipartForm) {
-                    request.sendMultipartForm((MultipartForm) body, resultHandler);
-                } else if (body instanceof ReadStream) {
-                    request.sendStream((ReadStream<Buffer>) body, resultHandler);
-                } else if (body instanceof String) {
+                // Handle vertx specific body first
+                if (body instanceof MultiMap mm) {
+                    request.sendForm(mm, resultHandler);
+                    return false;
+                } else if (body instanceof MultipartForm mf) {
+                    request.sendMultipartForm(mf, resultHandler);
+                    return false;
+                } else if (body instanceof ReadStream rs) {
+                    request.sendStream(rs, resultHandler);
+                    return false;
+                } else if (body instanceof Buffer buf) {
+                    request.sendBuffer(buf, resultHandler);
+                    return false;
+                }
+
+                if (body instanceof File || body instanceof WrappedFile<?>) {
+                    // file based (could potentially also be a FTP file etc)
+                    File file = message.getBody(File.class);
+                    if (file != null) {
+                        try (InputStream is = new FileInputStream(file)) {
+                            Buffer buf = VertxBufferConverter.toBuffer(is);
+                            if (multipart) {
+                                String type = MimeTypeHelper.probeMimeType(file.getName());
+                                if (type == null) {
+                                    type = "application/octet-stream"; // default binary
+                                }
+                                MultipartForm form
+                                        = MultipartForm.create().binaryFileUpload(multipartName, file.getName(), buf, type);
+                                request.sendMultipartForm(form, resultHandler);
+                            } else {
+                                request.sendBuffer(buf, resultHandler);
+                            }
+                        }
+                    }
+                } else if (body instanceof String str) {
                     // Try to extract URL encoded form data from the message body
                     if (CONTENT_TYPE_FORM_URLENCODED.equals(contentType)) {
                         MultiMap map = MultiMap.caseInsensitiveMultiMap();
-                        Map<String, Object> formParams = URISupport.parseQuery((String) body);
+                        Map<String, Object> formParams = URISupport.parseQuery(str);
                         formParams.forEach((key, o) -> map.add(key, String.valueOf(o)));
                         request.sendForm(map, resultHandler);
                     } else {
                         // Fallback to send as Buffer
-                        Buffer buffer = VertxBufferConverter.toBuffer((String) body, exchange);
+                        Buffer buffer = VertxBufferConverter.toBuffer(str, exchange);
                         request.sendBuffer(buffer, resultHandler);
                     }
-                } else if (body instanceof Buffer) {
-                    request.sendBuffer((Buffer) body, resultHandler);
                 } else {
                     // Handle x-java-serialized-object Content-Type
                     if (CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
@@ -101,7 +133,6 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                             throw new CamelExchangeException(
                                     "Content-type " + CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
                         }
-
                         // Send a serialized Java object message body
                         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                             Serializable serializable = message.getMandatoryBody(Serializable.class);

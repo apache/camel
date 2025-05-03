@@ -39,6 +39,10 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "httpMethod": target.getConfiguration().setHttpMethod(property(camelContext, io.vertx.core.http.HttpMethod.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "multipartupload":
+        case "multipartUpload": target.getConfiguration().setMultipartUpload(property(camelContext, boolean.class, value)); return true;
+        case "multipartuploadname":
+        case "multipartUploadName": target.getConfiguration().setMultipartUploadName(property(camelContext, java.lang.String.class, value)); return true;
         case "okstatuscoderange":
         case "okStatusCodeRange": target.getConfiguration().setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -91,6 +95,10 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "httpMethod": return io.vertx.core.http.HttpMethod.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "multipartupload":
+        case "multipartUpload": return boolean.class;
+        case "multipartuploadname":
+        case "multipartUploadName": return java.lang.String.class;
         case "okstatuscoderange":
         case "okStatusCodeRange": return java.lang.String.class;
         case "proxyhost":
@@ -144,6 +152,10 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "httpMethod": return target.getConfiguration().getHttpMethod();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "multipartupload":
+        case "multipartUpload": return target.getConfiguration().isMultipartUpload();
+        case "multipartuploadname":
+        case "multipartUploadName": return target.getConfiguration().getMultipartUploadName();
         case "okstatuscoderange":
         case "okStatusCodeRange": return target.getConfiguration().getOkStatusCodeRange();
         case "proxyhost":
