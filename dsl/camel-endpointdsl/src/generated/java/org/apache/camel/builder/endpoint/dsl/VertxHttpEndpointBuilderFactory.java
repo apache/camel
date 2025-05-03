@@ -176,6 +176,57 @@ public interface VertxHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * io.vertx.ext.web.multipart.MultipartForm to build the form.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder multipartUpload(boolean multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * Whether to force using multipart/form-data for easy file uploads.
+         * This is only to be used for uploading the message body as a single
+         * entity form-data. For uploading multiple entries then use
+         * io.vertx.ext.web.multipart.MultipartForm to build the form.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param multipartUpload the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder multipartUpload(String multipartUpload) {
+            doSetProperty("multipartUpload", multipartUpload);
+            return this;
+        }
+        /**
+         * The name of the multipart/form-data when multipartUpload is enabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: data
+         * Group: producer
+         * 
+         * @param multipartUploadName the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder multipartUploadName(String multipartUploadName) {
+            doSetProperty("multipartUploadName", multipartUploadName);
+            return this;
+        }
+        /**
          * The status codes which are considered a success response. The values
          * are inclusive. Multiple ranges can be defined, separated by comma,
          * e.g. 200-204,209,301-304. Each range must be a single number or
