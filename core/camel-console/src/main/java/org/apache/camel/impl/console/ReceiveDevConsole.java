@@ -262,7 +262,7 @@ public class ReceiveDevConsole extends AbstractDevConsole {
 
     private void addMessage(Exchange exchange) {
         JsonObject json
-                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), false, false, true, true, true, true, bodyMaxChars);
+                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), true, true, true, true, true, true, bodyMaxChars);
         json.put("uid", uuid.incrementAndGet());
         json.put("endpointUri", exchange.getFromEndpoint().toString());
         json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());

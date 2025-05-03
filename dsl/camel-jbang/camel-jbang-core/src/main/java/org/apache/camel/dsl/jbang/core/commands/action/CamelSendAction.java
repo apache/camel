@@ -72,27 +72,31 @@ public class CamelSendAction extends ActionBaseCommand {
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in traced messages")
+                        description = "Show exchange properties from response message (InOut)")
     boolean showExchangeProperties;
 
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
+                        description = "Show exchange variables from response message (InOut)")
+    boolean showExchangeVariables;
+
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in traced messages")
+                        description = "Show message headers from response message (InOut)")
     boolean showHeaders = true;
 
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in traced messages")
+                        description = "Show message body from response message (InOut)")
     boolean showBody = true;
 
     @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
+    @CommandLine.Option(names = { "--pretty" },
+                        description = "Pretty print response message body (InOut) when using JSon or XML format")
+    boolean pretty;
+
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
-
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
-    boolean pretty;
 
     private volatile long pid;
 
@@ -172,6 +176,9 @@ public class CamelSendAction extends ActionBaseCommand {
                 if (!showExchangeProperties && message != null) {
                     message.remove("exchangeProperties");
                 }
+                if (!showExchangeVariables && message != null) {
+                    message.remove("exchangeVariables");
+                }
                 if (!showHeaders && message != null) {
                     message.remove("headers");
                 }
@@ -186,6 +193,7 @@ public class CamelSendAction extends ActionBaseCommand {
                     tableHelper.setPretty(pretty);
                     tableHelper.setLoggingColor(loggingColor);
                     tableHelper.setShowExchangeProperties(showExchangeProperties);
+                    tableHelper.setShowExchangeVariables(showExchangeVariables);
                     String table = tableHelper.getDataAsTable(exchangeId, mep, jo, null, message, cause);
                     printer().println(table);
                 }
