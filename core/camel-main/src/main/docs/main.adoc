@@ -294,7 +294,7 @@ The camel.trace supports 14 options, which are listed below.
 | *camel.trace.standby* | To set the tracer in standby mode, where the tracer will be installed by not automatic enabled. The tracer can then later be enabled explicit from Java, JMX or tooling. | false | boolean
 | *camel.trace.traceFilter* | Filter for tracing messages |  | String
 | *camel.trace.tracePattern* | Filter for tracing by route or node id |  | String
-| *camel.trace.traceRests* | Whether to trace routes that is created from Rest DSL. | false | boolean
+| *camel.trace.traceRests* | Whether to trace routes that is created from Rest DSL. | true | boolean
 | *camel.trace.traceTemplates* | Whether to trace routes that is created from route templates or kamelets. | false | boolean
 |===
 

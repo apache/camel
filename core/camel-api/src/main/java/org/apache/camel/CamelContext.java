@@ -1256,6 +1256,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean isBacklogTracingTemplates();
 
     /**
+     * Whether backlog tracing should trace details from rest-dsl.
+     */
+    void setBacklogTracingRests(boolean backlogTracingRests);
+
+    /**
+     * Whether backlog tracing should trace details from rest-dsl.
+     */
+    boolean isBacklogTracingRests();
+
+    /**
      * Gets the current {@link UuidGenerator}
      *
      * @return the uuidGenerator
@@ -1462,6 +1472,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * verbosity of tracing when using many route templates, and allow to focus on tracing your own Camel routes only.
      */
     boolean isTracingTemplates();
+
+    /**
+     * Whether tracing should trace details from rest-dsl.
+     */
+    void setTracingRests(boolean tracingRests);
+
+    /**
+     * Whether tracing should trace details from rest-dsl.
+     */
+    boolean isTracingRests();
 
     /**
      * If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates)
