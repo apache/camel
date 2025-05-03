@@ -247,9 +247,11 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean backlogTrace = Boolean.FALSE;
     private Boolean backlogTraceStandby = Boolean.FALSE;
     private Boolean backlogTraceTemplates = Boolean.FALSE;
+    private Boolean backlogTraceRests = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean traceStandby = Boolean.FALSE;
     private Boolean traceTemplates = Boolean.FALSE;
+    private Boolean traceRests = Boolean.TRUE;
     private String tracePattern;
     private String tracingLoggingFormat;
     private Boolean modeline = Boolean.FALSE;
@@ -4031,6 +4033,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setTracingRests(boolean tracingRests) {
+        this.traceRests = tracingRests;
+    }
+
+    @Override
+    public boolean isTracingRests() {
+        return traceRests != null && traceRests;
+    }
+
+    @Override
     public void setBacklogTracingTemplates(boolean backlogTracingTemplates) {
         this.backlogTraceTemplates = backlogTracingTemplates;
     }
@@ -4038,6 +4050,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public boolean isBacklogTracingTemplates() {
         return backlogTraceTemplates != null && backlogTraceTemplates;
+    }
+
+    @Override
+    public boolean isBacklogTracingRests() {
+        return backlogTraceRests != null && backlogTraceRests;
+    }
+
+    @Override
+    public void setBacklogTracingRests(boolean backlogTracingRests) {
+        this.backlogTraceRests = backlogTracingRests;
     }
 
     @Override

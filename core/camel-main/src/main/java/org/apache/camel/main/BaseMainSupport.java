@@ -2169,6 +2169,7 @@ public abstract class BaseMainSupport extends BaseService {
         camelContext.setBacklogTracing(config.isEnabled());
         camelContext.setBacklogTracingStandby(config.isStandby());
         camelContext.setBacklogTracingTemplates(config.isTraceTemplates());
+        camelContext.setBacklogTracingRests(config.isTraceRests());
 
         BacklogTracer tracer = org.apache.camel.impl.debugger.BacklogTracer.createTracer(camelContext);
         tracer.setEnabled(config.isEnabled());
