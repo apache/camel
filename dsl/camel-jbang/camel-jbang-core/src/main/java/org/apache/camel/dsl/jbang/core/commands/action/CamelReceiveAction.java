@@ -130,6 +130,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
     String[] grep;
 
+    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
+                        description = "Show exchange properties in received messages")
+    boolean showExchangeProperties;
+
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
+                        description = "Show exchange variables in received messages")
+    boolean showExchangeVariables;
+
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in received messages")
     boolean showHeaders = true;
@@ -585,11 +593,18 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     row.message = jo.getMap("message");
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
-                    row.message.remove("exchangeProperties");
                     if (onlyBody) {
+                        row.message.remove("exchangeProperties");
+                        row.message.remove("exchangeVariables");
                         row.message.remove("headers");
                         row.message.remove("messageType");
                     } else {
+                        if (!showExchangeProperties) {
+                            row.message.remove("exchangeProperties");
+                        }
+                        if (!showExchangeVariables) {
+                            row.message.remove("exchangeVariables");
+                        }
                         if (!showHeaders) {
                             row.message.remove("headers");
                         }

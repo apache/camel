@@ -171,10 +171,10 @@ public class SendDevConsole extends AbstractDevConsole {
             sb.append("\n\n");
         }
         if (out != null && (poll || "InOut".equals(exchangePattern))) {
-            sb.append("\n    Response Message:\n");
+            sb.append("\n    Response Message:\n\n");
             int maxChars = Integer.parseInt((String) options.getOrDefault(BODY_MAX_CHARS, "" + bodyMaxChars));
             String json
-                    = MessageHelper.dumpAsJSon(out.getMessage(), false, false, true, 2, true, true, true,
+                    = MessageHelper.dumpAsJSon(out.getMessage(), true, true, true, 2, true, true, true,
                             maxChars, true);
             sb.append(json);
             sb.append("\n");
@@ -332,7 +332,8 @@ public class SendDevConsole extends AbstractDevConsole {
 
     private static boolean isCustomHeader(String key) {
         return !BODY.equals(key) && !BODY_MAX_CHARS.equals(key) && !POLL.equals(key) && !POLL_TIMEOUT.equals(key)
-                && !EXCHANGE_PATTERN.equals(key) && !ENDPOINT.equals(key);
+                && !EXCHANGE_PATTERN.equals(key) && !ENDPOINT.equals(key)
+                && !"CamelHttpPath".equals(key); // do not include ourself /q/dev/send
     }
 
 }
