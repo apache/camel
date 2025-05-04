@@ -6,7 +6,7 @@
 :since: 4.12
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: dapr
 
@@ -64,6 +64,14 @@ State management in Dapr allows your application to save, get and delete key-val
 |`executeTransaction` |Execute a batch of operations (save or delete) atomically within a transaction. For this operation (List<TransactionalStateOperation<?>>) `transactions` is a required field.
 |===
 
+=== 2. *pubSub*:
+Dapr’s publish-subscribe (Pub/Sub) building block enables asynchronous, event-driven communication between microservices. For this operation, the pubSubName and topic are required.
+
+=== Dapr Consumer operations
+The Dapr Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
+
+To configure a consumer, the pubSubName and topic must be provided. Alternatively, a preconfigured DaprPreviewClient can be registered in the Camel registry to allow the consumer to reuse it instead of creating a new one internally.
+
 == Examples
 
 === Producer Operations Examples
@@ -115,7 +123,7 @@ from("direct:start")
 
 [source,java]
 --------------------------------------------------------------------------------
-import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
     // section to learn about the headers that can be set
@@ -131,7 +139,7 @@ import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
 
 [source,java]
 --------------------------------------------------------------------------------
-import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
     // section to learn about the headers that can be set
@@ -146,7 +154,7 @@ import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
 
 [source,java]
 --------------------------------------------------------------------------------
-import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
     // section to learn about the headers that can be set
@@ -161,7 +169,7 @@ import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
 
 [source,java]
 --------------------------------------------------------------------------------
-import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
+from("direct:start")
   .process(exchange -> {
     // set the header you want the producer to evaluate, refer to the previous
     // section to learn about the headers that can be set
@@ -171,6 +179,32 @@ import org.apache.camel.component.dapr.DaprConstants;from("direct:start")
     exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
   })
   .to("dapr:state?stateOperation=executeTransaction&stateStore=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `pubSub` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.CONTENT_TYPE, "application/json");
+  })
+  .to("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+
+=== Consumer Operations Examples
+- `pubSub` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+  .log("Received message from Dapr pubsub: ${body}")
   .to("mock:result");
 --------------------------------------------------------------------------------
 

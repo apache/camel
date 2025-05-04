@@ -18,5 +18,6 @@ package org.apache.camel.component.dapr;
 
 public enum DaprOperation {
     invokeService,
-    state
+    state,
+    pubSub
 }
