@@ -76,6 +76,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
         localLog.info("Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
@@ -85,7 +86,6 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
         localLog.info("Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
 
         synchronized (subscribers) {
@@ -105,6 +105,8 @@ public class GooglePubsubConsumer extends DefaultConsumer {
             }
         }
         executor = null;
+
+        super.doStop();
     }
 
     private void safeCancelSynchronousPullResponses() {
