@@ -23,10 +23,18 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
         case "consistency": target.getConfiguration().setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
+        case "contenttype":
+        case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "etag":
         case "eTag": target.getConfiguration().setETag(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "httpextension":
         case "httpExtension": target.getConfiguration().setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -34,12 +42,17 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "methodtoinvoke":
         case "methodToInvoke": target.getConfiguration().setMethodToInvoke(property(camelContext, java.lang.String.class, value)); return true;
+        case "previewclient":
+        case "previewClient": target.getConfiguration().setPreviewClient(property(camelContext, io.dapr.client.DaprPreviewClient.class, value)); return true;
+        case "pubsubname":
+        case "pubSubName": target.getConfiguration().setPubSubName(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
         case "serviceToInvoke": target.getConfiguration().setServiceToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "stateoperation":
         case "stateOperation": target.getConfiguration().setStateOperation(property(camelContext, org.apache.camel.component.dapr.StateOperation.class, value)); return true;
         case "statestore":
         case "stateStore": target.getConfiguration().setStateStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "topic": target.getConfiguration().setTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "verb": target.getConfiguration().setVerb(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -47,16 +60,24 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"httpExtension"};
+        return new String[]{"httpExtension", "previewClient"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
         case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
         case "etag":
         case "eTag": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
         case "key": return java.lang.String.class;
@@ -64,12 +85,17 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "methodtoinvoke":
         case "methodToInvoke": return java.lang.String.class;
+        case "previewclient":
+        case "previewClient": return io.dapr.client.DaprPreviewClient.class;
+        case "pubsubname":
+        case "pubSubName": return java.lang.String.class;
         case "servicetoinvoke":
         case "serviceToInvoke": return java.lang.String.class;
         case "stateoperation":
         case "stateOperation": return org.apache.camel.component.dapr.StateOperation.class;
         case "statestore":
         case "stateStore": return java.lang.String.class;
+        case "topic": return java.lang.String.class;
         case "verb": return java.lang.String.class;
         default: return null;
         }
@@ -79,10 +105,18 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrency": return target.getConfiguration().getConcurrency();
         case "consistency": return target.getConfiguration().getConsistency();
+        case "contenttype":
+        case "contentType": return target.getConfiguration().getContentType();
         case "etag":
         case "eTag": return target.getConfiguration().getETag();
+        case "exceptionhandler":
+        case "exceptionHandler": return target.getExceptionHandler();
+        case "exchangepattern":
+        case "exchangePattern": return target.getExchangePattern();
         case "httpextension":
         case "httpExtension": return target.getConfiguration().getHttpExtension();
         case "key": return target.getConfiguration().getKey();
@@ -90,12 +124,17 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "methodtoinvoke":
         case "methodToInvoke": return target.getConfiguration().getMethodToInvoke();
+        case "previewclient":
+        case "previewClient": return target.getConfiguration().getPreviewClient();
+        case "pubsubname":
+        case "pubSubName": return target.getConfiguration().getPubSubName();
         case "servicetoinvoke":
         case "serviceToInvoke": return target.getConfiguration().getServiceToInvoke();
         case "stateoperation":
         case "stateOperation": return target.getConfiguration().getStateOperation();
         case "statestore":
         case "stateStore": return target.getConfiguration().getStateStore();
+        case "topic": return target.getConfiguration().getTopic();
         case "verb": return target.getConfiguration().getVerb();
         default: return null;
         }

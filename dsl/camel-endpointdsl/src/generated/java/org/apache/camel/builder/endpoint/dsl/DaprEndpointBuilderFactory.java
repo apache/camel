@@ -35,15 +35,273 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface DaprEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint for the Dapr component.
+     * Builder for endpoint consumers for the Dapr component.
      */
-    public interface DaprEndpointBuilder
+    public interface DaprEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default AdvancedDaprEndpointConsumerBuilder advanced() {
+            return (AdvancedDaprEndpointConsumerBuilder) this;
+        }
+        /**
+         * The contentType for the Pub/Sub component to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder contentType(String contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+        /**
+         * The name of the Dapr Pub/Sub component to use. This identifies which
+         * underlying messaging system Dapr will interact with for publishing or
+         * subscribing to events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param pubSubName the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder pubSubName(String pubSubName) {
+            doSetProperty("pubSubName", pubSubName);
+            return this;
+        }
+        /**
+         * The name of the topic to subscribe to. The topic must exist in the
+         * Pub/Sub component configured under the given pubsubName.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topic the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder topic(String topic) {
+            doSetProperty("topic", topic);
+            return this;
+        }
+        /**
+         * The client to consume messages by the consumer.
+         * 
+         * The option is a: <code>io.dapr.client.DaprPreviewClient</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param previewClient the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder previewClient(io.dapr.client.DaprPreviewClient previewClient) {
+            doSetProperty("previewClient", previewClient);
+            return this;
+        }
+        /**
+         * The client to consume messages by the consumer.
+         * 
+         * The option will be converted to a
+         * <code>io.dapr.client.DaprPreviewClient</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param previewClient the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder previewClient(String previewClient) {
+            doSetProperty("previewClient", previewClient);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the Dapr component.
+     */
+    public interface AdvancedDaprEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default DaprEndpointConsumerBuilder basic() {
+            return (DaprEndpointConsumerBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDaprEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDaprEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDaprEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDaprEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDaprEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDaprEndpointConsumerBuilder exchangePattern(String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the Dapr component.
+     */
+    public interface DaprEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        default AdvancedDaprEndpointBuilder advanced() {
-            return (AdvancedDaprEndpointBuilder) this;
+        default AdvancedDaprEndpointProducerBuilder advanced() {
+            return (AdvancedDaprEndpointProducerBuilder) this;
         }
 
+        /**
+         * The contentType for the Pub/Sub component to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder contentType(String contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+        /**
+         * The name of the Dapr Pub/Sub component to use. This identifies which
+         * underlying messaging system Dapr will interact with for publishing or
+         * subscribing to events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param pubSubName the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder pubSubName(String pubSubName) {
+            doSetProperty("pubSubName", pubSubName);
+            return this;
+        }
+        /**
+         * The name of the topic to subscribe to. The topic must exist in the
+         * Pub/Sub component configured under the given pubsubName.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topic the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder topic(String topic) {
+            doSetProperty("topic", topic);
+            return this;
+        }
         /**
          * Concurrency mode to use with state operations.
          * 
@@ -55,7 +313,7 @@ public interface DaprEndpointBuilderFactory {
          * @param concurrency the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder concurrency(io.dapr.client.domain.StateOptions.Concurrency concurrency) {
+        default DaprEndpointProducerBuilder concurrency(io.dapr.client.domain.StateOptions.Concurrency concurrency) {
             doSetProperty("concurrency", concurrency);
             return this;
         }
@@ -70,7 +328,7 @@ public interface DaprEndpointBuilderFactory {
          * @param concurrency the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder concurrency(String concurrency) {
+        default DaprEndpointProducerBuilder concurrency(String concurrency) {
             doSetProperty("concurrency", concurrency);
             return this;
         }
@@ -85,7 +343,7 @@ public interface DaprEndpointBuilderFactory {
          * @param consistency the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder consistency(io.dapr.client.domain.StateOptions.Consistency consistency) {
+        default DaprEndpointProducerBuilder consistency(io.dapr.client.domain.StateOptions.Consistency consistency) {
             doSetProperty("consistency", consistency);
             return this;
         }
@@ -100,7 +358,7 @@ public interface DaprEndpointBuilderFactory {
          * @param consistency the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder consistency(String consistency) {
+        default DaprEndpointProducerBuilder consistency(String consistency) {
             doSetProperty("consistency", consistency);
             return this;
         }
@@ -115,7 +373,7 @@ public interface DaprEndpointBuilderFactory {
          * @param eTag the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder eTag(String eTag) {
+        default DaprEndpointProducerBuilder eTag(String eTag) {
             doSetProperty("eTag", eTag);
             return this;
         }
@@ -132,7 +390,7 @@ public interface DaprEndpointBuilderFactory {
          * @param httpExtension the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder httpExtension(io.dapr.client.domain.HttpExtension httpExtension) {
+        default DaprEndpointProducerBuilder httpExtension(io.dapr.client.domain.HttpExtension httpExtension) {
             doSetProperty("httpExtension", httpExtension);
             return this;
         }
@@ -149,7 +407,7 @@ public interface DaprEndpointBuilderFactory {
          * @param httpExtension the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder httpExtension(String httpExtension) {
+        default DaprEndpointProducerBuilder httpExtension(String httpExtension) {
             doSetProperty("httpExtension", httpExtension);
             return this;
         }
@@ -164,7 +422,7 @@ public interface DaprEndpointBuilderFactory {
          * @param key the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder key(String key) {
+        default DaprEndpointProducerBuilder key(String key) {
             doSetProperty("key", key);
             return this;
         }
@@ -178,7 +436,7 @@ public interface DaprEndpointBuilderFactory {
          * @param methodToInvoke the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder methodToInvoke(String methodToInvoke) {
+        default DaprEndpointProducerBuilder methodToInvoke(String methodToInvoke) {
             doSetProperty("methodToInvoke", methodToInvoke);
             return this;
         }
@@ -193,7 +451,7 @@ public interface DaprEndpointBuilderFactory {
          * @param serviceToInvoke the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder serviceToInvoke(String serviceToInvoke) {
+        default DaprEndpointProducerBuilder serviceToInvoke(String serviceToInvoke) {
             doSetProperty("serviceToInvoke", serviceToInvoke);
             return this;
         }
@@ -210,7 +468,7 @@ public interface DaprEndpointBuilderFactory {
          * @param stateOperation the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder stateOperation(org.apache.camel.component.dapr.StateOperation stateOperation) {
+        default DaprEndpointProducerBuilder stateOperation(org.apache.camel.component.dapr.StateOperation stateOperation) {
             doSetProperty("stateOperation", stateOperation);
             return this;
         }
@@ -227,7 +485,7 @@ public interface DaprEndpointBuilderFactory {
          * @param stateOperation the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder stateOperation(String stateOperation) {
+        default DaprEndpointProducerBuilder stateOperation(String stateOperation) {
             doSetProperty("stateOperation", stateOperation);
             return this;
         }
@@ -242,7 +500,7 @@ public interface DaprEndpointBuilderFactory {
          * @param stateStore the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder stateStore(String stateStore) {
+        default DaprEndpointProducerBuilder stateStore(String stateStore) {
             doSetProperty("stateStore", stateStore);
             return this;
         }
@@ -257,20 +515,18 @@ public interface DaprEndpointBuilderFactory {
          * @param verb the value to set
          * @return the dsl builder
          */
-        default DaprEndpointBuilder verb(String verb) {
+        default DaprEndpointProducerBuilder verb(String verb) {
             doSetProperty("verb", verb);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint for the Dapr component.
+     * Advanced builder for endpoint producers for the Dapr component.
      */
-    public interface AdvancedDaprEndpointBuilder
-            extends
-                EndpointProducerBuilder {
-        default DaprEndpointBuilder basic() {
-            return (DaprEndpointBuilder) this;
+    public interface AdvancedDaprEndpointProducerBuilder extends EndpointProducerBuilder {
+        default DaprEndpointProducerBuilder basic() {
+            return (DaprEndpointProducerBuilder) this;
         }
 
         /**
@@ -292,7 +548,7 @@ public interface DaprEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AdvancedDaprEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+        default AdvancedDaprEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
@@ -315,10 +571,81 @@ public interface DaprEndpointBuilderFactory {
          * @param lazyStartProducer the value to set
          * @return the dsl builder
          */
-        default AdvancedDaprEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+        default AdvancedDaprEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+    }
+
+    /**
+     * Builder for endpoint for the Dapr component.
+     */
+    public interface DaprEndpointBuilder
+            extends
+                DaprEndpointConsumerBuilder,
+                DaprEndpointProducerBuilder {
+        default AdvancedDaprEndpointBuilder advanced() {
+            return (AdvancedDaprEndpointBuilder) this;
+        }
+
+        /**
+         * The contentType for the Pub/Sub component to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder contentType(String contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+        /**
+         * The name of the Dapr Pub/Sub component to use. This identifies which
+         * underlying messaging system Dapr will interact with for publishing or
+         * subscribing to events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param pubSubName the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder pubSubName(String pubSubName) {
+            doSetProperty("pubSubName", pubSubName);
+            return this;
+        }
+        /**
+         * The name of the topic to subscribe to. The topic must exist in the
+         * Pub/Sub component configured under the given pubsubName.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topic the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder topic(String topic) {
+            doSetProperty("topic", topic);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint for the Dapr component.
+     */
+    public interface AdvancedDaprEndpointBuilder
+            extends
+                AdvancedDaprEndpointConsumerBuilder,
+                AdvancedDaprEndpointProducerBuilder {
+        default DaprEndpointBuilder basic() {
+            return (DaprEndpointBuilder) this;
+        }
+
     }
 
     public interface DaprBuilders {
@@ -589,6 +916,158 @@ public interface DaprEndpointBuilderFactory {
          */
         public String daprTransactions() {
             return "CamelDaprTransactions";
+        }
+        /**
+         * The name of the Dapr Pub/Sub component to use. This identifies which
+         * underlying messaging system Dapr will interact with for publishing or
+         * subscribing to events.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DaprPubSubName}.
+         */
+        public String daprPubSubName() {
+            return "CamelDaprPubSubName";
+        }
+        /**
+         * The name of the topic to subscribe to. The topic must exist in the
+         * Pub/Sub component configured under the given pubsubName.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DaprTopic}.
+         */
+        public String daprTopic() {
+            return "CamelDaprTopic";
+        }
+        /**
+         * The content type for the Pub/Sub component to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DaprContentType}.
+         */
+        public String daprContentType() {
+            return "CamelDaprContentType";
+        }
+        /**
+         * Gets the unique identifier for the event, used to distinguish it from
+         * other events.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprID}.
+         */
+        public String daprID() {
+            return "CamelDaprID";
+        }
+        /**
+         * Gets the origin of the event, typically a URI indicating the
+         * component or service that generated the event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprSource}.
+         */
+        public String daprSource() {
+            return "CamelDaprSource";
+        }
+        /**
+         * Gets the string indicating the type of cloud event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprType}.
+         */
+        public String daprType() {
+            return "CamelDaprType";
+        }
+        /**
+         * Gets the version of the CloudEvents specification that the event
+         * conforms to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprSpecificVersion}.
+         */
+        public String daprSpecificVersion() {
+            return "CamelDaprSpecificVersion";
+        }
+        /**
+         * Gets the content type of the event data.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprDataContentType}.
+         */
+        public String daprDataContentType() {
+            return "CamelDaprDataContentType";
+        }
+        /**
+         * Gets the raw binary data payload of the event, if present (for events
+         * where data_base64 is used instead of data).
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprBinaryData}.
+         */
+        public String daprBinaryData() {
+            return "CamelDaprBinaryData";
+        }
+        /**
+         * Gets the timestamp of when the event occurred.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprTime}.
+         */
+        public String daprTime() {
+            return "CamelDaprTime";
+        }
+        /**
+         * Gets tracing info for following the event across services (includes
+         * trace ID and span ID).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprTraceParent}.
+         */
+        public String daprTraceParent() {
+            return "CamelDaprTraceParent";
+        }
+        /**
+         * Gets additional vendor-specific trace context.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprTraceState}.
+         */
+        public String daprTraceState() {
+            return "CamelDaprTraceState";
         }
     }
     static DaprEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -70,4 +70,43 @@ public class DaprConstants {
     @Metadata(label = "producer", description = "List of transactions for execute transactions state operations",
               javaType = "List<TransactionalStateOperation<?>>")
     public static final String TRANSACTIONS = HEADER_PREFIX + "Transactions";
+    @Metadata(label = "common",
+              description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying " +
+                            "messaging system Dapr will interact with for publishing or subscribing to events.",
+              javaType = "String")
+    public static final String PUBSUB_NAME = HEADER_PREFIX + "PubSubName";
+    @Metadata(label = "common", description = "The name of the topic to subscribe to. The topic must exist in the Pub/Sub " +
+                                              "component configured under the given pubsubName.",
+              javaType = "String")
+    public static final String TOPIC = HEADER_PREFIX + "Topic";
+    @Metadata(label = "common", description = "The content type for the Pub/Sub component to use", javaType = "String")
+    public static final String CONTENT_TYPE = HEADER_PREFIX + "ContentType";
+    @Metadata(label = "consumer",
+              description = "Gets the unique identifier for the event, used to distinguish it from other events",
+              javaType = "String")
+    public static final String ID = HEADER_PREFIX + "ID";
+    @Metadata(label = "consumer",
+              description = "Gets the origin of the event, typically a URI indicating the component or service " +
+                            "that generated the event",
+              javaType = "String")
+    public static final String SOURCE = HEADER_PREFIX + "Source";
+    @Metadata(label = "consumer", description = "Gets the string indicating the type of cloud event", javaType = "String")
+    public static final String TYPE = HEADER_PREFIX + "Type";
+    @Metadata(label = "consumer", description = "Gets the version of the CloudEvents specification that the event conforms to",
+              javaType = "String")
+    public static final String SPECIFIC_VERSION = HEADER_PREFIX + "SpecificVersion";
+    @Metadata(label = "consumer", description = "Gets the content type of the event data", javaType = "String")
+    public static final String DATA_CONTENT_TYPE = HEADER_PREFIX + "DataContentType";
+    @Metadata(label = "consumer", description = "Gets the raw binary data payload of the event, if present " +
+                                                "(for events where data_base64 is used instead of data)",
+              javaType = "byte[]")
+    public static final String BINARY_DATA = HEADER_PREFIX + "BinaryData";
+    @Metadata(label = "consumer", description = "Gets the timestamp of when the event occurred", javaType = "OffsetDateTime")
+    public static final String TIME = HEADER_PREFIX + "Time";
+    @Metadata(label = "consumer", description = "Gets tracing info for following the event across services " +
+                                                "(includes trace ID and span ID)",
+              javaType = "String")
+    public static final String TRACE_PARENT = HEADER_PREFIX + "TraceParent";
+    @Metadata(label = "consumer", description = "Gets additional vendor-specific trace context", javaType = "String")
+    public static final String TRACE_STATE = HEADER_PREFIX + "TraceState";
 }

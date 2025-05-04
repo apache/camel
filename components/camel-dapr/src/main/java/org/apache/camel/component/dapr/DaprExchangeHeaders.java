@@ -99,6 +99,18 @@ public class DaprExchangeHeaders {
         return getObjectFromHeaders(exchange, DaprConstants.TRANSACTIONS, List.class);
     }
 
+    public static String getPubSubNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.PUBSUB_NAME, String.class);
+    }
+
+    public static String getTopicFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.TOPIC, String.class);
+    }
+
+    public static String getContentTypeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.CONTENT_TYPE, String.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }
