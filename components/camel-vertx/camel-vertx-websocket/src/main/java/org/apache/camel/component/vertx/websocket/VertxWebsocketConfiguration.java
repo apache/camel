@@ -43,34 +43,34 @@ public class VertxWebsocketConfiguration {
     private String path;
     @UriParam(label = "consumer")
     private String allowedOriginPattern;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private Router router;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private HttpServerOptions serverOptions;
     @UriParam(label = "consumer")
     private boolean consumeAsClient;
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer")
     private int reconnectInitialDelay;
     @UriParam(label = "consumer", defaultValue = "1000")
     private int reconnectInterval = 1000;
-    @UriParam(label = "consumer", defaultValue = "0")
+    @UriParam(label = "consumer")
     private int maxReconnectAttempts;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private HttpClientOptions clientOptions;
     @UriParam(label = "producer")
     private boolean sendToAll;
     @UriParam(label = "producer")
     private String clientSubProtocols;
-    @UriParam(label = "security")
-    private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private boolean fireWebSocketConnectionEvents;
-    @UriParam(label = "producer,consumer", defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true")
     private boolean allowOriginHeader = true;
-    @UriParam(label = "producer,consumer")
+    @UriParam(label = "security")
     private String originHeaderUrl;
-    @UriParam(label = "producer,consumer", prefix = "handshake.", multiValue = true)
+    @UriParam(label = "security", prefix = "handshake.", multiValue = true)
     private Map<String, Object> handshakeHeaders;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     /**
      * The WebSocket URI address to use.
