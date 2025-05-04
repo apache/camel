@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dapr;
 
+import io.dapr.client.DaprPreviewClient;
 import io.dapr.client.domain.HttpExtension;
 import io.dapr.client.domain.StateOptions.Concurrency;
 import io.dapr.client.domain.StateOptions.Consistency;
@@ -58,6 +59,17 @@ public class DaprConfiguration implements Cloneable {
     private Concurrency concurrency;
     @UriParam(label = "producer", description = "Consistency level to use with state operations", enums = "EVENTUAL, STRONG")
     private Consistency consistency;
+    @UriParam(label = "consumer", description = "The client to consume messages by the consumer")
+    @Metadata(autowired = true)
+    private DaprPreviewClient previewClient;
+    @UriParam(label = "common", description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying "
+                                              + "messaging system Dapr will interact with for publishing or subscribing to events.")
+    private String pubSubName;
+    @UriParam(label = "common", description = "The name of the topic to subscribe to. The topic must exist in the Pub/Sub "
+                                              + "component configured under the given pubsubName.")
+    private String topic;
+    @UriParam(label = "common", description = "The contentType for the Pub/Sub component to use.")
+    private String contentType;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -206,6 +218,57 @@ public class DaprConfiguration implements Cloneable {
 
     public void setConsistency(Consistency consistency) {
         this.consistency = consistency;
+    }
+
+    /**
+     * The name of the Dapr <b>Pub/Sub component</b> to use.
+     *
+     * <p>
+     * This identifies which underlying messaging system Dapr will interact with for publishing or subscribing to
+     * events.
+     */
+    public String getPubSubName() {
+        return pubSubName;
+    }
+
+    public void setPubSubName(String pubSubName) {
+        this.pubSubName = pubSubName;
+    }
+
+    /**
+     * The name of the <b>topic</b> to subscribe to.
+     *
+     * <p>
+     * The topic must exist in the Pub/Sub component configured under the given pubsubName.
+     */
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    /**
+     * The <b>content type</b> for the Pub/Sub component to use.
+     */
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    /**
+     * The <b>preview client</b> to consume messages by the consumer.
+     */
+    public DaprPreviewClient getPreviewClient() {
+        return previewClient;
+    }
+
+    public void setPreviewClient(DaprPreviewClient previewClient) {
+        this.previewClient = previewClient;
     }
 
     public DaprConfiguration copy() {

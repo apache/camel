@@ -51,6 +51,114 @@ public interface DaprComponentBuilderFactory {
     interface DaprComponentBuilder extends ComponentBuilder<DaprComponent> {
     
         /**
+         * The component configurations.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.dapr.DaprConfiguration&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder configuration(org.apache.camel.component.dapr.DaprConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        /**
+         * The contentType for the Pub/Sub component to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder contentType(java.lang.String contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+    
+        /**
+         * The name of the Dapr Pub/Sub component to use. This identifies which
+         * underlying messaging system Dapr will interact with for publishing or
+         * subscribing to events.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param pubSubName the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder pubSubName(java.lang.String pubSubName) {
+            doSetProperty("pubSubName", pubSubName);
+            return this;
+        }
+    
+        /**
+         * The name of the topic to subscribe to. The topic must exist in the
+         * Pub/Sub component configured under the given pubsubName.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param topic the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder topic(java.lang.String topic) {
+            doSetProperty("topic", topic);
+            return this;
+        }
+    
+        
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+    
+        /**
+         * The client to consume messages by the consumer.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.dapr.client.DaprPreviewClient&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param previewClient the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder previewClient(io.dapr.client.DaprPreviewClient previewClient) {
+            doSetProperty("previewClient", previewClient);
+            return this;
+        }
+    
+        /**
          * Concurrency mode to use with state operations.
          * 
          * The option is a:
@@ -63,22 +171,6 @@ public interface DaprComponentBuilderFactory {
          */
         default DaprComponentBuilder concurrency(io.dapr.client.domain.StateOptions.Concurrency concurrency) {
             doSetProperty("concurrency", concurrency);
-            return this;
-        }
-    
-        /**
-         * The component configurations.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.dapr.DaprConfiguration&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param configuration the value to set
-         * @return the dsl builder
-         */
-        default DaprComponentBuilder configuration(org.apache.camel.component.dapr.DaprConfiguration configuration) {
-            doSetProperty("configuration", configuration);
             return this;
         }
     
@@ -298,8 +390,13 @@ public interface DaprComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "concurrency": getOrCreateConfiguration((DaprComponent) component).setConcurrency((io.dapr.client.domain.StateOptions.Concurrency) value); return true;
             case "configuration": ((DaprComponent) component).setConfiguration((org.apache.camel.component.dapr.DaprConfiguration) value); return true;
+            case "contentType": getOrCreateConfiguration((DaprComponent) component).setContentType((java.lang.String) value); return true;
+            case "pubSubName": getOrCreateConfiguration((DaprComponent) component).setPubSubName((java.lang.String) value); return true;
+            case "topic": getOrCreateConfiguration((DaprComponent) component).setTopic((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((DaprComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "previewClient": getOrCreateConfiguration((DaprComponent) component).setPreviewClient((io.dapr.client.DaprPreviewClient) value); return true;
+            case "concurrency": getOrCreateConfiguration((DaprComponent) component).setConcurrency((io.dapr.client.domain.StateOptions.Concurrency) value); return true;
             case "consistency": getOrCreateConfiguration((DaprComponent) component).setConsistency((io.dapr.client.domain.StateOptions.Consistency) value); return true;
             case "eTag": getOrCreateConfiguration((DaprComponent) component).setETag((java.lang.String) value); return true;
             case "httpExtension": getOrCreateConfiguration((DaprComponent) component).setHttpExtension((io.dapr.client.domain.HttpExtension) value); return true;
