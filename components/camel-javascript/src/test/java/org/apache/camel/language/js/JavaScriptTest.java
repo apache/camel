@@ -20,7 +20,7 @@ import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
+@DisabledIfSystemProperty(named = "java.vendor", matches = "(?i).*ibm.*")
 public class JavaScriptTest extends LanguageTestSupport {
 
     @Test

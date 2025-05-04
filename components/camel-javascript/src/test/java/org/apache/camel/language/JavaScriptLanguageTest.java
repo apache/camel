@@ -23,7 +23,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 /**
  * Ensures that the "js" language is compliant with the typed language expectations.
  */
-@DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
+@DisabledIfSystemProperty(named = "java.vendor", matches = "(?i).*ibm.*")
 class JavaScriptLanguageTest extends AbstractTypedLanguageTest<JavaScriptExpression.Builder, JavaScriptExpression> {
 
     JavaScriptLanguageTest() {
