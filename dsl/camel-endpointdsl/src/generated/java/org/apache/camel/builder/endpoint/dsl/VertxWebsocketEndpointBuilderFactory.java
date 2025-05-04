@@ -129,7 +129,6 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          * 
          * @param maxReconnectAttempts the value to set
@@ -146,7 +145,6 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          * 
          * @param maxReconnectAttempts the value to set
@@ -163,7 +161,6 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          * 
          * @param reconnectInitialDelay the value to set
@@ -180,7 +177,6 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          * 
          * @param reconnectInitialDelay the value to set
@@ -225,64 +221,93 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use an existing vertx router for the HTTP server.
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
          * 
-         * The option is a: <code>io.vertx.ext.web.Router</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: consumer
+         * Default: true
+         * Group: security
          * 
-         * @param router the value to set
+         * @param allowOriginHeader the value to set
          * @return the dsl builder
          */
-        default VertxWebsocketEndpointConsumerBuilder router(io.vertx.ext.web.Router router) {
-            doSetProperty("router", router);
+        default VertxWebsocketEndpointConsumerBuilder allowOriginHeader(boolean allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
             return this;
         }
         /**
-         * To use an existing vertx router for the HTTP server.
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
          * 
-         * The option will be converted to a
-         * <code>io.vertx.ext.web.Router</code> type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: consumer
+         * Default: true
+         * Group: security
          * 
-         * @param router the value to set
+         * @param allowOriginHeader the value to set
          * @return the dsl builder
          */
-        default VertxWebsocketEndpointConsumerBuilder router(String router) {
-            doSetProperty("router", router);
+        default VertxWebsocketEndpointConsumerBuilder allowOriginHeader(String allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
             return this;
         }
         /**
-         * Sets customized options for configuring the HTTP server hosting the
-         * WebSocket for the consumer.
+         * Headers to send in the HTTP handshake request. When the endpoint is a
+         * consumer, it only works when it consumes a remote host as a client
+         * (i.e. consumeAsClient is true).
          * 
-         * The option is a: <code>io.vertx.core.http.HttpServerOptions</code>
-         * type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * handshakeHeaders(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
-         * Group: consumer
+         * Group: security
          * 
-         * @param serverOptions the value to set
+         * @param key the option key
+         * @param value the option value
          * @return the dsl builder
          */
-        default VertxWebsocketEndpointConsumerBuilder serverOptions(io.vertx.core.http.HttpServerOptions serverOptions) {
-            doSetProperty("serverOptions", serverOptions);
+        default VertxWebsocketEndpointConsumerBuilder handshakeHeaders(String key, Object value) {
+            doSetMultiValueProperty("handshakeHeaders", "handshake." + key, value);
             return this;
         }
         /**
-         * Sets customized options for configuring the HTTP server hosting the
-         * WebSocket for the consumer.
+         * Headers to send in the HTTP handshake request. When the endpoint is a
+         * consumer, it only works when it consumes a remote host as a client
+         * (i.e. consumeAsClient is true).
          * 
-         * The option will be converted to a
-         * <code>io.vertx.core.http.HttpServerOptions</code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * handshakeHeaders(String, Object) method to add a value (call the
+         * method multiple times to set more values).
          * 
-         * Group: consumer
+         * Group: security
          * 
-         * @param serverOptions the value to set
+         * @param values the values
          * @return the dsl builder
          */
-        default VertxWebsocketEndpointConsumerBuilder serverOptions(String serverOptions) {
-            doSetProperty("serverOptions", serverOptions);
+        default VertxWebsocketEndpointConsumerBuilder handshakeHeaders(Map values) {
+            doSetMultiValueProperties("handshakeHeaders", "handshake.", values);
+            return this;
+        }
+        /**
+         * The value of the Origin header that the WebSocket client should use
+         * on the WebSocket handshake request. When not specified, the WebSocket
+         * client will automatically determine the value for the Origin from the
+         * request URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param originHeaderUrl the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder originHeaderUrl(String originHeaderUrl) {
+            doSetProperty("originHeaderUrl", originHeaderUrl);
             return this;
         }
         /**
@@ -443,6 +468,67 @@ public interface VertxWebsocketEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * To use an existing vertx router for the HTTP server.
+         * 
+         * The option is a: <code>io.vertx.ext.web.Router</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param router the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder router(io.vertx.ext.web.Router router) {
+            doSetProperty("router", router);
+            return this;
+        }
+        /**
+         * To use an existing vertx router for the HTTP server.
+         * 
+         * The option will be converted to a
+         * <code>io.vertx.ext.web.Router</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param router the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder router(String router) {
+            doSetProperty("router", router);
+            return this;
+        }
+        /**
+         * Sets customized options for configuring the HTTP server hosting the
+         * WebSocket for the consumer.
+         * 
+         * The option is a: <code>io.vertx.core.http.HttpServerOptions</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param serverOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder serverOptions(io.vertx.core.http.HttpServerOptions serverOptions) {
+            doSetProperty("serverOptions", serverOptions);
+            return this;
+        }
+        /**
+         * Sets customized options for configuring the HTTP server hosting the
+         * WebSocket for the consumer.
+         * 
+         * The option will be converted to a
+         * <code>io.vertx.core.http.HttpServerOptions</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param serverOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointConsumerBuilder serverOptions(String serverOptions) {
+            doSetProperty("serverOptions", serverOptions);
+            return this;
+        }
     }
 
     /**
@@ -455,38 +541,6 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return (AdvancedVertxWebsocketEndpointProducerBuilder) this;
         }
 
-        /**
-         * Sets customized options for configuring the WebSocket client used in
-         * the producer.
-         * 
-         * The option is a: <code>io.vertx.core.http.HttpClientOptions</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param clientOptions the value to set
-         * @return the dsl builder
-         */
-        default VertxWebsocketEndpointProducerBuilder clientOptions(io.vertx.core.http.HttpClientOptions clientOptions) {
-            doSetProperty("clientOptions", clientOptions);
-            return this;
-        }
-        /**
-         * Sets customized options for configuring the WebSocket client used in
-         * the producer.
-         * 
-         * The option will be converted to a
-         * <code>io.vertx.core.http.HttpClientOptions</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param clientOptions the value to set
-         * @return the dsl builder
-         */
-        default VertxWebsocketEndpointProducerBuilder clientOptions(String clientOptions) {
-            doSetProperty("clientOptions", clientOptions);
-            return this;
-        }
         /**
          * Comma separated list of WebSocket subprotocols that the client should
          * use for the Sec-WebSocket-Protocol header.
@@ -547,6 +601,96 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param allowOriginHeader the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder allowOriginHeader(boolean allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
+            return this;
+        }
+        /**
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param allowOriginHeader the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder allowOriginHeader(String allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
+            return this;
+        }
+        /**
+         * Headers to send in the HTTP handshake request. When the endpoint is a
+         * consumer, it only works when it consumes a remote host as a client
+         * (i.e. consumeAsClient is true).
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * handshakeHeaders(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder handshakeHeaders(String key, Object value) {
+            doSetMultiValueProperty("handshakeHeaders", "handshake." + key, value);
+            return this;
+        }
+        /**
+         * Headers to send in the HTTP handshake request. When the endpoint is a
+         * consumer, it only works when it consumes a remote host as a client
+         * (i.e. consumeAsClient is true).
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * handshakeHeaders(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder handshakeHeaders(Map values) {
+            doSetMultiValueProperties("handshakeHeaders", "handshake.", values);
+            return this;
+        }
+        /**
+         * The value of the Origin header that the WebSocket client should use
+         * on the WebSocket handshake request. When not specified, the WebSocket
+         * client will automatically determine the value for the Origin from the
+         * request URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param originHeaderUrl the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder originHeaderUrl(String originHeaderUrl) {
+            doSetProperty("originHeaderUrl", originHeaderUrl);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -586,6 +730,38 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return (VertxWebsocketEndpointProducerBuilder) this;
         }
 
+        /**
+         * Sets customized options for configuring the WebSocket client used in
+         * the producer.
+         * 
+         * The option is a: <code>io.vertx.core.http.HttpClientOptions</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointProducerBuilder clientOptions(io.vertx.core.http.HttpClientOptions clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
+        /**
+         * Sets customized options for configuring the WebSocket client used in
+         * the producer.
+         * 
+         * The option will be converted to a
+         * <code>io.vertx.core.http.HttpClientOptions</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxWebsocketEndpointProducerBuilder clientOptions(String clientOptions) {
+            doSetProperty("clientOptions", clientOptions);
+            return this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -645,6 +821,96 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return (AdvancedVertxWebsocketEndpointBuilder) this;
         }
 
+        /**
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param allowOriginHeader the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointBuilder allowOriginHeader(boolean allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
+            return this;
+        }
+        /**
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param allowOriginHeader the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointBuilder allowOriginHeader(String allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
+            return this;
+        }
+        /**
+         * Headers to send in the HTTP handshake request. When the endpoint is a
+         * consumer, it only works when it consumes a remote host as a client
+         * (i.e. consumeAsClient is true).
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * handshakeHeaders(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointBuilder handshakeHeaders(String key, Object value) {
+            doSetMultiValueProperty("handshakeHeaders", "handshake." + key, value);
+            return this;
+        }
+        /**
+         * Headers to send in the HTTP handshake request. When the endpoint is a
+         * consumer, it only works when it consumes a remote host as a client
+         * (i.e. consumeAsClient is true).
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * handshakeHeaders(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointBuilder handshakeHeaders(Map values) {
+            doSetMultiValueProperties("handshakeHeaders", "handshake.", values);
+            return this;
+        }
+        /**
+         * The value of the Origin header that the WebSocket client should use
+         * on the WebSocket handshake request. When not specified, the WebSocket
+         * client will automatically determine the value for the Origin from the
+         * request URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param originHeaderUrl the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointBuilder originHeaderUrl(String originHeaderUrl) {
+            doSetProperty("originHeaderUrl", originHeaderUrl);
+            return this;
+        }
         /**
          * To configure security using SSLContextParameters.
          * 
