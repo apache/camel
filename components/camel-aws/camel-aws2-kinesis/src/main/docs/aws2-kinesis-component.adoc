@@ -95,7 +95,7 @@ You have the possibility of avoiding the usage of explicit static credentials by
 
 The order of evaluation for Default Credentials Provider is the following:
 
-- Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+- Java system properties - `aws.accessKeyId` and `aws.secretAccessKey`.
 - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 - Web Identity Token from AWS STS.
 - The shared credentials and config files.
@@ -131,11 +131,11 @@ can be specified when calling createClient(...).
 
 The component supports also the KCL (Kinesis Client Library) for consuming from a Kinesis Data Stream.
 
-To enable this feature you'll need to set two different parameter in your endpoint:
+To enable this feature you'll need to set three different parameter in your endpoint and set the region:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------
-from("aws2-kinesis://mykinesisstream?asyncClient=true&useDefaultCredentialsProvider=true&useKclConsumers=true")
+from("aws2-kinesis://mykinesisstream?asyncClient=true&useDefaultCredentialsProvider=true&useKclConsumers=true&region=myregion")
   .to("log:out?showAll=true");
 --------------------------------------------------------------------------------------------------------------------
 
