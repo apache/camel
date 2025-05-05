@@ -23,7 +23,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "java.vendor", matches = "(?i).*ibm.*")
+@DisabledIfSystemProperty(named = "os.arch", matches = "(?i)(s390x|ppc64le)")
 public class JavaScriptChoiceTest extends CamelTestSupport {
 
     @Test
