@@ -137,29 +137,9 @@ public class EntityParserContentLineEndingTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         dispositionNotificationMultipartReportEntity.writeTo(out);
 
-        var left = expectedContent.getBytes();
-        var right = out.toByteArray();
-        for (int i=0 ; i<left.length ; i++ ) {
-            System.out.printf("%d : ", i);
-            print(left[i]);
-            System.out.print(" :: ");
-            print(right[i]);
-            System.out.println();
-            if (left[i] != right[i]) {
-                System.err.println("Abweichung in Element " + i);
-                break;
-            }
-        }
         assertEquals(expectedContent, out.toString(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
     }
 
-    private void print(int i) {
-        if (i < 33) {
-            System.out.printf("%d", i);
-        } else {
-            System.out.printf("%s", (char) i);
-        }
-    }
     @ParameterizedTest
     @ValueSource(strings = {"\r", ""})
     public void parseTextPlainBodyTest(String carriageReturn) throws Exception {
