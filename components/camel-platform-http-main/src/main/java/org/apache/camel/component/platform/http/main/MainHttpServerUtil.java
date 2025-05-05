@@ -45,14 +45,22 @@ public class MainHttpServerUtil {
                 if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
                     LOG.info(header);
                     int longestEndpoint = 0;
+                    int longestVerbs = 0;
                     for (HttpEndpointModel u : endpoints) {
                         String endpoint = getEndpoint(u);
                         if (endpoint.length() > longestEndpoint) {
                             longestEndpoint = endpoint.length();
                         }
+                        if (u.getVerbs() != null) {
+                            if (u.getVerbs().length() > longestVerbs) {
+                                longestVerbs = u.getVerbs().length();
+                            }
+                        }
                     }
-                    int spacing = 3;
-                    String formatTemplate = "%-" + (longestEndpoint + spacing) + "s %-8s %s";
+                    longestEndpoint += 3; // add some spacing
+                    longestVerbs += 2; // add parenthesis
+                    longestVerbs = Math.max(8, longestVerbs); // minimum length
+                    String formatTemplate = "%-" + longestEndpoint + "s %-" + longestVerbs + "s %s";
                     for (HttpEndpointModel u : endpoints) {
                         String endpoint = getEndpoint(u);
                         String formattedVerbs = "";
