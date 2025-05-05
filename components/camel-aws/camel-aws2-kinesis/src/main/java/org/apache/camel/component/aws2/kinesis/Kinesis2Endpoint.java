@@ -64,7 +64,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
         }
 
         if (configuration.isAsyncClient() &&
-                Objects.isNull(configuration.getAmazonKinesisClient())) {
+                Objects.isNull(configuration.getAmazonKinesisAsyncClient())) {
             kinesisAsyncClient = kinesisConnection.getAsyncClient(this);
         } else {
             kinesisClient = kinesisConnection.getClient(this);
