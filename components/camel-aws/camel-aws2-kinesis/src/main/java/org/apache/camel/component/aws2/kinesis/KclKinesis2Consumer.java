@@ -85,7 +85,9 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         LOG.debug("Starting KCL Consumer");
         DynamoDbAsyncClient dynamoDbAsyncClient = null;
         CloudWatchAsyncClient cloudWatchAsyncClient = null;
-        KinesisAsyncClient kinesisAsyncClient = getEndpoint().getConfiguration().getAmazonKinesisAsyncClient();
+        KinesisAsyncClient kinesisAsyncClient = getEndpoint().getAsyncClient() != null
+                ? getEndpoint().getAsyncClient()
+                : getEndpoint().getConfiguration().getAmazonKinesisAsyncClient();
         Kinesis2Configuration configuration = getEndpoint().getConfiguration();
         if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getDynamoDbAsyncClient())) {
             DynamoDbAsyncClientBuilder clientBuilder = DynamoDbAsyncClient.builder();
