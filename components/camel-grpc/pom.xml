@@ -199,7 +199,7 @@
                 <configuration>
                     <protocVersion>${protobuf-version}</protocVersion>
                     <sourceDirectories>
-                        <sourceDirectory>src/test/proto</sourceDirectory>
+                        <sourceDirectory>${project.basedir}/src/test/proto</sourceDirectory>
                     </sourceDirectories>
                     <binaryMavenPlugins>
                         <binaryMavenPlugin>
