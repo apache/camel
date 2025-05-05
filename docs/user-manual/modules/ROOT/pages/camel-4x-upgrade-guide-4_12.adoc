@@ -24,6 +24,15 @@ The `ExchangeHelper.copyResults` has been improved to also copy over exchange va
 Removed unused `Johnzon` in `org.apache.camel.model.dataformat.JsonLibrary` enum as `camel-johnzon` is not supported
 in Camel v4. This removal also means `johnzon` was removed from XSD and YAML DSL schemas.
 
+==== Header Filter Strategy
+
+The default `HeaderFilterStrategy` has changed to be case-insensitive by default. This ensures that headers sent over transports
+will be filtered also if they use different cases such as `camelKey` and `CAMELKEY`, `camelkey` would all be considered
+the same key and filtered.
+
+The default `HeaderFilterStrategy` has also removed filtering of keys starting with the legacy Camel v1 syntax `org.apache.camel.`.
+Camel v2 onwards are using the `Camel...` key standard.
+
 ==== Propagating variables in EIPs in seda/kamelet components
 
 The kamelet and seda component and EIPs such as Split, Multicast, Recipient List, Enrich, PollEnrich, Loop (copy mode)
