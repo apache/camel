@@ -33,7 +33,7 @@ public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/nullbody",
+                "smb:%s/%s/nullbody?username=%s&password=%s",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

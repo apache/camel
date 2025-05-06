@@ -28,7 +28,7 @@ public class SmbProducerFileExistOverrideTwoUploadIT extends SmbServerTestSuppor
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/existoverridetwo&delay=2000&noop=true&fileExist=Override",
+                "smb:%s/%s/existoverridetwo?username=%s&password=%s&delay=2000&noop=true&fileExist=Override",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

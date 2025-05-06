@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 
 @UriParams
 public class SmbConfiguration extends GenericFileConfiguration {
@@ -40,7 +41,7 @@ public class SmbConfiguration extends GenericFileConfiguration {
     @UriPath(description = "The name of the share directory")
     @Metadata(required = true)
     private String shareName;
-    @UriParam(label = "common", description = "The base directory within the share")
+    @UriPath(description = "The base directory within the share")
     private String path;
     @UriParam(label = "security", description = "The username required to access the share", secret = true)
     private String username;
@@ -99,7 +100,13 @@ public class SmbConfiguration extends GenericFileConfiguration {
         if (uri.getPort() > 0) {
             setPort(uri.getPort());
         }
-        setShareName(FileUtil.stripLeadingSeparator(uri.getPath()));
+        String path = FileUtil.stripLeadingSeparator(uri.getPath());
+        String share = StringHelper.before(path, "/", path);
+        setShareName(share);
+        String dir = StringHelper.after(path, "/");
+        if (dir != null) {
+            setPath(dir);
+        }
     }
 
     public String getProtocol() {

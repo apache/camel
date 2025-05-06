@@ -29,7 +29,7 @@ public class SmbProducerToMoveExistingIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/toMoveExisting&fileExist=Move&moveExisting=old-${file:onlyname}",
+                "smb:%s/%s/toMoveExisting?username=%s&password=%s&fileExist=Move&moveExisting=old-${file:onlyname}",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

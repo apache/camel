@@ -49,7 +49,7 @@ public class SmbChangedRootDirReadLockIT extends SmbServerTestSupport {
     // all the files are processed
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/&readLock=changed&searchPattern=*.dat&readLockCheckInterval=1000&delete=true",
+                "smb:%s/%s?username=%s&password=%s&readLock=changed&searchPattern=*.dat&readLockCheckInterval=1000&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

@@ -39,13 +39,13 @@ public class FromSmbRenameReadLockIT extends SmbServerTestSupport {
 
     protected String getSmbPollingUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/renamerl&delete=true&delay=1000&initialDelay=1500&readLock=rename",
+                "smb:%s/%s/renamerl?username=%s&password=%s&delete=true&delay=1000&initialDelay=1500&readLock=rename",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/renamerl",
+                "smb:%s/%s/renamerl?username=%s&password=%s",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

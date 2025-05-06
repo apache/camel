@@ -24,7 +24,7 @@ public class SmbConsumerDefaultIdempotentIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/defidemp&idempotent=true&delete=true&delay=1000",
+                "smb:%s/%s/defidemp?username=%s&password=%s&idempotent=true&delete=true&delay=1000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

@@ -30,7 +30,7 @@ public class FromSmbRemoteFileFilterIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/myfilter&searchPattern=*&filter=#myFilter&initialDelay=3000",
+                "smb:%s/%s/myfilter?username=%s&password=%s&searchPattern=*&filter=#myFilter&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

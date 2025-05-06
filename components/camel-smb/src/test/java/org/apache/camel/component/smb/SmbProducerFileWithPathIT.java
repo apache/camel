@@ -28,7 +28,7 @@ public class SmbProducerFileWithPathIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadWithPath",
+                "smb:%s/%s/uploadWithPath?username=%s&password=%s",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

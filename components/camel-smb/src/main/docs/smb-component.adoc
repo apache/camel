@@ -68,7 +68,7 @@ private void process(Exchange exchange) throws IOException {
 }
 
 public void configure() {
-    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+    fromF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(), service.userName(), service.password())
         .process(this::process)
         .to("mock:result");
 }
@@ -90,7 +90,7 @@ private void process(Exchange exchange) throws IOException {
 }
 
 public void configure() {
-    fromF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(), service.userName(), service.password())
+    fromF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(), service.userName(), service.password())
         .process(this::process)
         .to("mock:result");
 }

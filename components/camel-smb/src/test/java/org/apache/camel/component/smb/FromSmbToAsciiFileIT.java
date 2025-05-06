@@ -37,7 +37,7 @@ public class FromSmbToAsciiFileIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/toasciifile&fileExist=Override",
+                "smb:%s/%s/toasciifile?username=%s&password=%s&fileExist=Override",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

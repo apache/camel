@@ -114,7 +114,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig", service.address(), service.shareName(),
+                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
                         service.userName(), service.password())
                         .to("seda:intermediate");
 
@@ -123,18 +123,18 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                         .to("mock:result");
 
                 from("seda:send")
-                        .toF("smb:%s/%s?username=%s&password=%s&path=/", service.address(), service.shareName(),
+                        .toF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(),
                                 service.userName(), service.password());
 
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc&path=/", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_override");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc&path=/", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_ignore");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc&path=/", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_send");

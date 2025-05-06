@@ -28,7 +28,7 @@ public class PollDynamicFileNameTest extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/noop&noop=true",
+                "smb:%s/%s/noop?username=%s&password=%s&noop=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
