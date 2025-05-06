@@ -38,7 +38,7 @@ public class SmbConsumerProcessStrategyIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/strategy&processStrategy=#myStrategy",
+                "smb:%s/%s/strategy?username=%s&password=%s&processStrategy=#myStrategy",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

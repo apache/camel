@@ -31,7 +31,7 @@ public class SmbStreamDownloadStreamCacheIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadstream3&streamDownload=true",
+                "smb:%s/%s/uploadstream3?username=%s&password=%s&streamDownload=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

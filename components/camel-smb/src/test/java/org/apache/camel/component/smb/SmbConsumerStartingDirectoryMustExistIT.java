@@ -30,7 +30,7 @@ public class SmbConsumerStartingDirectoryMustExistIT extends SmbServerTestSuppor
 
     private String getSbmUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/doesnotexist&delete=true&initialDelay=3000&autoCreate=false&startingDirectoryMustExist=true",
+                "smb:%s/%s/doesnotexist?username=%s&password=%s&delete=true&initialDelay=3000&autoCreate=false&startingDirectoryMustExist=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
@@ -46,7 +46,7 @@ public class SmbConsumerStartingDirectoryMustExistIT extends SmbServerTestSuppor
             context.start();
             Assertions.fail();
         } catch (GenericFileOperationFailedException e) {
-            Assertions.assertEquals("Starting directory does not exist: /doesnotexist", e.getMessage());
+            Assertions.assertEquals("Starting directory does not exist: doesnotexist", e.getMessage());
         }
     }
 

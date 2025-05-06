@@ -30,7 +30,7 @@ public class SmbProducerFileExistIgnoreIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/existignore&delay=2000&noop=true&fileExist=Ignore",
+                "smb:%s/%s/existignore?username=%s&password=%s&delay=2000&noop=true&fileExist=Ignore",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

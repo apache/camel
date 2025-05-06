@@ -48,7 +48,7 @@ public class SmbChangedReadLockIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/changed&searchPattern=*&readLock=changed&readLockCheckInterval=1000&delete=true",
+                "smb:%s/%s/changed?username=%s&password=%s&searchPattern=*&readLock=changed&readLockCheckInterval=1000&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

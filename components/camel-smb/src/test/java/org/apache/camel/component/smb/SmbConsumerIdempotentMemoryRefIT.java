@@ -32,7 +32,7 @@ public class SmbConsumerIdempotentMemoryRefIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/idem&idempotent=true"
+                "smb:%s/%s/idem?username=%s&password=%s&idempotent=true"
                              + "&idempotentRepository=#myConsumerIdemRepo&idempotentKey=${file:onlyname}&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }

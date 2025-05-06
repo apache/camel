@@ -35,7 +35,7 @@ public class FromSmbPreMoveIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/premove&preMove=work",
+                "smb:%s/%s/premove?username=%s&password=%s&preMove=work",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

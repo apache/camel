@@ -36,7 +36,7 @@ public class SmbDeleteFileIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/deletedfile&delete=true",
+                "smb:%s/%s/deletedfile?username=%s&password=%s&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

@@ -44,7 +44,7 @@ public class SmbConsumerLocalWorkDirectoryIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/localwork&noop=true&localWorkDirectory=%s",
+                "smb:%s/%s/localwork?username=%s&password=%s&noop=true&localWorkDirectory=%s",
                 service.address(), service.shareName(), service.userName(), service.password(), testDirectory.toAbsolutePath());
     }
 
