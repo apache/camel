@@ -16,6 +16,17 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.camel.component.as2.api.util.EntityUtils;
@@ -47,19 +58,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.*;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import static org.apache.camel.component.as2.api.entity.EntityParserTest.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,7 +81,7 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"\r", ""})
+    @ValueSource(strings = { "\r", "" })
     public void parseMessageDispositionNotificationReportMessageTest(String carriageReturn) throws Exception {
         HttpResponse response = new BasicClassicHttpResponse(
                 HttpStatus.SC_OK, EnglishReasonPhraseCatalog.INSTANCE.getReason(HttpStatus.SC_OK, null));
@@ -91,7 +90,8 @@ public class EntityParserContentLineEndingTest {
                 DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
 
         InputStream is = new ByteArrayInputStream(
-                EntityParserContentProvider.dispositionNotificationReportContent(carriageReturn).getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
+                EntityParserContentProvider.dispositionNotificationReportContent(carriageReturn)
+                        .getBytes(DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME));
         BasicHttpEntity entity = new BasicHttpEntity(is, ContentType.parse(REPORT_CONTENT_TYPE_VALUE));
         EntityUtils.setMessageEntity(response, entity);
 
@@ -103,12 +103,12 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"\r", ""})
+    @ValueSource(strings = { "\r", "" })
     public void parseMessageDispositionNotificationReportBodyTest(String carriageReturn) throws Exception {
 
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
                 = createMdnEntity(EntityParserContentProvider.dispositionNotificationReportContent(carriageReturn),
-                DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
+                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
 
         assertNotNull(dispositionNotificationMultipartReportEntity,
                 "Unexpected Null disposition notification multipart entity");
@@ -122,12 +122,12 @@ public class EntityParserContentLineEndingTest {
 
     // verify that parsing the Disposition Notification Report has made no alteration to the entity's body part fields
     @ParameterizedTest
-    @ValueSource(strings = {"\r", ""})
+    @ValueSource(strings = { "\r", "" })
     public void messageDispositionNotificationReportBodyContentTest(String carriageReturn) throws Exception {
 
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
                 = createMdnEntity(EntityParserContentProvider.dispositionNotificationReportContentUnfolded(carriageReturn),
-                DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
+                        DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY);
 
         String expectedContent = String.format("%s\r\n%s\r\n%s",
                 new BasicHeader(AS2Header.CONTENT_TYPE, REPORT_CONTENT_TYPE_VALUE),
@@ -141,10 +141,11 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"\r", ""})
+    @ValueSource(strings = { "\r", "" })
     public void parseTextPlainBodyTest(String carriageReturn) throws Exception {
 
-        InputStream is = new ByteArrayInputStream(EntityParserContentProvider.textPlainContent(carriageReturn).getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
+        InputStream is = new ByteArrayInputStream(
+                EntityParserContentProvider.textPlainContent(carriageReturn).getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer
                 = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
@@ -157,10 +158,11 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"\r", ""})
-    public void parseTextPlainBodyTest_2(String carriageReturn) throws Exception {
+    @ValueSource(strings = { "\r", "" })
+    public void parseTextPlainBodyTestWithEntityMarshalling(String carriageReturn) throws Exception {
 
-        InputStream is = new ByteArrayInputStream(EntityParserContentProvider.textPlainContent(carriageReturn).getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
+        InputStream is = new ByteArrayInputStream(
+                EntityParserContentProvider.textPlainContent(carriageReturn).getBytes(TEXT_PLAIN_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer
                 = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 
@@ -176,11 +178,12 @@ public class EntityParserContentLineEndingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"\r", ""})
+    @ValueSource(strings = { "\r", "" })
     public void parseMessageDispositionNotificationBodyTest(String carriageReturn) throws Exception {
 
         InputStream is = new ByteArrayInputStream(
-                EntityParserContentProvider.dispositionNotificationContent(carriageReturn).getBytes(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
+                EntityParserContentProvider.dispositionNotificationContent(carriageReturn)
+                        .getBytes(DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME));
         AS2SessionInputBuffer inbuffer
                 = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_SIZE);
 

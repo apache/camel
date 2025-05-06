@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
-import org.apache.hc.core5.http.HttpException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import org.apache.hc.core5.http.HttpException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TextPlainEntityTest {
 
