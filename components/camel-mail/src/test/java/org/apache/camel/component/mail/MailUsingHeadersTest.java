@@ -46,7 +46,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
         map.put("CamelFileName", "fileOne");
-        map.put("org.apache.camel.test", "value");
+        map.put("CamelTest", "value");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
         template.sendBodyAndHeaders(davsclaus.uriPrefix(Protocol.smtp), body, map);
@@ -59,7 +59,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         assertEquals("Camel rocks", msg.getSubject());
 
         assertNull(msg.getHeader("CamelFileName"), "We should not get the message header here");
-        assertNull(msg.getHeader("org.apache.camel.test"), "We should not get the message header here");
+        assertNull(msg.getHeader("CAMELTest"), "We should not get the message header here");
     }
 
     @Test
