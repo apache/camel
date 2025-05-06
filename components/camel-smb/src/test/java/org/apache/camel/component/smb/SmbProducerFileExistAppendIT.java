@@ -29,11 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbProducerFileExistAppendIT extends SmbServerTestSupport {
 
-    //    private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
-
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/exist&delay=2000&noop=true&fileExist=Append",
+                "smb:%s/%s/exist?username=%s&password=%s&delay=2000&noop=true&fileExist=Append",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

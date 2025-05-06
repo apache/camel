@@ -132,3 +132,23 @@ They are replaced with a new option `threadOffloadExecutorService` as a general 
 Similarly, there is now only a single `camel-main` configuration option for the fault tolerance `ExecutorService` named `camel.faulttolerance.threadOffloadExecutorService`.
 
 `faultToleranceConfiguration` option  `circuitBreaker` is replaced by `typedGuard` and it's `camel-main` configuration option is `camel.main.faulttolerance.typedGuard`.
+
+=== camel-smb
+
+The `path` option is now configured in the context-path instead of query parameter.
+This makes the endpoint more similar to other file based components.
+
+Before:
+[source,text]
+----
+smb://mysmbserver/myshare/?path=mypath
+----
+
+After:
+
+[source,text]
+----
+smb://mysmbserver/myshare/mypath
+----
+
+TIP: The `path` can still be specified in the URI as backwards compatible.

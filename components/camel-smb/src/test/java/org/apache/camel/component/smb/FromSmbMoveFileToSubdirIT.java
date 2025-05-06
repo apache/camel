@@ -35,7 +35,7 @@ public class FromSmbMoveFileToSubdirIT extends SmbServerTestSupport {
     // create intermediate dirs, and rename file
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/movefiletosubdir&move=greet/${file:name}.old",
+                "smb:%s/%s/movefiletosubdir?username=%s&password=%s&move=greet/${file:name}.old",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

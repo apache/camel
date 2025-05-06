@@ -24,7 +24,7 @@ public class SmbConsumerIncludeExtIT extends SmbServerTestSupport {
 
     private String getSbmUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/includeext&includeExt=txt,dat&initialDelay=3000",
+                "smb:%s/%s/includeext?username=%s&password=%s&includeExt=txt,dat&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

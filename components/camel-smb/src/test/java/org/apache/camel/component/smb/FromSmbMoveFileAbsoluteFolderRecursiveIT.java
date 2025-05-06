@@ -30,7 +30,7 @@ public class FromSmbMoveFileAbsoluteFolderRecursiveIT extends SmbServerTestSuppo
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/moverecurse&recursive=true" +
+                "smb:%s/%s/moverecurse?username=%s&password=%s&recursive=true" +
                              "&move=/.done/${file:name}.old&initialDelay=2500&delay=5000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }

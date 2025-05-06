@@ -35,7 +35,7 @@ public class SmbProducerFileExistFailIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/existfail&delay=2000&noop=true&fileExist=Fail",
+                "smb:%s/%s/existfail?username=%s&password=%s&delay=2000&noop=true&fileExist=Fail",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
@@ -59,7 +59,7 @@ public class SmbProducerFileExistFailIT extends SmbServerTestSupport {
 
         GenericFileOperationFailedException cause
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
-        assertEquals("File already exist: /existfail/hello.txt. Cannot write new file.", cause.getMessage());
+        assertEquals("File already exist: existfail/hello.txt. Cannot write new file.", cause.getMessage());
 
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Read and write files to Server Message Block (SMB) file shares.
  */
-@UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName",
+@UriEndpoint(firstVersion = "4.3.0", scheme = "smb", title = "SMB", syntax = "smb:hostname:port/shareName/path",
              headersClass = SmbConstants.class, category = { Category.FILE })
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"

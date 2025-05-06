@@ -30,7 +30,7 @@ public class SmbProducerFileExistAppendNoFileBeforeIT extends SmbServerTestSuppo
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/appnotexist&delay=2000&noop=true&fileExist=Append",
+                "smb:%s/%s/appnotexist?username=%s&password=%s&delay=2000&noop=true&fileExist=Append",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
