@@ -54,7 +54,7 @@ public class TextPlainEntity extends MimeEntity {
             }
 
             // Write out content
-            canonicalOutstream.write(content.getBytes(StandardCharsets.US_ASCII), 0, content.length());
+            outstream.write(content.getBytes(StandardCharsets.US_ASCII), 0, content.length());
         }
     }
 
