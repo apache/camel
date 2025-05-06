@@ -33,7 +33,7 @@ public class FromSmbPreMoveFileExpressionIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/premoveexpr&delay=5000&preMove=../inprogress/${file:name.noext}.bak",
+                "smb:%s/%s/premoveexpr?username=%s&password=%s&delay=5000&preMove=../inprogress/${file:name.noext}.bak",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

@@ -75,14 +75,14 @@ public class SmbComponentIT extends CamelTestSupport {
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig", service.address(), service.shareName(),
+                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
                         service.userName(), service.password())
                         .process(this::process)
                         .to("mock:result");
 
                 fromF("direct:smbSendFile")
-                        .to("smb:%s/%s?username=%s&password=%s&path=/&smbConfig=#smbConfig")
-                        .to("smb:%s/%s?username=%s&password=%s&path=/")
+                        .to("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig")
+                        .to("smb:%s/%s?username=%s&password=%s")
                         .to("mock:result");
 
             }

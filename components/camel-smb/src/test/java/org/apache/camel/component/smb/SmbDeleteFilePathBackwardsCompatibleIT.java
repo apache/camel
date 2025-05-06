@@ -25,38 +25,45 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class SmbProducerFileExistOverrideIT extends SmbServerTestSupport {
-
-    protected String getSmbUrl() {
-        return String.format(
-                "smb:%s/%s/existoverride?username=%s&password=%s&delay=2000&noop=true&fileExist=Override",
-                service.address(), service.shareName(), service.userName(), service.password());
-    }
+public class SmbDeleteFilePathBackwardsCompatibleIT extends SmbServerTestSupport {
 
     @Override
     public void doPostSetup() throws Exception {
-        template.sendBodyAndHeader(getSmbUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        prepareSmbServer();
+    }
+
+    protected String getSmbUrl() {
+        return String.format(
+                "smb:%s/%s?username=%s&password=%s&path=deletedfile2&delete=true",
+                service.address(), service.shareName(), service.userName(), service.password());
     }
 
     @Test
-    public void testOverride() throws Exception {
+    public void testPollFileAndDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World this file will be deleted");
 
-        template.sendBodyAndHeader(getSmbUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
-
-        MockEndpoint.assertIsSatisfied(context);
+        mock.assertIsSatisfied();
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Bye World",
-                        new String(copyFileContentFromContainer("/data/rw/existoverride/hello.txt"))));
+                .untilAsserted(() -> assertNull((copyFileContentFromContainer("/data/rw/deletedfile2/hello.txt"))));
+    }
+
+    private void prepareSmbServer() throws Exception {
+        template.sendBodyAndHeader(getSmbUrl(), "Hello World this file will be deleted", Exchange.FILE_NAME, "hello.txt");
+
+        // assert file is created
+        await().atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Hello World this file will be deleted",
+                        new String(copyFileContentFromContainer("/data/rw/deletedfile2/hello.txt"))));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @Override
             public void configure() {
                 from(getSmbUrl()).to("mock:result");
             }

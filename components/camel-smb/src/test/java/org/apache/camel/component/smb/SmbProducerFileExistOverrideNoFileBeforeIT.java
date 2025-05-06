@@ -30,7 +30,7 @@ public class SmbProducerFileExistOverrideNoFileBeforeIT extends SmbServerTestSup
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/notexistoverride&delay=2000&noop=true&fileExist=Override",
+                "smb:%s/%s/notexistoverride?username=%s&password=%s&delay=2000&noop=true&fileExist=Override",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

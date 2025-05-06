@@ -34,7 +34,7 @@ public class SmbNoDownloadIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/nodownload&download=false",
+                "smb:%s/%s/nodownload?username=%s&password=%s&download=false",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

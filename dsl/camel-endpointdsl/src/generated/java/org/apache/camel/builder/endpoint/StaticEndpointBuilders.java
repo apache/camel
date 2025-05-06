@@ -13360,7 +13360,7 @@ public class StaticEndpointBuilders {
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
      * 
-     * Syntax: <code>smb:hostname:port/shareName</code>
+     * Syntax: <code>smb:hostname:port/shareName/path</code>
      * 
      * Path parameter: hostname (required)
      * The share hostname or IP address
@@ -13372,7 +13372,10 @@ public class StaticEndpointBuilders {
      * Path parameter: shareName (required)
      * The name of the share directory
      * 
-     * @param path hostname:port/shareName
+     * Path parameter: path
+     * The base directory within the share
+     * 
+     * @param path hostname:port/shareName/path
      * @return the dsl builder
      */
     public static SmbEndpointBuilderFactory.SmbEndpointBuilder smb(String path) {
@@ -13386,7 +13389,7 @@ public class StaticEndpointBuilders {
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
      * 
-     * Syntax: <code>smb:hostname:port/shareName</code>
+     * Syntax: <code>smb:hostname:port/shareName/path</code>
      * 
      * Path parameter: hostname (required)
      * The share hostname or IP address
@@ -13398,9 +13401,12 @@ public class StaticEndpointBuilders {
      * Path parameter: shareName (required)
      * The name of the share directory
      * 
+     * Path parameter: path
+     * The base directory within the share
+     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path hostname:port/shareName
+     * @param path hostname:port/shareName/path
      * @return the dsl builder
      */
     public static SmbEndpointBuilderFactory.SmbEndpointBuilder smb(String componentName, String path) {

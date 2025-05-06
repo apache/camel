@@ -24,7 +24,7 @@ public class SmbConsumerAutoCreateIT extends SmbServerTestSupport {
 
     private String getSbmUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/createme&delete=true&initialDelay=3000",
+                "smb:%s/%s/createme?username=%s&password=%s&delete=true&initialDelay=3000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

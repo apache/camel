@@ -17,7 +17,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 @Generated("org.apache.camel.maven.packaging.GenerateEndpointUriFactoryMojo")
 public class SmbEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":hostname:port/shareName";
+    private static final String BASE = ":hostname:port/shareName/path";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
@@ -144,6 +144,7 @@ public class SmbEndpointUriFactory extends org.apache.camel.support.component.En
         uri = buildPathParameter(syntax, uri, "hostname", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", 445, false, copy);
         uri = buildPathParameter(syntax, uri, "shareName", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "path", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

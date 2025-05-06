@@ -32,7 +32,7 @@ public class SmbStreamDownloadFalseIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/uploadstream2&streamDownload=false",
+                "smb:%s/%s/uploadstream2?username=%s&password=%s&streamDownload=false",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

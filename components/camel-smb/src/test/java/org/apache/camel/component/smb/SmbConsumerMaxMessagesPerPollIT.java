@@ -32,7 +32,7 @@ public class SmbConsumerMaxMessagesPerPollIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/poll&delete=true&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false",
+                "smb:%s/%s/poll?username=%s&password=%s&delete=true&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

@@ -28,7 +28,7 @@ public class SmbProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadIT ext
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/existOverrideTwoNotEagerDel&fileExist=Override&eagerDeleteTargetFile=false",
+                "smb:%s/%s/existOverrideTwoNotEagerDel?username=%s&password=%s&fileExist=Override&eagerDeleteTargetFile=false",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 

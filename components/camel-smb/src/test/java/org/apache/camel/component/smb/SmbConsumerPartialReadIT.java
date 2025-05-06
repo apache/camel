@@ -35,7 +35,7 @@ class SmbConsumerPartialReadIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s?username=%s&password=%s&path=/partialread&move=done&moveFailed=failed",
+                "smb:%s/%s/partialread?username=%s&password=%s&move=done&moveFailed=failed",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
