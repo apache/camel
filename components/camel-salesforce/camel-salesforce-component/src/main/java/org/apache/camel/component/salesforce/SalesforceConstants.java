@@ -63,6 +63,8 @@ public final class SalesforceConstants {
     public static final String HEADER_SALESFORCE_PUBSUB_REPLAY_ID = "CamelSalesforcePubSubReplayId";
     @Metadata(label = "consumer", description = "The Pub/Sub API event id.", javaType = "String")
     public static final String HEADER_SALESFORCE_PUBSUB_EVENT_ID = "CamelSalesforcePubSubEventId";
+    @Metadata(label = "consumer", description = "The Pub/Sub API rpc id.", javaType = "String")
+    public static final String HEADER_SALESFORCE_PUBSUB_RPC_ID = "CamelSalesforcePubSubRpcId";
 
     @Metadata(label = "producer", description = "Total number of records matching a query.", javaType = "int")
     public static final String HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE = "CamelSalesforceQueryResultTotalSize";
