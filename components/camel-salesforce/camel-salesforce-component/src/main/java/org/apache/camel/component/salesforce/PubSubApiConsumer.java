@@ -30,6 +30,7 @@ import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_EVENT_ID;
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_RPC_ID;
 
 public class PubSubApiConsumer extends DefaultConsumer {
 
@@ -65,12 +66,13 @@ public class PubSubApiConsumer extends DefaultConsumer {
         }
     }
 
-    public void processEvent(Object recordObj, String eventId, String replayId) {
+    public void processEvent(Object recordObj, String eventId, String replayId, String rpcId) {
         final Exchange exchange = createExchange(true);
         final Message in = exchange.getIn();
         in.setBody(recordObj);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_EVENT_ID, eventId);
         in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
+        in.setHeader(HEADER_SALESFORCE_PUBSUB_RPC_ID, rpcId);
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
     }
