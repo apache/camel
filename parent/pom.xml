@@ -158,7 +158,7 @@
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.20.1</flink-version>
         <flowable-version>7.1.0</flowable-version>
-        <fop-version>2.10</fop-version>
+        <fop-version>2.11</fop-version>
         <formatter-maven-plugin-version>2.25.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
