@@ -485,6 +485,29 @@ public interface Aws2S3ComponentBuilderFactory {
     
         
         /**
+         * Remove the contents of the prefix configuration string from the new
+         * S3Object key before copying. For example, if prefix is set to
+         * 'demo/notify' and the destinationBucketPrefix is set to
+         * 'demo/archive', an S3Object with a key of 'demo/notify/example.txt'
+         * will be copied to 'demo/archive/example.txt', rather than the default
+         * behavior where the new key is 'demo/archive/demo/notify/example.txt'.
+         * Only applicable when moveAfterRead is true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param removePrefixOnMove the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder removePrefixOnMove(boolean removePrefixOnMove) {
+            doSetProperty("removePrefixOnMove", removePrefixOnMove);
+            return this;
+        }
+    
+        
+        /**
          * If this option is true and includeBody is false, then the
          * S3Object.close() method will be called on exchange completion. This
          * option is strongly related to includeBody option. In case of setting
@@ -1162,6 +1185,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;
+            case "removePrefixOnMove": getOrCreateConfiguration((AWS2S3Component) component).setRemovePrefixOnMove((boolean) value); return true;
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
             case "batchMessageNumber": getOrCreateConfiguration((AWS2S3Component) component).setBatchMessageNumber((int) value); return true;
             case "batchSize": getOrCreateConfiguration((AWS2S3Component) component).setBatchSize((int) value); return true;
