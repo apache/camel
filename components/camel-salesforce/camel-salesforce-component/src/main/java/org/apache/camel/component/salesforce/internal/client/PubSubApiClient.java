@@ -369,7 +369,7 @@ public class PubSubApiClient extends ServiceSupport {
             LOG.debug("pending_num_requested: {}", fetchResponse.getPendingNumRequested());
             for (ConsumerEvent ce : fetchResponse.getEventsList()) {
                 try {
-                    processEvent(ce);
+                    processEvent(fetchResponse.getRpcId(), ce);
                 } catch (Exception e) {
                     LOG.error(e.toString(), e);
                 }
@@ -450,7 +450,7 @@ public class PubSubApiClient extends ServiceSupport {
             this.serverStream = serverStream;
         }
 
-        private void processEvent(ConsumerEvent ce) throws IOException {
+        private void processEvent(String rpcId, ConsumerEvent ce) throws IOException {
             final Schema schema = getSchema(ce.getEvent().getSchemaId());
             Object recordObj = switch (consumer.getDeserializeType()) {
                 case AVRO -> deserializeAvro(ce, schema);
@@ -461,7 +461,7 @@ public class PubSubApiClient extends ServiceSupport {
             };
             String eventId = ce.getEvent().getId();
             String replayId = PubSubApiClient.base64EncodeByteString(ce.getReplayId());
-            consumer.processEvent(recordObj, eventId, replayId);
+            consumer.processEvent(recordObj, eventId, replayId, rpcId);
         }
 
         private Object deserializeAvro(ConsumerEvent ce, Schema schema) throws IOException {
