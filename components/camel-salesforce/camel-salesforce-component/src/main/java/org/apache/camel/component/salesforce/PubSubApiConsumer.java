@@ -32,7 +32,6 @@ import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_S
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_REPLAY_ID;
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_PUBSUB_RPC_ID;
 
-
 public class PubSubApiConsumer extends DefaultConsumer {
 
     private final String topic;

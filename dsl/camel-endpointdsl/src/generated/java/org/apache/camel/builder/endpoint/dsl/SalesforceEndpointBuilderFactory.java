@@ -4328,6 +4328,18 @@ public interface SalesforceEndpointBuilderFactory {
             return "CamelSalesforcePubSubEventId";
         }
         /**
+         * The Pub/Sub API rpc id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforcePubSubRpcId}.
+         */
+        public String salesforcePubSubRpcId() {
+            return "CamelSalesforcePubSubRpcId";
+        }
+        /**
          * Total number of records matching a query.
          * 
          * The option is a: {@code int} type.
