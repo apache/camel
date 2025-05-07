@@ -588,6 +588,48 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Remove the contents of the prefix configuration string from the new
+         * S3Object key before copying. For example, if prefix is set to
+         * 'demo/notify' and the destinationBucketPrefix is set to
+         * 'demo/archive', an S3Object with a key of 'demo/notify/example.txt'
+         * will be copied to 'demo/archive/example.txt', rather than the default
+         * behavior where the new key is 'demo/archive/demo/notify/example.txt'.
+         * Only applicable when moveAfterRead is true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param removePrefixOnMove the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder removePrefixOnMove(boolean removePrefixOnMove) {
+            doSetProperty("removePrefixOnMove", removePrefixOnMove);
+            return this;
+        }
+        /**
+         * Remove the contents of the prefix configuration string from the new
+         * S3Object key before copying. For example, if prefix is set to
+         * 'demo/notify' and the destinationBucketPrefix is set to
+         * 'demo/archive', an S3Object with a key of 'demo/notify/example.txt'
+         * will be copied to 'demo/archive/example.txt', rather than the default
+         * behavior where the new key is 'demo/archive/demo/notify/example.txt'.
+         * Only applicable when moveAfterRead is true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param removePrefixOnMove the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder removePrefixOnMove(String removePrefixOnMove) {
+            doSetProperty("removePrefixOnMove", removePrefixOnMove);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
