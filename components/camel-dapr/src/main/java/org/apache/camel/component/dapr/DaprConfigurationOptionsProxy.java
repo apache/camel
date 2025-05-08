@@ -77,6 +77,10 @@ public class DaprConfigurationOptionsProxy {
         return getOption(DaprExchangeHeaders::getStateStoreFromHeaders, configuration::getStateStore, exchange);
     }
 
+    public String getSecretStore(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getSecretStoreFromHeaders, configuration::getSecretStore, exchange);
+    }
+
     public String getKey(final Exchange exchange) {
         return getOption(DaprExchangeHeaders::getKeyFromHeaders, configuration::getKey, exchange);
     }

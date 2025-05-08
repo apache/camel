@@ -70,6 +70,9 @@ Dapr’s publish-subscribe (Pub/Sub) building block enables asynchronous, event-
 === 3. *invokeBinding*:
 Dapr’s bindings building block allows interaction with external systems via input/output bindings. The invokeBinding operation enables sending data to a configured output binding. This operation requires specifying the bindingName (the name of the binding component) and the bindingOperation (such as create, get, or delete, depending on the binding's capabilities).
 
+=== 4. *secret*:
+Dapr’s secret management building block enables secure retrieval of secrets from external secret stores. The secret operation fetches a secret from the specified secret store. If a key is provided, the operation retrieves the corresponding secret; if no key is specified, a bulk retrieval of all secrets from the store is performed. This operation requires the secretStore name, and optionally the key.
+
 === Dapr Consumer operations
 The Dapr Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
 
@@ -214,6 +217,26 @@ from("direct:start")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+- `secret` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .to("dapr:secret?secretStore=myStore&key=mySecret")
+  .log("Received secret from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `secret: bulk` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  // when no secret key is passed, bulk retrieval is performed on secret store
+  .to("dapr:secret?secretStore=myStore")
+  .log("Received bulk secrets from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
 
 === Consumer Operations Examples
 - `pubSub` -

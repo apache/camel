@@ -48,7 +48,12 @@ public class DaprConstants {
               description = "The name of the Dapr state store to interact with, defined in statestore.yaml config",
               javaType = "String")
     public static final String STATE_STORE = HEADER_PREFIX + "StateStore";
-    @Metadata(label = "producer", description = "The key used to identify the state object within the specified state store",
+    @Metadata(label = "producer",
+              description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config",
+              javaType = "String")
+    public static final String SECRET_STORE = HEADER_PREFIX + "SecretStore";
+    @Metadata(label = "producer",
+              description = "The key used to identify the state/secret object within the specified state/secret store",
               javaType = "String")
     public static final String KEY = HEADER_PREFIX + "Key";
     @Metadata(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations",

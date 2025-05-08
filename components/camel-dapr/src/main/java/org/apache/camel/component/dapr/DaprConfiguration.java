@@ -50,7 +50,11 @@ public class DaprConfiguration implements Cloneable {
     @UriParam(label = "producer",
               description = "The name of the Dapr state store to interact with, defined in statestore.yaml config")
     private String stateStore;
-    @UriParam(label = "producer", description = "The key used to identify the state object within the specified state store")
+    @UriParam(label = "producer",
+              description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config")
+    private String secretStore;
+    @UriParam(label = "producer",
+              description = "The key used to identify the state/secret object within the specified state/secret store")
     private String key;
     @UriParam(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations")
     private String eTag;
@@ -171,7 +175,20 @@ public class DaprConfiguration implements Cloneable {
     }
 
     /**
-     * The key used to identify the <b>state object</b> within the specified state store.
+     * The name of the Dapr <b>secret store</b> to interact with.
+     * <p>
+     * Required for all secret management operations.
+     */
+    public String getSecretStore() {
+        return secretStore;
+    }
+
+    public void setSecretStore(String secretStore) {
+        this.secretStore = secretStore;
+    }
+
+    /**
+     * The key used to identify the <b>state/secret object</b> within the specified state/secret store.
      * <p>
      * Required for all state management operations.
      */

@@ -50,6 +50,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "previewClient": target.getConfiguration().setPreviewClient(property(camelContext, io.dapr.client.DaprPreviewClient.class, value)); return true;
         case "pubsubname":
         case "pubSubName": target.getConfiguration().setPubSubName(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretstore":
+        case "secretStore": target.getConfiguration().setSecretStore(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
         case "serviceToInvoke": target.getConfiguration().setServiceToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "stateoperation":
@@ -97,6 +99,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "previewClient": return io.dapr.client.DaprPreviewClient.class;
         case "pubsubname":
         case "pubSubName": return java.lang.String.class;
+        case "secretstore":
+        case "secretStore": return java.lang.String.class;
         case "servicetoinvoke":
         case "serviceToInvoke": return java.lang.String.class;
         case "stateoperation":
@@ -140,6 +144,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "previewClient": return target.getConfiguration().getPreviewClient();
         case "pubsubname":
         case "pubSubName": return target.getConfiguration().getPubSubName();
+        case "secretstore":
+        case "secretStore": return target.getConfiguration().getSecretStore();
         case "servicetoinvoke":
         case "serviceToInvoke": return target.getConfiguration().getServiceToInvoke();
         case "stateoperation":

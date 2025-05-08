@@ -303,6 +303,34 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
+         * The name of the Dapr binding to invoke.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param bindingName the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder bindingName(String bindingName) {
+            doSetProperty("bindingName", bindingName);
+            return this;
+        }
+        /**
+         * The operation to perform on the binding.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param bindingOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder bindingOperation(String bindingOperation) {
+            doSetProperty("bindingOperation", bindingOperation);
+            return this;
+        }
+        /**
          * Concurrency mode to use with state operations.
          * 
          * The option is a:
@@ -412,8 +440,8 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to identify the state object within the specified state
-         * store.
+         * The key used to identify the state/secret object within the specified
+         * state/secret store.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -438,6 +466,21 @@ public interface DaprEndpointBuilderFactory {
          */
         default DaprEndpointProducerBuilder methodToInvoke(String methodToInvoke) {
             doSetProperty("methodToInvoke", methodToInvoke);
+            return this;
+        }
+        /**
+         * The name of the Dapr secret store to interact with, defined in
+         * local-secret-store.yaml config.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param secretStore the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder secretStore(String secretStore) {
+            doSetProperty("secretStore", secretStore);
             return this;
         }
         /**
@@ -818,8 +861,21 @@ public interface DaprEndpointBuilderFactory {
             return "CamelDaprStateStore";
         }
         /**
-         * The key used to identify the state object within the specified state
-         * store.
+         * The name of the Dapr secret store to interact with, defined in
+         * local-secret-store.yaml config.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprSecretStore}.
+         */
+        public String daprSecretStore() {
+            return "CamelDaprSecretStore";
+        }
+        /**
+         * The key used to identify the state/secret object within the specified
+         * state/secret store.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1068,6 +1124,30 @@ public interface DaprEndpointBuilderFactory {
          */
         public String daprTraceState() {
             return "CamelDaprTraceState";
+        }
+        /**
+         * The name of the Dapr binding to invoke.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprBindingName}.
+         */
+        public String daprBindingName() {
+            return "CamelDaprBindingName";
+        }
+        /**
+         * The operation to perform on the binding.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprBindingOperation}.
+         */
+        public String daprBindingOperation() {
+            return "CamelDaprBindingOperation";
         }
     }
     static DaprEndpointBuilder endpointBuilder(String componentName, String path) {

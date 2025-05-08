@@ -23,7 +23,7 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("bindingName");
         props.add("bindingOperation");
         props.add("bridgeErrorHandler");
@@ -40,6 +40,7 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("operation");
         props.add("previewClient");
         props.add("pubSubName");
+        props.add("secretStore");
         props.add("serviceToInvoke");
         props.add("stateOperation");
         props.add("stateStore");

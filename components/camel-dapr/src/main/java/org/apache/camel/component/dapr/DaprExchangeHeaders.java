@@ -63,6 +63,10 @@ public class DaprExchangeHeaders {
         return getObjectFromHeaders(exchange, DaprConstants.STATE_STORE, String.class);
     }
 
+    public static String getSecretStoreFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.SECRET_STORE, String.class);
+    }
+
     public static String getKeyFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, DaprConstants.KEY, String.class);
     }
