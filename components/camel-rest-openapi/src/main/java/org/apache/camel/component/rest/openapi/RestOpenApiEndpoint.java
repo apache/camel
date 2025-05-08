@@ -296,6 +296,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (factory != null) {
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             Map<String, Object> copy = new HashMap<>(parameters); // defensive copy of the parameters
+            // avoid duplicate context-path
+            if (basePath.equals(config.getContextPath())) {
+                basePath = "";
+            }
             Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
             if (consumer instanceof PlatformHttpConsumerAware phca) {
                 processor.setPlatformHttpConsumer(phca);
@@ -511,18 +515,17 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
-        if (isNotEmpty(specificationBasePath)) {
-            return specificationBasePath;
-        }
-
         final CamelContext camelContext = getCamelContext();
         final RestConfiguration restConfiguration
                 = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
         final String restConfigurationBasePath = restConfiguration.getContextPath();
-
         if (isNotEmpty(restConfigurationBasePath)) {
             return restConfigurationBasePath;
+        }
+
+        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
+        if (isNotEmpty(specificationBasePath)) {
+            return specificationBasePath;
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;

@@ -97,6 +97,26 @@ to end the current choice (inner) and then afterwards change the scope to be Cho
 continue in the outer Choice. Otherwise the Java DSL cannot know the scope is Choice EIP and you would
 not be able to add the `otherwise` block to the outer Choice.
 
+==== Rest DSL
+
+When setting the context-path in _rest configuration_ then this now takes precedence over
+the base-path defined in an openapi specification when using _rest dsl contract-first_.
+
+For example
+
+[source,yaml]
+----
+- restConfiguration:
+    clientRequestValidation: true
+    contextPath: /cheese
+- rest:
+    openApi:
+      specification: petstore-v3.json
+----
+
+Then Camel will now use `/cheese` as the base-path for the Rest DSL API endpoints
+from the `petstore-v3.json` openapi specification file.
+
 === camel-as2
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and
