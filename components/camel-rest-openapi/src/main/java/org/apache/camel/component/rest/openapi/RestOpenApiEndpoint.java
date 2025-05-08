@@ -99,7 +99,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "API basePath, for example \"`/v3`\". Default is unset, if set overrides the value present in"
                             + " OpenApi specification and in the component configuration.",
-              label = "producer")
+              label = "common")
     private String basePath;
     @UriParam(description = "Name of the Camel component that will perform the requests. The component must be present"
                             + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
@@ -309,7 +309,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-
         final CamelContext camelContext = getCamelContext();
         final OpenAPI openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
         final Paths paths = openapiDoc.getPaths();
@@ -323,7 +322,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
             if (maybeOperationEntry.isPresent()) {
                 final Entry<PathItem.HttpMethod, Operation> operationEntry = maybeOperationEntry.get();
-
                 final Operation operation = operationEntry.getValue();
                 Map<String, Parameter> pathParameters;
                 if (operation.getParameters() != null) {
@@ -334,13 +332,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                     pathParameters = new HashMap<>();
                 }
                 final String uriTemplate = resolveUri(pathEntry.getKey(), pathParameters);
-
                 final HttpMethod httpMethod = operationEntry.getKey();
                 final String method = httpMethod.name();
-
                 return createProducerFor(openapiDoc, operation, method, uriTemplate);
             }
-
         }
 
         final String supportedOperations = paths.values().stream().flatMap(p -> p.readOperations().stream())
@@ -486,7 +481,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         Map<String, Object> params = determineEndpointParameters(openapi, operation);
         boolean hasHost = params.containsKey("host");
-
         String basePath = determineBasePath(openapi);
         String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
         if (hasHost) {
@@ -518,7 +512,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
-
         if (isNotEmpty(specificationBasePath)) {
             return specificationBasePath;
         }
@@ -732,18 +725,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     String literalPathParameterValue(final Parameter parameter) {
         final String name = parameter.getName();
-
         final String valueStr = String.valueOf(parameters.get(name));
-
         return UnsafeUriCharactersEncoder.encode(valueStr);
     }
 
     String literalQueryParameterValue(final Parameter parameter) {
         final String name = parameter.getName();
-
         final String valueStr = String.valueOf(parameters.get(name));
         final String encoded = UnsafeUriCharactersEncoder.encode(valueStr);
-
         return name + "=" + encoded;
     }
 
@@ -756,7 +745,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (parameters.containsKey(name)) {
             return literalQueryParameterValue(parameter);
         }
-
         return queryParameterExpression(parameter);
     }
 
@@ -766,7 +754,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         int start = uriTemplate.indexOf('{');
-
         if (start == -1) {
             return uriTemplate;
         }
@@ -777,7 +764,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             resolved.append(uriTemplate, pos, start);
 
             final int end = uriTemplate.indexOf('}', start);
-
             final String name = uriTemplate.substring(start + 1, end);
 
             if (parameters.containsKey(name)) {
@@ -799,7 +785,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return resolved.toString();
     }
 
-    protected RequestValidator configureRequestValidator(
+    private RequestValidator configureRequestValidator(
             OpenAPI openAPI, Operation operation, String method, String uriTemplate) {
         DefaultRequestValidator answer = new DefaultRequestValidator();
         answer.setOperation(new RestOpenApiOperation(operation, method, uriTemplate));

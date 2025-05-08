@@ -44,6 +44,22 @@ public interface RestOpenApiEndpointBuilderFactory {
             return (AdvancedRestOpenApiEndpointConsumerBuilder) this;
         }
         /**
+         * API basePath, for example /v3. Default is unset, if set overrides the
+         * value present in OpenApi specification and in the component
+         * configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointConsumerBuilder basePath(String basePath) {
+            doSetProperty("basePath", basePath);
+            return this;
+        }
+        /**
          * Sets the context-path to use for servicing the OpenAPI specification.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -337,7 +353,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param basePath the value to set
          * @return the dsl builder
@@ -502,6 +518,22 @@ public interface RestOpenApiEndpointBuilderFactory {
             return (AdvancedRestOpenApiEndpointBuilder) this;
         }
 
+        /**
+         * API basePath, for example /v3. Default is unset, if set overrides the
+         * value present in OpenApi specification and in the component
+         * configuration.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
+         */
+        default RestOpenApiEndpointBuilder basePath(String basePath) {
+            doSetProperty("basePath", basePath);
+            return this;
+        }
     }
 
     /**
