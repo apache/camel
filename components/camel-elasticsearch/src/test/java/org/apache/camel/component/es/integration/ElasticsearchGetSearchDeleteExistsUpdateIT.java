@@ -36,10 +36,10 @@ import co.elastic.clients.elasticsearch.core.MsearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.mget.MultiGetResponseItem;
 import co.elastic.clients.elasticsearch.core.msearch.MultiSearchResponseItem;
-import co.elastic.clients.elasticsearch.core.msearch.MultisearchBody;
 import co.elastic.clients.elasticsearch.core.msearch.MultisearchHeader;
 import co.elastic.clients.elasticsearch.core.msearch.RequestItem;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.elasticsearch.core.search.SearchRequestBody;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -448,9 +448,9 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
             //now, verify GET succeeded
             MsearchRequest.Builder builder = new MsearchRequest.Builder().index("twitter").searches(
                     new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
+                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
                     new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
             @SuppressWarnings("unchecked")
             List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSearch", builder, List.class);
             assertNotNull(response, "response should not be null");
@@ -484,9 +484,9 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
             //now, verify GET succeeded
             MsearchRequest.Builder builder = new MsearchRequest.Builder().index("multi-search").searches(
                     new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
+                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build(),
                     new RequestItem.Builder().header(new MultisearchHeader.Builder().build())
-                            .body(new MultisearchBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
+                            .body(new SearchRequestBody.Builder().query(b -> b.matchAll(x -> x)).build()).build());
             @SuppressWarnings("unchecked")
             List<MultiSearchResponseItem<?>> response = template.requestBodyAndHeaders(
                     "direct:multiSearch", builder,
