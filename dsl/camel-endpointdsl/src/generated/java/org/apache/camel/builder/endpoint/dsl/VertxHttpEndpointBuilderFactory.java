@@ -45,6 +45,42 @@ public interface VertxHttpEndpointBuilderFactory {
         }
 
         /**
+         * If the option is true, the Exchange.HTTP_URI header will be ignored
+         * and the endpoint URI will be used for the HTTP request. You may also
+         * set option throwExceptionOnFailure to false to return the fault
+         * response back to the client.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
+            return this;
+        }
+        /**
+         * If the option is true, the Exchange.HTTP_URI header will be ignored
+         * and the endpoint URI will be used for the HTTP request. You may also
+         * set option throwExceptionOnFailure to false to return the fault
+         * response back to the client.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
+            return this;
+        }
+        /**
          * The amount of time in milliseconds until a connection is established.
          * A timeout value of zero is interpreted as an infinite timeout.
          * 
