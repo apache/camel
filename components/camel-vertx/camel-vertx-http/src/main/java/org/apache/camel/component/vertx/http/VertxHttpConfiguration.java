@@ -87,6 +87,9 @@ public class VertxHttpConfiguration {
     @UriParam(label = "producer", defaultValue = "data",
               description = "The name of the multipart/form-data when multipartUpload is enabled.")
     private String multipartUploadName = "data";
+    @UriParam(label = "producer",
+              description = "If the option is true, the Exchange.HTTP_URI header will be ignored and the endpoint URI will be used for the HTTP request. You may also set option throwExceptionOnFailure to false to return the fault response back to the client.")
+    private boolean bridgeEndpoint;
 
     /**
      * The HTTP URI to connect to
@@ -376,5 +379,13 @@ public class VertxHttpConfiguration {
 
     public void setMultipartUploadName(String multipartUploadName) {
         this.multipartUploadName = multipartUploadName;
+    }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
     }
 }
