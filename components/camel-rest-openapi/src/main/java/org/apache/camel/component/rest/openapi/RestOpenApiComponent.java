@@ -157,12 +157,20 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
             throws Exception {
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(uri, remaining, this, parameters);
         endpoint.setApiContextPath(getApiContextPath());
+        endpoint.setBasePath(getBasePath());
         endpoint.setBindingPackageScan(getBindingPackageScan());
         endpoint.setClientRequestValidation(isClientRequestValidation());
+        endpoint.setComponentName(getComponentName());
+        endpoint.setConsumerComponentName(getConsumerComponentName());
+        endpoint.setConsumes(getConsumes());
+        endpoint.setHost(getHost());
+        endpoint.setProduces(getProduces());
         endpoint.setRequestValidationEnabled(isRequestValidationEnabled());
         endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
+        endpoint.setSpecificationUri(getSpecificationUri());
         endpoint.setMissingOperation(getMissingOperation());
         endpoint.setMockIncludePattern(getMockIncludePattern());
+        endpoint.setRestOpenapiProcessorStrategy(getRestOpenapiProcessorStrategy());
         setProperties(endpoint, parameters);
         return endpoint;
     }
