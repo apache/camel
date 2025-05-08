@@ -54,7 +54,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         Message message = exchange.getMessage();
 
         // Resolve query string from the HTTP_QUERY header or default to those provided on the endpoint HTTP URI
-        String queryString = VertxHttpHelper.resolveQueryString(exchange);
+        String queryString = VertxHttpHelper.resolveQueryString(exchange, endpoint);
         Map<String, Object> queryParams = null;
         if (ObjectHelper.isEmpty(queryString)) {
             // use default query string from endpoint configuration
@@ -109,7 +109,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             request.bearerTokenAuthentication(configuration.getBearerToken());
         }
 
-        populateRequestHeaders(exchange, request, configuration.getHeaderFilterStrategy());
+        populateRequestHeaders(endpoint, exchange, request, configuration.getHeaderFilterStrategy());
 
         if (configuration.getTimeout() > -1) {
             request.timeout(configuration.getTimeout());
@@ -119,7 +119,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public void populateRequestHeaders(Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy) {
+    public void populateRequestHeaders(
+            VertxHttpEndpoint endpoint, Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy) {
         // optimize to use add on MultiMap as putHeader on request does a remove/add
         MultiMap headers = request.headers();
 
@@ -135,6 +136,12 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
                 String key = entry.getKey();
                 Object headerValue = entry.getValue();
+
+                if (endpoint.getConfiguration().isBridgeEndpoint() && request.queryParams().contains(key)) {
+                    // Avoid duplicating headers when bridgeEndpoint and query params contains the same header keys
+                    continue;
+                }
+
                 if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     String str = tc.convertTo(String.class, headerValue);
                     headers.set(key, str);

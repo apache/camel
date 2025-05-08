@@ -40,17 +40,20 @@ public final class VertxHttpHelper {
     /**
      * Resolves a HTTP URI query string from the given exchange message headers
      */
-    public static String resolveQueryString(Exchange exchange) throws URISyntaxException {
+    public static String resolveQueryString(Exchange exchange, VertxHttpEndpoint endpoint) throws URISyntaxException {
         Message message = exchange.getMessage();
         String queryString = (String) message.removeHeader(Exchange.REST_HTTP_QUERY);
         if (ObjectHelper.isEmpty(queryString)) {
             queryString = message.getHeader(VertxHttpConstants.HTTP_QUERY, String.class);
         }
 
-        String uriString = message.getHeader(VertxHttpConstants.HTTP_URI, String.class);
-        uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+        String uriString = null;
+        if (!endpoint.getConfiguration().isBridgeEndpoint()) {
+            uriString = message.getHeader(VertxHttpConstants.HTTP_URI, String.class);
+            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+        }
 
-        if (uriString != null) {
+        if (ObjectHelper.isNotEmpty(uriString)) {
             uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
             URI uri = new URI(uriString);
             queryString = uri.getQuery();
@@ -66,7 +69,7 @@ public final class VertxHttpHelper {
         Message message = exchange.getMessage();
         String uri = (String) message.removeHeader(Exchange.REST_HTTP_URI);
 
-        if (ObjectHelper.isEmpty(uri)) {
+        if (ObjectHelper.isEmpty(uri) && !endpoint.getConfiguration().isBridgeEndpoint()) {
             uri = message.getHeader(VertxHttpConstants.HTTP_URI, String.class);
         }
 

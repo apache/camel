@@ -29,6 +29,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthUsername": target.getConfiguration().setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": target.getConfiguration().setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "cookiestore":
@@ -85,6 +87,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthUsername": return java.lang.String.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "cookiestore":
@@ -142,6 +146,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthUsername": return target.getConfiguration().getBasicAuthUsername();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return target.getConfiguration().isBridgeEndpoint();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "cookiestore":
