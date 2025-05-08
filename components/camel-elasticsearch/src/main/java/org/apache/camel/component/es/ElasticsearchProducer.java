@@ -47,6 +47,7 @@ import co.elastic.clients.elasticsearch.indices.ExistsRequest;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
+import co.elastic.clients.transport.rest_client.RestClientOptions;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -62,6 +63,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.sniff.Sniffer;
@@ -140,7 +142,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             }
             final ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            ElasticsearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper));
+            RestClientOptions options = new RestClientOptions(RequestOptions.DEFAULT, true);
+            ElasticsearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper), options);
             // 2. Index and type will be set by:
             // a. If the incoming body is already an action request
             // b. If the body is not an action request we will use headers if they
