@@ -127,6 +127,24 @@ YAML::
 ----
 ====
 
+=== Configuring Base Path
+
+By default, Camel uses the base path that are specified in the OpenAPI contract such as:
+
+[source,json]
+----
+    "basePath": {
+            "default": "/api/v3"
+    }
+----
+
+You can configure Camel to use a different base path by setting in `application.properties`:
+
+[source,properties]
+----
+camel.component.rest-openapi.base-path = /myapi
+----
+
 === Ignoring missing API operations
 
 When using OpenAPI with _contract-first_, then Camel will on startup check if there is a corresponding `direct:operationId` route
