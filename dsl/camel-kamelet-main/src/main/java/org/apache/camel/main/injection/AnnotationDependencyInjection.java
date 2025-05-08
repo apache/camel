@@ -345,14 +345,16 @@ public final class AnnotationDependencyInjection {
         @Override
         public void onMethodInject(Method method, Object bean, String beanName) {
             Produces produces = method.getAnnotation(Produces.class);
+            Inject inject = method.getAnnotation(Inject.class);
             Named bi = method.getAnnotation(Named.class);
-            if (produces != null || bi != null) {
+            if (produces != null || inject != null || bi != null) {
+                String an = produces != null ? "Produces" : "Inject";
                 Object instance;
                 if (lazyBean) {
                     instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
-                            "Produces");
+                            an);
                 } else {
-                    instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Produces");
+                    instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, an);
                 }
                 if (instance != null) {
                     String name = method.getName();
