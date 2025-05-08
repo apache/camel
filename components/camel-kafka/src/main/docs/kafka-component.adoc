@@ -2,7 +2,7 @@
 :doctitle: Kafka
 :shortname: kafka
 :artifactid: camel-kafka
-:description: Sent and receive messages to/from an Apache Kafka broker.
+:description: Send and receive messages to/from an Apache Kafka broker.
 :since: 2.13
 :supportlevel: Stable
 :tabs-sync-option:
