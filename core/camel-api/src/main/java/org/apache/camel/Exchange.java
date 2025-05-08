@@ -102,8 +102,6 @@ public interface Exchange extends VariableAware {
     String BATCH_INDEX = "CamelBatchIndex";
     String BATCH_SIZE = "CamelBatchSize";
     String BATCH_COMPLETE = "CamelBatchComplete";
-    @Deprecated(since = "4.11.0")
-    String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BINDING = "CamelBinding";
     // do not prefix with Camel and use a lower-case starting letter as it's a shared key
     // used across other Apache products such as AMQ, SMX etc.
