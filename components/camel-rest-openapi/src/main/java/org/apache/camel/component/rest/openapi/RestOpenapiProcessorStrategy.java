@@ -56,10 +56,12 @@ public interface RestOpenapiProcessorStrategy {
      * Validates the OpenAPI specification on startup
      *
      * @param  openAPI              the openapi specification
+     * @param  basePath             optional base path
      * @param  platformHttpConsumer the platform http consumer
      * @throws Exception            is thrown if validation error on startup
      */
-    default void validateOpenApi(OpenAPI openAPI, PlatformHttpConsumerAware platformHttpConsumer) throws Exception {
+    default void validateOpenApi(OpenAPI openAPI, String basePath, PlatformHttpConsumerAware platformHttpConsumer)
+            throws Exception {
         // noop
     }
 
