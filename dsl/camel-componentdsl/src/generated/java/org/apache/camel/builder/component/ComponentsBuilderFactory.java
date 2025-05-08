@@ -2570,7 +2570,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Kafka (camel-kafka)
-     * Sent and receive messages to/from an Apache Kafka broker.
+     * Send and receive messages to/from an Apache Kafka broker.
      * 
      * Category: messaging
      * Since: 2.13
