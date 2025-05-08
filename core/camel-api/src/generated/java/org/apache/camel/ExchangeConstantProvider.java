@@ -13,7 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(159);
+        Map<String, String> map = new HashMap<>(158);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -31,7 +31,6 @@ public class ExchangeConstantProvider {
         map.put("BATCH_COMPLETE", "CamelBatchComplete");
         map.put("BATCH_INDEX", "CamelBatchIndex");
         map.put("BATCH_SIZE", "CamelBatchSize");
-        map.put("BEAN_METHOD_NAME", "CamelBeanMethodName");
         map.put("BINDING", "CamelBinding");
         map.put("BREADCRUMB_ID", "breadcrumbId");
         map.put("CHARSET_NAME", "CamelCharsetName");

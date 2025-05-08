@@ -24,6 +24,8 @@ The `ExchangeHelper.copyResults` has been improved to also copy over exchange va
 Removed unused `Johnzon` in `org.apache.camel.model.dataformat.JsonLibrary` enum as `camel-johnzon` is not supported
 in Camel v4. This removal also means `johnzon` was removed from XSD and YAML DSL schemas.
 
+Removed the `Exchange.BEAN_METHOD_NAME` constant as it has been deprecated and are not in use.
+
 ==== Header Filter Strategy
 
 The default `HeaderFilterStrategy` has changed to be case-insensitive by default. This ensures that headers sent over transports
