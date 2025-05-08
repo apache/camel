@@ -138,11 +138,24 @@ By default, Camel uses the base path that are specified in the OpenAPI contract 
     }
 ----
 
-You can configure Camel to use a different base path by setting in `application.properties`:
+You can configure Camel to use a different base path (such as `cheese`) by either setting the base-path
+on the Rest OpenAPI component as follows, such as in `application.properties`:
 
 [source,properties]
 ----
-camel.component.rest-openapi.base-path = /myapi
+camel.component.rest-openapi.base-path = /cheese
+----
+
+Or configure this in the _rest configuration_ such as:
+
+[source,yaml]
+----
+- restConfiguration:
+    clientRequestValidation: true
+    contextPath: /cheese
+- rest:
+    openApi:
+      specification: petstore-v3.json
 ----
 
 === Ignoring missing API operations
