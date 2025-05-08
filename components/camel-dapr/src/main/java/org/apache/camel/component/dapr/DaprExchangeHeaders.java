@@ -111,6 +111,14 @@ public class DaprExchangeHeaders {
         return getObjectFromHeaders(exchange, DaprConstants.CONTENT_TYPE, String.class);
     }
 
+    public static String getBindingNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.BINDING_NAME, String.class);
+    }
+
+    public static String getBindingOperationFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.BINDING_OPERATION, String.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }

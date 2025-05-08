@@ -32,6 +32,10 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bindingname":
+        case "bindingName": getOrCreateConfiguration(target).setBindingName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindingoperation":
+        case "bindingOperation": getOrCreateConfiguration(target).setBindingOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": getOrCreateConfiguration(target).setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
@@ -74,6 +78,10 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bindingname":
+        case "bindingName": return java.lang.String.class;
+        case "bindingoperation":
+        case "bindingOperation": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
@@ -112,6 +120,10 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bindingname":
+        case "bindingName": return getOrCreateConfiguration(target).getBindingName();
+        case "bindingoperation":
+        case "bindingOperation": return getOrCreateConfiguration(target).getBindingOperation();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrency": return getOrCreateConfiguration(target).getConcurrency();

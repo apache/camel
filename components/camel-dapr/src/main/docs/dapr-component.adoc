@@ -67,6 +67,9 @@ State management in Dapr allows your application to save, get and delete key-val
 === 2. *pubSub*:
 Dapr’s publish-subscribe (Pub/Sub) building block enables asynchronous, event-driven communication between microservices. For this operation, the pubSubName and topic are required.
 
+=== 3. *invokeBinding*:
+Dapr’s bindings building block allows interaction with external systems via input/output bindings. The invokeBinding operation enables sending data to a configured output binding. This operation requires specifying the bindingName (the name of the binding component) and the bindingOperation (such as create, get, or delete, depending on the binding's capabilities).
+
 === Dapr Consumer operations
 The Dapr Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
 
@@ -194,6 +197,20 @@ from("direct:start")
     exchange.getIn().setHeader(DaprConstants.CONTENT_TYPE, "application/json");
   })
   .to("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `invokeBinding` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the message body to the payload to send to the output binding
+    // e.g.:
+    exchange.getMessage().setBody("myBody");
+  })
+  .to("dapr:invokeBinding?bindingName=myBinding&bindingOperation=myOperation")
   .to("mock:result");
 --------------------------------------------------------------------------------
 

@@ -23,6 +23,10 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bindingname":
+        case "bindingName": target.getConfiguration().setBindingName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindingoperation":
+        case "bindingOperation": target.getConfiguration().setBindingOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
@@ -66,6 +70,10 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bindingname":
+        case "bindingName": return java.lang.String.class;
+        case "bindingoperation":
+        case "bindingOperation": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
@@ -105,6 +113,10 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bindingname":
+        case "bindingName": return target.getConfiguration().getBindingName();
+        case "bindingoperation":
+        case "bindingOperation": return target.getConfiguration().getBindingOperation();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrency": return target.getConfiguration().getConcurrency();

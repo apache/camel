@@ -70,6 +70,10 @@ public class DaprConfiguration implements Cloneable {
     private String topic;
     @UriParam(label = "common", description = "The contentType for the Pub/Sub component to use.")
     private String contentType;
+    @UriParam(label = "producer", description = "The name of the Dapr binding to invoke")
+    private String bindingName;
+    @UriParam(label = "producer", description = "The operation to perform on the binding")
+    private String bindingOperation;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -269,6 +273,28 @@ public class DaprConfiguration implements Cloneable {
 
     public void setPreviewClient(DaprPreviewClient previewClient) {
         this.previewClient = previewClient;
+    }
+
+    /**
+     * The <b>name</b> of the Dapr binding to invoke.
+     */
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
+    }
+
+    /**
+     * The <b>operation</b> to perform on the binding.
+     */
+    public String getBindingOperation() {
+        return bindingOperation;
+    }
+
+    public void setBindingOperation(String bindingOperation) {
+        this.bindingOperation = bindingOperation;
     }
 
     public DaprConfiguration copy() {

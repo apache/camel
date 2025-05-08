@@ -121,6 +121,14 @@ public class DaprConfigurationOptionsProxy {
         return getOption(DaprExchangeHeaders::getContentTypeFromHeaders, configuration::getContentType, exchange);
     }
 
+    public String getBindingName(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getBindingNameFromHeaders, configuration::getBindingName, exchange);
+    }
+
+    public String getBindingOperation(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getBindingOperationFromHeaders, configuration::getBindingOperation, exchange);
+    }
+
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))

@@ -109,4 +109,8 @@ public class DaprConstants {
     public static final String TRACE_PARENT = HEADER_PREFIX + "TraceParent";
     @Metadata(label = "consumer", description = "Gets additional vendor-specific trace context", javaType = "String")
     public static final String TRACE_STATE = HEADER_PREFIX + "TraceState";
+    @Metadata(label = "producer", description = "The name of the Dapr binding to invoke", javaType = "String")
+    public static final String BINDING_NAME = HEADER_PREFIX + "BindingName";
+    @Metadata(label = "producer", description = "The operation to perform on the binding", javaType = "String")
+    public static final String BINDING_OPERATION = HEADER_PREFIX + "BindingOperation";
 }
