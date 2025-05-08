@@ -35,7 +35,6 @@ public class DropboxComponent extends DefaultComponent {
 
     public DropboxComponent(CamelContext context) {
         super(context);
-        registerExtension(new DropboxComponentVerifierExtension());
     }
 
     /**
