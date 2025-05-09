@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dapr;
+package org.apache.camel.component.dapr.consumer;
 
 import java.io.Closeable;
 
@@ -27,21 +27,24 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.dapr.DaprConfiguration;
+import org.apache.camel.component.dapr.DaprConstants;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-public class DaprConsumer extends DefaultConsumer {
+public class DaprPubSubConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DaprConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DaprPubSubConsumer.class);
     private final String pubSubName;
     private final String topic;
     private DaprPreviewClient client;
     private Closeable subscription;
 
-    public DaprConsumer(final DaprEndpoint endpoint, final Processor processor) {
+    public DaprPubSubConsumer(final DaprEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
         pubSubName = endpoint.getConfiguration().getPubSubName();
         topic = endpoint.getConfiguration().getTopic();

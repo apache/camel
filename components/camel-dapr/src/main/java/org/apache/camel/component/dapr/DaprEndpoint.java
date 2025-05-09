@@ -22,6 +22,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.dapr.consumer.DaprPubSubConsumer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -49,7 +50,15 @@ public class DaprEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DaprConsumer(this, processor);
+        DaprOperation operation = configuration.getOperation();
+
+        switch (operation) {
+            case pubSub:
+                return new DaprPubSubConsumer(this, processor);
+            default:
+                throw new IllegalArgumentException("Cannot create Dapr consumer with type " + operation);
+        }
+
     }
 
     @Override
