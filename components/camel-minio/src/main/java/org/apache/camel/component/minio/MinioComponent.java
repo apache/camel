@@ -37,7 +37,6 @@ public class MinioComponent extends HealthCheckComponent {
 
     public MinioComponent(CamelContext context) {
         super(context);
-        registerExtension(new MinioComponentVerifierExtension());
     }
 
     @Override
