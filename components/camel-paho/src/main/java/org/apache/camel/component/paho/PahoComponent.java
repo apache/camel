@@ -43,8 +43,6 @@ public class PahoComponent extends DefaultComponent {
 
     public PahoComponent(CamelContext context) {
         super(context);
-
-        registerExtension(new PahoComponentVerifierExtension());
     }
 
     @Override
