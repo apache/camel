@@ -30,7 +30,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -210,7 +209,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected boolean logHttpActivity;
 
     public HttpComponent() {
-        registerExtension(HttpComponentVerifierExtension::new);
     }
 
     /**
@@ -1084,10 +1082,5 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         ServiceHelper.stopService(httpActivityListener);
 
         super.doStop();
-    }
-
-    public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }
