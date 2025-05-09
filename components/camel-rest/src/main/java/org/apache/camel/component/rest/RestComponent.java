@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.spi.*;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
@@ -48,7 +47,6 @@ public class RestComponent extends HeaderFilterStrategyComponent {
     private String host;
 
     public RestComponent() {
-        registerExtension(RestComponentVerifierExtension::new);
     }
 
     @Override
@@ -217,10 +215,5 @@ public class RestComponent extends HeaderFilterStrategyComponent {
             }
         }
         return null;
-    }
-
-    public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }
