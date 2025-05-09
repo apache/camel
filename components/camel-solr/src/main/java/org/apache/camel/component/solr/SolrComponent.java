@@ -56,7 +56,6 @@ public class SolrComponent extends DefaultComponent {
 
     public SolrComponent(CamelContext context) {
         super(context);
-        registerExtension(new SolrComponentVerifierExtension());
     }
 
     @Override
