@@ -297,8 +297,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public SalesforceComponent(CamelContext context) {
         super(context);
-        registerExtension(SalesforceComponentVerifierExtension::new);
-        registerExtension(SalesforceMetaDataExtension::new);
     }
 
     @Override
