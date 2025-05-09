@@ -36,7 +36,6 @@ public class JiraComponent extends HealthCheckComponent {
 
     public JiraComponent(CamelContext context) {
         super(context);
-        registerExtension(new JiraVerifierExtension());
     }
 
     @Override
