@@ -39,7 +39,6 @@ public class SlackComponent extends HealthCheckComponent {
 
     public SlackComponent(CamelContext context) {
         super(context);
-        registerExtension(new SlackComponentVerifierExtension());
     }
 
     @Override
