@@ -64,7 +64,6 @@ public class OpensearchComponent extends DefaultComponent {
 
     public OpensearchComponent(CamelContext context) {
         super(context);
-        registerExtension(new OpensearchComponentVerifierExtension());
     }
 
     @Override
