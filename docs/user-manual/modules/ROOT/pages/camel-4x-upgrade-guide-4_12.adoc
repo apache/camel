@@ -174,3 +174,11 @@ smb://mysmbserver/myshare/mypath
 ----
 
 TIP: The `path` can still be specified in the URI as backwards compatible.
+
+=== Component Verifier Extensions and Metadata Extension
+
+All of the component verifier extensions and metadata extensions have been removed from components.
+
+There is one single exception for ServiceNow Metadata Extension since it is used in a MOJO.
+
+More details could be found in CAMEL-22013.
