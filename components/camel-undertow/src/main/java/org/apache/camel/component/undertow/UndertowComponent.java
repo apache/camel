@@ -37,7 +37,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -454,11 +453,6 @@ public class UndertowComponent extends DefaultComponent
      */
     public void setMuteException(boolean muteException) {
         this.muteException = muteException;
-    }
-
-    public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
     protected String getComponentName() {
