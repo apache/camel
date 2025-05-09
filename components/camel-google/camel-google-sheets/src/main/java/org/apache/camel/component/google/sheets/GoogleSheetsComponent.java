@@ -39,12 +39,10 @@ public class GoogleSheetsComponent
 
     public GoogleSheetsComponent() {
         super(GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
-        registerExtension(new GoogleSheetsVerifierExtension("google-sheets"));
     }
 
     public GoogleSheetsComponent(CamelContext context) {
         super(context, GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
-        registerExtension(new GoogleSheetsVerifierExtension("google-sheets", context));
     }
 
     @Override
