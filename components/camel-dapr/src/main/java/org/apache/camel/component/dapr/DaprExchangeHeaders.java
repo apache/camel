@@ -63,6 +63,14 @@ public class DaprExchangeHeaders {
         return getObjectFromHeaders(exchange, DaprConstants.STATE_STORE, String.class);
     }
 
+    public static String getSecretStoreFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.SECRET_STORE, String.class);
+    }
+
+    public static String getConfigStoreFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.CONFIG_STORE, String.class);
+    }
+
     public static String getKeyFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, DaprConstants.KEY, String.class);
     }
@@ -109,6 +117,19 @@ public class DaprExchangeHeaders {
 
     public static String getContentTypeFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, DaprConstants.CONTENT_TYPE, String.class);
+    }
+
+    public static String getBindingNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.BINDING_NAME, String.class);
+    }
+
+    public static String getBindingOperationFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.BINDING_OPERATION, String.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<String> getConfigKeysFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.CONFIG_KEYS, List.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {

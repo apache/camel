@@ -32,9 +32,17 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bindingname":
+        case "bindingName": getOrCreateConfiguration(target).setBindingName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindingoperation":
+        case "bindingOperation": getOrCreateConfiguration(target).setBindingOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": getOrCreateConfiguration(target).setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
+        case "configkeys":
+        case "configKeys": getOrCreateConfiguration(target).setConfigKeys(property(camelContext, java.util.List.class, value)); return true;
+        case "configstore":
+        case "configStore": getOrCreateConfiguration(target).setConfigStore(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.dapr.DaprConfiguration.class, value)); return true;
         case "consistency": getOrCreateConfiguration(target).setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
         case "contenttype":
@@ -52,6 +60,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "previewClient": getOrCreateConfiguration(target).setPreviewClient(property(camelContext, io.dapr.client.DaprPreviewClient.class, value)); return true;
         case "pubsubname":
         case "pubSubName": getOrCreateConfiguration(target).setPubSubName(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretstore":
+        case "secretStore": getOrCreateConfiguration(target).setSecretStore(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
         case "serviceToInvoke": getOrCreateConfiguration(target).setServiceToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "stateoperation":
@@ -74,9 +84,17 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bindingname":
+        case "bindingName": return java.lang.String.class;
+        case "bindingoperation":
+        case "bindingOperation": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
+        case "configkeys":
+        case "configKeys": return java.util.List.class;
+        case "configstore":
+        case "configStore": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.dapr.DaprConfiguration.class;
         case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
         case "contenttype":
@@ -94,6 +112,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "previewClient": return io.dapr.client.DaprPreviewClient.class;
         case "pubsubname":
         case "pubSubName": return java.lang.String.class;
+        case "secretstore":
+        case "secretStore": return java.lang.String.class;
         case "servicetoinvoke":
         case "serviceToInvoke": return java.lang.String.class;
         case "stateoperation":
@@ -112,9 +132,17 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bindingname":
+        case "bindingName": return getOrCreateConfiguration(target).getBindingName();
+        case "bindingoperation":
+        case "bindingOperation": return getOrCreateConfiguration(target).getBindingOperation();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrency": return getOrCreateConfiguration(target).getConcurrency();
+        case "configkeys":
+        case "configKeys": return getOrCreateConfiguration(target).getConfigKeys();
+        case "configstore":
+        case "configStore": return getOrCreateConfiguration(target).getConfigStore();
         case "configuration": return target.getConfiguration();
         case "consistency": return getOrCreateConfiguration(target).getConsistency();
         case "contenttype":
@@ -132,6 +160,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "previewClient": return getOrCreateConfiguration(target).getPreviewClient();
         case "pubsubname":
         case "pubSubName": return getOrCreateConfiguration(target).getPubSubName();
+        case "secretstore":
+        case "secretStore": return getOrCreateConfiguration(target).getSecretStore();
         case "servicetoinvoke":
         case "serviceToInvoke": return getOrCreateConfiguration(target).getServiceToInvoke();
         case "stateoperation":
@@ -140,6 +170,15 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "stateStore": return getOrCreateConfiguration(target).getStateStore();
         case "topic": return getOrCreateConfiguration(target).getTopic();
         case "verb": return getOrCreateConfiguration(target).getVerb();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configkeys":
+        case "configKeys": return java.lang.String.class;
         default: return null;
         }
     }

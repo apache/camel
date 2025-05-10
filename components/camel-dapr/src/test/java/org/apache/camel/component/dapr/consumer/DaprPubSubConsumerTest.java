@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dapr;
+package org.apache.camel.component.dapr.consumer;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -30,6 +30,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.component.dapr.DaprConfiguration;
+import org.apache.camel.component.dapr.DaprConstants;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -48,7 +51,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DaprConsumerTest extends CamelTestSupport {
+public class DaprPubSubConsumerTest extends CamelTestSupport {
 
     private final CamelContext context = mock(CamelContext.class);
     private final ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
@@ -64,7 +67,7 @@ public class DaprConsumerTest extends CamelTestSupport {
     private final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
     private final ArgumentCaptor<AsyncCallback> callbackCaptor = ArgumentCaptor.forClass(AsyncCallback.class);
 
-    private DaprConsumer consumer;
+    private DaprPubSubConsumer consumer;
 
     @BeforeEach
     void beforeEach() throws Exception {
@@ -88,7 +91,7 @@ public class DaprConsumerTest extends CamelTestSupport {
                 listenerCaptor.capture(),
                 any(TypeRef.class));
 
-        consumer = new DaprConsumer(endpoint, processor);
+        consumer = new DaprPubSubConsumer(endpoint, processor);
     }
 
     @Test

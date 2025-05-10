@@ -48,7 +48,16 @@ public class DaprConstants {
               description = "The name of the Dapr state store to interact with, defined in statestore.yaml config",
               javaType = "String")
     public static final String STATE_STORE = HEADER_PREFIX + "StateStore";
-    @Metadata(label = "producer", description = "The key used to identify the state object within the specified state store",
+    @Metadata(label = "producer",
+              description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config",
+              javaType = "String")
+    public static final String SECRET_STORE = HEADER_PREFIX + "SecretStore";
+    @Metadata(label = "producer",
+              description = "The name of the Dapr config store to interact with, defined in statestore.yaml config",
+              javaType = "String")
+    public static final String CONFIG_STORE = HEADER_PREFIX + "ConfigStore";
+    @Metadata(label = "producer",
+              description = "The key used to identify the state/secret object within the specified state/secret store",
               javaType = "String")
     public static final String KEY = HEADER_PREFIX + "Key";
     @Metadata(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations",
@@ -109,4 +118,15 @@ public class DaprConstants {
     public static final String TRACE_PARENT = HEADER_PREFIX + "TraceParent";
     @Metadata(label = "consumer", description = "Gets additional vendor-specific trace context", javaType = "String")
     public static final String TRACE_STATE = HEADER_PREFIX + "TraceState";
+    @Metadata(label = "producer", description = "The name of the Dapr binding to invoke", javaType = "String")
+    public static final String BINDING_NAME = HEADER_PREFIX + "BindingName";
+    @Metadata(label = "producer", description = "The operation to perform on the binding", javaType = "String")
+    public static final String BINDING_OPERATION = HEADER_PREFIX + "BindingOperation";
+    @Metadata(label = "producer", description = "List of keys for configuration operation", javaType = "List<String>")
+    public static final String CONFIG_KEYS = HEADER_PREFIX + "ConfigKeys";
+    @Metadata(label = "consumer", description = "The id for configuration change subscription", javaType = "String")
+    public static final String SUBSCRIPTION_ID = HEADER_PREFIX + "SubscriptionId";
+    @Metadata(label = "common", description = "The raw configuration update response",
+              javaType = "Map<String, io.dapr.client.domain.ConfigurationItem")
+    public static final String RAW_CONFIG_RESPONSE = HEADER_PREFIX + "RawConfigResponse";
 }
