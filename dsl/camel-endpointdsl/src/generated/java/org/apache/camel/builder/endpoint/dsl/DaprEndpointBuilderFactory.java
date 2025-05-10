@@ -44,6 +44,51 @@ public interface DaprEndpointBuilderFactory {
             return (AdvancedDaprEndpointConsumerBuilder) this;
         }
         /**
+         * List of keys for configuration operation.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder configKeys(List<java.lang.String> configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+        /**
+         * List of keys for configuration operation.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder configKeys(String configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+        /**
+         * The name of the Dapr configuration store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configStore the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder configStore(String configStore) {
+            doSetProperty("configStore", configStore);
+            return this;
+        }
+        /**
          * The contentType for the Pub/Sub component to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -257,6 +302,51 @@ public interface DaprEndpointBuilderFactory {
             return (AdvancedDaprEndpointProducerBuilder) this;
         }
 
+        /**
+         * List of keys for configuration operation.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder configKeys(List<java.lang.String> configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+        /**
+         * List of keys for configuration operation.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder configKeys(String configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+        /**
+         * The name of the Dapr configuration store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configStore the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder configStore(String configStore) {
+            doSetProperty("configStore", configStore);
+            return this;
+        }
         /**
          * The contentType for the Pub/Sub component to use.
          * 
@@ -632,6 +722,51 @@ public interface DaprEndpointBuilderFactory {
         }
 
         /**
+         * List of keys for configuration operation.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder configKeys(List<java.lang.String> configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+        /**
+         * List of keys for configuration operation.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder configKeys(String configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+        /**
+         * The name of the Dapr configuration store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param configStore the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder configStore(String configStore) {
+            doSetProperty("configStore", configStore);
+            return this;
+        }
+        /**
          * The contentType for the Pub/Sub component to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -872,6 +1007,19 @@ public interface DaprEndpointBuilderFactory {
          */
         public String daprSecretStore() {
             return "CamelDaprSecretStore";
+        }
+        /**
+         * The name of the Dapr config store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprConfigStore}.
+         */
+        public String daprConfigStore() {
+            return "CamelDaprConfigStore";
         }
         /**
          * The key used to identify the state/secret object within the specified
@@ -1148,6 +1296,43 @@ public interface DaprEndpointBuilderFactory {
          */
         public String daprBindingOperation() {
             return "CamelDaprBindingOperation";
+        }
+        /**
+         * List of keys for configuration operation.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprConfigKeys}.
+         */
+        public String daprConfigKeys() {
+            return "CamelDaprConfigKeys";
+        }
+        /**
+         * The id for configuration change subscription.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DaprSubscriptionId}.
+         */
+        public String daprSubscriptionId() {
+            return "CamelDaprSubscriptionId";
+        }
+        /**
+         * The raw configuration update response.
+         * 
+         * The option is a: {@code Map<String,
+         * io.dapr.client.domain.ConfigurationItem} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DaprRawConfigResponse}.
+         */
+        public String daprRawConfigResponse() {
+            return "CamelDaprRawConfigResponse";
         }
     }
     static DaprEndpointBuilder endpointBuilder(String componentName, String path) {

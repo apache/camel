@@ -64,7 +64,7 @@ public class DaprPubSubConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        LOG.debug("Creating connection to Dapr");
+        LOG.debug("Creating connection to Dapr PubSub");
 
         if (client == null) {
             client = new DaprClientBuilder().buildPreviewClient();

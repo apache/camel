@@ -22,6 +22,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.dapr.consumer.DaprConfigurationConsumer;
 import org.apache.camel.component.dapr.consumer.DaprPubSubConsumer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -55,6 +56,8 @@ public class DaprEndpoint extends DefaultEndpoint {
         switch (operation) {
             case pubSub:
                 return new DaprPubSubConsumer(this, processor);
+            case configuration:
+                return new DaprConfigurationConsumer(this, processor);
             default:
                 throw new IllegalArgumentException("Cannot create Dapr consumer with type " + operation);
         }

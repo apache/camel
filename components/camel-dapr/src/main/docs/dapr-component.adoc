@@ -73,10 +73,21 @@ Dapr’s bindings building block allows interaction with external systems via in
 === 4. *secret*:
 Dapr’s secret management building block enables secure retrieval of secrets from external secret stores. The secret operation fetches a secret from the specified secret store. If a key is provided, the operation retrieves the corresponding secret; if no key is specified, a bulk retrieval of all secrets from the store is performed. This operation requires the secretStore name, and optionally the key.
 
+=== 5. *configuration*:
+Dapr’s configuration building block allows applications to retrieve dynamic configuration values from external configuration stores. The configuration operation fetches values associated with keys specified in configKeys. This operation requires the configStore name, and the configKeys.
+
 === Dapr Consumer operations
-The Dapr Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
+
+=== 1. *pubSub*:
+The Dapr PubSub Consumer in Apache Camel allows your route to consume events from a Dapr-supported Pub/Sub system. It subscribes to a specified topic on a given pubsub component (pubSubName) and processes incoming CloudEvents as Camel Exchange objects.
 
 To configure a consumer, the pubSubName and topic must be provided. Alternatively, a preconfigured DaprPreviewClient can be registered in the Camel registry to allow the consumer to reuse it instead of creating a new one internally.
+
+=== 2. *configuration*:
+
+The Dapr Configuration Consumer in Apache Camel allows your route to receive real-time updates from a Dapr-supported configuration store. It listens for changes to specified keys in the configuration store and processes the updates as Camel Exchange objects.
+
+To configure the consumer, the configStore name and configKeys must be provided.
 
 == Examples
 
@@ -238,7 +249,24 @@ from("direct:start")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+- `configuration` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.CONFIG_KEYS, List.of("k1", "k2"));
+  })
+  .to("dapr:configuration?configStore=myStore")
+  .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
 === Consumer Operations Examples
+
 - `pubSub` -
 
 [source,java]
@@ -248,4 +276,12 @@ from("dapr:pubSub?pubSubName=myPubSub&topic=myTopic")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+- `configuration` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("dapr:configuration?configStore=myStore&configKeys=k1,k2")
+  .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
 include::spring-boot:partial$starter.adoc[]

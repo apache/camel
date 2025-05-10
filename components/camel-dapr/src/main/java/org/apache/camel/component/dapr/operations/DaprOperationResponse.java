@@ -19,6 +19,9 @@ package org.apache.camel.component.dapr.operations;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.dapr.client.domain.ConfigurationItem;
+import org.apache.camel.component.dapr.DaprConstants;
+
 public class DaprOperationResponse {
     private Object body;
     private Map<String, Object> headers = new HashMap<>();;
@@ -38,6 +41,19 @@ public class DaprOperationResponse {
 
     public static DaprOperationResponse create(final Object body, final Map<String, Object> headers) {
         return new DaprOperationResponse(body, headers);
+    }
+
+    public static DaprOperationResponse createFromConfig(final Map<String, ConfigurationItem> config) {
+        Map<String, Object> responseHeaders = Map.of(DaprConstants.RAW_CONFIG_RESPONSE, config);
+        Map<String, String> body = new HashMap<>();
+
+        if (!config.isEmpty()) {
+            config.forEach((k, v) -> {
+                body.put(k, v.getValue());
+            });
+        }
+
+        return create(body, responseHeaders);
     }
 
     public Object getBody() {

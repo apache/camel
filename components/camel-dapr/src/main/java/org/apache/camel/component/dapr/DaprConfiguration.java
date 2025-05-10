@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dapr;
 
+import java.util.List;
+
 import io.dapr.client.DaprPreviewClient;
 import io.dapr.client.domain.HttpExtension;
 import io.dapr.client.domain.StateOptions.Concurrency;
@@ -53,6 +55,9 @@ public class DaprConfiguration implements Cloneable {
     @UriParam(label = "producer",
               description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config")
     private String secretStore;
+    @UriParam(label = "common",
+              description = "The name of the Dapr configuration store to interact with, defined in statestore.yaml config")
+    private String configStore;
     @UriParam(label = "producer",
               description = "The key used to identify the state/secret object within the specified state/secret store")
     private String key;
@@ -78,6 +83,8 @@ public class DaprConfiguration implements Cloneable {
     private String bindingName;
     @UriParam(label = "producer", description = "The operation to perform on the binding")
     private String bindingOperation;
+    @UriParam(label = "common", description = "List of keys for configuration operation")
+    private List<String> configKeys;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -185,6 +192,19 @@ public class DaprConfiguration implements Cloneable {
 
     public void setSecretStore(String secretStore) {
         this.secretStore = secretStore;
+    }
+
+    /**
+     * The name of the Dapr <b>configuration store</b> to interact with.
+     * <p>
+     * Required for all configuration management operations.
+     */
+    public String getConfigStore() {
+        return configStore;
+    }
+
+    public void setConfigStore(String configStore) {
+        this.configStore = configStore;
     }
 
     /**
@@ -312,6 +332,17 @@ public class DaprConfiguration implements Cloneable {
 
     public void setBindingOperation(String bindingOperation) {
         this.bindingOperation = bindingOperation;
+    }
+
+    /**
+     * List of <b>keys</b> for configuration operation.
+     */
+    public List<String> getConfigKeys() {
+        return configKeys;
+    }
+
+    public void setConfigKeys(List<String> configKeys) {
+        this.configKeys = configKeys;
     }
 
     public DaprConfiguration copy() {

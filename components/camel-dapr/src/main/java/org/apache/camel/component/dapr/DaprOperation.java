@@ -21,5 +21,6 @@ public enum DaprOperation {
     state,
     pubSub,
     invokeBinding,
-    secret
+    secret,
+    configuration
 }

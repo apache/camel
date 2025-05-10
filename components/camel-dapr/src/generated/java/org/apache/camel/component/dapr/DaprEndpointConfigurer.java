@@ -30,6 +30,10 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
+        case "configkeys":
+        case "configKeys": target.getConfiguration().setConfigKeys(property(camelContext, java.util.List.class, value)); return true;
+        case "configstore":
+        case "configStore": target.getConfiguration().setConfigStore(property(camelContext, java.lang.String.class, value)); return true;
         case "consistency": target.getConfiguration().setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
@@ -79,6 +83,10 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
+        case "configkeys":
+        case "configKeys": return java.util.List.class;
+        case "configstore":
+        case "configStore": return java.lang.String.class;
         case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
         case "contenttype":
         case "contentType": return java.lang.String.class;
@@ -124,6 +132,10 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrency": return target.getConfiguration().getConcurrency();
+        case "configkeys":
+        case "configKeys": return target.getConfiguration().getConfigKeys();
+        case "configstore":
+        case "configStore": return target.getConfiguration().getConfigStore();
         case "consistency": return target.getConfiguration().getConsistency();
         case "contenttype":
         case "contentType": return target.getConfiguration().getContentType();
@@ -154,6 +166,15 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "stateStore": return target.getConfiguration().getStateStore();
         case "topic": return target.getConfiguration().getTopic();
         case "verb": return target.getConfiguration().getVerb();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configkeys":
+        case "configKeys": return java.lang.String.class;
         default: return null;
         }
     }
