@@ -18,18 +18,18 @@ package org.apache.camel.dsl.java.joor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.Main;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JavaMultiCompileTest {
+public class JavaMainIoCTest {
 
     @Test
-    public void testMainRoutesCollector() throws Exception {
-        // will load XML from target/classes when testing
+    public void testMainIoC() throws Exception {
         doTestMain(
-                "routes/MyBar*.java",
+                "routes/IoCWithBeanMethod.java",
                 null);
     }
 
@@ -43,12 +43,8 @@ public class JavaMultiCompileTest {
         assertNotNull(camelContext);
         assertEquals(1, camelContext.getRoutes().size());
 
-        String out = main.getCamelTemplate().requestBody("direct:start", "Jack", String.class);
-        assertEquals("Jack is at Moes Bar", out);
-
-        Object b = main.getCamelContext().getRegistry().lookupByName("myBarEcho");
-        assertNotNull(b);
-        assertEquals("MyBarEcho1", b.toString());
+        String out = main.getCamelTemplate().requestBody("direct:start", "World", String.class);
+        Assertions.assertEquals("Hello1", out);
 
         main.stop();
     }
