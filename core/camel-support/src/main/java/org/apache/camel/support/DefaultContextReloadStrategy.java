@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link ContextReloadStrategy}.
  */
+@ManagedResource(description = "Managed DefaultContextReloadStrategy")
 public class DefaultContextReloadStrategy extends ServiceSupport implements ContextReloadStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContextReloadStrategy.class);
