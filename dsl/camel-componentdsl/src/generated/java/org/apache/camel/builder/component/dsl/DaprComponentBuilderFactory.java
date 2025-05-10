@@ -51,6 +51,38 @@ public interface DaprComponentBuilderFactory {
     interface DaprComponentBuilder extends ComponentBuilder<DaprComponent> {
     
         /**
+         * List of keys for configuration operation.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configKeys the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder configKeys(java.util.List<java.lang.String> configKeys) {
+            doSetProperty("configKeys", configKeys);
+            return this;
+        }
+    
+        /**
+         * The name of the Dapr configuration store to interact with, defined in
+         * statestore.yaml config.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configStore the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder configStore(java.lang.String configStore) {
+            doSetProperty("configStore", configStore);
+            return this;
+        }
+    
+        /**
          * The component configurations.
          * 
          * The option is a:
@@ -159,6 +191,36 @@ public interface DaprComponentBuilderFactory {
         }
     
         /**
+         * The name of the Dapr binding to invoke.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param bindingName the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder bindingName(java.lang.String bindingName) {
+            doSetProperty("bindingName", bindingName);
+            return this;
+        }
+    
+        /**
+         * The operation to perform on the binding.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param bindingOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder bindingOperation(java.lang.String bindingOperation) {
+            doSetProperty("bindingOperation", bindingOperation);
+            return this;
+        }
+    
+        /**
          * Concurrency mode to use with state operations.
          * 
          * The option is a:
@@ -225,8 +287,8 @@ public interface DaprComponentBuilderFactory {
         }
     
         /**
-         * The key used to identify the state object within the specified state
-         * store.
+         * The key used to identify the state/secret object within the specified
+         * state/secret store.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -277,6 +339,22 @@ public interface DaprComponentBuilderFactory {
          */
         default DaprComponentBuilder methodToInvoke(java.lang.String methodToInvoke) {
             doSetProperty("methodToInvoke", methodToInvoke);
+            return this;
+        }
+    
+        /**
+         * The name of the Dapr secret store to interact with, defined in
+         * local-secret-store.yaml config.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param secretStore the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder secretStore(java.lang.String secretStore) {
+            doSetProperty("secretStore", secretStore);
             return this;
         }
     
@@ -390,12 +468,16 @@ public interface DaprComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configKeys": getOrCreateConfiguration((DaprComponent) component).setConfigKeys((java.util.List) value); return true;
+            case "configStore": getOrCreateConfiguration((DaprComponent) component).setConfigStore((java.lang.String) value); return true;
             case "configuration": ((DaprComponent) component).setConfiguration((org.apache.camel.component.dapr.DaprConfiguration) value); return true;
             case "contentType": getOrCreateConfiguration((DaprComponent) component).setContentType((java.lang.String) value); return true;
             case "pubSubName": getOrCreateConfiguration((DaprComponent) component).setPubSubName((java.lang.String) value); return true;
             case "topic": getOrCreateConfiguration((DaprComponent) component).setTopic((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((DaprComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "previewClient": getOrCreateConfiguration((DaprComponent) component).setPreviewClient((io.dapr.client.DaprPreviewClient) value); return true;
+            case "bindingName": getOrCreateConfiguration((DaprComponent) component).setBindingName((java.lang.String) value); return true;
+            case "bindingOperation": getOrCreateConfiguration((DaprComponent) component).setBindingOperation((java.lang.String) value); return true;
             case "concurrency": getOrCreateConfiguration((DaprComponent) component).setConcurrency((io.dapr.client.domain.StateOptions.Concurrency) value); return true;
             case "consistency": getOrCreateConfiguration((DaprComponent) component).setConsistency((io.dapr.client.domain.StateOptions.Consistency) value); return true;
             case "eTag": getOrCreateConfiguration((DaprComponent) component).setETag((java.lang.String) value); return true;
@@ -403,6 +485,7 @@ public interface DaprComponentBuilderFactory {
             case "key": getOrCreateConfiguration((DaprComponent) component).setKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((DaprComponent) component).setLazyStartProducer((boolean) value); return true;
             case "methodToInvoke": getOrCreateConfiguration((DaprComponent) component).setMethodToInvoke((java.lang.String) value); return true;
+            case "secretStore": getOrCreateConfiguration((DaprComponent) component).setSecretStore((java.lang.String) value); return true;
             case "serviceToInvoke": getOrCreateConfiguration((DaprComponent) component).setServiceToInvoke((java.lang.String) value); return true;
             case "stateOperation": getOrCreateConfiguration((DaprComponent) component).setStateOperation((org.apache.camel.component.dapr.StateOperation) value); return true;
             case "stateStore": getOrCreateConfiguration((DaprComponent) component).setStateStore((java.lang.String) value); return true;

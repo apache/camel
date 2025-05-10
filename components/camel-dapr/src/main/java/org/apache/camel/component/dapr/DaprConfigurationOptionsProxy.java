@@ -77,6 +77,14 @@ public class DaprConfigurationOptionsProxy {
         return getOption(DaprExchangeHeaders::getStateStoreFromHeaders, configuration::getStateStore, exchange);
     }
 
+    public String getSecretStore(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getSecretStoreFromHeaders, configuration::getSecretStore, exchange);
+    }
+
+    public String getConfigStore(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getConfigStoreFromHeaders, configuration::getConfigStore, exchange);
+    }
+
     public String getKey(final Exchange exchange) {
         return getOption(DaprExchangeHeaders::getKeyFromHeaders, configuration::getKey, exchange);
     }
@@ -119,6 +127,18 @@ public class DaprConfigurationOptionsProxy {
 
     public String getContentType(final Exchange exchange) {
         return getOption(DaprExchangeHeaders::getContentTypeFromHeaders, configuration::getContentType, exchange);
+    }
+
+    public String getBindingName(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getBindingNameFromHeaders, configuration::getBindingName, exchange);
+    }
+
+    public String getBindingOperation(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getBindingOperationFromHeaders, configuration::getBindingOperation, exchange);
+    }
+
+    public List<String> getConfigKeys(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getConfigKeysFromHeaders, configuration::getConfigKeys, exchange);
     }
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {

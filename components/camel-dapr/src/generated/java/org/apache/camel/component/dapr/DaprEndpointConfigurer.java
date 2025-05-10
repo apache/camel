@@ -23,9 +23,17 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bindingname":
+        case "bindingName": target.getConfiguration().setBindingName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindingoperation":
+        case "bindingOperation": target.getConfiguration().setBindingOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
+        case "configkeys":
+        case "configKeys": target.getConfiguration().setConfigKeys(property(camelContext, java.util.List.class, value)); return true;
+        case "configstore":
+        case "configStore": target.getConfiguration().setConfigStore(property(camelContext, java.lang.String.class, value)); return true;
         case "consistency": target.getConfiguration().setConsistency(property(camelContext, io.dapr.client.domain.StateOptions.Consistency.class, value)); return true;
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
@@ -46,6 +54,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "previewClient": target.getConfiguration().setPreviewClient(property(camelContext, io.dapr.client.DaprPreviewClient.class, value)); return true;
         case "pubsubname":
         case "pubSubName": target.getConfiguration().setPubSubName(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretstore":
+        case "secretStore": target.getConfiguration().setSecretStore(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
         case "serviceToInvoke": target.getConfiguration().setServiceToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "stateoperation":
@@ -66,9 +76,17 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bindingname":
+        case "bindingName": return java.lang.String.class;
+        case "bindingoperation":
+        case "bindingOperation": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
+        case "configkeys":
+        case "configKeys": return java.util.List.class;
+        case "configstore":
+        case "configStore": return java.lang.String.class;
         case "consistency": return io.dapr.client.domain.StateOptions.Consistency.class;
         case "contenttype":
         case "contentType": return java.lang.String.class;
@@ -89,6 +107,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "previewClient": return io.dapr.client.DaprPreviewClient.class;
         case "pubsubname":
         case "pubSubName": return java.lang.String.class;
+        case "secretstore":
+        case "secretStore": return java.lang.String.class;
         case "servicetoinvoke":
         case "serviceToInvoke": return java.lang.String.class;
         case "stateoperation":
@@ -105,9 +125,17 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bindingname":
+        case "bindingName": return target.getConfiguration().getBindingName();
+        case "bindingoperation":
+        case "bindingOperation": return target.getConfiguration().getBindingOperation();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrency": return target.getConfiguration().getConcurrency();
+        case "configkeys":
+        case "configKeys": return target.getConfiguration().getConfigKeys();
+        case "configstore":
+        case "configStore": return target.getConfiguration().getConfigStore();
         case "consistency": return target.getConfiguration().getConsistency();
         case "contenttype":
         case "contentType": return target.getConfiguration().getContentType();
@@ -128,6 +156,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "previewClient": return target.getConfiguration().getPreviewClient();
         case "pubsubname":
         case "pubSubName": return target.getConfiguration().getPubSubName();
+        case "secretstore":
+        case "secretStore": return target.getConfiguration().getSecretStore();
         case "servicetoinvoke":
         case "serviceToInvoke": return target.getConfiguration().getServiceToInvoke();
         case "stateoperation":
@@ -136,6 +166,15 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "stateStore": return target.getConfiguration().getStateStore();
         case "topic": return target.getConfiguration().getTopic();
         case "verb": return target.getConfiguration().getVerb();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configkeys":
+        case "configKeys": return java.lang.String.class;
         default: return null;
         }
     }
