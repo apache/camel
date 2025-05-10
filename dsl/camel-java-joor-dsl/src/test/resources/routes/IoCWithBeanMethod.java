@@ -15,30 +15,21 @@
  * limitations under the License.
  */
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.builder.RouteBuilder;
 
-import java.util.concurrent.atomic.AtomicInteger;
+public class IoCWithBeanMethod extends RouteBuilder {
 
-@BindToRegistry("myBarEcho")
-public class MyBarEcho {
-
-    private static final AtomicInteger ctr = new AtomicInteger();
-
-    private MyBar bar = new MyBar("Moes Bar");
-
-    public MyBarEcho() {
-        ctr.incrementAndGet();
-    }
-
-    public String echo(String s) {
-        return s + " is at " + bar.getName();
-    }
-
-    public int getCounter() {
-        return ctr.get();
-    }
+    private int counter;
 
     @Override
-    public String toString() {
-        return "MyBarEcho" + ctr.get();
+    public void configure() throws Exception {
+        from("direct:start")
+            .setBody().simple("${bean:myIoC?method=toString}");
+    }
+
+    @BindToRegistry("myIoC")
+    public String myEcho() {
+        counter++;
+        return "Hello" + counter;
     }
 }
