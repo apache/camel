@@ -92,7 +92,7 @@ public class DependencyList extends Export {
                     // must be child at <project/dependencyManagement> or <project/dependencies>
                     String p = node.getParentNode().getNodeName();
                     String p2 = node.getParentNode().getParentNode().getNodeName();
-                    boolean accept = "project".equals(p2) && (p.equals("dependencyManagement") || p.equals("dependencies"));
+                    boolean accept = ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
                     if (!accept) {
                         continue;
                     }

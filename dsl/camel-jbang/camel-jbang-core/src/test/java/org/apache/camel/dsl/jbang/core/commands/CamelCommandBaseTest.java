@@ -25,7 +25,7 @@ public class CamelCommandBaseTest {
     protected StringPrinter printer;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         printer = new StringPrinter();
     }
 
