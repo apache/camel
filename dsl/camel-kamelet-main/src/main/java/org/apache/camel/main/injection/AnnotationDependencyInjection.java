@@ -218,7 +218,7 @@ public final class AnnotationDependencyInjection {
                     // lower case first if using class name
                     name = StringHelper.decapitalize(name);
                 }
-                bindBean(camelContext, name, instance, true);
+                bindBean(camelContext, name, instance, instance.getClass(), true);
             }
         }
     }
@@ -276,7 +276,7 @@ public final class AnnotationDependencyInjection {
                     if (bi.name().length > 0) {
                         name = bi.name()[0];
                     }
-                    bindBean(context, name, instance, false);
+                    bindBean(context, name, instance, method.getReturnType(), false);
                 }
             }
         }
@@ -303,7 +303,7 @@ public final class AnnotationDependencyInjection {
                     // lower case first if using class name
                     name = StringHelper.decapitalize(name);
                 }
-                bindBean(camelContext, name, instance, true);
+                bindBean(camelContext, name, instance, instance.getClass(), true);
             }
         }
     }
@@ -361,13 +361,13 @@ public final class AnnotationDependencyInjection {
                     if (bi != null && !bi.value().isBlank()) {
                         name = bi.value();
                     }
-                    bindBean(context, name, instance, false);
+                    bindBean(context, name, instance, method.getReturnType(), false);
                 }
             }
         }
     }
 
-    private static void bindBean(CamelContext context, String name, Object instance, boolean postProcess) {
+    private static void bindBean(CamelContext context, String name, Object instance, Class<?> type, boolean postProcess) {
         // to support hot reloading of beans then we need to enable unbind mode in bean post processor
         Registry registry = context.getRegistry();
         CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(context);
@@ -375,7 +375,11 @@ public final class AnnotationDependencyInjection {
         try {
             // re-bind the bean to the registry
             registry.unbind(name);
-            registry.bind(name, instance);
+            if (instance instanceof Supplier sup) {
+                registry.bind(name, type, (Supplier<Object>) sup);
+            } else {
+                registry.bind(name, type, instance);
+            }
             if (postProcess) {
                 bpp.postProcessBeforeInitialization(instance, name);
                 bpp.postProcessAfterInitialization(instance, name);
