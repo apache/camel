@@ -1924,6 +1924,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-micrometer-observability</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-micrometer-prometheus</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3285,6 +3290,16 @@
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-tracing</artifactId>
+                <version>${micrometer-tracing-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bridge-otel</artifactId>
+                <version>${micrometer-tracing-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-test</artifactId>
                 <version>${micrometer-tracing-version}</version>
             </dependency>
             <dependency>
