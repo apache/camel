@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 class PluginDeleteTest extends CamelCommandBaseTest {
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         super.setup();
 
         CommandLineHelper.useHomeDir("target");
