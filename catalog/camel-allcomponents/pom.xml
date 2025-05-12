@@ -1268,6 +1268,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-micrometer-observability</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-micrometer-prometheus</artifactId>
             <version>${project.version}</version>
         </dependency>
