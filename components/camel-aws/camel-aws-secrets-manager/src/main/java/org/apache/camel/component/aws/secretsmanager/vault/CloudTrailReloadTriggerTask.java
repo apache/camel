@@ -349,7 +349,6 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                                     if (isReloadEnabled()) {
                                         LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                         triggerReloading = true;
-                                        message.receiptHandle();
                                         DeleteMessageRequest.Builder deleteRequest
                                                 = DeleteMessageRequest.builder().queueUrl(queueUrl)
                                                         .receiptHandle(message.receiptHandle());
