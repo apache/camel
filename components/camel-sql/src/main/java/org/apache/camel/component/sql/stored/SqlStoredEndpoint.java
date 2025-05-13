@@ -49,8 +49,6 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     private JdbcTemplate jdbcTemplate;
 
     private boolean serviceLocationEnabled;
-    private String serviceUrl;
-    private Map<String, String> serviceMetadata;
 
     @UriPath(description = "Sets the stored procedure template to perform. You can externalize the template by using file: or classpath: as prefix and specify the location of the file.")
     @Metadata(required = true, supportFileReference = true, largeInput = true, inputLanguage = "sql")
@@ -134,13 +132,8 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
                     ds = actual;
                 }
             }
-            serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
 
-            serviceMetadata = new HashMap<>();
             String user = SqlServiceLocationHelper.getUsernameFromConnectionFactory(bi, ds);
-            if (user != null) {
-                serviceMetadata.put("username", user);
-            }
         }
     }
 
