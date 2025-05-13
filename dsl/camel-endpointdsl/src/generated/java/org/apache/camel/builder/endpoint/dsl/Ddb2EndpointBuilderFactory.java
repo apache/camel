@@ -1130,6 +1130,44 @@ public interface Ddb2EndpointBuilderFactory {
         public String awsDdbWriteCapacity() {
             return "CamelAwsDdbWriteCapacity";
         }
+        /**
+         * The Filter Expression.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: Query Scan
+         * 
+         * @return the name of the header {@code AwsDdbFilterExpression}.
+         */
+        public String awsDdbFilterExpression() {
+            return "CamelAwsDdbFilterExpression";
+        }
+        /**
+         * The Filter Expression Attribute Names.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: Query Scan
+         * 
+         * @return the name of the header {@code
+         * AwsDdbFilterExpressionAttributeNames}.
+         */
+        public String awsDdbFilterExpressionAttributeNames() {
+            return "CamelAwsDdbFilterExpressionAttributeNames";
+        }
+        /**
+         * The Filter Expression Attribute Values.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: Query Scan
+         * 
+         * @return the name of the header {@code
+         * AwsDdbFilterExpressionAttributeValues}.
+         */
+        public String awsDdbFilterExpressionAttributeValues() {
+            return "CamelAwsDdbFilterExpressionAttributeValues";
+        }
     }
     static Ddb2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Ddb2EndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2EndpointBuilder, AdvancedDdb2EndpointBuilder {
