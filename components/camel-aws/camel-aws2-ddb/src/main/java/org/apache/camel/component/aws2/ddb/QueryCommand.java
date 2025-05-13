@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -50,6 +51,21 @@ public class QueryCommand extends AbstractDdbCommand {
             query.attributesToGet(determineAttributeNames());
         }
 
+        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION) != null &&
+                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class).isEmpty()) {
+            query.filterExpression(determineFilterExpression());
+        }
+
+        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES) != null &&
+                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class).isEmpty()) {
+            query.expressionAttributeNames(determineFilterExpressionAttributeNames());
+        }
+
+        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES) != null &&
+                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class).isEmpty()) {
+            query.expressionAttributeValues(determineFilterExpressionAttributeValues());
+        }
+
         QueryResponse result = ddbClient.query(query.build());
 
         Map<Object, Object> tmp = new HashMap<>();
@@ -67,5 +83,20 @@ public class QueryCommand extends AbstractDdbCommand {
     @SuppressWarnings("unchecked")
     private Map<String, Condition> determineKeyConditions() {
         return exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String determineFilterExpression() {
+        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, String> determineFilterExpressionAttributeNames() {
+        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, AttributeValue> determineFilterExpressionAttributeValues() {
+        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
     }
 }
