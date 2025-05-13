@@ -106,7 +106,7 @@ public class NatsProducer extends DefaultAsyncProducer {
             });
             return false;
         } else {
-            LOG.debug("Publishing to topic: {}", config.getTopic());
+            LOG.debug("Publishing to subject: {}", config.getTopic());
 
             if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
                 LOG.info("JetStream is available");
