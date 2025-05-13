@@ -345,6 +345,8 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     /**
      * Factory method which derived classes can use to create a {@link RouteBuilder} to define the routes for testing
+     *
+     * @see #createRouteBuilders()
      */
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -357,12 +359,10 @@ public abstract class CamelTestSupport extends AbstractTestSupport
 
     /**
      * Factory method which derived classes can use to create an array of {@link org.apache.camel.builder.RouteBuilder}s
-     * to define the routes for testing
+     * to define the routes for testing.
      *
-     * @see        #createRouteBuilder()
-     * @deprecated This method will be made private. Do not use
+     * @see #createRouteBuilder()
      */
-    @Deprecated(since = "4.7.0")
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] { createRouteBuilder() };
     }
