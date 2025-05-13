@@ -367,7 +367,7 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.30</metrics-version>
-        <micrometer-version>1.14.6</micrometer-version>
+        <micrometer-version>1.15.0</micrometer-version>
         <micrometer-tracing-version>1.4.5</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milvus-client-version>2.5.9</milvus-client-version>
