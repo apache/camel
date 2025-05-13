@@ -149,6 +149,43 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
         assertEquals(3, exchange.getIn().getHeader(Ddb2Constants.COUNT));
     }
 
+    @Test
+    public void queryItemsWithFilterExpression() {
+
+        putItem(retrieveValue, "uno");
+        putItem(retrieveValue, "dos");
+        putItem(retrieveValue, "tres");
+        putItem(notRetrieveValue, "Ignore me");
+        putItem(notRetrieveValue, "I should not be returned");
+
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
+            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+            Map<String, Condition> keyConditions = new HashMap<>();
+            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
+                    ComparisonOperator.EQ.toString())
+                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
+                    .build());
+            Collection<String> coll = new ArrayList<>();
+            coll.add("clave");
+            e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION, "#v <> :num");
+            Map<String, AttributeValue> filterAttrValues = new HashMap<>();
+            filterAttrValues.put(":num", AttributeValue.builder().s("retrieve").build());
+            e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.of("#v", "clave"));
+            e.getIn().setHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, filterAttrValues);
+        });
+
+        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
+        assertTrue(items.get(0).containsKey("clave"));
+        assertTrue(items.get(0).containsKey("secondary_attribute"));
+        assertTrue(items.get(0).get("clave").equals(AttributeValue.builder().s("ignore").build()));
+        assertTrue(items.get(1).containsKey("clave"));
+        assertTrue(items.get(1).get("clave").equals(AttributeValue.builder().s("ignore").build()));
+        assertTrue(items.get(1).containsKey("secondary_attribute"));
+        assertEquals(2, exchange.getIn().getHeader(Ddb2Constants.COUNT));
+    }
+
     private void putItem(String value1, String value2) {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();
         attributeMap.put(attributeName, AttributeValue.builder().s(value1).build());
