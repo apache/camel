@@ -135,6 +135,7 @@ public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServic
                     ds = actual;
                 }
             }
+            serviceUrl = SqlServiceLocationHelper.getJDBCURLFromDataSource(bi, ds);
 
             serviceMetadata = new HashMap<>();
             String user = SqlServiceLocationHelper.getUsernameFromConnectionFactory(bi, ds);
