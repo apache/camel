@@ -5214,6 +5214,7 @@
           "loggingLevel" : {
             "type" : "string",
             "title" : "Logging Level",
+            "description" : "The logging level to use in case of failures.",
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
@@ -14965,6 +14966,11 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "apiContextPath" : {
+            "type" : "string",
+            "title" : "Api Context Path",
+            "description" : "Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain the specification from the running Camel application."
+          },
           "description" : {
             "type" : "string",
             "title" : "Description",

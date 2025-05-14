@@ -170,10 +170,6 @@
                                 <echo>Copying code together for the XSD generation</echo>
                                 <mkdir dir="${project.build.directory}/schema-src" />
                                 <copy todir="${project.build.directory}/schema-src">
-                                    <fileset dir="${project.basedir}/../camel-core-xml/src/main/java">
-                                        <include name="org/apache/camel/core/xml/*.java" />
-                                        <include name="org/apache/camel/core/xml/util/**/*.java" />
-                                    </fileset>
                                     <fileset dir="${project.basedir}/../camel-api/src/main/java">
                                         <include name="org/apache/camel/BeanScope.java" />
                                         <include name="org/apache/camel/ExchangePattern.java" />

@@ -2661,16 +2661,14 @@ public class ModelParser extends BaseParser {
     }
     protected OpenApiDefinition doParseOpenApiDefinition() throws IOException, XmlPullParserException {
         return doParse(new OpenApiDefinition(), (def, key, val) -> switch (key) {
+                case "apiContextPath": def.setApiContextPath(val); yield true;
                 case "disabled": def.setDisabled(val); yield true;
                 case "missingOperation": def.setMissingOperation(val); yield true;
                 case "mockIncludePattern": def.setMockIncludePattern(val); yield true;
                 case "routeId": def.setRouteId(val); yield true;
                 case "specification": def.setSpecification(val); yield true;
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "apiContextPath": def.setApiContextPath(doParseText()); yield true;
-                default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
-            }, noValueHandler());
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected OpenIdConnectDefinition doParseOpenIdConnectDefinition() throws IOException, XmlPullParserException {
         return doParse(new OpenIdConnectDefinition(), (def, key, val) -> switch (key) {

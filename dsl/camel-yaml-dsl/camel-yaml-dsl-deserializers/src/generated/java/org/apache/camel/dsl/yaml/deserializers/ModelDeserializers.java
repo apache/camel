@@ -10980,6 +10980,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "To use OpenApi as contract-first with Camel Rest DSL.",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "apiContextPath", type = "string", description = "Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain the specification from the running Camel application.", displayName = "Api Context Path"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable all the REST services from the OpenAPI contract from the route during build time. Once an REST service has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
@@ -11004,6 +11005,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "apiContextPath": {
+                    String val = asText(node);
+                    target.setApiContextPath(val);
+                    break;
+                }
                 case "disabled": {
                     String val = asText(node);
                     target.setDisabled(val);
@@ -15078,7 +15084,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "intermittent", type = "boolean", description = "Sets whether the offsets will be intermittently present or whether they must be present in every exchange", displayName = "Intermittent"),
-                    @YamlProperty(name = "loggingLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "ERROR", displayName = "Logging Level"),
+                    @YamlProperty(name = "loggingLevel", type = "enum:TRACE,DEBUG,INFO,WARN,ERROR,OFF", defaultValue = "ERROR", description = "The logging level to use in case of failures.", displayName = "Logging Level"),
                     @YamlProperty(name = "resumeStrategy", type = "string", required = true, description = "Sets the resume strategy to use", displayName = "Resume Strategy")
             }
     )

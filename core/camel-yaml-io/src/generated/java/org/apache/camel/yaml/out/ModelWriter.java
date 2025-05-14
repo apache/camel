@@ -3375,9 +3375,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
         doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute("routeId", def.getRouteId(), null);
+        doWriteAttribute("apiContextPath", def.getApiContextPath(), null);
         doWriteAttribute("specification", def.getSpecification(), null);
         doWriteAttribute("disabled", def.getDisabled(), null);
-                doWriteElement("${n}", def.getApiContextPath(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteOpenIdConnectDefinition(String name, OpenIdConnectDefinition def) throws IOException {

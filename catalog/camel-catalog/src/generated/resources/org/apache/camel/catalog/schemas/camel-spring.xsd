@@ -12512,7 +12512,15 @@ Sets the resume strategy to use.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="loggingLevel" type="xs:string"/>
+        <xs:attribute name="loggingLevel" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The logging level to use in case of failures. Default value: ERROR
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="intermittent" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -15392,14 +15400,22 @@ To configure a special tag for the operations within this rest definition.
   <xs:complexType name="openApiDefinition">
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="apiContextPath" type="xs:string"/>
-        </xs:sequence>
+        <xs:sequence/>
         <xs:attribute name="specification" type="xs:string" use="required">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
 Path to the OpenApi specification file.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="apiContextPath" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable api-doc that exposes the OpenAPI specification file as a REST endpoint. This allows clients to obtain
+the specification from the running Camel application.
 ]]>
             </xs:documentation>
           </xs:annotation>
