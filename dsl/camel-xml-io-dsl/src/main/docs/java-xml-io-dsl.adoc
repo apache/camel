@@ -291,7 +291,7 @@ You then have to declare those methods in XML DSL as follows:
 ----
 
 The init and destroy methods are optional, so a bean does not have to have both,
-for example you may only have destroy methods.
+for example you may only have a destroy methods.
 
 
 == See Also
