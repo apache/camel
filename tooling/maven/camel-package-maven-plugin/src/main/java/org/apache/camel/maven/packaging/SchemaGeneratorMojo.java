@@ -1142,8 +1142,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             eipOptions.add(ep);
         }
 
-        System.out.println("Field: " + fieldName + " on " + originalClassType);
-
         if ("params".equals(fieldName) || "responseMsgs".equals(fieldName) || "security".equals(fieldName)) {
             String name;
             String docComment;
