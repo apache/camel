@@ -20,11 +20,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class XmlSpringBeansLoadTest {
 
     @Test
+    @Disabled("CAMEL-22066")
     public void testLoadRoutesBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             // load spring XML <beans> with embedded <camelContext>

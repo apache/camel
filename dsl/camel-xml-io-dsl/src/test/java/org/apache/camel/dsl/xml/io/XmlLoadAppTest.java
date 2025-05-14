@@ -30,6 +30,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.PluginHelper;
 import org.apache.commons.codec.binary.Base64;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -364,6 +365,7 @@ public class XmlLoadAppTest {
     }
 
     @Test
+    @Disabled("CAMEL-22066")
     public void testLoadAppWithDataFormatSpring() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.start();

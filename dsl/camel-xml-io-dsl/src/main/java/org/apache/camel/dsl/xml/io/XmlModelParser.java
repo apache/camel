@@ -34,7 +34,7 @@ import org.apache.camel.xml.io.XmlPullParserException;
  */
 public class XmlModelParser extends ModelParser {
 
-    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
+    private static final String SPRING_NS = "http://camel.apache.org/schema/xml-io";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
 
     public XmlModelParser(Resource input, String namespace) throws IOException, XmlPullParserException {

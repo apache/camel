@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<routes xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/xml-io">
     <!-- here we define the bar route -->
     <route id="bar">
         <from uri="direct:bar"/>

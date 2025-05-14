@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<rests xmlns="http://camel.apache.org/schema/spring">
+<rests xmlns="http://camel.apache.org/schema/xml-io">
     <rest id="bar" path="/say/hello">
         <get path="/bar">
             <to uri="mock:bar"/>

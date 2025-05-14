@@ -29,7 +29,7 @@ public class XmlRoutesBuilderLoaderTest {
     @Test
     public void canLoadRoutes() throws Exception {
         String content = ""
-                         + "<routes xmlns=\"http://camel.apache.org/schema/spring\">"
+                         + "<routes xmlns=\"http://camel.apache.org/schema/xml-io\">"
                          + "   <route id=\"xpath-route\">"
                          + "      <from uri=\"direct:test\"/>"
                          + "      <setBody>"
@@ -51,7 +51,7 @@ public class XmlRoutesBuilderLoaderTest {
     @Test
     public void canLoadRests() throws Exception {
         String content = ""
-                         + "<rests xmlns=\"http://camel.apache.org/schema/spring\">"
+                         + "<rests xmlns=\"http://camel.apache.org/schema/xml-io\">"
                          + "  <rest id=\"bar\" path=\"/say/hello\">"
                          + "    <get path=\"/bar\">"
                          + "      <to uri=\"mock:bar\"/>"
@@ -70,7 +70,7 @@ public class XmlRoutesBuilderLoaderTest {
     @Test
     public void canLoadTemplates() throws Exception {
         String content = ""
-                         + "<routeTemplates xmlns=\"http://camel.apache.org/schema/spring\">"
+                         + "<routeTemplates xmlns=\"http://camel.apache.org/schema/xml-io\">"
                          + "  <routeTemplate id=\"myTemplate\">"
                          + "    <templateParameter name=\"foo\"/>"
                          + "    <templateParameter name=\"bar\"/>"
@@ -110,7 +110,7 @@ public class XmlRoutesBuilderLoaderTest {
     @Test
     public void canLoadRouteConfigurations() throws Exception {
         String content = ""
-                         + "<routeConfigurations xmlns=\"http://camel.apache.org/schema/spring\">"
+                         + "<routeConfigurations xmlns=\"http://camel.apache.org/schema/xml-io\">"
                          + "  <routeConfiguration>"
                          + "    <onException>"
                          + "      <exception>java.lang.Exception</exception>"
