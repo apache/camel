@@ -252,6 +252,7 @@
                             <outputCamelSchemaFile>${project.build.directory}/classes/camel-xml-io.xsd</outputCamelSchemaFile>
                             <camelCoreModelDir>${project.basedir}/../camel-core-model</camelCoreModelDir>
                             <camelCoreXmlDir>${project.basedir}/../camel-core-xml</camelCoreXmlDir>
+                            <pathToModelDir>src/generated/resources/META-INF</pathToModelDir>
                             <deleteFilesAfterRun>
                                 ${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd
                             </deleteFilesAfterRun>
