@@ -182,3 +182,9 @@ All of the component verifier extensions and metadata extensions have been remov
 There is one single exception for ServiceNow Metadata Extension since it is used in a MOJO.
 
 More details could be found in CAMEL-22013.
+
+== camel-spring-boot
+
+The `camel-jetty-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
+
+The `camel-undertow-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
