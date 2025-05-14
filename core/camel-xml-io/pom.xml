@@ -79,6 +79,17 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>target/schema</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.class</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -97,6 +108,34 @@
 
             <!-- generate XSD -->
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-schema</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                    <sources>
+                        <source>${project.build.directory}/schema-src</source>
+                    </sources>
+                    <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                    <schemaSourceExcludeFilters>
+                        <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
+                            <patterns>
+                                <pattern>Helper.java</pattern>
+                                <pattern>Adapter.java</pattern>
+                            </patterns>
+                        </filter>
+                    </schemaSourceExcludeFilters>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -114,6 +153,9 @@
                                 <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
                                 <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
                                 <mkdir dir="target" />
+                                <echo file="target/camel.osgi.version.txt">
+                                    camel.schema.version = ${camel.schema.version}
+                                </echo>
                             </target>
                         </configuration>
                         <goals>
@@ -146,6 +188,7 @@
                                     <fileset dir="${project.basedir}/../camel-core-model/src/main/java">
                                         <include name="org/apache/camel/model/**/*.java" />
                                         <include name="org/apache/camel/package-info.java" />
+                                        <exclude name="org/apache/camel/model/console/**" />
                                     </fileset>
                                     <fileset dir="${project.basedir}/../camel-util/src/main/java">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
@@ -163,21 +206,33 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <target>
-                                <echo>Copying XSD schema to be included in JAR</echo>
-                                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-xml-io.xsd" preservelastmodified="true" />
-                                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-xml-io-v${camel.schema.version}.xsd" preservelastmodified="true" />
-                                <replace file="${project.build.directory}/schema/camel-xml-io-v${camel.schema.version}.xsd" token="&quot;http://camel.apache.org/schema/spring&quot;" value="&quot;http://camel.apache.org/schema/xml-io/v${camel.schema.version}&quot;" preservelastmodified="true" />
-                                <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
-                                    <fileset dir="${project.build.directory}/schema">
-                                        <exclude name="**/*.class" />
-                                    </fileset>
-                                </copy>
+                                <echo>Updating namespace in XSD schema</echo>
+                                <replace file="${project.build.directory}/classes/camel-xml-io.xsd" token="&quot;http://camel.apache.org/schema/spring&quot;" value="&quot;http://camel.apache.org/schema/xml-io&quot;" preservelastmodified="true" />
+                                <copy file="${project.build.directory}/classes/camel-xml-io.xsd" tofile="${project.build.directory}/classes/camel-xml-io-v${camel.schema.version}.xsd" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/classes/camel-xml-io-v${camel.schema.version}.xsd" token="&quot;http://camel.apache.org/schema/xml-io&quot;" value="&quot;http://camel.apache.org/schema/xml-io/v${camel.schema.version}&quot;" preservelastmodified="true" />
                             </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>init-camel-schema-version-property-from-file</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>target/camel.osgi.version.txt</file>
+                            </files>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -188,18 +243,39 @@
                 <executions>
                     <execution>
                         <id>eip-documentation-enricher</id>
-                        <!-- need to run earlier so we use the process-test-resources phase -->
                         <phase>process-test-resources</phase>
                         <goals>
                             <goal>eip-documentation-enricher</goal>
                         </goals>
                         <configuration>
                             <inputCamelSchemaFile>${project.build.directory}/schema/schema1.xsd</inputCamelSchemaFile>
-                            <outputCamelSchemaFile>${project.build.directory}/classes/camel-xml-io.xsd
-                            </outputCamelSchemaFile>
+                            <outputCamelSchemaFile>${project.build.directory}/classes/camel-xml-io.xsd</outputCamelSchemaFile>
+                            <camelCoreModelDir>${project.basedir}/../camel-core-model</camelCoreModelDir>
+                            <camelCoreXmlDir>${project.basedir}/../camel-core-xml</camelCoreXmlDir>
                             <deleteFilesAfterRun>
                                 ${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd
                             </deleteFilesAfterRun>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/classes/camel-xml-io.xsd</file>
+                                    <type>xsd</type>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
