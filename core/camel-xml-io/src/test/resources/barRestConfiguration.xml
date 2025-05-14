@@ -17,6 +17,6 @@
     limitations under the License.
 
 -->
-<camel xmlns="http://camel.apache.org/schema/spring">
+<camel xmlns="http://camel.apache.org/schema/xml-io">
 	<restConfiguration apiContextPath="my-api-doc"/>
 </camel>

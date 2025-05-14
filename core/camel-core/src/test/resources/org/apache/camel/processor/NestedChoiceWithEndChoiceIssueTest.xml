@@ -19,7 +19,7 @@
 -->
 
 
-<route xmlns="http://camel.apache.org/schema/spring" id="myRoute">
+<route xmlns="http://camel.apache.org/schema/xml-io" id="myRoute">
     <from id="from" uri="direct:test"/>
     <choice id="choice">
         <when id="when">

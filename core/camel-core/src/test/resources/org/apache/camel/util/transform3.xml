@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<route xmlns="http://camel.apache.org/schema/spring" id="myRoute">
+<route xmlns="http://camel.apache.org/schema/xml-io" id="myRoute">
     <from id="from" uri="timer:java?period={{time:1000}}"/>
     <setBody id="setBody">
         <simple>Hello Camel from ${routeId}</simple>
