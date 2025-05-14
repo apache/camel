@@ -1168,6 +1168,18 @@ public interface Ddb2EndpointBuilderFactory {
         public String awsDdbFilterExpressionAttributeValues() {
             return "CamelAwsDdbFilterExpressionAttributeValues";
         }
+        /**
+         * The Project Expression.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: Query Scan
+         * 
+         * @return the name of the header {@code AwsDdbProjectExpression}.
+         */
+        public String awsDdbProjectExpression() {
+            return "CamelAwsDdbProjectExpression";
+        }
     }
     static Ddb2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Ddb2EndpointBuilderImpl extends AbstractEndpointBuilder implements Ddb2EndpointBuilder, AdvancedDdb2EndpointBuilder {

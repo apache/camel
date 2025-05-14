@@ -66,6 +66,11 @@ public class QueryCommand extends AbstractDdbCommand {
             query.expressionAttributeValues(determineFilterExpressionAttributeValues());
         }
 
+        if (exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION) != null &&
+                !exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, Map.class).isEmpty()) {
+            query.projectionExpression(determineProjectExpression());
+        }
+
         QueryResponse result = ddbClient.query(query.build());
 
         Map<Object, Object> tmp = new HashMap<>();
@@ -98,5 +103,10 @@ public class QueryCommand extends AbstractDdbCommand {
     @SuppressWarnings("unchecked")
     private Map<String, AttributeValue> determineFilterExpressionAttributeValues() {
         return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String determineProjectExpression() {
+        return exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, String.class);
     }
 }
