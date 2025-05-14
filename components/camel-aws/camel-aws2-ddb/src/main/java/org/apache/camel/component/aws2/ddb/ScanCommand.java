@@ -41,6 +41,7 @@ public class ScanCommand extends AbstractDdbCommand {
                 .filterExpression(determineFilterExpression())
                 .expressionAttributeNames(determineFilterExpressionAttributeNames())
                 .expressionAttributeValues(determineFilterExpressionAttributeValues())
+                .projectionExpression(determineProjectExpression())
                 .scanFilter(determineScanFilter()).build());
 
         Map<Object, Object> tmp = new HashMap<>();
@@ -75,5 +76,10 @@ public class ScanCommand extends AbstractDdbCommand {
     @SuppressWarnings("unchecked")
     private Map<String, AttributeValue> determineFilterExpressionAttributeValues() {
         return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String determineProjectExpression() {
+        return exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, String.class);
     }
 }

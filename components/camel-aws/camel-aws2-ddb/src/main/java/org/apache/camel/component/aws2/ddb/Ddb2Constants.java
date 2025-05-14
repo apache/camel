@@ -147,4 +147,7 @@ public interface Ddb2Constants {
     @Metadata(label = "Query Scan", description = "The Filter Expression Attribute Values.",
               javaType = "Map<String, String>")
     String FILTER_EXPRESSION_ATTRIBUTE_VALUES = "CamelAwsDdbFilterExpressionAttributeValues";
+    @Metadata(label = "Query Scan", description = "The Project Expression.",
+              javaType = "String")
+    String PROJECT_EXPRESSION = "CamelAwsDdbProjectExpression";
 }

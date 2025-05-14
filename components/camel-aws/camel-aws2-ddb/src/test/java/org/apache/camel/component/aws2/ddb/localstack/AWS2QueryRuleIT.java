@@ -186,6 +186,35 @@ public class AWS2QueryRuleIT extends Aws2DDBBase {
         assertEquals(2, exchange.getIn().getHeader(Ddb2Constants.COUNT));
     }
 
+    @Test
+    public void queryItemsWithProjectExpression() {
+
+        putItem(retrieveValue, "uno");
+        putItem(retrieveValue, "dos");
+        putItem(retrieveValue, "tres");
+        putItem(notRetrieveValue, "Ignore me");
+        putItem(notRetrieveValue, "I should not be returned");
+
+        Exchange exchange = template.send("direct:start", e -> {
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.Scan);
+            e.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+            Map<String, Condition> keyConditions = new HashMap<>();
+            keyConditions.put(attributeName, Condition.builder().comparisonOperator(
+                    ComparisonOperator.EQ.toString())
+                    .attributeValueList(AttributeValue.builder().s(retrieveValue).build())
+                    .build());
+            Collection<String> coll = new ArrayList<>();
+            coll.add("clave");
+            e.getIn().setHeader(Ddb2Constants.PROJECT_EXPRESSION, "secondary_attribute");
+        });
+
+        assertNotNull(exchange.getIn().getHeader(Ddb2Constants.ITEMS));
+        List<Map<String, AttributeValue>> items = exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class);
+        assertTrue(items.get(0).containsKey("secondary_attribute"));
+        assertTrue(items.get(0).get("secondary_attribute").equals(AttributeValue.builder().s("dos").build()));
+        assertEquals(5, exchange.getIn().getHeader(Ddb2Constants.COUNT));
+    }
+
     private void putItem(String value1, String value2) {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();
         attributeMap.put(attributeName, AttributeValue.builder().s(value1).build());
