@@ -127,7 +127,6 @@ public class JsonataEndpoint extends ResourceEndpoint {
             });
         }
 
-        Object output = null;
         Jsonata expression = null;
         try (InputStreamReader inputStreamReader
                 = new InputStreamReader(getResourceAsInputStream(), StandardCharsets.UTF_8);
@@ -139,15 +138,20 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
 
         Jsonata.Frame frame = expression.createFrame();
-        if (frameBinding != null)
+        if (frameBinding != null) {
             frameBinding.bindToFrame(frame);
-        output = expression.evaluate(input, frame);
+        }
+        Object outputLib = expression.evaluate(input, frame);
+        String bodyAsString = mapper.writeValueAsString(outputLib);
 
         // now lets output the results to the exchange
-        Object body = output;
+        final Object output;
         if (getOutputType() == JsonataInputOutputType.JsonString) {
-            body = mapper.writeValueAsString(output);
+            output = bodyAsString;
+        } else {
+            output = mapper.readTree(bodyAsString);
         }
-        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
+        ExchangeHelper.setInOutBodyPatternAware(exchange, output);
     }
+
 }

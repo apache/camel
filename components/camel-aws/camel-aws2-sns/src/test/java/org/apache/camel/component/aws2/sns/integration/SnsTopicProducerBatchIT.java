@@ -67,7 +67,6 @@ public class SnsTopicProducerBatchIT extends Aws2SNSBase {
         });
 
         assertNotNull(exchange.getMessage().getBody(PublishBatchResponse.class));
-        System.err.println(exchange.getMessage().getBody(PublishBatchResponse.class).toString());
     }
 
     @Override

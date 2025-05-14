@@ -28,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.sql.SqlServiceLocationHelper;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -43,7 +44,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template",
              producerOnly = true, category = { Category.DATABASE }, headersClass = SqlStoredConstants.class)
-public class SqlStoredEndpoint extends DefaultEndpoint {
+public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private CallableStatementWrapperFactory wrapperFactory;
     private JdbcTemplate jdbcTemplate;
@@ -143,6 +144,24 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         if (this.wrapperFactory != null) {
             this.wrapperFactory.shutdown();
         }
+    }
+
+    @Override
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    @Override
+    public String getServiceProtocol() {
+        return "jdbc";
+    }
+
+    @Override
+    public Map<String, String> getServiceMetadata() {
+        if (serviceMetadata != null && !serviceMetadata.isEmpty()) {
+            return serviceMetadata;
+        }
+        return null;
     }
 
     public JdbcTemplate getJdbcTemplate() {

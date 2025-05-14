@@ -277,8 +277,10 @@ public class Export extends ExportBaseCommand {
                     case "org.apache.camel.springboot" -> {
                         String a1 = o1.getArtifactId();
                         // main/core/engine first
-                        if ("camel-spring-boot-engine-starter".equals(a1)) {
+                        if ("camel-spring-boot-starter".equals(a1)) {
                             return 21;
+                        } else if ("camel-spring-boot-engine-starter".equals(a1)) {
+                            return 22;
                         }
                         return 20;
                     }

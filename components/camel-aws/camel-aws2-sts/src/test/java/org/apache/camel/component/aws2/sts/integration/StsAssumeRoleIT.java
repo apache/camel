@@ -23,12 +23,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sts.STS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Disabled("Doesn't work with Localstack 4.4.0")
 public class StsAssumeRoleIT extends Aws2StsBase {
 
     @EndpointInject
