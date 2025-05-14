@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -269,6 +271,23 @@ public final class KubernetesHelper {
                         .formatted(extension, workingDir.toPath().toString()));
     }
 
+    public static Path resolveKubernetesManifestPath(String clusterType, Path workingDir) throws FileNotFoundException {
+        return resolveKubernetesManifestPath(clusterType, workingDir, "yml");
+    }
+
+    public static Path resolveKubernetesManifestPath(String clusterType, Path workingDir, String extension)
+            throws FileNotFoundException {
+
+        var manifestPath = getKubernetesManifestPath(clusterType, workingDir, extension);
+        if (Files.exists(manifestPath)) {
+            return manifestPath;
+        }
+
+        throw new FileNotFoundException(
+                "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                        .formatted(extension, workingDir.toString()));
+    }
+
     public static String getPodPhase(Pod pod) {
         return Optional.ofNullable(pod).map(p -> p.getStatus().getPhase()).orElse("Unknown");
     }
@@ -289,5 +308,19 @@ public final class KubernetesHelper {
             manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
         }
         return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
+    }
+
+    public static Path getKubernetesManifestPath(String clusterType, Path workingDir) {
+        return getKubernetesManifestPath(clusterType, workingDir, "yml");
+    }
+
+    public static Path getKubernetesManifestPath(String clusterType, Path workingDir, String extension) {
+        String manifestFile;
+        if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
+            manifestFile = "kubernetes";
+        } else {
+            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+        }
+        return workingDir.resolve("%s.%s".formatted(manifestFile, extension));
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.update;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileSystem;
@@ -56,7 +55,7 @@ public final class CamelUpdate implements Update {
                 = downloader.downloadArtifact("org.apache.camel.upgrade", getArtifactCoordinates(), updateMixin.version);
 
         try {
-            recipes = getRecipesInJar(mavenArtifact.getFile());
+            recipes = getRecipesInJar(mavenArtifact.getFile().toPath());
         } catch (IOException ex) {
             throw new CamelUpdateException(ex);
         }
@@ -76,11 +75,10 @@ public final class CamelUpdate implements Update {
         return activeRecipes;
     }
 
-    private List<Recipe> getRecipesInJar(File jar) throws IOException {
+    private List<Recipe> getRecipesInJar(Path jar) throws IOException {
         List<Recipe> recipes = new ArrayList<>();
-        Path jarPath = jar.toPath();
 
-        try (FileSystem fileSystem = FileSystems.newFileSystem(jarPath, (ClassLoader) null)) {
+        try (FileSystem fileSystem = FileSystems.newFileSystem(jar, (ClassLoader) null)) {
             Path recipePath = fileSystem.getPath("META-INF", "rewrite");
             if (Files.exists(recipePath)) {
                 try (Stream<Path> walk = Files.walk(recipePath)) {

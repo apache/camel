@@ -18,12 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -52,12 +54,20 @@ public class InfraLog extends InfraBaseCommand {
         List<Future<?>> futures = new ArrayList<>();
         if (serviceName == null || serviceName.isEmpty()) {
             // Log everything
-            for (File logFile : CommandLineHelper.getCamelDir().listFiles(
-                    (dir, name) -> name.startsWith("infra-") && name.endsWith(".log"))) {
+            try {
+                List<Path> logFiles = Files.list(CommandLineHelper.getCamelDir())
+                        .filter(p -> {
+                            String name = p.getFileName().toString();
+                            return name.startsWith("infra-") && name.endsWith(".log");
+                        })
+                        .collect(java.util.stream.Collectors.toList());
 
-                String alias = logFile.getName().split("-")[1];
-
-                createTailer(logFile, alias, futures);
+                for (Path logFile : logFiles) {
+                    String alias = logFile.getFileName().toString().split("-")[1];
+                    createTailer(logFile.toFile(), alias, futures);
+                }
+            } catch (IOException e) {
+                // ignore
             }
 
             if (futures.isEmpty()) {
@@ -68,10 +78,18 @@ public class InfraLog extends InfraBaseCommand {
         } else {
             String alias = serviceName.get(0);
 
-            File logFile = Arrays.stream(CommandLineHelper.getCamelDir().listFiles(
-                    (dir, name) -> name.startsWith("infra-" + alias + "-") && name.endsWith(".log")))
-                    .findFirst()
-                    .orElse(null);
+            Path logFile = null;
+            try {
+                logFile = Files.list(CommandLineHelper.getCamelDir())
+                        .filter(p -> {
+                            String name = p.getFileName().toString();
+                            return name.startsWith("infra-" + alias + "-") && name.endsWith(".log");
+                        })
+                        .findFirst()
+                        .orElse(null);
+            } catch (IOException e) {
+                // ignore
+            }
 
             if (logFile == null) {
                 printer().println("Log not found for service " + alias);
@@ -79,7 +97,7 @@ public class InfraLog extends InfraBaseCommand {
                 return -1;
             }
 
-            createTailer(logFile, alias, futures);
+            createTailer(logFile.toFile(), alias, futures);
         }
 
         for (Future<?> future : futures) {

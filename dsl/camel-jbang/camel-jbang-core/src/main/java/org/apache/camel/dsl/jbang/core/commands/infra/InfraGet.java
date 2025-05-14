@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -39,11 +41,20 @@ public class InfraGet extends InfraBaseCommand {
     public Integer doCall() throws Exception {
         String serviceToGet = serviceName.get(0);
         boolean found = false;
-        for (File jsonFile : CommandLineHelper.getCamelDir().listFiles(
-                (dir, name) -> name.startsWith("infra-" + serviceToGet + "-") && name.endsWith(".json"))) {
-            printer().println(Files.readString(jsonFile.toPath()));
-            found = true;
-            break;
+        try {
+            List<Path> jsonFiles = Files.list(CommandLineHelper.getCamelDir())
+                    .filter(p -> {
+                        String name = p.getFileName().toString();
+                        return name.startsWith("infra-" + serviceToGet + "-") && name.endsWith(".json");
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+
+            if (!jsonFiles.isEmpty()) {
+                printer().println(Files.readString(jsonFiles.get(0)));
+                found = true;
+            }
+        } catch (IOException e) {
+            // ignore
         }
 
         if (!found) {

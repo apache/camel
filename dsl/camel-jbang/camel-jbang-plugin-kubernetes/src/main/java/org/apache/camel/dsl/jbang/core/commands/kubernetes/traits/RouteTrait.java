@@ -16,10 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import io.fabric8.kubernetes.api.model.IntOrString;
@@ -123,14 +124,14 @@ public class RouteTrait extends BaseTrait {
     private String getContent(String value) {
         if (value.startsWith("file:")) {
             String filePath = StringHelper.after(value, ":");
-            final File file = new File(filePath);
-            if (!file.exists()) {
+            final Path path = Paths.get(filePath);
+            if (!Files.exists(path)) {
                 throw new RuntimeException(filePath + " does not exist");
             }
-            if (file.isDirectory()) {
+            if (Files.isDirectory(path)) {
                 throw new RuntimeException(filePath + " is not a file");
             }
-            try (InputStream is = new FileInputStream(file)) {
+            try (InputStream is = Files.newInputStream(path)) {
                 return IOHelper.loadText(is);
             } catch (IOException e) {
                 throw new RuntimeException(e);

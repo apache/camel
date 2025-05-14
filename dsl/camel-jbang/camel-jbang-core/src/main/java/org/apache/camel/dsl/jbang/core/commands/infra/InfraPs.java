@@ -16,9 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -36,10 +40,17 @@ public class InfraPs extends InfraBaseCommand {
     public Integer doCall() throws Exception {
         // retrieve running services to filter output
         Set<String> runningAliases = new HashSet<>();
-        for (File pidFile : CommandLineHelper.getCamelDir().listFiles(
-                (dir, name) -> name.startsWith("infra-"))) {
-            String runningServiceName = pidFile.getName().split("-")[1];
-            runningAliases.add(runningServiceName);
+        try {
+            List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
+                    .filter(p -> p.getFileName().toString().startsWith("infra-"))
+                    .collect(java.util.stream.Collectors.toList());
+
+            for (Path pidFile : pidFiles) {
+                String runningServiceName = pidFile.getFileName().toString().split("-")[1];
+                runningAliases.add(runningServiceName);
+            }
+        } catch (IOException e) {
+            // ignore
         }
 
         return listServices(rows -> {

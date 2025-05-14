@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -60,10 +60,10 @@ public class Export extends ExportBaseCommand {
 
     protected Integer doExport() throws Exception {
         // application.properties
-        doLoadAndInitProfileProperties(new File("application.properties"));
+        doLoadAndInitProfileProperties(Paths.get("application.properties"));
         if (profile != null) {
             // override from profile specific configuration
-            doLoadAndInitProfileProperties(new File("application-" + profile + ".properties"));
+            doLoadAndInitProfileProperties(Paths.get("application-" + profile + ".properties"));
         }
 
         if (runtime == null) {
@@ -116,17 +116,17 @@ public class Export extends ExportBaseCommand {
                 if (fn.endsWith("/*")) {
                     fn = fn.substring(0, fn.length() - 2);
                 }
-                if (!Paths.get(fn).toFile().exists()) {
+                if (!Files.exists(Paths.get(fn))) {
                     throw new FileNotFoundException("Path does not exist: " + fn);
                 }
             }
         }
     }
 
-    private void doLoadAndInitProfileProperties(File file) throws Exception {
-        if (file.exists()) {
+    private void doLoadAndInitProfileProperties(Path path) throws Exception {
+        if (Files.exists(path)) {
             Properties props = new CamelCaseOrderedProperties();
-            RuntimeUtil.loadProperties(props, file);
+            RuntimeUtil.loadProperties(props, path);
             // read runtime and gav from profile if not configured
             String rt = props.getProperty("camel.jbang.runtime");
             if (rt != null) {
@@ -312,8 +312,8 @@ public class Export extends ExportBaseCommand {
 
     // Copy the dockerfile into the same Maven project root directory.
     protected void copyDockerFiles(String buildDir) throws Exception {
-        File docker = new File(buildDir, "src/main/docker");
-        docker.mkdirs();
+        Path docker = Path.of(buildDir).resolve("src/main/docker");
+        Files.createDirectories(docker);
         String[] ids = gav.split(":");
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile.tmpl");
         String context = IOHelper.loadText(is);
@@ -321,7 +321,7 @@ public class Export extends ExportBaseCommand {
 
         String appJar = ids[1] + "-" + ids[2] + ".jar";
         context = context.replaceAll("\\{\\{ \\.AppJar }}", appJar);
-        IOHelper.writeText(context, new FileOutputStream(new File(docker, "Dockerfile"), false));
+        Files.writeString(docker.resolve("Dockerfile"), context);
     }
 
     // Copy the readme.md into the same Maven project root directory.
@@ -334,6 +334,6 @@ public class Export extends ExportBaseCommand {
         context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceAll("\\{\\{ \\.AppRuntimeJar }}", appJar);
-        IOHelper.writeText(context, new FileOutputStream(new File(buildDir, "readme.md"), false));
+        Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
     }
 }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop",
@@ -41,15 +43,21 @@ public class InfraStop extends InfraBaseCommand {
 
         boolean serviceStopped = false;
         String pid = null;
-        for (File pidFile : CommandLineHelper.getCamelDir().listFiles(
-                (dir, name) -> name.startsWith("infra-" + serviceToStop + "-"))) {
+        try {
+            List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
+                    .filter(p -> p.getFileName().toString().startsWith("infra-" + serviceToStop + "-"))
+                    .collect(java.util.stream.Collectors.toList());
 
-            String name = pidFile.getName();
-            pid = name.substring(name.lastIndexOf("-") + 1, name.lastIndexOf('.'));
+            for (Path pidFile : pidFiles) {
+                String name = pidFile.getFileName().toString();
+                pid = name.substring(name.lastIndexOf("-") + 1, name.lastIndexOf('.'));
 
-            FileUtil.deleteFile(pidFile);
-
-            serviceStopped = true;
+                Files.deleteIfExists(pidFile);
+                serviceStopped = true;
+                break;
+            }
+        } catch (IOException e) {
+            // ignore
         }
 
         if (!serviceStopped) {

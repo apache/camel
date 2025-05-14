@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
 public final class VersionHelper {
@@ -35,13 +35,11 @@ public final class VersionHelper {
             if (homeDir == null || homeDir.isBlank()) {
                 // fallback to .jbang cache that has a list of latest version
                 path = ".jbang/cache/";
-                homeDir = CommandLineHelper.getHomeDir();
+                homeDir = CommandLineHelper.getHomeDir().toString();
             }
-            File file = new File(homeDir, path + "version.txt");
-            if (file.exists() && file.isFile()) {
-                FileInputStream fis = new FileInputStream(file);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
+            Path file = Paths.get(homeDir).resolve(path + "version.txt");
+            if (Files.exists(file) && Files.isRegularFile(file)) {
+                String text = Files.readString(file);
                 text = text.trim();
                 return text;
             }

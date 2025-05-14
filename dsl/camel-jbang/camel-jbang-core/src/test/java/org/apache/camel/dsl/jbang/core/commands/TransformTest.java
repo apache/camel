@@ -16,15 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -34,32 +32,31 @@ import picocli.CommandLine;
 
 class TransformTest {
 
-    private File workingDir;
+    private Path workingDir;
 
     @BeforeEach
     public void setup() throws IOException {
         Path base = Paths.get("target");
-        workingDir = Files.createTempDirectory(base, "camel-transform").toFile();
+        workingDir = Files.createTempDirectory(base, "camel-transform");
     }
 
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        FileUtil.removeDir(workingDir);
+        PathUtils.deleteDirectory(workingDir);
     }
 
     @Test
     public void shouldTransformToYaml() throws Exception {
-        String name = workingDir + "/transform.yaml";
-        File out = new File(name);
+        Path outPath = workingDir.resolve("transform.yaml");
 
-        String[] args = new String[] { "--output=" + out.getPath() };
+        String[] args = new String[] { "--output=" + outPath.toString() };
         TransformRoute command = createCommand(new String[] { "src/test/resources/transform.xml" }, args);
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(out.exists());
-        String data = IOHelper.loadText(new FileInputStream(out));
+        Assertions.assertTrue(Files.exists(outPath));
+        String data = Files.readString(outPath);
         String expected
                 = IOHelper.stripLineComments(Paths.get("src/test/resources/transform-out.yaml"), "#", true);
         Assertions.assertEquals(expected, data);
@@ -67,16 +64,15 @@ class TransformTest {
 
     @Test
     public void shouldTransformBlueprintToYaml() throws Exception {
-        String name = workingDir + "/blueprint.yaml";
-        File out = new File(name);
+        Path outPath = workingDir.resolve("blueprint.yaml");
 
-        String[] args = new String[] { "--output=" + out.getPath() };
+        String[] args = new String[] { "--output=" + outPath.toString() };
         TransformRoute command = createCommand(new String[] { "src/test/resources/blueprint.xml" }, args);
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
-        Assertions.assertTrue(out.exists());
-        String data = IOHelper.loadText(new FileInputStream(out));
+        Assertions.assertTrue(Files.exists(outPath));
+        String data = Files.readString(outPath);
         String expected
                 = IOHelper.stripLineComments(Paths.get("src/test/resources/blueprint-out.yaml"), "#", true);
         Assertions.assertEquals(expected, data);
