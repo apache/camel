@@ -15989,7 +15989,7 @@
           "basicAuth" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.BasicAuthDefinition"
           },
-          "bearer" : {
+          "bearerToken" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.rest.BearerTokenDefinition"
           },
           "mutualTLS" : {

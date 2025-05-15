@@ -119,6 +119,9 @@ For example
 Then Camel will now use `/cheese` as the base-path for the Rest DSL API endpoints
 from the `petstore-v3.json` openapi specification file.
 
+When using code-first with Rest DSL and are specifying security constraints, then `bearer` in YAML and XML DSL has been renamed to `bearerToken`
+to be aligned with Java DSL.
+
 === camel-as2
 
 Add options allowing the addition of an `Authorization` header for Basic or Bearer authentication to client and

@@ -14905,6 +14905,13 @@ List of bean.
       </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
       <xs:element minOccurs="0" name="dataFormats">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+List of data formats.
+]]>
+          </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
           <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="dataFormat" type="tns:dataFormat">
@@ -15467,7 +15474,7 @@ patterns can be specified separated by comma. Default value: classpath:camel-moc
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element ref="tns:apiKey"/>
         <xs:element ref="tns:basicAuth"/>
-        <xs:element name="bearer" type="tns:bearerTokenDefinition"/>
+        <xs:element ref="tns:bearerToken"/>
         <xs:element ref="tns:oauth2"/>
         <xs:element ref="tns:openIdConnect"/>
         <xs:element ref="tns:mutualTLS"/>

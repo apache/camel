@@ -3520,7 +3520,7 @@ public class ModelWriter extends BaseWriter {
             switch (v.getClass().getSimpleName()) {
                 case "ApiKeyDefinition" -> doWriteApiKeyDefinition("apiKey", (ApiKeyDefinition) v);
                 case "BasicAuthDefinition" -> doWriteBasicAuthDefinition("basicAuth", (BasicAuthDefinition) v);
-                case "BearerTokenDefinition" -> doWriteBearerTokenDefinition("bearer", (BearerTokenDefinition) v);
+                case "BearerTokenDefinition" -> doWriteBearerTokenDefinition("bearerToken", (BearerTokenDefinition) v);
                 case "OAuth2Definition" -> doWriteOAuth2Definition("oauth2", (OAuth2Definition) v);
                 case "OpenIdConnectDefinition" -> doWriteOpenIdConnectDefinition("openIdConnect", (OpenIdConnectDefinition) v);
                 case "MutualTLSDefinition" -> doWriteMutualTLSDefinition("mutualTLS", (MutualTLSDefinition) v);

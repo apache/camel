@@ -2704,7 +2704,7 @@ public class ModelParser extends BaseParser {
         return doParse(new RestSecuritiesDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
                 case "apiKey": doAdd(doParseApiKeyDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "basicAuth": doAdd(doParseBasicAuthDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
-                case "bearer": doAdd(doParseBearerTokenDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
+                case "bearerToken": doAdd(doParseBearerTokenDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "oauth2": doAdd(doParseOAuth2Definition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "openIdConnect": doAdd(doParseOpenIdConnectDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;
                 case "mutualTLS": doAdd(doParseMutualTLSDefinition(), def.getSecurityDefinitions(), def::setSecurityDefinitions); yield true;

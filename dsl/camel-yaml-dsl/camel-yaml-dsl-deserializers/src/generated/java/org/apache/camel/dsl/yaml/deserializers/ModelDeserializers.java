@@ -14927,7 +14927,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "apiKey", type = "object:org.apache.camel.model.rest.ApiKeyDefinition"),
                     @YamlProperty(name = "basicAuth", type = "object:org.apache.camel.model.rest.BasicAuthDefinition"),
-                    @YamlProperty(name = "bearer", type = "object:org.apache.camel.model.rest.BearerTokenDefinition"),
+                    @YamlProperty(name = "bearerToken", type = "object:org.apache.camel.model.rest.BearerTokenDefinition"),
                     @YamlProperty(name = "mutualTLS", type = "object:org.apache.camel.model.rest.MutualTLSDefinition"),
                     @YamlProperty(name = "oauth2", type = "object:org.apache.camel.model.rest.OAuth2Definition"),
                     @YamlProperty(name = "openIdConnect", type = "object:org.apache.camel.model.rest.OpenIdConnectDefinition")
@@ -14973,7 +14973,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setSecurityDefinitions(existing);
                     break;
                 }
-                case "bearer": {
+                case "bearerToken": {
                     org.apache.camel.model.rest.BearerTokenDefinition val = asType(node, org.apache.camel.model.rest.BearerTokenDefinition.class);
                     java.util.List<org.apache.camel.model.rest.RestSecurityDefinition> existing = target.getSecurityDefinitions();
                     if (existing == null) {
