@@ -54,11 +54,12 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
 
         mockEndPointMarshal1.expectedMessageCount(1);
         mockEndPointMarshal1
-                .expectedBodiesReceived("\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+                .expectedBodiesReceived(
+                        "\"123\",\"\"\"foo\"\",abc\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         BindyCsvRowFormat7621 body = new BindyCsvRowFormat7621();
         body.setFirstField("123");
-        body.setSecondField("\"foo\"");
+        body.setSecondField("\"foo\",abc");
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal1", body);
 
@@ -68,7 +69,7 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
                 = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
 
         assertEquals("123", model.getFirstField());
-        assertEquals("\"bar\"", model.getSecondField());
+        assertEquals("\"bar\",abc", model.getSecondField());
         assertEquals(new BigDecimal(10), model.getNumber());
     }
 
